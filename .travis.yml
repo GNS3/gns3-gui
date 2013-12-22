@@ -1,0 +1,24 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.3"
+
+install:
+  - "pip install -r requirements.txt --use-mirrors"
+  - "pip install tox"
+
+script: "python setup.py test"
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
+  irc:
+    channels:
+      - "chat.freenode.net#gns3"
+    on_success: change
+    on_failure: always
+
