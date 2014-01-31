@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2014 GNS3 Technologies Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Configuration page for Dynamips Ethernet hubs.
+"""
+
+from gns3.qt import QtGui
+from gns3.node_configurator import ConfigurationError
+from ..ui.ethernet_hub_configuration_page_ui import Ui_ethernetHubConfigPageWidget
+
+
+class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget):
+    """
+    QWidget configuration page for Ethernet hubs.
+    """
+
+    def __init__(self):
+
+        QtGui.QWidget.__init__(self)
+        self.setupUi(self)
+
+    def loadSettings(self, settings, node):
+        """
+        Loads the Ethernet hub settings.
+
+        :param settings: the settings (dictionary)
+        :param node: Node object
+        """
+
+        nbports = len(settings["ports"])
+        self.uiPortsSpinBox.setValue(nbports)
+
+    def saveSettings(self, settings, node):
+        """
+        Saves the Ethernet hub settings.
+
+        :param settings: the settings (dictionary)
+        :param node: Node object
+        """
+
+        # these setting cannot be shared by nodes and updated
+        # in the node configurator.
+        if "name" in settings:
+            del settings["name"]
+
+        nbports = self.uiPortsSpinBox.value()
+
+        # check that a link isn't connected to a port
+        # before we delete it
+        ports = node.ports()
+        for port in ports:
+            if not port.isFree() and port.port > nbports:
+                self.loadSettings(settings, node)
+                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port))
+                raise ConfigurationError()
+
+        settings["ports"] = []
+        for port in range(1, nbports + 1):
+            settings["ports"].append(str(port))

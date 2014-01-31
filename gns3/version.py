@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2013 GNS3 Technologies Inc.
+# Copyright (C) 2014 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# __version__ is a human-readable version number.
+"""
+__version__ is a human-readable version number.
 
-# __version_info__ is a four-tuple for programmatic comparison. The first
-# three numbers are the components of the version number. The fourth
-# is zero for an official release, positive for a development branch,
-# or negative for a release candidate or beta (after the base version
-# number has been incremented)
+__version_info__ is a four-tuple for programmatic comparison. The first
+three numbers are the components of the version number. The fourth
+is zero for an official release, positive for a development branch,
+or negative for a release candidate or beta (after the base version
+number has been incremented)
+"""
 
 __version__ = "0.1.dev"
 __version_info__ = (0, 1, 0, -99)

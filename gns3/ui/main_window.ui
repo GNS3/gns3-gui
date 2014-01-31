@@ -1,0 +1,1390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>980</width>
+    <height>719</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GNS3</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/resources.qrc">
+    <normaloff>:/images/logo_icon.png</normaloff>:/images/logo_icon.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#toolBar_Devices QToolButton {
+width: 50px;
+height: 55px;
+border:solid 1px black opacity 0.4;
+background-none;
+}
+
+#toolBar_General QToolButton {
+width: 36px;
+height: 36px;
+border:solid 1px black opacity 0.4;
+background-none;
+}
+
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="GraphicsView" name="uiGraphicsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="statusTip">
+       <string>Topology Graphic View (Workspace).</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>980</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="action_SelectAll"/>
+    <addaction name="action_SelectNone"/>
+    <addaction name="separator"/>
+    <addaction name="action_IOS_images"/>
+    <addaction name="action_Symbol_Manager"/>
+    <addaction name="uiPreferencesAction"/>
+   </widget>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_New"/>
+    <addaction name="action_Open"/>
+    <addaction name="action_Save"/>
+    <addaction name="action_SaveProjectAs"/>
+    <addaction name="separator"/>
+    <addaction name="action_config"/>
+    <addaction name="action_Export"/>
+    <addaction name="action_Snapshot"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <widget class="QMenu" name="menu_About">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_OnlineHelp"/>
+    <addaction name="action_CheckForUpdate"/>
+    <addaction name="action_Instructions"/>
+    <addaction name="action_Tips"/>
+    <addaction name="action_AboutQt"/>
+    <addaction name="action_About"/>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuWindow_Style">
+     <property name="title">
+      <string>Window Style</string>
+     </property>
+     <addaction name="action_DefaultStyle"/>
+     <addaction name="action_EnergySavingStyle"/>
+    </widget>
+    <addaction name="action_ZoomIn"/>
+    <addaction name="action_ZoomOut"/>
+    <addaction name="action_ZoomReset"/>
+    <addaction name="action_ZoomUsingMouseWheel"/>
+    <addaction name="action_DisableMouseWheel"/>
+    <addaction name="separator"/>
+    <addaction name="action_ShowLayers"/>
+    <addaction name="action_ResetInterfaceLabels"/>
+    <addaction name="action_ShowHostnames"/>
+    <addaction name="action_ShowinterfaceNames"/>
+    <addaction name="menuWindow_Style"/>
+   </widget>
+   <widget class="QMenu" name="menuControl">
+    <property name="title">
+     <string>Control</string>
+    </property>
+    <addaction name="action_StartAll"/>
+    <addaction name="action_SuspendAll"/>
+    <addaction name="action_StopAll"/>
+    <addaction name="action_ReloadAll"/>
+    <addaction name="action_ShowVirtualBoxManager"/>
+    <addaction name="action_ConsoleAuxAll"/>
+    <addaction name="action_TelnetAll"/>
+   </widget>
+   <widget class="QMenu" name="menuAnnotate">
+    <property name="title">
+     <string>Annotate</string>
+    </property>
+    <addaction name="action_AddNote"/>
+    <addaction name="action_InsertImage"/>
+    <addaction name="action_DrawRectangle"/>
+    <addaction name="action_DrawEllipse"/>
+   </widget>
+   <widget class="QMenu" name="menuDevice">
+    <property name="title">
+     <string>Device</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_View"/>
+   <addaction name="menuControl"/>
+   <addaction name="menuDevice"/>
+   <addaction name="menuAnnotate"/>
+   <addaction name="menu_Tools"/>
+   <addaction name="menu_About"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar_General">
+   <property name="windowTitle">
+    <string>General</string>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="statusTip">
+    <string/>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_New"/>
+   <addaction name="action_Open"/>
+   <addaction name="action_Save"/>
+  </widget>
+  <widget class="QDockWidget" name="uiNodesDockWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Node Types</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="uiNodesDockWidgetContents">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="NodesView" name="uiNodesView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Drag Node to Workspace (press SHIFT while dragging for multiple nodes).</string>
+       </property>
+       <property name="statusTip">
+        <string>Available Node types are colored and can be dragged to the Workspace. Press SHIFT while dragging a device to add multiple identical nodes.</string>
+       </property>
+       <property name="dragEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Devices">
+   <property name="windowTitle">
+    <string>Devices</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>64</width>
+     <height>64</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Router"/>
+   <addaction name="separator"/>
+   <addaction name="action_Switch"/>
+   <addaction name="separator"/>
+   <addaction name="action_EndDevices"/>
+   <addaction name="separator"/>
+   <addaction name="action_SecurityDevices"/>
+   <addaction name="separator"/>
+   <addaction name="action_BrowseAllDevices"/>
+   <addaction name="separator"/>
+   <addaction name="uiAddLinkAction"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Emulation">
+   <property name="windowTitle">
+    <string>Emulation</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Snapshot"/>
+   <addaction name="action_config"/>
+   <addaction name="action_ShowinterfaceNames"/>
+   <addaction name="action_Console"/>
+   <addaction name="separator"/>
+   <addaction name="action_StartAll"/>
+   <addaction name="action_SuspendAll"/>
+   <addaction name="action_StopAll"/>
+   <addaction name="action_ReloadAll"/>
+   <addaction name="action_ShowVirtualBoxManager"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_Console">
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllDockWidgetAreas</set>
+   </property>
+   <property name="windowTitle">
+    <string>Console</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTextEdit" name="textEditConsole">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="statusTip">
+        <string>GNS3 Management Console. Right-click for edit options. Type help for command line help.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar_drawing">
+   <property name="windowTitle">
+    <string>Drawing</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_AddNote"/>
+   <addaction name="action_InsertImage"/>
+   <addaction name="action_DrawRectangle"/>
+   <addaction name="action_DrawEllipse"/>
+   <addaction name="action_ZoomIn"/>
+   <addaction name="action_ZoomOut"/>
+   <addaction name="action_Export"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_UndoView">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Undo Stack</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QListView" name="UndoViewDock">
+       <property name="toolTip">
+        <string>Click on timepoint to restore device/link history to that timepoint.</string>
+       </property>
+       <property name="statusTip">
+        <string>Undo stack holds device and link creation/deletion history. Click on timepoint to restore device/link history to that timepoint.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_Capture">
+   <property name="windowTitle">
+    <string>Captures</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTreeWidget" name="capturesDock">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Select capture and right-click for menu.</string>
+       </property>
+       <property name="statusTip">
+        <string>Captures lists all Wireshark captures for this session. Select capture and right-click for menu.</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>Hostname</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Interface</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_TopoSum">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>84</width>
+     <height>109</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Topology Summary</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_7">
+    <layout class="QGridLayout">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QTreeWidget" name="treeWidget_TopologySummary">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Expand device to view connections. Select link and Right-click for menu.</string>
+       </property>
+       <property name="statusTip">
+        <string>Topology Summary shows device and connection status. Expand device to view connections. Select link and Right-click for menu.</string>
+       </property>
+       <column>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="action_About">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+   <property name="statusTip">
+    <string>About</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/quit.svg</normaloff>:/icons/quit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="statusTip">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/open.svg</normaloff>:/icons/open.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Open project or topology file</string>
+   </property>
+   <property name="statusTip">
+    <string>Open project or topology file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save project</string>
+   </property>
+   <property name="toolTip">
+    <string>Save project</string>
+   </property>
+   <property name="statusTip">
+    <string>Save project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_IOS_images">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/binary.svg</normaloff>:/icons/binary.svg</iconset>
+   </property>
+   <property name="text">
+    <string>IOS images and hypervisors</string>
+   </property>
+   <property name="statusTip">
+    <string>IOS images and hypervisors</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
+   </property>
+  </action>
+  <action name="action_OnlineHelp">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/help.svg</normaloff>:/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Online help</string>
+   </property>
+   <property name="toolTip">
+    <string>Online help</string>
+   </property>
+   <property name="statusTip">
+    <string>Online Help</string>
+   </property>
+  </action>
+  <action name="action_Export">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/camera-photo.svg</normaloff>
+     <activeoff>:/icons/camera-photo-hover.svg</activeoff>:/icons/camera-photo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Take a screenshot</string>
+   </property>
+   <property name="toolTip">
+    <string>Take a screenshot</string>
+   </property>
+   <property name="statusTip">
+    <string>Take a creenshot</string>
+   </property>
+  </action>
+  <action name="action_StartAll">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/play7-test.svg</normaloff>
+     <normalon>:/icons/play7-test.svg</normalon>
+     <activeoff>:/icons/play2-test.svg</activeoff>
+     <activeon>:/icons/play2-test.svg</activeon>:/icons/play7-test.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Start/Resume all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Start/Resume all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Start/Resume all devices</string>
+   </property>
+  </action>
+  <action name="action_StopAll">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/stop3-test.svg</normaloff>
+     <activeoff>:/icons/stop2-test.svg</activeoff>
+     <activeon>:/icons/stop2-test.svg</activeon>:/icons/stop3-test.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Stop all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Stop all devices</string>
+   </property>
+  </action>
+  <action name="action_ShowHostnames">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/show-hostname.svg</normaloff>:/icons/show-hostname.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show hostnames</string>
+   </property>
+   <property name="toolTip">
+    <string>Show hostnames</string>
+   </property>
+   <property name="statusTip">
+    <string>Show hostnames</string>
+   </property>
+  </action>
+  <action name="action_TelnetAll">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/console.svg</normaloff>:/icons/console.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Console connect to all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Console connect to all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Console to all devices</string>
+   </property>
+  </action>
+  <action name="action_SaveAs">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/save-as.svg</normaloff>:/icons/save-as.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save topology &amp;as…</string>
+   </property>
+   <property name="iconText">
+    <string>Save As</string>
+   </property>
+   <property name="toolTip">
+    <string>Save topology file as...</string>
+   </property>
+   <property name="statusTip">
+    <string>Save topology file as...</string>
+   </property>
+  </action>
+  <action name="action_AboutQt">
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+   <property name="statusTip">
+    <string>About Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="action_ZoomIn">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/zoom-in.png</normaloff>
+     <activeoff>:/icons/zoom-in-hover.png</activeoff>:/icons/zoom-in.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom in</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom in</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="action_ZoomOut">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/zoom-out.png</normaloff>
+     <activeoff>:/icons/zoom-out-hover.png</activeoff>:/icons/zoom-out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom out</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="action_ZoomReset">
+   <property name="text">
+    <string>Zoom 1:1</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom Reset (1:1)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="action_SelectAll">
+   <property name="text">
+    <string>Select &amp;all</string>
+   </property>
+   <property name="statusTip">
+    <string>Select All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="action_SelectNone">
+   <property name="text">
+    <string>Select &amp;none</string>
+   </property>
+   <property name="statusTip">
+    <string>Select None</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="uiPreferencesAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/applications.svg</normaloff>:/icons/applications.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Preferences...</string>
+   </property>
+   <property name="statusTip">
+    <string>Preferences</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="action_Undo">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit-undo.svg</normaloff>:/icons/edit-undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="action_Redo">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit-redo.svg</normaloff>:/icons/edit-redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="action_SuspendAll">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/pause3-test.svg</normaloff>
+     <activeoff>:/icons/pause2-test.svg</activeoff>
+     <activeon>:/icons/pause2-test.svg</activeon>:/icons/pause3-test.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Suspend all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Suspend all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Suspend all devices</string>
+   </property>
+  </action>
+  <action name="action_Clear">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/new.svg</normaloff>:/icons/new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New blank topology</string>
+   </property>
+   <property name="toolTip">
+    <string>New blank topology</string>
+   </property>
+   <property name="statusTip">
+    <string>New blank topology</string>
+   </property>
+  </action>
+  <action name="action_AddNote">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/add-note.svg</normaloff>:/icons/add-note.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add note</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a note</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a note</string>
+   </property>
+  </action>
+  <action name="action_New">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/new-project.svg</normaloff>:/icons/new-project.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New blank project</string>
+   </property>
+   <property name="iconText">
+    <string>New Project</string>
+   </property>
+   <property name="toolTip">
+    <string>New blank project</string>
+   </property>
+   <property name="statusTip">
+    <string>New blank project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_config">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/import_export_configs.svg</normaloff>:/icons/import_export_configs.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Import/Export IOS Startup Configs</string>
+   </property>
+   <property name="toolTip">
+    <string>Import/Export IOS Startup Configs</string>
+   </property>
+   <property name="statusTip">
+    <string>Import/Export IOS Startup Configs</string>
+   </property>
+  </action>
+  <action name="action_InsertImage">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/image.svg</normaloff>:/icons/image.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Insert picture</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert a picture</string>
+   </property>
+   <property name="statusTip">
+    <string>Insert a picture</string>
+   </property>
+  </action>
+  <action name="action_Symbol_Manager">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/node_conception.svg</normaloff>:/icons/node_conception.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Symbol manager</string>
+   </property>
+   <property name="toolTip">
+    <string>Symbol manager</string>
+   </property>
+   <property name="statusTip">
+    <string>Symbol Manager</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="action_DrawRectangle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/rectangle3-test.svg</normaloff>
+     <activeoff>:/icons/rectangle2-test.svg</activeoff>
+     <activeon>:/icons/rectangle2-test.svg</activeon>:/icons/rectangle3-test.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Draw rectangle</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a rectangle</string>
+   </property>
+   <property name="statusTip">
+    <string>Draw a rectangle</string>
+   </property>
+  </action>
+  <action name="action_DrawEllipse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/ellipse3-test.svg</normaloff>
+     <activeoff>:/icons/ellipse2-test.svg</activeoff>
+     <activeon>:/icons/ellipse2-test.svg</activeon>:/icons/ellipse3-test.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Draw ellipse</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw an ellipse</string>
+   </property>
+   <property name="statusTip">
+    <string>Draw an ellipse</string>
+   </property>
+  </action>
+  <action name="action_ShowinterfaceNames">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/show-interface-names.svg</normaloff>:/icons/show-interface-names.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show/Hide interface labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show/Hide interface labels</string>
+   </property>
+   <property name="statusTip">
+    <string>Show/Hide interface labels</string>
+   </property>
+  </action>
+  <action name="action_Snapshot">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/snapshot.svg</normaloff>:/icons/snapshot.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Manage snapshots</string>
+   </property>
+   <property name="toolTip">
+    <string>Manage snapshots</string>
+   </property>
+   <property name="statusTip">
+    <string>Manage snapshots</string>
+   </property>
+  </action>
+  <action name="action_ShowLayers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show layers</string>
+   </property>
+   <property name="statusTip">
+    <string>Show layers</string>
+   </property>
+  </action>
+  <action name="action_SaveProjectAs">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/save-as-project.svg</normaloff>:/icons/save-as-project.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save project as…</string>
+   </property>
+   <property name="toolTip">
+    <string>Save project as...</string>
+   </property>
+   <property name="statusTip">
+    <string>Save project as...</string>
+   </property>
+  </action>
+  <action name="action_ReloadAll">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/reload.svg</normaloff>:/icons/reload.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reload all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Reload all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Reload all devices</string>
+   </property>
+  </action>
+  <action name="action_ConsoleAuxAll">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/aux-console.svg</normaloff>:/icons/aux-console.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Console connect via AUX to all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Console connect via AUX to all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Console AUX to all devices</string>
+   </property>
+  </action>
+  <action name="action_ResetInterfaceLabels">
+   <property name="text">
+    <string>Reset interface labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset interface labels</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset Interface Labels</string>
+   </property>
+  </action>
+  <action name="action_CheckForUpdate">
+   <property name="text">
+    <string>Check for Update</string>
+   </property>
+   <property name="statusTip">
+    <string>Check for Update</string>
+   </property>
+  </action>
+  <action name="action_ShowVirtualBoxManager">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/virtualbox.png</normaloff>:/icons/virtualbox.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show VirtualBox Manager</string>
+   </property>
+   <property name="toolTip">
+    <string>Show VirtualBox Manager</string>
+   </property>
+   <property name="statusTip">
+    <string>Show VirtualBox Manager</string>
+   </property>
+  </action>
+  <action name="action_EnergySavingStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Energy Saving</string>
+   </property>
+   <property name="statusTip">
+    <string>Energy Saving Mode</string>
+   </property>
+  </action>
+  <action name="action_DefaultStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Default</string>
+   </property>
+  </action>
+  <action name="action_Router">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/router.png</normaloff>
+     <activeoff>:/icons/router-hover.png</activeoff>:/icons/router.png</iconset>
+   </property>
+   <property name="text">
+    <string>Browse Routers</string>
+   </property>
+   <property name="iconText">
+    <string>Browse Routers</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse Routers</string>
+   </property>
+   <property name="statusTip">
+    <string>Browse Routers</string>
+   </property>
+  </action>
+  <action name="action_Switch">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/switch.png</normaloff>
+     <activeoff>:/icons/switch-hover.png</activeoff>:/icons/switch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Browse Switches</string>
+   </property>
+   <property name="iconText">
+    <string>Browse Switches</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse Switches</string>
+   </property>
+   <property name="statusTip">
+    <string>Browse Switches</string>
+   </property>
+  </action>
+  <action name="action_EndDevices">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/PC.png</normaloff>
+     <activeoff>:/icons/PC-hover.png</activeoff>:/icons/PC.png</iconset>
+   </property>
+   <property name="text">
+    <string>Browse End Devices</string>
+   </property>
+   <property name="iconText">
+    <string>Browse End Devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse End Devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Browse End Devices</string>
+   </property>
+  </action>
+  <action name="action_SecurityDevices">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/firewall.png</normaloff>
+     <activeoff>:/icons/firewall-hover.png</activeoff>:/icons/firewall.png</iconset>
+   </property>
+   <property name="text">
+    <string>Browse Security Devices</string>
+   </property>
+   <property name="iconText">
+    <string>Browse Security Devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse Security Devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Browse Security Devices</string>
+   </property>
+  </action>
+  <action name="action_HighContrastStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>High Contrast</string>
+   </property>
+   <property name="statusTip">
+    <string>High Contrast Mode</string>
+   </property>
+  </action>
+  <action name="action_BrowseAllDevices">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/browse-all-icons.png</normaloff>
+     <activeoff>:/icons/browse-all-icons-hover.png</activeoff>:/icons/browse-all-icons.png</iconset>
+   </property>
+   <property name="text">
+    <string>Browse all devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse all devices</string>
+   </property>
+   <property name="statusTip">
+    <string>Browse all devices</string>
+   </property>
+  </action>
+  <action name="uiAddLinkAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/connection-new.svg</normaloff>
+     <activeoff>:/icons/connection-new-hover.svg</activeoff>:/icons/connection-new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add a link</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a link</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a link</string>
+   </property>
+  </action>
+  <action name="action_Console">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/console.svg</normaloff>:/icons/console.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Console</string>
+   </property>
+   <property name="toolTip">
+    <string>Start Console...</string>
+   </property>
+   <property name="statusTip">
+    <string>Start Console...</string>
+   </property>
+  </action>
+  <action name="action_Export_in_a_PDF">
+   <property name="text">
+    <string>Export in a PDF</string>
+   </property>
+  </action>
+  <action name="action_Deployement_Wizard">
+   <property name="text">
+    <string>Deployement Wizard</string>
+   </property>
+  </action>
+  <action name="action_DisableMouseWheel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Disable Mouse Wheel</string>
+   </property>
+   <property name="toolTip">
+    <string>Disable Mouse Wheel</string>
+   </property>
+  </action>
+  <action name="action_ZoomUsingMouseWheel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Zoom using Mouse Wheel</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom in/out using the mouse whee</string>
+   </property>
+  </action>
+  <action name="action_Tips">
+   <property name="text">
+    <string>Tips</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Tips</string>
+   </property>
+  </action>
+  <action name="action_Instructions">
+   <property name="text">
+    <string>Instructions</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>..graphics_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NodesView</class>
+   <extends>QTreeWidget</extends>
+   <header>..nodes_view.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>uiGraphicsView</tabstop>
+  <tabstop>uiNodesView</tabstop>
+  <tabstop>textEditConsole</tabstop>
+  <tabstop>UndoViewDock</tabstop>
+  <tabstop>capturesDock</tabstop>
+  <tabstop>treeWidget_TopologySummary</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>398</x>
+     <y>302</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

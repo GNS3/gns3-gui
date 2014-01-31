@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DynamipsPreferencesPageWidget</class>
+ <widget class="QWidget" name="DynamipsPreferencesPageWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>432</width>
+    <height>508</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dynamips</string>
+  </property>
+  <layout class="QVBoxLayout">
+   <item>
+    <widget class="QTabWidget" name="uiTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="uiGeneralSettingsTabWidget">
+      <attribute name="title">
+       <string>General settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiDynamipsPathLabel">
+         <property name="text">
+          <string>Path to Dynamips:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiBaseHypervisorPortLabel">
+         <property name="text">
+          <string>Base port for hypervisors:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiBaseConsolePortLabel">
+         <property name="text">
+          <string>Base console port for routers:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QLabel" name="uiBaseAuxPortLabel">
+         <property name="text">
+          <string>Base auxiliary console port for routers:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="uiTestSettingsPushButton">
+           <property name="text">
+            <string>Test settings</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
+           <property name="text">
+            <string>Restore defaults</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>164</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>390</width>
+           <height>193</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QSpinBox" name="uiBaseAuxPortSpinBox">
+         <property name="suffix">
+          <string notr="true"> TCP</string>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>2501</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QSpinBox" name="uiBaseConsolePortSpinBox">
+         <property name="suffix">
+          <string notr="true"> TCP</string>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>2001</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QSpinBox" name="uiBaseHypervisorPortSpinBox">
+         <property name="suffix">
+          <string notr="true"> TCP</string>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>7200</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLineEdit" name="uiDynamipsPathLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiDynamipsPathToolButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiServerSettingsTabWidget">
+      <attribute name="title">
+       <string>Server settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
+         <property name="text">
+          <string>Use the local server</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="uiRemoteServersGroupBox">
+         <property name="title">
+          <string>Remote servers</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <column>
+             <property name="text">
+              <string>Host</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Port</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiAdvancedSettingsTabWidget">
+      <attribute name="title">
+       <string>Advanced settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="uiHypervisorAllocationGroupBox">
+         <property name="title">
+          <string>Hypervisor allocation</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="uiAllocateHypervisorPerDeviceCheckBox">
+            <property name="text">
+             <string>Allocate a new hypervisor for each device</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="uiMemoryUsageLimitPerHypervisorLabel">
+            <property name="text">
+             <string>Memory usage limit per hypervisor:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="uiMemoryUsageLimitPerHypervisorSpinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="suffix">
+             <string> MiB</string>
+            </property>
+            <property name="maximum">
+             <number>1000000</number>
+            </property>
+            <property name="singleStep">
+             <number>128</number>
+            </property>
+            <property name="value">
+             <number>512</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="uiAllocateHypervisorPerIOSCheckBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Allocate a new hypervisor per IOS image</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiUDPTunnelingGroupBox">
+         <property name="title">
+          <string>UDP tunneling</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLabel" name="uiBaseUDPPortLabel">
+            <property name="text">
+             <string> Base UDP port:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="uiBaseUDPPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> UDP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>10001</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="uiBaseUDPPortIncrementationLabel">
+            <property name="text">
+             <string>UDP incrementation per hypervisor:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="uiBaseUDPPortIncrementationSpinBox">
+            <property name="maximum">
+             <number>100000</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiMemoryUsageOptimisationGroupBox">
+         <property name="title">
+          <string>Memory usage optimisation</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QCheckBox" name="uiGhostIOSSupportCheckBox">
+            <property name="text">
+             <string>Enable ghost IOS support</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="uiMmapSupportCheckBox">
+            <property name="text">
+             <string>Enable mmap support</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="uiJITSharingSupportCheckBox">
+            <property name="text">
+             <string>Enable JIT sharing support</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="uiSparseMemorySupportCheckBox">
+            <property name="text">
+             <string>Enable sparse memory support</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="spacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>390</width>
+           <height>12</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+      <zorder>spacer_2</zorder>
+      <zorder>uiUDPTunnelingGroupBox</zorder>
+      <zorder>uiMemoryUsageOptimisationGroupBox</zorder>
+      <zorder>uiHypervisorAllocationGroupBox</zorder>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>uiTabWidget</tabstop>
+  <tabstop>uiDynamipsPathLineEdit</tabstop>
+  <tabstop>uiDynamipsPathToolButton</tabstop>
+  <tabstop>uiBaseHypervisorPortSpinBox</tabstop>
+  <tabstop>uiBaseConsolePortSpinBox</tabstop>
+  <tabstop>uiBaseAuxPortSpinBox</tabstop>
+  <tabstop>uiAllocateHypervisorPerDeviceCheckBox</tabstop>
+  <tabstop>uiMemoryUsageLimitPerHypervisorSpinBox</tabstop>
+  <tabstop>uiAllocateHypervisorPerIOSCheckBox</tabstop>
+  <tabstop>uiBaseUDPPortSpinBox</tabstop>
+  <tabstop>uiBaseUDPPortIncrementationSpinBox</tabstop>
+  <tabstop>uiGhostIOSSupportCheckBox</tabstop>
+  <tabstop>uiMmapSupportCheckBox</tabstop>
+  <tabstop>uiJITSharingSupportCheckBox</tabstop>
+  <tabstop>uiSparseMemorySupportCheckBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+ <designerdata>
+  <property name="gridDeltaX">
+   <number>10</number>
+  </property>
+  <property name="gridDeltaY">
+   <number>10</number>
+  </property>
+  <property name="gridSnapX">
+   <bool>true</bool>
+  </property>
+  <property name="gridSnapY">
+   <bool>true</bool>
+  </property>
+  <property name="gridVisible">
+   <bool>true</bool>
+  </property>
+ </designerdata>
+</ui>
