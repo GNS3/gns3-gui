@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1998"
+   sodipodi:version="0.32"
+   inkscape:version="0.45"
+   width="72.265999"
+   height="32.197998"
+   version="1.0"
+   sodipodi:docbase="/home/grossmj/workspace/gns3-artwork/symbols"
+   sodipodi:docname="hub.selected.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true">
+  <metadata
+     id="metadata2003">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Hub</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jeremy Grossmann</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>GNS-3</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:description>Created for the GNS-3 project (www.gns3.net)</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2001">
+    <linearGradient
+       id="linearGradient6587">
+      <stop
+         style="stop-color:#506eaa;stop-opacity:1;"
+         offset="0"
+         id="stop6589" />
+      <stop
+         style="stop-color:#506eaa;stop-opacity:0;"
+         offset="1"
+         id="stop6591" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow2Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         id="path11918"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(1.1,0,0,1.1,1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path11921"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path11936"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="979"
+     inkscape:window-width="1400"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="16"
+     inkscape:cx="40.824376"
+     inkscape:cy="12.730068"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:current-layer="svg1998" />
+  <path
+     style="fill:#000000;fill-opacity:0.55686275;stroke:none;stroke-width:0.001"
+     d="M 2.4058282,16.455091 L 2.4058282,32.150856 L 55.002952,32.150856 L 55.002952,16.455091 L 2.4058282,16.455091"
+     id="path13703" />
+  <path
+     style="fill:#000000;fill-opacity:0.55686275;stroke:none;stroke-width:0.001"
+     d="M 54.964224,18.784972 L 71.34872,2.9757151 L 71.34872,16.388745 L 54.964224,32.197999 L 54.964224,18.784972"
+     id="path14592" />
+  <path
+     style="fill:#49659d;fill-opacity:1;stroke:none;stroke-width:0.00110589"
+     d="M 0.262,16.276 L 0.262,30.176 L 55.117,30.176 L 55.117,16.276 L 0.262,16.276"
+     id="path2007" />
+  <path
+     style="fill:#495b89;fill-opacity:1;stroke:none;stroke-width:0.001"
+     d="M 54.766,16.462092 L 71.967,-2.4563684e-15 L 71.967,13.966913 L 54.766,30.429 L 54.766,16.462092"
+     id="path2009" />
+  <path
+     style="fill:#48649d;fill-opacity:1;stroke:none;stroke-width:0.01505287;stroke-opacity:1"
+     d="M 55.175556,16.636 L 72.266,0.041 L 17.044871,0.041 L 0,16.636 L 55.175556,16.636"
+     id="path2013" />
+  <path
+     style="fill:#000000;stroke:none;stroke-width:0.001"
+     d="M 17.333127,6.358126 L 13.746509,8.6448907 L 38.88,8.6448907 L 34.396726,11.507711 L 55.916426,7.5276925 L 44.259923,4.6299604 L 42.520958,6.358126 L 17.333127,6.358126"
+     id="path2019" />
+  <path
+     style="fill:#ffffff;stroke:none;stroke-width:0.001"
+     d="M 18.256952,6.9341813 L 14.643164,9.2034898 L 39.776654,9.2034898 L 35.293382,12.048855 L 56.840256,8.0513792 L 45.183753,5.2060155 L 43.363269,6.9341813 L 18.256952,6.9341813"
+     id="path2027" />
+</svg>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1998"
+   sodipodi:version="0.32"
+   inkscape:version="0.45"
+   width="51.358818"
+   height="47.630692"
+   version="1.0"
+   sodipodi:docbase="/home/grossmj/workspace/gns3-artwork/symbols"
+   sodipodi:docname="sw_frame_relay.selected.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true">
+  <metadata
+     id="metadata2003">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+        <dc:title>Frame Relay switch</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jeremy Grossmann</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:description>Created for the GNS-3 project (www.gns3.net)</dc:description>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>GNS-3</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2001">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient10123">
+      <stop
+         style="stop-color:#e4405c;stop-opacity:1;"
+         offset="0"
+         id="stop10125" />
+      <stop
+         style="stop-color:#e4405c;stop-opacity:0;"
+         offset="1"
+         id="stop10127" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient8331">
+      <stop
+         style="stop-color:#506eaa;stop-opacity:1;"
+         offset="0"
+         id="stop8333" />
+      <stop
+         style="stop-color:#506eaa;stop-opacity:0;"
+         offset="1"
+         id="stop8335" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient6603">
+      <stop
+         style="stop-color:#506eaa;stop-opacity:1;"
+         offset="0"
+         id="stop6605" />
+      <stop
+         style="stop-color:#506eaa;stop-opacity:0;"
+         offset="1"
+         id="stop6607" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient6587">
+      <stop
+         style="stop-color:#506eaa;stop-opacity:1;"
+         offset="0"
+         id="stop6589" />
+      <stop
+         style="stop-color:#506eaa;stop-opacity:0;"
+         offset="1"
+         id="stop6591" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow2Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         id="path11918"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(1.1,0,0,1.1,1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path11921"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:black;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path11936"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:black;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6587"
+       id="linearGradient6593"
+       x1="3.95626"
+       y1="0.64267641"
+       x2="-1.2664427"
+       y2="0.62730032"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.060042,0,0,1.074658,-3.942481e-3,-0.356572)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6603"
+       id="linearGradient6609"
+       x1="2.2801981"
+       y1="1.4519272"
+       x2="-0.41311559"
+       y2="1.4649135"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.060042,0,0,1.074658,-3.942482e-3,-0.356572)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10123"
+       id="linearGradient10129"
+       x1="1.3990936"
+       y1="1.4711363"
+       x2="0.49966058"
+       y2="0.56367606"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.117962,0,0,1.035008,-4.0973e-2,-6.788682e-3)" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="979"
+     inkscape:window-width="1400"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="15.791667"
+     inkscape:cx="27.737563"
+     inkscape:cy="27.498605"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:current-layer="svg1998" />
+  <path
+     id="path11907"
+     d="M 1.8402723,44.565612 L 1.8402723,47.615693 L 44.293781,47.615693 L 44.293781,44.565612 L 1.8402723,44.565612"
+     style="fill:#000000;fill-opacity:0.55686275;stroke:none;stroke-width:0.001" />
+  <path
+     id="path11020"
+     d="M 44.370594,6.1851672 L 51.194316,1.0980117 L 51.358819,41.344844 L 44.266438,47.63069 L 44.370594,6.1851672"
+     style="fill:#000000;fill-opacity:0.55686275;stroke:none;stroke-width:0.001"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     id="path2037"
+     d="M 0.062500355,5.155915 L 0.062500355,46.326915 L 44.407694,46.326915 L 44.407694,5.155915 L 0.062500355,5.155915"
+     style="fill:#49659d;fill-opacity:1;stroke:none;stroke-width:0.001" />
+  <path
+     id="path2041"
+     d="M -0.385,5.5959223 L 5.2944433,0.2186915 L 50.133,0.25249818 L 44.403768,5.6296915 L -0.385,5.5959223"
+     style="fill:#506daa;fill-opacity:1;stroke:none;stroke-width:0.001" />
+  <path
+     id="path2045"
+     d="M 44.273,5.133749 L 49.926077,0.172692 L 49.931,41.392635 L 44.277923,46.353692 L 44.273,5.133749"
+     style="fill:#495b89;fill-opacity:1;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 6.900405,9.9244987 L 6.900405,15.822533 L 8.668349,14.104042 L 13.26069,18.262367 L 15.352038,16.183205 L 11.147782,11.664208 L 12.894165,9.9244987 L 6.900405,9.9244987"
+     id="path2308"
+     style="fill:#000000;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 38.572473,41.218021 L 38.572473,35.319988 L 36.80453,37.059696 L 32.255307,32.540699 L 29.775875,34.959317 L 34.346656,39.478313 L 32.600273,41.218021 L 38.572473,41.218021"
+     id="path2310"
+     style="fill:#000000;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 20.63431,25.560653 L 23.092183,23.142035 L 17.464946,17.922912 L 14.985514,20.34153 L 20.63431,25.560653"
+     id="path2312"
+     style="fill:#000000;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 27.662966,32.880154 L 30.120839,30.44032 L 24.860127,25.221198 L 22.402254,27.661031 L 27.662966,32.880154"
+     id="path2314"
+     style="fill:#000000;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 6.577,10.60341 L 6.577,16.183205 L 8.301823,14.443497 L 12.894165,18.941277 L 15.352038,16.543876 L 10.781256,12.364334 L 12.5492,10.60341 L 6.577,10.60341"
+     id="path2316"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 38.572473,41.578692 L 38.572473,36.020114 L 36.80453,37.738606 L 32.255307,33.219609 L 29.775875,35.659443 L 34.346656,39.838985 L 32.600273,41.578692 L 38.572473,41.578692"
+     id="path2318"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 20.289345,26.260779 L 22.747218,23.820945 L 17.464946,18.623039 L 14.985514,21.062873 L 20.289345,26.260779"
+     id="path2320"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 27.662966,33.559064 L 30.120839,31.119231 L 24.860127,25.921324 L 22.402254,28.000487 L 27.662966,33.559064"
+     id="path2322"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+</svg>
