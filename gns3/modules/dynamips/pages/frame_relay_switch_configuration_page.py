@@ -125,12 +125,13 @@ class FrameRelaySwitchConfigurationPage(QtGui.QWidget, Ui_frameRelaySwitchConfig
             del self._mapping[source]
             self.uiMappingTreeWidget.takeTopLevelItem(self.uiMappingTreeWidget.indexOfTopLevelItem(item))
 
-    def loadSettings(self, settings, node):
+    def loadSettings(self, settings, node, group=False):
         """
         Loads the Frame-Relay switch settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         self.uiMappingTreeWidget.clear()
@@ -147,12 +148,13 @@ class FrameRelaySwitchConfigurationPage(QtGui.QWidget, Ui_frameRelaySwitchConfig
         self.uiMappingTreeWidget.resizeColumnToContents(0)
         self.uiMappingTreeWidget.resizeColumnToContents(1)
 
-    def saveSettings(self, settings, node):
+    def saveSettings(self, settings, node, group=False):
         """
         Saves the Frame-Relay switch settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         # these setting cannot be shared by nodes and updated

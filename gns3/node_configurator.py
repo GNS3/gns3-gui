@@ -99,14 +99,15 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
             self.uiTitleLabel.setText("{} configuration".format(item.text(0)))
             item = item.child(0)
             page = item.page()
+            # load the item temporary settings onto the page
+            page.loadSettings(item.settings(), item.node(), group=True)
         else:
             self.uiTitleLabel.setText("{} configuration".format(item.node().name()))
             page = item.page()
             self.previousItem = item
             self.previousPage = page
-
-        # load the item temporary settings onto the page
-        page.loadSettings(item.settings(), item.node())
+            # load the item temporary settings onto the page
+            page.loadSettings(item.settings(), item.node())
 
         self.uiConfigStackedWidget.addWidget(page)
         self.uiConfigStackedWidget.setCurrentWidget(page)
@@ -153,12 +154,15 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
                 # save the temporary settings for the current group
                 # by applying the first child temporary settings to
                 # all children for that group
-                settings = item.child(0).settings()
+                self.previousItem = None
+                self.previousNode = None
+                settings = item.child(0).settings().copy()
                 node = item.child(0).node()
-                page.saveSettings(settings, node)
+                page.saveSettings(settings, node, group=True)
                 for index in range(0, item.childCount()):
                     child = item.child(index)
-                    child.setSettings(settings.copy())
+                    child.node().update(settings)
+                    child.settings().update(settings)
 
         # update the nodes with the settings
         for item in self._parent_items.values():
@@ -181,14 +185,15 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
             else:
                 # this is a group item (no parent), reload the settings
                 # on the current page by taking the settings of the first child.
-                page.loadSettings(item.child(0).settings(), item.child(0).node())
+                self.previousItem = None
+                self.previousNode = None
+                page.loadSettings(item.child(0).settings().copy(), item.child(0).node(), group=True)
 
         # reset the settings
         for item in self._parent_items.values():
-            settings = item.child(0).node().settings()
             for index in range(0, item.childCount()):
                 child = item.child(index)
-                child.setSettings(settings.copy())
+                child.setSettings(child.node().settings().copy())
 
 
 class ConfigurationPageItem(QtGui.QTreeWidgetItem):

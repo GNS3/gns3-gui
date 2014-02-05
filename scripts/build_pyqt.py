@@ -52,7 +52,8 @@ def recursive(function, path):
 
 if __name__ == '__main__':
     cwd = os.path.dirname(os.path.abspath(__file__))
-    ui_path = os.path.abspath(os.path.join(cwd, "../gns3/"))
-    recursive(build_ui, ui_path)
+    gns3_path = os.path.abspath(os.path.join(cwd, "../gns3/"))
+    ui_path = os.path.abspath(os.path.join(cwd, "../gns3/ui"))
+    recursive(build_ui, gns3_path)
     rcc_path = os.path.abspath(os.path.join(cwd, "../resources"))
     build_resources(rcc_path, ui_path)

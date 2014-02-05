@@ -88,6 +88,43 @@ class Node(QtCore.QObject):
 
         raise NotImplementedError()
 
+    def addNIOInfo(self, nio, params):
+        """
+        Adds NIO information to a dictionary.
+
+        :param nio: NIO object
+        :param params: dictionary
+        """
+
+        nio_type = str(nio)
+        if nio_type == "NIO_UDP":
+            # add NIO UDP params
+            params["lport"] = nio.lport
+            params["rhost"] = nio.rhost
+            params["rport"] = nio.rport
+
+        elif nio_type == "NIO_GenericEthernet":
+            # add NIO generic Ethernet param
+            params["ethernet_device"] = nio.ethernet_device
+
+        elif nio_type == "NIO_LinuxEthernet":
+            # add NIO Linux Ethernet param
+            params["ethernet_device"] = nio.ethernet_device
+
+        elif nio_type == "NIO_TAP":
+            # add NIO TAP param
+            params["tap_device"] = nio.tap_device
+
+        elif nio_type == "NIO_UNIX":
+            # add NIO UNIX params
+            params["local_file"] = nio.local_file
+            params["remote_file"] = nio.remote_file
+
+        elif nio_type == "NIO_VDE":
+            # add NIO VDE params
+            params["control_file"] = nio.control_file
+            params["local_file"] = nio.local_file
+
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node configurator.

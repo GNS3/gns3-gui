@@ -39,6 +39,7 @@ class Router(Node):
     def __init__(self, server, platform="c7200"):
         Node.__init__(self)
 
+        log.info("router {} is being created".format(platform))
         self._server = server
         self._defaults = {}
         self._ports = []
@@ -74,11 +75,9 @@ class Router(Node):
                           "wic1": None,
                           "wic2": None}
 
-        #self._ethernet_wic_port_id = 0
-        #self._serial_wic_port_id = 0
-
     def _addAdapterPorts(self, adapter, slot_id):
         """
+        Adds ports based on what adapter is inserted in which slot.
 
         :param adapter: adapter name
         :param slot_id: slot identifier (integer)
@@ -96,16 +95,23 @@ class Router(Node):
             new_port.slot = slot_id
             new_port.port = port_id
             self._ports.append(new_port)
+            log.debug("port {} has been added".format(port_name))
 
     def _removeAdapterPorts(self, slot_id):
+        """
+        Removes ports when an adapter is removed from a slot.
+
+        :param slot_id: slot identifier (integer)
+        """
 
         for port in self._ports.copy():
             if port.slot == slot_id:
                 self._ports.remove(port)
+                log.debug("port {} has been removed".format(port.name))
 
     def _addWICPorts(self, wic, wic_slot_id):
         """
-
+        Adds ports based on what WIC is inserted in which slot.
 
         :param wic: WIC name
         :param wic_slot_id: WIC slot identifier (integer)
@@ -122,8 +128,14 @@ class Router(Node):
             # Dynamips WICs slot IDs start on a multiple of 16.
             new_port.port = base + port_id
             self._ports.append(new_port)
+            log.debug("port {} has been added".format(port_name))
 
     def _removeWICPorts(self, wic, wic_slot_id):
+        """
+        Removes ports when a WIC is removed from a slot.
+
+        :param wic_slot_id: WIC slot identifier (integer)
+        """
 
         wic_ports_to_delete = []
         nb_ports = WIC_MATRIX[wic]["nb_ports"]
@@ -133,19 +145,52 @@ class Router(Node):
         for port in self._ports.copy():
             if port.slot == 0 and port.port in wic_ports_to_delete:
                 self._ports.remove(port)
+                log.debug("port {} has been removed".format(port.name))
+
+    def _updateWICNumbering(self):
+        """
+        Updates the port names that are located on a WIC adapter
+        (based on the number of WICs and their slot number).
+        """
+
+        wic_ethernet_port_count = 0
+        wic_serial_port_count = 0
+        for wic_slot_id in range(0, 3):
+            base = 16 * (wic_slot_id + 1)
+            wic_slot = "wic" + str(wic_slot_id)
+            if self._settings[wic_slot]:
+                wic = self._settings[wic_slot]
+                nb_ports = WIC_MATRIX[wic]["nb_ports"]
+                for port_id in range(0, nb_ports):
+                    for port in self._ports:
+                        if port.slot == 0 and port.port == base + port_id:
+                            if port.linkType() == "Serial":
+                                wic_port_id = wic_serial_port_count
+                                wic_serial_port_count += 1
+                            else:
+                                wic_port_id = wic_ethernet_port_count
+                                wic_ethernet_port_count += 1
+                            old_name = port.name
+                            if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
+                                # these chassis show their interface without a slot number
+                                port.name = port.longNameType() + str(wic_port_id)
+                            else:
+                                port.name = port.longNameType() + "0/" + str(wic_port_id)
+                            log.debug("port {} renamed to {}".format(old_name, port.name))
 
     def delete(self):
         """
         Deletes this router.
         """
 
+        log.debug("router {} is being deleted: {}".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         self._server.send_message("dynamips.vm.delete", {"id": self._router_id}, self._deleteCallback)
 
     def _deleteCallback(self, result, error=False):
         """
-        Callback for the delete method.
+        Callback for delete.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -155,7 +200,7 @@ class Router(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
-            log.info("{} has been deleted".format(self.name()))
+            log.info("router {} has been deleted".format(self.name()))
             self.delete_signal.emit()
 
     def setup(self, image, ram, name=None):
@@ -190,14 +235,14 @@ class Router(Node):
             self._settings["name"] = name
             params["name"] = name
 
-        self._server.send_message("dynamips.vm.create", params, self.setupCallback)
+        self._server.send_message("dynamips.vm.create", params, self._setupCallback)
 
-    def setupCallback(self, response, error=False):
+    def _setupCallback(self, response, error=False):
         """
-        Callback for the setup.
+        Callback for setup.
 
         :param result: server response
-        :param error: ..
+        :param error: indicates an error (boolean)
         """
 
         if error:
@@ -236,36 +281,23 @@ class Router(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        self._server.send_message("dynamips.vm.update", params, self.updateCallback)
+        log.debug("{} is updating settings: {}".format(self.name(), params))
+        self._server.send_message("dynamips.vm.update", params, self._updateCallback)
 
-    def _updateWICNumbering(self):
+    def _updateCallback(self, result, error=False):
+        """
+        Callback for update.
 
-        wic_ethernet_port_count = 0
-        wic_serial_port_count = 0
-        for wic_slot_id in range(0, 3):
-            base = 16 * (wic_slot_id + 1)
-            wic_slot = "wic" + str(wic_slot_id)
-            if self._settings[wic_slot]:
-                wic = self._settings[wic_slot]
-                nb_ports = WIC_MATRIX[wic]["nb_ports"]
-                for port_id in range(0, nb_ports):
-                    for port in self._ports:
-                        if port.slot == 0 and port.port == base + port_id:
-                            if port.linkType() == "Serial":
-                                wic_port_id = wic_serial_port_count
-                                wic_serial_port_count += 1
-                            else:
-                                wic_port_id = wic_ethernet_port_count
-                                wic_ethernet_port_count += 1
-                            if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
-                                # these chassis show their interface without a slot number
-                                port.name = port.longNameType() + str(wic_port_id)
-                            else:
-                                port.name = port.longNameType() + "0/" + str(wic_port_id)
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
 
-    def updateCallback(self, response, error=False):
+        if error:
+            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+            return
 
-        for name, value in response.items():
+        for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from {} to {}".format(self.name(), name, self._settings[name], value))
                 if name.startswith("slot"):
@@ -399,34 +431,7 @@ class Router(Node):
                   "slot": port.slot,
                   "port": port.port}
 
-        if nio_type == "NIO_UDP":
-            # add NIO UDP params
-            params["lport"] = nio.lport
-            params["rhost"] = nio.rhost
-            params["rport"] = nio.rport
-
-        elif nio_type == "NIO_GenericEthernet":
-            # add NIO generic Ethernet param
-            params["ethernet_device"] = nio.ethernet_device
-
-        elif nio_type == "NIO_LinuxEthernet":
-            # add NIO Linux Ethernet param
-            params["ethernet_device"] = nio.ethernet_device
-
-        elif nio_type == "NIO_TAP":
-            # add NIO TAP param
-            params["tap_device"] = nio.tap_device
-
-        elif nio_type == "NIO_UNIX":
-            # add NIO UNIX params
-            params["local_file"] = nio.local_file
-            params["remote_file"] = nio.remote_file
-
-        elif nio_type == "NIO_VDE":
-            # add NIO VDE params
-            params["control_file"] = nio.control_file
-            params["local_file"] = nio.local_file
-
+        self.addNIOInfo(nio, params)
         log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
         self._server.send_message("dynamips.vm.add_nio", params, self._addNIOCallback)
 
@@ -442,22 +447,33 @@ class Router(Node):
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            log.info("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id)
 
     def deleteNIO(self, port):
+        """
+        Deletes an NIO from the specified port on this router.
+
+        :param port: Port object.
+        """
 
         params = {"id": self._router_id,
-                  "nio": "NIO_UDP",
                   "slot": port.slot,
                   "port": port.port}
 
         port.nio = None
-        self._server.send_message("dynamips.vm.delete_nio", params, self.deleteNIOCallback)
+        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
+        self._server.send_message("dynamips.vm.delete_nio", params, self._deleteNIOCallback)
 
-    def deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False):
+        """
+        Callback for deleteNIO.
 
-        print("NIO deleted!")
-        print(result)
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        log.info("{} has deleted a NIO: {}".format(self.name(), result))
 
     def name(self):
         """

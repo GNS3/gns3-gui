@@ -59,17 +59,6 @@ class Cloud(Node):
         self._settings = {"nios": [],
                           "interfaces": []}
 
-    def setup(self, name=None):
-        """
-        Setups this cloud.
-
-        :param image: IOS image path
-        :param ram: amount of RAM
-        :param name: optional name for this router
-        """
-
-        self._server.send_message("dynamips.nio.get_interfaces", None, self.setupCallback)
-
     def delete(self):
         """
         Deletes this cloud.
@@ -79,18 +68,32 @@ class Cloud(Node):
         self.delete_links_signal.emit()
         self.delete_signal.emit()
 
-    def setupCallback(self, response, error=False):
+    def setup(self, name=None):
         """
-        Callback for the setup.
+        Setups this cloud.
+
+        :param name: optional name for this cloud
+        """
+
+        self._server.send_message("dynamips.nio.get_interfaces", None, self._setupCallback)
+
+    def _setupCallback(self, response, error=False):
+        """
+        Callback for setup.
 
         :param result: server response
-        :param error: ..
+        :param error: indicates an error (boolean)
         """
 
         for interface in response:
             self._settings["interfaces"].append(interface)
 
     def _createNIOUDP(self, nio):
+        """
+        Creates a NIO UDP.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_udp:(\d+):(.+):(\d+)$""", nio)
         if match:
@@ -101,6 +104,11 @@ class Cloud(Node):
         return None
 
     def _createNIOGenericEthernet(self, nio):
+        """
+        Creates a NIO Generic Ethernet.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_gen_eth:(.+)$""", nio)
         if match:
@@ -109,6 +117,11 @@ class Cloud(Node):
         return None
 
     def _createNIOLinuxEthernet(self, nio):
+        """
+        Creates a NIO Linux Ethernet.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_gen_linux:(.+)$""", nio)
         if match:
@@ -117,6 +130,11 @@ class Cloud(Node):
         return None
 
     def _createNIOTAP(self, nio):
+        """
+        Creates a NIO TAP.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_tap:(.+)$""", nio)
         if match:
@@ -125,6 +143,11 @@ class Cloud(Node):
         return None
 
     def _createNIOUNIX(self, nio):
+        """
+        Creates a NIO UNIX.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_unix:(.+):(.+)$""", nio)
         if match:
@@ -134,6 +157,11 @@ class Cloud(Node):
         return None
 
     def _createNIOVDE(self, nio):
+        """
+        Creates a NIO VDE.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_vde:(.+):(.+)$""", nio)
         if match:
@@ -143,6 +171,11 @@ class Cloud(Node):
         return None
 
     def _createNIONull(self, nio):
+        """
+        Creates a NIO Null.
+
+        :param nio: nio string
+        """
 
         match = re.search(r"""^nio_null:(.+)$""", nio)
         if match:
@@ -182,54 +215,20 @@ class Cloud(Node):
             if nio_object == None:
                 log.error("Could not create NIO object from {}".format(nio))
                 continue
-            print("Create port for {}".format(nio))
             port = Port(nio, nio_object, stub=True)
             self._ports.append(port)
+            log.debug("port {} has been added".format(nio))
 
         # delete ports
         for nio in self._settings["nios"]:
             if nio not in nios:
                 for port in self._ports.copy():
                     if port.name == nio:
-                        print("Delete port {}".format(nio))
                         self._ports.remove(port)
+                        log.debug("port {} has been deleted".format(nio))
                         break
 
         self._settings = new_settings.copy()
-
-#     def addNIO(self, port, nio):
-#         """
-#         Adds a new NIO on the specified port for this router.
-# 
-#         :param port: Port object.
-#         :param nio: NIO object.
-#         """
-# 
-#         if isinstance(nio, NIO_UDP):
-#             params = {"id": self._router_id,
-#                       "nio": "NIO_UDP",
-#                       "slot": port.slot,
-#                       "port": port.port,
-#                       "lport": nio.lport,
-#                       "rhost": nio.rhost,
-#                       "rport": nio.rport}
-#             log.debug("{} is adding an UDP NIO: {}".format(self.name(), params))
-# 
-#         self._server.send_message("dynamips.vm.add_nio", params, self._addNIOCallback)
-# 
-#     def _addNIOCallback(self, result, error=False):
-#         """
-#         Callback for addNIO.
-# 
-#         :param result: server response
-#         :param error: indicates an error (boolean)
-#         """
-# 
-#         if error:
-#             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-#             self.error_signal.emit(self.name(), result["code"], result["message"])
-#         else:
-#             self.nio_signal.emit(self.id)
 
     def deleteNIO(self, port):
 
@@ -237,7 +236,7 @@ class Cloud(Node):
 
     def name(self):
         """
-        Returns the name of this router.
+        Returns the name of this cloud.
 
         :returns: name (string)
         """
@@ -246,7 +245,7 @@ class Cloud(Node):
 
     def settings(self):
         """
-        Returns all this router settings.
+        Returns all this cloud settings.
 
         :returns: settings dictionary
         """
@@ -255,7 +254,7 @@ class Cloud(Node):
 
     def ports(self):
         """
-        Returns all the ports for this router.
+        Returns all the ports for this cloud.
 
         :returns: list of Port objects
         """

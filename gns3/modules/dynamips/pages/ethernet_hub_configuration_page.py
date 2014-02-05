@@ -34,23 +34,25 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-    def loadSettings(self, settings, node):
+    def loadSettings(self, settings, node, group=False):
         """
         Loads the Ethernet hub settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         nbports = len(settings["ports"])
         self.uiPortsSpinBox.setValue(nbports)
 
-    def saveSettings(self, settings, node):
+    def saveSettings(self, settings, node, group=False):
         """
         Saves the Ethernet hub settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         # these setting cannot be shared by nodes and updated

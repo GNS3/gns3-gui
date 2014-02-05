@@ -130,12 +130,13 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
             del self.mapping[ethernet_port]
             self.uiMappingTreeWidget.takeTopLevelItem(self.uiMappingTreeWidget.indexOfTopLevelItem(item))
 
-    def loadSettings(self, settings, node):
+    def loadSettings(self, settings, node, group=False):
         """
         Loads the ATM bridge settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         self.uiMappingTreeWidget.clear()
@@ -152,12 +153,13 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         self.uiMappingTreeWidget.resizeColumnToContents(0)
         self.uiMappingTreeWidget.resizeColumnToContents(1)
 
-    def saveSettings(self, settings, node):
+    def saveSettings(self, settings, node, group=False):
         """
         Saves the ATM bridge settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         # these setting cannot be shared by nodes and updated

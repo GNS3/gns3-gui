@@ -454,12 +454,13 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             self._nios.remove(nio)
             self.uiNIONullListWidget.takeItem(self.uiNIONullListWidget.currentRow())
 
-    def loadSettings(self, settings, node, parent):
+    def loadSettings(self, settings, node, group=False):
         """
         Loads the cloud settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         self._node = node
@@ -501,12 +502,13 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             elif nio.lower().startswith("nio_null"):
                 self.uiNIONullListWidget.addItem(nio)
 
-    def saveSettings(self, settings, node):
+    def saveSettings(self, settings, node, group=False):
         """
         Saves the cloud settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         settings["nios"] = list(self._nios)

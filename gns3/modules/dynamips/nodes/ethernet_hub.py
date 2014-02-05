@@ -22,7 +22,6 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
-from gns3.nios.nio_udp import NIO_UDP
 
 import logging
 log = logging.getLogger(__name__)
@@ -48,25 +47,24 @@ class EthernetHub(Node):
         """
         Setups this hub.
 
-        :param image: IOS image path
-        :param ram: amount of RAM
-        :param name: optional name for this router
+        :param name: optional name for this hub
         """
 
-        self._server.send_message("dynamips.ethhub.create", None, self.setupCallback)
+        self._server.send_message("dynamips.ethhub.create", None, self._setupCallback)
 
-    def setupCallback(self, response, error=False):
+    def _setupCallback(self, result, error=False):
         """
-        Callback for the setup.
+        Callback for setup.
 
         :param result: server response
-        :param error: ..
+        :param error: indicates an error (boolean)
         """
 
-        self._ethhub_id = response["id"]
-        self._settings["name"] = response["name"]
+        self._ethhub_id = result["id"]
+        self._settings["name"] = result["name"]
 
-        # let the GUI knows about this router name
+        # let the GUI knows about this hub name
+        log.info("Ethernet hub {} has been created".format(result["name"]))
         self.newname_signal.emit(self._settings["name"])
 
     def delete(self):
@@ -74,13 +72,14 @@ class EthernetHub(Node):
         Deletes this Ethernet hub.
         """
 
+        log.debug("Ethernet hub {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         self._server.send_message("dynamips.ethhub.delete", {"id": self._ethhub_id}, self._deleteCallback)
 
     def _deleteCallback(self, result, error=False):
         """
-        Callback for the delete method.
+        Callback for delete.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -95,7 +94,7 @@ class EthernetHub(Node):
 
     def update(self, new_settings):
         """
-        Updates the settings for this cloud.
+        Updates the settings for this Ethernet hub.
 
         :param new_settings: settings dictionary
         """
@@ -110,6 +109,7 @@ class EthernetHub(Node):
         for port in self._ports.copy():
             if port.isFree():
                 self._ports.remove(port)
+                log.debug("port {} has been removed".format(port.name))
             else:
                 ports_to_create.remove(port.name)
 
@@ -117,12 +117,9 @@ class EthernetHub(Node):
             port = EthernetPort(port_name)
             port.port = int(port_name)
             self._ports.append(port)
+            log.debug("port {} has been added".format(port_name))
 
         self._settings["ports"] = new_settings["ports"].copy()
-
-    def updateCallback(self, response, error=False):
-
-        print(response)
 
     def allocateUDPPort(self):
         """
@@ -151,21 +148,19 @@ class EthernetHub(Node):
 
     def addNIO(self, port, nio):
         """
-        Adds a new NIO on the specified port for this router.
+        Adds a new NIO on the specified port for this hub.
 
         :param port: Port object.
         :param nio: NIO object.
         """
 
-        if isinstance(nio, NIO_UDP):
-            params = {"id": self._ethhub_id,
-                      "nio": "NIO_UDP",
-                      "port": port.port,
-                      "lport": nio.lport,
-                      "rhost": nio.rhost,
-                      "rport": nio.rport}
-            log.debug("{} is adding an UDP NIO: {}".format(self.name(), params))
+        nio_type = str(nio)
+        params = {"id": self._ethhub_id,
+                  "nio": nio_type,
+                  "port": port.port}
 
+        self.addNIOInfo(nio, params)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
         self._server.send_message("dynamips.ethhub.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -183,21 +178,32 @@ class EthernetHub(Node):
             self.nio_signal.emit(self.id)
 
     def deleteNIO(self, port):
+        """
+        Deletes an NIO from the specified port on this hub.
+
+        :param port: Port object.
+        """
 
         params = {"id": self._ethhub_id,
                   "port": port.port}
 
         port.nio = None
-        self._server.send_message("dynamips.ethhub.delete_nio", params, self.deleteNIOCallback)
+        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
+        self._server.send_message("dynamips.ethhub.delete_nio", params, self._deleteNIOCallback)
 
-    def deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False):
+        """
+        Callback for deleteNIO.
 
-        print("NIO deleted!")
-        print(result)
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        log.info("{} has deleted a NIO: {}".format(self.name(), result))
 
     def name(self):
         """
-        Returns the name of this router.
+        Returns the name of this hub.
 
         :returns: name (string)
         """
@@ -206,7 +212,7 @@ class EthernetHub(Node):
 
     def settings(self):
         """
-        Returns all this router settings.
+        Returns all this hub settings.
 
         :returns: settings dictionary
         """
@@ -215,7 +221,7 @@ class EthernetHub(Node):
 
     def ports(self):
         """
-        Returns all the ports for this router.
+        Returns all the ports for this hub.
 
         :returns: list of Port objects
         """

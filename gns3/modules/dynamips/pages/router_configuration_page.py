@@ -224,13 +224,27 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
                     if (index != -1):
                         self._widget_wics[wic_number].setCurrentIndex(index)
 
-    def loadSettings(self, settings, node):
+    def loadSettings(self, settings, node, group=False):
         """
         Loads the router settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group of routers
         """
+
+        #print("loading {}".format(group))
+        if not group:
+            self.uiNameLineEdit.setText(settings["name"])
+            self.uiConsolePortSpinBox.setValue(settings["console"])
+            self.uiAuxPortSpinBox.setValue(settings["aux"])
+        else:
+            self.uiNameLabel.hide()
+            self.uiNameLineEdit.hide()
+            self.uiConsolePortLabel.hide()
+            self.uiConsolePortSpinBox.hide()
+            self.uiAuxPortLabel.hide()
+            self.uiAuxPortSpinBox.hide()
 
         # show the platform and chassis if applicable
         platform = settings["platform"]
@@ -245,7 +259,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         self.uiIOSImageTextLabel.setText(os.path.basename(settings["image"]))
 
         #TODO: startup-config setting
-        self.uiStartupConfigTextLabel.setText("None")
+        #self.uiStartupConfigTextLabel.setText("None")
 
         if platform == "c7200":
 
@@ -344,24 +358,34 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
                                                                                                                                       wic))
                 raise ConfigurationError()
 
-    def saveSettings(self, settings, node):
+    def saveSettings(self, settings, node, group=False):
         """
         Saves the router settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group of routers
         """
+
+        #print("saving {}".format(group))
 
         # these settings cannot be shared by nodes and updated
         # in the node configurator.
-        if "name" in settings:
-            del settings["name"]
-        if "console" in settings:
-            del settings["console"]
-        if "aux" in settings:
-            del settings["aux"]
-        #del self._settings["image"]
 
+        if not group:
+            settings["name"] = self.uiNameLineEdit.text()
+            settings["console"] = self.uiConsolePortSpinBox.value()
+            settings["aux"] = self.uiAuxPortSpinBox.value()
+        else:
+            #if "name" in settings:
+            del settings["name"]
+            #if "console" in settings:
+            del settings["console"]
+            #if "aux" in settings:
+            del settings["aux"]
+
+
+        #del self._settings["image"]
         # get the platform and chassis if applicable
         platform = settings["platform"]
         chassis = ""

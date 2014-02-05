@@ -22,7 +22,6 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
-from gns3.nios.nio_udp import NIO_UDP
 
 import logging
 log = logging.getLogger(__name__)
@@ -35,8 +34,6 @@ class EthernetSwitch(Node):
     :param server: GNS3 server instance
     """
 
-    #_name_instance_count = 1
-
     def __init__(self, server):
         Node.__init__(self)
 
@@ -46,34 +43,33 @@ class EthernetSwitch(Node):
         self._settings = {"name": "",
                           "ports": {}}
 
-        # create an unique id and name
-#         self._name_id = EthernetSwitch._name_instance_count
-#         EthernetSwitch._name_instance_count += 1
-#         self._name = "SW{}".format(self._name_id)
-
     def setup(self, name=None):
         """
-        Setups this switch.
+        Setups this Ethernet switch.
 
-        :param image: IOS image path
-        :param ram: amount of RAM
-        :param name: optional name for this router
+        :param name: optional name for this switch
         """
 
-        self._server.send_message("dynamips.ethsw.create", None, self.setupCallback)
+        self._server.send_message("dynamips.ethsw.create", None, self._setupCallback)
 
-    def setupCallback(self, response, error=False):
+    def _setupCallback(self, result, error=False):
         """
-        Callback for the setup.
+        Callback for setup.
 
         :param result: server response
-        :param error: ..
+        :param error: indicates an error (boolean)
         """
 
-        self._ethsw_id = response["id"]
-        self._settings["name"] = response["name"]
+        if error:
+            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+            return
 
-        # let the GUI knows about this router name
+        self._ethsw_id = result["id"]
+        self._settings["name"] = result["name"]
+
+        log.info("Ethernet switch {} has been created".format(result["name"]))
+        # let the GUI knows about this switch name
         self.newname_signal.emit(self._settings["name"])
 
     def delete(self):
@@ -81,13 +77,14 @@ class EthernetSwitch(Node):
         Deletes this Ethernet switch.
         """
 
+        log.debug("Ethernet switch {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         self._server.send_message("dynamips.ethsw.delete", {"id": self._ethsw_id}, self._deleteCallback)
 
     def _deleteCallback(self, result, error=False):
         """
-        Callback for the delete method.
+        Callback for delete.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -97,7 +94,7 @@ class EthernetSwitch(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
-            log.info("{} has been deleted".format(self.name()))
+            log.info("Ethernet switch {} has been deleted".format(self.name()))
             self.delete_signal.emit()
 
     def update(self, new_settings):
@@ -121,19 +118,31 @@ class EthernetSwitch(Node):
             port = EthernetPort(str(port_id))
             port.port = port_id
             self._ports.append(port)
+            log.debug("port {} has been added".format(port_id))
 
         if ports_to_update:
             params = {"id": self._ethsw_id,
                       "ports": {}}
             for port_id, info in ports_to_update.items():
                 params["ports"][port_id] = info
-            self._server.send_message("dynamips.ethsw.update", params, self.updateCallback)
+            log.debug("{} is being updated: {}".format(self.name(), params))
+            self._server.send_message("dynamips.ethsw.update", params, self._updateCallback)
 
         self._settings["ports"] = new_settings["ports"].copy()
 
-    def updateCallback(self, response, error=False):
+    def _updateCallback(self, result, error=False):
+        """
+        Callback for update.
 
-        print(response)
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while updating {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+        else:
+            log.info("{} has been updated".format(self.name()))
 
     def allocateUDPPort(self):
         """
@@ -162,24 +171,22 @@ class EthernetSwitch(Node):
 
     def addNIO(self, port, nio):
         """
-        Adds a new NIO on the specified port for this router.
+        Adds a new NIO on the specified port for this switch.
 
         :param port: Port object.
         :param nio: NIO object.
         """
 
         port_info = self._settings["ports"][port.port]
-        if isinstance(nio, NIO_UDP):
-            params = {"id": self._ethsw_id,
-                      "nio": "NIO_UDP",
-                      "port": port.port,
-                      "vlan": port_info["vlan"],
-                      "port_type": port_info["type"],
-                      "lport": nio.lport,
-                      "rhost": nio.rhost,
-                      "rport": nio.rport}
-            log.debug("{} is adding an UDP NIO: {}".format(self.name(), params))
+        nio_type = str(nio)
+        params = {"id": self._ethsw_id,
+                  "nio": nio_type,
+                  "port": port.port,
+                  "vlan": port_info["vlan"],
+                  "port_type": port_info["type"]}
 
+        self.addNIOInfo(nio, params)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
         self._server.send_message("dynamips.ethsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -194,24 +201,36 @@ class EthernetSwitch(Node):
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            log.info("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id)
 
     def deleteNIO(self, port):
+        """
+        Deletes an NIO from the specified port on this switch.
+
+        :param port: Port object.
+        """
 
         params = {"id": self._ethsw_id,
                   "port": port.port}
 
         port.nio = None
-        self._server.send_message("dynamips.ethsw.delete_nio", params, self.deleteNIOCallback)
+        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
+        self._server.send_message("dynamips.ethsw.delete_nio", params, self._deleteNIOCallback)
 
-    def deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False):
+        """
+        Callback for deleteNIO.
 
-        print("NIO deleted!")
-        print(result)
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        log.info("{} has deleted a NIO: {}".format(self.name(), result))
 
     def name(self):
         """
-        Returns the name of this router.
+        Returns the name of this switch.
 
         :returns: name (string)
         """
@@ -220,7 +239,7 @@ class EthernetSwitch(Node):
 
     def settings(self):
         """
-        Returns all this router settings.
+        Returns all this switch settings.
 
         :returns: settings dictionary
         """
@@ -229,7 +248,7 @@ class EthernetSwitch(Node):
 
     def ports(self):
         """
-        Returns all the ports for this router.
+        Returns all the ports for this switch.
 
         :returns: list of Port objects
         """

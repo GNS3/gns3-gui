@@ -122,12 +122,13 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         else:
             self.uiPortSpinBox.setValue(1)
 
-    def loadSettings(self, settings, node):
+    def loadSettings(self, settings, node, group=False):
         """
         Loads the Ethernet switch settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         self.uiPortsTreeWidget.clear()
@@ -147,12 +148,13 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         if len(self._ports) > 0:
             self.uiPortSpinBox.setValue(max(self._ports) + 1)
 
-    def saveSettings(self, settings, node):
+    def saveSettings(self, settings, node, group=False):
         """
         Saves the Ethernet switch settings.
 
         :param settings: the settings (dictionary)
         :param node: Node object
+        :param group: indicates the settings apply to a group
         """
 
         # these setting cannot be shared by nodes and updated

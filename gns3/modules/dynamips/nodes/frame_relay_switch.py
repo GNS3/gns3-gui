@@ -22,7 +22,6 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 
 from gns3.node import Node
 from gns3.ports.serial_port import SerialPort
-from gns3.nios.nio_udp import NIO_UDP
 
 import logging
 log = logging.getLogger(__name__)
@@ -46,27 +45,26 @@ class FrameRelaySwitch(Node):
 
     def setup(self, name=None):
         """
-        Setups this switch.
+        Setups this Frame Relay switch.
 
-        :param image: IOS image path
-        :param ram: amount of RAM
-        :param name: optional name for this router
+        :param name: optional name for this switch.
         """
 
-        self._server.send_message("dynamips.frsw.create", None, self.setupCallback)
+        self._server.send_message("dynamips.frsw.create", None, self._setupCallback)
 
-    def setupCallback(self, response, error=False):
+    def _setupCallback(self, result, error=False):
         """
-        Callback for the setup.
+        Callback for setup.
 
         :param result: server response
-        :param error: ..
+        :param error: indicates an error (boolean)
         """
 
-        self._frsw_id = response["id"]
-        self._settings["name"] = response["name"]
+        self._frsw_id = result["id"]
+        self._settings["name"] = result["name"]
 
-        # let the GUI knows about this router name
+        # let the GUI knows about this switch name
+        log.info("Frame Relay switch {} has been created".format(result["name"]))
         self.newname_signal.emit(self._settings["name"])
 
     def delete(self):
@@ -74,6 +72,7 @@ class FrameRelaySwitch(Node):
         Deletes this Frame Relay switch.
         """
 
+        log.debug("Frame Relay switch {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         self._server.send_message("dynamips.frsw.delete", {"id": self._frsw_id}, self._deleteCallback)
@@ -114,6 +113,7 @@ class FrameRelaySwitch(Node):
         for port in self._ports.copy():
             if port.isFree():
                 self._ports.remove(port)
+                log.debug("port {} has been removed".format(port.name))
             else:
                 ports_to_create.remove(port.name)
 
@@ -121,14 +121,9 @@ class FrameRelaySwitch(Node):
             port = SerialPort(port_name)
             port.port = int(port_name)
             self._ports.append(port)
+            log.debug("port {} has been added".format(port_name))
 
         self._settings["mapping"] = new_settings["mapping"].copy()
-
-#             self._server.send_message("dynamips.ethsw.update", params, self.updateCallback)
-
-    def updateCallback(self, response, error=False):
-
-        print(response)
 
     def allocateUDPPort(self):
         """
@@ -163,14 +158,12 @@ class FrameRelaySwitch(Node):
         :param nio: NIO object.
         """
 
-        if isinstance(nio, NIO_UDP):
-            params = {"id": self._frsw_id,
-                      "nio": "NIO_UDP",
-                      "port": port.port,
-                      "lport": nio.lport,
-                      "rhost": nio.rhost,
-                      "rport": nio.rport}
+        nio_type = str(nio)
+        params = {"id": self._frsw_id,
+                  "nio": nio_type,
+                  "port": port.port}
 
+        self.addNIOInfo(nio, params)
         params["mapping"] = {}
         for source, destination in self._settings["mapping"].items():
             source_port = source.split(":")[0]
@@ -181,6 +174,7 @@ class FrameRelaySwitch(Node):
                 params["mapping"][destination] = source
             log.debug("{} is adding an UDP NIO: {}".format(self.name(), params))
 
+        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
         self._server.send_message("dynamips.frsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -195,24 +189,36 @@ class FrameRelaySwitch(Node):
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            log.info("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id)
 
     def deleteNIO(self, port):
+        """
+        Deletes an NIO from the specified port on this switch.
+
+        :param port: Port object.
+        """
 
         params = {"id": self._frsw_id,
                   "port": port.port}
 
         port.nio = None
-        self._server.send_message("dynamips.frsw.delete_nio", params, self.deleteNIOCallback)
+        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
+        self._server.send_message("dynamips.frsw.delete_nio", params, self._deleteNIOCallback)
 
-    def deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False):
+        """
+        Callback for deleteNIO.
 
-        print("NIO deleted!")
-        print(result)
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        log.info("{} has deleted a NIO: {}".format(self.name(), result))
 
     def name(self):
         """
-        Returns the name of this router.
+        Returns the name of this switch.
 
         :returns: name (string)
         """
@@ -221,7 +227,7 @@ class FrameRelaySwitch(Node):
 
     def settings(self):
         """
-        Returns all this router settings.
+        Returns all this switch settings.
 
         :returns: settings dictionary
         """
@@ -230,7 +236,7 @@ class FrameRelaySwitch(Node):
 
     def ports(self):
         """
-        Returns all the ports for this router.
+        Returns all the ports for this switch.
 
         :returns: list of Port objects
         """
