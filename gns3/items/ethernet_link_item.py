@@ -27,11 +27,11 @@ class EthernetLinkItem(LinkItem):
     """
     Ethernet link for the scene.
 
-    :param source_item: source NodeItem object
-    :param source_port: source Port object
-    :param destination_item: destination NodeItem object
-    :param destination_port: destination Port object
-    :param link: Link object (contains back-end stuff for this link)
+    :param source_item: source NodeItem instance
+    :param source_port: source Port instance
+    :param destination_item: destination NodeItem instance
+    :param destination_port: destination Port instance
+    :param link: Link instance (contains back-end stuff for this link)
     :param adding_flag: indicates if this link is being added (no destination yet)
     :param multilink: used to draw multiple link between the same source and destination
     """
@@ -94,22 +94,24 @@ class EthernetLinkItem(LinkItem):
         """
         Draws the status points.
 
-        :param painter: QPainter object
-        :param option: QStyleOptionGraphicsItem object
-        :param widget: QWidget object.
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance.
         """
 
         QtGui.QGraphicsPathItem.paint(self, painter, option, widget)
 
-        if not self._adding_flag and self._show_status_points:
+        if not self._adding_flag and self._settings["draw_link_status_points"]:
 
             # points disappears if nodes are too close to each others.
             if self.length < 100:
                 return
 
-            if self._source_port_status == 'up':
+            if self._source_port.status() == 1:
+                # port is active
                 color = QtCore.Qt.green
-            elif self._source_port_status == 'suspended':
+            elif self._source_port.status() == 2:
+                # port is suspended
                 color = QtCore.Qt.yellow
             else:
                 color = QtCore.Qt.red
@@ -161,9 +163,11 @@ class EthernetLinkItem(LinkItem):
 
             painter.drawPoint(point1)
 
-            if self._destination_port_status == 'up':
+            if self._destination_port.status() == 1:
+                # port is active
                 color = QtCore.Qt.green
-            elif self._destination_port_status == 'suspended':
+            elif self._destination_port.status() == 2:
+                # port is suspended
                 color = QtCore.Qt.yellow
             else:
                 color = QtCore.Qt.red

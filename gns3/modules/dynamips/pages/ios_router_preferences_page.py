@@ -23,17 +23,9 @@ import os
 import sys
 import re
 from gns3.qt import QtGui
+from ..settings import PLATFORMS_DEFAULT_RAM
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
-
-# supported platforms with the default RAM value
-PLATFORMS = {"c1700": 64,
-             "c2600": 64,
-             "c2691": 128,
-             "c3600": 128,
-             "c3725": 128,
-             "c3745": 128,
-             "c7200": 256}
 
 # platforms with supported chassis
 CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),
@@ -52,7 +44,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         self._ios_images = {}
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
-        self.uiPlatformComboBox.addItems(list(PLATFORMS.keys()))
+        self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
         self.uiSaveIOSImagePushButton.clicked.connect(self._iosImageSaveSlot)
         self.uiDeleteIOSImagePushButton.clicked.connect(self._iosImageDeleteSlot)
         self.uiIOSImagesTreeWidget.itemClicked.connect(self._iosImageClickedSlot)
@@ -77,7 +69,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
         Loads a selected IOS image from the tree widget.
 
-        :param item: selected QTreeWidgetItem object
+        :param item: selected QTreeWidgetItem instance
         :param column: ignored
         """
 
@@ -204,7 +196,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             return
 
         detected_platform = match.group(1)
-        if detected_platform not in PLATFORMS:
+        if detected_platform not in PLATFORMS_DEFAULT_RAM:
             QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform and is not supported by this application!".format(detected_platform))
             return
 
@@ -212,7 +204,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         if index != -1:
             self.uiPlatformComboBox.setCurrentIndex(index)
 
-        self.uiRAMSpinBox.setValue(PLATFORMS[detected_platform])
+        self.uiRAMSpinBox.setValue(PLATFORMS_DEFAULT_RAM[detected_platform])
 
     def _startupConfigBrowserSlot(self):
         """

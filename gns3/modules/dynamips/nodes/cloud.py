@@ -23,13 +23,13 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 import re
 from gns3.node import Node
 from gns3.ports.port import Port
-from gns3.nios.nio_generic_ethernet import NIO_GenericEthernet
-from gns3.nios.nio_linux_ethernet import NIO_LinuxEthernet
-from gns3.nios.nio_udp import NIO_UDP
-from gns3.nios.nio_tap import NIO_TAP
-from gns3.nios.nio_unix import NIO_UNIX
-from gns3.nios.nio_vde import NIO_VDE
-from gns3.nios.nio_null import NIO_Null
+from gns3.nios.nio_generic_ethernet import NIOGenericEthernet
+from gns3.nios.nio_linux_ethernet import NIOLinuxEthernet
+from gns3.nios.nio_udp import NIOUDP
+from gns3.nios.nio_tap import NIOTAP
+from gns3.nios.nio_unix import NIOUNIX
+from gns3.nios.nio_vde import NIOVDE
+from gns3.nios.nio_null import NIONull
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,15 +39,14 @@ class Cloud(Node):
     """
     Dynamips cloud.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
     _name_instance_count = 1
 
-    def __init__(self, server, platform="c7200"):
-        Node.__init__(self)
-
-        self._server = server
+    def __init__(self, module, server):
+        Node.__init__(self, server)
 
         # create an unique id and name
         self._name_id = Cloud._name_instance_count
@@ -56,6 +55,7 @@ class Cloud(Node):
 
         self._defaults = {}
         self._ports = []
+        self._module = module
         self._settings = {"nios": [],
                           "interfaces": []}
 
@@ -68,13 +68,20 @@ class Cloud(Node):
         self.delete_links_signal.emit()
         self.delete_signal.emit()
 
-    def setup(self, name=None):
+    def setup(self, name=None, initial_settings={}):
         """
         Setups this cloud.
 
         :param name: optional name for this cloud
         """
 
+        if name:
+            self._settings["name"] = name
+        #if "nios" in initial_settings:
+        #    self._settings["nios"] = initial_settings["nios"]
+        if "nios" in initial_settings:
+            initial_settings["interfaces"] = []
+            self.update(initial_settings)
         self._server.send_message("dynamips.nio.get_interfaces", None, self._setupCallback)
 
     def _setupCallback(self, response, error=False):
@@ -87,6 +94,8 @@ class Cloud(Node):
 
         for interface in response:
             self._settings["interfaces"].append(interface)
+        self.setInitialized(True)
+        self.created_signal.emit(self.id())
 
     def _createNIOUDP(self, nio):
         """
@@ -100,7 +109,7 @@ class Cloud(Node):
             lport = int(match.group(1))
             rhost = match.group(2)
             rport = int(match.group(3))
-            return NIO_UDP(lport, rhost, rport)
+            return NIOUDP(lport, rhost, rport)
         return None
 
     def _createNIOGenericEthernet(self, nio):
@@ -113,7 +122,7 @@ class Cloud(Node):
         match = re.search(r"""^nio_gen_eth:(.+)$""", nio)
         if match:
             ethernet_device = match.group(1)
-            return NIO_GenericEthernet(ethernet_device)
+            return NIOGenericEthernet(ethernet_device)
         return None
 
     def _createNIOLinuxEthernet(self, nio):
@@ -126,7 +135,7 @@ class Cloud(Node):
         match = re.search(r"""^nio_gen_linux:(.+)$""", nio)
         if match:
             linux_device = match.group(1)
-            return NIO_LinuxEthernet(linux_device)
+            return NIOLinuxEthernet(linux_device)
         return None
 
     def _createNIOTAP(self, nio):
@@ -139,7 +148,7 @@ class Cloud(Node):
         match = re.search(r"""^nio_tap:(.+)$""", nio)
         if match:
             tap_device = match.group(1)
-            return NIO_TAP(tap_device)
+            return NIOTAP(tap_device)
         return None
 
     def _createNIOUNIX(self, nio):
@@ -153,7 +162,7 @@ class Cloud(Node):
         if match:
             local_file = match.group(1)
             remote_file = match.group(2)
-            return NIO_UNIX(local_file, remote_file)
+            return NIOUNIX(local_file, remote_file)
         return None
 
     def _createNIOVDE(self, nio):
@@ -167,7 +176,7 @@ class Cloud(Node):
         if match:
             control_file = match.group(1)
             local_file = match.group(2)
-            return NIO_VDE(control_file, local_file)
+            return NIOVDE(control_file, local_file)
         return None
 
     def _createNIONull(self, nio):
@@ -180,7 +189,7 @@ class Cloud(Node):
         match = re.search(r"""^nio_null:(.+)$""", nio)
         if match:
             identifier = match.group(1)
-            return NIO_Null(identifier)
+            return NIONull(identifier)
         return None
 
     def update(self, new_settings):
@@ -192,6 +201,7 @@ class Cloud(Node):
 
         nios = new_settings["nios"]
 
+        updated = False
         # add ports
         for nio in nios:
             if nio in self._settings["nios"]:
@@ -217,22 +227,86 @@ class Cloud(Node):
                 continue
             port = Port(nio, nio_object, stub=True)
             self._ports.append(port)
+            updated = True
             log.debug("port {} has been added".format(nio))
 
         # delete ports
         for nio in self._settings["nios"]:
             if nio not in nios:
                 for port in self._ports.copy():
-                    if port.name == nio:
+                    if port.name() == nio:
                         self._ports.remove(port)
+                        updated = True
                         log.debug("port {} has been deleted".format(nio))
                         break
 
         self._settings = new_settings.copy()
+        if updated:
+            self.updated_signal.emit()
 
     def deleteNIO(self, port):
 
-        port.nio = None
+        pass
+
+    def info(self):
+        """
+        Returns information about this cloud.
+
+        :returns: formated string
+        """
+
+        return ""
+
+    def dump(self):
+        """
+        Returns a representation of this cloud
+        (to be saved in a topology file).
+
+        :returns: representation of the node (dictionary)
+        """
+
+        cloud = {"id": self.id(),
+                 "type": self.__class__.__name__,
+                 "description": str(self),
+                 "properties": {"name": self.name(),
+                                "nios": self._settings["nios"]},
+                 "server_id": self._server.id(),
+                }
+
+        # add the ports
+        if self._ports:
+            ports = cloud["ports"] = []
+            for port in self._ports:
+                ports.append(port.dump())
+
+        return cloud
+
+    def load(self, node_info):
+        """
+        Loads a cloud representation
+        (from a topology file).
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        self.node_info = node_info
+        settings = node_info["properties"]
+        name = settings.pop("name")
+        self.updated_signal.connect(self._updatePortSettings)
+        self.setup(name, settings)
+
+    def _updatePortSettings(self):
+        """
+        Updates port settings when loading a topology.
+        """
+
+        # update the port with the correct IDs
+        if "ports" in self.node_info:
+            ports = self.node_info["ports"]
+            for topology_port in ports:
+                for port in self._ports:
+                    if topology_port["name"] == port.name():
+                        port.setId(topology_port["id"])
 
     def name(self):
         """
@@ -256,7 +330,7 @@ class Cloud(Node):
         """
         Returns all the ports for this cloud.
 
-        :returns: list of Port objects
+        :returns: list of Port instances
         """
 
         return self._ports
@@ -265,7 +339,7 @@ class Cloud(Node):
         """
         Returns the configuration page widget to be used by the node configurator.
 
-        :returns: QWidget object.
+        :returns: QWidget object
         """
 
         from ..pages.cloud_configuration_page import CloudConfigurationPage

@@ -22,20 +22,23 @@ Graphical view on the scene where items are drawn.
 
 import pickle
 from .qt import QtCore, QtGui
-from .scene import Scene
 from .items.node_item import NodeItem
 from .node_configurator import NodeConfigurator
 from .link import Link
+from .node import Node
 from .modules.dynamips import Dynamips
+from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
+from .topology import Topology
+from .ports.port import Port
 
 # link items
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
 
 # ports
-from .ports.ethernet_port import EthernetPort
-from .ports.fastethernet_port import FastEthernetPort
-from .ports.gigabitethernet_port import GigabitEthernetPort
+#from .ports.ethernet_port import EthernetPort
+#from .ports.fastethernet_port import FastEthernetPort
+#from .ports.gigabitethernet_port import GigabitEthernetPort
 
 
 class GraphicsView(QtGui.QGraphicsView):
@@ -48,22 +51,19 @@ class GraphicsView(QtGui.QGraphicsView):
     def __init__(self, parent):
 
         QtGui.QGraphicsView.__init__(self, parent)
+        self._settings = {}
+        self._loadSettings()
 
         self._adding_link = False
         self._newlink = None
         self._dragging = False
         self._last_mouse_position = None
-
-        #FIXME: temporary location to store links
-        self._links = {}
-
-        # restore settings
-        settings = QtCore.QSettings()
-        width = settings.value("GUI/scene_width", 2000)
-        height = settings.value("GUI/scene_height", 2000)
+        self._topology = Topology.instance()
 
         # set the scene
-        scene = Scene(parent=self)
+        scene = QtGui.QGraphicsScene(parent=self)
+        width = self._settings["scene_width"]
+        height = self._settings["scene_height"]
         scene.setSceneRect(-(width / 2), -(height / 2), width, height)
         self.setScene(scene)
 
@@ -73,6 +73,65 @@ class GraphicsView(QtGui.QGraphicsView):
         self.setRenderHint(QtGui.QPainter.Antialiasing)
         self.setTransformationAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
+
+    def reset(self):
+        """
+        Remove all the items from the scene and
+        reset the instances count.
+        """
+
+        #FIXME: check server is up to send a delete
+        for item in self.scene().items():
+            if isinstance(item, NodeItem):
+                self._topology.removeNode(item.node())
+                if item.node().server().connected():
+                    item.node().delete()
+                else:
+                    self.scene().removeItem(item)
+
+        dynamips = Dynamips.instance()
+        dynamips.reset()
+
+        Node.reset()
+        Link.reset()
+        Port.reset()
+        self._topology.reset()
+
+    def _loadSettings(self):
+        """
+        Loads the settings from the persistent settings file.
+        """
+
+        # restore settings
+        settings = QtCore.QSettings()
+        settings.beginGroup(self.__class__.__name__)
+        for name, value in GRAPHICS_VIEW_SETTINGS.items():
+            self._settings[name] = settings.value(name, value, type=GRAPHICS_VIEW_SETTING_TYPES[name])
+        settings.endGroup()
+
+    def settings(self):
+        """
+        Returns the graphics view settings.
+
+        :returns: settings dictionary
+        """
+
+        return self._settings
+
+    def setSettings(self, new_settings):
+        """
+        Set new graphics view settings.
+
+        :param new_settings: settings dictionary
+        """
+
+        # save the settings
+        self._settings.update(new_settings)
+        settings = QtCore.QSettings()
+        settings.beginGroup(self.__class__.__name__)
+        for name, value in self._settings.items():
+            settings.setValue(name, value)
+        settings.endGroup()
 
     def addingLinkSlot(self, enabled):
         """
@@ -93,12 +152,12 @@ class GraphicsView(QtGui.QGraphicsView):
 
     def addLink(self, source_node, source_port, destination_node, destination_port):
         """
-        Creates a Link object representing a connection between 2 devices.
+        Creates a Link instance representing a connection between 2 devices.
 
-        :param source_node: source Node object
-        :param source_port: source Port object
-        :param destination_node: destination Node object
-        :param destination_port: destination Port object
+        :param source_node: source Node instance
+        :param source_port: source Port instance
+        :param destination_node: destination Node instance
+        :param destination_port: destination Port instance
         """
 
         link = Link(source_node, source_port, destination_node, destination_port)
@@ -107,7 +166,7 @@ class GraphicsView(QtGui.QGraphicsView):
         # a new link creation or deletion.
         link.add_link_signal.connect(self.addLinkSlot)
         link.delete_link_signal.connect(self.deleteLinkSlot)
-        self._links[link.id] = link
+        self._topology.addLink(link)
 
     def addLinkSlot(self, link_id):
         """
@@ -117,7 +176,7 @@ class GraphicsView(QtGui.QGraphicsView):
         :param link_id: link identifier
         """
 
-        link = self._links[link_id]
+        link = self._topology.getLink(link_id)
         source_item = None
         destination_item = None
         source_port = link._source_port
@@ -126,9 +185,9 @@ class GraphicsView(QtGui.QGraphicsView):
         # find the correct source and destination node items
         for item in self.scene().items():
             if isinstance(item, NodeItem):
-                if item.node().id == link._source_node.id:
+                if item.node().id() == link._source_node.id():
                     source_item = item
-                if item.node().id == link._destination_node.id:
+                if item.node().id() == link._destination_node.id():
                     destination_item = item
             if source_item and destination_item:
                 break
@@ -145,9 +204,9 @@ class GraphicsView(QtGui.QGraphicsView):
         d2 = 1
         link_items = source_item.links()
         for link_item in link_items:
-            if link_item.destinationItem().node().id == destination_item.node().id:
+            if link_item.destinationItem().node().id() == destination_item.node().id():
                 d1 += 1
-            if link_item.sourceItem().node().id == destination_item.node().id:
+            if link_item.sourceItem().node().id() == destination_item.node().id():
                 d2 += 1
 
         if len(link_items) > 0:
@@ -169,7 +228,7 @@ class GraphicsView(QtGui.QGraphicsView):
         if source_item == destination_item:
             multi = 0
 
-        if link._source_port.linkType() == "Serial":
+        if link._source_port.linkType() == "Serial" or (source_port.isStub() and link._destination_port.linkType() == "Serial"):
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
         else:
             link_item = EthernetLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
@@ -183,76 +242,114 @@ class GraphicsView(QtGui.QGraphicsView):
         :param link_id: link identifier
         """
 
-        link = self._links[link_id]
-
+        link = self._topology.getLink(link_id)
         # disconnect the signals just in case...
         link.add_link_signal.disconnect()
         link.delete_link_signal.disconnect()
-        del self._links[link_id]
+        self._topology.removeLink(link)
+
+    def _userNodeLinking(self, event, item):
+        """
+        Handles node linking by the user.
+
+        :param event: QMouseEvent instance
+        :param item: NodeItem instance
+        """
+
+        # link addition code
+        if not self._newlink:
+            source_item = item
+            source_port = source_item.connectToPort()
+            if not source_port:
+                return
+            if not source_port.isFree():
+                QtGui.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(source_port.name()))
+                return
+            if source_port.linkType() == "Serial":
+                self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
+            else:
+                self._newlink = EthernetLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
+            self.scene().addItem(self._newlink)
+        else:
+            source_item = self._newlink.sourceItem()
+            source_port = self._newlink.sourcePort()
+            destination_item = item
+            if source_item == destination_item:
+                QtGui.QMessageBox.critical(self, "Connection", "Cannot connect to itself!")
+                return
+            destination_port = destination_item.connectToPort()
+            if not destination_port:
+                return
+            if not destination_port.isFree():
+                QtGui.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(destination_port.name()))
+                return
+            if source_port.isStub() or destination_port.isStub():
+                pass
+            elif source_port.linkType() != destination_port.linkType():
+                QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
+                return
+
+#             elif type(source_port) in (EthernetPort, FastEthernetPort, GigabitEthernetPort) and \
+#                 not type(destination_port) in (EthernetPort, FastEthernetPort, GigabitEthernetPort):
+#                 QtGui.QMessageBox.critical(self, "Connection", "You must connect an Ethernet port to another Ethernet compatible port")
+#                 return
+#             elif type(source_port) != type(destination_port):
+#                 print(type(source_port))
+#                 print(type(destination_port))
+#                 QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
+#                 return
+
+            self.scene().removeItem(self._newlink)
+            self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
+            self._newlink = None
 
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
 
-        :param: QMouseEvent object
+        :param event: QMouseEvent instance
         """
 
+        is_not_link = True
         item = self.itemAt(event.pos())
-#         if item and isinstance(item, NodeItem):
-#             item.setSelected(True)
+        if item and isinstance(item, Link):
+            is_not_link = False
 
-        # This statement checks to see if either the middle mouse is pressed
-        # or a combination of the right and left mouse buttons is pressed to start dragging the view
-        if (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ControlModifier) or event.buttons() == QtCore.Qt.MidButton:
+        if (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) or event.buttons() == QtCore.Qt.MidButton:
+            # checks to see if either the middle mouse is pressed
+            # or a combination of left mouse button and SHIT key are pressed to start dragging the view
             self._last_mouse_position = self.mapFromGlobal(event.globalPos())
             self._dragging = True
             self.setCursor(QtCore.Qt.ClosedHandCursor)
             return
 
-        if event.modifiers() == QtCore.Qt.ShiftModifier and event.button() == QtCore.Qt.LeftButton and item and not self._adding_link:
+        if is_not_link and item and event.modifiers() == QtCore.Qt.ControlModifier and event.button() == QtCore.Qt.LeftButton and item and not self._adding_link:
+            # manual selection using CTRL
             if item.isSelected():
                 item.setSelected(False)
             else:
                 item.setSelected(True)
-        elif item and isinstance(item, NodeItem):
-            item.setSelected(True)
+        elif is_not_link and event.button() == QtCore.Qt.RightButton and not self._adding_link:
+            if item:
+                #Prevent right clicking on a selected item from de-selecting all other items
+                if not item.isSelected():
+                    if not event.modifiers() & QtCore.Qt.ControlModifier:
+                        for it in self.scene().items():
+                            it.setSelected(False)
+                    if item.zValue() < 0:
+                        item.setFlag(item.ItemIsSelectable, True)
+                    item.setSelected(True)
+                    self._showContextualMenu(QtGui.QCursor.pos())
+                    if item.zValue() < 0:
+                        item.setFlag(item.ItemIsSelectable, False)
 
-        if item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
-            if not self._newlink:
-                source_item = item
-                source_port = source_item.connectToPort()
-                if not source_port:
-                    return
-                if source_port.linkType() == "Serial":
-                    self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
                 else:
-                    self._newlink = EthernetLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
-                self.scene().addItem(self._newlink)
-            else:
-                source_item = self._newlink.sourceItem()
-                source_port = self._newlink.sourcePort()
-                destination_item = item
-                if source_item == destination_item:
-                    QtGui.QMessageBox.critical(self, "Connection", "Cannot connect to itself!")
-                    return
-                destination_port = destination_item.connectToPort()
-                if not destination_port:
-                    return
-
-                if source_port.isStub() or destination_port.isStub():
-                    pass
-                #FIXME
-                elif type(source_port) in (EthernetPort, FastEthernetPort, GigabitEthernetPort) and \
-                   not type(destination_port) in (EthernetPort, FastEthernetPort, GigabitEthernetPort):
-                    QtGui.QMessageBox.critical(self, "Connection", "You must connect an Ethernet port to another Ethernet compatible port")
-                    return
-#                 elif type(source_port) != type(destination_port):
-#                     QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
-#                     return
-
-                self.scene().removeItem(self._newlink)
-                self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
-                self._newlink = None
+                    self._showContextualMenu(QtGui.QCursor.pos())
+            # when more than one item is selected display the contextual menu even if mouse is not above an item
+            elif len(self.scene().selectedItems()) > 1:
+                self._showContextualMenu(QtGui.QCursor.pos())
+        elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
+            self._userNodeLinking(event, item)
         else:
             QtGui.QGraphicsView.mousePressEvent(self, event)
 
@@ -260,21 +357,32 @@ class GraphicsView(QtGui.QGraphicsView):
         """
         Handles all mouse release events.
 
-        :param: QMouseEvent object
+        :param: QMouseEvent instance
         """
 
         item = self.itemAt(event.pos())
-        # If the left  mouse button is not still pressed TOGETHER with the CTRL key and neither is the middle button
+        # If the left  mouse button is not still pressed TOGETHER with the SHIFT key and neither is the middle button
         # this means the user is no longer trying to drag the view
-        if self._dragging and not (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ControlModifier) and not event.buttons() & QtCore.Qt.MidButton:
+        if self._dragging and not (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) and not event.buttons() & QtCore.Qt.MidButton:
             self._dragging = False
             self.setCursor(QtCore.Qt.ArrowCursor)
         else:
-            if item is not None and not event.modifiers() & QtCore.Qt.ShiftModifier:
+            if item is not None and not event.modifiers() & QtCore.Qt.ControlModifier:
                 item.setSelected(True)
-                #for other_item in self.__topology.selectedItems():
-                #    other_item.setSelected(False)
             QtGui.QGraphicsView.mouseReleaseEvent(self, event)
+
+#     def wheelEvent(self, event):
+#         """
+#         Zoom or scroll using the mouse wheel
+#         """
+# 
+#         if globals.GApp.workspace.action_DisableMouseWheel.isChecked() == False and \
+#         (globals.GApp.workspace.action_ZoomUsingMouseWheel.isChecked() or event.modifiers() == QtCore.Qt.ControlModifier) and \
+#         event.orientation() == QtCore.Qt.Vertical:
+#             self.scaleView(pow(2.0, event.delta() / 240.0))
+# 
+#         elif globals.GApp.workspace.action_DisableMouseWheel.isChecked() == False:
+#             QtGui.QGraphicsView.wheelEvent(self, event)
 
     def scaleView(self, scale_factor):
         """
@@ -301,8 +409,10 @@ class GraphicsView(QtGui.QGraphicsView):
             # zoom out
             factor_out = pow(2.0, -120 / 240.0)
             self.scaleView(factor_out)
+
+        # TODO: handle the delete key
 #         elif event.key() == QtCore.Qt.Key_Delete:
-#             # check if we are editing an Annotation object, then send the Delete event to it
+#             # check if we are editing an Annotation instance, then send the Delete event to it
 #             for item in self.__topology.selectedItems():
 #                 if isinstance(item, Annotation) and item.hasFocus():
 #                     QtGui.QGraphicsView.keyPressEvent(self, event)
@@ -315,7 +425,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
         Handles all mouse move events (mouse tracking has been enabled).
 
-        :param: QMouseEvent object
+        :param event: QMouseEvent instance
         """
 
         if self._dragging:
@@ -340,12 +450,13 @@ class GraphicsView(QtGui.QGraphicsView):
         """
         Handles all mouse double click events.
 
-        :param: QMouseEvent object
+        :param event: QMouseEvent instance
         """
 
         item = self.itemAt(event.pos())
-        if not self._adding_link and isinstance(item, NodeItem):
+        if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
             item.setSelected(True)
+            #TODO: start the console when the user double-click on the device
 #             if (isinstance(item, IOSRouter) or isinstance(item, AnyEmuDevice)) and item.isStarted():
 #                 self.slotConsole()
 #             elif isinstance(item, AnyVBoxEmuDevice) and (item.isStarted() or item.isSuspended()) and not globals.addingLinkFlag:
@@ -374,8 +485,10 @@ class GraphicsView(QtGui.QGraphicsView):
         """
         Handles all drag move events.
 
-        :param event: QDragMoveEvent object
+        :param event: QDragMoveEvent instance
         """
+
+        # TODO: drag of a topology file
 
         # check if what is dragged is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-node"):
@@ -388,8 +501,12 @@ class GraphicsView(QtGui.QGraphicsView):
         """
         Handles all drop events.
 
-        :param event: QDropEvent object
+        :param event: QDropEvent instance
         """
+
+        # TODO: drop of a topology file
+
+        # TODO: multi-drop
 
         # check if what has been dropped is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-node"):
@@ -402,47 +519,72 @@ class GraphicsView(QtGui.QGraphicsView):
         else:
             event.ignore()
 
-    def contextMenuEvent(self, event):
-        """
-        Handles all context menu events.
+#     def contextMenuEvent(self, event):
+#         """
+#         Handles all context menu events.
+# 
+#         :param event: QContextMenuEvent instance
+#         """
+# 
+#         self._showContextualMenu(event.globalPos())
 
-        :param event: QContextMenuEvent object
+    def _showContextualMenu(self, pos):
+        """
+        Create and display a contextual menu.
+
+        :param pos: position where to display the menu
         """
 
         menu = QtGui.QMenu()
-        self.populateContextMenu(menu)
-        menu.exec_(event.globalPos())
+        self._populateContextMenu(menu)
+        menu.exec_(pos)
+        menu.clear()
 
-    def populateContextMenu(self, menu):
+    def _populateContextMenu(self, menu):
         """
         Adds actions to the contextual menu.
 
-        :param menu: QMenu object
+        :param menu: QMenu instance
         """
 
         items = self.scene().selectedItems()
         if not items:
             return
 
+        configure_action = QtGui.QAction("Configure", menu)
+        configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
+        configure_action.triggered.connect(self.configureActionSlot)
+        menu.addAction(configure_action)
+
+        console_action = QtGui.QAction("Console", menu)
+        console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
+        console_action.triggered.connect(self.consoleActionSlot)
+        menu.addAction(console_action)
+
+        idlepc_action = QtGui.QAction("Idle-PC", menu)
+        idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
+        idlepc_action.triggered.connect(self.idlepcActionSlot)
+        menu.addAction(idlepc_action)
+
         start_action = QtGui.QAction("Start", menu)
         start_action.setIcon(QtGui.QIcon(':/icons/play.svg'))
         start_action.triggered.connect(self.startActionSlot)
         menu.addAction(start_action)
-
-        stop_action = QtGui.QAction("Stop", menu)
-        stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
-        stop_action.triggered.connect(self.stopActionSlot)
-        menu.addAction(stop_action)
 
         suspend_action = QtGui.QAction("Suspend", menu)
         suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
         suspend_action.triggered.connect(self.suspendActionSlot)
         menu.addAction(suspend_action)
 
-        configure_action = QtGui.QAction("Configure", menu)
-        configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
-        configure_action.triggered.connect(self.configureActionSlot)
-        menu.addAction(configure_action)
+        stop_action = QtGui.QAction("Stop", menu)
+        stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
+        stop_action.triggered.connect(self.stopActionSlot)
+        menu.addAction(stop_action)
+
+        reload_action = QtGui.QAction("Reload", menu)
+        reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
+        reload_action.triggered.connect(self.reloadActionSlot)
+        menu.addAction(reload_action)
 
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
@@ -456,7 +598,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "start"):
+            if hasattr(item.node(), "start") and item.node().initialized():
                 item.node().start()
 
     def stopActionSlot(self):
@@ -466,7 +608,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "stop"):
+            if hasattr(item.node(), "stop") and item.node().initialized():
                 item.node().stop()
 
     def suspendActionSlot(self):
@@ -476,8 +618,18 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "suspend"):
+            if hasattr(item.node(), "suspend") and item.node().initialized():
                 item.node().suspend()
+
+    def reloadActionSlot(self):
+        """
+        Slot to receive events from the reload action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if hasattr(item.node(), "reload") and item.node().initialized():
+                item.node().reload()
 
     def configureActionSlot(self):
         """
@@ -487,11 +639,90 @@ class GraphicsView(QtGui.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem):
+            if isinstance(item, NodeItem) and item.node().initialized():
                 items.append(item)
 
         if items:
             self.configureSlot(items)
+
+    def consoleActionSlot(self):
+        """
+        Slot to receive events from the console action in the
+        contextual menu.
+        """
+
+        from .console import telnetConsole
+        for item in self.scene().selectedItems():
+            if hasattr(item.node(), "console"):
+                node = item.node()
+                name = node.name()
+                console_port = node.console()
+                console_host = node.server().host
+                try:
+                    telnetConsole(name, console_host, console_port)
+                except (OSError, ValueError) as e:
+                    QtGui.QMessageBox.critical(self, "Console", 'could not start console: {}'.format(e))
+                    break
+
+    def idlepcActionSlot(self):
+        """
+        Slot to receive events from the idlepc action in the
+        contextual menu.
+        """
+
+        items = self.scene().selectedItems()
+        if len(items) != 1:
+            QtGui.QMessageBox.critical(self, "Idle-PC", "Please select only one router")
+            return
+        item = items[0]
+        if isinstance(item, NodeItem) and hasattr(item.node(), "idlepcs"):
+            router = item.node()
+            idlepc = router.idlepc()
+            router.computeIdlepcs()
+
+            #TODO: improve to show progress over 10 seconds
+            self._idlepc_progress_dialog = QtGui.QProgressDialog("Computing values...", "Cancel", 0, 0, parent=self)
+            self._idlepc_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+            self._idlepc_progress_dialog.setWindowTitle("Idle-PC")
+
+            def cancel():
+                router.idlepc_signal.disconnect(self._showIdlepcProposals)
+                router.error_signal.disconnect(self._showIdlepcError)
+                router.setIdlepc(idlepc)
+
+            self._idlepc_progress_dialog.canceled.connect(cancel)
+            router.idlepc_signal.connect(self._showIdlepcProposals)
+            router.error_signal.connect(self._showIdlepcError)
+            self._idlepc_progress_dialog.show()
+
+    def _showIdlepcError(self, name, code, message):
+        """
+        Shows an error message if the idle-pc values cannot be computed.
+        """
+
+        self._idlepc_progress_dialog.reject()
+        QtGui.QMessageBox.critical(self, "Idle-PC", "Error: {}".format(message))
+        router = self.scene().selectedItems()[0].node()
+        router.error_signal.disconnect(self._showIdlepcError)
+        router.idlepc_signal.disconnect(self._showIdlepcProposals)
+
+    def _showIdlepcProposals(self):
+        """
+        Slot to allow the user to select an idlepc value.
+        """
+
+        self._idlepc_progress_dialog.accept()
+        router = self.scene().selectedItems()[0].node()
+        router.idlepc_signal.disconnect(self._showIdlepcProposals)
+        router.error_signal.disconnect(self._showIdlepcError)
+        idlepcs = router.idlepcs()
+        if idlepcs:
+            idlepc, ok = QtGui.QInputDialog.getItem(self, "Idle-PC values", "Please select an idle-pc value", idlepcs, 0, False)
+            if ok:
+                idlepc = idlepc.split()[0]
+                router.setIdlepc(idlepc)
+        else:
+            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no idle-pc values could be computed, please check again with Cisco IOS in a different state")
 
     def deleteActionSlot(self):
         """
@@ -499,10 +730,10 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        items = []
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
                 item.node().delete()
+                self._topology.removeNode(item.node())
 
     def createNode(self, node_class, pos):
         """
@@ -515,6 +746,10 @@ class GraphicsView(QtGui.QGraphicsView):
         #TODO: node setup management with other modules
         dynamips = Dynamips.instance()
         node = dynamips.createNode(node_class)
+        if node == None:
+            #TODO: finish this
+            print("Could not create node")
+            return
         node_item = NodeItem(node)
         node_item.setPos(self.mapToScene(pos))
         self.scene().addItem(node_item)
@@ -522,3 +757,4 @@ class GraphicsView(QtGui.QGraphicsView):
         y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
         node_item.setPos(x, y)
         dynamips.setupNode(node)
+        self._topology.addNode(node)

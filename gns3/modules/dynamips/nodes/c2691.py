@@ -26,21 +26,26 @@ class C2691(Router):
     """
     Dynamips c2691 router.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
-    def __init__(self, server):
-        Router.__init__(self, server, platform="c2691")
+    def __init__(self, module, server):
+        Router.__init__(self, module, server, platform="c2691")
 
         self._platform_settings = {"ram": 128,
                                    "nvram": 112,
                                    "disk0": 16,
                                    "disk1": 0,
                                    "iomem": 5,
-                                   "clock_divisor": 8}
+                                   "clock_divisor": 8,
+                                   "slot0": "GT96100-FE"}
 
         # merge platform settings with the generic ones
         self._settings.update(self._platform_settings)
+
+        # save the default settings
+        self._defaults = self._settings.copy()
 
     def __str__(self):
 

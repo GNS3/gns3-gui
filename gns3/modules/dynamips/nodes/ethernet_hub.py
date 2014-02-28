@@ -31,26 +31,31 @@ class EthernetHub(Node):
     """
     Dynamips Ethernet hub.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
-    def __init__(self, server):
-        Node.__init__(self)
+    def __init__(self, module, server):
+        Node.__init__(self, server)
 
-        self._server = server
         self._ethhub_id = None
+        self._module = module
         self._ports = []
         self._settings = {"name": "",
                           "ports": []}
 
-    def setup(self, name=None):
+    def setup(self, name=None, initial_settings={}):
         """
         Setups this hub.
 
         :param name: optional name for this hub
         """
 
-        self._server.send_message("dynamips.ethhub.create", None, self._setupCallback)
+        params = {}
+        if name:
+            params["name"] = self._settings["name"] = name
+
+        self._server.send_message("dynamips.ethhub.create", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
         """
@@ -60,12 +65,17 @@ class EthernetHub(Node):
         :param error: indicates an error (boolean)
         """
 
+        if error:
+            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+            return
+
         self._ethhub_id = result["id"]
         self._settings["name"] = result["name"]
 
-        # let the GUI knows about this hub name
         log.info("Ethernet hub {} has been created".format(result["name"]))
-        self.newname_signal.emit(self._settings["name"])
+        self.setInitialized(True)
+        self.created_signal.emit(self.id())
 
     def delete(self):
         """
@@ -75,7 +85,10 @@ class EthernetHub(Node):
         log.debug("Ethernet hub {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        self._server.send_message("dynamips.ethhub.delete", {"id": self._ethhub_id}, self._deleteCallback)
+        if self._ethhub_id:
+            self._server.send_message("dynamips.ethhub.delete", {"id": self._ethhub_id}, self._deleteCallback)
+        else:
+            self.delete_signal.emit()
 
     def _deleteCallback(self, result, error=False):
         """
@@ -102,32 +115,39 @@ class EthernetHub(Node):
         ports_to_create = []
         ports = new_settings["ports"]
 
-        for port_id in ports:
-            if port_id not in ports_to_create:
-                ports_to_create.append(port_id)
+        updated = False
+        for port_number in ports:
+            if port_number not in ports_to_create:
+                ports_to_create.append(port_number)
 
         for port in self._ports.copy():
             if port.isFree():
                 self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name))
+                updated = True
+                log.debug("port {} has been removed".format(port.name()))
             else:
-                ports_to_create.remove(port.name)
+                ports_to_create.remove(port.name())
 
         for port_name in ports_to_create:
             port = EthernetPort(port_name)
-            port.port = int(port_name)
+            port.setPortNumber(int(port_name))
             self._ports.append(port)
+            updated = True
             log.debug("port {} has been added".format(port_name))
 
         self._settings["ports"] = new_settings["ports"].copy()
+        if updated:
+            self.updated_signal.emit()
 
-    def allocateUDPPort(self):
+    def allocateUDPPort(self, port_id):
         """
         Requests an UDP port allocation.
+
+        :param port_id: port identifier
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("dynamips.ethhub.allocate_udp_port", {"id": self._ethhub_id}, self._allocateUDPPortCallback)
+        self._server.send_message("dynamips.ethhub.allocate_udp_port", {"id": self._ethhub_id, "port_id": port_id}, self._allocateUDPPortCallback)
 
     def _allocateUDPPortCallback(self, result, error=False):
         """
@@ -141,23 +161,25 @@ class EthernetHub(Node):
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            port_id = result["port_id"]
             lhost = result["lhost"]
             lport = result["lport"]
-            log.info("{} has allocated UDP port {} for host {}".format(self.name(), lport, lhost))
-            self.allocate_udp_nio_signal.emit(self.id, lport, lhost)
+            log.debug("{} has allocated UDP port {} for host {}".format(self.name(), port_id, lport, lhost))
+            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport, lhost)
 
     def addNIO(self, port, nio):
         """
         Adds a new NIO on the specified port for this hub.
 
-        :param port: Port object.
-        :param nio: NIO object.
+        :param port: Port instance
+        :param nio: NIO instance
         """
 
         nio_type = str(nio)
         params = {"id": self._ethhub_id,
                   "nio": nio_type,
-                  "port": port.port}
+                  "port": port.portNumber(),
+                  "port_id": port.id()}
 
         self.addNIOInfo(nio, params)
         log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
@@ -175,19 +197,18 @@ class EthernetHub(Node):
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
-            self.nio_signal.emit(self.id)
+            self.nio_signal.emit(self.id(), result["port_id"])
 
     def deleteNIO(self, port):
         """
         Deletes an NIO from the specified port on this hub.
 
-        :param port: Port object.
+        :param port: Port instance
         """
 
         params = {"id": self._ethhub_id,
-                  "port": port.port}
+                  "port": port.portNumber()}
 
-        port.nio = None
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
         self._server.send_message("dynamips.ethhub.delete_nio", params, self._deleteNIOCallback)
 
@@ -199,7 +220,66 @@ class EthernetHub(Node):
         :param error: indicates an error (boolean)
         """
 
-        log.info("{} has deleted a NIO: {}".format(self.name(), result))
+        if error:
+            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+            return
+
+        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
+
+    def info(self):
+        """
+        Returns information about this Ethernet hub.
+
+        :returns: formated string
+        """
+
+        return ""
+
+    def dump(self):
+        """
+        Returns a representation of this Ethernet hub
+        (to be saved in a topology file)
+
+        :returns: representation of the node (dictionary)
+        """
+
+        hub = {"id": self.id(),
+               "type": self.__class__.__name__,
+               "description": str(self),
+               "properties": {"name": self.name()},
+               "server_id": self._server.id(),
+               }
+
+        # add the ports
+        if self._ports:
+            ports = hub["ports"] = []
+            for port in self._ports:
+                ports.append(port.dump())
+
+        return hub
+
+    def load(self, node_info):
+        """
+        Loads an Ethernet hub representation
+        (from a topology file).
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        settings = node_info["properties"]
+        name = settings.pop("name")
+
+        # create the ports with the correct port numbers and IDs
+        if "ports" in node_info:
+            ports = node_info["ports"]
+            for topology_port in ports:
+                port = EthernetPort(topology_port["name"])
+                port.setPortNumber(topology_port["port_number"])
+                self._ports.append(port)
+                self._settings["ports"].append(port.portNumber())
+
+        self.setup(name)
 
     def name(self):
         """
@@ -223,7 +303,7 @@ class EthernetHub(Node):
         """
         Returns all the ports for this hub.
 
-        :returns: list of Port objects
+        :returns: list of Port instances
         """
 
         return self._ports
@@ -232,7 +312,7 @@ class EthernetHub(Node):
         """
         Returns the configuration page widget to be used by the node configurator.
 
-        :returns: QWidget object.
+        :returns: QWidget object
         """
 
         from ..pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage

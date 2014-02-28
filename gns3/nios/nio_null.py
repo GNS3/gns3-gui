@@ -22,7 +22,7 @@ Interface for dummy NIOs (mostly for tests or fake connections).
 from .nio import NIO
 
 
-class NIO_Null(NIO):
+class NIONull(NIO):
     """
     NULL NIO.
     """
@@ -36,7 +36,6 @@ class NIO_Null(NIO):
 
         return "NIO_Null"
 
-    @property
     def identifier(self):
         """
         Returns the identifier used by this NIO.

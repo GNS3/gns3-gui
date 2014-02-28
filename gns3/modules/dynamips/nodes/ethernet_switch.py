@@ -31,26 +31,31 @@ class EthernetSwitch(Node):
     """
     Dynamips Ethernet switch.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
-    def __init__(self, server):
-        Node.__init__(self)
+    def __init__(self, module, server):
+        Node.__init__(self, server)
 
-        self._server = server
         self._ethsw_id = None
+        self._module = module
         self._ports = []
         self._settings = {"name": "",
                           "ports": {}}
 
-    def setup(self, name=None):
+    def setup(self, name=None, initial_settings={}):
         """
         Setups this Ethernet switch.
 
         :param name: optional name for this switch
         """
 
-        self._server.send_message("dynamips.ethsw.create", None, self._setupCallback)
+        params = {}
+        if name:
+            params["name"] = self._settings["name"] = name
+
+        self._server.send_message("dynamips.ethsw.create", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
         """
@@ -69,8 +74,8 @@ class EthernetSwitch(Node):
         self._settings["name"] = result["name"]
 
         log.info("Ethernet switch {} has been created".format(result["name"]))
-        # let the GUI knows about this switch name
-        self.newname_signal.emit(self._settings["name"])
+        self.setInitialized(True)
+        self.created_signal.emit(self.id())
 
     def delete(self):
         """
@@ -80,7 +85,10 @@ class EthernetSwitch(Node):
         log.debug("Ethernet switch {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        self._server.send_message("dynamips.ethsw.delete", {"id": self._ethsw_id}, self._deleteCallback)
+        if self._ethsw_id:
+            self._server.send_message("dynamips.ethsw.delete", {"id": self._ethsw_id}, self._deleteCallback)
+        else:
+            self.delete_signal.emit()
 
     def _deleteCallback(self, result, error=False):
         """
@@ -106,29 +114,33 @@ class EthernetSwitch(Node):
 
         ports_to_update = {}
         ports = new_settings["ports"]
-        for port_id in ports.keys():
-            if port_id in self._settings["ports"]:
-                if self._settings["ports"][port_id] != ports[port_id]:
-                    print("Port {} has been updated".format(port_id))
+        updated = False
+        for port_number in ports.keys():
+            if port_number in self._settings["ports"]:
+                if self._settings["ports"][port_number] != ports[port_number]:
                     for port in self._ports:
-                        if port.port == port_id and not port.isFree():
-                            ports_to_update[port_id] = ports[port_id]
+                        if port.portNumber() == port_number and not port.isFree():
+                            ports_to_update[port_number] = ports[port_number]
                             break
                 continue
-            port = EthernetPort(str(port_id))
-            port.port = port_id
+            port = EthernetPort(str(port_number))
+            port.setPortNumber(port_number)
             self._ports.append(port)
-            log.debug("port {} has been added".format(port_id))
+            updated = True
+            log.debug("port {} has been added".format(port_number))
 
         if ports_to_update:
             params = {"id": self._ethsw_id,
                       "ports": {}}
-            for port_id, info in ports_to_update.items():
-                params["ports"][port_id] = info
+            for port_number, info in ports_to_update.items():
+                params["ports"][port_number] = info
+            updated = True
             log.debug("{} is being updated: {}".format(self.name(), params))
             self._server.send_message("dynamips.ethsw.update", params, self._updateCallback)
 
         self._settings["ports"] = new_settings["ports"].copy()
+        if updated:
+            self.updated_signal.emit()
 
     def _updateCallback(self, result, error=False):
         """
@@ -144,13 +156,15 @@ class EthernetSwitch(Node):
         else:
             log.info("{} has been updated".format(self.name()))
 
-    def allocateUDPPort(self):
+    def allocateUDPPort(self, port_id):
         """
         Requests an UDP port allocation.
+
+        :param port_id: port identifier
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("dynamips.ethsw.allocate_udp_port", {"id": self._ethsw_id}, self._allocateUDPPortCallback)
+        self._server.send_message("dynamips.ethsw.allocate_udp_port", {"id": self._ethsw_id, "port_id": port_id}, self._allocateUDPPortCallback)
 
     def _allocateUDPPortCallback(self, result, error=False):
         """
@@ -164,24 +178,26 @@ class EthernetSwitch(Node):
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            port_id = result["port_id"]
             lhost = result["lhost"]
             lport = result["lport"]
-            log.info("{} has allocated UDP port {} for host {}".format(self.name(), lport, lhost))
-            self.allocate_udp_nio_signal.emit(self.id, lport, lhost)
+            log.debug("{} has allocated UDP port {} for host {}".format(self.name(), lport, lhost))
+            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport, lhost)
 
     def addNIO(self, port, nio):
         """
         Adds a new NIO on the specified port for this switch.
 
-        :param port: Port object.
-        :param nio: NIO object.
+        :param port: Port instance
+        :param nio: NIO instance
         """
 
-        port_info = self._settings["ports"][port.port]
+        port_info = self._settings["ports"][port.portNumber()]
         nio_type = str(nio)
         params = {"id": self._ethsw_id,
                   "nio": nio_type,
-                  "port": port.port,
+                  "port": port.portNumber(),
+                  "port_id": port.id(),
                   "vlan": port_info["vlan"],
                   "port_type": port_info["type"]}
 
@@ -201,20 +217,19 @@ class EthernetSwitch(Node):
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
-            log.info("{} has added a new NIO: {}".format(self.name(), result))
-            self.nio_signal.emit(self.id)
+            log.debug("{} has added a new NIO: {}".format(self.name(), result))
+            self.nio_signal.emit(self.id(), result["port_id"])
 
     def deleteNIO(self, port):
         """
         Deletes an NIO from the specified port on this switch.
 
-        :param port: Port object.
+        :param port: Port instance
         """
 
         params = {"id": self._ethsw_id,
-                  "port": port.port}
+                  "port": port.portNumber()}
 
-        port.nio = None
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
         self._server.send_message("dynamips.ethsw.delete_nio", params, self._deleteNIOCallback)
 
@@ -226,7 +241,89 @@ class EthernetSwitch(Node):
         :param error: indicates an error (boolean)
         """
 
-        log.info("{} has deleted a NIO: {}".format(self.name(), result))
+        if error:
+            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+            return
+
+        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
+
+    def info(self):
+        """
+        Returns information about this Ethernet switch.
+
+        :returns: formated string
+        """
+
+        info = "Ethernet switch " + self.name() + " is always-on\n  Hardware is Dynamips emulated simple ethernet switch\n  Switch's server runs on " + self._server.host + ':' + str(self._server.port) + '\n'
+
+        port_info = ""
+        for port in self._ports:
+            if port.isFree():
+                port_info += '   Port ' + port.name() + ' is empty\n'
+            else:
+                port_type = self._settings["ports"][port.portNumber()]["type"]
+                port_vlan = str(self._settings["ports"][port.portNumber()]["vlan"])
+                if port_type == "access":
+                    port_vlan_info = " VLAN ID " + port_vlan
+                elif port_type == "dot1q":
+                    port_vlan_info = " native VLAN " + port_vlan
+                elif port_type == "qinq":
+                    port_vlan_info = " outer VLAN " + port_vlan
+                port_info += '   Port ' + port.name() + ' is in ' + port_type + ' mode, with ' + port_vlan_info + ',\n    ' + port.description() + '\n'
+
+        return info + port_info
+
+    def dump(self):
+        """
+        Returns a representation of this Ethernet switch
+        (to be saved in a topology file)
+
+        :returns: dictionary
+        """
+
+        switch = {"id": self.id(),
+                  "type": self.__class__.__name__,
+                  "description": str(self),
+                  "properties": {"name": self.name()},
+                  "server_id": self._server.id(),
+                  }
+
+        # add the ports
+        if self._ports:
+            ports = switch["ports"] = []
+            for port in self._ports:
+                port_info = port.dump()
+                if port.portNumber() in self._settings["ports"]:
+                    port_info["type"] = self._settings["ports"][port.portNumber()]["type"]
+                    port_info["vlan"] = self._settings["ports"][port.portNumber()]["vlan"]
+                ports.append(port_info)
+
+        return switch
+
+    def load(self, node_info):
+        """
+        Loads an Ethernet switch representation
+        (from a topology file).
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        settings = node_info["properties"]
+        name = settings.pop("name")
+
+        # create the ports with the correct port numbers, IDs and settings
+        if "ports" in node_info:
+            ports = node_info["ports"]
+            for topology_port in ports:
+                port = EthernetPort(topology_port["name"])
+                port.setPortNumber(topology_port["port_number"])
+                port.setId(topology_port["id"])
+                self._ports.append(port)
+                self._settings["ports"][port.portNumber()] = {"type": topology_port["type"],
+                                                          "vlan": topology_port["vlan"]}
+
+        self.setup(name)
 
     def name(self):
         """
@@ -250,7 +347,7 @@ class EthernetSwitch(Node):
         """
         Returns all the ports for this switch.
 
-        :returns: list of Port objects
+        :returns: list of Port instances
         """
 
         return self._ports
@@ -259,7 +356,7 @@ class EthernetSwitch(Node):
         """
         Returns the configuration page widget to be used by the node configurator.
 
-        :returns: QWidget object.
+        :returns: QWidget object
         """
 
         from ..pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage

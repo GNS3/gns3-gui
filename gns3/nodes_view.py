@@ -51,7 +51,7 @@ class NodesView(QtGui.QTreeWidget):
         Handles all mouse move events.
         This is the starting point to drag & drop a node on the scene.
 
-        :param: QMouseEvent object
+        :param: QMouseEvent instance
         """
 
         # check the left button isn't used and that an item has been selected.

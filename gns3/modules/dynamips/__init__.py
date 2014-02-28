@@ -36,10 +36,13 @@ from .nodes.ethernet_switch import EthernetSwitch
 from .nodes.ethernet_hub import EthernetHub
 from .nodes.frame_relay_switch import FrameRelaySwitch
 from .nodes.atm_switch import ATMSwitch
-from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES
+from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES, PLATFORMS_DEFAULT_RAM
 
 
 class Dynamips(Module):
+    """
+    Dynamips module.
+    """
 
     def __init__(self):
         Module.__init__(self)
@@ -53,6 +56,9 @@ class Dynamips(Module):
         self._loadIOSImages()
 
     def _loadSettings(self):
+        """
+        Loads the settings from the persistent settings file.
+        """
 
         # load the settings
         settings = QtCore.QSettings()
@@ -62,6 +68,9 @@ class Dynamips(Module):
         settings.endGroup()
 
     def _saveSettings(self):
+        """
+        Saves the settings to the persistent settings file.
+        """
 
         # save the settings
         settings = QtCore.QSettings()
@@ -71,10 +80,13 @@ class Dynamips(Module):
         settings.endGroup()
 
     def _loadIOSImages(self):
+        """
+        Load the IOS images from the persistent settings file.
+        """
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOS_images")
+        settings.beginGroup("IOS")
 
         # load the IOS images
         size = settings.beginReadArray("ios_image")
@@ -103,10 +115,13 @@ class Dynamips(Module):
         settings.endGroup()
 
     def _saveIOSImages(self):
+        """
+        Saves the IOS images to the persistent settings file.
+        """
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOS_images")
+        settings.beginGroup("IOS")
         settings.remove("")
 
         # save the IOS images
@@ -121,36 +136,71 @@ class Dynamips(Module):
         settings.endGroup()
 
     def addServer(self, server):
+        """
+        Adds a server to be used by this module.
+
+        :param server: WebSocketClient instance
+        """
 
         self._servers.append(server)
-        server.send_notification("dynamips.settings", self._settings)
+        self._sendSettings(server)
 
     def removeServer(self, server):
+        """
+        Removes a server from being used by this module.
+
+        :param server: WebSocketClient instance
+        """
 
         self._servers.remove(server)
 
     def servers(self):
+        """
+        Returns all the servers used by this module.
+
+        :returns: list of WebSocketClient instances
+        """
 
         return self._servers
 
     def iosImages(self):
+        """
+        Returns IOS images settings.
+
+        :returns: IOS images settings (dictionary)
+        """
 
         return self._ios_images
 
     def setIOSImages(self, new_ios_images):
+        """
+        Sets IOS images settings.
+
+        :param new_ios_images: IOS images settings (dictionary)
+        """
 
         self._ios_images = new_ios_images.copy()
         self._saveIOSImages()
 
     def settings(self):
+        """
+        Returns the module settings
+
+        :returns: module settings (dictionary)
+        """
 
         return self._settings
 
     def setSettings(self, settings):
+        """
+        Sets the module settings
+
+        :param settings: module settings (dictionary)
+        """
 
         params = {}
         for name, value in settings.items():
-            if self._settings[name] != value:
+            if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
         if params:
@@ -160,37 +210,106 @@ class Dynamips(Module):
         self._settings.update(settings)
         self._saveSettings()
 
+    def _sendSettings(self, server):
+        """
+        Sends the module settings to the server.
+
+        :param server: WebSocketClient instance
+        """
+
+        server.send_notification("dynamips.settings", self._settings)
+
     def createNode(self, node_class):
+        """
+        Creates a new node.
+
+        :param node_class: Node object
+        """
 
         servers = Servers.instance()
         server = servers.localServer()
 
-        if not server.connected:
+        if not server.connected():
             try:
-                server.connect()
+                server.reconnect()
+                self._sendSettings(server)
             except socket.error as e:
                 print("COULD NOT CONNECT TO SERVER!!")
                 print(e)
-                return
+                return None
 
-        self.addServer(server)
-        return node_class(server)
+        if server not in self._servers:
+            self.addServer(server)
+        return node_class(self, server)
 
     def _allocateIOSImage(self, node):
+        """
+        Allocates an IOS image to a node
+
+        :param node: Node instance
+        """
 
         platform = node.settings()["platform"]
         for ios_image in self._ios_images.values():
             if ios_image["platform"] == platform:
                 return ios_image
+        return None
 
     def setupNode(self, node):
+        """
+        Setups a node.
+
+        :param node: Node instance
+        """
 
         if isinstance(node, Router):
             ios_image = self._allocateIOSImage(node)
-            #node.setup(ios_image)
-            node.setup("/home/grossmj/Documents/IOS images/c3725-adventerprisek9-mz.124-15.T14.image", 128)
+            #TODO: raise exception
+            if not ios_image:
+                return False
+            settings = {}
+            if ios_image["idlepc"]:
+                settings["idlepc"] = ios_image["idlepc"]
+            node.setup(ios_image["path"], ios_image["ram"], initial_settings=settings)
         else:
             node.setup()
+
+    def updateImageIdlepc(self, image_path, idlepc):
+        """
+        Updates the idle-pc for an IOS image.
+
+        :param image_path: path to the IOS image
+        :param idlepc: idle-pc value
+        """
+
+        for ios_image in self._ios_images.values():
+            if ios_image["path"] == image_path:
+                ios_image["idlepc"] = idlepc
+                self._saveIOSImages()
+                break
+
+    def reset(self):
+        """
+        Resets the servers.
+        """
+
+        for server in self._servers:
+            if server.connected():
+                server.send_notification("dynamips.reset")
+
+    @staticmethod
+    def getNodeClass(name):
+        """
+        Returns the object with the corresponding name.
+
+        :param name: object name
+
+        :returns: object or None
+        """
+
+        if name in globals():
+            return globals()[name]
+        return None
 
     @staticmethod
     def nodes():

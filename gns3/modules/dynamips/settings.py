@@ -64,3 +64,12 @@ DYNAMIPS_SETTING_TYPES = {
     "sparse_memory_support": bool,
     "mmap_support": bool,
 }
+
+# supported platforms with the default RAM value
+PLATFORMS_DEFAULT_RAM = {"c1700": 64,
+                         "c2600": 64,
+                         "c2691": 128,
+                         "c3600": 128,
+                         "c3725": 128,
+                         "c3745": 128,
+                         "c7200": 256}

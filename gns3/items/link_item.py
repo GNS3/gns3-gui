@@ -28,11 +28,11 @@ class LinkItem(QtGui.QGraphicsPathItem):
     """
     Base class for link items.
 
-    :param source_item: source NodeItem object
-    :param source_port: source Port object
-    :param destination_item: destination NodeItem object
-    :param destination_port: destination Port object
-    :param link: Link object (contains back-end stuff for this link)
+    :param source_item: source NodeItem instance
+    :param source_port: source Port instance
+    :param destination_item: destination NodeItem instance
+    :param destination_port: destination Port instance
+    :param link: Link instance (contains back-end stuff for this link)
     :param adding_flag: indicates if this link is being added (no destination yet)
     :param multilink: used to draw multiple link between the same source and destination
     """
@@ -41,6 +41,10 @@ class LinkItem(QtGui.QGraphicsPathItem):
 
         QtGui.QGraphicsPathItem.__init__(self)
         self.setZValue(-1)
+        self._link = None
+
+        from ..main_window import MainWindow
+        self._settings = MainWindow.instance().uiGraphicsView.settings()
 
         # indicates link is being added:
         # source has been chosen but not its destination yet
@@ -56,30 +60,27 @@ class LinkItem(QtGui.QGraphicsPathItem):
         # between the same source and destination
         self._multilink = multilink
 
+        # source & destination items and ports
         self._source_item = source_item
         self._destination_item = destination_item
         self._source_port = source_port
         self._destination_port = destination_port
 
-        self._show_port_names = True
-        self._show_status_points = True
-        self._source_port_status = "down"
-        self._destination_port_status = "down"
-
         if not self._adding_flag:
+            # there is a destination
 
             self._link = link
 
             # links must always be below node items on the scene
             min_zvalue = min([source_item.zValue(), destination_item.zValue()])
             self.setZValue(min_zvalue - 1)
-
             self.setFlag(self.ItemIsFocusable)
 
             source_item.addLink(self)
             destination_item.addLink(self)
 
-#TODO: tooltip + capture support
+            #TODO: capture support
+
 #             source_item.node.nio_signal.connect(self.newNIOSlot)
 #             destination_item.node.nio_signal.connect(self.newNIOSlot)
 #             self._source_item.setCustomToolTip()
@@ -90,11 +91,12 @@ class LinkItem(QtGui.QGraphicsPathItem):
 #             self.tailProcess = None
 #             self.capturePipeThread = None
 #             # Set default tooltip
-#             self.setCustomToolTip()
+
 #             self.encapsulationTransform = { 'ETH': 'EN10MB',
 #                                             'FR': 'FRELAY',
 #                                             'HDLC': 'C_HDLC',
 #                                             'PPP': 'PPP_SERIAL'}
+            self.setCustomToolTip()
 
         else:
             source_rect = self._source_item.boundingRect()
@@ -113,11 +115,19 @@ class LinkItem(QtGui.QGraphicsPathItem):
         self._link.deleteLink()
         self.scene().removeItem(self)
 
+    def setCustomToolTip(self):
+        """
+        Sets a custom tool tip for this link.
+        """
+
+        if self._link:
+            self.setToolTip(self._link.description())
+
     def sourceItem(self):
         """
         Returns the source item for this link.
 
-        :returns: NodeItem object
+        :returns: NodeItem instance
         """
 
         return self._source_item
@@ -126,7 +136,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
         """
         Returns the destination item for this link.
 
-        :returns: NodeItem object
+        :returns: NodeItem instance
         """
 
         return self._destination_item
@@ -135,7 +145,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
         """
         Returns the source port for this link.
 
-        :returns: Port object
+        :returns: Port instance
         """
 
         return self._source_port
@@ -144,7 +154,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
         """
         Returns the destination port for this link.
 
-        :returns: Port object
+        :returns: Port instance
         """
 
         return self._destination_port

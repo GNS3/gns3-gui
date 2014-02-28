@@ -27,7 +27,7 @@ class SerialPort(Port):
     Serial port.
 
     :param name: port name (string)
-    :param nio: NIO object to attach to this port
+    :param nio: NIO instance to attach to this port
     """
 
     def __init__(self, name, nio=None):

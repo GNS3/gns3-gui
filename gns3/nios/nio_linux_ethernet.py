@@ -22,7 +22,7 @@ Interface for Linux Ethernet NIOs (Linux only).
 from .nio import NIO
 
 
-class NIO_LinuxEthernet(NIO):
+class NIOLinuxEthernet(NIO):
     """
     Linux Ethernet NIO.
 
@@ -38,8 +38,7 @@ class NIO_LinuxEthernet(NIO):
 
         return "NIO_LinuxEthernet"
 
-    @property
-    def ethernet_device(self):
+    def ethernetDevice(self):
         """
         Returns the Ethernet device used by this NIO.
 

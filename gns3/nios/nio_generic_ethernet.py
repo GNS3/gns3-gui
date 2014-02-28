@@ -22,7 +22,7 @@ Interface for generic Ethernet NIOs (PCAP library).
 from .nio import NIO
 
 
-class NIO_GenericEthernet(NIO):
+class NIOGenericEthernet(NIO):
     """
     Generic Ethernet NIO.
 
@@ -38,8 +38,7 @@ class NIO_GenericEthernet(NIO):
 
         return "NIO_GenericEthernet"
 
-    @property
-    def ethernet_device(self):
+    def ethernetDevice(self):
         """
         Returns the Ethernet device used by this NIO.
 

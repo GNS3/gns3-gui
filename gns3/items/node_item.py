@@ -19,7 +19,7 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
-from ..qt import QtGui, QtSvg
+from ..qt import QtCore, QtGui, QtSvg
 
 
 class NodeItem(QtSvg.QGraphicsSvgItem):
@@ -33,8 +33,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         QtSvg.QGraphicsSvgItem.__init__(self)
 
+        # attached node
         self._node = node
-        self._name = "N/A"
 
         # set graphical settings for this node
         self.setFlag(QtSvg.QGraphicsSvgItem.ItemIsMovable)
@@ -51,10 +51,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # connect signals to know about some events
         # e.g. when the node has been started, stopped or suspended etc.
-        node.newname_signal.connect(self.newNameSlot)
+        node.created_signal.connect(self.createdSlot)
         node.started_signal.connect(self.startedSlot)
         node.stopped_signal.connect(self.stoppedSlot)
         node.suspended_signal.connect(self.suspendedSlot)
+        node.updated_signal.connect(self.updatedSlot)
         node.delete_links_signal.connect(self.deleteLinksSlot)
         node.delete_signal.connect(self.deleteSlot)
 
@@ -63,6 +64,19 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # used when a port has been selected from the contextual menu
         self._selected_port = None
+
+        # says if the attached node has been initialized
+        # by the server.
+        self._initialized = False
+
+    def setUnsavedState(self):
+        """
+        Indicates the project is in a unsaved state.
+        """
+
+        from ..main_window import MainWindow
+        main_window = MainWindow.instance()
+        main_window.setUnsavedState()
 
     def node(self):
         """
@@ -77,40 +91,42 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Adds a link items to this node item.
 
-        :param link: LinkItem object
+        :param link: LinkItem instance
         """
 
         self._links.append(link)
+        self.setUnsavedState()
 
     def removeLink(self, link):
         """
         Removes a link items from this node item.
 
-        :param link: LinkItem object
+        :param link: LinkItem instance
         """
 
         self._links.remove(link)
+        self.setUnsavedState()
 
     def links(self):
         """
         Returns all the link items attached to this node item.
 
-        :returns: list of LinkItem objects
+        :returns: list of LinkItem instances
         """
 
         return self._links
 
-    def newNameSlot(self, name):
+    def createdSlot(self, node_id):
         """
         Slot to receive events from the attached Node instance
-        when a the node has a new name.
+        when a the node has been created/initialized.
 
-        :param name: node new name
+        :param node_id: node identifier (integer)
         """
 
-        #TODO: finish this
-        self._name = name
-        #self.showName()
+        self._initialized = True
+        self.update()
+        self.showName()
 
     def startedSlot(self):
         """
@@ -118,8 +134,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has started.
         """
 
-        #TODO: finish this
-        print("Node started!")
+        ports = self._node.ports()
+        for port in ports:
+            # set ports as started
+            port.setStatus(1)
+        for link in self._links:
+            link.update()
 
     def stoppedSlot(self):
         """
@@ -127,8 +147,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has stopped.
         """
 
-        #TODO: finish this
-        print("Node stopped!")
+        ports = self._node.ports()
+        for port in ports:
+            # set ports as stopped
+            port.setStatus(0)
+        for link in self._links:
+            link.update()
 
     def suspendedSlot(self):
         """
@@ -136,8 +160,16 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has suspended.
         """
 
-        #TODO: finish this
-        print("Node suspended")
+        ports = self._node.ports()
+        for port in ports:
+            # set ports as suspended
+            port.setStatus(2)
+        for link in self._links:
+            link.update()
+
+    def updatedSlot(self):
+
+        self.setUnsavedState()
 
     def deleteLinksSlot(self):
         """
@@ -155,13 +187,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         self.scene().removeItem(self)
+        self.setUnsavedState()
 
     def setCustomToolTip(self):
         """
         Sets a new ToolTip.
         """
 
-        self.setToolTip(self._name)
+        self.setToolTip(self._node.info())
 
     def showName(self):
         """
@@ -169,7 +202,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         #TODO: possibility to change the Font size etc.
-        self.textItem = QtGui.QGraphicsTextItem(self._name, self)
+        self.textItem = QtGui.QGraphicsTextItem(self._node.name(), self)
         self.textItem.setFont(QtGui.QFont("TypeWriter", 10, QtGui.QFont.Bold))
         self.textItem.setFlag(self.textItem.ItemIsMovable)
         textrect = self.textItem.boundingRect()
@@ -186,7 +219,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         :param unavailable_ports: list of port names that the user cannot choose
 
-        :returns: Port object corresponding to the selected port
+        :returns: Port instance corresponding to the selected port
         """
 
         self._selected_port = None
@@ -199,7 +232,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # sort by port name
         port_names = {}
         for port in ports:
-            port_names[port.name] = port
+            port_names[port.name()] = port
         ports = sorted(port_names.keys())
 
         # show a contextual menu for the user to choose a port
@@ -223,14 +256,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         Slot to receive events when a port has been selected in the
         contextual menu.
 
-        :param action: QAction object
+        :param action: QAction instance
         """
 
         ports = self._node.ports()
 
-        # get the Port object based on the selected port name.
+        # get the Port instance based on the selected port name.
         for port in ports:
-            if port.name == str(action.text()):
+            if port.name() == str(action.text()):
                 self._selected_port = port
                 break
 
@@ -251,6 +284,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # adjust link item positions when this node is moving or has changed.
         if change == QtSvg.QGraphicsSvgItem.ItemPositionChange or change == QtSvg.QGraphicsSvgItem.ItemPositionHasChanged:
+            self.setUnsavedState()
             for link in self._links:
                 link.adjust()
 
@@ -260,48 +294,42 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Paints the contents of an item in local coordinates.
 
-        :param painter: QPainter object.
-        :param option: QStyleOptionGraphicsItem object.
-        :param widget: QWidget object.
+        :param painter: QPainter instance.
+        :param option: QStyleOptionGraphicsItem instance.
+        :param widget: QWidget instance.
         """
 
         # don't show the selection rectangle
         option.state = QtGui.QStyle.State_None
-        return QtSvg.QGraphicsSvgItem.paint(self, painter, option, widget)
+        QtSvg.QGraphicsSvgItem.paint(self, painter, option, widget)
 
 #TODO: show layer position on the node
 #         # Don't draw if not activated
 #         if globals.GApp.workspace.flg_showLayerPos == False:
 #             return
-# 
-#         # Show layer level of this node
-#         brect = self.boundingRect()
-#         center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-# 
-#         painter.setBrush(QtCore.Qt.red)
-#         painter.setPen(QtCore.Qt.red)
-#         painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20,20)
-#         painter.setPen(QtCore.Qt.black)
-#         painter.setFont(QtGui.QFont("TypeWriter", 14, QtGui.QFont.Bold))
-#         zval = str(int(self.zValue()))
-#         painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+
+        if not self._initialized:
+            # Show layer level of this node
+            brect = self.boundingRect()
+            # center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
+
+            painter.setBrush(QtCore.Qt.red)
+            painter.setPen(QtCore.Qt.red)
+            painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+
+            #painter.setPen(QtCore.Qt.black)
+            #painter.setFont(QtGui.QFont("TypeWriter", 14, QtGui.QFont.Bold))
+            #zval = str(int(self.zValue()))
+            #painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
 
     def hoverEnterEvent(self, event):
         """
         Handles all hover enter events for this item.
 
-        :param event: QGraphicsSceneHoverEvent object
+        :param event: QGraphicsSceneHoverEvent instance
         """
 
         self.setCustomToolTip()
-
-#TODO: finish tooptip support
-        # update tool tip
-#         try:
-#             self.setCustomToolTip()
-#         except:
-#             print translate("AbstractNode", "Cannot communicate with %s, the server running this node may have crashed!" % self.hostname)
-
         # dynamically change the renderer when this node item is hovered.
         if not self.isSelected():
             self.setSharedRenderer(self._hover_renderer)
@@ -310,7 +338,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Handles all hover leave events for this item.
 
-        :param event: QGraphicsSceneHoverEvent object
+        :param event: QGraphicsSceneHoverEvent instance
         """
 
         # dynamically change the renderer back to the default when this node item is not hovered anymore.

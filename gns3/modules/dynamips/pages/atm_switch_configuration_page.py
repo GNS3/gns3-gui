@@ -49,7 +49,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         """
         Loads a selected mapping from the tree widget.
 
-        :param item: selected QTreeWidgetItem object
+        :param item: selected QTreeWidgetItem instance
         :param column: ignored
         """
 
@@ -143,8 +143,8 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
             # before we delete that mapping
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if (node_port.port == source_port or node_port.port == destination_port) and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.port))
+                if (node_port.portNumber() == source_port or node_port.portNumber() == destination_port) and not node_port.isFree():
+                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
                     return
 
             del self._mapping[source]
@@ -155,7 +155,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         Loads the ATM switch settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -163,7 +163,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         self._mapping = {}
         self._node = node
 
-        for source, destination in settings["mapping"].items():
+        for source, destination in settings["mappings"].items():
             item = QtGui.QTreeWidgetItem(self.uiMappingTreeWidget)
             item.setText(0, source)
             item.setText(1, destination)
@@ -178,7 +178,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         Saves the ATM switch settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -187,4 +187,4 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         if "name" in settings:
             del settings["name"]
 
-        settings["mapping"] = self._mapping.copy()
+        settings["mappings"] = self._mapping.copy()

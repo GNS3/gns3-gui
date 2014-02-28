@@ -25,22 +25,26 @@ from .qt import QtCore
 class Node(QtCore.QObject):
     """
     Node implementation.
+
+    :param server: client connection to a server
     """
 
-    # signals used to let the GUI view know about some events.
-    newname_signal = QtCore.Signal(str)
+    # signals used to let the GUI know about some events.
+    created_signal = QtCore.Signal(int)
     started_signal = QtCore.Signal()
     stopped_signal = QtCore.Signal()
     suspended_signal = QtCore.Signal()
+    updated_signal = QtCore.Signal()
     delete_links_signal = QtCore.Signal()
     delete_signal = QtCore.Signal()
+    idlepc_signal = QtCore.Signal()
     error_signal = QtCore.Signal(str, int, str)
-    nio_signal = QtCore.Signal(int)
-    allocate_udp_nio_signal = QtCore.Signal(int, int, str)
+    nio_signal = QtCore.Signal(int, int)
+    allocate_udp_nio_signal = QtCore.Signal(int, int, int, str)
 
     _instance_count = 1
 
-    def __init__(self):
+    def __init__(self, server=None):
 
         super(Node, self).__init__()
 
@@ -48,7 +52,26 @@ class Node(QtCore.QObject):
         self._id = Node._instance_count
         Node._instance_count += 1
 
-    @property
+        self._server = server
+        self._initialized = False
+
+    @classmethod
+    def reset(cls):
+        """
+        Reset the instance count.
+        """
+
+        cls._instance_count = 1
+
+    def server(self):
+        """
+        Returns this node server.
+
+        :returns: Server instance
+        """
+
+        return self._server
+
     def id(self):
         """
         Returns this node identifier.
@@ -57,6 +80,54 @@ class Node(QtCore.QObject):
         """
 
         return self._id
+
+    def setId(self, new_id):
+        """
+        Sets an identifier for this node.
+
+        :param new_id: node identifier (integer)
+        """
+
+        self._id = new_id
+
+    def initialized(self):
+        """
+        Returns if the node has been initialized
+
+        :returns: boolean
+        """
+
+        return self._initialized
+
+    def setInitialized(self, initialized):
+        """
+        Sets if the node has been initialized
+
+        :param initialized: boolean
+        """
+
+        self._initialized = initialized
+
+    def dump(self):
+        """
+        Returns a representation of this node.
+        Must be overloaded.
+
+        :returns: dictionary
+        """
+
+        raise NotImplementedError()
+
+    def load(self, node_info):
+        """
+        Loads a node representation
+        (from a topology file).
+        Must be overloaded.
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        raise NotImplementedError()
 
     def name(self):
         """
@@ -83,7 +154,7 @@ class Node(QtCore.QObject):
         Returns all the ports for this node.
         Must be overloaded.
 
-        :returns: list of Port objects
+        :returns: list of Port instances
         """
 
         raise NotImplementedError()
@@ -92,45 +163,45 @@ class Node(QtCore.QObject):
         """
         Adds NIO information to a dictionary.
 
-        :param nio: NIO object
+        :param nio: NIO instance
         :param params: dictionary
         """
 
         nio_type = str(nio)
         if nio_type == "NIO_UDP":
             # add NIO UDP params
-            params["lport"] = nio.lport
-            params["rhost"] = nio.rhost
-            params["rport"] = nio.rport
+            params["lport"] = nio.lport()
+            params["rhost"] = nio.rhost()
+            params["rport"] = nio.rport()
 
         elif nio_type == "NIO_GenericEthernet":
             # add NIO generic Ethernet param
-            params["ethernet_device"] = nio.ethernet_device
+            params["ethernet_device"] = nio.ethernetDevice()
 
         elif nio_type == "NIO_LinuxEthernet":
             # add NIO Linux Ethernet param
-            params["ethernet_device"] = nio.ethernet_device
+            params["ethernet_device"] = nio.ethernetDevice()
 
         elif nio_type == "NIO_TAP":
             # add NIO TAP param
-            params["tap_device"] = nio.tap_device
+            params["tap_device"] = nio.tapDevice()
 
         elif nio_type == "NIO_UNIX":
             # add NIO UNIX params
-            params["local_file"] = nio.local_file
-            params["remote_file"] = nio.remote_file
+            params["local_file"] = nio.localFile()
+            params["remote_file"] = nio.remoteFile()
 
         elif nio_type == "NIO_VDE":
             # add NIO VDE params
-            params["control_file"] = nio.control_file
-            params["local_file"] = nio.local_file
+            params["control_file"] = nio.controlFile()
+            params["local_file"] = nio.localFile()
 
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node configurator.
         Must be overloaded.
 
-        :returns: QWidget object.
+        :returns: QWidget instance
         """
 
         raise NotImplementedError()

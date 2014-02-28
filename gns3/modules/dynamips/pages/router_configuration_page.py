@@ -229,15 +229,19 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         Loads the router settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group of routers
         """
 
-        #print("loading {}".format(group))
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
             self.uiAuxPortSpinBox.setValue(settings["aux"])
+            # load the MAC address setting
+            if settings["mac_addr"]:
+                self.uiBaseMACLineEdit.setText(settings["mac_addr"])
+            else:
+                self.uiBaseMACLineEdit.clear()
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
@@ -245,15 +249,19 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             self.uiConsolePortSpinBox.hide()
             self.uiAuxPortLabel.hide()
             self.uiAuxPortSpinBox.hide()
+            self.uiBaseMacLabel.hide()
+            self.uiBaseMACLineEdit.hide()
 
         # show the platform and chassis if applicable
         platform = settings["platform"]
+        self.uiPlatformTextLabel.setText(platform)
         chassis = ""
         if "chassis" in settings:
             chassis = settings["chassis"]
-            self.uiPlatformTextLabel.setText("{} (chassis: {})".format(platform, chassis))
+            self.uiChassisLineEdit.setText(chassis)
         else:
-            self.uiPlatformTextLabel.setText(platform)
+            self.uiChassisLabel.hide()
+            self.uiChassisLineEdit.hide()
 
         # load the IOS image name without the full path
         self.uiIOSImageTextLabel.setText(os.path.basename(settings["image"]))
@@ -304,15 +312,8 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         # load the configuration register setting
         self.uiConfregLineEdit.setText(settings["confreg"])
 
-        # load the MAC address setting
-        if settings["mac_addr"]:
-            self.uiBaseMACLineEdit.setText(settings["mac_addr"])
-        else:
-            self.uiBaseMACLineEdit.clear()
-
         # load the Exec Area setting
-        if settings["exec_area"]:
-            self.uiExecAreaSpinBox.setValue(settings["exec_area"])
+        self.uiExecAreaSpinBox.setValue(settings["exec_area"])
 
         #self.uiTabWidget.removeTab(0)
 
@@ -322,18 +323,18 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
 
         :param slot_number: adapter slot number
         :param settings: IOS router settings
-        :param node: Node object
+        :param node: Node instance
         """
 
         node_ports = node.ports()
         for node_port in node_ports:
             # ports > 15 are WICs ones.
-            if node_port.slot == slot_number and node_port.port <= 15 and not node_port.isFree():
+            if node_port.slotNumber() == slot_number and node_port.portNumber() <= 15 and not node_port.isFree():
                 adapter = settings["slot" + str(slot_number)]
                 index = self._widget_slots[slot_number].findText(adapter)
                 if (index != -1):
                     self._widget_slots[slot_number].setCurrentIndex(index)
-                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter {}, please remove it first".format(node_port.name,
+                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter {}, please remove it first".format(node_port.name(),
                                                                                                                                               adapter))
                 raise ConfigurationError()
 
@@ -343,18 +344,18 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
 
         :param wic_number: WIC slot number
         :param settings: IOS router settings
-        :param node: Node object
+        :param node: Node instance
         """
 
         node_ports = node.ports()
         for node_port in node_ports:
             # ports > 15 are WICs ones.
-            if node_port.slot == wic_number and node_port.port > 15 and not node_port.isFree():
+            if node_port.slotNumber() == wic_number and node_port.portNumber() > 15 and not node_port.isFree():
                 wic = settings["wic" + str(wic_number)]
                 index = self._widget_wics[wic_number].findText(wic)
                 if (index != -1):
                     self._widget_wics[wic_number].setCurrentIndex(index)
-                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on {}, please remove it first".format(node_port.name,
+                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on {}, please remove it first".format(node_port.name(),
                                                                                                                                       wic))
                 raise ConfigurationError()
 
@@ -363,7 +364,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         Saves the router settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group of routers
         """
 
@@ -376,28 +377,25 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             settings["name"] = self.uiNameLineEdit.text()
             settings["console"] = self.uiConsolePortSpinBox.value()
             settings["aux"] = self.uiAuxPortSpinBox.value()
-        else:
-            #if "name" in settings:
-            del settings["name"]
-            #if "console" in settings:
-            del settings["console"]
-            #if "aux" in settings:
-            del settings["aux"]
 
+            # check and save the base MAC address
+            mac = self.uiBaseMACLineEdit.text()
+            if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
+                QtGui.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
+            elif mac != "":
+                settings["mac_addr"] = mac
+        else:
+            del settings["name"]
+            del settings["console"]
+            del settings["aux"]
+            del settings["mac_addr"]
 
         #del self._settings["image"]
         # get the platform and chassis if applicable
         platform = settings["platform"]
         chassis = ""
         if "chassis" in settings:
-            chassis = settings["chassis"]
-
-        # check and save the base MAC address
-        mac = self.uiBaseMACLineEdit.text()
-        if mac and not re.search(r"""^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$""", mac):
-            QtGui.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
-        elif mac != "":
-            settings["mac_addr"] = mac
+            settings["chassis"] = self.uiChassisLineEdit.text()
 
         if platform == "c7200":
             # save the midplane and NPE settings
@@ -417,12 +415,8 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         # TODO: check the format? 0xnnnn
         settings["confreg"] = self.uiConfregLineEdit.text()
 
-        # save the Exec Area setting
-        exec_area = self.uiExecAreaSpinBox.value()
-        if exec_area and exec_area != 64:
-            settings["exec_area"] = exec_area
-        else:
-            settings["exec_area"] = None
+        # save the exec area setting
+        settings["exec_area"] = self.uiExecAreaSpinBox.value()
 
         # save the adapters and WICs configuration and
         # check if a module port is connected before removing or replacing.

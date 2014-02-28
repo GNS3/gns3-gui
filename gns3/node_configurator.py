@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Dialog to configure and update node settings.
+Dialog to configure and update node settings using widget pages.
 """
 
 from .qt import QtCore, QtGui
@@ -27,7 +27,7 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
     """
     Node configurator implementation.
 
-    :param node_items: list of NodeItem objects
+    :param node_items: list of NodeItem instances
     :param parent: parent widget
     """
 
@@ -161,7 +161,7 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
                 page.saveSettings(settings, node, group=True)
                 for index in range(0, item.childCount()):
                     child = item.child(index)
-                    child.node().update(settings)
+                    #child.node().update(settings)  #TODO: delete
                     child.settings().update(settings)
 
         # update the nodes with the settings
@@ -198,11 +198,11 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
 
 class ConfigurationPageItem(QtGui.QTreeWidgetItem):
     """
-    Item for the QTreeWidget object.
+    Item for the QTreeWidget instance.
     Store temporary node settings configured in a page widget.
 
     :param parent: parent widget
-    :param node: Node object
+    :param node: Node instance
     """
 
     def __init__(self, parent, node):
@@ -221,7 +221,7 @@ class ConfigurationPageItem(QtGui.QTreeWidgetItem):
         """
         Returns the page widget to be displayed by the node configurator.
 
-        :returns: QWidget object.
+        :returns: QWidget instance
         """
 
         return self._page()
@@ -230,7 +230,7 @@ class ConfigurationPageItem(QtGui.QTreeWidgetItem):
         """
         Returns node associated with this item.
 
-        :returns: Node object.
+        :returns: Node instance
         """
 
         return self._node

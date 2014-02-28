@@ -19,7 +19,7 @@
 Base class for port objects.
 """
 
-from ..nios.nio_udp import NIO_UDP
+from ..nios.nio_udp import NIOUDP
 
 
 class Port(object):
@@ -27,22 +27,58 @@ class Port(object):
     Base port.
 
     :param name: port name (string)
-    :param nio: NIO object to attach to this port
+    :param default_nio: NIO object to use by default
+    :param stub: indicates a stub port
     """
+
+    _instance_count = 1
 
     def __init__(self, name, default_nio=None, stub=False):
 
+        # create an unique ID
+        self._id = Port._instance_count
+        Port._instance_count += 1
+
         self._name = name
-        self._slot = None
-        self._port = None
+        self._port_number = None
+        self._slot_number = None
         self._stub = stub
+        self._link_id = None
+        self._description = ""
+        self._status = 0
+        self._data = {}
         if default_nio == None:
-            self._default_nio = NIO_UDP
+            self._default_nio = NIOUDP
         else:
             self._default_nio = default_nio
         self._nio = None
 
-    @property
+    def id(self):
+        """
+        Returns an unique identifier for this port.
+
+        :returns: port identifier (integer)
+        """
+
+        return self._id
+
+    def setId(self, new_id):
+        """
+        Sets an identifier for this port.
+
+        :param new_id: node identifier (integer)
+        """
+
+        self._id = new_id
+
+    @classmethod
+    def reset(cls):
+        """
+        Reset the instance count.
+        """
+
+        cls._instance_count = 1
+
     def name(self):
         """
         Returns the name of this port.
@@ -52,8 +88,7 @@ class Port(object):
 
         return self._name
 
-    @name.setter
-    def name(self, new_name):
+    def setName(self, new_name):
         """
         Sets a new name for this port.
 
@@ -62,70 +97,133 @@ class Port(object):
 
         self._name = new_name
 
-    @property
-    def slot(self):
+    def status(self):
+        """
+        Returns the status of this port.
+        0 = stopped, 1 = active, 2 = suspended.
+
+        :returns: port status (integer)
+        """
+
+        return self._status
+
+    def setStatus(self, status):
+        """
+        Sets a status for this port.
+        0 = stopped, 1 = active, 2 = suspended.
+
+        :param status: port status (integer)
+        """
+
+        self._status = status
+
+    def slotNumber(self):
         """
         Returns the slot number for this port.
 
         :returns: current slot number (integer)
         """
 
-        return self._slot
+        return self._slot_number
 
-    @slot.setter
-    def slot(self, slot):
+    def setSlotNumber(self, slot_number):
         """
         Sets the slot number for this port.
 
-        :param slot: new slot number (integer)
+        :param slot_number: new slot number (integer)
         """
 
-        self._slot = slot
+        self._slot_number = slot_number
 
-    @property
-    def port(self):
+    def portNumber(self):
         """
         Returns the port number for this port.
 
         :returns: current port number (integer)
         """
 
-        return self._port
+        return self._port_number
 
-    @port.setter
-    def port(self, port):
+    def setPortNumber(self, port_number):
         """
         Sets the port number for this port.
 
         :param port: new port number (integer)
         """
 
-        self._port = port
+        self._port_number = port_number
 
-    @property
-    def default_nio(self):
-
-        return self._default_nio
-
-    @property
-    def nio(self):
+    def defaultNio(self):
         """
-        Returns the NIO attached to this port.
+        Returns the default NIO for this port.
 
         :returns: NIO object
         """
 
+        return self._default_nio
+
+    def nio(self):
+        """
+        Returns the NIO attached to this port.
+
+        :returns: NIO instance
+        """
+
         return self._nio
 
-    @nio.setter
-    def nio(self, nio):
+    def setNio(self, nio):
         """
         Attach a NIO to this port.
 
-        :param nio: NIO object
+        :param nio: NIO instance
         """
 
         self._nio = nio
+
+    def linkId(self):
+        """
+        Returns the link id connected to this port.
+
+        :returns: link id (integer)
+        """
+
+        return self._link_id
+
+    def setLinkId(self, link_id):
+        """
+        Adds the link id connected to this port.
+
+        :param link_id: link id (integer)
+        """
+
+        self._link_id = link_id
+
+    def description(self):
+        """
+        Returns the text description of this port.
+
+        :returns: description
+        """
+
+        return self._description
+
+    def setDescription(self, description):
+        """
+        Adds a text description to this port.
+
+        :param description: description
+        """
+
+        self._description = description
+
+    def setFree(self):
+        """
+        Frees this port.
+        """
+
+        self._nio = None
+        self._link_id = None
+        self._description = ""
 
     def isFree(self):
         """
@@ -156,6 +254,49 @@ class Port(object):
         """
 
         return "Ethernet"
+
+    def data(self):
+        """
+        Returns the data associated with this port.
+
+        :returns: current port data (dictionary)
+        """
+
+        return self._data
+
+    def setData(self, new_data):
+        """
+        Sets data to be associated with this port.
+
+        :param new_data: new port data (dictionary)
+        """
+
+        self._data = new_data
+
+    def dump(self):
+        """
+        Returns a representation of this port.
+
+        :returns: dictionary
+        """
+
+        port = {"name": self._name,
+                "id": self._id}
+
+        if self._nio:
+            port["nio"] = str(self._nio)
+        if self._port_number != None:
+            port["port_number"] = self._port_number
+        if self._slot_number != None:
+            port["slot_number"] = self._slot_number
+        if self._stub:
+            port["stub"] = self._stub
+        if self._description:
+            port["description"] = self._description
+        if self._link_id != None:
+            port["link_id"] = self._link_id
+
+        return port
 
     def __str__(self):
 

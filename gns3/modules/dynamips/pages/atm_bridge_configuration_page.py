@@ -49,7 +49,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         """
         Loads a selected mapping from the tree widget.
 
-        :param item: selected QTreeWidgetItem object
+        :param item: selected QTreeWidgetItem instance
         :param column: ignored
         """
 
@@ -123,8 +123,8 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
             # before we delete that mapping.
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if (node_port.port == ethernet_port or node_port.port == atm_port) and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.port))
+                if (node_port.portNumber() == ethernet_port or node_port.portNumber() == atm_port) and not node_port.isFree():
+                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
                     return
 
             del self.mapping[ethernet_port]
@@ -135,7 +135,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         Loads the ATM bridge settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -143,7 +143,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         self._mapping = {}
         self._node = node
 
-        for ethernet_port, destination in settings["mapping"].items():
+        for ethernet_port, destination in settings["mappings"].items():
             item = QtGui.QTreeWidgetItem(self.uiMappingTreeWidget)
             item.setText(0, ethernet_port)
             item.setText(1, destination)
@@ -158,7 +158,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         Saves the ATM bridge settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -167,4 +167,4 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         if "name" in settings:
             del settings["name"]
 
-        settings["mapping"] = self._mapping.copy()
+        settings["mappings"] = self._mapping.copy()

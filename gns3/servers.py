@@ -19,6 +19,7 @@
 Keeps track of all the local and remote servers and their settings.
 """
 
+import sys
 from .qt import QtCore
 from .websocket_client import WebSocketClient
 
@@ -32,6 +33,8 @@ class Servers(object):
 
         self._local_server = None
         self._remote_servers = {}
+        self._local_server_path = ""
+        self._local_server_proccess = QtCore.QProcess()
         self._loadSettings()
 
     def _loadSettings(self):
@@ -46,7 +49,8 @@ class Servers(object):
         # set the local server
         local_server_host = settings.value("local_server_host", "127.0.0.1")
         local_server_port = settings.value("local_server_port", 8000, type=int)
-        self.setLocalServer(local_server_host, local_server_port)
+        local_server_path = settings.value("local_server_path", "")
+        self.setLocalServer(local_server_path, local_server_host, local_server_port)
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -73,6 +77,7 @@ class Servers(object):
         if self._local_server:
             settings.setValue("local_server_host", self._local_server.host)
             settings.setValue("local_server_port", self._local_server.port)
+            settings.setValue("local_server_path", self._local_server_path)
 
         # save the remote servers
         settings.beginWriteArray("remote", len(self._remote_servers))
@@ -85,10 +90,47 @@ class Servers(object):
         settings.endArray()
         settings.endGroup()
 
-    def setLocalServer(self, host, port):
+    def localServerPath(self):
+        """
+        Returns the local server path.
+
+        :returns: path to local server program.
+        """
+
+        return self._local_server_path
+
+    def startLocalServer(self, path, host, port):
+        """
+        Starts the local server process.
+        """
+
+        # start the server, use python on all platform but Windows (in release mode)
+        if sys.platform.startswith('win') and path.split('.')[-1] == 'exe':
+            self._local_server_proccess.start('"' + path + '"', ['--host', host, '--port', str(port)])
+        elif hasattr(sys, "frozen"):
+            self._local_server_proccess.start('python3', [path, '--host', host, '--port', str(port)])
+        else:
+            self._local_server_proccess.start(sys.executable, [path, '--host=' + host, '--port=' + str(port)])
+
+        if self._local_server_proccess.waitForStarted() == False:
+            return False
+        return True
+
+    def stopLocalServer(self, wait=False):
+
+        if self._local_server and self._local_server.connected():
+            self._local_server.close_connection()
+        if self._local_server_proccess.state() == QtCore.QProcess.Running:
+            self._local_server_proccess.terminate()
+            if wait:
+                self._local_server_proccess.waitForFinished()
+                self._local_server_proccess.close()
+
+    def setLocalServer(self, path, host, port):
         """
         Sets the local server.
 
+        :param path: path to the local server
         :param host: host or address of the server
         :param port: port of the server (integer)
         """
@@ -96,9 +138,10 @@ class Servers(object):
         if self._local_server:
             if self._local_server.host == host and self._local_server.port == port:
                 return
-            elif self._local_server.connected:
-                self._local_server.close()
+            if self._local_server.connected():
+                self._local_server.close_connection()
 
+        self._local_server_path = path
         url = "ws://{host}:{port}".format(host=host, port=port)
         self._local_server = WebSocketClient(url)
 
@@ -106,7 +149,7 @@ class Servers(object):
         """
         Returns the local server.
 
-        :returns: local server (object)
+        :returns: Server instance
         """
 
         return self._local_server
@@ -133,7 +176,7 @@ class Servers(object):
 
         for server_id, server in self._remote_servers.copy().items():
             if not server_id in servers:
-                if server.connected:
+                if server.connected():
                     server.close()
                 del self._remote_servers[server_id]
 
@@ -168,10 +211,10 @@ class Servers(object):
         Disconnects all servers (local and remote).
         """
 
-        if self._local_server.connected:
+        if self._local_server.connected():
             self._local_server.close_connection()
         for server in self._remote_servers:
-            if server.connected:
+            if server.connected():
                 server.close_connection()
 
     @staticmethod

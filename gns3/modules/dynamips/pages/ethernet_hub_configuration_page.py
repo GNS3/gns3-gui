@@ -39,7 +39,7 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         Loads the Ethernet hub settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -51,7 +51,7 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         Saves the Ethernet hub settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -66,9 +66,9 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         # before we delete it
         ports = node.ports()
         for port in ports:
-            if not port.isFree() and port.port > nbports:
+            if not port.isFree() and port.portNumber() > nbports:
                 self.loadSettings(settings, node)
-                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port))
+                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port.name()))
                 raise ConfigurationError()
 
         settings["ports"] = []

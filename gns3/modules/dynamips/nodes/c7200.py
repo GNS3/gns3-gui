@@ -26,22 +26,32 @@ class C7200(Router):
     """
     Dynamips c7200 router.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
-    def __init__(self, server):
-        Router.__init__(self, server, platform="c7200")
+    def __init__(self, module, server, npe="npe-400"):
+        Router.__init__(self, module, server, platform="c7200")
 
         self._platform_settings = {"ram": 256,
                                    "nvram": 128,
                                    "disk0": 64,
                                    "disk1": 0,
-                                   "npe": "npe-400",
+                                   "npe": npe,
                                    "midplane": "vxr",
                                    "clock_divisor": 4}
 
+        # first slot is a mandatory Input/Output controller (based on NPE type)
+        if npe == "npe-g2":
+            self._platform_settings["slot0"] = "C7200-IO-GE-E"
+        else:
+            self._platform_settings["slot0"] = "C7200-IO-2FE"
+
         # merge platform settings with the generic ones
         self._settings.update(self._platform_settings)
+
+        # save the default settings
+        self._defaults = self._settings.copy()
 
     def __str__(self):
 

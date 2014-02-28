@@ -26,11 +26,12 @@ class C1700(Router):
     """
     Dynamips c1700 router.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
-    def __init__(self, server):
-        Router.__init__(self, server, platform="c1700")
+    def __init__(self, module, server, chassis="1720"):
+        Router.__init__(self, module, server, platform="c1700")
 
         self._platform_settings = {"ram": 64,
                                    "nvram": 32,
@@ -38,10 +39,18 @@ class C1700(Router):
                                    "disk1": 0,
                                    "chassis": "1720",
                                    "iomem": 15,
-                                   "clock_divisor": 8}
+                                   "clock_divisor": 8,
+                                   "slot0": "C1700-MB-1FE"}
+
+        # set the default adapter for slot 1 for these chassis
+        if chassis in ['1751', '1760']:
+            self._platform_settings["slot1"] = "C1700-MB-WIC1"
 
         # merge platform settings with the generic ones
         self._settings.update(self._platform_settings)
+
+        # save the default settings
+        self._defaults = self._settings.copy()
 
     def __str__(self):
 

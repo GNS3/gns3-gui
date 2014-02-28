@@ -1,0 +1,87 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2014 GNS3 Technologies Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Thread to repeatedly try to connect to a network resource.
+"""
+
+import socket
+import time
+from ..qt import QtCore
+
+
+class WaitForConnectionThread(QtCore.QThread):
+    """
+    Thread to wait for a connection.
+
+    :param host: destination host or IP address
+    :param port: destination port
+    """
+
+    # signals to update the progress dialog.
+    error = QtCore.pyqtSignal(str)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
+
+    def __init__(self, host, port):
+
+        QtCore.QThread.__init__(self)
+        self._host = host
+        self._port = port
+
+    def run(self):
+        """
+        Thread starting point.
+        """
+
+        self._is_running = True
+        connection_success = False
+        begin = time.time()
+
+        # try to connect for 10 seconds
+        while(time.time() - begin < 10.0):
+            if not self._is_running:
+                return
+            time.sleep(0.01)
+            sock = None
+            try:
+                sock = socket.create_connection((self._host, self._port), timeout=10)
+            except socket.error as e:
+                last_exception = e
+                continue
+            finally:
+                if sock:
+                    sock.close()
+            connection_success = True
+            break
+
+        if not connection_success:
+            # let the GUI know about the connection was unsuccessful and finish the thread
+            self.error.emit("Could not connect to {} on port {}: {}".format(self._host,
+                                                                            self._port,
+                                                                            last_exception))
+            return
+
+        # connection has been successful, let's inform the GUI before the thread exits
+        self.completed.emit()
+
+    def stop(self):
+        """
+        Stops this thread as soon as possible.
+        """
+
+        self._is_running = False

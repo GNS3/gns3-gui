@@ -22,7 +22,7 @@ Interface for UNIX NIOs (Unix based OSes only).
 from .nio import NIO
 
 
-class NIO_UNIX(NIO):
+class NIOUNIX(NIO):
     """
     UNIX NIO.
 
@@ -40,8 +40,7 @@ class NIO_UNIX(NIO):
 
         return "NIO_UNIX"
 
-    @property
-    def local_file(self):
+    def localFile(self):
         """
         Returns the local UNIX socket.
 
@@ -50,8 +49,7 @@ class NIO_UNIX(NIO):
 
         return self._local_file
 
-    @property
-    def remote_file(self):
+    def remoteFile(self):
         """
         Returns the remote UNIX socket.
 

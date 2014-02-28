@@ -16,32 +16,42 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-NIO (Network Input/Output) for UDP tunnel connections.
+NIO (Network Input/Output) for UDP tunnel connections (port is chosen automatically in a defined range)
 """
 
 from .nio import NIO
 
 
-class NIOUDP(NIO):
+#TODO: finish this.
+class NIOUDPAuto(NIO):
     """
-    NIO UDP.
+    NIO UDP Auto.
 
-    :param lport: local port number
-    :param rhost: remote address/host
-    :param rport: remote port number
+    :param laddr: local address
+    :param lport_start: start local port range
+    :param lport_end: end local port range
     """
 
-    def __init__(self, lport, rhost, rport):
+    def __init__(self, laddr, lport_start, lport_end):
 
         NIO.__init__(self)
 
-        self._lport = lport
-        self._rhost = rhost
-        self._rport = rport
+        self._laddr = laddr
+        self._lport_start = lport_start
+        self._lport_end = lport_end
 
     def __str__(self):
 
-        return "NIO_UDP"
+        return "NIO_UDP_Auto"
+
+    def laddr(self):
+        """
+        Returns the local address
+
+        :returns: local address
+        """
+
+        return self._laddr
 
     def lport(self):
         """
@@ -52,14 +62,14 @@ class NIOUDP(NIO):
 
         return self._lport
 
-    def rhost(self):
+    def raddr(self):
         """
-        Returns the remote host
+        Returns the remote address
 
-        :returns: remote address/host
+        :returns: remote address
         """
 
-        return self._rhost
+        return self._raddr
 
     def rport(self):
         """

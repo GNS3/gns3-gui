@@ -58,21 +58,31 @@ def main():
 
     # default logging level
     logging.basicConfig(level=logging.INFO)
-    app = QtGui.QApplication(sys.argv)
-
-    # this info is necessary for QSettings
-    app.setOrganizationName("GNS3")
-    app.setOrganizationDomain("gns3.net")
-    app.setApplicationName("GNS3")
 
     # don't use the registry to store settings on Windows
     # because we don't like it!
     if sys.platform.startswith('win'):
         QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
 
-    mainwindow = MainWindow.instance()
-    mainwindow.show()
-    app.exec_()
+    exit_code = MainWindow.exit_code_reboot
+    while exit_code == MainWindow.exit_code_reboot:
+
+        exit_code = 0
+        app = QtGui.QApplication(sys.argv)
+
+        # this info is necessary for QSettings
+        app.setOrganizationName("GNS3")
+        app.setOrganizationDomain("gns3.net")
+        app.setApplicationName("GNS3")
+        app.setApplicationVersion(__version__)
+
+        mainwindow = MainWindow.instance()
+        mainwindow.show()
+        exit_code = app.exec_()
+        delattr(MainWindow, "_instance")
+        app.deleteLater()
+
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
     main()

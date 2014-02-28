@@ -22,7 +22,7 @@ Interface for TAP NIOs (UNIX based OSes only).
 from .nio import NIO
 
 
-class NIO_TAP(NIO):
+class NIOTAP(NIO):
     """
     TAP NIO.
 
@@ -38,8 +38,7 @@ class NIO_TAP(NIO):
 
         return "NIO_TAP"
 
-    @property
-    def tap_device(self):
+    def tapDevice(self):
         """
         Returns the TAP device used by this NIO.
 

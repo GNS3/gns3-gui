@@ -120,7 +120,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -169,7 +169,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -229,7 +229,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -283,7 +283,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -340,7 +340,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -396,7 +396,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -448,7 +448,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             # check we can delete that NIO
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.name == nio and not node_port.isFree():
+                if node_port.name() == nio and not node_port.isFree():
                     QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
@@ -459,7 +459,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         Loads the cloud settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -507,7 +507,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         Saves the cloud settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 

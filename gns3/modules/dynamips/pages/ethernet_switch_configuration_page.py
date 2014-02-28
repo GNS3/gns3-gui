@@ -48,7 +48,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         """
         Loads a selected port from the tree widget.
 
-        :param item: selected QTreeWidgetItem object
+        :param item: selected QTreeWidgetItem instance
         :param column: ignored
         """
 
@@ -111,8 +111,8 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
             port = int(item.text(0))
             node_ports = self._node.ports()
             for node_port in node_ports:
-                if node_port.port == port and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(port))
+                if node_port.portNumber() == port and not node_port.isFree():
+                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
                     return
             del self._ports[port]
             self.uiPortsTreeWidget.takeTopLevelItem(self.uiPortsTreeWidget.indexOfTopLevelItem(item))
@@ -127,7 +127,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         Loads the Ethernet switch settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 
@@ -153,7 +153,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         Saves the Ethernet switch settings.
 
         :param settings: the settings (dictionary)
-        :param node: Node object
+        :param node: Node instance
         :param group: indicates the settings apply to a group
         """
 

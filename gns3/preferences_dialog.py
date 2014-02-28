@@ -22,6 +22,7 @@ Dialog to load module and built-in preference pages.
 from .qt import QtCore, QtGui
 from .ui.preferences_dialog_ui import Ui_PreferencesDialog
 from .pages.server_preferences_page import ServerPreferencesPage
+from .pages.general_preferences_page import GeneralPreferencesPage
 from .modules.dynamips import Dynamips
 
 
@@ -50,7 +51,16 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         Loads all preference pages (built-ins and from modules).
         """
 
-        # load servers page
+        # load general settings pages
+        general_page = GeneralPreferencesPage()
+        general_page.loadPreferences()
+        name = general_page.windowTitle()
+        item = QtGui.QListWidgetItem(name, self.uiListWidget)
+        item.setData(QtCore.Qt.UserRole, general_page)
+        self.uiStackedWidget.addWidget(general_page)
+        self._items.append(item)
+
+        # load server settings page
         servers_page = ServerPreferencesPage()
         servers_page.loadPreferences()
         name = servers_page.windowTitle()

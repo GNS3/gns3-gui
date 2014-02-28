@@ -26,22 +26,30 @@ class C3600(Router):
     """
     Dynamips c3600 router.
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     """
 
-    def __init__(self, server):
-        Router.__init__(self, server, platform="c3600")
+    def __init__(self, module, server, chassis="3640"):
+        Router.__init__(self, module, server, platform="c3600")
 
         self._platform_settings = {"ram": 128,
                                    "nvram": 128,
                                    "disk0": 0,
                                    "disk1": 0,
-                                   "chassis": "3640",
+                                   "chassis": chassis,
                                    "iomem": 5,
                                    "clock_divisor": 4}
 
+        # chassis 3660 has a default adapter
+        if chassis == "3660":
+            self._platform_settings["slot0"] = "Leopard-2FE"
+
         # merge platform settings with the generic ones
         self._settings.update(self._platform_settings)
+
+        # save the default settings
+        self._defaults = self._settings.copy()
 
     def __str__(self):
 

@@ -21,6 +21,7 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 """
 
 from gns3.node import Node
+from ..settings import PLATFORMS_DEFAULT_RAM
 from ..adapters import ADAPTER_MATRIX
 from ..wics import WIC_MATRIX
 
@@ -32,18 +33,22 @@ class Router(Node):
     """
     Dynamips router (client implementation).
 
+    :param module: parent module for this node
     :param server: GNS3 server instance
     :param platform: c7200, c3745, c3725, c3600, c2691, c2600 or c1700
     """
 
-    def __init__(self, server, platform="c7200"):
-        Node.__init__(self)
+    def __init__(self, module, server, platform="c7200"):
+        Node.__init__(self, server)
 
         log.info("router {} is being created".format(platform))
-        self._server = server
         self._defaults = {}
         self._ports = []
         self._router_id = None
+        self._inital_settings = None
+        self._idlepcs = []
+        self._module = module
+        self._loading = False
         self._settings = {"name": "",
                           "platform": platform,
                           "image": "",
@@ -55,7 +60,7 @@ class Router(Node):
                           "idlepc": "",
                           "idlemax": 1500,
                           "idlesleep": 30,
-                          "exec_area": None,
+                          "exec_area": 64,
                           "jit_sharing_group": None,
                           "disk0": 0,
                           "disk1": 0,
@@ -63,7 +68,7 @@ class Router(Node):
                           "console": None,
                           "aux": None,
                           "mac_addr": None,
-                          "system_id": None,
+                          "system_id": "FTX0945W0MY",
                           "slot0": None,
                           "slot1": None,
                           "slot2": None,
@@ -75,77 +80,77 @@ class Router(Node):
                           "wic1": None,
                           "wic2": None}
 
-    def _addAdapterPorts(self, adapter, slot_id):
+    def _addAdapterPorts(self, adapter, slot_number):
         """
         Adds ports based on what adapter is inserted in which slot.
 
         :param adapter: adapter name
-        :param slot_id: slot identifier (integer)
+        :param slot_number: slot number (integer)
         """
 
         nb_ports = ADAPTER_MATRIX[adapter]["nb_ports"]
-        for port_id in range(0, nb_ports):
+        for port_number in range(0, nb_ports):
             port = ADAPTER_MATRIX[adapter]["port"]
             if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
                 # these chassis show their interface without a slot number
-                port_name = port.longNameType() + str(port_id)
+                port_name = port.longNameType() + str(port_number)
             else:
-                port_name = port.longNameType() + str(slot_id) + "/" + str(port_id)
+                port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
             new_port = port(port_name)
-            new_port.slot = slot_id
-            new_port.port = port_id
+            new_port.setPortNumber(port_number)
+            new_port.setSlotNumber(slot_number)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def _removeAdapterPorts(self, slot_id):
+    def _removeAdapterPorts(self, slot_number):
         """
         Removes ports when an adapter is removed from a slot.
 
-        :param slot_id: slot identifier (integer)
+        :param slot_number: slot number (integer)
         """
 
         for port in self._ports.copy():
-            if port.slot == slot_id:
+            if port.slotNumber() == slot_number:
                 self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name))
+                log.debug("port {} has been removed".format(port.name()))
 
-    def _addWICPorts(self, wic, wic_slot_id):
+    def _addWICPorts(self, wic, wic_slot_number):
         """
         Adds ports based on what WIC is inserted in which slot.
 
         :param wic: WIC name
-        :param wic_slot_id: WIC slot identifier (integer)
+        :param wic_slot_number: WIC slot number (integer)
         """
 
         nb_ports = WIC_MATRIX[wic]["nb_ports"]
-        base = 16 * (wic_slot_id + 1)
-        for port_id in range(0, nb_ports):
+        base = 16 * (wic_slot_number + 1)
+        for port_number in range(0, nb_ports):
             port = WIC_MATRIX[wic]["port"]
-            port_name = port.longNameType() + str(base + port_id)
+            # Dynamips WICs port number start on a multiple of 16.
+            port_name = port.longNameType() + str(base + port_number)
             new_port = port(port_name)
+            new_port.setPortNumber(base + port_number)
             # WICs are always in adapter slot 0.
-            new_port.slot = 0
-            # Dynamips WICs slot IDs start on a multiple of 16.
-            new_port.port = base + port_id
+            new_port.setslotNumber(0)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def _removeWICPorts(self, wic, wic_slot_id):
+    def _removeWICPorts(self, wic, wic_slot_number):
         """
         Removes ports when a WIC is removed from a slot.
 
-        :param wic_slot_id: WIC slot identifier (integer)
+        :param wic_slot_number: WIC slot identifier (integer)
         """
 
         wic_ports_to_delete = []
         nb_ports = WIC_MATRIX[wic]["nb_ports"]
-        base = 16 * (wic_slot_id + 1)
-        for port_id in range(0, nb_ports):
-            wic_ports_to_delete.append(base + port_id)
+        base = 16 * (wic_slot_number + 1)
+        for port_number in range(0, nb_ports):
+            wic_ports_to_delete.append(base + port_number)
         for port in self._ports.copy():
-            if port.slot == 0 and port.port in wic_ports_to_delete:
+            if port.slotNumber() == 0 and port.portNumber() in wic_ports_to_delete:
                 self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name))
+                log.debug("port {} has been removed".format(port.name()))
 
     def _updateWICNumbering(self):
         """
@@ -155,38 +160,41 @@ class Router(Node):
 
         wic_ethernet_port_count = 0
         wic_serial_port_count = 0
-        for wic_slot_id in range(0, 3):
-            base = 16 * (wic_slot_id + 1)
-            wic_slot = "wic" + str(wic_slot_id)
+        for wic_slot_number in range(0, 3):
+            base = 16 * (wic_slot_number + 1)
+            wic_slot = "wic" + str(wic_slot_number)
             if self._settings[wic_slot]:
                 wic = self._settings[wic_slot]
                 nb_ports = WIC_MATRIX[wic]["nb_ports"]
-                for port_id in range(0, nb_ports):
+                for port_number in range(0, nb_ports):
                     for port in self._ports:
-                        if port.slot == 0 and port.port == base + port_id:
+                        if port.slotNumber() == 0 and port.portNumber() == base + port_number:
                             if port.linkType() == "Serial":
-                                wic_port_id = wic_serial_port_count
+                                wic_port_number = wic_serial_port_count
                                 wic_serial_port_count += 1
                             else:
-                                wic_port_id = wic_ethernet_port_count
+                                wic_port_number = wic_ethernet_port_count
                                 wic_ethernet_port_count += 1
-                            old_name = port.name
+                            old_name = port.name()
                             if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
                                 # these chassis show their interface without a slot number
-                                port.name = port.longNameType() + str(wic_port_id)
+                                port.setName(port.longNameType() + str(wic_port_number))
                             else:
-                                port.name = port.longNameType() + "0/" + str(wic_port_id)
-                            log.debug("port {} renamed to {}".format(old_name, port.name))
+                                port.setName(port.longNameType() + "0/" + str(wic_port_number))
+                            log.debug("port {} renamed to {}".format(old_name, port.name()))
 
     def delete(self):
         """
         Deletes this router.
         """
 
-        log.debug("router {} is being deleted: {}".format(self.name()))
+        log.debug("router {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        self._server.send_message("dynamips.vm.delete", {"id": self._router_id}, self._deleteCallback)
+        if self._router_id and self._server.connected():
+            self._server.send_message("dynamips.vm.delete", {"id": self._router_id}, self._deleteCallback)
+        else:
+            self.delete_signal.emit()
 
     def _deleteCallback(self, result, error=False):
         """
@@ -203,25 +211,17 @@ class Router(Node):
             log.info("router {} has been deleted".format(self.name()))
             self.delete_signal.emit()
 
-    def setup(self, image, ram, name=None):
+    def setup(self, image, ram, name=None, initial_settings={}):
         """
         Setups this router.
 
         :param image: IOS image path
         :param ram: amount of RAM
         :param name: optional name for this router
+        :param initial_settings: other additional and not mandatory settings
         """
 
-        #self._settings["image"] = ios_image["path"]
-        #self._settings["ram"] = ios_image["ram"]
-        #self._settings["idlepc"] = ios_image["idlepc"]
-        #TODO: handle startup-config
-        #if "chassis" in self._settings:
-        #    self._settings["chassis"] = ios_image["chassis"]
-
         platform = self._settings["platform"]
-        #image = self._settings["image"]
-        #ram = self._settings["ram"]
 
         # Minimum settings to send to the server in order
         # to create a new router
@@ -229,15 +229,26 @@ class Router(Node):
                   "ram": ram,
                   "image": image}
 
-        # A name for this router is optional, the server
+        # add some initial settings
+        if "console" in initial_settings:
+            params["console"] = self._settings["console"] = initial_settings.pop("console")
+        if "aux" in initial_settings:
+            params["aux"] = self._settings["aux"] = initial_settings.pop("aux")
+        if "mac_addr" in initial_settings:
+            params["mac_addr"] = self._settings["mac_addr"] = initial_settings.pop("mac_addr")
+
+        # other initial settings will be applied when the router has been created
+        if initial_settings:
+            self._inital_settings = initial_settings
+
+        # a name for this router is optional, the server
         # will create one if there is no name set.
         if name:
-            self._settings["name"] = name
-            params["name"] = name
+            params["name"] = self._settings["name"] = name
 
         self._server.send_message("dynamips.vm.create", params, self._setupCallback)
 
-    def _setupCallback(self, response, error=False):
+    def _setupCallback(self, result, error=False):
         """
         Callback for setup.
 
@@ -246,28 +257,31 @@ class Router(Node):
         """
 
         if error:
-            #TODO: send errors to the GUI using a signal.
-            print(response)
+            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
             return
 
-        self._router_id = response["id"]
+        self._router_id = result["id"]
 
         # update the settings using the defaults sent by the server
-        self._defaults = response.copy()
-        for name, value in response.items():
+        for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
-                log.info("router setting up and updating {} from {} to {}".format(name, self._settings[name], value))
+                log.info("router setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
                 self._settings[name] = value
 
         # insert default adapters
         for name, value in self._settings.items():
             if name.startswith("slot") and value:
-                slot_id = int(name[-1])
+                slot_number = int(name[-1])
                 adapter = value
-                self._addAdapterPorts(adapter, slot_id)
+                self._addAdapterPorts(adapter, slot_number)
 
-        # let the GUI knows about this router name
-        self.newname_signal.emit(self._settings["name"])
+        # update the node with setup initial settings if any
+        if self._inital_settings:
+            self.update(self._inital_settings)
+        else:
+            self.setInitialized(True)
+            self.created_signal.emit(self.id())
 
     def update(self, new_settings):
         """
@@ -297,31 +311,41 @@ class Router(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
             return
 
+        updated = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
-                log.info("{}: updating {} from {} to {}".format(self.name(), name, self._settings[name], value))
+                log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                updated = True
                 if name.startswith("slot"):
                     # add or remove adapters ports
-                    slot_id = int(name[-1])
+                    slot_number = int(name[-1])
                     if value:
                         adapter = value
                         if adapter != self._settings[name]:
-                            self._removeAdapterPorts(slot_id)
-                        self._addAdapterPorts(adapter, slot_id)
+                            self._removeAdapterPorts(slot_number)
+                        self._addAdapterPorts(adapter, slot_number)
                     elif self._settings[name]:
-                        self._removeAdapterPorts(slot_id)
+                        self._removeAdapterPorts(slot_number)
                 if name.startswith("wic"):
                     # create or remove WIC ports
-                    wic_slot_id = int(name[-1])
+                    wic_slot_number = int(name[-1])
                     if value:
                         wic = value
                         if self._settings[name] and wic != self._settings[name]:
-                            self._removeWICPorts(self._settings[name], wic_slot_id)
-                        self._addWICPorts(wic, wic_slot_id)
+                            self._removeWICPorts(self._settings[name], wic_slot_number)
+                        self._addWICPorts(wic, wic_slot_number)
                     elif self._settings[name]:
-                        self._removeWICPorts(self._settings[name], wic_slot_id)
+                        self._removeWICPorts(self._settings[name], wic_slot_number)
                 self._settings[name] = value
         self._updateWICNumbering()
+
+        if self._inital_settings and not self._loading:
+            self.setInitialized(True)
+            self.created_signal.emit(self.id())
+            self._inital_settings = None
+
+        if updated:
+            self.updated_signal.emit()
 
     def start(self):
         """
@@ -392,13 +416,92 @@ class Router(Node):
             log.info("{} has suspended".format(self.name()))
             self.suspended_signal.emit()
 
-    def allocateUDPPort(self):
+    def reload(self):
+        """
+        Reloads this router.
+        """
+
+        log.debug("{} is being reloaded".format(self.name()))
+        self._server.send_message("dynamips.vm.reload", {"id": self._router_id}, self._reloadCallback)
+
+    def _reloadCallback(self, result, error=False):
+        """
+        Callback for reload.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+        else:
+            log.info("{} has reloaded".format(self.name()))
+
+    def computeIdlepcs(self):
+        """
+        Get idle-pc proposals
+        """
+
+        log.debug("{} is requesting idle-pc proposals".format(self.name()))
+        self._server.send_message("dynamips.vm.idlepcs", {"id": self._router_id}, self._computeIdlepcsCallback)
+
+    def _computeIdlepcsCallback(self, result, error=False):
+        """
+        Callback for computeIdlepc.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while computing idle-pc proposals {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+        else:
+            log.info("{} has received idle-pc proposals".format(self.name()))
+            self._idlepcs = result["idlepcs"]
+            self.idlepc_signal.emit()
+
+    def idlepcs(self):
+        """
+        Returns previously computed idle-pc values.
+
+        :returns: idle-pc values (list)
+        """
+
+        return self._idlepcs
+
+    def idlepc(self):
+        """
+        Returns the current idle-pc value for this router.
+
+        :returns: idlepc value (string)
+        """
+
+        return self._settings["idlepc"]
+
+    def setIdlepc(self, idlepc):
+        """
+        Sets a new idle-pc value for this router.
+
+        :param idlepc: idlepc value (string)
+        """
+
+        params = {"id": self._router_id,
+                  "idlepc": idlepc}
+        log.debug("{} is updating settings: {}".format(self.name(), params))
+        self._server.send_message("dynamips.vm.update", params, self._updateCallback)
+        self._module.updateImageIdlepc(self._settings["image"], idlepc)
+
+    def allocateUDPPort(self, port_id):
         """
         Requests an UDP port allocation.
+
+        :param port_id: port identifier
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("dynamips.vm.allocate_udp_port", {"id": self._router_id}, self._allocateUDPPortCallback)
+        self._server.send_message("dynamips.vm.allocate_udp_port", {"id": self._router_id, "port_id": port_id}, self._allocateUDPPortCallback)
 
     def _allocateUDPPortCallback(self, result, error=False):
         """
@@ -412,24 +515,26 @@ class Router(Node):
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            port_id = result["port_id"]
             lhost = result["lhost"]
             lport = result["lport"]
-            log.info("{} has allocated UDP port {} for host {}".format(self.name(), lport, lhost))
-            self.allocate_udp_nio_signal.emit(self.id, lport, lhost)
+            log.debug("{} has allocated UDP port {} for host {}".format(self.name(), lport, lhost))
+            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport, lhost)
 
     def addNIO(self, port, nio):
         """
         Adds a new NIO on the specified port for this router.
 
-        :param port: Port object.
-        :param nio: NIO object.
+        :param port: Port instance
+        :param nio: NIO instance
         """
 
         nio_type = str(nio)
         params = {"id": self._router_id,
                   "nio": nio_type,
-                  "slot": port.slot,
-                  "port": port.port}
+                  "slot": port.slotNumber(),
+                  "port": port.portNumber(),
+                  "port_id": port.id()}
 
         self.addNIOInfo(nio, params)
         log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
@@ -444,26 +549,26 @@ class Router(Node):
         """
 
         if error:
-            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
+            log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
-            log.info("{} has added a new NIO: {}".format(self.name(), result))
-            self.nio_signal.emit(self.id)
+            log.debug("{} has added a new NIO: {}".format(self.name(), result))
+            self.nio_signal.emit(self.id(), result["port_id"])
 
     def deleteNIO(self, port):
         """
         Deletes an NIO from the specified port on this router.
 
-        :param port: Port object.
+        :param port: Port instance
         """
 
         params = {"id": self._router_id,
-                  "slot": port.slot,
-                  "port": port.port}
+                  "slot": port.slotNumber(),
+                  "port": port.portNumber()}
 
-        port.nio = None
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        self._server.send_message("dynamips.vm.delete_nio", params, self._deleteNIOCallback)
+        if self._server.connected():
+            self._server.send_message("dynamips.vm.delete_nio", params, self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
         """
@@ -473,7 +578,207 @@ class Router(Node):
         :param error: indicates an error (boolean)
         """
 
-        log.info("{} has deleted a NIO: {}".format(self.name(), result))
+        if error:
+            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+            return
+
+        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
+
+    def _slot_info(self):
+        """
+        Returns information about the slots/ports of this router.
+
+        :returns: formated string
+        """
+
+        slot_info = ""
+        for name, value in self._settings.items():
+            if name.startswith("slot") and value != None:
+                slot_number = int(name[-1])
+                adapter_name = value
+                nb_ports = ADAPTER_MATRIX[adapter_name]["nb_ports"]
+                if nb_ports == 1:
+                    port_string = ' port\n'
+                else:
+                    port_string = ' ports\n'
+
+                slot_info = slot_info + '   slot ' + str(slot_number) + ' hardware is ' + adapter_name + ' with ' + str(nb_ports) + port_string
+
+                port_names = {}
+                for port in self._ports:
+                    if port.slotNumber() == slot_number and port.portNumber() < 16:
+                        port_names[port.name()] = port
+                sorted_ports = sorted(port_names.keys())
+
+                for port_name in sorted_ports:
+                    port_info = port_names[port_name]
+                    if port_info.isFree():
+                        slot_info += '     ' + port_name + ' is empty\n'
+                    else:
+                        slot_info += '     ' + port_name + ' ' + port_info.description() + '\n'
+
+            if name.startswith("wic") and value != None:
+                wic_slot_number = int(name[-1])
+                wic_name = value
+                nb_ports = WIC_MATRIX[wic_name]["nb_ports"]
+                if nb_ports == 1:
+                    port_string = ' port\n'
+                else:
+                    port_string = ' ports\n'
+
+                slot_info = slot_info + "   " + wic_name + " installed in WIC slot " + str(wic_slot_number) + " with " + str(nb_ports) + port_string
+
+                base = 16 * (wic_slot_number + 1)
+                port_names = {}
+                for port_number in range(0, nb_ports):
+                    for port in self._ports:
+                        if port.slotNumber() == 0 and port.portNumber() == base + port_number:
+                            port_names[port.name()] = port
+                sorted_ports = sorted(port_names.keys())
+
+                for port_name in sorted_ports:
+                    port_info = port_names[port_name]
+                    if port_info.isFree():
+                        slot_info += '     ' + port_name + ' is empty\n'
+                    else:
+                        slot_info += '     ' + port_name + ' ' + port_info.description() + '\n'
+
+        return slot_info
+
+    def info(self):
+        """
+        Returns information about this router.
+
+        :returns: formated string
+        """
+
+        platform = self._settings["platform"]
+        router_specific_info = ""
+        if platform == "c7200":
+            router_specific_info = self._settings["midplane"] + " " + self._settings["npe"]
+            router_specific_info = router_specific_info.upper()
+
+        #get info about image and ghostios
+        image_info = '\n  Image is '
+#         if self.ghost_status == 2:
+#             #we are running on ghost IOS
+#             image_info = image_info + 'shared ' + self.ghost_file
+#         else:
+        image_info = image_info + self._settings["image"]
+
+        jitsharing_group_info = '  JIT blocks sharing group is '
+        if self._settings["jit_sharing_group"] != None:
+            jitsharing_group_info = jitsharing_group_info + str(self._settings["jit_sharing_group"])
+        else:
+            jitsharing_group_info = '  No JIT blocks sharing enabled'
+
+        #get info about idle-pc value
+        idlepc_info = ""
+        if not self._settings["idlepc"]:
+            idlepc_info = ' with no idlepc value'
+        else:
+            idlepc_info = ' with idlepc value of ' + self._settings["idlepc"]# + '\n  idlemax value is ' + str(self.idlemax) + ', idlesleep is ' + str(self.idlesleep) + ' ms'
+
+        #gather information about PA, their interfaces and connections
+        slot_info = self._slot_info()
+
+#         # Uptime of the router.
+#         def utimetotxt(utime):
+#             (zmin, zsec) = divmod(utime, 60)
+#             (zhur, zmin) = divmod(zmin, 60)
+#             (zday, zhur) = divmod(zhur, 24)
+#             utxt = ('%d %s, ' % (zday, 'days'  if (zday != 1) else 'day')  if (zday > 0) else '') + \
+#                    ('%d %s, ' % (zhur, 'hours' if (zhur != 1) else 'hour') if ((zhur > 0) or (zday > 0)) else '') + \
+#                    ('%d %s' % (zmin, 'mins'  if (zmin != 1) else 'min'))
+#             return utxt
+# 
+#         if (self.state == 'running'):
+#             txtuptime = '  Router running time is ' + utimetotxt((int(time.time()) - self.starttime) - self.waittime) + '\n'
+#         elif (self.state == 'suspended'):
+#             txtuptime = '  Router suspended time is ' + utimetotxt(int(time.time()) - self.suspendtime) + '\n'
+#         elif (self.state == 'stopped'):
+#             txtuptime = '  Router stopped time is ' + utimetotxt(int(time.time()) - self.stoptime) + '\n'
+#         else:
+        txtuptime = '  Router uptime is unknown\n'
+
+        self.state = "stopped"
+
+        #create final output, with proper indentation
+        return 'Router ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Dynamips emulated Cisco ' + platform + router_specific_info + ' with ' + \
+               str(self._settings["ram"]) + ' MB RAM\n' + txtuptime + '  Router\'s server runs on ' + self._server.host + ":" + str(self._server.port) + \
+               ', console is on port ' + str(self._settings["console"]) + ', aux is on port ' + str(self._settings["aux"]) + image_info + idlepc_info + '\n' + \
+               jitsharing_group_info + '\n  ' + str(self._settings["nvram"]) + ' KB NVRAM, ' + str(self._settings["disk0"]) + \
+               ' MB disk0 size, ' + str(self._settings["disk1"]) + ' MB disk1 size' + '\n' + slot_info
+
+    def dump(self):
+        """
+        Returns a representation of this router
+        (to be saved in a topology file).
+
+        :returns: representation of the node (dictionary)
+        """
+
+        router = {"id": self.id(),
+                  "type": self.__class__.__name__,
+                  "description": str(self),
+                  "properties": {},
+                  "server_id": self._server.id(),
+                  }
+
+        # add the properties
+        for name, value in self._settings.items():
+            if name in self._defaults and self._defaults[name] != value:
+                router["properties"][name] = value
+
+        # add the ports
+        if self._ports:
+            ports = router["ports"] = []
+            for port in self._ports:
+                ports.append(port.dump())
+
+        # handle the image path
+        # router["properties"]["image"]
+
+        return router
+
+    def load(self, node_info):
+        """
+        Loads a router representation
+        (from a topology file).
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        self.node_info = node_info
+        settings = node_info["properties"]
+        name = settings.pop("name")
+        image = settings.pop("image")
+        ram = settings.get("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
+        self.updated_signal.connect(self._updatePortSettings)
+        # block the created signal, it will be triggered when loading is completely done
+        self._loading = True
+        self.setup(image, ram, name, settings)
+
+    def _updatePortSettings(self):
+        """
+        Updates port settings when loading a topology.
+        """
+
+        # update the port with the correct names and IDs
+        if "ports" in self.node_info:
+            ports = self.node_info["ports"]
+            for topology_port in ports:
+                for port in self._ports:
+                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.slotNumber():
+                        port.setName(topology_port["name"])
+                        port.setId(topology_port["id"])
+
+        # now we can set the node has initialized and trigger the signal
+        self.setInitialized(True)
+        self.created_signal.emit(self.id())
+        self._inital_settings = None
+        self._loading = False
 
     def name(self):
         """
@@ -497,16 +802,34 @@ class Router(Node):
         """
         Returns all the ports for this router.
 
-        :returns: list of Port objects
+        :returns: list of Port instances
         """
 
         return self._ports
+
+    def console(self):
+        """
+        Returns the console port for this router.
+
+        :returns: port (integer)
+        """
+
+        return self._settings["console"]
+
+    def auxConsole(self):
+        """
+        Returns the auxiliary console port for this router.
+
+        :returns: port (integer)
+        """
+
+        return self._settings["aux"]
 
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node configurator.
 
-        :returns: QWidget object.
+        :returns: QWidget object
         """
 
         from ..pages.router_configuration_page import RouterConfigurationPage

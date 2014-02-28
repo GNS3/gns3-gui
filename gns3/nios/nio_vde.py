@@ -22,7 +22,7 @@ Interface for VDE (Virtual Distributed Ethernet) NIOs (Unix based OSes only).
 from .nio import NIO
 
 
-class NIO_VDE(NIO):
+class NIOVDE(NIO):
     """
     VDE NIO.
 
@@ -40,8 +40,7 @@ class NIO_VDE(NIO):
 
         return "NIO_VDE"
 
-    @property
-    def control_file(self):
+    def controlFile(self):
         """
         Returns the VDE control file.
 
@@ -50,8 +49,7 @@ class NIO_VDE(NIO):
 
         return self._control_file
 
-    @property
-    def local_file(self):
+    def localFile(self):
         """
         Returns the VDE local file.
 

@@ -36,6 +36,8 @@ class WebSocketClient(WebSocketBaseClient):
     :param url: websocket URL to connect to the server
     """
 
+    _instance_count = 1
+
     def __init__(self, url, protocols=None, extensions=None, heartbeat_freq=None,
                  ssl_options=None, headers=None):
 
@@ -45,6 +47,27 @@ class WebSocketClient(WebSocketBaseClient):
         self.callbacks = {}
         self._connected = False
 
+        # create an unique ID
+        self._id = WebSocketClient._instance_count
+        WebSocketClient._instance_count += 1
+
+    def id(self):
+        """
+        Returns this WebSocket identifier.
+
+        :returns: WebSocket identifier (integer)
+        """
+
+        return self._id
+
+    @classmethod
+    def reset(cls):
+        """
+        Reset the instance count.
+        """
+
+        cls._instance_count = 1
+
     def opened(self):
         """
         Called when the connection with the server is successful.
@@ -53,7 +76,14 @@ class WebSocketClient(WebSocketBaseClient):
         log.info("connected to {}:{}".format(self.host, self.port))
         self._connected = True
 
-    @property
+    def reconnect(self):
+        """
+        Reconnects to the server.
+        """
+
+        self.__init__(self.url)
+        self.connect()
+
     def connected(self):
         """
         Returns if the client is connected.
@@ -90,7 +120,7 @@ class WebSocketClient(WebSocketBaseClient):
         """
         Called when a new message has been received from the server.
 
-        :param message: message object
+        :param message: message instance
         """
 
         # TODO: WSAEWOULDBLOCK on Windows
@@ -130,6 +160,7 @@ class WebSocketClient(WebSocketBaseClient):
             # This is a JSON-RPC notification
             method = reply.get("method")
             params = reply.get("params")
+
             #TODO: handle notifications from servers
             print("This is a notification! {} {}".format(method, params))
 
@@ -141,6 +172,10 @@ class WebSocketClient(WebSocketBaseClient):
         :param params: params to send (dictionary)
         :param callback: callback method to call when the server replies.
         """
+
+        if not self.connected():
+            log.warning("connection with server {}:{} is down".format(self.host, self.port))
+            return
 
         request = jsonrpc.JSONRPCRequest(destination, params)
         self.callbacks[request.id] = callback
@@ -154,6 +189,10 @@ class WebSocketClient(WebSocketBaseClient):
         :param params: params to send (dictionary)
         """
 
+        if not self.connected():
+            log.warning("connection with server {}:{} is down".format(self.host, self.port))
+            return
+
         request = jsonrpc.JSONRPCNotification(destination, params)
         self.send(str(request))
 
@@ -163,6 +202,7 @@ class WebSocketClient(WebSocketBaseClient):
         the QSocketNotifier.
         """
 
+        self._connected = False
         WebSocketBaseClient.close_connection(self)
         self.fd_notifier.setEnabled(False)
 
@@ -175,3 +215,14 @@ class WebSocketClient(WebSocketBaseClient):
         if self.once() == False:
             log.warning("lost connection with server {}:{}".format(self.host, self.port))
             self.close_connection()
+
+    def dump(self):
+        """
+        Returns a representation of this server.
+
+        :returns: dictionary
+        """
+
+        return {"id": self._id,
+                "host": self.host,
+                "port": self.port}
