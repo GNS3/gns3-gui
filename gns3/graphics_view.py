@@ -33,6 +33,7 @@ from .topology import Topology
 from .ports.port import Port
 
 # link items
+from .items.link_item import LinkItem
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
 
@@ -308,7 +309,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         is_not_link = True
         item = self.itemAt(event.pos())
-        if item and isinstance(item, Link):
+        if item and isinstance(item, LinkItem):
             is_not_link = False
 
         if (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) or event.buttons() == QtCore.Qt.MidButton:
@@ -746,7 +747,7 @@ class GraphicsView(QtGui.QGraphicsView):
             node_item = NodeItem(node)
             dynamips.setupNode(node)
         except ModuleError as e:
-            QtGui.QMessageBox.critical(self, "Node", "Could not create node: {}".format(e))
+            QtGui.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
         node_item.setPos(self.mapToScene(pos))
         self.scene().addItem(node_item)

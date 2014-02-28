@@ -251,7 +251,7 @@ class Topology(object):
                 try:
                     node = dynamips.createNode(node_class)
                 except ModuleError as e:
-                    QtGui.QMessageBox.critical(main_window, "Node", "Could not create node: {}".format(e))
+                    QtGui.QMessageBox.critical(main_window, "Node creation", "{}".format(e))
                     return
 
                 node.setId(topology_node["id"])
