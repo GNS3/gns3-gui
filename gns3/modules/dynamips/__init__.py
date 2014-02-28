@@ -23,6 +23,7 @@ import socket
 from gns3.qt import QtCore
 from gns3.servers import Servers
 from ..module import Module
+from ..module_error import ModuleError
 from .nodes.router import Router
 from .nodes.c1700 import C1700
 from .nodes.c2600 import C2600
@@ -37,6 +38,9 @@ from .nodes.ethernet_hub import EthernetHub
 from .nodes.frame_relay_switch import FrameRelaySwitch
 from .nodes.atm_switch import ATMSwitch
 from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES, PLATFORMS_DEFAULT_RAM
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class Dynamips(Module):
@@ -142,6 +146,7 @@ class Dynamips(Module):
         :param server: WebSocketClient instance
         """
 
+        log.info("adding server {}:{} to Dynamips module".format(server.host, server.port))
         self._servers.append(server)
         self._sendSettings(server)
 
@@ -152,6 +157,7 @@ class Dynamips(Module):
         :param server: WebSocketClient instance
         """
 
+        log.info("removing server {}:{} from Dynamips module".format(server.host, server.port))
         self._servers.remove(server)
 
     def servers(self):
@@ -217,6 +223,7 @@ class Dynamips(Module):
         :param server: WebSocketClient instance
         """
 
+        log.info("sending Dynamips settings to server {}:{}".format(server.host, server.port))
         server.send_notification("dynamips.settings", self._settings)
 
     def createNode(self, node_class):
@@ -226,20 +233,24 @@ class Dynamips(Module):
         :param node_class: Node object
         """
 
+        log.info("creating node {}".format(node_class))
+
+        # allocate a server for the node
         servers = Servers.instance()
         server = servers.localServer()
-
         if not server.connected():
             try:
+                log.info("reconnecting to server {}:{}".format(server.host, server.port))
                 server.reconnect()
                 self._sendSettings(server)
             except socket.error as e:
-                print("COULD NOT CONNECT TO SERVER!!")
-                print(e)
-                return None
-
+                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
+                                                                                 server.port,
+                                                                                 e))
         if server not in self._servers:
             self.addServer(server)
+
+        # create an instance of the node class
         return node_class(self, server)
 
     def _allocateIOSImage(self, node):
@@ -262,12 +273,14 @@ class Dynamips(Module):
         :param node: Node instance
         """
 
+        log.info("configuring node {}".format(node))
+
         if isinstance(node, Router):
             ios_image = self._allocateIOSImage(node)
-            #TODO: raise exception
             if not ios_image:
-                return False
+                raise ModuleError("No IOS image found for platform {}".format(node.settings()["platform"]))
             settings = {}
+            # set initial settings like an idle-pc value
             if ios_image["idlepc"]:
                 settings["idlepc"] = ios_image["idlepc"]
             node.setup(ios_image["path"], ios_image["ram"], initial_settings=settings)
@@ -293,6 +306,7 @@ class Dynamips(Module):
         Resets the servers.
         """
 
+        log.info("Dynamips module reset")
         for server in self._servers:
             if server.connected():
                 server.send_notification("dynamips.reset")

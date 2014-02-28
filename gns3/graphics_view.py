@@ -27,6 +27,7 @@ from .node_configurator import NodeConfigurator
 from .link import Link
 from .node import Node
 from .modules.dynamips import Dynamips
+from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
 from .topology import Topology
 from .ports.port import Port
@@ -34,11 +35,6 @@ from .ports.port import Port
 # link items
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
-
-# ports
-#from .ports.ethernet_port import EthernetPort
-#from .ports.fastethernet_port import FastEthernetPort
-#from .ports.gigabitethernet_port import GigabitEthernetPort
 
 
 class GraphicsView(QtGui.QGraphicsView):
@@ -745,16 +741,16 @@ class GraphicsView(QtGui.QGraphicsView):
 
         #TODO: node setup management with other modules
         dynamips = Dynamips.instance()
-        node = dynamips.createNode(node_class)
-        if node == None:
-            #TODO: finish this
-            print("Could not create node")
+        try:
+            node = dynamips.createNode(node_class)
+            node_item = NodeItem(node)
+            dynamips.setupNode(node)
+        except ModuleError as e:
+            QtGui.QMessageBox.critical(self, "Node", "Could not create node: {}".format(e))
             return
-        node_item = NodeItem(node)
         node_item.setPos(self.mapToScene(pos))
         self.scene().addItem(node_item)
         x = node_item.pos().x() - (node_item.boundingRect().width() / 2)
         y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
         node_item.setPos(x, y)
-        dynamips.setupNode(node)
         self._topology.addNode(node)

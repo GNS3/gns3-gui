@@ -20,8 +20,12 @@ Keeps track of all the local and remote servers and their settings.
 """
 
 import sys
+import os
 from .qt import QtCore
 from .websocket_client import WebSocketClient
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class Servers(object):
@@ -104,13 +108,19 @@ class Servers(object):
         Starts the local server process.
         """
 
-        # start the server, use python on all platform but Windows (in release mode)
-        if sys.platform.startswith('win') and path.split('.')[-1] == 'exe':
-            self._local_server_proccess.start('"' + path + '"', ['--host', host, '--port', str(port)])
+        params = ['--host=' + host, '--port=' + str(port)]
+        # start the server, use Python on all platform but Windows (in release mode)
+        if sys.platform.startswith('win') and os.path.splitext(path)[1] == '.exe':
+            executable = '"' + path + '"'
         elif hasattr(sys, "frozen"):
-            self._local_server_proccess.start('python3', [path, '--host', host, '--port', str(port)])
+            executable = "python3"
+            params = [path] + params
         else:
-            self._local_server_proccess.start(sys.executable, [path, '--host=' + host, '--port=' + str(port)])
+            executable = sys.executable
+            params = [path] + params
+
+        log.info("starting local server process {} with {}".format(executable, params))
+        self._local_server_proccess.start(executable, params)
 
         if self._local_server_proccess.waitForStarted() == False:
             return False
@@ -121,6 +131,7 @@ class Servers(object):
         if self._local_server and self._local_server.connected():
             self._local_server.close_connection()
         if self._local_server_proccess.state() == QtCore.QProcess.Running:
+            log.info("stopping local server process")
             self._local_server_proccess.terminate()
             if wait:
                 self._local_server_proccess.waitForFinished()
@@ -140,10 +151,12 @@ class Servers(object):
                 return
             if self._local_server.connected():
                 self._local_server.close_connection()
+            log.info("local server connection {} unregistered".format(self._local_server.url))
 
         self._local_server_path = path
         url = "ws://{host}:{port}".format(host=host, port=port)
         self._local_server = WebSocketClient(url)
+        log.info("new local server connection {} registered".format(url))
 
     def localServer(self):
         """
@@ -166,6 +179,7 @@ class Servers(object):
         url = "ws://{server_socket}".format(server_socket=server_socket)
         server = WebSocketClient(url)
         self._remote_servers[server_socket] = server
+        log.info("new remote server connection {} registered".format(url))
 
     def updateRemoteServers(self, servers):
         """
@@ -178,6 +192,7 @@ class Servers(object):
             if not server_id in servers:
                 if server.connected():
                     server.close()
+                log.info("remote server connection {} unregistered".format(server.url))
                 del self._remote_servers[server_id]
 
         for server_id, server in servers.items():
@@ -189,6 +204,7 @@ class Servers(object):
             url = "ws://{host}:{port}".format(host=host, port=port)
             new_server = WebSocketClient(url)
             self._remote_servers[server_id] = new_server
+            log.info("new remote server connection {} registered".format(url))
 
     def remoteServers(self):
         """

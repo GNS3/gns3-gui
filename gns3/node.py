@@ -21,6 +21,9 @@ Base class for node classes.
 
 from .qt import QtCore
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class Node(QtCore.QObject):
     """
@@ -174,27 +177,58 @@ class Node(QtCore.QObject):
             params["rhost"] = nio.rhost()
             params["rport"] = nio.rport()
 
+            log.debug("creating {} for {} with lport={}, rhost={}, rport={}".format(nio,
+                                                                                    self.name(),
+                                                                                    nio.lport(),
+                                                                                    nio.rhost(),
+                                                                                    nio.rport()))
+
         elif nio_type == "NIO_GenericEthernet":
             # add NIO generic Ethernet param
             params["ethernet_device"] = nio.ethernetDevice()
+
+            log.debug("creating {} for {} with Ethernet device {}".format(nio,
+                                                                          self.name(),
+                                                                          nio.ethernetDevice()))
 
         elif nio_type == "NIO_LinuxEthernet":
             # add NIO Linux Ethernet param
             params["ethernet_device"] = nio.ethernetDevice()
 
+            log.debug("creating {} for {} with Ethernet device {}".format(nio,
+                                                                          self.name(),
+                                                                          nio.ethernetDevice()))
+
         elif nio_type == "NIO_TAP":
             # add NIO TAP param
             params["tap_device"] = nio.tapDevice()
+
+            log.debug("creating {} for {} with TAP device {}".format(nio,
+                                                                     self.name(),
+                                                                     nio.tapDevice()))
 
         elif nio_type == "NIO_UNIX":
             # add NIO UNIX params
             params["local_file"] = nio.localFile()
             params["remote_file"] = nio.remoteFile()
 
+            log.debug("creating {} for {} with local file '{}' and remote file '{}'".format(nio,
+                                                                                            nio.localFile(),
+                                                                                            nio.remoteFile()))
+
         elif nio_type == "NIO_VDE":
             # add NIO VDE params
             params["control_file"] = nio.controlFile()
             params["local_file"] = nio.localFile()
+
+            log.debug("creating {} for {} with control file '{}' and local file '{}'".format(nio,
+                                                                                             nio.controlFile(),
+                                                                                             nio.localFile()))
+        elif nio_type == "NIO_Null":
+
+            log.debug("creating {} for {} with identifier '{}'".format(nio,
+                                                                       self.name(),
+                                                                       nio.identifier()))
 
     def configPage(self):
         """

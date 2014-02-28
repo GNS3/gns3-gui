@@ -49,6 +49,11 @@ class Link(QtCore.QObject):
 
         super(Link, self).__init__()
 
+        log.info("adding link from {} {} to {} {}".format(source_node.name(),
+                                                          source_port.name(),
+                                                          destination_node.name(),
+                                                          destination_port.name()))
+
         # create an unique ID
         self._id = Link._instance_count
         Link._instance_count += 1
@@ -122,6 +127,11 @@ class Link(QtCore.QObject):
         Deletes this link.
         """
 
+        log.info("deleting link from {} {} to {} {}".format(self._source_node.name(),
+                                                            self._source_port.name(),
+                                                            self._destination_node.name(),
+                                                            self._destination_port.name()))
+
         # delete the NIOs on both source and destination nodes
         self._source_node.deleteNIO(self._source_port)
         self._source_port.setFree()
@@ -157,11 +167,19 @@ class Link(QtCore.QObject):
             # disconnect the signal has we don't expect new source UDP info for this link.
             self._source_node.allocate_udp_nio_signal.disconnect(self.UDPPortAllocatedSlot)
 
+            log.debug("{} has allocated UDP port {} for host {}".format(self._source_node.name(),
+                                                                        lport,
+                                                                        laddr))
+
         # check that the node is connected to this link as a destination
         elif node_id == self._destination_node.id() and port_id == self._destination_port.id():
             self._destination_udp = (lport, laddr)
             # disconnect the signal has we don't expect new source UDP info for this link.
             self._destination_node.allocate_udp_nio_signal.disconnect(self.UDPPortAllocatedSlot)
+
+            log.debug("{} has allocated UDP port {} for host {}".format(self._destination_node.name(),
+                                                                        lport,
+                                                                        laddr))
 
         if self._source_udp and self._destination_udp:
 
@@ -176,6 +194,8 @@ class Link(QtCore.QObject):
 
             self._source_udp = None
             self._destination_udp = None
+
+            log.debug("creating UDP tunnel from {}:{} to {}:{} ".format(laddr, lport, raddr, rport))
 
             # add the UDP NIOs to the nodes
             self._source_node.addNIO(self._source_port, self._source_nio)
@@ -236,6 +256,9 @@ class Link(QtCore.QObject):
         if not self._source_port.description():
             self._source_port.setDescription("connected to {name} on port {port}".format(name=self._destination_node.name(),
                                                                                          port=self._destination_port.name()))
+        log.debug("{} attached to {} on port {}".format(nio,
+                                                        self._source_node.name(),
+                                                        self._source_port.name()))
 
     def _addToDestinationPort(self, nio):
         """
@@ -249,6 +272,10 @@ class Link(QtCore.QObject):
         if not self._destination_port.description():
             self._destination_port.setDescription("connected to {name} on port {port}".format(name=self._source_node.name(),
                                                                                               port=self._source_port.name()))
+
+        log.debug("{} attached to {} on port {}".format(nio,
+                                                        self._destination_node.name(),
+                                                        self._destination_port.name()))
 
     def description(self):
         """

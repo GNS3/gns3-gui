@@ -38,6 +38,7 @@ class EthernetSwitch(Node):
     def __init__(self, module, server):
         Node.__init__(self, server)
 
+        log.info("Ethernet switch is being created")
         self._ethsw_id = None
         self._module = module
         self._ports = []
@@ -73,7 +74,7 @@ class EthernetSwitch(Node):
         self._ethsw_id = result["id"]
         self._settings["name"] = result["name"]
 
-        log.info("Ethernet switch {} has been created".format(result["name"]))
+        log.info("Ethernet switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
 
@@ -323,6 +324,7 @@ class EthernetSwitch(Node):
                 self._settings["ports"][port.portNumber()] = {"type": topology_port["type"],
                                                           "vlan": topology_port["vlan"]}
 
+        log.info("Ethernet switch {} is loading".format(name))
         self.setup(name)
 
     def name(self):

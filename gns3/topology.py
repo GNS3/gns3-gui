@@ -21,9 +21,10 @@ Handles the saving and loading of a topology.
 """
 
 #import networkx as nx
-from .qt import QtCore
+from .qt import QtGui, QtCore
 from .items.node_item import NodeItem
 from .modules.dynamips import Dynamips
+from .modules.module_error import ModuleError
 from .version import __version__
 
 import logging
@@ -130,6 +131,7 @@ class Topology(object):
         self._links.clear()
         self._nodes.clear()
         self._initialized_nodes.clear()
+        log.info("topology has been reset")
 
     def _dump_gui_settings(self, topology):
         """
@@ -220,9 +222,9 @@ class Topology(object):
         self._node_to_links_mapping = {}
         # first create a mapping node ID to links
         if "links" in topology["topology"]:
-            log.info("mapping nodes to links")
             links = topology["topology"]["links"]
             for topology_link in links:
+                log.debug("mapping node to link with ID {}".format(topology_link["id"]))
                 source_id = topology_link["source_node_id"]
                 destination_id = topology_link["destination_node_id"]
                 if source_id not in self._node_to_links_mapping:
@@ -235,14 +237,23 @@ class Topology(object):
         # then load the nodes
         if "nodes" in topology["topology"]:
             nodes = topology["topology"]["nodes"]
-            log.info("loading nodes")
             for topology_node in nodes:
+
+                log.debug("loading node with ID {}".format(topology_node["id"]))
+
+                #TODO: node setup management with other modules
 
                 # create the node
                 node_class = Dynamips.getNodeClass(topology_node["type"])
                 dynamips = Dynamips.instance()
+
                 # TODO: catch exception
-                node = dynamips.createNode(node_class)
+                try:
+                    node = dynamips.createNode(node_class)
+                except ModuleError as e:
+                    QtGui.QMessageBox.critical(main_window, "Node", "Could not create node: {}".format(e))
+                    return
+
                 node.setId(topology_node["id"])
 
                 # we want to know when the node has been created
@@ -273,7 +284,7 @@ class Topology(object):
         from .main_window import MainWindow
         view = MainWindow.instance().uiGraphicsView
 
-        log.info("node {} has initialized".format(node.name()))
+        log.debug("node {} has initialized".format(node.name()))
         self._initialized_nodes.append(node_id)
 
         if node_id in self._node_to_links_mapping:
@@ -286,7 +297,7 @@ class Topology(object):
                     source_node = self.getNode(source_node_id)
                     destination_node = self.getNode(destination_node_id)
 
-                    log.info("creating link from {} to {}".format(source_node.name(), destination_node.name()))
+                    log.debug("creating link from {} to {}".format(source_node.name(), destination_node.name()))
 
                     source_port = None
                     destination_port = None
@@ -304,7 +315,6 @@ class Topology(object):
                             break
 
                     if source_port and destination_port:
-                        log.info("connecting {} {} to {} {}".format(source_node.name(), source_port.name(), destination_node.name(), destination_port.name()))
                         view.addLink(source_node, source_port, destination_node, destination_port)
 
     def _reactivateUnsavedState(self):

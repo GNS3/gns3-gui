@@ -38,6 +38,7 @@ class FrameRelaySwitch(Node):
     def __init__(self, module, server):
         Node.__init__(self, server)
 
+        log.info("Frame-Relay switch is being created")
         self._frsw_id = None
         self._ports = []
         self._module = module
@@ -75,7 +76,7 @@ class FrameRelaySwitch(Node):
         self._frsw_id = result["id"]
         self._settings["name"] = result["name"]
 
-        log.info("Frame Relay switch {} has been created".format(result["name"]))
+        log.info("Frame Relay switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
 
@@ -144,6 +145,7 @@ class FrameRelaySwitch(Node):
         self._settings["mappings"] = new_settings["mappings"].copy()
 
         if updated:
+            log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
     def allocateUDPPort(self, port_id):
@@ -297,7 +299,7 @@ class FrameRelaySwitch(Node):
                 port.setPortNumber(topology_port["port_number"])
                 port.setId(topology_port["id"])
                 self._ports.append(port)
-
+        log.info("Frame-Relay switch {} is loading".format(name))
         self.setup(name)
 
     def name(self):

@@ -38,6 +38,7 @@ class ATMSwitch(Node):
     def __init__(self, module, server):
         Node.__init__(self, server)
 
+        log.info("ATM switch is being created")
         self._atmsw_id = None
         self._ports = []
         self._module = module
@@ -75,7 +76,7 @@ class ATMSwitch(Node):
         self._atmsw_id = result["id"]
         self._settings["name"] = result["name"]
 
-        log.info("ATM switch {} has been created".format(result["name"]))
+        log.info("ATM switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
 
@@ -142,6 +143,7 @@ class ATMSwitch(Node):
 
         self._settings["mappings"] = new_settings["mappings"].copy()
         if updated:
+            log.info("ATM switch {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
     def allocateUDPPort(self, port_id):
@@ -297,6 +299,7 @@ class ATMSwitch(Node):
                 self._ports.append(port)
                 self._settings["ports"].append(port.portNumber())
 
+        log.info("ATM switch {} is loading".format(name))
         self.setup(name)
 
     def name(self):

@@ -38,6 +38,7 @@ class EthernetHub(Node):
     def __init__(self, module, server):
         Node.__init__(self, server)
 
+        log.info("Ethernet hub is being created")
         self._ethhub_id = None
         self._module = module
         self._ports = []
@@ -73,7 +74,7 @@ class EthernetHub(Node):
         self._ethhub_id = result["id"]
         self._settings["name"] = result["name"]
 
-        log.info("Ethernet hub {} has been created".format(result["name"]))
+        log.info("Ethernet hub {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
 
@@ -137,6 +138,7 @@ class EthernetHub(Node):
 
         self._settings["ports"] = new_settings["ports"].copy()
         if updated:
+            log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
     def allocateUDPPort(self, port_id):
@@ -279,6 +281,7 @@ class EthernetHub(Node):
                 self._ports.append(port)
                 self._settings["ports"].append(port.portNumber())
 
+        log.info("Ethernet hub {} is loading".format(name))
         self.setup(name)
 
     def name(self):

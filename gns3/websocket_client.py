@@ -113,7 +113,7 @@ class WebSocketClient(WebSocketBaseClient):
         :param reason: reason (string)
         """
 
-        log.info("Connection closed down: {} (code {})".format(reason, code))
+        log.info("connection closed down: {} (code {})".format(reason, code))
         self._connected = False
 
     def received_message(self, message):

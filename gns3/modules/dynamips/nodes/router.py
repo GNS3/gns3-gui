@@ -281,6 +281,7 @@ class Router(Node):
             self.update(self._inital_settings)
         else:
             self.setInitialized(True)
+            log.debug("router {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
 
     def update(self, new_settings):
@@ -341,10 +342,11 @@ class Router(Node):
 
         if self._inital_settings and not self._loading:
             self.setInitialized(True)
+            log.info("router {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._inital_settings = None
-
-        if updated:
+        elif updated:
+            log.info("router {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
     def start(self):
@@ -737,7 +739,7 @@ class Router(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
-        # handle the image path
+        #TODO: handle the image path
         # router["properties"]["image"]
 
         return router
@@ -758,6 +760,7 @@ class Router(Node):
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
+        log.info("router {} is loading".format(name))
         self.setup(image, ram, name, settings)
 
     def _updatePortSettings(self):
@@ -776,6 +779,7 @@ class Router(Node):
 
         # now we can set the node has initialized and trigger the signal
         self.setInitialized(True)
+        log.info("router {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._inital_settings = None
         self._loading = False

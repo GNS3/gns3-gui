@@ -48,6 +48,7 @@ class Cloud(Node):
     def __init__(self, module, server):
         Node.__init__(self, server)
 
+        log.info("cloud is being created")
         # create an unique id and name
         self._name_id = Cloud._name_instance_count
         Cloud._name_instance_count += 1
@@ -94,6 +95,8 @@ class Cloud(Node):
 
         for interface in response:
             self._settings["interfaces"].append(interface)
+
+        log.info("cloud {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
 
@@ -242,6 +245,7 @@ class Cloud(Node):
 
         self._settings = new_settings.copy()
         if updated:
+            log.info("cloud {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
     def deleteNIO(self, port):
@@ -293,6 +297,7 @@ class Cloud(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         self.updated_signal.connect(self._updatePortSettings)
+        log.info("cloud {} is loading".format(name))
         self.setup(name, settings)
 
     def _updatePortSettings(self):
