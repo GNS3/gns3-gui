@@ -266,6 +266,9 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         # load the IOS image name without the full path
         self.uiIOSImageTextLabel.setText(os.path.basename(settings["image"]))
 
+        # load the startup-config
+        self.uiStartupConfigTextLabel.setText(settings["startup_config"])
+
         #TODO: startup-config setting
         #self.uiStartupConfigTextLabel.setText("None")
 

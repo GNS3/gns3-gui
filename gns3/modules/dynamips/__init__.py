@@ -20,6 +20,7 @@ Dynamips module implementation.
 """
 
 import socket
+import os
 from gns3.qt import QtCore
 from gns3.servers import Servers
 from ..module import Module
@@ -54,6 +55,7 @@ class Dynamips(Module):
         self._settings = {}
         self._ios_images = {}
         self._servers = []
+        self._working_dir = ""
 
         # load the settings and IOS images.
         self._loadSettings()
@@ -98,7 +100,7 @@ class Dynamips(Module):
             settings.setArrayIndex(index)
             path = settings.value("path", "")
             image = settings.value("image", "")
-            startup_config = settings.value("image", "")
+            startup_config = settings.value("startup_config", "")
             platform = settings.value("platform", "")
             chassis = settings.value("chassis", "")
             idlepc = settings.value("idlepc", "")
@@ -108,7 +110,7 @@ class Dynamips(Module):
             key = "{server}:{image}".format(server=server, image=image)
             self._ios_images[key] = {"path": path,
                                      "image": image,
-                                     "startup-config": startup_config,
+                                     "startup_config": startup_config,
                                      "platform": platform,
                                      "chassis": chassis,
                                      "idlepc": idlepc,
@@ -138,6 +140,26 @@ class Dynamips(Module):
             index += 1
         settings.endArray()
         settings.endGroup()
+
+    def setLocalBaseWorkingDir(self, path):
+        """
+        Sets the local base working directory for this module.
+
+        :param path: path to the local working directory
+        """
+
+        self._working_dir = os.path.join(path, "dynamips")
+        if not os.path.exists(self._working_dir):
+            try:
+                os.makedirs(self._working_dir)
+            except EnvironmentError as e:
+                raise ModuleError("{}".format(e))
+
+        log.info("local working directory for Dynamips module: {}".format(self._working_dir))
+        servers = Servers.instance()
+        server = servers.localServer()
+        if server.connected():
+            self._sendSettings(server)
 
     def addServer(self, server):
         """
@@ -224,20 +246,34 @@ class Dynamips(Module):
         """
 
         log.info("sending Dynamips settings to server {}:{}".format(server.host, server.port))
-        server.send_notification("dynamips.settings", self._settings)
+        params = self._settings.copy()
+        # send the local working directory only if this is a local server
+        servers = Servers.instance()
+        if server == servers.localServer():
+            params.update({"working_dir": self._working_dir})
+        server.send_notification("dynamips.settings", params)
 
-    def createNode(self, node_class):
+    def createNode(self, node_class, server=None):
         """
         Creates a new node.
 
         :param node_class: Node object
+        :param server: optional  WebSocketClient instance
         """
 
         log.info("creating node {}".format(node_class))
 
-        # allocate a server for the node
+        # allocate a server for the node if none is given
         servers = Servers.instance()
-        server = servers.localServer()
+        if self._settings["use_local_server"] and not server:
+            # use the local server
+            server = servers.localServer()
+        elif not server:
+            # pick up a remote server (round-robin method)
+            server = next(iter(servers))
+            if not server:
+                raise ModuleError("No remote server is configured")
+
         if not server.connected():
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
@@ -283,6 +319,8 @@ class Dynamips(Module):
             # set initial settings like an idle-pc value
             if ios_image["idlepc"]:
                 settings["idlepc"] = ios_image["idlepc"]
+            if ios_image["startup_config"]:
+                settings["startup_config"] = ios_image["startup_config"]
             node.setup(ios_image["path"], ios_image["ram"], initial_settings=settings)
         else:
             node.setup()
@@ -317,13 +355,11 @@ class Dynamips(Module):
         Returns the object with the corresponding name.
 
         :param name: object name
-
-        :returns: object or None
         """
 
         if name in globals():
             return globals()[name]
-        return None
+        raise ModuleError("Dynamips module could not find object {}".format(name))
 
     @staticmethod
     def nodes():

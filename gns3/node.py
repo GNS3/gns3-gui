@@ -47,6 +47,11 @@ class Node(QtCore.QObject):
 
     _instance_count = 1
 
+    # node statuses
+    stopped = 0
+    started = 1
+    suspended = 2
+
     def __init__(self, server=None):
 
         super(Node, self).__init__()
@@ -57,6 +62,7 @@ class Node(QtCore.QObject):
 
         self._server = server
         self._initialized = False
+        self._status = 0
 
     @classmethod
     def reset(cls):
@@ -92,6 +98,26 @@ class Node(QtCore.QObject):
         """
 
         self._id = new_id
+
+    def status(self):
+        """
+        Returns the status of this node.
+        0 = stopped, 1 = started, 2 = suspended.
+
+        :returns: node status (integer)
+        """
+
+        return self._status
+
+    def setStatus(self, status):
+        """
+        Sets a status for this node.
+        0 = stopped, 1 = started, 2 = suspended.
+
+        :param status: node status (integer)
+        """
+
+        self._status = status
 
     def initialized(self):
         """

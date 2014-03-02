@@ -25,6 +25,7 @@ from .qt import QtGui, QtCore
 from .items.node_item import NodeItem
 from .modules.dynamips import Dynamips
 from .modules.module_error import ModuleError
+from .utils.message_box import MessageBox
 from .version import __version__
 
 import logging
@@ -184,7 +185,7 @@ class Topology(object):
         if self._links:
             topology_links = topology["topology"]["links"] = []
             for link in self._links:
-                log.info("saving {}".format(link.description().lower()))
+                log.info("saving {}".format(link.description()))
                 topology_links.append(link.dump())
 
         # finally the servers
@@ -235,6 +236,7 @@ class Topology(object):
                 self._node_to_links_mapping[destination_id].append(topology_link)
 
         # then load the nodes
+        node_errors = []
         if "nodes" in topology["topology"]:
             nodes = topology["topology"]["nodes"]
             for topology_node in nodes:
@@ -244,15 +246,14 @@ class Topology(object):
                 #TODO: node setup management with other modules
 
                 # create the node
-                node_class = Dynamips.getNodeClass(topology_node["type"])
-                dynamips = Dynamips.instance()
-
-                # TODO: catch exception
                 try:
+                    node_class = Dynamips.getNodeClass(topology_node["type"])
+                    dynamips = Dynamips.instance()
                     node = dynamips.createNode(node_class)
                 except ModuleError as e:
-                    QtGui.QMessageBox.critical(main_window, "Node creation", "{}".format(e))
-                    return
+                    node_errors.append(str(e))
+                    #QtGui.QMessageBox.critical(main_window, "Node creation", "{}".format(e))
+                    continue
 
                 node.setId(topology_node["id"])
 
@@ -267,6 +268,10 @@ class Topology(object):
                 node_item.setPos(topology_node["x"], topology_node["y"])
                 view.scene().addItem(node_item)
                 self.addNode(node)
+
+        if node_errors:
+            errors = "\n".join(node_errors)
+            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
 
     def _nodeCreatedSlot(self, node_id):
         """

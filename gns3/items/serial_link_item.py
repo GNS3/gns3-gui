@@ -22,6 +22,7 @@ Graphical representation of a Serial link on the QGraphicsScene.
 import math
 from ..qt import QtCore, QtGui
 from .link_item import LinkItem
+from ..ports.port import Port
 
 
 class SerialLinkItem(LinkItem):
@@ -108,10 +109,10 @@ class SerialLinkItem(LinkItem):
                 return
 
             # source point color
-            if self._source_port.status() == 1:
+            if self._source_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-            elif self._source_port.status() == 2:
+            elif self._source_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
             else:
@@ -154,10 +155,10 @@ class SerialLinkItem(LinkItem):
             #painter.drawPoint(self.source)
 
             # destination point color
-            if self._destination_port.status() == 1:
+            if self._destination_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-            elif self._destination_port.status() == 2:
+            elif self._destination_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
             else:

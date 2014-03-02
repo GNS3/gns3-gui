@@ -39,6 +39,7 @@ class EthernetSwitch(Node):
         Node.__init__(self, server)
 
         log.info("Ethernet switch is being created")
+        self.setStatus(Node.started)  # this is an always-on node
         self._ethsw_id = None
         self._module = module
         self._ports = []
@@ -126,6 +127,7 @@ class EthernetSwitch(Node):
                 continue
             port = EthernetPort(str(port_number))
             port.setPortNumber(port_number)
+            port.setStatus(EthernetPort.started)
             self._ports.append(port)
             updated = True
             log.debug("port {} has been added".format(port_number))
@@ -320,6 +322,7 @@ class EthernetSwitch(Node):
                 port = EthernetPort(topology_port["name"])
                 port.setPortNumber(topology_port["port_number"])
                 port.setId(topology_port["id"])
+                port.setStatus(EthernetPort.started)
                 self._ports.append(port)
                 self._settings["ports"][port.portNumber()] = {"type": topology_port["type"],
                                                           "vlan": topology_port["vlan"]}

@@ -94,6 +94,14 @@ class GraphicsView(QtGui.QGraphicsView):
         Port.reset()
         self._topology.reset()
 
+    def setLocalBaseWorkingDirtoAllModules(self, path):
+
+        try:
+            dynamips = Dynamips.instance()
+            dynamips.setLocalBaseWorkingDir(path)
+        except ModuleError as e:
+            QtGui.QMessageBox.critical(self, "Local working directory", "{}".format(e))
+
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.

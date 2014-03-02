@@ -1,0 +1,20 @@
+!
+hostname %h
+!
+no ip domain lookup
+no ip icmp rate-limit unreachable
+ip tcp synwait 5
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+ privilege level 15
+ no login
+line aux 0
+ exec-timeout 0 0
+ logging synchronous
+ privilege level 15
+ no login
+!
+!
+end

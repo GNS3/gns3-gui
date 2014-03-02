@@ -35,9 +35,10 @@ else:
 
 DYNAMIPS_SETTINGS = {
     "path": DEFAULT_DYNAMIPS_PATH,
-    "base_hypervisor_port": 7200,
+    "base_hypervisor_port": 7201,
     "base_console_port": 2101,
     "base_aux_port": 2501,
+    "use_local_server": True,
     "allocate_hypervisor_per_device": True,
     "memory_usage_limit_per_hypervisor": 1024,
     "allocate_hypervisor_per_ios_image": True,
@@ -54,6 +55,7 @@ DYNAMIPS_SETTING_TYPES = {
     "base_hypervisor_port": int,
     "base_console_port": int,
     "base_aux_port": int,
+    "use_local_server": bool,
     "allocate_hypervisor_per_device": bool,
     "memory_usage_limit_per_hypervisor": int,
     "allocate_hypervisor_per_ios_image": bool,

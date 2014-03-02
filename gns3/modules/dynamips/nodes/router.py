@@ -20,7 +20,11 @@ Base class for Dynamips router implementations on the client side.
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
+import os
+import base64
 from gns3.node import Node
+from gns3.ports.port import Port
+
 from ..settings import PLATFORMS_DEFAULT_RAM
 from ..adapters import ADAPTER_MATRIX
 from ..wics import WIC_MATRIX
@@ -52,6 +56,8 @@ class Router(Node):
         self._settings = {"name": "",
                           "platform": platform,
                           "image": "",
+                          "startup_config": "",
+                          "private_config": "",
                           "ram": 128,
                           "nvram": 128,
                           "mmap": True,
@@ -284,6 +290,26 @@ class Router(Node):
             log.debug("router {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
 
+    def _base64Config(self, config_path):
+        """
+        Get the base64 encoded config from a file.
+
+        :param config_path: path to the configuration file.
+
+        :returns: base64 encoded string
+        """
+
+        try:
+            with open(config_path, "r") as f:
+                log.info("opening configuration file: {}".format(config_path))
+                config = f.read()
+                config = '!\n' + config.replace('\r', "")
+                encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
+                return encoded
+        except EnvironmentError as e:
+            log.warn("could not base64 encode {}: {}".format(config_path, e))
+            return ""
+
     def update(self, new_settings):
         """
         Updates the settings for this router.
@@ -295,6 +321,10 @@ class Router(Node):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
+
+        if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
+        and os.path.exists(new_settings["startup_config"]):
+            params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("dynamips.vm.update", params, self._updateCallback)
@@ -370,6 +400,10 @@ class Router(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
             log.info("{} has started".format(self.name()))
+            self.setStatus(Node.started)
+            for port in self._ports:
+                # set ports as started
+                port.setStatus(Port.started)
             self.started_signal.emit()
 
     def stop(self):
@@ -393,6 +427,10 @@ class Router(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
+            self.setStatus(Node.stopped)
+            for port in self._ports:
+                # set ports as stopped
+                port.setStatus(Port.stopped)
             self.stopped_signal.emit()
 
     def suspend(self):
@@ -416,6 +454,10 @@ class Router(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
             log.info("{} has suspended".format(self.name()))
+            self.setStatus(Node.suspended)
+            for port in self._ports:
+                # set ports as suspended
+                port.setStatus(Port.suspended)
             self.suspended_signal.emit()
 
     def reload(self):
@@ -587,6 +629,15 @@ class Router(Node):
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
 
+    def _saveConfig(self):
+        """
+        Tells the server to save the router configurations (startup-config and private-config).
+        """
+
+        params = {"id": self._router_id}
+        log.debug("{} is saving his configuration: {}".format(self.name(), params))
+        self._server.send_notification("dynamips.vm.save_config", params)
+
     def _slot_info(self):
         """
         Returns information about the slots/ports of this router.
@@ -721,12 +772,15 @@ class Router(Node):
         :returns: representation of the node (dictionary)
         """
 
+        # tell the server to save the startup-config and
+        # private-config
+        self._saveConfig()
+
         router = {"id": self.id(),
                   "type": self.__class__.__name__,
                   "description": str(self),
                   "properties": {},
-                  "server_id": self._server.id(),
-                  }
+                  "server_id": self._server.id()}
 
         # add the properties
         for name, value in self._settings.items():

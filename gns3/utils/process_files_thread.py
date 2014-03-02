@@ -74,7 +74,8 @@ class ProcessFilesThread(QtCore.QThread):
                     return
                 try:
                     destination_dir = os.path.join(base_dir, directory)
-                    os.makedirs(destination_dir)
+                    if not os.path.exists(destination_dir):
+                        os.makedirs(destination_dir)
                 except EnvironmentError as e:
                     self.error.emit("Could not create directory {}: {}".format(destination_dir, str(e)))
                     return
@@ -118,6 +119,7 @@ class ProcessFilesThread(QtCore.QThread):
         :param directory: path to the directory.
         """
 
-        if os.path.isdir(directory):
-            return len(next(os.walk(directory))[2])
-        return 0
+        count = 0
+        for _, _, files in os.walk(directory):
+            count += len(files)
+        return count

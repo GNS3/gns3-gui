@@ -33,6 +33,11 @@ class Port(object):
 
     _instance_count = 1
 
+    # port statuses
+    stopped = 0
+    started = 1
+    suspended = 2
+
     def __init__(self, name, default_nio=None, stub=False):
 
         # create an unique ID
@@ -45,7 +50,7 @@ class Port(object):
         self._stub = stub
         self._link_id = None
         self._description = ""
-        self._status = 0
+        self._status = Port.stopped
         self._data = {}
         if default_nio == None:
             self._default_nio = NIOUDP
@@ -100,7 +105,7 @@ class Port(object):
     def status(self):
         """
         Returns the status of this port.
-        0 = stopped, 1 = active, 2 = suspended.
+        0 = stopped, 1 = started, 2 = suspended.
 
         :returns: port status (integer)
         """
@@ -110,7 +115,7 @@ class Port(object):
     def setStatus(self, status):
         """
         Sets a status for this port.
-        0 = stopped, 1 = active, 2 = suspended.
+        0 = stopped, 1 = started, 2 = suspended.
 
         :param status: port status (integer)
         """

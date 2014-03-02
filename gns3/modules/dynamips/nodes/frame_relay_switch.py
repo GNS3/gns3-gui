@@ -39,6 +39,7 @@ class FrameRelaySwitch(Node):
         Node.__init__(self, server)
 
         log.info("Frame-Relay switch is being created")
+        self.setStatus(Node.started)  # this is an always-on node
         self._frsw_id = None
         self._ports = []
         self._module = module
@@ -138,6 +139,7 @@ class FrameRelaySwitch(Node):
         for port_name in ports_to_create:
             port = SerialPort(port_name)
             port.setPortNumber(int(port_name))
+            port.setStatus(SerialPort.started)
             self._ports.append(port)
             updated = True
             log.debug("port {} has been added".format(port_name))
@@ -298,6 +300,7 @@ class FrameRelaySwitch(Node):
                 port = SerialPort(topology_port["name"])
                 port.setPortNumber(topology_port["port_number"])
                 port.setId(topology_port["id"])
+                port.setStatus(SerialPort.started)
                 self._ports.append(port)
         log.info("Frame-Relay switch {} is loading".format(name))
         self.setup(name)

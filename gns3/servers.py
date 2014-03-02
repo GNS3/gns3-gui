@@ -40,6 +40,7 @@ class Servers(object):
         self._local_server_path = ""
         self._local_server_proccess = QtCore.QProcess()
         self._loadSettings()
+        self._remote_server_iter_pos = 0
 
     def _loadSettings(self):
         """
@@ -214,6 +215,33 @@ class Servers(object):
         """
 
         return self._remote_servers
+
+    def __iter__(self):
+        """
+        Creates a round-robin system to pick up a remote server.
+        """
+
+        return self
+
+    def __next__(self):
+        """
+        Returns the next available remote server.
+
+        :returns: remote server (WebSocketClient instance)
+        """
+
+        if not self._remote_servers:
+            return None
+
+        server_ids = list(self._remote_servers.keys())
+        server_id = server_ids[self._remote_server_iter_pos]
+
+        if self._remote_server_iter_pos < len(server_ids) - 1:
+            self._remote_server_iter_pos += 1
+        else:
+            self._remote_server_iter_pos = 0
+
+        return self._remote_servers[server_id]
 
     def save(self):
         """

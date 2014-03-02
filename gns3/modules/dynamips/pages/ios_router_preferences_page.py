@@ -78,7 +78,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         ios_image = self._ios_images[key]
 
         self.uiIOSPathLineEdit.setText(ios_image["path"])
-        self.uiStartupConfigLineEdit.setText(ios_image["startup-config"])
+        self.uiStartupConfigLineEdit.setText(ios_image["startup_config"])
         index = self.uiPlatformComboBox.findText(ios_image["platform"])
         if index != -1:
             self.uiPlatformComboBox.setCurrentIndex(index)
@@ -142,7 +142,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         self._ios_images[key] = {"path": path,
                                  "image": image,
-                                 "startup-config": startup_config,
+                                 "startup_config": startup_config,
                                  "platform": platform,
                                  "chassis": chassis,
                                  "idlepc": idlepc,

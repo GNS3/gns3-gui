@@ -22,7 +22,6 @@ vice-versa. Possibility to add PyQt5 in the future as well. Current default is P
 
 # based on https://gist.github.com/remram44/5985681
 
-from __future__ import unicode_literals
 import sys
 import sip
 

@@ -24,14 +24,16 @@ import tempfile
 import socket
 import shutil
 import json
-from .servers import Servers
 from .qt import QtGui, QtCore
+from .servers import Servers
+from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .preferences_dialog import PreferencesDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
+from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
 from .topology import Topology
 
@@ -727,7 +729,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Saves a project to another location/name.
         """
 
-        #TODO: check if any node are running, cancel if any!
+        # first check if any node that can be started is running
+        topology = Topology.instance()
+        running_nodes = []
+        for node in topology.nodes():
+            if hasattr(node, "start") and node.status() == Node.started:
+                running_nodes.append(node.name())
+
+        if running_nodes:
+            nodes = "\n".join(running_nodes)
+            MessageBox(self, "Save project", "Please stop the following nodes before saving the topology", nodes)
+            return
 
         if self._temporary_project:
             destination_file = os.path.join(self._settings["projects_path"], "untitled.net")
@@ -759,6 +771,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return False
 
         self._deleteTemporaryProject()
+        self._project_files_dir = new_project_files_dir
+        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
         return self._saveProject(path)
 
     def _saveProject(self, path):
@@ -790,6 +804,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.reset()
+
+        project_files_dir = path
+        if path.endswith(".net"):
+            project_files_dir = path[:-4]
+        self._project_files_dir = project_files_dir + "-files"
+
+        if not os.path.exists(self._project_files_dir):
+            QtGui.QMessageBox.warning(self, "Load", "Project files directory doesn't exist: {}".format(self._project_files_dir))
+
+        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
+
         topology = Topology.instance()
         try:
             with open(path, "r") as f:
@@ -804,15 +829,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._project_path = path
-
-        project_files_dir = path
-        if path.endswith(".net"):
-            project_files_dir = path[:-4]
-        self._project_files_dir = project_files_dir + "-files"
-
-        if not os.path.exists(self._project_files_dir):
-            QtGui.QMessageBox.warning(self, "Load", "Project files directory doesn't exist: {}".format(self._project_files_dir))
-
         self._setCurrentFile(path)
 
     def _deleteTemporaryProject(self):
@@ -850,6 +866,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except EnvironmentError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
 
+        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
         self._setCurrentFile()
 
     def _setCurrentFile(self, path=None):

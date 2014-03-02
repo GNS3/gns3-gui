@@ -21,6 +21,7 @@ Graphical representation of an Ethernet link for QGraphicsScene.
 
 from ..qt import QtCore, QtGui
 from .link_item import LinkItem
+from ..ports.port import Port
 
 
 class EthernetLinkItem(LinkItem):
@@ -107,10 +108,10 @@ class EthernetLinkItem(LinkItem):
             if self.length < 100:
                 return
 
-            if self._source_port.status() == 1:
+            if self._source_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-            elif self._source_port.status() == 2:
+            elif self._source_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
             else:
@@ -163,10 +164,10 @@ class EthernetLinkItem(LinkItem):
 
             painter.drawPoint(point1)
 
-            if self._destination_port.status() == 1:
+            if self._destination_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-            elif self._destination_port.status() == 2:
+            elif self._destination_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
             else:

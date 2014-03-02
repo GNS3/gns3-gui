@@ -134,10 +134,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has started.
         """
 
-        ports = self._node.ports()
-        for port in ports:
-            # set ports as started
-            port.setStatus(1)
         for link in self._links:
             link.update()
 
@@ -147,10 +143,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has stopped.
         """
 
-        ports = self._node.ports()
-        for port in ports:
-            # set ports as stopped
-            port.setStatus(0)
         for link in self._links:
             link.update()
 
@@ -160,10 +152,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has suspended.
         """
 
-        ports = self._node.ports()
-        for port in ports:
-            # set ports as suspended
-            port.setStatus(2)
         for link in self._links:
             link.update()
 

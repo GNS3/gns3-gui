@@ -39,6 +39,7 @@ class ATMSwitch(Node):
         Node.__init__(self, server)
 
         log.info("ATM switch is being created")
+        self.setStatus(Node.started)  # this is an always-on node
         self._atmsw_id = None
         self._ports = []
         self._module = module
@@ -137,6 +138,7 @@ class ATMSwitch(Node):
         for port_name in ports_to_create:
             port = SerialPort(port_name)
             port.setPortNumber(int(port_name))
+            port.setStatus(SerialPort.started)
             self._ports.append(port)
             updated = True
             log.debug("port {} has been added".format(port_name))
@@ -296,6 +298,7 @@ class ATMSwitch(Node):
             for topology_port in ports:
                 port = SerialPort(topology_port["name"])
                 port.setPortNumber(topology_port["port_number"])
+                port.setStatus(SerialPort.started)
                 self._ports.append(port)
                 self._settings["ports"].append(port.portNumber())
 

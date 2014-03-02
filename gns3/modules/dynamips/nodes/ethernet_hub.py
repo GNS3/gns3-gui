@@ -39,6 +39,7 @@ class EthernetHub(Node):
         Node.__init__(self, server)
 
         log.info("Ethernet hub is being created")
+        self.setStatus(Node.started)  # this is an always-on node
         self._ethhub_id = None
         self._module = module
         self._ports = []
@@ -132,6 +133,7 @@ class EthernetHub(Node):
         for port_name in ports_to_create:
             port = EthernetPort(port_name)
             port.setPortNumber(int(port_name))
+            port.setStatus(EthernetPort.started)
             self._ports.append(port)
             updated = True
             log.debug("port {} has been added".format(port_name))
@@ -278,6 +280,7 @@ class EthernetHub(Node):
             for topology_port in ports:
                 port = EthernetPort(topology_port["name"])
                 port.setPortNumber(topology_port["port_number"])
+                port.setStatus(EthernetPort.started)
                 self._ports.append(port)
                 self._settings["ports"].append(port.portNumber())
 
