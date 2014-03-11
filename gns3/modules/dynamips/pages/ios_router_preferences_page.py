@@ -185,6 +185,19 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             except UnicodeEncodeError:
                 QtGui.QMessageBox.warning(self, "IOS image", "The IOS image filename should contains only ascii (English) characters.")
 
+        try:
+            with open(path, "rb") as f:
+                # read the first 7 bytes of the file.
+                elf_header_start = f.read(7)
+        except EnvironmentError as e:
+            QtGui.QMessageBox.critical(self, "IOS image", "Cannot read ELF magic number: {}".format(e))
+            return
+
+        # file must start with the ELF magic number, be 32-bit, little endian and have an ELF version of 1
+        if elf_header_start != b'\x7fELF\x01\x02\x01':
+            QtGui.QMessageBox.critical(self, "IOS image", "Sorry, this is not a valid IOS image!")
+            return
+
         self.uiIOSPathLineEdit.clear()
         self.uiIOSPathLineEdit.setText(path)
 

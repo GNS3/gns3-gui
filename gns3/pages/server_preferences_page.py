@@ -151,25 +151,26 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         local_server_port = self.uiLocalServerPortSpinBox.value()
         local_server_path = self.uiLocalServerPathLineEdit.text()
 
-        if not os.path.exists(local_server_path):
-            QtGui.QMessageBox.critical(self, "Local server", "The path to {} doesn't exists.".format(local_server_path))
-        else:
-            server = servers.localServer()
-            if servers.localServerPath() != local_server_path or server.host != local_server_host or server.port != local_server_port:
-                # local server settings have changed, let's stop the current local server.
-                if server.connected():
-                    server.close_connection()
-                servers.stopLocalServer(wait=True)
-                #TODO: ASK if the user wants to start local server
-                if servers.startLocalServer(local_server_path, local_server_host, local_server_port):
-                    thread = WaitForConnectionThread(local_server_host, local_server_port)
-                    dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
-                    dialog.show()
-                    dialog.exec_()
-                else:
-                    QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(local_server_path))
+        if local_server_path:
+            if not os.path.exists(local_server_path):
+                QtGui.QMessageBox.critical(self, "Local server", "The path to {} doesn't exists.".format(local_server_path))
+            else:
+                server = servers.localServer()
+                if servers.localServerPath() != local_server_path or server.host != local_server_host or server.port != local_server_port:
+                    # local server settings have changed, let's stop the current local server.
+                    if server.connected():
+                        server.close_connection()
+                    servers.stopLocalServer(wait=True)
+                    #TODO: ASK if the user wants to start local server
+                    if servers.startLocalServer(local_server_path, local_server_host, local_server_port):
+                        thread = WaitForConnectionThread(local_server_host, local_server_port)
+                        dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                        dialog.show()
+                        dialog.exec_()
+                    else:
+                        QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(local_server_path))
 
-        # save the remote server preferences
-        servers.setLocalServer(local_server_path, local_server_host, local_server_port)
+            # save the remote server preferences
+            servers.setLocalServer(local_server_path, local_server_host, local_server_port)
         servers.updateRemoteServers(self._remote_servers)
         servers.save()

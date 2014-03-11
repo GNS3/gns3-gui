@@ -21,9 +21,9 @@ Handles the saving and loading of a topology.
 """
 
 #import networkx as nx
-from .qt import QtGui, QtCore
+from .qt import QtCore
 from .items.node_item import NodeItem
-from .modules.dynamips import Dynamips
+from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
 from .version import __version__
@@ -243,16 +243,19 @@ class Topology(object):
 
                 log.debug("loading node with ID {}".format(topology_node["id"]))
 
-                #TODO: node setup management with other modules
-
-                # create the node
                 try:
-                    node_class = Dynamips.getNodeClass(topology_node["type"])
-                    dynamips = Dynamips.instance()
-                    node = dynamips.createNode(node_class)
+                    node_module = None
+                    for module in MODULES:
+                        instance = module.instance()
+                        node_class = module.getNodeClass(topology_node["type"])
+                        if node_class:
+                            node_module = instance
+                            break
+                    if not node_module:
+                        raise ModuleError("Could not find any module for {}".format(topology_node["type"]))
+                    node = node_module.createNode(node_class)
                 except ModuleError as e:
                     node_errors.append(str(e))
-                    #QtGui.QMessageBox.critical(main_window, "Node creation", "{}".format(e))
                     continue
 
                 node.setId(topology_node["id"])

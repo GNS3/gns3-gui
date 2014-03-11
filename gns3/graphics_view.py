@@ -26,7 +26,7 @@ from .items.node_item import NodeItem
 from .node_configurator import NodeConfigurator
 from .link import Link
 from .node import Node
-from .modules.dynamips import Dynamips
+from .modules import MODULES
 from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
 from .topology import Topology
@@ -86,8 +86,10 @@ class GraphicsView(QtGui.QGraphicsView):
                 else:
                     self.scene().removeItem(item)
 
-        dynamips = Dynamips.instance()
-        dynamips.reset()
+        # reset the modules
+        for module in MODULES:
+            instance = module.instance()
+            instance.reset()
 
         Node.reset()
         Link.reset()
@@ -97,8 +99,9 @@ class GraphicsView(QtGui.QGraphicsView):
     def setLocalBaseWorkingDirtoAllModules(self, path):
 
         try:
-            dynamips = Dynamips.instance()
-            dynamips.setLocalBaseWorkingDir(path)
+            for module in MODULES:
+                instance = module.instance()
+                instance.setLocalBaseWorkingDir(path)
         except ModuleError as e:
             QtGui.QMessageBox.critical(self, "Local working directory", "{}".format(e))
 
@@ -748,12 +751,18 @@ class GraphicsView(QtGui.QGraphicsView):
         :param pos: position of the drop event
         """
 
-        #TODO: node setup management with other modules
-        dynamips = Dynamips.instance()
         try:
-            node = dynamips.createNode(node_class)
+            node_module = None
+            for module in MODULES:
+                instance = module.instance()
+                if node_class in instance.nodes():
+                    node_module = instance
+                    break
+            if not node_module:
+                raise ModuleError("Could not find any module for {}".format(node_class))
+            node = node_module.createNode(node_class)
             node_item = NodeItem(node)
-            dynamips.setupNode(node)
+            node_module.setupNode(node)
         except ModuleError as e:
             QtGui.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return

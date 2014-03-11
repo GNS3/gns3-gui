@@ -16,50 +16,39 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Dynamips module implementation.
+IOU module implementation.
 """
 
 import socket
+import base64
 import os
 from gns3.qt import QtCore
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
-from .nodes.router import Router
-from .nodes.c1700 import C1700
-from .nodes.c2600 import C2600
-from .nodes.c2691 import C2691
-from .nodes.c3600 import C3600
-from .nodes.c3725 import C3725
-from .nodes.c3745 import C3745
-from .nodes.c7200 import C7200
-from .nodes.cloud import Cloud
-from .nodes.ethernet_switch import EthernetSwitch
-from .nodes.ethernet_hub import EthernetHub
-from .nodes.frame_relay_switch import FrameRelaySwitch
-from .nodes.atm_switch import ATMSwitch
-from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES, PLATFORMS_DEFAULT_RAM
+from .iou_device import IOUDevice
+from .settings import IOU_SETTINGS, IOU_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class Dynamips(Module):
+class IOU(Module):
     """
-    Dynamips module.
+    IOU module.
     """
 
     def __init__(self):
         Module.__init__(self)
 
         self._settings = {}
-        self._ios_images = {}
+        self._iou_images = {}
         self._servers = []
         self._working_dir = ""
 
-        # load the settings and IOS images.
+        # load the settings
         self._loadSettings()
-        self._loadIOSImages()
+        self._loadIOUImages()
 
     def _loadSettings(self):
         """
@@ -69,8 +58,8 @@ class Dynamips(Module):
         # load the settings
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in DYNAMIPS_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=DYNAMIPS_SETTING_TYPES[name])
+        for name, value in IOU_SETTINGS.items():
+            self._settings[name] = settings.value(name, value, type=IOU_SETTING_TYPES[name])
         settings.endGroup()
 
     def _saveSettings(self):
@@ -85,55 +74,51 @@ class Dynamips(Module):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def _loadIOSImages(self):
+    def _loadIOUImages(self):
         """
-        Load the IOS images from the persistent settings file.
+        Load the IOU images from the persistent settings file.
         """
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOS")
+        settings.beginGroup("IOUs")
 
-        # load the IOS images
-        size = settings.beginReadArray("ios_image")
+        # load the IOU images
+        size = settings.beginReadArray("iou_image")
         for index in range(0, size):
             settings.setArrayIndex(index)
             path = settings.value("path", "")
             image = settings.value("image", "")
             startup_config = settings.value("startup_config", "")
-            platform = settings.value("platform", "")
-            chassis = settings.value("chassis", "")
-            idlepc = settings.value("idlepc", "")
-            ram = settings.value("ram", 128, type=int)
+            ram = settings.value("ram", 256, type=int)
+            nvram = settings.value("nvram", 128, type=int)
             server = settings.value("server", "local")
 
             key = "{server}:{image}".format(server=server, image=image)
-            self._ios_images[key] = {"path": path,
+            self._iou_images[key] = {"path": path,
                                      "image": image,
                                      "startup_config": startup_config,
-                                     "platform": platform,
-                                     "chassis": chassis,
-                                     "idlepc": idlepc,
                                      "ram": ram,
+                                     "nvram": nvram,
                                      "server": server}
 
         settings.endArray()
         settings.endGroup()
 
-    def _saveIOSImages(self):
+    def _saveIOUImages(self):
         """
-        Saves the IOS images to the persistent settings file.
+        Saves the IOU images to the persistent settings file.
         """
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOS")
+        settings.beginGroup("IOUs")
         settings.remove("")
 
-        # save the IOS images
-        settings.beginWriteArray("ios_image", len(self._ios_images))
+        # save the IOU images
+        settings.beginWriteArray("iou_image", len(self._iou_images))
         index = 0
-        for ios_image in self._ios_images.values():
+        for ios_image in self._iou_images.values():
             settings.setArrayIndex(index)
             for name, value in ios_image.items():
                 settings.setValue(name, value)
@@ -148,14 +133,14 @@ class Dynamips(Module):
         :param path: path to the local working directory
         """
 
-        self._working_dir = os.path.join(path, "dynamips")
+        self._working_dir = os.path.join(path, "iou")
         if not os.path.exists(self._working_dir):
             try:
                 os.makedirs(self._working_dir)
             except EnvironmentError as e:
                 raise ModuleError("{}".format(e))
 
-        log.info("local working directory for Dynamips module: {}".format(self._working_dir))
+        log.info("local working directory for IOU module: {}".format(self._working_dir))
         servers = Servers.instance()
         server = servers.localServer()
         if server.connected():
@@ -168,7 +153,7 @@ class Dynamips(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("adding server {}:{} to Dynamips module".format(server.host, server.port))
+        log.info("adding server {}:{} to IOU module".format(server.host, server.port))
         self._servers.append(server)
         self._sendSettings(server)
 
@@ -179,7 +164,7 @@ class Dynamips(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("removing server {}:{} from Dynamips module".format(server.host, server.port))
+        log.info("removing server {}:{} from IOU module".format(server.host, server.port))
         self._servers.remove(server)
 
     def servers(self):
@@ -191,24 +176,24 @@ class Dynamips(Module):
 
         return self._servers
 
-    def iosImages(self):
+    def iouImages(self):
         """
-        Returns IOS images settings.
+        Returns IOU images settings.
 
-        :returns: IOS images settings (dictionary)
+        :returns: IOU images settings (dictionary)
         """
 
-        return self._ios_images
+        return self._iou_images
 
-    def setIOSImages(self, new_ios_images):
+    def setIOUImages(self, new_iou_images):
         """
         Sets IOS images settings.
 
-        :param new_ios_images: IOS images settings (dictionary)
+        :param new_iou_images: IOS images settings (dictionary)
         """
 
-        self._ios_images = new_ios_images.copy()
-        self._saveIOSImages()
+        self._iou_images = new_iou_images.copy()
+        self._saveIOUImages()
 
     def settings(self):
         """
@@ -218,6 +203,25 @@ class Dynamips(Module):
         """
 
         return self._settings
+
+    def _base64iourc(self, iourc_path):
+        """
+        Get the content of the IOURC file base64 encoded.
+
+        :param config_path: path to the iourc file.
+
+        :returns: base64 encoded string
+        """
+
+        try:
+            with open(iourc_path, "r") as f:
+                log.info("opening iourc file: {}".format(iourc_path))
+                config = f.read()
+                encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
+                return encoded
+        except EnvironmentError as e:
+            log.warn("could not base64 encode {}: {}".format(iourc_path, e))
+            return ""
 
     def setSettings(self, settings):
         """
@@ -232,8 +236,11 @@ class Dynamips(Module):
                 params[name] = value
 
         if params:
+            if "iourc" in params:
+                # encode the iourc file in base64
+                params["iourc"] = self._base64iourc(params["iourc"])
             for server in self._servers:
-                server.send_notification("dynamips.settings", params)
+                server.send_notification("iou.settings", params)
 
         self._settings.update(settings)
         self._saveSettings()
@@ -245,13 +252,17 @@ class Dynamips(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("sending Dynamips settings to server {}:{}".format(server.host, server.port))
+        log.info("sending IOU settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
+
+        # encode the iourc file in base64
+        params["iourc"] = self._base64iourc(params["iourc"])
+
         # send the local working directory only if this is a local server
         servers = Servers.instance()
         if server == servers.localServer():
             params.update({"working_dir": self._working_dir})
-        server.send_notification("dynamips.settings", params)
+        server.send_notification("iou.settings", params)
 
     def createNode(self, node_class, server=None):
         """
@@ -262,6 +273,9 @@ class Dynamips(Module):
         """
 
         log.info("creating node {}".format(node_class))
+
+        if not self._settings["iourc"] or not os.path.exists(self._settings["iourc"]):
+            raise ModuleError("The path to IOURC must be configured")
 
         # allocate a server for the node if none is given
         servers = Servers.instance()
@@ -289,19 +303,6 @@ class Dynamips(Module):
         # create an instance of the node class
         return node_class(self, server)
 
-    def _allocateIOSImage(self, node):
-        """
-        Allocates an IOS image to a node
-
-        :param node: Node instance
-        """
-
-        platform = node.settings()["platform"]
-        for ios_image in self._ios_images.values():
-            if ios_image["platform"] == platform:
-                return ios_image
-        return None
-
     def setupNode(self, node):
         """
         Setups a node.
@@ -310,44 +311,27 @@ class Dynamips(Module):
         """
 
         log.info("configuring node {}".format(node))
+        if not self._iou_images:
+            raise ModuleError("No IOU image found for this device")
 
-        if isinstance(node, Router):
-            ios_image = self._allocateIOSImage(node)
-            if not ios_image:
-                raise ModuleError("No IOS image found for platform {}".format(node.settings()["platform"]))
-            settings = {}
-            # set initial settings like an idle-pc value
-            if ios_image["idlepc"]:
-                settings["idlepc"] = ios_image["idlepc"]
-            if ios_image["startup_config"]:
-                settings["startup_config"] = ios_image["startup_config"]
-            node.setup(ios_image["path"], ios_image["ram"], initial_settings=settings)
-        else:
-            node.setup()
-
-    def updateImageIdlepc(self, image_path, idlepc):
-        """
-        Updates the idle-pc for an IOS image.
-
-        :param image_path: path to the IOS image
-        :param idlepc: idle-pc value
-        """
-
-        for ios_image in self._ios_images.values():
-            if ios_image["path"] == image_path:
-                ios_image["idlepc"] = idlepc
-                self._saveIOSImages()
-                break
+        settings = {}
+        #FIXME: for now use the fist available image
+        iouimage = list(self._iou_images.keys())[0]
+        startup_config = self._iou_images[iouimage]["startup_config"]
+        iou_path = self._iou_images[iouimage]["path"]
+        if startup_config:
+            settings = {"startup_config": startup_config}
+        node.setup(iou_path, initial_settings=settings)
 
     def reset(self):
         """
         Resets the servers.
         """
 
-        log.info("Dynamips module reset")
+        log.info("IOU module reset")
         for server in self._servers:
             if server.connected():
-                server.send_notification("dynamips.reset")
+                server.send_notification("iou.reset")
 
     @staticmethod
     def getNodeClass(name):
@@ -369,7 +353,7 @@ class Dynamips(Module):
         :returns: list of classes
         """
 
-        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, Cloud, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]
+        return [IOUDevice]
 
     @staticmethod
     def preferencePages():
@@ -377,18 +361,18 @@ class Dynamips(Module):
         :returns: QWidget object list
         """
 
-        from .pages.dynamips_preferences_page import DynamipsPreferencesPage
-        from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        return [DynamipsPreferencesPage, IOSRouterPreferencesPage]
+        from .pages.iou_preferences_page import IOUPreferencesPage
+        from .pages.iou_device_preferences_page import IOUDevicePreferencesPage
+        return [IOUPreferencesPage, IOUDevicePreferencesPage]
 
     @staticmethod
     def instance():
         """
-        Singleton to return only on instance of Dynamips.
+        Singleton to return only on instance of IOU module.
 
-        :returns: instance of Dynamips
+        :returns: instance of IOU
         """
 
-        if not hasattr(Dynamips, "_instance"):
-            Dynamips._instance = Dynamips()
-        return Dynamips._instance
+        if not hasattr(IOU, "_instance"):
+            IOU._instance = IOU()
+        return IOU._instance

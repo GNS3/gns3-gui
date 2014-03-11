@@ -21,7 +21,7 @@ Based on the ws4py websocket client.
 """
 
 import json
-import jsonrpc
+from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
 from .qt import QtCore
 

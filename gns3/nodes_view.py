@@ -21,7 +21,7 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 
 import pickle
 from .qt import QtCore, QtGui
-from .modules.dynamips import Dynamips
+from .modules import MODULES
 
 
 class NodesView(QtGui.QTreeWidget):
@@ -38,13 +38,13 @@ class NodesView(QtGui.QTreeWidget):
         # enables the possibility to drag items.
         self.setDragEnabled(True)
 
-        # FIXME: generic creation of the node list
-        for node in Dynamips.nodes():
-            item = QtGui.QTreeWidgetItem(self)
-            item.setIcon(0, QtGui.QIcon(node.defaultSymbol()))
-            item.setText(0, node.symbolName())
-            # add the node class in the item data
-            item.setData(0, QtCore.Qt.UserRole, node)
+        for module in MODULES:
+            for node in module.nodes():
+                item = QtGui.QTreeWidgetItem(self)
+                item.setIcon(0, QtGui.QIcon(node.defaultSymbol()))
+                item.setText(0, node.symbolName())
+                # add the node class in the item data
+                item.setData(0, QtCore.Qt.UserRole, node)
 
     def mouseMoveEvent(self, event):
         """

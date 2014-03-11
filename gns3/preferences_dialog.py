@@ -23,7 +23,7 @@ from .qt import QtCore, QtGui
 from .ui.preferences_dialog_ui import Ui_PreferencesDialog
 from .pages.server_preferences_page import ServerPreferencesPage
 from .pages.general_preferences_page import GeneralPreferencesPage
-from .modules.dynamips import Dynamips
+from .modules import MODULES
 
 
 class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
@@ -69,16 +69,16 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         self.uiStackedWidget.addWidget(servers_page)
         self._items.append(item)
 
-        # load Dynamips pages
-        #TODO: generic way to go thru all modules
-        for cls in Dynamips.preferencePages():
-            preferences_page = cls()
-            preferences_page.loadPreferences()
-            name = preferences_page.windowTitle()
-            item = QtGui.QListWidgetItem(name, self.uiListWidget)
-            item.setData(QtCore.Qt.UserRole, preferences_page)
-            self.uiStackedWidget.addWidget(preferences_page)
-            self._items.append(item)
+        # load module preference pages
+        for module in MODULES:
+            for cls in module.preferencePages():
+                preferences_page = cls()
+                preferences_page.loadPreferences()
+                name = preferences_page.windowTitle()
+                item = QtGui.QListWidgetItem(name, self.uiListWidget)
+                item.setData(QtCore.Qt.UserRole, preferences_page)
+                self.uiStackedWidget.addWidget(preferences_page)
+                self._items.append(item)
 
     def _showPreferencesPageSlot(self, current, previous):
         """
