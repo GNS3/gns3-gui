@@ -143,6 +143,8 @@ class IOUDevice(Node):
         # update the node with setup initial settings if any
         if self._inital_settings:
             self.update(self._inital_settings)
+        elif self._loading:
+            self.updated_signal.emit()
         else:
             self.setInitialized(True)
             log.info("IOU instance {} has been created".format(self.name()))
@@ -306,6 +308,28 @@ class IOUDevice(Node):
                 # set ports as stopped
                 port.setStatus(Port.stopped)
             self.stopped_signal.emit()
+
+    def reload(self):
+        """
+        Reloads this IOU instance.
+        """
+
+        log.debug("{} is being reloaded".format(self.name()))
+        self._server.send_message("iou.reload", {"id": self._iou_id}, self._reloadCallback)
+
+    def _reloadCallback(self, result, error=False):
+        """
+        Callback for reload.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+        else:
+            log.info("{} has reloaded".format(self.name()))
 
     def allocateUDPPort(self, port_id):
         """
@@ -529,7 +553,7 @@ class IOUDevice(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/router.normal.svg"
+        return ":/symbols/multilayer_switch.normal.svg"
 
     @staticmethod
     def hoverSymbol():
@@ -539,7 +563,7 @@ class IOUDevice(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/router.selected.svg"
+        return ":/symbols/multilayer_switch.selected.svg"
 
     @staticmethod
     def symbolName():

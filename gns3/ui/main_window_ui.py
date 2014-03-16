@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Thu Feb 13 15:42:20 2014
+# Created: Tue Mar 11 18:26:17 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -141,7 +141,7 @@ class Ui_MainWindow(object):
         self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setMargin(0)
         self.vboxlayout1.setObjectName(_fromUtf8("vboxlayout1"))
-        self.uiConsoleTextEdit = QtGui.QTextEdit(self.uiConsoleDockWidgetContents)
+        self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -654,6 +654,7 @@ class Ui_MainWindow(object):
         self.uiLabInstructionsAction.setText(_translate("MainWindow", "Lab instructions", None))
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view", None))
 
+from ..console_view import ConsoleView
 from ..nodes_view import NodesView
 from ..graphics_view import GraphicsView
 from . import resources_rc

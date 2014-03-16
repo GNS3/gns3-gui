@@ -285,6 +285,8 @@ class Router(Node):
         # update the node with setup initial settings if any
         if self._inital_settings:
             self.update(self._inital_settings)
+        elif self._loading:
+            self.updated_signal.emit()
         else:
             self.setInitialized(True)
             log.debug("router {} has been created".format(self.name()))

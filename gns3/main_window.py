@@ -443,7 +443,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when connecting to all the nodes using the console.
         """
 
-        from .console import telnetConsole
+        from .telnet_console import telnetConsole
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
                 node = item.node()

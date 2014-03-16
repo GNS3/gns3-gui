@@ -45,7 +45,7 @@ if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.p
                                              'Xshell 4': 'C:\Program Files (x86)\\NetSarang\\Xshell 4\\xshell.exe -url telnet://%h:%p'}
 
     # default Windows 64-bit Telnet console command
-    if os.path.exists(os.getcwdu() + os.sep + "SuperPutty.exe"):
+    if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty"]
     else:
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
@@ -60,7 +60,7 @@ elif sys.platform.startswith("win"):
                                              'Xshell 4': 'C:\Program Files\\NetSarang\\Xshell 4\\xshell.exe -url telnet://%h:%p'}
 
     # default Windows 32-bit Telnet console command
-    if os.path.exists(os.getcwdu() + os.sep + "SuperPutty.exe"):
+    if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty"]
     else:
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
@@ -97,7 +97,7 @@ if sys.platform.startswith("win"):
                                              'SuperPutty': 'SuperPutty.exe -serial "%s -wt \"%d\" -gns3 5 -skin 4"'}
 
     # default Windows serial console command
-    if os.path.exists(os.getcwdu() + os.sep + "SuperPutty.exe"):
+    if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
         DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["SuperPutty"]
     else:
         DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Putty (included with GNS3)"]

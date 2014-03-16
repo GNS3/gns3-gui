@@ -25,5 +25,5 @@ or negative for a release candidate or beta (after the base version
 number has been incremented)
 """
 
-__version__ = "0.1.dev"
-__version_info__ = (0, 1, 0, -99)
+__version__ = "0.9.dev"
+__version_info__ = (0, 9, 0, -99)

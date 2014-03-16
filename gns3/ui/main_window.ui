@@ -343,7 +343,7 @@ background-none;
       <number>0</number>
      </property>
      <item>
-      <widget class="QTextEdit" name="uiConsoleTextEdit">
+      <widget class="ConsoleView" name="uiConsoleTextEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -1146,6 +1146,11 @@ background-none;
    <class>NodesView</class>
    <extends>QTreeWidget</extends>
    <header>..nodes_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ConsoleView</class>
+   <extends>QTextEdit</extends>
+   <header>..console_view.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

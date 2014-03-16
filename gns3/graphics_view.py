@@ -659,7 +659,7 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        from .console import telnetConsole
+        from .telnet_console import telnetConsole
         for item in self.scene().selectedItems():
             if hasattr(item.node(), "console"):
                 node = item.node()
@@ -761,6 +761,9 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
             node = node_module.createNode(node_class)
+#             from .main_window import MainWindow
+#             mainwindow = MainWindow.instance()
+#             node.error_signal.connect(mainwindow.uiConsoleTextEdit.write_error)
             node_item = NodeItem(node)
             node_module.setupNode(node)
         except ModuleError as e:

@@ -237,6 +237,8 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
             self.uiAuxPortSpinBox.setValue(settings["aux"])
+            # load the startup-config
+            self.uiStartupConfigTextLabel.setText(settings["startup_config"])
             # load the MAC address setting
             if settings["mac_addr"]:
                 self.uiBaseMACLineEdit.setText(settings["mac_addr"])
@@ -245,6 +247,8 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
+            self.uiStartupConfigLabel.hide()
+            self.uiStartupConfigTextLabel.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
             self.uiAuxPortLabel.hide()
@@ -266,8 +270,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         # load the IOS image name without the full path
         self.uiIOSImageTextLabel.setText(os.path.basename(settings["image"]))
 
-        # load the startup-config
-        self.uiStartupConfigTextLabel.setText(settings["startup_config"])
+
 
         #TODO: startup-config setting
         #self.uiStartupConfigTextLabel.setText("None")
@@ -392,6 +395,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             del settings["console"]
             del settings["aux"]
             del settings["mac_addr"]
+            del settings["startup_config"]
 
         #del self._settings["image"]
         # get the platform and chassis if applicable
