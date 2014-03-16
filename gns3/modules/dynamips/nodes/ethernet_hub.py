@@ -138,8 +138,35 @@ class EthernetHub(Node):
             updated = True
             log.debug("port {} has been added".format(port_name))
 
+        params = {}
+        if "name" in new_settings and new_settings["name"] != self.name():
+            params = {"id": self._ethhub_id,
+                      "name": new_settings["name"]}
+            updated = True
+
         self._settings["ports"] = new_settings["ports"].copy()
         if updated:
+            if params:
+                log.debug("{} is being updated: {}".format(self.name(), params))
+                self._server.send_message("dynamips.ethhub.update", params, self._updateCallback)
+            else:
+                log.info("{} has been updated".format(self.name()))
+                self.updated_signal.emit()
+
+    def _updateCallback(self, result, error=False):
+        """
+        Callback for update.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while updating {}: {}".format(self.name(), result["message"]))
+            self.error_signal.emit(self.name(), result["code"], result["message"])
+        else:
+            if "name" in result:
+                self._settings["name"] = result["name"]
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 

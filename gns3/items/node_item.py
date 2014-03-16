@@ -157,6 +157,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     def updatedSlot(self):
 
+        self.textItem.setPlainText(self._node.name())
         self.setUnsavedState()
 
     def deleteLinksSlot(self):

@@ -132,18 +132,21 @@ class EthernetSwitch(Node):
             updated = True
             log.debug("port {} has been added".format(port_number))
 
+        params = {"id": self._ethsw_id}
         if ports_to_update:
-            params = {"id": self._ethsw_id,
-                      "ports": {}}
+            params["ports"] = {}
             for port_number, info in ports_to_update.items():
                 params["ports"][port_number] = info
             updated = True
-            log.debug("{} is being updated: {}".format(self.name(), params))
-            self._server.send_message("dynamips.ethsw.update", params, self._updateCallback)
+
+        if "name" in new_settings and new_settings["name"] != self.name():
+            params["name"] = new_settings["name"]
+            updated = True
 
         self._settings["ports"] = new_settings["ports"].copy()
         if updated:
-            self.updated_signal.emit()
+            log.debug("{} is being updated: {}".format(self.name(), params))
+            self._server.send_message("dynamips.ethsw.update", params, self._updateCallback)
 
     def _updateCallback(self, result, error=False):
         """
@@ -157,7 +160,10 @@ class EthernetSwitch(Node):
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
+            if "name" in result:
+                self._settings["name"] = result["name"]
             log.info("{} has been updated".format(self.name()))
+            self.updated_signal.emit()
 
     def allocateUDPPort(self, port_id):
         """

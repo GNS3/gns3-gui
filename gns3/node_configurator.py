@@ -72,7 +72,7 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
         # create the children items (configuration page items)
         for node_item in self._node_items:
             parent = " {} group".format(str(node_item.node()))
-            item = ConfigurationPageItem(self._parent_items[parent], node_item.node())
+            item = ConfigurationPageItem(self._parent_items[parent], node_item)
 
         # sort the tree
         self.uiNodesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
@@ -202,20 +202,30 @@ class ConfigurationPageItem(QtGui.QTreeWidgetItem):
     Store temporary node settings configured in a page widget.
 
     :param parent: parent widget
-    :param node: Node instance
+    :param node_item: NodeItem instance
     """
 
-    def __init__(self, parent, node):
+    def __init__(self, parent, node_item):
 
-        name = node.name()
-        self._node = node
-        QtGui.QTreeWidgetItem.__init__(self, parent, [name])
+        self._node = node_item.node()
+        QtGui.QTreeWidgetItem.__init__(self, parent, [self._node.name()])
 
         # return the configuration page widget used to configure the node.
-        self._page = node.configPage()
+        self._page = self._node.configPage()
 
         # make a copy of the node settings
-        self.setSettings(node.settings().copy())
+        self.setSettings(self._node.settings().copy())
+
+        # we want to know about updated settings
+        self._node.updated_signal.connect(self._updatedSlot)
+
+    def _updatedSlot(self):
+        """
+        Slot called when the node settings have been updated.
+        """
+
+        # update the name of the widget item
+        self.setText(0, self._node.name())
 
     def page(self):
         """

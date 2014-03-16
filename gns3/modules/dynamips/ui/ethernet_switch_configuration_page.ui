@@ -13,8 +13,64 @@
   <property name="windowTitle">
    <string>Ethernet switch configuration</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="uiGeneralGroupBox">
+     <property name="title">
+      <string>General</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="uiNameLabel">
+        <property name="text">
+         <string>Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiNameLineEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="2" rowspan="3">
+    <widget class="QGroupBox" name="uiEthernetSwitchPortsGroupBox">
+     <property name="title">
+      <string>Ports</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QTreeWidget" name="uiPortsTreeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="rootIsDecorated">
+         <bool>false</bool>
+        </property>
+        <column>
+         <property name="text">
+          <string>Port</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>VLAN</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="uiEthernetSwitchSettingsGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -107,51 +163,14 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="2" rowspan="3">
-    <widget class="QGroupBox" name="uiEthernetSwitchPortsGroupBox">
-     <property name="title">
-      <string>Ports</string>
-     </property>
-     <layout class="QVBoxLayout">
-      <item>
-       <widget class="QTreeWidget" name="uiPortsTreeWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="rootIsDecorated">
-         <bool>false</bool>
-        </property>
-        <column>
-         <property name="text">
-          <string>Port</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>VLAN</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Type</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QPushButton" name="uiAddPushButton">
      <property name="text">
       <string>&amp;Add</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QPushButton" name="uiDeletePushButton">
      <property name="enabled">
       <bool>false</bool>
@@ -161,7 +180,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>

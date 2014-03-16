@@ -270,11 +270,6 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         # load the IOS image name without the full path
         self.uiIOSImageTextLabel.setText(os.path.basename(settings["image"]))
 
-
-
-        #TODO: startup-config setting
-        #self.uiStartupConfigTextLabel.setText("None")
-
         if platform == "c7200":
 
             # load the midplane and NPE settings

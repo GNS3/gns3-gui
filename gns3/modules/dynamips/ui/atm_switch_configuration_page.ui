@@ -6,22 +6,41 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>482</width>
-    <height>376</height>
+    <width>459</width>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>ATM Switch</string>
   </property>
-  <layout class="QGridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QCheckBox" name="uiVPICheckBox">
-     <property name="text">
-      <string>Use VPI only (VP tunnel)</string>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0" colspan="3">
+    <widget class="QGroupBox" name="uiGeneralGroupBox">
+     <property name="title">
+      <string>General</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="uiNameLabel">
+        <property name="text">
+         <string>Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiNameLineEdit"/>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="uiVPICheckBox">
+        <property name="text">
+         <string>Use VPI only (VP tunnel)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="0" column="2" rowspan="4">
+   <item row="0" column="3" rowspan="3">
     <widget class="QGroupBox" name="uiMappingGroupBox">
      <property name="title">
       <string>Mapping</string>
@@ -53,7 +72,37 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="uiAddPushButton">
+     <property name="text">
+      <string>&amp;Add</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="uiDeletePushButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>&amp;Delete</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" colspan="2">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>213</width>
+       <height>31</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="uiSourceGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -143,7 +192,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0" colspan="3">
     <widget class="QGroupBox" name="uiDestinationGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -233,36 +282,6 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="uiAddPushButton">
-     <property name="text">
-      <string>&amp;Add</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QPushButton" name="uiDeletePushButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>&amp;Delete</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>213</width>
-       <height>31</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
  <tabstops>
@@ -275,7 +294,6 @@
   <tabstop>uiDestinationVCISpinBox</tabstop>
   <tabstop>uiAddPushButton</tabstop>
   <tabstop>uiDeletePushButton</tabstop>
-  <tabstop>uiMappingTreeWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/ethernet_hub_configuration_page.ui'
 #
-# Created: Tue Jan 21 20:55:02 2014
+# Created: Sun Mar 16 11:16:57 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,11 +36,17 @@ class Ui_ethernetHubConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiSettingsGroupBox.sizePolicy().hasHeightForWidth())
         self.uiSettingsGroupBox.setSizePolicy(sizePolicy)
         self.uiSettingsGroupBox.setObjectName(_fromUtf8("uiSettingsGroupBox"))
-        self.gridlayout1 = QtGui.QGridLayout(self.uiSettingsGroupBox)
-        self.gridlayout1.setObjectName(_fromUtf8("gridlayout1"))
+        self.gridLayout = QtGui.QGridLayout(self.uiSettingsGroupBox)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.uiNameLabel = QtGui.QLabel(self.uiSettingsGroupBox)
+        self.uiNameLabel.setObjectName(_fromUtf8("uiNameLabel"))
+        self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
+        self.uiNameLineEdit = QtGui.QLineEdit(self.uiSettingsGroupBox)
+        self.uiNameLineEdit.setObjectName(_fromUtf8("uiNameLineEdit"))
+        self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
         self.uiPortsLabel = QtGui.QLabel(self.uiSettingsGroupBox)
         self.uiPortsLabel.setObjectName(_fromUtf8("uiPortsLabel"))
-        self.gridlayout1.addWidget(self.uiPortsLabel, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiPortsLabel, 1, 0, 1, 1)
         self.uiPortsSpinBox = QtGui.QSpinBox(self.uiSettingsGroupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -51,10 +57,10 @@ class Ui_ethernetHubConfigPageWidget(object):
         self.uiPortsSpinBox.setMaximum(65535)
         self.uiPortsSpinBox.setProperty("value", 1)
         self.uiPortsSpinBox.setObjectName(_fromUtf8("uiPortsSpinBox"))
-        self.gridlayout1.addWidget(self.uiPortsSpinBox, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiPortsSpinBox, 1, 1, 1, 1)
         spacerItem = QtGui.QSpacerItem(20, 71, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridlayout1.addItem(spacerItem, 1, 1, 1, 1)
-        self.gridlayout.addWidget(self.uiSettingsGroupBox, 0, 0, 1, 2)
+        self.gridLayout.addItem(spacerItem, 2, 1, 1, 1)
+        self.gridlayout.addWidget(self.uiSettingsGroupBox, 0, 1, 1, 1)
 
         self.retranslateUi(ethernetHubConfigPageWidget)
         QtCore.QMetaObject.connectSlotsByName(ethernetHubConfigPageWidget)
@@ -62,5 +68,6 @@ class Ui_ethernetHubConfigPageWidget(object):
     def retranslateUi(self, ethernetHubConfigPageWidget):
         ethernetHubConfigPageWidget.setWindowTitle(_translate("ethernetHubConfigPageWidget", "Ethernet hub", None))
         self.uiSettingsGroupBox.setTitle(_translate("ethernetHubConfigPageWidget", "Settings", None))
+        self.uiNameLabel.setText(_translate("ethernetHubConfigPageWidget", "Name:", None))
         self.uiPortsLabel.setText(_translate("ethernetHubConfigPageWidget", "Number of ports:", None))
 

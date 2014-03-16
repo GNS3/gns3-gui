@@ -52,13 +52,14 @@ class Cloud(Node):
         # create an unique id and name
         self._name_id = Cloud._name_instance_count
         Cloud._name_instance_count += 1
-        self._name = "Cloud {}".format(self._name_id)
 
+        name = "Cloud {}".format(self._name_id)
         self._defaults = {}
         self._ports = []
         self._module = module
         self._settings = {"nios": [],
-                          "interfaces": []}
+                          "interfaces": [],
+                          "name": name}
 
     def delete(self):
         """
@@ -243,7 +244,11 @@ class Cloud(Node):
                         log.debug("port {} has been deleted".format(nio))
                         break
 
-        self._settings = new_settings.copy()
+        if "name" in new_settings and new_settings["name"] != self.name():
+            self._settings["name"] = new_settings["name"]
+            updated = True
+
+        self._settings["nios"] = new_settings["nios"].copy()
         if updated:
             log.info("cloud {} has been updated".format(self.name()))
             self.updated_signal.emit()
@@ -320,7 +325,7 @@ class Cloud(Node):
         :returns: name (string)
         """
 
-        return self._name
+        return self._settings["name"]
 
     def settings(self):
         """

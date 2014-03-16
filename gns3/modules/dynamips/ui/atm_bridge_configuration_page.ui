@@ -6,15 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>403</width>
-    <height>383</height>
+    <width>432</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>ATM Bridge</string>
   </property>
-  <layout class="QGridLayout">
-   <item row="0" column="0" colspan="2">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="2" rowspan="3">
+    <widget class="QGroupBox" name="uiMappingGroupBox">
+     <property name="title">
+      <string>Mapping</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QTreeWidget" name="uiMappingTreeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="rootIsDecorated">
+         <bool>false</bool>
+        </property>
+        <column>
+         <property name="text">
+          <string>Ethernet Port</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Port:VPI:VCI</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="uiEthernetGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -55,39 +87,7 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="2" rowspan="3">
-    <widget class="QGroupBox" name="uiMappingGroupBox">
-     <property name="title">
-      <string>Mapping</string>
-     </property>
-     <layout class="QVBoxLayout">
-      <item>
-       <widget class="QTreeWidget" name="uiMappingTreeWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="rootIsDecorated">
-         <bool>false</bool>
-        </property>
-        <column>
-         <property name="text">
-          <string>Ethernet Port</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Port:VPI:VCI</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="uiATMGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -183,14 +183,14 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QPushButton" name="uiAddPushButton">
      <property name="text">
       <string>&amp;Add</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QPushButton" name="uiDeletePushButton">
      <property name="enabled">
       <bool>false</bool>
@@ -200,7 +200,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="3">
+   <item row="4" column="0" colspan="3">
     <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -213,6 +213,25 @@
      </property>
     </spacer>
    </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="uiGeneralGroupBox">
+     <property name="title">
+      <string>General</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="uiNameLabel">
+        <property name="text">
+         <string>Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiNameLineEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -222,7 +241,6 @@
   <tabstop>uiATMVCISpinBox</tabstop>
   <tabstop>uiAddPushButton</tabstop>
   <tabstop>uiDeletePushButton</tabstop>
-  <tabstop>uiMappingTreeWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

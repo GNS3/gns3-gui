@@ -463,6 +463,11 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         :param group: indicates the settings apply to a group
         """
 
+        if not group:
+            self.uiNameLineEdit.setText(settings["name"])
+        else:
+            self.uiNameLineEdit.setEnabled(False)
+
         self._node = node
 
         # load all network interfaces
@@ -510,5 +515,10 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         :param node: Node instance
         :param group: indicates the settings apply to a group
         """
+
+        if not group:
+            settings["name"] = self.uiNameLineEdit.text()
+        else:
+            del settings["name"]
 
         settings["nios"] = list(self._nios)

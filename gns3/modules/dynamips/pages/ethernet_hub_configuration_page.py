@@ -43,6 +43,12 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         :param group: indicates the settings apply to a group
         """
 
+        if not group:
+            self.uiNameLineEdit.setText(settings["name"])
+        else:
+            self.uiNameLineEdit.hide()
+            self.uiNameLabel.hide()
+
         nbports = len(settings["ports"])
         self.uiPortsSpinBox.setValue(nbports)
 
@@ -55,9 +61,9 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         :param group: indicates the settings apply to a group
         """
 
-        # these setting cannot be shared by nodes and updated
-        # in the node configurator.
-        if "name" in settings:
+        if not group:
+            settings["name"] = self.uiNameLineEdit.text()
+        else:
             del settings["name"]
 
         nbports = self.uiPortsSpinBox.value()

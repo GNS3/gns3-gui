@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/cloud_configuration_page.ui'
 #
-# Created: Tue Jan 21 14:35:27 2014
+# Created: Sun Mar 16 11:16:57 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -355,6 +355,19 @@ class Ui_cloudConfigPageWidget(object):
         spacerItem8 = QtGui.QSpacerItem(20, 181, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridlayout13.addItem(spacerItem8, 3, 2, 1, 1)
         self.tabWidget.addTab(self.tab_6, _fromUtf8(""))
+        self.tab_7 = QtGui.QWidget()
+        self.tab_7.setObjectName(_fromUtf8("tab_7"))
+        self.gridLayout = QtGui.QGridLayout(self.tab_7)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.uiNameLabel = QtGui.QLabel(self.tab_7)
+        self.uiNameLabel.setObjectName(_fromUtf8("uiNameLabel"))
+        self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
+        self.uiNameLineEdit = QtGui.QLineEdit(self.tab_7)
+        self.uiNameLineEdit.setObjectName(_fromUtf8("uiNameLineEdit"))
+        self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
+        spacerItem9 = QtGui.QSpacerItem(20, 399, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem9, 1, 1, 1, 1)
+        self.tabWidget.addTab(self.tab_7, _fromUtf8(""))
         self.vboxlayout.addWidget(self.tabWidget)
 
         self.retranslateUi(cloudConfigPageWidget)
@@ -403,4 +416,6 @@ class Ui_cloudConfigPageWidget(object):
         self.uiAddNIONullPushButton.setText(_translate("cloudConfigPageWidget", "&Add", None))
         self.uiDeleteNIONullPushButton.setText(_translate("cloudConfigPageWidget", "&Delete", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("cloudConfigPageWidget", "NIO NULL", None))
+        self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("cloudConfigPageWidget", "Misc.", None))
 

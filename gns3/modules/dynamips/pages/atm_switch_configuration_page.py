@@ -159,6 +159,11 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         :param group: indicates the settings apply to a group
         """
 
+        if not group:
+            self.uiNameLineEdit.setText(settings["name"])
+        else:
+            self.uiNameLineEdit.setEnabled(False)
+
         self.uiMappingTreeWidget.clear()
         self._mapping = {}
         self._node = node
@@ -182,9 +187,9 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         :param group: indicates the settings apply to a group
         """
 
-        # these setting cannot be shared by nodes and updated
-        # in the node configurator.
-        if "name" in settings:
+        if not group:
+            settings["name"] = self.uiNameLineEdit.text()
+        else:
             del settings["name"]
 
         settings["mappings"] = self._mapping.copy()
