@@ -76,13 +76,10 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
-    def loadPreferences(self):
+    def _updateRemoteServersSlot(self):
         """
-        Loads IOU preferences.
+        Adds/Updates the available remote servers.
         """
-
-        iou_settings = IOU.instance().settings()
-        self._populateWidgets(iou_settings)
 
         servers = Servers.instance()
         self.uiRemoteServersTreeWidget.clear()
@@ -92,6 +89,18 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
             item.setText(0, host)
             item.setText(1, str(port))
+
+    def loadPreferences(self):
+        """
+        Loads IOU preferences.
+        """
+
+        iou_settings = IOU.instance().settings()
+        self._populateWidgets(iou_settings)
+
+        servers = Servers.instance()
+        servers.updated_signal.connect(self._updateRemoteServersSlot)
+        self._updateRemoteServersSlot()
 
     def savePreferences(self):
         """

@@ -107,13 +107,10 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.uiJITSharingSupportCheckBox.setChecked(settings["jit_sharing_support"])
         self.uiSparseMemorySupportCheckBox.setChecked(settings["sparse_memory_support"])
 
-    def loadPreferences(self):
+    def _updateRemoteServersSlot(self):
         """
-        Loads the Dynamips preferences.
+        Adds/Updates the available remote servers.
         """
-
-        dynamips_settings = Dynamips.instance().settings()
-        self._populateWidgets(dynamips_settings)
 
         servers = Servers.instance()
         self.uiRemoteServersTreeWidget.clear()
@@ -123,6 +120,18 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
             item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
             item.setText(0, host)
             item.setText(1, str(port))
+
+    def loadPreferences(self):
+        """
+        Loads the Dynamips preferences.
+        """
+
+        dynamips_settings = Dynamips.instance().settings()
+        self._populateWidgets(dynamips_settings)
+
+        servers = Servers.instance()
+        servers.updated_signal.connect(self._updateRemoteServersSlot)
+        self._updateRemoteServersSlot()
 
     def savePreferences(self):
         """

@@ -113,7 +113,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
                 self.write("\n")
                 self.columnize(self.completion_matches)
 
-        # In any case, reprint promt + line
+        # In any case, reprint prompt + line
         self.write("\n" + sys.ps1 + str(self.line))
 
     def writeError(self, name, code, message):

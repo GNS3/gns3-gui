@@ -28,13 +28,17 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Servers(object):
+class Servers(QtCore.QObject):
     """
     Server management class.
     """
 
+    # to let other pages know about remote server updates
+    updated_signal = QtCore.Signal()
+
     def __init__(self):
 
+        super(Servers, self).__init__()
         self._local_server = None
         self._remote_servers = {}
         self._local_server_path = ""
@@ -206,6 +210,8 @@ class Servers(object):
             new_server = WebSocketClient(url)
             self._remote_servers[server_id] = new_server
             log.info("new remote server connection {} registered".format(url))
+
+        self.updated_signal.emit()
 
     def remoteServers(self):
         """
