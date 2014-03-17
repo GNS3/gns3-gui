@@ -116,9 +116,21 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # In any case, reprint promt + line
         self.write("\n" + sys.ps1 + str(self.line))
 
-    def write_error(self, name, code, message):
+    def writeError(self, name, code, message):
+        """
+        Write error messages coming from the server.
 
-        print("Error received from {} with code {} and message: {}\n".format(name, code, message))
+        :param name: node name
+        :param code: error code
+        :param message: error message
+        """
+
+        #print("Error received from {} with code {} and message: {}\n".format(name, code, message))
+        if name:
+            name = name + ": "
+        text = "Server error [{code}]: {name} {message}".format(code=code, name=name, message=message)
+        self.write(text, error=True)
+        self.write("\n")
 
     def _run(self):
         """

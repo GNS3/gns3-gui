@@ -47,6 +47,10 @@ class GraphicsView(QtGui.QGraphicsView):
 
     def __init__(self, parent):
 
+        # Our parent is the central widget which parent
+        # is the main window.
+        self._main_window = parent.parent()
+
         QtGui.QGraphicsView.__init__(self, parent)
         self._settings = {}
         self._loadSettings()
@@ -479,10 +483,9 @@ class GraphicsView(QtGui.QGraphicsView):
         Opens the node configurator.
         """
 
-        from .main_window import MainWindow
         if not items:
             items = self.scene().selectedItems()
-        node_configurator = NodeConfigurator(items, MainWindow.instance())
+        node_configurator = NodeConfigurator(items, self._main_window)
         node_configurator.setModal(True)
         node_configurator.show()
         node_configurator.exec_()
@@ -564,35 +567,41 @@ class GraphicsView(QtGui.QGraphicsView):
         configure_action.triggered.connect(self.configureActionSlot)
         menu.addAction(configure_action)
 
-        console_action = QtGui.QAction("Console", menu)
-        console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
-        console_action.triggered.connect(self.consoleActionSlot)
-        menu.addAction(console_action)
+        if True in list(map(lambda item: hasattr(item.node(), "console"), items)):
+            console_action = QtGui.QAction("Console", menu)
+            console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
+            console_action.triggered.connect(self.consoleActionSlot)
+            menu.addAction(console_action)
 
-        idlepc_action = QtGui.QAction("Idle-PC", menu)
-        idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
-        idlepc_action.triggered.connect(self.idlepcActionSlot)
-        menu.addAction(idlepc_action)
+        if True in list(map(lambda item: hasattr(item.node(), "idlepcs"), items)):
+            idlepc_action = QtGui.QAction("Idle-PC", menu)
+            idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
+            idlepc_action.triggered.connect(self.idlepcActionSlot)
+            menu.addAction(idlepc_action)
 
-        start_action = QtGui.QAction("Start", menu)
-        start_action.setIcon(QtGui.QIcon(':/icons/play.svg'))
-        start_action.triggered.connect(self.startActionSlot)
-        menu.addAction(start_action)
+        if True in list(map(lambda item: hasattr(item.node(), "start"), items)):
+            start_action = QtGui.QAction("Start", menu)
+            start_action.setIcon(QtGui.QIcon(':/icons/play.svg'))
+            start_action.triggered.connect(self.startActionSlot)
+            menu.addAction(start_action)
 
-        suspend_action = QtGui.QAction("Suspend", menu)
-        suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
-        suspend_action.triggered.connect(self.suspendActionSlot)
-        menu.addAction(suspend_action)
+        if True in list(map(lambda item: hasattr(item.node(), "suspend"), items)):
+            suspend_action = QtGui.QAction("Suspend", menu)
+            suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
+            suspend_action.triggered.connect(self.suspendActionSlot)
+            menu.addAction(suspend_action)
 
-        stop_action = QtGui.QAction("Stop", menu)
-        stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
-        stop_action.triggered.connect(self.stopActionSlot)
-        menu.addAction(stop_action)
+        if True in list(map(lambda item: hasattr(item.node(), "stop"), items)):
+            stop_action = QtGui.QAction("Stop", menu)
+            stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
+            stop_action.triggered.connect(self.stopActionSlot)
+            menu.addAction(stop_action)
 
-        reload_action = QtGui.QAction("Reload", menu)
-        reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
-        reload_action.triggered.connect(self.reloadActionSlot)
-        menu.addAction(reload_action)
+        if True in list(map(lambda item: hasattr(item.node(), "reload"), items)):
+            reload_action = QtGui.QAction("Reload", menu)
+            reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
+            reload_action.triggered.connect(self.reloadActionSlot)
+            menu.addAction(reload_action)
 
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
@@ -761,9 +770,7 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
             node = node_module.createNode(node_class)
-#             from .main_window import MainWindow
-#             mainwindow = MainWindow.instance()
-#             node.error_signal.connect(mainwindow.uiConsoleTextEdit.write_error)
+            node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node_item = NodeItem(node)
             node_module.setupNode(node)
         except ModuleError as e:

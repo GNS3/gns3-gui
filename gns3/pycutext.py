@@ -146,7 +146,7 @@ class PyCutExt(QtGui.QTextEdit):
         else:
             return self.line
 
-    def write(self, text):
+    def write(self, text, error=False):
         """
         Simulates stdin, stdout, and stderr.
         """
@@ -164,7 +164,11 @@ class PyCutExt(QtGui.QTextEdit):
         # Set the format
         cursor.setPosition(pos1, QtGui.QTextCursor.KeepAnchor)
         char_format = cursor.charFormat()
-        char_format.setForeground(QtGui.QBrush(QtGui.QColor(0, 0, 0)))
+        if error:
+            color = QtGui.QColor(255, 0, 0)  # red
+        else:
+            color = QtGui.QColor(0, 0, 0)  # black
+        char_format.setForeground(QtGui.QBrush(color))
         cursor.setCharFormat(char_format)
 
     def writelines(self, text):
@@ -332,7 +336,7 @@ class PyCutExt(QtGui.QTextEdit):
         newpos = cursor.position()
         pos = -1
 
-        while(newpos != pos):
+        while (newpos != pos):
             cursor.movePosition(QtGui.QTextCursor.NextWord)
 
             pos = newpos

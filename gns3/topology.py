@@ -254,6 +254,7 @@ class Topology(object):
                     if not node_module:
                         raise ModuleError("Could not find any module for {}".format(topology_node["type"]))
                     node = node_module.createNode(node_class)
+                    node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
                 except ModuleError as e:
                     node_errors.append(str(e))
                     continue
