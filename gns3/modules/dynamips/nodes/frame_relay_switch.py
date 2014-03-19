@@ -105,9 +105,8 @@ class FrameRelaySwitch(Node):
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
-        else:
-            log.info("{} has been deleted".format(self.name()))
-            self.delete_signal.emit()
+        log.info("{} has been deleted".format(self.name()))
+        self.delete_signal.emit()
 
     def update(self, new_settings):
         """

@@ -39,7 +39,9 @@ class C7200(Router):
                                    "disk1": 0,
                                    "npe": npe,
                                    "midplane": "vxr",
-                                   "clock_divisor": 4}
+                                   "clock_divisor": 4,
+                                   "sensors": [22, 22, 22, 22],
+                                   "power_supplies": [1, 1]}
 
         # first slot is a mandatory Input/Output controller (based on NPE type)
         if npe == "npe-g2":

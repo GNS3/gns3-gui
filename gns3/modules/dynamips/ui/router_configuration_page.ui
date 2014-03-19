@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>439</width>
-    <height>480</height>
+    <width>419</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="uiGeneralTabWidget">
+     <widget class="QWidget" name="uiGeneralPageWidget">
       <attribute name="title">
        <string>General</string>
       </attribute>
@@ -31,98 +31,8 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="2" colspan="2">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiConsolePortLabel">
-         <property name="text">
-          <string>Console port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QLabel" name="uiAuxPortLabel">
-         <property name="text">
-          <string>Aux console port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="QSpinBox" name="uiAuxPortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiIOSImageLabel">
-         <property name="text">
-          <string>IOS image:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiStartupConfigLabel">
-         <property name="text">
-          <string>Startup-config:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="2">
-        <widget class="QLabel" name="uiStartupConfigTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="uiMidplaneLabel">
-         <property name="text">
-          <string>Midplane:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="uiNPELabel">
-         <property name="text">
-          <string>NPE:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1" colspan="2">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>263</width>
-           <height>151</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="6" column="2">
-        <widget class="QLabel" name="uiIOSImageTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLabel" name="uiPlatformTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="uiPlatformLabel">
@@ -138,10 +48,97 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
-        <widget class="QLineEdit" name="uiChassisLineEdit"/>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiIOSImageLabel">
+         <property name="text">
+          <string>IOS image:</string>
+         </property>
+        </widget>
        </item>
-       <item row="8" column="2">
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiStartupConfigLabel">
+         <property name="text">
+          <string>Startup-config:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLineEdit" name="uiStartupConfigLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiStartupConfigToolButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiPrivateConfigLabel">
+         <property name="text">
+          <string>Private-config:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiPrivateConfigToolButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiConsolePortLabel">
+         <property name="text">
+          <string>Console port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2" colspan="2">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="uiAuxPortLabel">
+         <property name="text">
+          <string>Aux port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="2" colspan="2">
+        <widget class="QSpinBox" name="uiAuxPortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiMidplaneLabel">
+         <property name="text">
+          <string>Midplane:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2" colspan="2">
         <widget class="QComboBox" name="uiMidplaneComboBox">
          <property name="enabled">
           <bool>true</bool>
@@ -154,7 +151,14 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="2">
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiNPELabel">
+         <property name="text">
+          <string>NPE:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="2" colspan="2">
         <widget class="QComboBox" name="uiNPEComboBox">
          <property name="enabled">
           <bool>true</bool>
@@ -167,19 +171,49 @@
          </property>
         </widget>
        </item>
+       <item row="10" column="2" colspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>263</width>
+           <height>151</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="2" colspan="2">
+        <widget class="QLabel" name="uiPlatformTextLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2" colspan="2">
+        <widget class="QComboBox" name="uiIOSImageComboBox"/>
+       </item>
+       <item row="2" column="2" colspan="2">
+        <widget class="QLabel" name="uiChassisTextLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="uiMemoriesTabWidget">
+     <widget class="QWidget" name="uiMemoriesPageWidget">
       <attribute name="title">
        <string>Memories and disks</string>
       </attribute>
-      <layout class="QVBoxLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="uiMemoriesGroupBox">
          <property name="title">
           <string>Memories</string>
          </property>
-         <layout class="QGridLayout">
+         <layout class="QGridLayout" name="gridLayout_5">
           <item row="0" column="0">
            <widget class="QLabel" name="uiRamLabel">
             <property name="text">
@@ -235,6 +269,38 @@
             </property>
             <property name="value">
              <number>128</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiIomemLabel">
+            <property name="text">
+             <string>I/O memory :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="uiIomemSpinBox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="singleStep">
+             <number>5</number>
+            </property>
+            <property name="value">
+             <number>5</number>
             </property>
            </widget>
           </item>
@@ -317,7 +383,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="uiSlotsTabWidget">
+     <widget class="QWidget" name="uiSlotsPageWidget">
       <attribute name="title">
        <string>Slots</string>
       </attribute>
@@ -515,113 +581,188 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="uiAdvancedTabWidget">
+     <widget class="QWidget" name="uiAdvancedPageWidget">
       <attribute name="title">
        <string>Advanced</string>
       </attribute>
-      <layout class="QGridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiConfregLabel">
-         <property name="text">
-          <string>Confreg:</string>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="uiSystemGroupBox">
+         <property name="title">
+          <string>System</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiSystemIdLineEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiConfregLabel">
+            <property name="text">
+             <string>Confreg:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>System ID:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiBaseMacLabel">
+            <property name="text">
+             <string>Base MAC:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="uiBaseMACLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="uiConfregLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>0x2102</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiConfregLineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item>
+        <widget class="QGroupBox" name="uiOptimizationsGroupBox">
+         <property name="title">
+          <string>Optimisations</string>
          </property>
-         <property name="text">
-          <string>0x2102</string>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiExecAreaLabel">
+            <property name="text">
+             <string>Exec area:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="uiExecAreaSpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> MiB</string>
+            </property>
+            <property name="maximum">
+             <number>4096</number>
+            </property>
+            <property name="singleStep">
+             <number>4</number>
+            </property>
+            <property name="value">
+             <number>64</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiSparseMemoryCheckBox">
+            <property name="text">
+             <string>Enable sparse memory support</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiIdlepcLabel">
+            <property name="text">
+             <string>Idle-PC:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiIdlepcLineEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiIdlemaxLabel">
+            <property name="text">
+             <string>Idlemax:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="uiIdlemaxSpinBox">
+            <property name="minimum">
+             <number>100</number>
+            </property>
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>1500</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiIdlesleepLabel">
+            <property name="text">
+             <string>Idlesleep:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiMmapCheckBox">
+            <property name="text">
+             <string>Enable mmap support</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="uiIdlesleepSpinBox">
+            <property name="suffix">
+             <string> ms</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>500</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiBaseMacLabel">
-         <property name="text">
-          <string>Base MAC:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiBaseMACLineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiExecAreaLabel">
-         <property name="text">
-          <string>Exec area:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QSpinBox" name="uiExecAreaSpinBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="suffix">
-          <string> MiB</string>
-         </property>
-         <property name="maximum">
-          <number>4096</number>
-         </property>
-         <property name="singleStep">
-          <number>4</number>
-         </property>
-         <property name="value">
-          <number>64</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiIomemLabel">
-         <property name="text">
-          <string>I/O memory :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QSpinBox" name="uiIomemSpinBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="suffix">
-          <string> %</string>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="singleStep">
-          <number>5</number>
-         </property>
-         <property name="value">
-          <number>5</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
+       <item>
         <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -636,12 +777,201 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="uiEnvironmentPageWidget">
+      <attribute name="title">
+       <string>Environment</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="uiPowerSuppliesGroupBox">
+         <property name="title">
+          <string>Power supplies</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiPowerSupply2Label">
+            <property name="text">
+             <string>Power supply 2:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="uiPowerSupply1ComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>on</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>off</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiPowerSupply1Label">
+            <property name="text">
+             <string>Power supply 1:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="uiPowerSupply2ComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>on</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>off</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiSensorsGroupBox">
+         <property name="title">
+          <string>Temperature sensors</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiSensor1Label">
+            <property name="text">
+             <string>I/0 controller inlet:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="uiSensor1SpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> C</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiSensor2Label">
+            <property name="text">
+             <string>I/0 controller outlet:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="uiSensor2SpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> C</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiSensor3Label">
+            <property name="text">
+             <string>NPE inlet:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="uiSensor3SpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> C</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiSensor4Label">
+            <property name="text">
+             <string>NPE outlet:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="uiSensor4SpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> C</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>194</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>uiTabWidget</tabstop>
   <tabstop>uiMidplaneComboBox</tabstop>
   <tabstop>uiNPEComboBox</tabstop>
   <tabstop>uiRamSpinBox</tabstop>
@@ -661,7 +991,6 @@
   <tabstop>uiConfregLineEdit</tabstop>
   <tabstop>uiBaseMACLineEdit</tabstop>
   <tabstop>uiExecAreaSpinBox</tabstop>
-  <tabstop>uiIomemSpinBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

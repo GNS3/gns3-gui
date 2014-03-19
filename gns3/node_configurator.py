@@ -61,6 +61,8 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
 
         # create the parent (group) items
         for node_item in self._node_items:
+            if not node_item.node().initialized():
+                continue
             group_name = " {} group".format(str(node_item.node()))
             parent = group_name
             if not parent in self._parent_items:
@@ -71,6 +73,8 @@ class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
 
         # create the children items (configuration page items)
         for node_item in self._node_items:
+            if not node_item.node().initialized():
+                continue
             parent = " {} group".format(str(node_item.node()))
             item = ConfigurationPageItem(self._parent_items[parent], node_item)
 

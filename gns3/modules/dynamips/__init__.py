@@ -101,16 +101,18 @@ class Dynamips(Module):
             path = settings.value("path", "")
             image = settings.value("image", "")
             startup_config = settings.value("startup_config", "")
+            private_config = settings.value("private_config", "")
             platform = settings.value("platform", "")
             chassis = settings.value("chassis", "")
             idlepc = settings.value("idlepc", "")
             ram = settings.value("ram", 128, type=int)
-            server = settings.value("server", "local")
+            server = settings.value("server", "local")  # TODO: remote servers
 
             key = "{server}:{image}".format(server=server, image=image)
             self._ios_images[key] = {"path": path,
                                      "image": image,
                                      "startup_config": startup_config,
+                                     "private_config": private_config,
                                      "platform": platform,
                                      "chassis": chassis,
                                      "idlepc": idlepc,
@@ -316,11 +318,15 @@ class Dynamips(Module):
             if not ios_image:
                 raise ModuleError("No IOS image found for platform {}".format(node.settings()["platform"]))
             settings = {}
-            # set initial settings like an idle-pc value
+            # set initial settings like the chassis or an idle-pc value etc.
+            if ios_image["chassis"]:
+                settings["chassis"] = ios_image["chassis"]
             if ios_image["idlepc"]:
                 settings["idlepc"] = ios_image["idlepc"]
             if ios_image["startup_config"]:
                 settings["startup_config"] = ios_image["startup_config"]
+            if ios_image["private_config"]:
+                settings["private_config"] = ios_image["private_config"]
             node.setup(ios_image["path"], ios_image["ram"], initial_settings=settings)
         else:
             node.setup()

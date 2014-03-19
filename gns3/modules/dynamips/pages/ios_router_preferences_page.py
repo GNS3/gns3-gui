@@ -23,14 +23,9 @@ import os
 import sys
 import re
 from gns3.qt import QtGui
-from ..settings import PLATFORMS_DEFAULT_RAM
+from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
-
-# platforms with supported chassis
-CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),
-           "c2600": ("2610", "2611", "2620", "2621", "2610XM", "2611XM", "2620XM", "2621XM", "2650XM", "2651XM"),
-           "c3600": ("3620", "3640", "3660")}
 
 
 class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget):
@@ -51,6 +46,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiIOSImagesTreeWidget.itemSelectionChanged.connect(self._iosImageChangedSlot)
         self.uiIOSPathToolButton.clicked.connect(self._iosImageBrowserSlot)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
@@ -79,6 +75,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         self.uiIOSPathLineEdit.setText(ios_image["path"])
         self.uiStartupConfigLineEdit.setText(ios_image["startup_config"])
+        self.uiPrivateConfigLineEdit.setText(ios_image["private_config"])
         index = self.uiPlatformComboBox.findText(ios_image["platform"])
         if index != -1:
             self.uiPlatformComboBox.setCurrentIndex(index)
@@ -106,6 +103,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         path = self.uiIOSPathLineEdit.text()
         startup_config = self.uiStartupConfigLineEdit.text()
+        private_config = self.uiPrivateConfigLineEdit.text()
         platform = self.uiPlatformComboBox.currentText()
         chassis = self.uiChassisComboBox.currentText()
         idlepc = self.uiIdlePCLineEdit.text()
@@ -143,6 +141,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self._ios_images[key] = {"path": path,
                                  "image": image,
                                  "startup_config": startup_config,
+                                 "private_config": private_config,
                                  "platform": platform,
                                  "chassis": chassis,
                                  "idlepc": idlepc,
@@ -209,13 +208,25 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             return
 
         detected_platform = match.group(1)
+        detected_chassis = ""
+        # IOS images for the 3600 platform start with the chassis name (c3620 etc.)
+        for platform, chassis in CHASSIS.items():
+            if detected_platform[1:] in chassis:
+                detected_chassis = detected_platform[1:]
+                detected_platform = platform
+                break
+
         if detected_platform not in PLATFORMS_DEFAULT_RAM:
-            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform and is not supported by this application!".format(detected_platform))
+            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
             return
 
         index = self.uiPlatformComboBox.findText(detected_platform)
         if index != -1:
             self.uiPlatformComboBox.setCurrentIndex(index)
+
+        index = self.uiChassisComboBox.findText(detected_chassis)
+        if index != -1:
+            self.uiChassisComboBox.setCurrentIndex(index)
 
         self.uiRAMSpinBox.setValue(PLATFORMS_DEFAULT_RAM[detected_platform])
 
@@ -233,15 +244,25 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
             return
 
-        if sys.platform.startswith('win'):
-            # Dynamips (Cygwin acutally) doesn't like non ascii paths on Windows
-            try:
-                path.encode('ascii')
-            except UnicodeEncodeError:
-                QtGui.QMessageBox.warning(self, "Startup configuration", "The startup configuration filename should contains only ascii (English) characters.")
-
         self.uiStartupConfigLineEdit.clear()
         self.uiStartupConfigLineEdit.setText(path)
+
+    def _privateConfigBrowserSlot(self):
+        """
+        Slot to open a file browser and select a private-config file.
+        """
+
+        #TODO: current directory for private-config + filter?
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.R_OK):
+            QtGui.QMessageBox.critical(self, "Private configuration", "Cannot read {}".format(path))
+            return
+
+        self.uiPrivateConfigLineEdit.clear()
+        self.uiPrivateConfigLineEdit.setText(path)
 
     def _idlePCFinderSlot(self):
 

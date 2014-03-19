@@ -54,6 +54,7 @@ class Cloud(Node):
         Cloud._name_instance_count += 1
 
         name = "Cloud {}".format(self._name_id)
+        self.setStatus(Node.started)  # this is an always-on node
         self._defaults = {}
         self._ports = []
         self._module = module

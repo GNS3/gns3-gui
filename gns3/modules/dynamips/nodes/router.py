@@ -213,9 +213,8 @@ class Router(Node):
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
-        else:
-            log.info("router {} has been deleted".format(self.name()))
-            self.delete_signal.emit()
+        log.info("router {} has been deleted".format(self.name()))
+        self.delete_signal.emit()
 
     def setup(self, image, ram, name=None, initial_settings={}):
         """
@@ -242,6 +241,8 @@ class Router(Node):
             params["aux"] = self._settings["aux"] = initial_settings.pop("aux")
         if "mac_addr" in initial_settings:
             params["mac_addr"] = self._settings["mac_addr"] = initial_settings.pop("mac_addr")
+        if "chassis" in initial_settings:
+            params["chassis"] = self._settings["chassis"] = initial_settings.pop("chassis")
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
@@ -324,9 +325,15 @@ class Router(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
+        # push the startup-config
         if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
         and os.path.exists(new_settings["startup_config"]):
             params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
+
+        # push the private-config
+        if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"] \
+        and os.path.exists(new_settings["private_config"]):
+            params["private_config_base64"] = self._base64Config(new_settings["private_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("dynamips.vm.update", params, self._updateCallback)

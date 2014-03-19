@@ -738,7 +738,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if running_nodes:
             nodes = "\n".join(running_nodes)
-            MessageBox(self, "Save project", "Please stop the following nodes before saving the topology", nodes)
+            MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
             return
 
         if self._temporary_project:
