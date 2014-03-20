@@ -161,8 +161,13 @@ class WebSocketClient(WebSocketBaseClient):
             method = reply.get("method")
             params = reply.get("params")
 
-            #TODO: handle notifications from servers
-            print("This is a notification! {} {}".format(method, params))
+            # let the responsible module know about the notification
+            from .modules import MODULES
+            for module in MODULES:
+                if method.startswith(module.__name__.lower()):
+                    instance = module.instance()
+                    instance.notification(method, params)
+                    break
 
     def send_message(self, destination, params, callback):
         """

@@ -201,6 +201,7 @@ class Router(Node):
             self._server.send_message("dynamips.vm.delete", {"id": self._router_id}, self._deleteCallback)
         else:
             self.delete_signal.emit()
+            self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
         """
@@ -215,6 +216,7 @@ class Router(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("router {} has been deleted".format(self.name()))
         self.delete_signal.emit()
+        self._module.removeNode(self)
 
     def setup(self, image, ram, name=None, initial_settings={}):
         """
@@ -292,6 +294,7 @@ class Router(Node):
             self.setInitialized(True)
             log.debug("router {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def _base64Config(self, config_path):
         """
@@ -383,6 +386,7 @@ class Router(Node):
             self.setInitialized(True)
             log.info("router {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
+            self._module.addNode(self)
             self._inital_settings = None
         elif updated:
             log.info("router {} has been updated".format(self.name()))
@@ -844,6 +848,7 @@ class Router(Node):
         self.setInitialized(True)
         log.info("router {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
+        self._module.addNode(self)
         self._inital_settings = None
         self._loading = False
 

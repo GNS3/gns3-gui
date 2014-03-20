@@ -149,6 +149,7 @@ class IOUDevice(Node):
             self.setInitialized(True)
             log.info("IOU instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def delete(self):
         """
@@ -162,6 +163,7 @@ class IOUDevice(Node):
             self._server.send_message("iou.delete", {"id": self._iou_id}, self._deleteCallback)
         else:
             self.delete_signal.emit()
+            self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
         """
@@ -174,9 +176,9 @@ class IOUDevice(Node):
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
-        else:
-            log.info("{} has been deleted".format(self.name()))
-            self.delete_signal.emit()
+        log.info("{} has been deleted".format(self.name()))
+        self.delete_signal.emit()
+        self._module.removeNode(self)
 
     def _base64Config(self, config_path):
         """
@@ -250,6 +252,7 @@ class IOUDevice(Node):
             self.setInitialized(True)
             log.info("IOU device {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
+            self._module.addNode(self)
             self._inital_settings = None
         elif updated:
             log.info("IOU device {} has been updated".format(self.name()))
@@ -496,6 +499,7 @@ class IOUDevice(Node):
         self.setInitialized(True)
         log.info("router {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
+        self._module.addNode(self)
         self._inital_settings = None
         self._loading = False
 

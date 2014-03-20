@@ -42,6 +42,7 @@ class IOU(Module):
         Module.__init__(self)
 
         self._settings = {}
+        self._nodes = []
         self._iou_images = {}
         self._servers = []
         self._working_dir = ""
@@ -175,6 +176,24 @@ class IOU(Module):
         """
 
         return self._servers
+
+    def addNode(self, node):
+        """
+        Adds a node to this module.
+
+        :param node: Node instance
+        """
+
+        self._nodes.append(node)
+
+    def removeNode(self, node):
+        """
+        Removes a node from this module.
+
+        :param node: Node instance
+        """
+
+        self._nodes.remove(node)
 
     def iouImages(self):
         """
@@ -332,6 +351,21 @@ class IOU(Module):
         for server in self._servers:
             if server.connected():
                 server.send_notification("iou.reset")
+
+    def notification(self, destination, params):
+        """
+        To received notifications from the server.
+
+        :param destination: JSON-RPC method
+        :param params: JSON-RPC params
+        """
+
+        if "id" in params:
+            for node in self._nodes:
+                if node.id() == params["id"]:
+                    message = "node {}: {}".format(node.name(), params["message"])
+                    self.notification_signal.emit(message, params["details"])
+                    node.stop()
 
     @staticmethod
     def getNodeClass(name):

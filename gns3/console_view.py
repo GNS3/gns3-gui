@@ -20,6 +20,7 @@ import sys
 from .version import __version__
 from .console_cmd import ConsoleCmd
 from .pycutext import PyCutExt
+from .modules import MODULES
 
 
 class ConsoleView(PyCutExt, ConsoleCmd):
@@ -69,6 +70,10 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         except Exception as e:
             sys.stderr.write(e)
 
+        for module in MODULES:
+            instance = module.instance()
+            instance.notification_signal.connect(self.writeNotification)
+
     def onKeyPress_Tab(self):
         """
         Imitate cmd.Cmd.complete(self, text, state) function.
@@ -115,6 +120,20 @@ class ConsoleView(PyCutExt, ConsoleCmd):
 
         # In any case, reprint prompt + line
         self.write("\n" + sys.ps1 + str(self.line))
+
+    def writeNotification(self, message, details):
+        """
+        Write notification messages coming from the server.
+
+        :param message: notification message
+        :param details: details (text)
+        """
+
+        text = "Server notification: {}".format(message)
+        self.write(text, error=True)
+        self.write("\n")
+        self.write(details)
+        self.write("\n")
 
     def writeError(self, name, code, message):
         """

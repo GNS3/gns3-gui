@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/router_configuration_page.ui'
 #
-# Created: Tue Mar 18 17:23:00 2014
+# Created: Wed Mar 19 13:25:01 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!

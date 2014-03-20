@@ -1,0 +1,3201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AboutDialog</class>
+ <widget class="QDialog" name="AboutDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>534</width>
+    <height>280</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>About</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/resources.qrc">
+    <normaloff>:/images/logo_icon.png</normaloff>:/images/logo_icon.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>&amp;About</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="uiLogoLabel">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../../resources/resources.qrc">:/images/logo_gns3_small.png</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="uiAboutTextLabel">
+           <property name="text">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:14pt; font-weight:600;&quot;&gt;GNS3 ER %VERSION%&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Under GPL v3 license&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:12pt; font-weight:600;&quot;&gt;GNS3 Technologies Inc.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.gns3.net&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;Visit our website&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/donate/index.php?group_id=198152&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;Make a donation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.gns3.net/contact&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;Contact us&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>&amp;Thanks to</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QPlainTextEdit" name="uiThanksPlainTextEdit">
+         <property name="plainText">
+          <string>James Borden
+Tenzin Rigdol Oshoe
+Brian Jacobson
+Chad Hoevenaars
+Jesus Espinoza
+Des Kharisma Tarigan
+David Bigerstaff
+Christopher Good
+Brian Farmer
+Jimmy Bruneel
+Rob Edwards
+BEGQTh34
+Nebulis01
+The JWag (James Wagner)
+JONATHAN BALEVA VIRAY
+Jamie Hoyt
+Jake Guffey
+Enis Byci
+Avery Wright
+Maxim Klimanov
+Salomon ADJOVI
+Keith McCulloch
+Guillermoi A Pierluissi
+MiraliN
+ALexandr Ismagilov
+mistabatu
+AFIF JABADO
+Allen Hadder 
+Jonathan M. Olivier
+Muhammad Adeel Malik
+PhatWheZ
+Christopher D Perrett
+James Clifford
+David Henderson
+Andrea Florio
+Michael Eva
+Abdul Wahid
+SebastianHelmer
+Eric Maxwell
+Bradly Leiws
+Pavel Afanasjev
+Jan Jessen
+Brandon Raikes
+Geron
+Joel-Brook-Leeds-yay!
+Robert Novak
+Barry Weiss
+Sami Alsubhi
+Packetboss
+Ionut Vasile
+Nick Yeager
+Pioneer Network Solutions, LLC.
+Randy Timmermans
+Pablo Lucena
+Michal Dulovic
+Ramon Pinyol
+Roberto Taccon
+Andras Dosztal
+Matthieu Dalcourt
+Matt Dominey
+Wanderson Cristony Tinti
+Alexandre Maia Vlahos
+DarronDazlinSmith
+JOHN BAPTIST OBILIL
+Jimmy Copeland
+Roy Benoy
+Henrik Kruse Larsen
+cpt2040
+Martin Varga
+Jonathan Gonzalez
+Luke Withers
+Mahir Ali Ahmed
+Dean Ryan Perrine
+Robert F. Dias Jr
+Ashenafi
+Justin L. Spencer
+Carlo Gagliardi
+Sean Barmettler
+focaccio
+rhein021
+Frederick Poirier
+Dmitri Fedotov
+Ernie Maestas
+Colin Taylor 
+HugoAmaro
+Solim
+Volodymyr Kharytonov
+Max &quot;Big Hoss&quot; Clise
+Alex_Gutierrez
+Saad Najaf Khan
+dahveed311
+Michael Loft Mikkelsen - DK
+HyperSCSI
+Enrico Floris
+Grigoris Papalexis
+Prithvi Mandava
+YOUNIS BADAWI
+SelvaagIT
+steve brokenshire
+Brian Adelson
+Michael A Hern
+Umair Ali Soomro
+Matt_Earp
+Martin L Lora
+Diego Monasterios
+Chris T Sims
+Jeff Wagner
+Harinder Singh
+David Gaytan
+Jonathan Moulton
+OGUZHAN VEYSEL ATALAR
+Bent Mathiesen
+GuruSue
+mmetaphor
+Paul Stoner
+Ryan Corcoran
+OmarS
+Dudiefa Tonye
+Christian Elsen (San Francisco)
+Victor Venturelli Mosconi
+Barry Jones
+Syed Zayed Bukhari
+Kareo
+Urs &quot;Whity&quot; Weiss
+Jesus Hernando Lopez
+Mike McCauley
+Carl Francis AKA tEeJ
+Imad Daou
+orangejam72
+Paulo &quot;elTechno&quot; Alvarado
+Don Coulson
+Jeff Nierman
+Brian Whelton
+Garang Deng
+Marcus Watson
+Paul@GGR
+Anthony Branchaud
+Rameez-C
+Patrick Williams
+Jonathan Madore
+Robert Gene Horn
+Jaime
+Ken Richardson
+Eduard Ch.
+Ionut Tartau
+Fred Ellis Jr
+Ferenc Kuris
+David Tinsley
+Jeroen Roos
+Peter Palasti
+Dave Hardy
+Herceg Andras
+Bryan Scarbrough
+Filipe Matias
+Muelly
+tr3quart1sta
+Ian C Scarborough
+Robert B Romel
+Pio P. Prado
+zasplas
+Pantelis Stoufis
+Daniel R Moore
+Daniel Tinsley
+Derek Ivey
+Alessandro Piva
+Tony DelGreco
+Tyler Carlisle
+Christopher Buckley
+Korstiaan Kooijman
+Paul Schriever
+Mawat
+Ivo Bottenheft
+Soundwave
+Markus Karlsson
+molan1
+Nikola Sambolic
+Joachim Boadu Kwaku
+Adi Wong
+Joao Teixeira
+Alexandru Badea
+Bryan Hubbard
+Rajesh Anne
+Bartosz Durma
+Vladusha
+HasanTheWise
+Tejinder Panesar
+Alexandru Stefan Marinescu
+Giovanni Augusto
+Kyryl Tumanov
+Rashiem Mims
+Maky Robert
+Timur Mezentsev
+Matt Blackwell
+James Moore
+elhatab
+Ruben Lihet
+Paul Kiela
+Jeffrey Kraemer
+Andrew K.
+Comein Arnaud
+Riccardo Bruzzone
+Ulrich Kempken
+Simon Wilkinson
+Susan Chatterjee
+Jose Isidro Cantu Alvarez
+Mcglon
+Asimios Kiropoulos
+slobodan simic
+Jacob Adlon
+arkSyne
+Rakesh M. Thakkar
+Tchitchi
+Mohamed Rezard Meeralebbe
+JaeHyeong Jeon
+enderst
+Yves Kerbens
+Ramon Kidd
+Frank Olshansky
+Steve Miller
+Curt Wheeler
+Tony M Nguyen
+Chris Kuhn
+John K Williamson
+Swinster
+Jared Heinrichs
+macbroadcast
+Cyrinojuca
+Sean Cardus
+Lazaro Rene Ortega Rodriguez
+Andrew Peter Kirkby
+Luis Ramos
+Sean McGrath
+Manuel Neuner (Austria)
+Matt Siegel
+J. Neil Marlowe
+Shibata
+Michael Maguire
+Harmeet Singh Sian
+Britt Adams
+MuslimSubmittedToGod
+Samuel
+Steve Housego
+Pablo Hauptmann
+Stevan Sheely
+Brian &quot;Red&quot; Williamson
+Mark Fietje
+Muhammet Said Temelli
+Skeeve Stevens
+JEFF OLIVER
+Frederik Bjerggaard Nielsen
+Anar R. Iskandarli - Azerbaijan
+Anthony_Oliverio
+Jason Cook
+Kalamoukos Dimitris
+Francis Ruddy
+roxtonuk
+Przemyslaw 'UWillC' Snowacki
+Chipa
+M Sawatzky
+dzap
+Shaun Carlin
+Jegan
+Enrique Gómez Monreal
+Marco Simontacchi
+Christopher Robert Lee
+esreverse
+milan peyrac
+Robin Wood - Digininja
+Dan Nelson
+Gareth Mitchelson
+Michael V King, Sr.
+Brent A Walter
+smcghie
+Jose Carvalho
+IPrgomet
+Richard Harris 1
+Wilson Mendes
+Jovito Cueva
+Conrad Jedynak
+Martin Gursky
+paul wynne
+Oyama Hall
+Giles Mathew Broom
+Akwasi Adu
+Dan Roering
+Sal Amico
+Jakso Laszlo 06101963
+Engelbert Luechinger
+MWenglikowski
+Waqas Bashir
+Garrett Skjelstad
+Renato de Pierri - SP Brazil
+Ebo Semenhyia Thompson
+Marcos Rodrigo Santos de Souza
+OGINNI OLUWASEYI
+Jordan Foster(Jez2cool)
+Bluca
+Earl Bovell
+Steve Stewart
+Mike Boughton
+Adrian Z.
+Phillip White
+Mustafa Ameen Al-Khateeb
+Vikas Sharma
+Noel Mulryan
+Johan2004
+James Ramsay
+Brian Lehr
+ecium
+Yatin K Shah
+Neil Sheridan
+Francis Pena (JigaX)
+Hank Yeomans
+Peter Stanczak
+jhrcariazo
+Matthew Gosling
+Danni Nissen Bardino
+Duane McNulty
+Adam Wysockyj
+Benjamin Donald Byers 
+Terrance Richards
+Erik Jacobson II
+DIAS
+ALDO LEIVA-MARCHISSANO (DECO5)
+dedycahyadi-unmul
+Robert Trow
+Adam Johnston
+Mace
+Alexander Lubenski
+John Braswell
+Brian Sanders
+David Vierling
+André Jan Smit
+RedNectar Chris Welsh
+Edmarc Vitz Oliveros
+Vivek Bannore
+Emilio Sanchez Parbul
+Luke Jay Cooper
+Bill Laubsch
+Luke Cooper
+Chris Cook
+KloudFyre Networks
+Jason Miller
+Chase Wright
+Joseph Paveglio
+Shing Hei Yee
+MARSHG
+Rowan Brandon Lee
+AbdulHayee
+Wanxue Hai
+Net9 Telecom
+Dean Lofts
+Gordon Duncan
+Daniel Gurgel
+Bill Scully
+Scott Dalton
+brato
+Peter Hansen
+Jose E. Silva
+reySkata
+Francis Xavier Todd II
+Nick Cochrane
+Geoff Kuchera
+Geoff Ladwig
+Murilo R. Esplugues
+Srinivasa R Emani
+Terrence Battlehunt
+Muhammad Bhatti
+John Miller
+Tiago Lima (TiLima)
+Luis Carlos Gomes Alves
+Giuseppe De Luca
+Alex Kieser
+Adam Steele
+Joey Caldwell
+Aaron Oliver
+Adil Nasser
+Marcelo Chicralla
+Chris Smolen
+Oleg Ivin
+davidwthomas
+pingwarrior
+Yared Demissie
+SIM Kwang Meng
+Thomas Irwan
+Jordan Dalton
+Debasish
+Ernest Saadat
+Dr Bankim Jani
+Nasir Bilal
+Tran Minh Luan
+Brad Haynes
+Gerald Gonzalez Santoni
+Campesi
+Richard Danu
+Olugbenga Adara
+Emad Salahuddin
+Ezra Reang
+Serge Cherestal
+Mike Shafer
+Vikram Sokhi
+Arliton Martiniano Rocha
+Faith Solutions pvt ltd 
+Arnold A. Madulin
+cqaigy
+Ti-Chris
+Sergey Goffert
+Chris Higgins
+George P. Burdell
+Todd Graham
+Barry Middleton
+Pdw8
+Lê Việt Thanh
+Pavel Glushkov
+Alan Rizgar Ali
+Aung Ye Thu
+Khurshid Hassan Khan
+Kamran Mehdi
+Richard Mantilla
+David R. Burgess
+Thomas Whitmore
+Lee Kong Wah
+SUNANDA DAS
+Irvan Tambunan
+Vasanthkumar
+TJ West
+Kanthi Kiran Narisetti
+DarwinLabs
+Weston Brown
+Manikant Thakur
+Intoy23_
+Muhammad Hussain
+jakimm
+Gengxiaojun
+Dilan Perera
+Yagnesh Chauhan
+James R. Gross Jr.
+Abraxas
+Patrick Silwimba
+Rajavel
+Idris Adesanya
+John Bluhdorn
+Xulnoor Syed
+Gerard Sharpe
+Warren Sullivan
+Greg Gephart
+Ian Verno
+Mark Odette II
+Christopher Megyeri
+Vladimir Kuchar
+Yazeed Fataar
+Rajesh Kakkanatt Jolly
+Radovan Brezula
+Russell W Wood
+Cameron Rooke
+Michael Dawson
+Ronald Boestfleisch Jr
+Jade Rampulla
+Mohammed Aftab
+Orkhan Farajov
+sumitava chatterjee
+Hugh Mann
+Rasto Szaszak
+Name, last name and country.
+Milan Zapletal
+MJM Boyens
+Ernesto Hernandez, Finland.
+Filippos Kolovos
+David Julson
+Net Center, Inc.
+Robert Rittenhouse
+asdfghjkl
+Derek Michael Neves
+GLB
+Nadeem Rafi
+Steve De Jongh
+Rich Gibbons
+Krishna Kumaran GK
+Sebastian Gosenheimer
+dante
+Frank Hopkins
+Wyld Stallyn
+George Paa Kwesi Williams
+Andrzej Krzyżak
+TheMasonFamily
+Neill Wilkinson - Aeonvista Ltd
+Guillano  L'intelligent
+Tiago Sousa
+Ingo Bothe
+Guillano L
+Dingxia Li
+Bongie
+Orlov Vladimir
+Dmitry Tyutikov
+Jon Walker
+Theofanis Katsiaounis
+praneel prasad
+norwizzle
+tmcraig08
+Simon Huber
+Pedro Duarte ESTCB
+Akov
+Mihai Alexandru Vasiliu
+ronnietheengineer
+Timothy Manito
+Dmitry Seliverstov
+Matija Grabar
+mckrsta
+magulito
+GazandKim
+Chris Davies
+Zack Manriquez
+Adnan Pajalic
+Anton Ovsyannikov
+RushenYYZ
+Alejandro Nolla
+Igor Plokhikh
+Ilya Kupriyanov
+zahid yasin
+joey fernandez mirador
+Orlando Amador
+Christiano Lucas
+Timothy Call-Buckeyes#1
+Chris Graves
+Roman Florea
+Andrew Banwell
+Randy Brizuela
+Tibor Torma
+KIOUSIS THANASIS
+Paulo Vaz
+primmus
+Ovidu Catrina
+Emi.Tiamo.
+Willian Kassem
+Xianli Huang
+karanarora192006
+Jens THIES
+Emberlight
+Luis Knob
+WarrenHayhurst
+Richard Karus
+Pablo Olveira
+ghisisan
+Antonio Gerbino
+Bijay Swain
+Simon Minery
+Matt du Jardin
+Ian Blaney
+Nallanathan Sivatharzan
+Paulo Guerreiro
+Joe Audet
+Noman Choudhury
+Silvyse
+Azam Saddiq
+Rodrigo Henrique Castro da Silva
+Rickard Körkkö
+Thomas quero
+Matus Lenhart
+Frank Bailey
+herdoc2005
+Kurt Holm-Andersen
+Dimitar Leskov
+David Abreu de Sousa Junior
+Anthony R Junk
+Aung Zaw Latt
+Fred Bisel
+khaisar
+MOHAMMAD FAIZAL BIN MOHAMED SALLEHIN
+Svindler
+Marcel Slagter
+Brandon.nmi.Johnson
+Farias
+Quinton Bakies
+Yoshihiro Ano
+Alex K
+Yohannes Iyob
+JPETALLAR
+William Gruesbeck Jr.
+Yollande S Chang
+Chandler B.
+Roberto Ríos Camilo
+poolisa
+Luke Grant-Jones
+Bhuiya
+Kenneth Vargas Vargas
+Shivam Agarwal
+Alexander Slipak
+Gary W. McCullors
+HD_37432
+Huy Tran
+David Krantz 
+Tony Davis
+Richie Hor
+Luis Diego Flores
+Felipe Lima (Sheriff)
+John Merry
+Syed Jamil Hussain Jafri
+Randy Llandelar
+Fahim Ahmed
+Dan Ryan
+Kyle Bauer
+Michael Campbell
+Matthew Gillespie
+Khuram Rafique
+Sean Salvadalena
+steven richardson
+Jarod Mohlmaster
+Loc Vinh Nguyen
+Rick Vaquera
+Pritam Banerjee
+claytondf
+Andrew Chapman
+Filip Štirn
+Emeka Ezekoka
+Steve of the family McGonigle
+Eliott Stidd
+Tim Peel
+williamhotel
+Thomas Kager
+Purushotham G
+Karthik Bonthu
+Nathan Howard
+Slobodan Nastevski
+DustyWeatherby
+Andrew Kotska
+Wesly Inbaraj
+Frantzcy Paisible
+Emmett G
+Finn Mann
+Tariq Raza
+Darick W. LaSelle
+jwiggins
+Jonathan Marson
+Thiago Takayama
+Jason Gibbs
+&quot;THE&quot; James Greene
+Micah Stanley
+Benjamin Lutz
+David Correa
+Knack Black
+MJ DeFilippis
+Michael Dunn
+jaypo
+Artemio
+Mike Johnson
+Nic Bumgart
+Randall Bradford
+Wilfried Olthoff
+Ben Arblaster
+Mark F. Boules
+Tommy &quot;BigDaddy&quot; Grigsby
+Michael Jones
+Krynos18
+Ken Clifford
+mast nishant
+Furqan
+Douglas R. Carirngton, Excelibrium Inc
+tulley
+Felix A Leiva
+abrhim
+Ed Vanderpool
+neo_renshaw
+Anders Berggren
+Morgan Zahra
+Grillmon
+Jorgen Rhode Jensen
+jerrysimila
+Louis Gonzales
+j.d.wegner
+Jared J. Fernandez, E.I.T.
+KQuinn
+Felipe Alvarez Diaz
+SecretServiceOO
+NOSaturn
+Clayton Coelho
+CJCCIE25938
+Anton Antony Arockiasamy
+Nicholas Alessi
+George Young
+Shaheer Osman
+Mahmud Rahman Jami
+Yassine EL Jazouli
+IAmBuldog
+Imtiyazuddin.Shaikh
+Les
+Xavier Alexander Gilmet
+Hikmet Terzioglu
+Daniel Wichlacz
+Karl Newell
+Nanda Kyaw
+Rafael Bianco Nacif
+Nick O'Neill
+BigRhino
+jeff pliska
+Richard Vincent Perez
+Gilberto Cloud Galvan
+Sid Lorenzana
+David Kumar
+Ellert Hardarson
+Peter Prusinowski
+Pacerfan9
+Jason Alan Barretta
+Tyler Pell
+Dan Devlin
+Travis Eberhardt
+Jeremy Frush
+Cisc0kid
+Joe A. Lourenco
+JeffA
+Jacqueco Peenz
+Siggi Bjarnason
+Samuel Ajakaiye
+Georgios Ntib
+Bartosz Miklaszewski 
+pepso100
+Digit Oktavianto
+Vineet Bulbule
+Rui Ruivo
+DWPerry
+Frantisek Pupik
+Christopher Robert Sutton
+Casey Ajalat
+Riku Pessinen
+g.montoanelli
+Dave Thompson
+Paul Knight
+Schisme
+Christopher Edwards
+Karel Perez Castillo
+ErrorCode67
+John Perry
+Nick Bonifacio CCIE #38473
+Matt Humphries
+Nathan Miller - Youngstown, OH
+Kevin D'Arcy
+CelsoAraujo
+Paul Sherratt
+Francis Illuzzi
+Lupe SIlva
+Sukhdeep Kahlon
+Scott K. Bridges
+Demetrius Cagampan
+Jon &quot;The Man&quot; Marte
+Farhan Qazi
+Craig Zambra
+Alexey Zhigaltsov
+Josh R Blaylock
+davidbarclay@nlets
+Katherine McNamara
+T.J. Patterson
+Cash_97
+David Undernehr
+Andrew Conway
+David Earney
+Joel Bergmark
+Chris DiPaola
+copeland
+Blair&amp;BenedictRepuyan
+Titus
+Damian Mainwaring Davies
+Nathanael Kenyon
+Ilia Korsakov
+Michael Dubery
+Alex Giunta
+RSaleh
+Tassos Chatzithomaoglou
+Franklin Valdez
+loop
+Ulf Bye
+giantbullfrog
+Luke Russell
+voke
+CoCoHimself
+Nicholas Andrew Critten
+Mahrazi Mohd Kamal
+Dmitry Stashkov
+Bilal Issa
+Momodou Sarr
+Ryan Barrett
+Robin Harteveld
+DMSwope
+Dave Noles
+Jason Salomons
+Luis
+LIZHAO DING
+Douglas R. Musser
+Jason Vizmanos
+Prakash Purohit
+Rafique Ahmed Narejo
+Rustam Davletshin
+Krzysztof Andrzej Szukała
+Dimitris Armenatzoglou
+Torstein Mauseth
+Marius Landsem
+Caio Vianna
+Nauman Tariq
+ZAW THANT KYAW
+Graham Redish
+Kinopcs
+Suren Tsaturyan
+Dustin Max Calderon
+Man Gao
+Phillip A Camera
+José Luis Berlanga V.
+einfachgust
+Paul Lampron
+Alex Presse
+Jacob Johnson
+Adam Troxel
+Tom Dastrup
+Chad Abbs
+John Rubin
+Cory Light
+Jason Rearick
+Shamikh Irshad
+Kier Fretenborough
+Saravana Thoppay
+Roulston
+Axel Siöland
+Zhang Liang
+Pritpal Bisla
+Thien-Tam TRAN
+Philippe Tang
+Muawia Yasin
+ErikJWells
+Alan Esterman
+Aju Jose
+Jason R. Rokeach
+Yeyo
+Daniel Maxwell
+Mark C Bernier
+Luis Francisco Rivera Ospina
+In Memory of Ben Gibbs
+Mirza Zeshan Baig
+Marcel Loesberg
+Santoshi Rajani Kumar
+Sathursan Kantharajah
+Richard Harris 
+Jon Kolman
+Robert Magrath
+suguita
+Sergey Solodov
+Juan Gabriel Delgado Picado
+Andrei Matei
+Andit Tjahjo
+Ian Wandless
+Ismael Mamadou
+Patrick Donald Bostwick
+BDG
+Aouachria Nassin
+vdeluca-BR
+Tyler Milam
+Carsten Ellermann
+Stunod7
+TrueNie
+Brody Murfin
+Steven Howard Kalupson
+Woodard
+tr4ck3r
+Andrew Walding
+Eric Geib
+Mark D Rametta
+Adam Pinkerton
+Evan Fox
+Richmond Porath
+Bestone Kasoloka
+Sergey Kuzyurov
+Warren
+Conrad J. Moore
+Michael Molina Lasprilla
+Erik White
+Michael Torres
+Omrelliug A Senoj III
+Jacob Bolm
+Beau Daniel Jones 
+Maikel Mantilla
+Oscar Quinonez
+Xavier Lario
+Stefanio Lourenço
+Aaron Robinson
+Adrian Gibbons
+Milan P
+Kristian J Francisco
+Daniel Gos
+Joel Lawless
+Sumit Kumar
+CodyPorter
+Chris Gauthier
+Krishna Varma
+Aidan Burnett
+Matthew Clarke Gordon
+Ali Youssef Ahmad
+Lauren Brittany Taylor
+Avery Abbott
+WANG KAI
+gila
+Michael Molina Lasprilla Jr
+Thomas J Tablada
+Valentin Vanguelov
+Mario Kool - Netherlands
+Leigh Bogardis
+Johnny T
+RDB
+Aaron P. Clark
+najouaimtiyaz shaikh
+Durmus -dprogrammer- Celep
+Marc van Lier
+Felipe Soares de Souza
+ccie4451
+Dustin L. 'Stonewolf' Derry
+Rich Johnson
+Infrastructure Solutions LLC
+Niklas Riddarlo
+Waleed Alamodi
+Adolfo Aksel
+Schladi
+Tomasz Kacprzynski
+SHU2
+Nathan Hitchcock
+RefAndante
+Ade Alder
+Raphael THIERRY
+Mr Morgan
+AurieP
+Jason Bishop
+Pavel Kilipko
+Chris Albert Beltran
+Manny Franqueira
+foolproofalibi
+gregwards1987
+Aaron Day
+kmaslashdevslashnull
+Leon Cassidy (NZ)
+John Dowling
+Ramon Jr Garcia Yu
+zdenotim
+Prasad Kunjeer
+Felipe.Ferrugem
+Simone Groce
+Sinan Sulaiman
+JEFF HANSEN
+Dániel Okos
+Phillip D Larson
+Dickson Wong 
+Gaurav
+becakgurun
+Jun Liu
+Mohamed Faisal CCIE#36553
+Rose Parnsoonthorn
+Jeremiah Land
+Joh4xx0rn Andersson
+Mike &quot;ChimChim&quot; Pritchard
+Dan W
+Dhanushka Chandrasiri
+Steve Redford
+Keith Shum
+Sean McQuilling
+Simon Given
+Colm Kilmartin
+Marius Geonea
+SteveBeans
+Kwaggaken
+Ben Murray (@Cache22)
+LaKellyEllaDustyMath
+PotatoGim
+Pikador*Hopto.hu
+Mustafa
+Liqua_Thrushbane
+GNS34624
+juan
+Michael Klose
+Tuan Huynh
+Peter E Gregg
+thosi
+Salmanees
+Renjith G Nair
+Saqib Raza
+Jose Ignacio Jorquera
+Showpanda
+Syed Mohd Mohsein
+Eric Yoakum
+Alex Beal
+Ronald Boestfleisch Jr.
+Moussa BRAHIMI
+Lee Gardner
+Robbins
+PaulEyre
+Geir Hogberg
+Dimitrios Misichronis
+Boris Bozicevic
+Saleh Batouq
+William Walton
+wolly
+Gopinath v
+Hamad Khalaf
+David Dietrich
+Jericho Gutierrez
+Cameron Exley
+Daniel Grubbs
+Stephen Savaso
+Marcus Morais
+Roilen Palmer
+David Bradwell
+Adrian Lizuniga
+Thomas Meinhardt
+Mohammed Arshad Irfan
+Kevin R. Owens II
+Xiaodong Zhang
+Suman Saha
+GoldenBough
+Jeff Nagel
+Paul Regan
+Andrew Haase
+Gregory Bruccoleri
+Ian Tuten
+Joshua Senft
+Pierre &quot;Ghostdog&quot; Blanchet
+Chris Brown
+Luis Felipe Sass
+Dimitar L. Yosifov
+Matt Heim
+Codey Oxley
+J.D. Wegner
+AJ
+Brannen Taylor
+Billy Calderon
+Carl Thompson
+Alexandre Paradis
+Fahad Hamid Q Aljuhani
+Bruno HAON
+AerOne
+Manuel Rojas
+Jason Brammer
+Jason M Heath
+Christopher Bellman
+Jay Drennen
+Adam Born
+Bootcamp20
+Fabrício Pimenta de Avila
+Stephen Lynch
+Olivia Frances Potter
+Mitch Dolan
+Seer Snively
+Taígo
+zerny
+Kevin Sheahan
+khurshid hassan khan
+Marcellus Hunt
+Fabricio Neves
+Hany Garass
+Bryce Nicholls
+Hristo Neykov
+Leart Sapun
+Tony M Taylor
+Scott Holwerda
+Troy Perkins
+Mason Feuhrer
+Jonathan W Cole
+Pat Golob
+Pendragon
+Stuart(big Stu) Cameron
+FernandoLuisJanuario
+Tim Davis
+Eric John Fiedler
+ciscopotato
+TJ Plummer
+Rawhide
+Brent &quot;B&quot; Stevenson
+Kyle Byrne
+Hutch Theriault
+Tyler Robertson
+sharifraaf
+thepacketgeek
+Matt Hill
+Zayed Syed Bukhari
+Joe Uhl
+Eric Sundquist
+Jason D. Ladd
+Brooke Lexi
+Dave Kretzmer
+Mike Gatti
+G. David Malner
+Evelyn Bowman
+Stephen &quot;Mr. Poker&quot; Schroeder
+Christian Fernandez Herrero
+Sten-Erik Winborg
+Zhengzhong
+jose olivo
+Julian West
+Marek Kupsta
+Albert PR
+Lucian Cretu
+dhuzen
+nycsilvaj
+Alex Nieves
+Anthony Luis Cirillo
+A318A
+Brian Bristlin
+Judd
+D. Paul Hemphill
+Trevor Roberts Jr
+Genaro 
+Justin Seabrook-Rocha
+Ramogpal Reddy M
+Ramgopal Reddy M
+Anthony Smith
+Amhar Saputra
+Fred W Schulze
+Mojoman
+Edwinrg00
+Bruno Fagioli
+Diego Morandini
+Garcia Rice
+davenaisbitt
+Bharath Kumar Sole
+Chad Routh
+Daniel Dias
+Robert Ankeny
+Dean Stamler
+Ofer Ben Zvi
+Marcus Beaman
+Jakub Pullmann
+Larry Nicholson
+chekoceronn
+GeorgeTrip
+Leighton Andrews
+James P Feely
+Ed Walsh, Jr.
+Dennis Janak
+Sylvain B
+Eli Haiby
+CiscoCowKiller
+Wong Khai Loon
+Mike Pierce
+Rodrigo de Paula Cordeiro
+steveo
+droeseler
+Michael Callahan
+christy b mathai
+Nicholas Nelson
+Shawn Cunningham
+Randy L. Betke
+Nuno Cruz
+Hamid Ben Zaina
+Janet Knotts
+Eduardo Acuna Salas
+Shamal Weerakoon
+Scott McAndrew
+ajmatson
+Ramin Asghari Ardebili
+Joel Jones
+True St. Thomas
+Joshua Baker
+Feix A Leiva
+sirclicksalot
+Hovik Mosessi
+NguyenTan512
+John M. McCreight
+Philip Weekly
+Dusty Roy
+CFESH
+iWasimAbbas
+cstizza
+Hans Ramdien
+Itay Shem-tov
+dakidfresh1
+Marcelo Pires de Souza - MAPIS
+Daniel A. Zoquier
+Mihael Hutton
+RobPrescott
+Vinicius Guimaraes
+Kaylee May Fox
+DannyRodriguez79
+Nicholas Wysocki
+Tyler Potenberg
+Gabe Rivas
+Keunwoo Nam
+Aldo Francescon
+NetJimB
+Jihan
+Bryan Cordoba Sanchez
+Anton Lindman
+Thomas Siczek (Poland)
+lblakesley
+Mike W. Burks
+James Stephens
+@MacBachi
+Michael Higgins
+Rajendra Thuvarakan
+Robert Lund
+Christopher Lee Shanks
+Brian30024
+Dan Tedrick
+James Bothe
+lewiryan
+jecrane
+Titus Warui
+Aditya Limbu
+Erik Szlaur
+Bishop Betteridge
+Garth &quot;Stogyman&quot; Fish
+Dr Vivek Bannore
+Tony Bushong
+Szymon Kufel
+Muzeyen Hassen
+Blacho
+ErmiasBekele
+Jose Miguel Montoya Sierra
+Greg Murphy
+Robin Williams 
+RichieB
+RFK786
+Edson Raya
+Nathan J Downes
+Eduardo Cardoso
+Julian Ben
+Ethan William Hussong
+Richard Rigby
+Gage Brewer
+Adeola Adegbolagun
+Faith Solutions pvt ltd, Maldives
+Steve Cameron
+Kevin Le
+hnamanh 
+Jesse Stilwell
+Chandrasekar Ramachandran
+Lee Shouse
+Kyle &quot;Mr. CrossFit&quot; Moschetto
+Engr. Jeffrey B. Anarna
+Nicholas D. Yates
+Stefan Nagy
+Jason DeGroote
+Jeremy Corkery
+Harry Lewins
+Ashwinkumar CS
+Rahul Long
+Cloyd Crisostomo
+Ivan Hollins
+Eslam T. Mohamed
+Roger Morehouse
+Darrel Perucho
+Trent Scholl
+Dinesh Seyyadri
+Joe Frixon
+Thineshan
+Gabriel Ciocan
+Eric Stratton &quot;OTTER&quot;
+ALEKSANDR ZASADYUK
+RStuivenbergNL
+MattE
+Peter Joseph
+Silviu Romonti
+Haidar Noah 
+Alexandre Gnutzmann
+Robert Mikołajczyk
+Francesco Benucci
+Eduardo Luditza Quintal
+Nirav Dave
+Luciano Barros
+Brewhound
+Tedel Baca
+Odenike Taiye
+Myash
+DreamVision Networks LLC
+Pablo Lues
+Rayhiyaan
+Stephen R Catto
+Petr Bonbon Adamec
+Arek Wrobel
+Jasper Brouwer
+Fyase
+Richard Rebman
+bgardner15
+LishanMirando
+Paul Vila
+Juan David Ruiz
+John_Shoffeitt
+Jason Punda
+Radoslaw Gorski
+AJ NOURI
+Mauro de Sousa
+Alan Young
+Marcin Kapturski
+Ban Wong
+AndresZ
+configbytes
+Edwin Campbell
+Omberai Dzingirai
+Felippe Dias
+SOSSOUGAH ALEXIS
+Achiraf CHARIF
+Junho Lee
+Bavo Seesink
+Brent Sieling
+Nicholas G Zerwig
+Renato de Pierri SP Brazil
+EdWillson
+Bladerunner
+Rob Boyko
+Jonathan Isley
+Tyler Ruckinger
+Lachlan Holmes
+Ariel Pablo Roza
+Shahin Ahmadi
+zuozhenqing
+Ratanajantra
+Irfan Zaffarulla
+David P. Schuetz
+Tonycarreno
+Bruno Watt
+Guy Winfrey
+PHAung
+Berny Ramirez Gonzalez
+Liao Hsueh Hung
+Derrick Nguyen
+Dave Powers
+Milap Joshi
+Noel Bravo
+Ayoob Eshaq
+Binuraj Rajappan
+Richard Wambua
+mocotel
+Paul S Payne
+Anand Shah
+Dawid Mitura
+Kryssar approves of this software!
+Bruno Galhoufa
+David Poulton
+Che Ge
+Saed Zahedi
+thejapa
+PJ Archer
+Marcos Yanase
+cwmdavies
+Wellington Ferrraz
+Derek Nückel
+alexandros
+Jonathan Stevenson
+Bolanu Andrei
+M.Elhassan
+EBRAHIM DARYA
+COLTAR
+Eduardo Honorato
+Marcelo Lyra Bastos
+George G
+Clint Collins - Oziboys
+Pradeep George
+Steve Kittinger
+cmbellgardt
+Ramesh
+Nicki Kristensen
+Jose D. Mora
+Seydou Belemvire
+J. Pell
+Javed Rehman
+lwdbos
+Chun K Lam
+J. David Gregg
+Chris Lääng
+Armstrong Ndemalia
+Shoaib Zahidi
+Rogerio Mota
+Ignacio Hernandez
+Marcin Krajnik
+ChettiandNatti
+Elias Sisya
+Jacob Henson
+Mike McPhee
+Joe Kraxner
+A Witherspoon
+Rasmus Elmholt
+Tom Penrose
+Ivan Velasquez
+Michael Quill
+carlitosP
+larrybpsu
+Gabriel John
+Blake Barnett
+robeson
+Robert Ramoutar 
+Anthony J Wathen
+Jayir Mansuclal
+Luke Evans
+VahidRezaMehrasaGNS38826
+Damian Roche
+Gerry
+Jan-Erik Svendsen
+YuRJ
+Michael Crouch
+NightmareFH
+Clemens Dubbick
+HishamHowege
+Tome Spirit Petkovski
+Osmo
+Japd
+Dane Freeman
+netwrklab
+Simon Boam
+ComputerRick
+Gabriel DeMarco
+GigaRacer
+Cat Rodery
+Jeff Breon
+mikynik
+Stefanio Lourenco da Silva
+Denny Höglund
+Steven  Vlahakis
+Przemek Rogala
+Harlen Zuluaga
+Ronaldo Echevenguá
+Christian Leonardelli
+高渐星
+earth
+KyungRyul
+Dmitry MBR Sokolov
+mohammed fouad shat
+Josh Gomez
+James Packard
+Ben Millington-Drake
+rluisem
+Michael McNamara
+Tubejockey
+Nick Henderson
+esc0
+Bradford Wright
+Frank S
+Vitaliy Zinatov
+Peter Tavenier
+Guillermo Rodriguez
+Charles Cecela
+ali abdulsalam
+NSandone
+Ismael Mustapha
+Jacob Uecker
+plex
+ciscoraz
+Mehul Patel 
+Abbas Khalil
+JAVID IBRAHIMOV
+Brandon Porter
+dragon
+Thor
+Lukasz Teodorowski
+John Montgomery
+Erin Clay Smith
+James David Schell
+Antonello Moneta
+IE-Guru
+Alex &quot;P.h.o.t.o&quot; Drozdov
+Amelie Haley
+Leonardo Migliorini
+Ole Morten Aaslund
+Anishkumar Kurup
+Joseph I Gilbert
+Mike Scioscia
+Christopher David Keith Garrett
+Leonardo Magbuhos Jr
+Francisco Alfaro
+Jude Kenneth Bickerton Lymn
+ir0ck
+BrettWCook
+Ayokunle Adekanle
+ HsinHong,Huang
+Tomi Olamigoke
+IrishFighter
+Dennis Dumont
+Josh Micone
+Antonio B Gerbino
+F7EE
+Jon Sawyer
+Brian Matson
+Erik Burdeaux
+Andre Jones
+Karl Fukushima
+Rajesh.R
+Mohamed Furqan Firdous
+Sean B Crites
+Eulic McGee
+Noel Rivera
+Paul 'Twig' Firth
+Rob Michel
+BrockSouza808
+Kravnik
+jajulius
+Marcin Zablocki
+Gian Karlo Andrade
+Aaron Picht
+XIAiYIP
+Maciej sk84life Smolak
+Ashleigh Wilson
+Robin Harper
+Keith Barker
+Cristian Sima
+AKAHAW
+Rodrigo Dominguez
+Joejaders971
+Joe Buemi III
+McAnder
+Sauceboss24
+POORNA SHASHANK PARVATALA
+Rutvij Brahmbhatt
+Axis
+V O' Rourke
+Karim Al-Azzawi
+Eduardo Romero Peña
+Vandeth Nop
+Mortch
+Moidin Kunhi
+Wei Shu
+Patrick den Hoed
+Kurauone Mahachi
+Kurauone B. Mahachi
+Catalin Butiseaca
+Debayan
+Gordon Fountain
+Saikeo Kavhanxay
+Danilo Bottino
+Viliam Schrojf
+Kumaralingam
+LeighHarrison
+Eduardo Campos
+John Voirol
+John Ellison
+Juan Larriega
+Steven Perée
+Aivis Purvinsh
+Rizwan Hanif
+Reynaldo Gonzalez II
+Pipeiden
+Michael Aird
+@espennilsen
+Denilsod
+gizmo
+Josh1984
+Tobi Adesanoye
+Randy Damron
+Pedro Collado
+Arwa
+Nazish Ahmed
+Nicolas POIRIER
+Kostas Gerakaris
+Peter
+John Jeremy Skog Sullivan
+Todd Snyder
+Tony Virath
+Oscar Reyes Garcia
+Arturas Zalenekas
+javalogicuser
+Andrew Baughan
+P. JH. Pelletier
+MES
+Marlon Zackery
+Loyd W. Altebaumer
+Josh Hitt
+GNS LLC
+Brent Andrews of Trinidad &amp; Tobago
+Marek Macovsky
+Stumper
+Jan Sidlo
+Vinesh Raniga
+Denis &quot;GRinch&quot; Karpushin
+Christos Cambanellis
+Sylvester Kolakowski
+Liam and Quinn Densmore
+Jacco Rorman
+Rüdiger
+Rc7200
+Nicholas McManamy
+Elvin Baez
+Dai Yiru
+Matt Engelbrecht
+gerald greer
+DR MAHESH KUMAR
+Matthew Longwell
+Gordon Murray
+Steven A. Wilson
+Jose Bracero
+ireDave
+Torgny Holmlund
+Craig Timchak
+John Mathews
+Joshua P Roybal
+scoty1
+Oscar Dotel
+Aaron Bauman
+CIOBY
+Alexey Zhukov CCIE#36822
+Omar Coeto Hernandez
+Jonathan King
+Carlos Pata Oi! Munoz
+Tiffany A. Whittington
+Martin Steele
+Dizzydonut
+gutonjusa
+Jay Shepherd
+Song Kim
+Charles A Moore
+Kevin Louie
+Shane Walton
+Jan Barkawitz
+Chris Stewart
+Cole Two Bears
+Taz
+Chris Adams
+Brian Rodriguez
+Johnoel Stafford
+Janmesh Jani`
+Jeff Grimm
+John L. Ricketts, Ph.D.
+George Watkins
+Abdul Bajaber
+Brandon Bennett
+Daniil Yanov
+Al Reid
+Rob the animal Steers
+cargostud
+cjf de kievith
+Aaminah H Rashid
+Eric Park
+Muhammad Shehab
+Amit
+Aki Pap
+Michael Doe
+Todor Bozhinov
+CraigThomsonSCOTLAND
+MarkThomas 
+Eric Davis
+Yuta G. Shimizu
+Arthit Chinnachot
+5UCC355
+Patrick van Bennekom
+Ricardo Oto Engelmann
+Marcus B. Ullrich
+Douglas Wagner
+Artiom Lichtenstein
+Chad Pembleton
+Zhandos Shalmanov
+Miguel Fuentes Gonzales
+JamesCawte
+Marcello71
+Ali Fadhl
+ALI FADHL
+DAlicea
+Dion.I.Seuss
+Antoine Reid
+Richard Kok
+Soe Naing 
+Simon Jack
+Nick Morrison
+Dennis R. Miranda
+Rameshbabu
+Bryan Kosten
+Tim Potticary
+Thomas Knowles
+el3ctron
+Gerard.v.Geffen
+lombers
+waqar
+kakalo
+Michael Magnus
+Brent Walter
+Gnani
+Ishan Arora
+Dennis Pham
+Emanuel Jose Hernandez
+Alex Dumitrescu
+Jonathan Els
+Modathir Bashir
+Todd Albiston
+Daniel Morales (RCL)
+Flaviano Reis
+Mike H.
+Elijah S. Rodriguez
+imperorr
+Phill Johntony
+ChulhansOfTrinidad
+Celia
+Christopher Fata
+Vince Ward
+Ricky Innes
+Nizar Hamoudah
+Salman Chougle
+Darpan Gadhiya
+Watashi No Kamei
+CCIE#18444
+Kevin Eze
+strontiumdog
+David Alpizar
+Suelzwurst
+Victor M Hanna
+Abdullah
+Sahir Algharibih
+Jimmy
+Andrew Victor Godfrey
+tom.meadows
+laljohnson
+ShawayneD
+Jason Huseman
+Kristian L Brown
+Syed Abbas Ali
+RMasuda
+Hooman.Abbasi
+Marty Nelson
+Harjinder Singh
+rjbanker
+Josh Barenthin
+TheSorrow
+Mark Ducote
+CedarLee
+Mayank Nauni
+Richard (Tricky) Town
+Mathieu Poussin
+Constantin Mihuta 
+LikeIT
+Olrik Lenstra
+Georgios Pelekanos
+FONTAINE Aurélien
+Mohamad Yehia Siblini
+Bryan Lurer
+Gianremo Smisek
+Mark (Noof) Ducote
+Michael Routledge
+d0gbert
+HollisDarby
+Bert
+Mohammed Kamal
+Brandon Glaze
+FlonMaloku
+Tameem ALjanabi
+Fabrizio Micucci
+Paul Burmeister
+Ian Bartels
+kalo.evang
+Yan Cote
+Nicholas Vogtman
+Edgar Fernando Monroy
+HIM
+igat78
+Alfredo Pasigan Salipot
+Artem N Kuznetsov
+Siem Hermans
+Tony Marrazzo
+Josh Lowe @ UOIT
+ziaul
+Bahman Arbabzadeh
+Hussain A.Aziz Al Alwani
+githure
+Stephen Snively
+David Gierke
+James Julier
+David Bell
+Ashkan
+Kamaleldin Sadik
+Mike Dupuis
+Jacques Baribeault
+Ait bennour
+Abrhim
+N1029676
+Major Dallas
+Pedro A. Collado
+Luca Zanin8
+Karl Billington
+Jared Murrell
+RhoninXPowers
+Ali Abed
+Lee Hutchings
+Mesikoo Kamali
+Kanwar Muhammad Zeeshan
+Dan West
+Joshua Hublar
+Hameed Alzahrani
+Kev Ward UK
+Jon Waters
+Mika Ilvesmaki
+Patrick McMichael
+Ron Cannella
+James McCutcheon
+Russel Crozier
+ValMor
+Maximilian Lehrbaum
+RiCor874
+Russell Cassidy
+Sherwin A. Crown
+Jim &quot;The Great Mullet&quot; Rethmann
+Ovunc Alper Mert
+Glenn Tobey
+kjsrandhawa
+LeeJBurton
+Zygimantas Vrubliauskas
+Mike Manning
+Andrew C Bodine
+Edward Beheler
+David Monteclaro
+yasir
+Matt Wardle
+Kevin Menzel
+Jude Wu
+Richard Alvarez
+Jay Shah
+Alexander E. Deems AKA TSDOI
+SOMANDAC
+Mark Degner
+Paul McParland
+cham00ko
+Jeffrey Charlite
+bootcamp20
+Nilson Medrano
+LoveKatyaPa
+Sanjay Kumar Patel
+Kirk J Iles
+Munyaradzi Manonose
+Munyaradzi Ncube
+Afrasinei Doru Mihai
+patrez
+Tsepo Lesibe
+Curtis Stanley
+Alex Guzzardo
+WILLIAN PEREIRA VIEIRA DA CUNHA
+Michael Camara
+Prankit Jain
+Michael Field
+Edward Fahner
+Tom Jehn
+Thomas Tablada
+faizkhanzada
+Lonardoni
+Hugo Klein Nagelvoort
+MarkP
+Michigan J. Frog
+Cyberbird
+pingaq
+Christopher Michael Murray
+Shailesh R Patel
+WTRoss
+Chad Stambaugh
+Daniel Toland
+Damian Baran
+Ashley Georgeson
+DaveNaisbitt 
+Anthony Burke
+Kevin Denton
+Fordo
+Julios Ñahuero Balbin
+Richard Sias
+Ibon Arretxe
+EODChief
+Garrett W Taylor
+Sulaywan Benoit F. TUFFERY
+Nionios
+obsidianlock
+Kamal Osman
+Sachin
+woodard
+SCarriveau
+Jason Brake
+Kelvin BigEasy Stallings
+Oufaki_Boulaki
+Paulo Pinto da Silva
+Angus Lepper
+Pawel Sniechowski
+BCQuest
+Robin - Digininja
+networker
+Chris O'Shea
+Andrés Rosales Luna
+Alvarito
+John Tobin
+Jeff Cameron
+Gauntlet Smith
+Catpuking
+Voujon L.
+Deez
+Alex DeAraujo
+Manny Garcia
+Garry Baker
+Silvio Pinheiro
+Faisal
+doncompu
+Happy Hanna
+dcsmwy
+LGSalsero
+Liudas Duoba
+Jamie Wells
+Alfredo Vera
+eiasan
+Mohammad Ali Naghval
+Vinicius Machado
+Mike &amp; Cindy M
+MikeCarel
+barkusdawg
+Robert McKee
+Charles Ferguson
+Tonicarreno
+Steve Blizzard
+Osamuyi imade
+McNeelyYoung
+Adolfo Cabrera
+Megajove
+Francisco R. Butera
+Carl Baccus
+Dallas Bishop
+Alexei Nikolaev
+Houssam Chahine
+Charlie Gombert
+Praveen Kumar 
+Mahmood Naiser
+tudor evil1
+ak2766
+Alex Clipper
+Bob Benson
+Kakos
+Andre Jonker
+LeeWray-CCIEtoBe
+GMcCray@Orange
+Phil Chapman
+Ze 'Qzx' Qronique
+Trevor Conkle
+Mike Mikeson
+Krzysztof Miłek
+Joseph Becker
+Don Floyd
+Andrew Lemin
+Kimmer
+Cotomacio
+MarkF
+Ronak Maniar
+Deepak Bysani
+Mohau Nchake
+Roderick Williams Sr.
+Bob Lyons
+Kieran123
+Blaine G
+ikehoff
+Tony Dennis
+AbdulWahabSoomro
+ILIAS BATSILAS
+Omar Bounoun
+Leandro Pina
+ZorprimeSDF1
+Kevin Fisher
+Andre Heyliger
+jethrocruz3
+Nnamdi Anyanwu
+nazir8121
+Karim Souissi
+Ramon Jr Yu
+Peter Hinds
+MarkMalone
+Francivaldo B. Cavalcante
+Roberto Otero
+GersonEx
+Mark Horsfield
+dsgm
+New Generation Network NGN
+Derrick Lowder
+Daniel López
+ilya zindman
+jerryjmcconnell
+Craig Munro
+WeirdLilMidget
+Jonathan Miller
+MEHDI BASRI
+Andy Burnett
+Doug George
+Faheem
+Mike Rozman
+Maz Shah
+Bulost
+Dennis Bailey
+Craine Runton
+AJMottola
+irwandi.guritno
+ManuelR
+tchilljr
+Fernando Mauro
+Rafael Meira Salomao
+William A Engel
+Kevin Seales
+Sérgio
+Sergio Pereira
+JerryCakes
+Mukom Akong TAMON
+Roger M. Jones
+WaltDoGG
+Ashish Batajoo
+gianghip
+Hakan &quot;deegan&quot; Bjorklund
+satmatzidis
+PanosK
+Frantisek Cmuchar
+MJPollard
+Jace Thompson
+Shawn Nay
+Aaron Paul Clark
+Jeremy Furr
+kcriscuolo
+jaberzadeh
+Haridralingam
+Brett W. Cook
+Michael-Vogler
+pkaldani
+James Grace
+Andres Bolaños Rojas
+Bradley Stevens
+Renaud Pellerin Levesque
+Bizkitcan
+Roberto Velez
+912m0fr34k(Digvijay Singh)
+TRAVIS K
+Jamal Mohamed Ahmed Aly
+Ashwin Ramdin
+MarcoEnrique
+Ray Manriquez
+Jason &quot;jabreity&quot; Breitwieser
+Ruben Genaro Villanueva
+Robert Bowen
+Brad Peterson
+Renaud Pellerin-Levesque
+Johnathan Andrew Greeley
+dbamurray
+EMAD ABID
+Dustin Sammut
+Alexander Bauer
+irvinleovillanueva
+Munir B. Abdullahi
+Dag H. Richards
+ShamYavagal
+Fraser Hugh Munro
+shankerbm
+Andrew Dashner
+Nathan Gautrey
+Brian Eckblad
+Riley C. Robertson
+TuRaNiK
+Sergio Martinez
+Brandon Gonzalez
+amrinder kamboj
+Shaun Parrish
+Damian Wikkeling
+Justin Neisler
+Ian J Adams
+NHH
+NAHH
+Walshburg
+Jamie Cresdee
+Nash
+Jeff Taylor
+SomeScaryGirl
+Mike Melo
+Vlad &quot;Rivera&quot; Ivanov
+racole
+VDR
+Christopher H. George
+Colby Collier
+Patrick Ley
+JHBrashear
+Lochocki
+Alberto González Rosales
+HaOsLsE
+Rich Cortes
+2affa7
+Dustin Goode
+Daniel Huber
+Cory Thomas
+Michelle Laydon
+Jason-Liang
+fangfangjt
+Lateef Law
+Andy Goodley
+Nicholas Zerwig
+Matt Long
+Matthew Allen Weber
+Chukwuemeka Ezekoka
+Neil A. Briscoe
+Roman Chikunov
+Jesse Barto
+Alexander Shivers
+HSIEH CHANG MING
+Alfred B. Dullano
+Jez2cool&amp;Bebo
+Tom Huynh
+Will Kerr
+Granite Ledford
+Nicholas Strov Alexander
+Sajjad Ahmed
+Theo Hill
+scb
+Andrew Roderos
+Tofig Ahmed
+Mark Buono
+Eric Coleman
+Jessie Carabajal
+Marcel _N:L:
+Moshe.Itzhaki
+Carl Joseph Ellement
+aelso.silva
+gtz
+Adam Knutson
+Augusto Castelan Carlson
+Erik
+Michael Patton
+Thomas Anderson
+Geoff Thornton
+Tzalas Konstantinos
+Miguel Rosa
+Daniel Demers
+Jeremy Goyette
+N. van Zwieten
+Windsor
+Brendan Mason
+David J Smith
+Syed Ahmed Quadri
+Anders Cai
+Bonno
+Rob Looby
+Olivia the Cat
+Travis Heinz
+pranay solanki
+skennedy
+ChaXueHer
+Even Hernandez
+Mark Shield
+POPQUIZZZ
+Thomas Pedersen
+James T. Walston Jr.
+James Rosenthal
+Jesus Garcia Chavez
+Matthew Songy
+Kevin Groves
+Warakorn Sae-Tang
+Roberto Carratala
+Paul Harris
+Hasan Aljumaily
+skHosting.eu s.r.o.
+EJAZ MUNIR
+Luke Tidd
+Jason Roth
+Ali Fard
+RechieCebreros
+Samaan AlKhaldi
+Abhijeet Kunde
+Aldin Ringor
+Shine Sandhu
+Øystein Gulliksen
+Nick Travalini
+Joon Park
+M.Philip
+Kamron
+MikeCindyAkinaAlek
+Bjoern Drewes (Verfriemelt)
+Spencer Onsongo
+Corey_age_00110000
+Jegan-Malaysia
+David Okeyode
+Md Rasel Mia
+Jesse Loggins CCIE#14661
+Jacob Bennefield
+Mohamed Nizwan
+Ali
+yes
+Andrey Bozhko
+GHaKK
+Jubal Gil Vivas
+Julio Maura
+CARLOS ALBERTO PEREZ RAMIREZ
+sidney berkenbrock
+Richard Wilson
+Chase Raptor Wilson
+Rakee
+Felipe Solís
+escartinis
+Erick Parsons
+Alexander O Chard
+Davi Junior
+Zachary McLemore
+Marc Simcox
+Juan José Castro
+Dharnesh
+Mostafa Hassan
+Zaheid Iqbal
+Samarth Chidanand
+Ping Petchged
+Joe Sanchez
+Alan Dunne
+David Scolamiero
+Wade Edwards
+Teng Lee
+Voramit Y.
+Harshit Namdeo
+Michael A. Martino
+Ahmad Maher Che Mohd Adib
+h.msahbin
+tataroktay
+Tony Kenneth
+Adrien Demma
+Thiago R. Fanfoni
+vladys
+Joe Polak
+Eric Belinsky
+linuxdancer
+Ian Woods UK
+Michael Ciacco
+Suradech Pornsomboonkit
+Gauravdeep Singh 
+resoldab
+Keith Gardiner
+JayWifi
+PrabhuWorld &amp; Nishanth
+Prabhu &amp; Agalya
+Prabhu &amp; Duraikannan &amp; Vanitha
+Nick Young
+yurezplace
+Seth Eshun
+TLACKI
+University of Texas at Dallas
+Richard Antiabong
+Aaminah Haniyah Rashid
+Michael Gilton
+emil
+LynnH
+Emanuel Facundo Campos
+Leandro Rudolph Araujo
+Arabi
+chekoceron
+Sonny&quot;Criminal&quot;Wigmore
+Hervey Allen
+Steve Brosseau
+Fishlogic
+Alex Kirby
+Kyle Steinkamp
+Louis Lloyd
+cblessed
+Jason Biscuit Williard
+Steven H. Kalupson
+Oshoe
+John E. Durrett
+WALA
+Adrian Huston
+Chad Hart
+Blessing Matore
+Julien BERTON
+Michel Askenfeldt
+Stephen Neary
+WavetechSystemsLLC
+CDeHoust
+James P Hollingsworth
+MMPD
+KJ Iqbal
+Ray Belshaw
+Cipriano
+Chris Fucking Johnson
+Mondilla1985
+Drew Mallett
+Kevin Taylor
+Chen Huangdong
+Dan Brito
+Charles Moore
+Rowan George
+Simon Joiner
+Ebnöther Christian
+Reza Hossain Khan
+John Regan
+Daniel D Patrick
+Gared
+George Solorzano 
+Nathan Bender
+AJ Cochenour
+Noel R
+Tseggai
+sSkulltrail
+VegasRatt
+Loek Canisius
+Ismael A. Torres
+Carlos Gobea
+Patricio Salmeron
+Alex Viman
+Aram Nazarin
+KhaisarMasoodAhmed
+CameronRake
+Adnan Shaikh
+John Huston
+Rob Stoop
+route_bub
+medtemo
+Mark Mcfarland
+slaxative
+Warren Evans
+Herme
+Krzysztof Milek
+Gobinath Chandrasekaran
+julius gilmore
+jeremyjenkins5
+junj2121
+Eduard Coll Pascual
+SwampRabbit
+Chintan Patel
+Chad Monroe
+Benjamin A Albee
+S2MFH
+Rajan Thanki
+Dr. Christopher DesMarteau
+Antonio Molina Cádiz
+csegovia
+Kamaleldin M Sadik
+Tzu-Che HUANG
+Zandro Bacani
+Gabriele Di Benedetto
+ARGCCIE2013
+Tyler Kor
+petenugent
+Will Sim 
+wam
+Chris Aldridge
+Dwarfmage
+Glenn &quot;Moose&quot; McHenry
+Peter Baffoe
+John and Crystal Vaughan
+JAPD
+Henrique Roma
+Joseph Webb
+Anton Denisevich
+Brennan Nehemiah Jones
+Justin Reagan
+Stewart Beam
+AlexBransome
+Dwayne Towns
+Derek Smiley
+Ferran Orsola
+Jason Craft
+devesh
+Luis A. Rocca Vazquez
+Borja López Montilla
+Adib Amrani
+Debasish Gharami
+Alessandro Lovati
+Cristian Vendemiati
+somescarygirl
+Neil Shankar
+Manjunath S Chickmath
+Phill Proud
+RolandVogels
+Sam Mackenzie
+Anthony Fuentes
+Rich N
+Meneertjes
+darma96
+Daniel Stamatov
+Jakub Peterek
+David G Boyle
+Chad Carrington
+CCIE28839
+Lilliana 
+Raffaele 
+Brad Powlison
+Bharath Ramakrishna
+MCyagli
+Scott Maderitz
+Eugeniu Babin
+William M Zambrano
+Elton Hubner</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>&amp;License Agreement</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QPlainTextEdit" name="uiLicensePlainTextEdit">
+         <property name="plainText">
+          <string>                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+  To protect your rights, we need to prevent others from denying you
+these rights or asking you to surrender the rights.  Therefore, you have
+certain responsibilities if you distribute copies of the software, or if
+you modify it: responsibilities to respect the freedom of others.
+
+  For example, if you distribute copies of such a program, whether
+gratis or for a fee, you must pass on to the recipients the same
+freedoms that you received.  You must make sure that they, too, receive
+or can get the source code.  And you must show them these terms so they
+know their rights.
+
+  Developers that use the GNU GPL protect your rights with two steps:
+(1) assert copyright on the software, and (2) offer you this License
+giving you legal permission to copy, distribute and/or modify it.
+
+  For the developers' and authors' protection, the GPL clearly explains
+that there is no warranty for this free software.  For both users' and
+authors' sake, the GPL requires that modified versions be marked as
+changed, so that their problems will not be attributed erroneously to
+authors of previous versions.
+
+  Some devices are designed to deny users access to install or run
+modified versions of the software inside them, although the manufacturer
+can do so.  This is fundamentally incompatible with the aim of
+protecting users' freedom to change the software.  The systematic
+pattern of such abuse occurs in the area of products for individuals to
+use, which is precisely where it is most unacceptable.  Therefore, we
+have designed this version of the GPL to prohibit the practice for those
+products.  If such problems arise substantially in other domains, we
+stand ready to extend this provision to those domains in future versions
+of the GPL, as needed to protect the freedom of users.
+
+  Finally, every program is threatened constantly by software patents.
+States should not allow patents to restrict development and use of
+software on general-purpose computers, but in those that do, we wish to
+avoid the special danger that patents applied to a free program could
+make it effectively proprietary.  To prevent this, the GPL assures that
+patents cannot be used to render the program non-free.
+
+  The precise terms and conditions for copying, distribution and
+modification follow.
+
+                       TERMS AND CONDITIONS
+
+  0. Definitions.
+
+  &quot;This License&quot; refers to version 3 of the GNU General Public License.
+
+  &quot;Copyright&quot; also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
+
+  &quot;The Program&quot; refers to any copyrightable work licensed under this
+License.  Each licensee is addressed as &quot;you&quot;.  &quot;Licensees&quot; and
+&quot;recipients&quot; may be individuals or organizations.
+
+  To &quot;modify&quot; a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy.  The resulting work is called a &quot;modified version&quot; of the
+earlier work or a work &quot;based on&quot; the earlier work.
+
+  A &quot;covered work&quot; means either the unmodified Program or a work based
+on the Program.
+
+  To &quot;propagate&quot; a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy.  Propagation includes copying,
+distribution (with or without modification), making available to the
+public, and in some countries other activities as well.
+
+  To &quot;convey&quot; a work means any kind of propagation that enables other
+parties to make or receive copies.  Mere interaction with a user through
+a computer network, with no transfer of a copy, is not conveying.
+
+  An interactive user interface displays &quot;Appropriate Legal Notices&quot;
+to the extent that it includes a convenient and prominently visible
+feature that (1) displays an appropriate copyright notice, and (2)
+tells the user that there is no warranty for the work (except to the
+extent that warranties are provided), that licensees may convey the
+work under this License, and how to view a copy of this License.  If
+the interface presents a list of user commands or options, such as a
+menu, a prominent item in the list meets this criterion.
+
+  1. Source Code.
+
+  The &quot;source code&quot; for a work means the preferred form of the work
+for making modifications to it.  &quot;Object code&quot; means any non-source
+form of a work.
+
+  A &quot;Standard Interface&quot; means an interface that either is an official
+standard defined by a recognized standards body, or, in the case of
+interfaces specified for a particular programming language, one that
+is widely used among developers working in that language.
+
+  The &quot;System Libraries&quot; of an executable work include anything, other
+than the work as a whole, that (a) is included in the normal form of
+packaging a Major Component, but which is not part of that Major
+Component, and (b) serves only to enable use of the work with that
+Major Component, or to implement a Standard Interface for which an
+implementation is available to the public in source code form.  A
+&quot;Major Component&quot;, in this context, means a major essential component
+(kernel, window system, and so on) of the specific operating system
+(if any) on which the executable work runs, or a compiler used to
+produce the work, or an object code interpreter used to run it.
+
+  The &quot;Corresponding Source&quot; for a work in object code form means all
+the source code needed to generate, install, and (for an executable
+work) run the object code and to modify the work, including scripts to
+control those activities.  However, it does not include the work's
+System Libraries, or general-purpose tools or generally available free
+programs which are used unmodified in performing those activities but
+which are not part of the work.  For example, Corresponding Source
+includes interface definition files associated with source files for
+the work, and the source code for shared libraries and dynamically
+linked subprograms that the work is specifically designed to require,
+such as by intimate data communication or control flow between those
+subprograms and other parts of the work.
+
+  The Corresponding Source need not include anything that users
+can regenerate automatically from other parts of the Corresponding
+Source.
+
+  The Corresponding Source for a work in source code form is that
+same work.
+
+  2. Basic Permissions.
+
+  All rights granted under this License are granted for the term of
+copyright on the Program, and are irrevocable provided the stated
+conditions are met.  This License explicitly affirms your unlimited
+permission to run the unmodified Program.  The output from running a
+covered work is covered by this License only if the output, given its
+content, constitutes a covered work.  This License acknowledges your
+rights of fair use or other equivalent, as provided by copyright law.
+
+  You may make, run and propagate covered works that you do not
+convey, without conditions so long as your license otherwise remains
+in force.  You may convey covered works to others for the sole purpose
+of having them make modifications exclusively for you, or provide you
+with facilities for running those works, provided that you comply with
+the terms of this License in conveying all material for which you do
+not control copyright.  Those thus making or running the covered works
+for you must do so exclusively on your behalf, under your direction
+and control, on terms that prohibit them from making any copies of
+your copyrighted material outside their relationship with you.
+
+  Conveying under any other circumstances is permitted solely under
+the conditions stated below.  Sublicensing is not allowed; section 10
+makes it unnecessary.
+
+  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+
+  No covered work shall be deemed part of an effective technological
+measure under any applicable law fulfilling obligations under article
+11 of the WIPO copyright treaty adopted on 20 December 1996, or
+similar laws prohibiting or restricting circumvention of such
+measures.
+
+  When you convey a covered work, you waive any legal power to forbid
+circumvention of technological measures to the extent such circumvention
+is effected by exercising rights under this License with respect to
+the covered work, and you disclaim any intention to limit operation or
+modification of the work as a means of enforcing, against the work's
+users, your or third parties' legal rights to forbid circumvention of
+technological measures.
+
+  4. Conveying Verbatim Copies.
+
+  You may convey verbatim copies of the Program's source code as you
+receive it, in any medium, provided that you conspicuously and
+appropriately publish on each copy an appropriate copyright notice;
+keep intact all notices stating that this License and any
+non-permissive terms added in accord with section 7 apply to the code;
+keep intact all notices of the absence of any warranty; and give all
+recipients a copy of this License along with the Program.
+
+  You may charge any price or no price for each copy that you convey,
+and you may offer support or warranty protection for a fee.
+
+  5. Conveying Modified Source Versions.
+
+  You may convey a work based on the Program, or the modifications to
+produce it from the Program, in the form of source code under the
+terms of section 4, provided that you also meet all of these conditions:
+
+    a) The work must carry prominent notices stating that you modified
+    it, and giving a relevant date.
+
+    b) The work must carry prominent notices stating that it is
+    released under this License and any conditions added under section
+    7.  This requirement modifies the requirement in section 4 to
+    &quot;keep intact all notices&quot;.
+
+    c) You must license the entire work, as a whole, under this
+    License to anyone who comes into possession of a copy.  This
+    License will therefore apply, along with any applicable section 7
+    additional terms, to the whole of the work, and all its parts,
+    regardless of how they are packaged.  This License gives no
+    permission to license the work in any other way, but it does not
+    invalidate such permission if you have separately received it.
+
+    d) If the work has interactive user interfaces, each must display
+    Appropriate Legal Notices; however, if the Program has interactive
+    interfaces that do not display Appropriate Legal Notices, your
+    work need not make them do so.
+
+  A compilation of a covered work with other separate and independent
+works, which are not by their nature extensions of the covered work,
+and which are not combined with it such as to form a larger program,
+in or on a volume of a storage or distribution medium, is called an
+&quot;aggregate&quot; if the compilation and its resulting copyright are not
+used to limit the access or legal rights of the compilation's users
+beyond what the individual works permit.  Inclusion of a covered work
+in an aggregate does not cause this License to apply to the other
+parts of the aggregate.
+
+  6. Conveying Non-Source Forms.
+
+  You may convey a covered work in object code form under the terms
+of sections 4 and 5, provided that you also convey the
+machine-readable Corresponding Source under the terms of this License,
+in one of these ways:
+
+    a) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by the
+    Corresponding Source fixed on a durable physical medium
+    customarily used for software interchange.
+
+    b) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by a
+    written offer, valid for at least three years and valid for as
+    long as you offer spare parts or customer support for that product
+    model, to give anyone who possesses the object code either (1) a
+    copy of the Corresponding Source for all the software in the
+    product that is covered by this License, on a durable physical
+    medium customarily used for software interchange, for a price no
+    more than your reasonable cost of physically performing this
+    conveying of source, or (2) access to copy the
+    Corresponding Source from a network server at no charge.
+
+    c) Convey individual copies of the object code with a copy of the
+    written offer to provide the Corresponding Source.  This
+    alternative is allowed only occasionally and noncommercially, and
+    only if you received the object code with such an offer, in accord
+    with subsection 6b.
+
+    d) Convey the object code by offering access from a designated
+    place (gratis or for a charge), and offer equivalent access to the
+    Corresponding Source in the same way through the same place at no
+    further charge.  You need not require recipients to copy the
+    Corresponding Source along with the object code.  If the place to
+    copy the object code is a network server, the Corresponding Source
+    may be on a different server (operated by you or a third party)
+    that supports equivalent copying facilities, provided you maintain
+    clear directions next to the object code saying where to find the
+    Corresponding Source.  Regardless of what server hosts the
+    Corresponding Source, you remain obligated to ensure that it is
+    available for as long as needed to satisfy these requirements.
+
+    e) Convey the object code using peer-to-peer transmission, provided
+    you inform other peers where the object code and Corresponding
+    Source of the work are being offered to the general public at no
+    charge under subsection 6d.
+
+  A separable portion of the object code, whose source code is excluded
+from the Corresponding Source as a System Library, need not be
+included in conveying the object code work.
+
+  A &quot;User Product&quot; is either (1) a &quot;consumer product&quot;, which means any
+tangible personal property which is normally used for personal, family,
+or household purposes, or (2) anything designed or sold for incorporation
+into a dwelling.  In determining whether a product is a consumer product,
+doubtful cases shall be resolved in favor of coverage.  For a particular
+product received by a particular user, &quot;normally used&quot; refers to a
+typical or common use of that class of product, regardless of the status
+of the particular user or of the way in which the particular user
+actually uses, or expects or is expected to use, the product.  A product
+is a consumer product regardless of whether the product has substantial
+commercial, industrial or non-consumer uses, unless such uses represent
+the only significant mode of use of the product.
+
+  &quot;Installation Information&quot; for a User Product means any methods,
+procedures, authorization keys, or other information required to install
+and execute modified versions of a covered work in that User Product from
+a modified version of its Corresponding Source.  The information must
+suffice to ensure that the continued functioning of the modified object
+code is in no case prevented or interfered with solely because
+modification has been made.
+
+  If you convey an object code work under this section in, or with, or
+specifically for use in, a User Product, and the conveying occurs as
+part of a transaction in which the right of possession and use of the
+User Product is transferred to the recipient in perpetuity or for a
+fixed term (regardless of how the transaction is characterized), the
+Corresponding Source conveyed under this section must be accompanied
+by the Installation Information.  But this requirement does not apply
+if neither you nor any third party retains the ability to install
+modified object code on the User Product (for example, the work has
+been installed in ROM).
+
+  The requirement to provide Installation Information does not include a
+requirement to continue to provide support service, warranty, or updates
+for a work that has been modified or installed by the recipient, or for
+the User Product in which it has been modified or installed.  Access to a
+network may be denied when the modification itself materially and
+adversely affects the operation of the network or violates the rules and
+protocols for communication across the network.
+
+  Corresponding Source conveyed, and Installation Information provided,
+in accord with this section must be in a format that is publicly
+documented (and with an implementation available to the public in
+source code form), and must require no special password or key for
+unpacking, reading or copying.
+
+  7. Additional Terms.
+
+  &quot;Additional permissions&quot; are terms that supplement the terms of this
+License by making exceptions from one or more of its conditions.
+Additional permissions that are applicable to the entire Program shall
+be treated as though they were included in this License, to the extent
+that they are valid under applicable law.  If additional permissions
+apply only to part of the Program, that part may be used separately
+under those permissions, but the entire Program remains governed by
+this License without regard to the additional permissions.
+
+  When you convey a copy of a covered work, you may at your option
+remove any additional permissions from that copy, or from any part of
+it.  (Additional permissions may be written to require their own
+removal in certain cases when you modify the work.)  You may place
+additional permissions on material, added by you to a covered work,
+for which you have or can give appropriate copyright permission.
+
+  Notwithstanding any other provision of this License, for material you
+add to a covered work, you may (if authorized by the copyright holders of
+that material) supplement the terms of this License with terms:
+
+    a) Disclaiming warranty or limiting liability differently from the
+    terms of sections 15 and 16 of this License; or
+
+    b) Requiring preservation of specified reasonable legal notices or
+    author attributions in that material or in the Appropriate Legal
+    Notices displayed by works containing it; or
+
+    c) Prohibiting misrepresentation of the origin of that material, or
+    requiring that modified versions of such material be marked in
+    reasonable ways as different from the original version; or
+
+    d) Limiting the use for publicity purposes of names of licensors or
+    authors of the material; or
+
+    e) Declining to grant rights under trademark law for use of some
+    trade names, trademarks, or service marks; or
+
+    f) Requiring indemnification of licensors and authors of that
+    material by anyone who conveys the material (or modified versions of
+    it) with contractual assumptions of liability to the recipient, for
+    any liability that these contractual assumptions directly impose on
+    those licensors and authors.
+
+  All other non-permissive additional terms are considered &quot;further
+restrictions&quot; within the meaning of section 10.  If the Program as you
+received it, or any part of it, contains a notice stating that it is
+governed by this License along with a term that is a further
+restriction, you may remove that term.  If a license document contains
+a further restriction but permits relicensing or conveying under this
+License, you may add to a covered work material governed by the terms
+of that license document, provided that the further restriction does
+not survive such relicensing or conveying.
+
+  If you add terms to a covered work in accord with this section, you
+must place, in the relevant source files, a statement of the
+additional terms that apply to those files, or a notice indicating
+where to find the applicable terms.
+
+  Additional terms, permissive or non-permissive, may be stated in the
+form of a separately written license, or stated as exceptions;
+the above requirements apply either way.
+
+  8. Termination.
+
+  You may not propagate or modify a covered work except as expressly
+provided under this License.  Any attempt otherwise to propagate or
+modify it is void, and will automatically terminate your rights under
+this License (including any patent licenses granted under the third
+paragraph of section 11).
+
+  However, if you cease all violation of this License, then your
+license from a particular copyright holder is reinstated (a)
+provisionally, unless and until the copyright holder explicitly and
+finally terminates your license, and (b) permanently, if the copyright
+holder fails to notify you of the violation by some reasonable means
+prior to 60 days after the cessation.
+
+  Moreover, your license from a particular copyright holder is
+reinstated permanently if the copyright holder notifies you of the
+violation by some reasonable means, this is the first time you have
+received notice of violation of this License (for any work) from that
+copyright holder, and you cure the violation prior to 30 days after
+your receipt of the notice.
+
+  Termination of your rights under this section does not terminate the
+licenses of parties who have received copies or rights from you under
+this License.  If your rights have been terminated and not permanently
+reinstated, you do not qualify to receive new licenses for the same
+material under section 10.
+
+  9. Acceptance Not Required for Having Copies.
+
+  You are not required to accept this License in order to receive or
+run a copy of the Program.  Ancillary propagation of a covered work
+occurring solely as a consequence of using peer-to-peer transmission
+to receive a copy likewise does not require acceptance.  However,
+nothing other than this License grants you permission to propagate or
+modify any covered work.  These actions infringe copyright if you do
+not accept this License.  Therefore, by modifying or propagating a
+covered work, you indicate your acceptance of this License to do so.
+
+  10. Automatic Licensing of Downstream Recipients.
+
+  Each time you convey a covered work, the recipient automatically
+receives a license from the original licensors, to run, modify and
+propagate that work, subject to this License.  You are not responsible
+for enforcing compliance by third parties with this License.
+
+  An &quot;entity transaction&quot; is a transaction transferring control of an
+organization, or substantially all assets of one, or subdividing an
+organization, or merging organizations.  If propagation of a covered
+work results from an entity transaction, each party to that
+transaction who receives a copy of the work also receives whatever
+licenses to the work the party's predecessor in interest had or could
+give under the previous paragraph, plus a right to possession of the
+Corresponding Source of the work from the predecessor in interest, if
+the predecessor has it or can get it with reasonable efforts.
+
+  You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License.  For example, you may
+not impose a license fee, royalty, or other charge for exercise of
+rights granted under this License, and you may not initiate litigation
+(including a cross-claim or counterclaim in a lawsuit) alleging that
+any patent claim is infringed by making, using, selling, offering for
+sale, or importing the Program or any portion of it.
+
+  11. Patents.
+
+  A &quot;contributor&quot; is a copyright holder who authorizes use under this
+License of the Program or a work on which the Program is based.  The
+work thus licensed is called the contributor's &quot;contributor version&quot;.
+
+  A contributor's &quot;essential patent claims&quot; are all patent claims
+owned or controlled by the contributor, whether already acquired or
+hereafter acquired, that would be infringed by some manner, permitted
+by this License, of making, using, or selling its contributor version,
+but do not include claims that would be infringed only as a
+consequence of further modification of the contributor version.  For
+purposes of this definition, &quot;control&quot; includes the right to grant
+patent sublicenses in a manner consistent with the requirements of
+this License.
+
+  Each contributor grants you a non-exclusive, worldwide, royalty-free
+patent license under the contributor's essential patent claims, to
+make, use, sell, offer for sale, import and otherwise run, modify and
+propagate the contents of its contributor version.
+
+  In the following three paragraphs, a &quot;patent license&quot; is any express
+agreement or commitment, however denominated, not to enforce a patent
+(such as an express permission to practice a patent or covenant not to
+sue for patent infringement).  To &quot;grant&quot; such a patent license to a
+party means to make such an agreement or commitment not to enforce a
+patent against the party.
+
+  If you convey a covered work, knowingly relying on a patent license,
+and the Corresponding Source of the work is not available for anyone
+to copy, free of charge and under the terms of this License, through a
+publicly available network server or other readily accessible means,
+then you must either (1) cause the Corresponding Source to be so
+available, or (2) arrange to deprive yourself of the benefit of the
+patent license for this particular work, or (3) arrange, in a manner
+consistent with the requirements of this License, to extend the patent
+license to downstream recipients.  &quot;Knowingly relying&quot; means you have
+actual knowledge that, but for the patent license, your conveying the
+covered work in a country, or your recipient's use of the covered work
+in a country, would infringe one or more identifiable patents in that
+country that you have reason to believe are valid.
+
+  If, pursuant to or in connection with a single transaction or
+arrangement, you convey, or propagate by procuring conveyance of, a
+covered work, and grant a patent license to some of the parties
+receiving the covered work authorizing them to use, propagate, modify
+or convey a specific copy of the covered work, then the patent license
+you grant is automatically extended to all recipients of the covered
+work and works based on it.
+
+  A patent license is &quot;discriminatory&quot; if it does not include within
+the scope of its coverage, prohibits the exercise of, or is
+conditioned on the non-exercise of one or more of the rights that are
+specifically granted under this License.  You may not convey a covered
+work if you are a party to an arrangement with a third party that is
+in the business of distributing software, under which you make payment
+to the third party based on the extent of your activity of conveying
+the work, and under which the third party grants, to any of the
+parties who would receive the covered work from you, a discriminatory
+patent license (a) in connection with copies of the covered work
+conveyed by you (or copies made from those copies), or (b) primarily
+for and in connection with specific products or compilations that
+contain the covered work, unless you entered into that arrangement,
+or that patent license was granted, prior to 28 March 2007.
+
+  Nothing in this License shall be construed as excluding or limiting
+any implied license or other defenses to infringement that may
+otherwise be available to you under applicable patent law.
+
+  12. No Surrender of Others' Freedom.
+
+  If conditions are imposed on you (whether by court order, agreement or
+otherwise) that contradict the conditions of this License, they do not
+excuse you from the conditions of this License.  If you cannot convey a
+covered work so as to satisfy simultaneously your obligations under this
+License and any other pertinent obligations, then as a consequence you may
+not convey it at all.  For example, if you agree to terms that obligate you
+to collect a royalty for further conveying from those to whom you convey
+the Program, the only way you could satisfy both those terms and this
+License would be to refrain entirely from conveying the Program.
+
+  13. Use with the GNU Affero General Public License.
+
+  Notwithstanding any other provision of this License, you have
+permission to link or combine any covered work with a work licensed
+under version 3 of the GNU Affero General Public License into a single
+combined work, and to convey the resulting work.  The terms of this
+License will continue to apply to the part which is the covered work,
+but the special requirements of the GNU Affero General Public License,
+section 13, concerning interaction through a network will apply to the
+combination as such.
+
+  14. Revised Versions of this License.
+
+  The Free Software Foundation may publish revised and/or new versions of
+the GNU General Public License from time to time.  Such new versions will
+be similar in spirit to the present version, but may differ in detail to
+address new problems or concerns.
+
+  Each version is given a distinguishing version number.  If the
+Program specifies that a certain numbered version of the GNU General
+Public License &quot;or any later version&quot; applies to it, you have the
+option of following the terms and conditions either of that numbered
+version or of any later version published by the Free Software
+Foundation.  If the Program does not specify a version number of the
+GNU General Public License, you may choose any version ever published
+by the Free Software Foundation.
+
+  If the Program specifies that a proxy can decide which future
+versions of the GNU General Public License can be used, that proxy's
+public statement of acceptance of a version permanently authorizes you
+to choose that version for the Program.
+
+  Later license versions may give you additional or different
+permissions.  However, no additional obligations are imposed on any
+author or copyright holder as a result of your choosing to follow a
+later version.
+
+  15. Disclaimer of Warranty.
+
+  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM &quot;AS IS&quot; WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+  16. Limitation of Liability.
+
+  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
+
+  17. Interpretation of Sections 15 and 16.
+
+  If the disclaimer of warranty and limitation of liability provided
+above cannot be given local legal effect according to their terms,
+reviewing courts shall apply local law that most closely approximates
+an absolute waiver of all civil liability in connection with the
+Program, unless a warranty or assumption of liability accompanies a
+copy of the Program in return for a fee.
+
+                     END OF TERMS AND CONDITIONS
+
+            How to Apply These Terms to Your New Programs
+
+  If you develop a new program, and you want it to be of the greatest
+possible use to the public, the best way to achieve this is to make it
+free software which everyone can redistribute and change under these terms.
+
+  To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+state the exclusion of warranty; and each file should have at least
+the &quot;copyright&quot; line and a pointer to where the full notice is found.
+
+    &lt;one line to give the program's name and a brief idea of what it does.&gt;
+    Copyright (C) &lt;year&gt;  &lt;name of author&gt;
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+Also add information on how to contact you by electronic and paper mail.
+
+  If the program does terminal interaction, make it output a short
+notice like this when it starts in an interactive mode:
+
+    &lt;program&gt;  Copyright (C) &lt;year&gt;  &lt;name of author&gt;
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
+
+The hypothetical commands `show w' and `show c' should show the appropriate
+parts of the General Public License.  Of course, your program's commands
+might be different; for a GUI interface, you would use an &quot;about box&quot;.
+
+  You should also get your employer (if you work as a programmer) or school,
+if any, to sign a &quot;copyright disclaimer&quot; for the program, if necessary.
+For more information on this, and how to apply and follow the GNU GPL, see
+&lt;http://www.gnu.org/licenses/&gt;.
+
+  The GNU General Public License does not permit incorporating your program
+into proprietary programs.  If your program is a subroutine library, you
+may consider it more useful to permit linking proprietary applications with
+the library.  If this is what you want to do, use the GNU Lesser General
+Public License instead of this License.  But first, please read
+&lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;.
+</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>uiThanksPlainTextEdit</tabstop>
+  <tabstop>uiLicensePlainTextEdit</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

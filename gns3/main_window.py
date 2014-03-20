@@ -28,6 +28,9 @@ from .qt import QtGui, QtCore
 from .servers import Servers
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
+from .about_dialog import AboutDialog
+from .news_dialog import NewsDialog
+from .early_release_dialog import EarlyReleaseDialog
 from .preferences_dialog import PreferencesDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES
 from .utils.progress_dialog import ProgressDialog
@@ -36,6 +39,8 @@ from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
 from .topology import Topology
+from .version import __version__
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -508,8 +513,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot to open the news dialog.
         """
 
-        #TODO: news dialog implementation
-        QtGui.QMessageBox.critical(self, "News", "Sorry, to be implemented!")
+        try:
+            # QtWebKit is not installed by default on FreeBSD, Solaris and possibly other systems.
+            from .qt import QtWebKit
+        except ImportError:
+            return
+
+        dialog = NewsDialog(self)
+        dialog.show()
+        dialog.exec_()
 
     def _labInstructionsActionSlot(self):
         """
@@ -531,8 +543,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot to display the GNS3 About dialog.
         """
 
-        #TODO: about dialog.
-        QtGui.QMessageBox.critical(self, "About", "Sorry, to be implemented!")
+        dialog = AboutDialog(self)
+        dialog.show()
+        dialog.exec_()
 
 #     def _doSlidingWindow(self, type):
 #         """
@@ -723,6 +736,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
                                                                                                                                                    error=e))
+
+        config_filename = QtCore.QSettings().fileName()
+        if not os.access(config_filename, os.F_OK):
+            # no config file detected, first time we start this application
+            dialog = EarlyReleaseDialog(self)
+            dialog.show()
+            dialog.exec_()
+
+        self._newsActionSlot()
 
     def _saveProjectAs(self):
         """

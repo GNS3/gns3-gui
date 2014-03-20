@@ -80,6 +80,7 @@ class FrameRelaySwitch(Node):
         log.info("Frame Relay switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
+        self._module.addNode(self)
 
     def delete(self):
         """
@@ -93,6 +94,7 @@ class FrameRelaySwitch(Node):
             self._server.send_message("dynamips.frsw.delete", {"id": self._frsw_id}, self._deleteCallback)
         else:
             self.delete_signal.emit()
+            self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
         """
@@ -107,6 +109,7 @@ class FrameRelaySwitch(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.delete_signal.emit()
+        self._module.removeNode(self)
 
     def update(self, new_settings):
         """

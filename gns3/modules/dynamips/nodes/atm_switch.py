@@ -80,6 +80,7 @@ class ATMSwitch(Node):
         log.info("ATM switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
+        self._module.addNode(self)
 
     def delete(self):
         """
@@ -93,6 +94,7 @@ class ATMSwitch(Node):
             self._server.send_message("dynamips.atmsw.delete", {"id": self._atmsw_id}, self._deleteCallback)
         else:
             self.delete_signal.emit()
+            self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
         """
@@ -107,6 +109,7 @@ class ATMSwitch(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("ATM switch {} has been deleted".format(self.name()))
         self.delete_signal.emit()
+        self._module.removeNode(self)
 
     def update(self, new_settings):
         """

@@ -19,18 +19,22 @@
 Base class (interface) for modules.
 """
 
+from ..qt import QtCore
+
 import logging
 log = logging.getLogger(__name__)
 
 
-class Module(object):
+class Module(QtCore.QObject):
     """
     Module interface.
     """
 
+    notification_signal = QtCore.Signal(str, str)
+
     def __init__(self):
 
-        pass
+        super(Module, self).__init__()
 
     @staticmethod
     def nodes(self):
@@ -50,6 +54,17 @@ class Module(object):
         Must be overloaded.
 
         :returns: list of preference page classes
+        """
+
+        raise NotImplementedError()
+
+    def notification(self, destination, params):
+        """
+        To received notifications from the server.
+        Must be overloaded.
+
+        :param destination: JSON-RPC method
+        :param params: JSON-RPC params
         """
 
         raise NotImplementedError()
