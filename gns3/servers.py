@@ -43,6 +43,7 @@ class Servers(QtCore.QObject):
         self._remote_servers = {}
         self._local_server_path = ""
         self._local_server_proccess = QtCore.QProcess()
+        self._local_server_proccess.setWorkingDirectory(os.curdir)
         self._loadSettings()
         self._remote_server_iter_pos = 0
 

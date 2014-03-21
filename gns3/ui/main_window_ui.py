@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Mar 11 18:26:17 2014
+# Created: Thu Mar 20 16:15:47 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -189,7 +189,7 @@ class Ui_MainWindow(object):
         self.gridlayout1.setMargin(0)
         self.gridlayout1.setSpacing(0)
         self.gridlayout1.setObjectName(_fromUtf8("gridlayout1"))
-        self.uiTopologySummaryTreeWidget = QtGui.QTreeWidget(self.uiTopologySummaryDockWidgetContents)
+        self.uiTopologySummaryTreeWidget = TopologySummaryView(self.uiTopologySummaryDockWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -657,4 +657,5 @@ class Ui_MainWindow(object):
 from ..console_view import ConsoleView
 from ..nodes_view import NodesView
 from ..graphics_view import GraphicsView
+from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

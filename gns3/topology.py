@@ -272,6 +272,7 @@ class Topology(object):
                 node_item.setPos(topology_node["x"], topology_node["y"])
                 view.scene().addItem(node_item)
                 self.addNode(node)
+                main_window.uiTopologySummaryTreeWidget.addNode(node)
 
         if node_errors:
             errors = "\n".join(node_errors)

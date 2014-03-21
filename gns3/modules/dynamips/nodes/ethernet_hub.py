@@ -91,7 +91,7 @@ class EthernetHub(Node):
         if self._ethhub_id:
             self._server.send_message("dynamips.ethhub.delete", {"id": self._ethhub_id}, self._deleteCallback)
         else:
-            self.delete_signal.emit()
+            self.deleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -106,7 +106,7 @@ class EthernetHub(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
-        self.delete_signal.emit()
+        self.deleted_signal.emit()
         self._module.removeNode(self)
 
     def update(self, new_settings):

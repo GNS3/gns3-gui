@@ -39,6 +39,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self._remote_servers = {}
 
         # connect the slots
+        self.uiLocalServerToolButton.clicked.connect(self._localServerBrowserSlot)
         self.uiAddRemoteServerPushButton.clicked.connect(self._remoteServerAddSlot)
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
         self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
@@ -48,6 +49,17 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiLocalServerHostComboBox.addItems(["0.0.0.0", "::", QtNetwork.QHostInfo.localHostName()])
         for address in QtNetwork.QNetworkInterface.allAddresses():
             self.uiLocalServerHostComboBox.addItem(address.toString())
+
+    def _localServerBrowserSlot(self):
+        """
+        Slot to open a file browser and select a local server.
+        """
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select the local server", ".", "GNS3 server (*.exe *.py)")
+        if not path:
+            return
+
+        self.uiLocalServerPathLineEdit.setText(path)
 
     def _remoteServerClickedSlot(self, item, column):
         """

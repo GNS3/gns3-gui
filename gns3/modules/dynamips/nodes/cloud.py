@@ -69,7 +69,7 @@ class Cloud(Node):
 
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        self.delete_signal.emit()
+        self.deleted_signal.emit()
 
     def setup(self, name=None, initial_settings={}):
         """

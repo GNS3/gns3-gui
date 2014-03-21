@@ -82,7 +82,7 @@ class IOU(Module):
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOUs")
+        settings.beginGroup("IOUImages")
 
         # load the IOU images
         size = settings.beginReadArray("iou_image")
@@ -113,7 +113,7 @@ class IOU(Module):
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOUs")
+        settings.beginGroup("IOUImages")
         settings.remove("")
 
         # save the IOU images
@@ -281,6 +281,9 @@ class IOU(Module):
         servers = Servers.instance()
         if server == servers.localServer():
             params.update({"working_dir": self._working_dir})
+        else:
+            # do not send iouyap path to remote servers
+            del params["iouyap"]
         server.send_notification("iou.settings", params)
 
     def createNode(self, node_class, server=None):

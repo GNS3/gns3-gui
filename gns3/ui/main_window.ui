@@ -457,7 +457,7 @@ background-none;
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="uiTopologySummaryTreeWidget">
+      <widget class="TopologySummaryView" name="uiTopologySummaryTreeWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -1151,6 +1151,11 @@ background-none;
    <class>ConsoleView</class>
    <extends>QTextEdit</extends>
    <header>..console_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TopologySummaryView</class>
+   <extends>QTreeWidget</extends>
+   <header>..topology_summary_view.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

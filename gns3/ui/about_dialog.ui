@@ -89,6 +89,9 @@ p, li { white-space: pre-wrap; }
       <layout class="QVBoxLayout">
        <item>
         <widget class="QPlainTextEdit" name="uiThanksPlainTextEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="plainText">
           <string>James Borden
 Tenzin Rigdol Oshoe
@@ -2462,6 +2465,9 @@ Elton Hubner</string>
       <layout class="QVBoxLayout">
        <item>
         <widget class="QPlainTextEdit" name="uiLicensePlainTextEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="plainText">
           <string>                    GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

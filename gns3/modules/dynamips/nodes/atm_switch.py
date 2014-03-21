@@ -93,7 +93,7 @@ class ATMSwitch(Node):
         if self._atmsw_id:
             self._server.send_message("dynamips.atmsw.delete", {"id": self._atmsw_id}, self._deleteCallback)
         else:
-            self.delete_signal.emit()
+            self.deleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -108,7 +108,7 @@ class ATMSwitch(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("ATM switch {} has been deleted".format(self.name()))
-        self.delete_signal.emit()
+        self.deleted_signal.emit()
         self._module.removeNode(self)
 
     def update(self, new_settings):

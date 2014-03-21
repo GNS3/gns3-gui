@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/about_dialog.ui'
 #
-# Created: Wed Mar 19 17:41:27 2014
+# Created: Thu Mar 20 15:27:45 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,6 +59,7 @@ class Ui_AboutDialog(object):
         self.vboxlayout = QtGui.QVBoxLayout(self.tab_2)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiThanksPlainTextEdit = QtGui.QPlainTextEdit(self.tab_2)
+        self.uiThanksPlainTextEdit.setReadOnly(True)
         self.uiThanksPlainTextEdit.setObjectName(_fromUtf8("uiThanksPlainTextEdit"))
         self.vboxlayout.addWidget(self.uiThanksPlainTextEdit)
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
@@ -67,6 +68,7 @@ class Ui_AboutDialog(object):
         self.vboxlayout1 = QtGui.QVBoxLayout(self.tab_3)
         self.vboxlayout1.setObjectName(_fromUtf8("vboxlayout1"))
         self.uiLicensePlainTextEdit = QtGui.QPlainTextEdit(self.tab_3)
+        self.uiLicensePlainTextEdit.setReadOnly(True)
         self.uiLicensePlainTextEdit.setObjectName(_fromUtf8("uiLicensePlainTextEdit"))
         self.vboxlayout1.addWidget(self.uiLicensePlainTextEdit)
         self.tabWidget.addTab(self.tab_3, _fromUtf8(""))

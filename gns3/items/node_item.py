@@ -56,8 +56,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         node.stopped_signal.connect(self.stoppedSlot)
         node.suspended_signal.connect(self.suspendedSlot)
         node.updated_signal.connect(self.updatedSlot)
+        node.deleted_signal.connect(self.deletedSlot)
         node.delete_links_signal.connect(self.deleteLinksSlot)
-        node.delete_signal.connect(self.deleteSlot)
 
         # link items connected to this node item.
         self._links = []
@@ -95,6 +95,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         self._links.append(link)
+        self._node.updated_signal.emit()
         self.setUnsavedState()
 
     def removeLink(self, link):
@@ -169,7 +170,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         for link in self._links.copy():
             link.delete()
 
-    def deleteSlot(self):
+    def deletedSlot(self):
         """
         Slot to receive events from the attached Node instance
         when the node has been deleted.

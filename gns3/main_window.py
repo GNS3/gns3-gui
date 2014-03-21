@@ -452,6 +452,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
                 node = item.node()
+                if node.status() != Node.started:
+                    continue
                 name = node.name()
                 console_port = node.console()
                 console_host = node.server().host
@@ -708,6 +710,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+        
+        config_filename = QtCore.QSettings().fileName()
+        if not os.access(config_filename, os.F_OK):
+            # no config file detected, first time we start this application
+            dialog = EarlyReleaseDialog(self)
+            dialog.show()
+            dialog.exec_()
+
+        self._newsActionSlot()
 
         self._createTemporaryProject()
 
@@ -736,15 +747,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
                                                                                                                                                    error=e))
-
-        config_filename = QtCore.QSettings().fileName()
-        if not os.access(config_filename, os.F_OK):
-            # no config file detected, first time we start this application
-            dialog = EarlyReleaseDialog(self)
-            dialog.show()
-            dialog.exec_()
-
-        self._newsActionSlot()
 
     def _saveProjectAs(self):
         """

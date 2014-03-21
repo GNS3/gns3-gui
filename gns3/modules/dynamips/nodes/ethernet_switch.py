@@ -91,7 +91,7 @@ class EthernetSwitch(Node):
         if self._ethsw_id:
             self._server.send_message("dynamips.ethsw.delete", {"id": self._ethsw_id}, self._deleteCallback)
         else:
-            self.delete_signal.emit()
+            self.deleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -106,7 +106,7 @@ class EthernetSwitch(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("Ethernet switch {} has been deleted".format(self.name()))
-        self.delete_signal.emit()
+        self.deleted_signal.emit()
         self._module.removeNode(self)
 
     def update(self, new_settings):

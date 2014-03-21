@@ -135,8 +135,10 @@ class Link(QtCore.QObject):
         # delete the NIOs on both source and destination nodes
         self._source_node.deleteNIO(self._source_port)
         self._source_port.setFree()
+        self._source_node.updated_signal.emit()
         self._destination_node.deleteNIO(self._destination_port)
         self._destination_port.setFree()
+        self._destination_node.updated_signal.emit()
 
         # let the GUI know about this link has been deleted
         self.delete_link_signal.emit(self._id)

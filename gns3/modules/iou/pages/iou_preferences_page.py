@@ -19,6 +19,7 @@
 Configuration page for IOU preferences.
 """
 
+import os
 import sys
 from gns3.qt import QtGui
 from gns3.servers import Servers
@@ -37,9 +38,45 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
+        if not sys.platform.startswith("linux"):
+            self.uiIouyapPathLineEdit.setEnable(False)
+            self.uiIouyapPathToolButton.setEnable(False)
+
         # connect signals
+        self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
+        self.uiIouyapPathToolButton.clicked.connect(self._iouyapPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
+
+    def _iourcPathBrowserSlot(self):
+        """
+        Slot to open a file browser and select an iourc file
+        """
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select the IOURC file", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.R_OK):
+            QtGui.QMessageBox.critical(self, "IOURC file", "{} cannot be read".format(os.path.basename(path)))
+            return
+
+        self.uiIOURCPathLineEdit.setText(path)
+
+    def _iouyapPathBrowserSlot(self):
+        """
+        Slot to open a file browser and select iouyap.
+        """
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select iouyap", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.X_OK):
+            QtGui.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
+            return
+
+        self.uiIouyapPathLineEdit.setText(path)
 
     def _restoreDefaultsSlot(self):
         """
@@ -70,6 +107,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         self.uiIOURCPathLineEdit.setText(settings["iourc"])
+        self.uiIouyapPathLineEdit.setText(settings["iouyap"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
@@ -109,6 +147,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
         new_settings = {}
         new_settings["iourc"] = self.uiIOURCPathLineEdit.text()
+        new_settings["iouyap"] = self.uiIouyapPathLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()

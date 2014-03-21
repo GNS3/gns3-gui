@@ -23,6 +23,7 @@ Default IOU settings.
 
 IOU_SETTINGS = {
     "iourc": "",
+    "iouyap": "",
     "console_start_port_range": 4001,
     "console_end_port_range": 4512,
     "udp_start_port_range": 30001,
@@ -36,6 +37,7 @@ if not sys.platform.startswith("linux"):
 
 IOU_SETTING_TYPES = {
     "iourc": str,
+    "iouyap": str,
     "console_start_port_range": int,
     "console_end_port_range": int,
     "udp_start_port_range": int,

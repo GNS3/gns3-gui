@@ -200,7 +200,7 @@ class Router(Node):
         if self._router_id and self._server.connected():
             self._server.send_message("dynamips.vm.delete", {"id": self._router_id}, self._deleteCallback)
         else:
-            self.delete_signal.emit()
+            self.deleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -215,7 +215,7 @@ class Router(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("router {} has been deleted".format(self.name()))
-        self.delete_signal.emit()
+        self.deleted_signal.emit()
         self._module.removeNode(self)
 
     def setup(self, image, ram, name=None, initial_settings={}):

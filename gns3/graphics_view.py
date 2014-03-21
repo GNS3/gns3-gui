@@ -672,6 +672,8 @@ class GraphicsView(QtGui.QGraphicsView):
         for item in self.scene().selectedItems():
             if hasattr(item.node(), "console"):
                 node = item.node()
+                if node.status() != Node.started:
+                    continue
                 name = node.name()
                 console_port = node.console()
                 console_host = node.server().host
@@ -782,3 +784,4 @@ class GraphicsView(QtGui.QGraphicsView):
         y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
         node_item.setPos(x, y)
         self._topology.addNode(node)
+        self._main_window.uiTopologySummaryTreeWidget.addNode(node)

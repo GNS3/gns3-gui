@@ -70,5 +70,4 @@ class NewsDialog(QtGui.QDialog, Ui_NewsDialog):
             QtGui.QMessageBox.information(self, "News", "Cannot load the online page, trying with your default browser ...")
             if QtGui.QDesktopServices.openUrl(self.webpage) == False:
                 print("Failed to open the URL: {}".format(self.webpage.toString()))
-            self.uiDontShowAgainCheckBox.setChecked(True)
             self.close()

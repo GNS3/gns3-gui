@@ -19,6 +19,7 @@
 Configuration page for Dynamips preferences.
 """
 
+import os
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from .. import Dynamips
@@ -37,10 +38,26 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
+        self.uiDynamipsPathToolButton.clicked.connect(self._dynamipsPathBrowserSlot)
         self.uiAllocateHypervisorPerDeviceCheckBox.stateChanged.connect(self._allocateHypervisorPerDeviceSlot)
         self.uiGhostIOSSupportCheckBox.stateChanged.connect(self._ghostIOSSupportSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
+
+    def _dynamipsPathBrowserSlot(self):
+        """
+        Slot to open a file browser and select Dynamips executable.
+        """
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select Dynamips", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.X_OK):
+            QtGui.QMessageBox.critical(self, "Dynamips", "{} is not an executable".format(os.path.basename(path)))
+            return
+
+        self.uiDynamipsPathLineEdit.setText(path)
 
     def _allocateHypervisorPerDeviceSlot(self, state):
         """

@@ -93,7 +93,7 @@ class Dynamips(Module):
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOS")
+        settings.beginGroup("IOSImages")
 
         # load the IOS images
         size = settings.beginReadArray("ios_image")
@@ -130,7 +130,7 @@ class Dynamips(Module):
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOS")
+        settings.beginGroup("IOSImages")
         settings.remove("")
 
         # save the IOS images
@@ -382,12 +382,14 @@ class Dynamips(Module):
         :param params: JSON-RPC params
         """
 
-        if "id" in params and "name" in params:
+        if "devices" in params:
             for node in self._nodes:
-                if node.id() == params["id"] and node.name() == params["name"]:
-                    message = "node {}: {}".format(node.name(), params["message"])
-                    self.notification_signal.emit(message, params["details"])
-                    node.stop()
+                for device in params["devices"]:
+                    if node.name() == device:
+                        message = "node {}: {}".format(node.name(), params["message"])
+                        self.notification_signal.emit(message, params["details"])
+                        if hasattr(node, "stop"):
+                            node.stop()
 
     @staticmethod
     def getNodeClass(name):

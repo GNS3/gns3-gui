@@ -162,7 +162,7 @@ class IOUDevice(Node):
         if self._iou_id:
             self._server.send_message("iou.delete", {"id": self._iou_id}, self._deleteCallback)
         else:
-            self.delete_signal.emit()
+            self.deleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -177,7 +177,7 @@ class IOUDevice(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.error_signal.emit(self.name(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
-        self.delete_signal.emit()
+        self.deleted_signal.emit()
         self._module.removeNode(self)
 
     def _base64Config(self, config_path):
