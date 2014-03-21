@@ -21,6 +21,7 @@ Configuration page for IOU devices.
 
 import os
 from gns3.qt import QtGui
+from .. import IOU
 from gns3.node_configurator import ConfigurationError
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
@@ -34,6 +35,24 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
+        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+
+    def _startupConfigBrowserSlot(self):
+        """
+        Slot to open a file browser and select a startup-config file.
+        """
+
+        #TODO: current directory for startup-config + filter?
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.R_OK):
+            QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
+            return
+
+        self.uiStartupConfigLineEdit.clear()
+        self.uiStartupConfigLineEdit.setText(path)
 
     def loadSettings(self, settings, node, group=False):
         """
@@ -47,17 +66,30 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
+
+            # load the startup-config
+            self.uiStartupConfigLineEdit.setText(settings["startup_config"])
+
+            # load the available IOU images
+            iou_images = IOU.instance().iouImages()
+            for iou_image in iou_images.values():
+                #TODO: remote server aware
+                self.uiIOUImageComboBox.addItem(iou_image["image"], iou_image["path"])
+
+            index = self.uiIOUImageComboBox.findText(os.path.basename(settings["path"]))
+            if index != -1:
+                self.uiIOUImageComboBox.setCurrentIndex(index)
+
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
+            self.uiIOUImageLabel.hide()
+            self.uiIOUImageComboBox.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-
-        # load the IOU image name without the full path
-        self.uiIOUImageTextLabel.setText(os.path.basename(settings["path"]))
-
-        # load the startup-config
-        self.uiStartupConfigTextLabel.setText(settings["startup_config"])
+            self.uiStartupConfigLabel.hide()
+            self.uiStartupConfigLineEdit.hide()
+            self.uiStartupConfigToolButton.hide()
 
         # load the memories and disks settings
         self.uiRamSpinBox.setValue(settings["ram"])
@@ -81,6 +113,18 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         if not group:
             settings["name"] = self.uiNameLineEdit.text()
             settings["console"] = self.uiConsolePortSpinBox.value()
+
+            startup_config = self.uiStartupConfigLineEdit.text()
+            if startup_config != settings["startup_config"]:
+                if os.access(startup_config, os.R_OK):
+                    settings["startup_config"] = startup_config
+                else:
+                    QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+
+            # save the IOU image path
+            index = self.uiIOUImageComboBox.currentIndex()
+            ios_path = self.uiIOUImageComboBox.itemData(index)
+            settings["path"] = ios_path
         else:
             del settings["name"]
             del settings["console"]

@@ -431,7 +431,17 @@ class IOUDevice(Node):
         :returns: formated string
         """
 
-        return ""
+        image_info = '\n  Image is '
+        image_info = image_info + os.path.basename(self._settings["path"])
+
+        txtuptime = '  Router uptime is unknown\n'
+
+        self.state = "stopped"
+
+        #create final output, with proper indentation
+        return 'Router ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Cisco IOU generic device with ' + \
+               str(self._settings["ram"]) + ' MB RAM and ' + str(self._settings["nvram"]) + ' KB NVRAM\n' + txtuptime + '  Router\'s server runs on ' + self._server.host + ":" + str(self._server.port) + \
+               ', console is on port ' + str(self._settings["console"]) + image_info + '\n'# + slot_info
 
     def dump(self):
         """

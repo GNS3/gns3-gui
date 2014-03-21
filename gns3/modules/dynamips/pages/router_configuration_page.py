@@ -21,7 +21,7 @@ Configuration page for Dynamips IOS routers.
 
 import os
 import re
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtGui
 from .. import Dynamips
 from gns3.node_configurator import ConfigurationError
 from ..ui.router_configuration_page_ui import Ui_routerConfigPageWidget
