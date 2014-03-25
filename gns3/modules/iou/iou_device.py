@@ -584,6 +584,15 @@ class IOUDevice(Node):
 
         return "IOU device"
 
+    def categories():
+        """
+        Returns the node categories the node is part of (used by the device panel).
+
+        :returns: list of node category (integer)
+        """
+
+        return [Node.routers, Node.switches]
+
     def __str__(self):
 
         return "IOU device"

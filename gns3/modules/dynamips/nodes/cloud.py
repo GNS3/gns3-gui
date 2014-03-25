@@ -381,6 +381,16 @@ class Cloud(Node):
 
         return "Cloud"
 
+    @staticmethod
+    def categories():
+        """
+        Returns the node categories the node is part of (used by the device panel).
+
+        :returns: list of node category (integer)
+        """
+
+        return [Node.end_devices]
+
     def __str__(self):
 
         return "Cloud"

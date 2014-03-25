@@ -52,6 +52,12 @@ class Node(QtCore.QObject):
     started = 1
     suspended = 2
 
+    # node categories
+    routers = 0
+    switches = 1
+    end_devices = 2
+    security_devices = 3
+
     def __init__(self, server=None):
 
         super(Node, self).__init__()
@@ -304,6 +310,16 @@ class Node(QtCore.QObject):
         Returns the symbol name (for the nodes view).
 
         :returns: name (string)
+        """
+
+        raise NotImplementedError()
+
+    @staticmethod
+    def categories(self):
+        """
+        Returns the node categories the node is part of (used by the device panel).
+
+        :returns: list of node category (integer)
         """
 
         raise NotImplementedError()

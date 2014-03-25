@@ -39,7 +39,6 @@ from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
 from .topology import Topology
-from .version import __version__
 
 
 import logging
@@ -75,6 +74,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project_files_dir = None
 
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        # do not show the nodes dock widget my default
+        self.uiNodesDockWidget.setVisible(False)
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -549,61 +551,59 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
-#     def _doSlidingWindow(self, type):
-#         """
-#         Make the NodeDock appear (sliding effect is in progress)
-#         with the appropriate title and the devices concerned listed.
-#         Make window disappear if click on same category.
-#         """
-# 
-#         if self.dockWidget_NodeTypes.windowTitle() == type:
-#             self.dockWidget_NodeTypes.setVisible(False)
-#             self.dockWidget_NodeTypes.setWindowTitle('')
-#         else:
-#             self.dockWidget_NodeTypes.setWindowTitle(type)
-#             self.dockWidget_NodeTypes.setVisible(True)
-#             self.nodesDock.clear()
-#             self.nodesDock.populateNodeDock(type)
+    def _showNodesDockWidget(self, title, category=None):
+        """
+        Makes the NodesDockWidget appear with the appropriate title and the devices
+        from the specified category listed.
+        Makes the dock disappear if the same category is selected.
+
+        :param title: NodesDockWidget title
+        :param category: category of device to list
+        """
+
+        if self.uiNodesDockWidget.windowTitle() == title:
+            self.uiNodesDockWidget.setVisible(False)
+            self.uiNodesDockWidget.setWindowTitle("")
+        else:
+            self.uiNodesDockWidget.setWindowTitle(title)
+            self.uiNodesDockWidget.setVisible(True)
+            self.uiNodesView.clear()
+            self.uiNodesView.populateNodesView(category)
 
     def _browseRoutersActionSlot(self):
         """
         Slot to browse all the routers.
         """
 
-        #TODO
-        pass
+        self._showNodesDockWidget("Routers", Node.routers)
 
     def _browseSwitchesActionSlot(self):
         """
         Slot to browse all the switches.
         """
 
-        #TODO
-        pass
+        self._showNodesDockWidget("Switches", Node.switches)
 
     def _browseEndDevicesActionSlot(self):
         """
         Slot to browse all the end devices.
         """
 
-        #TODO
-        pass
+        self._showNodesDockWidget("End devices", Node.end_devices)
 
     def _browseSecurityDevicesActionSlot(self):
         """
         Slot to browse all the security devices.
         """
 
-        #TODO
-        pass
+        self._showNodesDockWidget("Security devices", Node.security_devices)
 
     def _browseAllDevicesActionSlot(self):
         """
         Slot to browse all the devices.
         """
 
-        #TODO
-        pass
+        self._showNodesDockWidget("All devices")
 
     def _addLinkActionSlot(self):
         """
@@ -710,7 +710,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
-        
+
         config_filename = QtCore.QSettings().fileName()
         if not os.access(config_filename, os.F_OK):
             # no config file detected, first time we start this application

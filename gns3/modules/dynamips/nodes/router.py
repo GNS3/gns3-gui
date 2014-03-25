@@ -64,7 +64,7 @@ class Router(Node):
                           "sparsemem": True,
                           "clock_divisor": 8,
                           "idlepc": "",
-                          "idlemax": 1500,
+                          "idlemax": 500,
                           "idlesleep": 30,
                           "exec_area": 64,
                           "jit_sharing_group": None,
@@ -926,3 +926,13 @@ class Router(Node):
         """
 
         return ":/symbols/router.selected.svg"
+
+    @staticmethod
+    def categories():
+        """
+        Returns the node categories the node is part of (used by the device panel).
+
+        :returns: list of node category (integer)
+        """
+
+        return [Node.routers]

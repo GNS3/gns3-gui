@@ -38,8 +38,18 @@ class NodesView(QtGui.QTreeWidget):
         # enables the possibility to drag items.
         self.setDragEnabled(True)
 
+    def populateNodesView(self, category):
+        """
+        Populates the nodes view with the device list of the specified
+        category (None = all devices).
+
+        :param category: category of device to list
+        """
+
         for module in MODULES:
             for node in module.nodes():
+                if category != None and category not in node.categories():
+                    continue
                 item = QtGui.QTreeWidgetItem(self)
                 item.setIcon(0, QtGui.QIcon(node.defaultSymbol()))
                 item.setText(0, node.symbolName())

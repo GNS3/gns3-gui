@@ -414,7 +414,7 @@ class Ui_routerConfigPageWidget(object):
         self.uiIdlemaxSpinBox.setMinimum(100)
         self.uiIdlemaxSpinBox.setMaximum(10000)
         self.uiIdlemaxSpinBox.setSingleStep(100)
-        self.uiIdlemaxSpinBox.setProperty("value", 1500)
+        self.uiIdlemaxSpinBox.setProperty("value", 500)
         self.uiIdlemaxSpinBox.setObjectName(_fromUtf8("uiIdlemaxSpinBox"))
         self.gridLayout_4.addWidget(self.uiIdlemaxSpinBox, 1, 1, 1, 1)
         self.uiIdlesleepLabel = QtGui.QLabel(self.uiOptimizationsGroupBox)

@@ -396,6 +396,16 @@ class ATMSwitch(Node):
 
         return "ATM switch"
 
+    @staticmethod
+    def categories():
+        """
+        Returns the node categories the node is part of (used by the device panel).
+
+        :returns: list of node category (integer)
+        """
+
+        return [Node.switches]
+
     def __str__(self):
 
         return "ATM switch"
