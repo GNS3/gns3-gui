@@ -153,7 +153,7 @@
        <item row="2" column="0" colspan="2">
         <widget class="QLineEdit" name="uiRemoteServerPortLineEdit">
          <property name="text">
-          <string>192.168.1.1</string>
+          <string>192.168.56.101</string>
          </property>
         </widget>
        </item>

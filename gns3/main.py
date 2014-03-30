@@ -19,6 +19,8 @@
 import datetime
 import sys
 import logging
+import traceback
+import time
 from gns3.version import __version__
 from gns3.main_window import MainWindow
 from gns3.qt import QtGui
@@ -28,6 +30,24 @@ def main():
     """
     Entry point for GNS3 GUI.
     """
+
+    def exceptionHook(exception, value, tb):
+
+        lines = traceback.format_exception(exception, value, tb)
+        print("---------Traceback lines (saved in exception.log)----------")
+        print("\n" . join(lines))
+        print("-----------------------------------------------------------")
+        try:
+            curdate = time.strftime("%d %b %Y %H:%M:%S")
+            logfile = open('exception.log', 'a')
+            logfile.write("=== GNS3 {} traceback on {} ===\n".format(__version__, curdate))
+            logfile.write("\n" . join(lines))
+            logfile.close()
+        except EnvironmentError as e:
+            print("Could not save in exception.log: {}".format(e))
+
+    # catch exceptions to write them in a file
+    sys.excepthook = exceptionHook
 
     current_year = datetime.date.today().year
     print("GNS3 GUI version {}".format(__version__))

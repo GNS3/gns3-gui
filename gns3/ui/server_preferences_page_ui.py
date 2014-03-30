@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Sun Mar 30 10:55:50 2014
+# Created: Sun Mar 30 16:26:41 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -135,7 +135,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("ServerPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("ServerPreferencesPageWidget", "Port", None))
         self.uiRemoteServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host:", None))
-        self.uiRemoteServerPortLineEdit.setText(_translate("ServerPreferencesPageWidget", "192.168.1.1", None))
+        self.uiRemoteServerPortLineEdit.setText(_translate("ServerPreferencesPageWidget", "192.168.56.101", None))
         self.uiRemoteServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
         self.uiAddRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Add", None))
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Delete", None))

@@ -35,7 +35,7 @@ class Tox(TestCommand):
 
 setup(
     name="gns3-gui",
-    version=__import__("gns3server").__version__,
+    version=__import__("gns3").__version__,
     url="http://github.com/GNS3/gns3-gui",
     license="GNU General Public License v3 (GPLv3)",
     tests_require=["tox"],

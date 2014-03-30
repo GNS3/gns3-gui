@@ -21,7 +21,7 @@ Configuration page for IOU preferences.
 
 import os
 import sys
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtGui
 from gns3.servers import Servers
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
@@ -39,8 +39,9 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.setupUi(self)
 
         if not sys.platform.startswith("linux"):
-            self.uiIouyapPathLineEdit.setEnable(False)
-            self.uiIouyapPathToolButton.setEnable(False)
+            self.uiIouyapPathLineEdit.setEnabled(False)
+            self.uiIouyapPathToolButton.setEnabled(False)
+            self.uiUseLocalServercheckBox.setEnabled(False)
 
         # connect signals
         self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
@@ -96,19 +97,8 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         if state:
-            # IOU is only available on Linux
-            if not sys.platform.startswith("linux"):
-                QtGui.QMessageBox.critical(self, "IOU", "Sorry, local server is only supported on Linux")
-                return
-
             self.uiRemoteServersTreeWidget.setEnabled(False)
         else:
-
-            if not Servers.instance().remoteServers():
-                QtGui.QMessageBox.critical(self, "IOU", "Please add remote servers first")
-                self.uiUseLocalServercheckBox.setCheckState(QtCore.Qt.Checked)
-                return
-
             self.uiRemoteServersTreeWidget.setEnabled(True)
 
     def _populateWidgets(self, settings):

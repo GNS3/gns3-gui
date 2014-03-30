@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Fri Mar 28 15:40:04 2014
+# Created: Sun Mar 30 16:26:41 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -159,7 +159,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC:", None))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings", None))
-        self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server", None))
+        self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server (Linux only)", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Remote servers", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("IOUPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("IOUPreferencesPageWidget", "Port", None))
