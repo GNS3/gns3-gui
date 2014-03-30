@@ -254,7 +254,7 @@ class IOUDevice(Node):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
             self._inital_settings = None
-        elif updated:
+        elif updated or self._loading:
             log.info("IOU device {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -357,10 +357,9 @@ class IOUDevice(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
-            lhost = result["lhost"]
             lport = result["lport"]
-            log.debug("{} has allocated UDP port {} for host {}".format(self.name(), port_id, lport, lhost))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport, lhost)
+            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
+            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
 
     def addNIO(self, port, nio):
         """
@@ -496,6 +495,7 @@ class IOUDevice(Node):
         Updates port settings when loading a topology.
         """
 
+        self.updated_signal.disconnect(self._updatePortSettings)
         # update the port with the correct names and IDs
         if "ports" in self.node_info:
             ports = self.node_info["ports"]
@@ -584,6 +584,7 @@ class IOUDevice(Node):
 
         return "IOU device"
 
+    @staticmethod
     def categories():
         """
         Returns the node categories the node is part of (used by the device panel).

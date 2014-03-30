@@ -152,7 +152,7 @@ class Link(QtCore.QObject):
 
         return self._id
 
-    def UDPPortAllocatedSlot(self, node_id, port_id, lport, laddr):
+    def UDPPortAllocatedSlot(self, node_id, port_id, lport):
         """
         Slot to receive events from Node instances
         when a UDP port has been allocated in order to create a NIO UDP.
@@ -160,11 +160,11 @@ class Link(QtCore.QObject):
         :param node_id: node identifier
         :param port_id: port identifier
         :param lport: local UDP port
-        :param laddr: local host/address
         """
 
         # check that the node is connected to this link as a source
         if node_id == self._source_node.id() and port_id == self._source_port.id():
+            laddr = self._source_node.server().host
             self._source_udp = (lport, laddr)
             # disconnect the signal has we don't expect new source UDP info for this link.
             self._source_node.allocate_udp_nio_signal.disconnect(self.UDPPortAllocatedSlot)
@@ -175,6 +175,7 @@ class Link(QtCore.QObject):
 
         # check that the node is connected to this link as a destination
         elif node_id == self._destination_node.id() and port_id == self._destination_port.id():
+            laddr = self._destination_node.server().host
             self._destination_udp = (lport, laddr)
             # disconnect the signal has we don't expect new source UDP info for this link.
             self._destination_node.allocate_udp_nio_signal.disconnect(self.UDPPortAllocatedSlot)

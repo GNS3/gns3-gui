@@ -144,9 +144,6 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::ExtendedSelection</enum>
-            </property>
             <column>
              <property name="text">
               <string>Host</string>

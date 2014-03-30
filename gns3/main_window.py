@@ -711,6 +711,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
+        self._createTemporaryProject()
+
         config_filename = QtCore.QSettings().fileName()
         if not os.access(config_filename, os.F_OK):
             # no config file detected, first time we start this application
@@ -720,18 +722,30 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._newsActionSlot()
 
-        self._createTemporaryProject()
-
         # connect to the local server
         servers = Servers.instance()
         server = servers.localServer()
 
         if not server.connected():
+
+            try:
+                # check if the local address still exists
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.bind((server.host, 0))
+            except socket.error as e:
+                QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {host}: {error} (please check your host binding setting)".format(host=server.host, error=e))
+                return
+
             try:
                 server.connect()
                 log.info("use an already started local server on {}:{}".format(server.host, server.port))
             except socket.error as e:
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
+
+                if not servers.localServerPath():
+                    log.info("not local server is configured")
+                    return
+
                 if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
                     thread = WaitForConnectionThread(server.host, server.port)
                     dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
@@ -892,6 +906,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
         self._setCurrentFile()
+
+    def isTemporaryProject(self):
+        """
+        Returns either this is a temporary project or not.
+
+        :returns: boolean
+        """
+
+        return self._temporary_project
 
     def _setCurrentFile(self, path=None):
         """

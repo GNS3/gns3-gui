@@ -22,6 +22,7 @@ Configuration page for IOU image & device preferences.
 import os
 import sys
 from gns3.qt import QtGui
+from gns3.servers import Servers
 from .. import IOU
 from ..ui.iou_device_preferences_page_ui import Ui_IOUDevicePreferencesPageWidget
 
@@ -54,7 +55,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         image = item.text(0)
-        key = "{server}:{image}".format(server="local", image=image)
+        server = item.text(1)
+        key = "{server}:{image}".format(server=server, image=image)
         iou_image = self._iou_images[key]
 
         self.uiIOUPathLineEdit.setText(iou_image["path"])
@@ -90,19 +92,25 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         else:
             image = os.path.basename(path)
 
-        key = "{server}:{image}".format(server="local", image=image)
+        #TODO: mutiple remote server
+        if IOU.instance().settings()["use_local_server"]:
+            server = "local"
+        else:
+            server = server = next(iter(Servers.instance())).host
+
+        key = "{server}:{image}".format(server=server, image=image)
         item = self.uiIOUImagesTreeWidget.currentItem()
 
         if key in self._iou_images and item and item.text(0) == image:
             item.setText(0, image)
-            item.setText(1, "local")
+            item.setText(1, server)
         elif key in self._iou_images:
             return
         else:
             # add a new entry in the tree widget
             item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
             item.setText(0, image)
-            item.setText(1, "local")
+            item.setText(1, server)
             self.uiIOUImagesTreeWidget.setCurrentItem(item)
 
         self._iou_images[key] = {"path": path,
@@ -110,7 +118,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                                  "startup_config": startup_config,
                                  "ram": ram,
                                  "nvram": nvram,
-                                 "server": "local"}
+                                 "server": server}
 
         self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
@@ -123,7 +131,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         item = self.uiIOUImagesTreeWidget.currentItem()
         if item:
             image = item.text(0)
-            key = "{server}:{image}".format(server="local", image=image)
+            server = item.text(1)
+            key = "{server}:{image}".format(server=server, image=image)
             del self._iou_images[key]
             self.uiIOUImagesTreeWidget.takeTopLevelItem(self.uiIOUImagesTreeWidget.indexOfTopLevelItem(item))
 
@@ -193,7 +202,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         for iou_image in iou_images.values():
             item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
             item.setText(0, iou_image["image"])
-            item.setText(1, "local")
+            item.setText(1, iou_image["server"])
 
         self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOUImagesTreeWidget.resizeColumnToContents(1)

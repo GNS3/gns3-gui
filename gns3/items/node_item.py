@@ -58,6 +58,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         node.updated_signal.connect(self.updatedSlot)
         node.deleted_signal.connect(self.deletedSlot)
         node.delete_links_signal.connect(self.deleteLinksSlot)
+        node.error_signal.connect(self.errorSlot)
 
         # link items connected to this node item.
         self._links = []
@@ -68,6 +69,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # says if the attached node has been initialized
         # by the server.
         self._initialized = False
+
+        # contains the last error message received
+        # from the server.
+        self._last_error = None
 
     def setUnsavedState(self):
         """
@@ -179,12 +184,31 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.scene().removeItem(self)
         self.setUnsavedState()
 
+    def errorSlot(self, name, code, message):
+        """
+        Slot to receive events from the attached Node instance
+        when the node has received an error from the server.
+
+        :param name: node name
+        :param code: error code
+        :param message: error message
+        """
+
+        self._last_error = "{message}".format(message=message)
+
     def setCustomToolTip(self):
         """
         Sets a new ToolTip.
         """
 
-        self.setToolTip(self._node.info())
+        if not self._initialized:
+            if not self._last_error:
+                error = "unknown error"
+            else:
+                error = self._last_error
+            self.setToolTip("This node isn't initialized\n{}".format(error))
+        else:
+            self.setToolTip(self._node.info())
 
     def showName(self):
         """

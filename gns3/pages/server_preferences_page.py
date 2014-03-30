@@ -46,9 +46,18 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
 
         # load all available addresses
-        self.uiLocalServerHostComboBox.addItems(["0.0.0.0", "::", QtNetwork.QHostInfo.localHostName()])
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            self.uiLocalServerHostComboBox.addItem(address.toString())
+            address_string = address.toString()
+            if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
+                continue  #FIXME: finish IPv6 support (problem with ws4py)
+                # we do not want the scope id when using an IPv6 address...
+                address.setScopeId("")
+            self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
+
+        # default is 127.0.0.1
+        index = self.uiLocalServerHostComboBox.findText("127.0.0.1")
+        if index != -1:
+            self.uiLocalServerHostComboBox.setCurrentIndex(index)
 
     def _localServerBrowserSlot(self):
         """
@@ -89,6 +98,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         """
         Adds a new remote server.
         """
+
+        if len(self._remote_servers) == 1:
+            QtGui.QMessageBox.critical(self, "Remote server", "Sorry we do not support multiple remote servers yet!")
+            return
 
         host = self.uiRemoteServerPortLineEdit.text()
         port = self.uiRemoteServerPortSpinBox.value()
@@ -133,9 +146,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
         # load the local server preferences
         local_server = servers.localServer()
-        index = self.uiLocalServerHostComboBox.findText(local_server.host)
+        index = self.uiLocalServerHostComboBox.findData(local_server.host)
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
+
         self.uiLocalServerPortSpinBox.setValue(local_server.port)
         self.uiLocalServerPathLineEdit.setText(servers.localServerPath())
 
@@ -151,6 +165,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
             item.setText(0, host)
             item.setText(1, str(port))
 
+        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
+
     def savePreferences(self):
         """
         Saves the server preferences.
@@ -159,7 +175,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         servers = Servers.instance()
 
         # save the local server preferences
-        local_server_host = self.uiLocalServerHostComboBox.currentText()
+        local_server_host = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
         local_server_port = self.uiLocalServerPortSpinBox.value()
         local_server_path = self.uiLocalServerPathLineEdit.text()
 

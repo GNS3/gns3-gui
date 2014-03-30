@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout">
    <item>
     <widget class="QTabWidget" name="uiTabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -215,6 +218,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="uiIOSRoutersTabWidget">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>IOS routers</string>
       </attribute>

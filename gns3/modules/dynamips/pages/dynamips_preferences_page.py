@@ -20,7 +20,7 @@ Configuration page for Dynamips preferences.
 """
 
 import os
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from .. import Dynamips
 from ..ui.dynamips_preferences_page_ui import Ui_DynamipsPreferencesPageWidget
@@ -100,6 +100,10 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         if state:
             self.uiRemoteServersTreeWidget.setEnabled(False)
         else:
+            if not Servers.instance().remoteServers():
+                QtGui.QMessageBox.critical(self, "Dynamips", "Please add remote servers first")
+                self.uiUseLocalServercheckBox.setCheckState(QtCore.Qt.Checked)
+                return
             self.uiRemoteServersTreeWidget.setEnabled(True)
 
     def _populateWidgets(self, settings):
@@ -137,6 +141,8 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
             item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
             item.setText(0, host)
             item.setText(1, str(port))
+
+        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
 
     def loadPreferences(self):
         """

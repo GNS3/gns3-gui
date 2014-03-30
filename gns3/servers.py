@@ -56,10 +56,25 @@ class Servers(QtCore.QObject):
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
 
+        # default path to the local GNS3 server executable or script
+        if sys.platform.startswith("win"):
+            DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
+        else:
+            # look for gns3server in PATH
+            gns3server = None
+            for path in os.environ["PATH"].split(":"):
+                if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
+                    gns3server = os.path.join(path, "gns3server")
+                    break
+            if gns3server:
+                DEFAULT_LOCAL_SERVER_PATH = gns3server
+            else:
+                DEFAULT_LOCAL_SERVER_PATH = "gns3server"
+
         # set the local server
         local_server_host = settings.value("local_server_host", "127.0.0.1")
         local_server_port = settings.value("local_server_port", 8000, type=int)
-        local_server_path = settings.value("local_server_path", "")
+        local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
         self.setLocalServer(local_server_path, local_server_host, local_server_port)
 
         # load the remote servers
@@ -162,6 +177,7 @@ class Servers(QtCore.QObject):
         self._local_server_path = path
         url = "ws://{host}:{port}".format(host=host, port=port)
         self._local_server = WebSocketClient(url)
+        self._local_server.setLocal(True)
         log.info("new local server connection {} registered".format(url))
 
     def localServer(self):
@@ -179,6 +195,8 @@ class Servers(QtCore.QObject):
 
         :param host: host or address of the server
         :param port: port of the server (integer)
+
+        :returns: the new remote server
         """
 
         server_socket = "{host}:{port}".format(host=host, port=port)
@@ -186,6 +204,15 @@ class Servers(QtCore.QObject):
         server = WebSocketClient(url)
         self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
+        return server
+
+    def getRemoteServer(self, host, port):
+
+        for server in self._remote_servers.values():
+            if server.host == host and server.port == port:
+                return server
+
+        return self._addRemoteServer(host, port)
 
     def updateRemoteServers(self, servers):
         """

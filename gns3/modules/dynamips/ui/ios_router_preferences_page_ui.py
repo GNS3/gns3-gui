@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Tue Mar 18 16:02:30 2014
+# Created: Fri Mar 28 15:40:04 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.vboxlayout = QtGui.QVBoxLayout(IOSRouterPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(IOSRouterPreferencesPageWidget)
+        self.uiTabWidget.setEnabled(True)
         self.uiTabWidget.setObjectName(_fromUtf8("uiTabWidget"))
         self.uiIOSImagesTabWidget = QtGui.QWidget()
         self.uiIOSImagesTabWidget.setObjectName(_fromUtf8("uiIOSImagesTabWidget"))
@@ -127,6 +128,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.uiTabWidget.addTab(self.uiIOSImagesTabWidget, _fromUtf8(""))
         self.uiIOSRoutersTabWidget = QtGui.QWidget()
+        self.uiIOSRoutersTabWidget.setEnabled(False)
         self.uiIOSRoutersTabWidget.setObjectName(_fromUtf8("uiIOSRoutersTabWidget"))
         self.gridLayout = QtGui.QGridLayout(self.uiIOSRoutersTabWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))

@@ -21,6 +21,7 @@ Based on the ws4py websocket client.
 """
 
 import json
+import socket
 from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
 from .qt import QtCore
@@ -46,6 +47,7 @@ class WebSocketClient(WebSocketBaseClient):
 
         self.callbacks = {}
         self._connected = False
+        self._local = False
 
         # create an unique ID
         self._id = WebSocketClient._instance_count
@@ -68,6 +70,24 @@ class WebSocketClient(WebSocketBaseClient):
 
         cls._instance_count = 1
 
+    def setLocal(self, value):
+        """
+        Sets either this is a connection to a local server or not.
+
+        :param value: boolean
+        """
+
+        self._local = value
+
+    def isLocal(self):
+        """
+        Returns either this is a connection to a local server or not.
+
+        :returns: boolean
+        """
+
+        return self._local
+
     def opened(self):
         """
         Called when the connection with the server is successful.
@@ -82,6 +102,12 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         self.__init__(self.url)
+
+        if self._local:
+            # check the local host address is still valid
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.bind((self.host, 0))
+
         self.connect()
 
     def connected(self):
@@ -230,4 +256,5 @@ class WebSocketClient(WebSocketBaseClient):
 
         return {"id": self._id,
                 "host": self.host,
-                "port": self.port}
+                "port": self.port,
+                "local": self._local}

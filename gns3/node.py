@@ -43,7 +43,7 @@ class Node(QtCore.QObject):
     idlepc_signal = QtCore.Signal()
     error_signal = QtCore.Signal(str, int, str)
     nio_signal = QtCore.Signal(int, int)
-    allocate_udp_nio_signal = QtCore.Signal(int, int, int, str)
+    allocate_udp_nio_signal = QtCore.Signal(int, int, int)
 
     _instance_count = 1
 

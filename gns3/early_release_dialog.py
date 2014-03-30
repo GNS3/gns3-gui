@@ -56,6 +56,6 @@ class EarlyReleaseDialog(QtGui.QDialog, Ui_EarlyReleaseDialog):
             if not self.uiDisclaimerCheckBox.isChecked():
                 QtGui.QMessageBox.critical(self, "Disclaimer", "Please read the disclaimer!")
                 return
-            # Congratulations, you found where we check for a GNS3 membership! and yes, it is very simple ;)
+            # Congratulations, you have found where we check for a GNS3 membership! and yes, it is very simple ;)
             # Since you were smart enough to get here, you deserve to use GNS3 without a membership...
         QtGui.QDialog.done(self, result)

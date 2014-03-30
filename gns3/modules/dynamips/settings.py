@@ -27,9 +27,9 @@ if sys.platform.startswith("win"):
     DEFAULT_DYNAMIPS_PATH = "dynamips.exe"
 elif sys.platform.startswith('darwin'):
     if hasattr(sys, "frozen"):
-        DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwdu(), "../Resources/dynamips-0.2.10-OSX.intel64.bin")
+        DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwdu(), "../Resources/dynamips-0.2.12-OSX.intel64.bin")
     else:
-        DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwdu(), "dynamips-0.2.10-OSX.intel64.bin")
+        DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwdu(), "dynamips-0.2.12-OSX.intel64.bin")
 else:
     DEFAULT_DYNAMIPS_PATH = "dynamips"
 

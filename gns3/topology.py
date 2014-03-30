@@ -23,6 +23,7 @@ Handles the saving and loading of a topology.
 #import networkx as nx
 from .qt import QtCore
 from .items.node_item import NodeItem
+from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
@@ -235,7 +236,20 @@ class Topology(object):
                 self._node_to_links_mapping[source_id].append(topology_link)
                 self._node_to_links_mapping[destination_id].append(topology_link)
 
-        # then load the nodes
+        # then load the servers
+        self._servers = {}
+        server_manager = Servers.instance()
+        if "servers" in topology["topology"]:
+            servers = topology["topology"]["servers"]
+            for topology_server in servers:
+                if "local" in topology_server and topology_server["local"]:
+                    self._servers[topology_server["id"]] = server_manager.localServer()
+                else:
+                    host = topology_server["host"]
+                    port = topology_server["port"]
+                    self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
+
+        # finally load the nodes
         node_errors = []
         if "nodes" in topology["topology"]:
             nodes = topology["topology"]["nodes"]
@@ -253,7 +267,16 @@ class Topology(object):
                             break
                     if not node_module:
                         raise ModuleError("Could not find any module for {}".format(topology_node["type"]))
-                    node = node_module.createNode(node_class)
+
+                    server = None
+                    if topology_node["server_id"] in self._servers:
+                        server = self._servers[topology_node["server_id"]]
+
+                    if not server:
+                        node_errors.append("No server reference for node ID {}".format(topology_node["id"]))
+                        continue
+
+                    node = node_module.createNode(node_class, server)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
                 except ModuleError as e:
                     node_errors.append(str(e))

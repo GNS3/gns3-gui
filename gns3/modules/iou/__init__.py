@@ -22,7 +22,7 @@ IOU module implementation.
 import socket
 import base64
 import os
-from gns3.qt import QtCore
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
@@ -94,7 +94,6 @@ class IOU(Module):
             ram = settings.value("ram", 256, type=int)
             nvram = settings.value("nvram", 128, type=int)
             server = settings.value("server", "local")
-
             key = "{server}:{image}".format(server=server, image=image)
             self._iou_images[key] = {"path": path,
                                      "image": image,
@@ -134,13 +133,7 @@ class IOU(Module):
         :param path: path to the local working directory
         """
 
-        self._working_dir = os.path.join(path, "iou")
-        if not os.path.exists(self._working_dir):
-            try:
-                os.makedirs(self._working_dir)
-            except EnvironmentError as e:
-                raise ModuleError("{}".format(e))
-
+        self._working_dir = path
         log.info("local working directory for IOU module: {}".format(self._working_dir))
         servers = Servers.instance()
         server = servers.localServer()
@@ -193,7 +186,8 @@ class IOU(Module):
         :param node: Node instance
         """
 
-        self._nodes.remove(node)
+        if node in self._nodes:
+            self._nodes.remove(node)
 
     def iouImages(self):
         """
@@ -278,13 +272,24 @@ class IOU(Module):
         params["iourc"] = self._base64iourc(params["iourc"])
 
         # send the local working directory only if this is a local server
-        servers = Servers.instance()
-        if server == servers.localServer():
+        if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            # do not send iouyap path to remote servers
-            del params["iouyap"]
+            del params["iouyap"]  # do not send iouyap path to remote servers
+            project_name = os.path.basename(self._working_dir)
+            if project_name.endswith("-files"):
+                project_name = project_name[:-6]
+            params.update({"project_name": project_name})
         server.send_notification("iou.settings", params)
+
+    def useLocalServer(self):
+        """
+        Returns either the module use the local server or not.
+
+        :returns: boolean
+        """
+
+        return self._settings["use_local_server"]
 
     def createNode(self, node_class, server=None):
         """
@@ -314,7 +319,6 @@ class IOU(Module):
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
                 server.reconnect()
-                self._sendSettings(server)
             except socket.error as e:
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
@@ -333,12 +337,29 @@ class IOU(Module):
         """
 
         log.info("configuring node {}".format(node))
-        if not self._iou_images:
-            raise ModuleError("No IOU image found for this device")
-
         settings = {}
-        #FIXME: for now use the fist available image
-        iouimage = list(self._iou_images.keys())[0]
+
+        selected_images = []
+        for image, info in self._iou_images.items():
+            if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                selected_images.append(image)
+
+        if not selected_images:
+            raise ModuleError("No IOU image found for this device")
+        elif len(selected_images) > 1:
+
+            from gns3.main_window import MainWindow
+            mainwindow = MainWindow.instance()
+
+            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "IOU image", "Please choose an image", selected_images, 0, False)
+            if ok:
+                iouimage = selection
+            else:
+                raise ModuleError("Please select an IOU image")
+
+        else:
+            iouimage = selected_images[0]
+
         startup_config = self._iou_images[iouimage]["startup_config"]
         iou_path = self._iou_images[iouimage]["path"]
         if startup_config:

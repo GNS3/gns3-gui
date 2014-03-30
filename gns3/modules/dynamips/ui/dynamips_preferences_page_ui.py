@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Mon Mar 17 21:37:06 2014
+# Created: Fri Mar 28 15:40:04 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -103,7 +103,6 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.uiRemoteServersTreeWidget = QtGui.QTreeWidget(self.uiRemoteServersGroupBox)
         self.uiRemoteServersTreeWidget.setEnabled(False)
-        self.uiRemoteServersTreeWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.uiRemoteServersTreeWidget.setObjectName(_fromUtf8("uiRemoteServersTreeWidget"))
         self.horizontalLayout_3.addWidget(self.uiRemoteServersTreeWidget)
         self.gridLayout_2.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)

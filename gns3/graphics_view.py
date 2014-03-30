@@ -21,7 +21,7 @@ Graphical view on the scene where items are drawn.
 
 
 import pickle
-from .qt import QtCore, QtGui
+from .qt import QtCore, QtGui, QtNetwork
 from .items.node_item import NodeItem
 from .node_configurator import NodeConfigurator
 from .link import Link
@@ -74,6 +74,8 @@ class GraphicsView(QtGui.QGraphicsView):
         self.setRenderHint(QtGui.QPainter.Antialiasing)
         self.setTransformationAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
+
+        self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def reset(self):
         """
@@ -310,6 +312,14 @@ class GraphicsView(QtGui.QGraphicsView):
 #                 print(type(destination_port))
 #                 QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
 #                 return
+
+            # check if the 2 nodes can communicate
+            source_host = source_item.node().server().host
+            destination_host = destination_item.node().server().host
+            if (source_host in self._local_addresses and destination_host not in self._local_addresses) or \
+               (destination_host in self._local_addresses and source_host not in self._local_addresses):
+                QtGui.QMessageBox.critical(self, "Connection", "Server {} cannot communicate with server {}, most likely because your local server host binding is set to a local address".format(source_host, destination_host))
+                return
 
             self.scene().removeItem(self._newlink)
             self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
@@ -771,6 +781,11 @@ class GraphicsView(QtGui.QGraphicsView):
                     break
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
+
+            if not node_module.useLocalServer() and self._main_window.isTemporaryProject():
+                self._main_window.setUnsavedState()
+                raise ModuleError("Please save your project first before using remote servers")
+
             node = node_module.createNode(node_class)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node_item = NodeItem(node)

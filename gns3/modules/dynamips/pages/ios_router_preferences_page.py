@@ -23,6 +23,7 @@ import os
 import sys
 import re
 from gns3.qt import QtGui
+from gns3.servers import Servers
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
@@ -70,7 +71,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         image = item.text(0)
-        key = "{server}:{image}".format(server="local", image=image)
+        server = item.text(2)
+        key = "{server}:{image}".format(server=server, image=image)
         ios_image = self._ios_images[key]
 
         self.uiIOSPathLineEdit.setText(ios_image["path"])
@@ -119,14 +121,20 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         if image.startswith("c7200p"):
             QtGui.QMessageBox.warning(self, "IOS Image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
 
+        #TODO: mutiple remote server
+        if Dynamips.instance().settings()["use_local_server"]:
+            server = "local"
+        else:
+            server = server = next(iter(Servers.instance())).host
+
         #ios_images = Dynamips.instance().iosImages()
-        key = "{server}:{image}".format(server="local", image=image)
+        key = "{server}:{image}".format(server=server, image=image)
         item = self.uiIOSImagesTreeWidget.currentItem()
 
         if key in self._ios_images and item and item.text(0) == image:
             item.setText(0, image)
             item.setText(1, platform)
-            item.setText(2, "local")
+            item.setText(2, server)
         elif key in self._ios_images:
             print("Image already added")
             return
@@ -135,7 +143,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item = QtGui.QTreeWidgetItem(self.uiIOSImagesTreeWidget)
             item.setText(0, image)
             item.setText(1, platform)
-            item.setText(2, "local")
+            item.setText(2, server)
             self.uiIOSImagesTreeWidget.setCurrentItem(item)
 
         self._ios_images[key] = {"path": path,
@@ -146,7 +154,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                  "chassis": chassis,
                                  "idlepc": idlepc,
                                  "ram": ram,
-                                 "server": "local"}
+                                 "server": server}
 
         self.uiIOSImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOSImagesTreeWidget.resizeColumnToContents(1)
@@ -159,7 +167,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         item = self.uiIOSImagesTreeWidget.currentItem()
         if item:
             image = item.text(0)
-            key = "{server}:{image}".format(server="local", image=image)
+            server = item.text(2)
+            key = "{server}:{image}".format(server=server, image=image)
             del self._ios_images[key]
             self.uiIOSImagesTreeWidget.takeTopLevelItem(self.uiIOSImagesTreeWidget.indexOfTopLevelItem(item))
 
@@ -284,7 +293,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item = QtGui.QTreeWidgetItem(self.uiIOSImagesTreeWidget)
             item.setText(0, ios_image["image"])
             item.setText(1, ios_image["platform"])
-            item.setText(2, "local")
+            item.setText(2, ios_image["server"])
 
         self.uiIOSImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOSImagesTreeWidget.resizeColumnToContents(1)

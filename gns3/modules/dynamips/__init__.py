@@ -21,7 +21,7 @@ Dynamips module implementation.
 
 import socket
 import os
-from gns3.qt import QtCore
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
@@ -151,13 +151,7 @@ class Dynamips(Module):
         :param path: path to the local working directory
         """
 
-        self._working_dir = os.path.join(path, "dynamips")
-        if not os.path.exists(self._working_dir):
-            try:
-                os.makedirs(self._working_dir)
-            except EnvironmentError as e:
-                raise ModuleError("{}".format(e))
-
+        self._working_dir = path
         log.info("local working directory for Dynamips module: {}".format(self._working_dir))
         servers = Servers.instance()
         server = servers.localServer()
@@ -210,7 +204,8 @@ class Dynamips(Module):
         :param node: Node instance
         """
 
-        self._nodes.remove(node)
+        if node in self._nodes:
+            self._nodes.remove(node)
 
     def iosImages(self):
         """
@@ -269,10 +264,23 @@ class Dynamips(Module):
         log.info("sending Dynamips settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
         # send the local working directory only if this is a local server
-        servers = Servers.instance()
-        if server == servers.localServer():
+        if server.isLocal():
             params.update({"working_dir": self._working_dir})
+        else:
+            project_name = os.path.basename(self._working_dir)
+            if project_name.endswith("-files"):
+                project_name = project_name[:-6]
+            params.update({"project_name": project_name})
         server.send_notification("dynamips.settings", params)
+
+    def useLocalServer(self):
+        """
+        Returns either the module use the local server or not.
+
+        :returns: boolean
+        """
+
+        return self._settings["use_local_server"]
 
     def createNode(self, node_class, server=None):
         """
@@ -299,7 +307,6 @@ class Dynamips(Module):
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
                 server.reconnect()
-                self._sendSettings(server)
             except socket.error as e:
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
@@ -318,10 +325,27 @@ class Dynamips(Module):
         """
 
         platform = node.settings()["platform"]
-        for ios_image in self._ios_images.values():
-            if ios_image["platform"] == platform:
-                return ios_image
-        return None
+
+        selected_images = []
+        for ios_image, info in self._ios_images.items():
+            if info["platform"] == platform and (info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local")):
+                selected_images.append(ios_image)
+
+        if not selected_images:
+            return None
+        elif len(selected_images) > 1:
+
+            from gns3.main_window import MainWindow
+            mainwindow = MainWindow.instance()
+
+            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "IOS image", "Please choose an image", selected_images, 0, False)
+            if ok:
+                return self._ios_images[selection]
+            else:
+                raise ModuleError("Please select an IOS image")
+
+        else:
+            return self._ios_images[selected_images[0]]
 
     def setupNode(self, node):
         """

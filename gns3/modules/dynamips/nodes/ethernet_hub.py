@@ -195,10 +195,9 @@ class EthernetHub(Node):
             self.error_signal.emit(self.name(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
-            lhost = result["lhost"]
             lport = result["lport"]
-            log.debug("{} has allocated UDP port {} for host {}".format(self.name(), port_id, lport, lhost))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport, lhost)
+            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
+            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
 
     def addNIO(self, port, nio):
         """
