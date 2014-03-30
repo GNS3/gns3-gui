@@ -767,7 +767,12 @@ class Router(Node):
 #         else:
         txtuptime = '  Router uptime is unknown\n'
 
-        self.state = "stopped"
+        if self.status() == Node.started:
+            self.state = "started"
+        elif self.status() == Node.suspended:
+            self.state = "suspended"
+        else:
+            self.state = "stopped"
 
         #create final output, with proper indentation
         return 'Router ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Dynamips emulated Cisco ' + platform + router_specific_info + ' with ' + \

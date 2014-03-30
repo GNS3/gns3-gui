@@ -44,6 +44,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
         self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
+        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
@@ -58,6 +59,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         index = self.uiLocalServerHostComboBox.findText("127.0.0.1")
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
+
+    def _testSettingsSlot(self):
+
+        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
 
     def _localServerBrowserSlot(self):
         """

@@ -43,6 +43,7 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.uiGhostIOSSupportCheckBox.stateChanged.connect(self._ghostIOSSupportSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
+        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
     def _dynamipsPathBrowserSlot(self):
         """
@@ -58,6 +59,10 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
             return
 
         self.uiDynamipsPathLineEdit.setText(path)
+
+    def _testSettingsSlot(self):
+
+        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
 
     def _allocateHypervisorPerDeviceSlot(self, state):
         """

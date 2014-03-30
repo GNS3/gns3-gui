@@ -45,7 +45,7 @@ setup(
     description="GNS3 graphical interface for the GNS3 server.",
     long_description=open("README.rst", "r").read(),
     install_requires=[
-        ],
+        "ws4py"],
     entry_points={
         "console_scripts": [
             "gns3 = gns3.main:main",
@@ -55,7 +55,7 @@ setup(
     include_package_data=True,
     platforms="any",
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 3 - Alpha",
         "Environment :: X11 Applications :: Qt",
         "Intended Audience :: Information Technology",
         "Topic :: System :: Networking",

@@ -47,6 +47,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiIouyapPathToolButton.clicked.connect(self._iouyapPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
+        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
     def _iourcPathBrowserSlot(self):
         """
@@ -77,6 +78,10 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             return
 
         self.uiIouyapPathLineEdit.setText(path)
+
+    def _testSettingsSlot(self):
+
+        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
 
     def _restoreDefaultsSlot(self):
         """

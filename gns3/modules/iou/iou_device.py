@@ -433,14 +433,24 @@ class IOUDevice(Node):
         image_info = '\n  Image is '
         image_info = image_info + os.path.basename(self._settings["path"])
 
-        txtuptime = '  Router uptime is unknown\n'
+        txtuptime = '  Device uptime is unknown\n'
 
-        self.state = "stopped"
+        if self.status() == Node.started:
+            self.state = "started"
+        else:
+            self.state = "stopped"
+
+        port_info = "  {} Ethernet adapters and {} serial adapters\n".format(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
+        for port in self._ports:
+            if port.isFree():
+                port_info += '     ' + port.name() + ' is empty\n'
+            else:
+                port_info += '     ' + port.name() + ' ' + port.description() + '\n'
 
         #create final output, with proper indentation
-        return 'Router ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Cisco IOU generic device with ' + \
+        return 'Device ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Cisco IOU generic device with ' + \
                str(self._settings["ram"]) + ' MB RAM and ' + str(self._settings["nvram"]) + ' KB NVRAM\n' + txtuptime + '  Router\'s server runs on ' + self._server.host + ":" + str(self._server.port) + \
-               ', console is on port ' + str(self._settings["console"]) + image_info + '\n'# + slot_info
+               ', console is on port ' + str(self._settings["console"]) + image_info + '\n' + port_info
 
     def dump(self):
         """

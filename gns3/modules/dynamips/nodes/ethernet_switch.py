@@ -265,7 +265,7 @@ class EthernetSwitch(Node):
         :returns: formated string
         """
 
-        info = "Ethernet switch " + self.name() + " is always-on\n  Hardware is Dynamips emulated simple ethernet switch\n  Switch's server runs on " + self._server.host + ':' + str(self._server.port) + '\n'
+        info = "Ethernet switch " + self.name() + " is always-on\n  Hardware is Dynamips emulated simple Ethernet switch\n  Switch's server runs on " + self._server.host + ':' + str(self._server.port) + '\n'
 
         port_info = ""
         for port in self._ports:
