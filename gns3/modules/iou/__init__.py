@@ -257,7 +257,8 @@ class IOU(Module):
                 if server.isLocal():
                     params.update({"working_dir": self._working_dir})
                 else:
-                    del params["iouyap"]  # do not send iouyap path to remote servers
+                    if "iouyap" in params:
+                        del params["iouyap"]  # do not send iouyap path to remote servers
                     project_name = os.path.basename(self._working_dir)
                     if project_name.endswith("-files"):
                         project_name = project_name[:-6]
@@ -284,7 +285,8 @@ class IOU(Module):
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            del params["iouyap"]  # do not send iouyap path to remote servers
+            if "iouyap" in params:
+                del params["iouyap"]  # do not send iouyap path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]

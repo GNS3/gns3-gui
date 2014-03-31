@@ -92,10 +92,11 @@ class ProcessFilesThread(QtCore.QThread):
                     else:
                         shutil.copy2(source_file, destination_file)
                 except EnvironmentError as e:
-                    if self._move:
-                        self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)))
-                    else:
-                        self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)))
+                    pass # FIXME
+#                     if self._move:
+#                         self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)))
+#                     else:
+#                         self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)))
                     return
                 copied += 1
                 # update the progress made
