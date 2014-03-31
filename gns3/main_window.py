@@ -20,6 +20,7 @@ Main window for the GUI.
 """
 
 import os
+import sys
 import tempfile
 import socket
 import shutil
@@ -743,15 +744,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
 
                 if not servers.localServerPath():
-                    log.info("not local server is configured")
+                    log.info("no local server is configured")
                     return
 
-                if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
-                    thread = WaitForConnectionThread(server.host, server.port)
-                    dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
-                    dialog.show()
-                    if dialog.exec_() == False:
-                        return
+                if sys.platform.startswith("win"):
+                    QtGui.QMessageBox.critical(self, "Local server", "Please manually start the server: All programs -> GNS3-ER -> GNS3 Server")
+                elif servers.startLocalServer(servers.localServerPath(), server.host, server.port):
+                        thread = WaitForConnectionThread(server.host, server.port)
+                        self._progress_dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                        self._progress_dialog.show()
+                        if self._progress_dialog.exec_() == False:
+                            return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                     return
@@ -798,14 +801,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # move files if saving from a temporary project
             log.info("moving project files from {} to {}".format(self._project_files_dir, new_project_files_dir))
             thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir, move=True)
-            dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
+            self._progress_dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
             log.info("copying project files from {} to {}".format(self._project_files_dir, new_project_files_dir))
             thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir)
-            dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
-        dialog.show()
-        if not dialog.exec_():
+            self._progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
+        self._progress_dialog.show()
+        if not self._progress_dialog.exec_():
             return False
 
         self._deleteTemporaryProject()

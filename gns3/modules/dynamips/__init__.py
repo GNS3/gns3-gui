@@ -249,6 +249,13 @@ class Dynamips(Module):
 
         if params:
             for server in self._servers:
+                if server.isLocal():
+                    params.update({"working_dir": self._working_dir})
+                else:
+                    project_name = os.path.basename(self._working_dir)
+                    if project_name.endswith("-files"):
+                        project_name = project_name[:-6]
+                    params.update({"project_name": project_name})
                 server.send_notification("dynamips.settings", params)
 
         self._settings.update(settings)

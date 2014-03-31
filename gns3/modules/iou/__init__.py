@@ -253,6 +253,15 @@ class IOU(Module):
                 # encode the iourc file in base64
                 params["iourc"] = self._base64iourc(params["iourc"])
             for server in self._servers:
+                # send the local working directory only if this is a local server
+                if server.isLocal():
+                    params.update({"working_dir": self._working_dir})
+                else:
+                    del params["iouyap"]  # do not send iouyap path to remote servers
+                    project_name = os.path.basename(self._working_dir)
+                    if project_name.endswith("-files"):
+                        project_name = project_name[:-6]
+                    params.update({"project_name": project_name})
                 server.send_notification("iou.settings", params)
 
         self._settings.update(settings)

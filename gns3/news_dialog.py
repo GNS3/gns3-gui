@@ -35,7 +35,7 @@ class NewsDialog(QtGui.QDialog, Ui_NewsDialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.webpage = QtCore.QUrl('http://ads.gns3.net/ads.php')
+        self.webpage = QtCore.QUrl('http://ads.gns3.net/er_ads.php')
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.connect(self.uiWebView, QtCore.SIGNAL('linkClicked(const QUrl &)'), self._urlClickedSlot)
         self.connect(self.uiWebView, QtCore.SIGNAL('loadFinished(bool)'), self._loadFinishedSlot)

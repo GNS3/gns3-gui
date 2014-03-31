@@ -24,7 +24,7 @@ import os
 
 # default path to Dynamips executable
 if sys.platform.startswith("win"):
-    DEFAULT_DYNAMIPS_PATH = "dynamips.exe"
+    DEFAULT_DYNAMIPS_PATH = "C:/Program Files (x86)/GNS3-ER/dynamips.exe"
 elif sys.platform.startswith('darwin'):
     if hasattr(sys, "frozen"):
         DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwdu(), "../Resources/dynamips-0.2.12-OSX.intel64.bin")
