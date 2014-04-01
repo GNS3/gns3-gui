@@ -32,7 +32,7 @@ class EarlyReleaseDialog(QtGui.QDialog, Ui_EarlyReleaseDialog):
 
     def isEmail(self, email):
 
-        if re.match("[\.\w]{1,}[@]\w+[.]\w+", email):
+        if re.match("([\w\-\.]+@(\w[\w\-]+\.)+[\w\-]+)", email):
             return True
         else:
             return False
