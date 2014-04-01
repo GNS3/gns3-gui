@@ -388,7 +388,7 @@ class Router(Node):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
             self._inital_settings = None
-        elif updated:
+        elif updated or self._loading:
             log.info("router {} has been updated".format(self.name()))
             self.updated_signal.emit()
 

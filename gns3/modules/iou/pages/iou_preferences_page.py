@@ -63,7 +63,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             QtGui.QMessageBox.critical(self, "IOURC file", "{} cannot be read".format(os.path.basename(path)))
             return
 
-        self.uiIOURCPathLineEdit.setText(path)
+        self.uiIOURCPathLineEdit.setText(os.path.normpath(path))
 
     def _iouyapPathBrowserSlot(self):
         """
@@ -78,7 +78,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             QtGui.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
             return
 
-        self.uiIouyapPathLineEdit.setText(path)
+        self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
 
     def _testSettingsSlot(self):
 

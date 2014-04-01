@@ -673,7 +673,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             event.accept()
 
             servers = Servers.instance()
-            servers.stopLocalServer()
+            servers.stopLocalServer(wait=True)
         else:
             event.ignore()
 
@@ -747,9 +747,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     log.info("no local server is configured")
                     return
 
-                if sys.platform.startswith("win"):
-                    QtGui.QMessageBox.critical(self, "Local server", "Please manually start the server: All programs -> GNS3-ER -> GNS3 Server")
-                elif servers.startLocalServer(servers.localServerPath(), server.host, server.port):
+                if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
                         thread = WaitForConnectionThread(server.host, server.port)
                         self._progress_dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
                         self._progress_dialog.show()

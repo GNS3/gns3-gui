@@ -21,6 +21,9 @@ Keeps track of all the local and remote servers and their settings.
 
 import sys
 import os
+import shlex
+import signal
+import subprocess
 from .qt import QtCore
 from .websocket_client import WebSocketClient
 
@@ -42,8 +45,7 @@ class Servers(QtCore.QObject):
         self._local_server = None
         self._remote_servers = {}
         self._local_server_path = ""
-        self._local_server_proccess = QtCore.QProcess()
-        self._local_server_proccess.setWorkingDirectory(os.curdir)
+        self._local_server_proccess = None
         self._loadSettings()
         self._remote_server_iter_pos = 0
 
@@ -129,34 +131,44 @@ class Servers(QtCore.QObject):
         Starts the local server process.
         """
 
-        params = ['--host=' + host, '--port=' + str(port)]
+        params = ' --host=' + host + ' --port=' + str(port)
         # start the server, use Python on all platform but Windows (in release mode)
         if sys.platform.startswith('win') and os.path.splitext(path)[1] == '.exe':
             executable = '"' + path + '"'
         elif hasattr(sys, "frozen"):
             executable = "python3"
-            params = [path] + params
+            params = path + params
         else:
             executable = sys.executable
-            params = [path] + params
+            params = path + params
 
-        log.info("starting local server process {} with {}".format(executable, params))
-        self._local_server_proccess.start(executable, params)
+        command = executable + ' ' + params
+        log.info("starting local server process with {}".format(command))
 
-        if self._local_server_proccess.waitForStarted() == False:
+        try:
+            if sys.platform.startswith("win"):
+                # use the string on Windows
+                self._local_server_proccess = subprocess.Popen(command)
+            else:
+                # use arguments on other platforms
+                args = shlex.split(command)
+                self._local_server_proccess = subprocess.Popen(args)
+        except EnvironmentError as e:
+            log.warning('could not start local server "{}": {}'.format(command, e))
             return False
+
         return True
 
     def stopLocalServer(self, wait=False):
 
-        if self._local_server and self._local_server.connected():
-            self._local_server.close_connection()
-        if self._local_server_proccess.state() == QtCore.QProcess.Running:
-            log.info("stopping local server process")
-            self._local_server_proccess.terminate()
-            if wait:
-                self._local_server_proccess.waitForFinished()
-                self._local_server_proccess.close()
+        if self._local_server_proccess:
+            if self._local_server and self._local_server.connected():
+                log.info("sending stop request to the server")
+                self._local_server.send_notification("builtin.stop")
+                self._local_server.close_connection()
+            else:
+                self._local_server_proccess.send_signal(signal.SIGINT)
+            self._local_server_proccess.wait()
 
     def setLocalServer(self, path, host, port):
         """

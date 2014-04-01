@@ -118,8 +118,6 @@ class TopologySummaryView(QtGui.QTreeWidget):
         """
 
         node = self._topology.getNode(node_id)
-        # just disconnect because the node cannot be created twice
-        node.created_signal.disconnect(self._createdNodeSlot)
         TopologyNodeItem(self, node)
 
     def mousePressEvent(self, event):

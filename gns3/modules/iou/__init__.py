@@ -386,6 +386,7 @@ class IOU(Module):
         for server in self._servers:
             if server.connected():
                 server.send_notification("iou.reset")
+        self._servers.clear()
 
     def notification(self, destination, params):
         """

@@ -404,6 +404,7 @@ class Dynamips(Module):
         for server in self._servers:
             if server.connected():
                 server.send_notification("dynamips.reset")
+        self._servers.clear()
 
     def notification(self, destination, params):
         """
