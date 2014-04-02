@@ -16,8 +16,13 @@ Dependencies:
 - PyQt must be installed, to install on Debian-like Linux: sudo apt-get install python3-pyqt4
 - Dynamips version 0.2.11 or above (http://github.com/GNS3/dynamips)
 
-$ python3 setup.py install
-$ gns3
+.. code:: bash
+
+   cd gns3-gui-master
+   sudo python3 setup.py install
+   gns3
+
+`Detailled instructions for Debian Jesse <http://forum.gns3.net/topic8988.html>`_. 
 
 Windows
 -------
