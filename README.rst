@@ -12,8 +12,8 @@ Dependencies:
 
 - Python version 3.3 or above
 - pip & setuptools must be installed, please see http://pip.readthedocs.org/en/latest/installing.html
+  (or sudo apt-get install python3-pip but install more packages)
 - PyQt must be installed, to install on Debian-like Linux: sudo apt-get install python3-pyqt4
-- ws4py, to install: sudo apt-get install python3-ws4py or pip3 install ws4py
 - Dynamips version 0.2.11 or above (http://github.com/GNS3/dynamips)
 
 $ python3 setup.py install
