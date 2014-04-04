@@ -196,7 +196,7 @@ class IOUDevice(Node):
                 config = '!\n' + config.replace('\r', "")
                 encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
                 return encoded
-        except EnvironmentError as e:
+        except OSError as e:
             log.warn("could not base64 encode {}: {}".format(config_path, e))
             return ""
 

@@ -59,7 +59,7 @@ class ProcessFilesThread(QtCore.QThread):
         if not os.path.exists(self._destination):
             try:
                 os.makedirs(self._destination)
-            except EnvironmentError as e:
+            except OSError as e:
                 self.error.emit("Could not create directory {}: {}".format(self._destination, str(e)))
                 return
 
@@ -76,7 +76,7 @@ class ProcessFilesThread(QtCore.QThread):
                     destination_dir = os.path.join(base_dir, directory)
                     if not os.path.exists(destination_dir):
                         os.makedirs(destination_dir)
-                except EnvironmentError as e:
+                except OSError as e:
                     self.error.emit("Could not create directory {}: {}".format(destination_dir, str(e)))
                     return
 
@@ -91,7 +91,7 @@ class ProcessFilesThread(QtCore.QThread):
                         shutil.move(source_file, destination_file)
                     else:
                         shutil.copy2(source_file, destination_file)
-                except EnvironmentError as e:
+                except OSError as e:
                     pass # FIXME
 #                     if self._move:
 #                         self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)))

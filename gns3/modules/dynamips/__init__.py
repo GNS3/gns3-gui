@@ -314,7 +314,7 @@ class Dynamips(Module):
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
                 server.reconnect()
-            except socket.error as e:
+            except OSError as e:
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
                                                                                  e))

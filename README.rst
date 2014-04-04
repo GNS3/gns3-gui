@@ -22,7 +22,7 @@ Dependencies:
    sudo python3 setup.py install
    gns3
 
-`Detailled instructions for Debian Jesse <http://forum.gns3.net/topic8988.html>`_. 
+`Detailed instructions for Debian Jesse <http://forum.gns3.net/topic8988.html>`_. 
 
 Windows
 -------

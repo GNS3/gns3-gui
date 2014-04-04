@@ -197,7 +197,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             with open(path, "rb") as f:
                 # read the first 7 bytes of the file.
                 elf_header_start = f.read(7)
-        except EnvironmentError as e:
+        except OSError as e:
             QtGui.QMessageBox.critical(self, "IOS image", "Cannot read ELF magic number: {}".format(e))
             return
 

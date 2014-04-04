@@ -43,7 +43,7 @@ def main():
             logfile.write("=== GNS3 {} traceback on {} ===\n".format(__version__, curdate))
             logfile.write("\n" . join(lines))
             logfile.close()
-        except EnvironmentError as e:
+        except OSError as e:
             print("Could not save in exception.log: {}".format(e))
 
     # catch exceptions to write them in a file
@@ -83,6 +83,20 @@ def main():
     # because we don't like it!
     if sys.platform.startswith('win'):
         QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+
+        try:
+            import win32console
+            import win32con
+            import win32gui
+        except ImportError:
+            raise RuntimeError("Python for Windows exentions must be installed.")
+
+        try:
+            win32console.AllocConsole()
+            #console_window = win32console.GetConsoleWindow()
+            #win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+        except win32console.error as e:
+            print("warning: could not allocate console: {}".format(e))
 
     exit_code = MainWindow.exit_code_reboot
     while exit_code == MainWindow.exit_code_reboot:

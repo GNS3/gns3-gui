@@ -153,7 +153,7 @@ class Servers(QtCore.QObject):
                 # use arguments on other platforms
                 args = shlex.split(command)
                 self._local_server_proccess = subprocess.Popen(args)
-        except EnvironmentError as e:
+        except OSError as e:
             log.warning('could not start local server "{}": {}'.format(command, e))
             return False
 

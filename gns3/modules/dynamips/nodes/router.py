@@ -137,7 +137,7 @@ class Router(Node):
             new_port = port(port_name)
             new_port.setPortNumber(base + port_number)
             # WICs are always in adapter slot 0.
-            new_port.setslotNumber(0)
+            new_port.setSlotNumber(0)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
@@ -312,7 +312,7 @@ class Router(Node):
                 config = '!\n' + config.replace('\r', "")
                 encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
                 return encoded
-        except EnvironmentError as e:
+        except OSError as e:
             log.warn("could not base64 encode {}: {}".format(config_path, e))
             return ""
 

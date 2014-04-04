@@ -42,11 +42,11 @@ class EarlyReleaseDialog(QtGui.QDialog, Ui_EarlyReleaseDialog):
         if not result:  # cancelled
             QtGui.QApplication.quit()
         else:
-            username = self.uiUsernameLineEdit.text()
+            username = self.uiUsernameLineEdit.text().strip()
             if not username:
                 QtGui.QMessageBox.critical(self, "Username", "Please provide an username")
                 return
-            email = self.uiEmailLineEdit.text()
+            email = self.uiEmailLineEdit.text().strip()
             if not email:
                 QtGui.QMessageBox.critical(self, "Email", "Please provide an email address")
                 return

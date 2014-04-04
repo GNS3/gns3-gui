@@ -733,14 +733,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # check if the local address still exists
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                     sock.bind((server.host, 0))
-            except socket.error as e:
+            except OSError as e:
                 QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {host}: {error} (please check your host binding setting)".format(host=server.host, error=e))
                 return
 
             try:
                 server.connect()
                 log.info("use an already started local server on {}:{}".format(server.host, server.port))
-            except socket.error as e:
+            except OSError as e:
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
 
                 if not servers.localServerPath():
@@ -758,7 +758,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     return
                 try:
                     server.connect()
-                except socket.error as e:
+                except OSError as e:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
                                                                                                                                                    error=e))
@@ -826,7 +826,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             with open(path, "w") as f:
                 log.info("saving project: {}".format(path))
                 json.dump(topology.dump(), f, sort_keys=True, indent=4)
-        except EnvironmentError as e:
+        except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
             return False
 
@@ -859,7 +859,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             with open(path, "r") as f:
                 log.info("loading project: {}".format(path))
                 topology.load(json.load(f))
-        except EnvironmentError as e:
+        except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             return False
         except ValueError as e:
@@ -882,7 +882,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 log.info("deleting temporary topology file: {}".format(self._project_path))
                 os.remove(self._project_path)
-            except EnvironmentError as e:
+            except OSError as e:
                 log.warning("could not delete temporary topology file: {}: e".format(self._project_path, e))
 
     def _createTemporaryProject(self):
@@ -902,7 +902,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._project_files_dir = project_files_dir
                 self._project_path = f.name
 
-        except EnvironmentError as e:
+        except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
 
         self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)

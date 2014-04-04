@@ -60,7 +60,7 @@ class WaitForConnectionThread(QtCore.QThread):
             sock = None
             try:
                 sock = socket.create_connection((self._host, self._port), timeout=10)
-            except socket.error as e:
+            except OSError as e:
                 last_exception = e
                 continue
             finally:

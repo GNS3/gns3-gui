@@ -232,7 +232,7 @@ class IOU(Module):
                 config = f.read()
                 encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
                 return encoded
-        except EnvironmentError as e:
+        except OSError as e:
             log.warn("could not base64 encode {}: {}".format(iourc_path, e))
             return ""
 
@@ -330,7 +330,7 @@ class IOU(Module):
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
                 server.reconnect()
-            except socket.error as e:
+            except OSError as e:
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
                                                                                  e))
