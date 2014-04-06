@@ -690,7 +690,7 @@ class GraphicsView(QtGui.QGraphicsView):
                 try:
                     telnetConsole(name, console_host, console_port)
                 except (OSError, ValueError) as e:
-                    QtGui.QMessageBox.critical(self, "Console", 'could not start console: {}'.format(e))
+                    QtGui.QMessageBox.critical(self, "Console", 'Cannot start console application: {}'.format(e))
                     break
 
     def idlepcActionSlot(self):

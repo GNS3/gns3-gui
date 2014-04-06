@@ -20,7 +20,6 @@ Main window for the GUI.
 """
 
 import os
-import sys
 import tempfile
 import socket
 import shutil
@@ -806,8 +805,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir)
             self._progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
         self._progress_dialog.show()
-        if not self._progress_dialog.exec_():
-            return False
+        self._progress_dialog.exec_()
 
         self._deleteTemporaryProject()
         self._project_files_dir = new_project_files_dir

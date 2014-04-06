@@ -23,6 +23,9 @@ import os
 import shutil
 from ..qt import QtCore
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class ProcessFilesThread(QtCore.QThread):
     """
@@ -92,12 +95,14 @@ class ProcessFilesThread(QtCore.QThread):
                     else:
                         shutil.copy2(source_file, destination_file)
                 except OSError as e:
-                    pass # FIXME
+                    if self._move:
+                        log.warning("cannot move: {}".format(e))
+                    else:
+                        log.warning("cannot copy: {}".format(e))
 #                     if self._move:
 #                         self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)))
 #                     else:
 #                         self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)))
-                    return
                 copied += 1
                 # update the progress made
                 progress = float(copied) / file_count * 100
