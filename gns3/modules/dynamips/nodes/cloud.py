@@ -231,6 +231,7 @@ class Cloud(Node):
                 log.error("Could not create NIO object from {}".format(nio))
                 continue
             port = Port(nio, nio_object, stub=True)
+            port.setStatus(Port.started)
             self._ports.append(port)
             updated = True
             log.debug("port {} has been added".format(nio))
