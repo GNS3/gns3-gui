@@ -161,10 +161,10 @@ class Servers(QtCore.QObject):
 
     def stopLocalServer(self, wait=False):
 
-#         if self._local_server and self._local_server.connected():
-#             log.info("sending stop request to the server")
-#             #self._local_server.send_notification("builtin.stop")
-#             self._local_server.close_connection()
+        if self._local_server and self._local_server.connected():
+            #log.info("sending stop request to the server")
+            #self._local_server.send_notification("builtin.stop")
+            self._local_server.close_connection()
         if self._local_server_proccess and self._local_server_proccess.poll() == None:
             if sys.platform.startswith("win"):
                 self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)

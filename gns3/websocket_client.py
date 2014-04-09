@@ -114,7 +114,13 @@ class WebSocketClient(WebSocketBaseClient):
         Reconnects to the server.
         """
 
-        self.__init__(self.url)
+        WebSocketBaseClient.__init__(self,
+                                     self.url,
+                                     self.protocols,
+                                     self.extensions,
+                                     self.heartbeat_freq,
+                                     self.ssl_options,
+                                     self.extra_headers)
 
         if self._local:
             # check the local host address is still valid
