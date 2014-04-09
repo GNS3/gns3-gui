@@ -718,68 +718,61 @@ class Router(Node):
         :returns: formated string
         """
 
+        if self.status() == Node.started:
+            state = "started"
+        elif self.status() == Node.suspended:
+            state = "suspended"
+        else:
+            state = "stopped"
+
         platform = self._settings["platform"]
         router_specific_info = ""
         if platform == "c7200":
-            router_specific_info = self._settings["midplane"] + " " + self._settings["npe"]
+            router_specific_info = "{midplane} {npe}".format(midplane=self._settings["midplane"],
+                                                             npe=self._settings["npe"])
+
             router_specific_info = router_specific_info.upper()
 
-        #get info about image and ghostios
-        image_info = '\n  Image is '
-#         if self.ghost_status == 2:
-#             #we are running on ghost IOS
-#             image_info = image_info + 'shared ' + self.ghost_file
-#         else:
-        image_info = image_info + self._settings["image"]
-
-        jitsharing_group_info = '  JIT blocks sharing group is '
+        # get info about JIT sharing
+        jitsharing_group_info = "No JIT blocks sharing enabled"
         if self._settings["jit_sharing_group"] != None:
-            jitsharing_group_info = jitsharing_group_info + str(self._settings["jit_sharing_group"])
-        else:
-            jitsharing_group_info = '  No JIT blocks sharing enabled'
+            jitsharing_group_info = "JIT blocks sharing group is {group}".format(group=str(self._settings["jit_sharing_group"]))
 
-        #get info about idle-pc value
-        idlepc_info = ""
-        if not self._settings["idlepc"]:
-            idlepc_info = ' with no idlepc value'
-        else:
-            idlepc_info = ' with idlepc value of ' + self._settings["idlepc"]# + '\n  idlemax value is ' + str(self.idlemax) + ', idlesleep is ' + str(self.idlesleep) + ' ms'
+        # get info about idle-pc
+        idlepc_info = "with no idlepc value"
+        if self._settings["idlepc"]:
+            idlepc_info = "with idlepc value of {idlepc}, idlemax of {idlemax} and idlesleep of {idlesleep} ms".format(idlepc=self._settings["idlepc"],
+                                                                                                                       idlemax=self._settings["idlemax"],
+                                                                                                                       idlesleep=self._settings["idlesleep"])
+
+        info = """Router {name} [id={id}] is {state}
+  Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
+  Device uptime is unknown
+  Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}
+  Image is {image_name}
+  {idlepc_info}
+  {jitsharing_group_info}
+  {disk0} MB disk0 size, {disk1} MB disk1 size
+""".format(name=self.name(),
+           id=self._router_id,
+           state=state,
+           platform=platform,
+           specific_info=router_specific_info,
+           ram=str(self._settings["ram"]),
+           nvram=str(self._settings["nvram"]),
+           host=self._server.host,
+           port=str(self._server.port),
+           console=str(self._settings["console"]),
+           aux=str(self._settings["aux"]),
+           image_name=os.path.basename(self._settings["image"]),
+           idlepc_info=idlepc_info,
+           jitsharing_group_info=jitsharing_group_info,
+           disk0=str(self._settings["disk0"]),
+           disk1=str(self._settings["disk1"]))
 
         #gather information about PA, their interfaces and connections
         slot_info = self._slot_info()
-
-#         # Uptime of the router.
-#         def utimetotxt(utime):
-#             (zmin, zsec) = divmod(utime, 60)
-#             (zhur, zmin) = divmod(zmin, 60)
-#             (zday, zhur) = divmod(zhur, 24)
-#             utxt = ('%d %s, ' % (zday, 'days'  if (zday != 1) else 'day')  if (zday > 0) else '') + \
-#                    ('%d %s, ' % (zhur, 'hours' if (zhur != 1) else 'hour') if ((zhur > 0) or (zday > 0)) else '') + \
-#                    ('%d %s' % (zmin, 'mins'  if (zmin != 1) else 'min'))
-#             return utxt
-# 
-#         if (self.state == 'running'):
-#             txtuptime = '  Router running time is ' + utimetotxt((int(time.time()) - self.starttime) - self.waittime) + '\n'
-#         elif (self.state == 'suspended'):
-#             txtuptime = '  Router suspended time is ' + utimetotxt(int(time.time()) - self.suspendtime) + '\n'
-#         elif (self.state == 'stopped'):
-#             txtuptime = '  Router stopped time is ' + utimetotxt(int(time.time()) - self.stoptime) + '\n'
-#         else:
-        txtuptime = '  Router uptime is unknown\n'
-
-        if self.status() == Node.started:
-            self.state = "started"
-        elif self.status() == Node.suspended:
-            self.state = "suspended"
-        else:
-            self.state = "stopped"
-
-        #create final output, with proper indentation
-        return 'Router ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Dynamips emulated Cisco ' + platform + router_specific_info + ' with ' + \
-               str(self._settings["ram"]) + ' MB RAM\n' + txtuptime + '  Router\'s server runs on ' + self._server.host + ":" + str(self._server.port) + \
-               ', console is on port ' + str(self._settings["console"]) + ', aux is on port ' + str(self._settings["aux"]) + image_info + idlepc_info + '\n' + \
-               jitsharing_group_info + '\n  ' + str(self._settings["nvram"]) + ' KB NVRAM, ' + str(self._settings["disk0"]) + \
-               ' MB disk0 size, ' + str(self._settings["disk1"]) + ' MB disk1 size' + '\n' + slot_info
+        return info + slot_info
 
     def dump(self):
         """

@@ -430,27 +430,38 @@ class IOUDevice(Node):
         :returns: formated string
         """
 
-        image_info = '\n  Image is '
-        image_info = image_info + os.path.basename(self._settings["path"])
-
-        txtuptime = '  Device uptime is unknown\n'
-
         if self.status() == Node.started:
-            self.state = "started"
+            state = "started"
         else:
-            self.state = "stopped"
+            state = "stopped"
 
-        port_info = "  {} Ethernet adapters and {} serial adapters\n".format(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
+        info = """Device {name} [id={id}] is {state}
+  Hardware is Cisco IOU generic device with {ram} MB RAM and {nvram} KB NVRAM
+  Device uptime is unknown
+  Router's server runs on {host}:{port}, console is on port {console}
+  Image is {image_name}
+  {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters
+""".format(name=self.name(),
+           id=self._iou_id,
+           state=state,
+           ram=str(self._settings["ram"]),
+           nvram=str(self._settings["nvram"]),
+           host=self._server.host,
+           port=str(self._server.port),
+           console=str(self._settings["console"]),
+           image_name=os.path.basename(self._settings["path"]),
+           nb_ethernet=self._settings["ethernet_adapters"],
+           nb_serial=self._settings["serial_adapters"])
+
+        port_info = ""
         for port in self._ports:
             if port.isFree():
-                port_info += '     ' + port.name() + ' is empty\n'
+                port_info += "     {port_name} is empty\n".format(port_name=port.name())
             else:
-                port_info += '     ' + port.name() + ' ' + port.description() + '\n'
+                port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
+                                                                            port_description=port.description())
 
-        #create final output, with proper indentation
-        return 'Device ' + self.name() + ' is ' + self.state + '\n' + '  Hardware is Cisco IOU generic device with ' + \
-               str(self._settings["ram"]) + ' MB RAM and ' + str(self._settings["nvram"]) + ' KB NVRAM\n' + txtuptime + '  Router\'s server runs on ' + self._server.host + ":" + str(self._server.port) + \
-               ', console is on port ' + str(self._settings["console"]) + image_info + '\n' + port_info
+        return info + port_info
 
     def dump(self):
         """

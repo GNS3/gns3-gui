@@ -21,9 +21,14 @@ import sys
 import logging
 import traceback
 import time
-from gns3.version import __version__
+
+try:
+    from gns3.qt import QtCore, QtGui, DEFAULT_BINDING
+except ImportError:
+    raise RuntimeError("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
+
 from gns3.main_window import MainWindow
-from gns3.qt import QtGui
+from gns3.version import __version__
 
 
 def main():
@@ -58,11 +63,6 @@ def main():
         raise RuntimeError("Python 2.7 or higher is required")
     elif sys.version_info[0] == 3 and sys.version_info < (3, 3):
         raise RuntimeError("Python 3.3 or higher is required")
-
-    try:
-        from gns3.qt import QtCore, DEFAULT_BINDING
-    except ImportError:
-        raise RuntimeError("Can't import Qt modules, Python binding is probably not installed...")
 
     version = lambda version_string: [int(i) for i in version_string.split('.')]
 
