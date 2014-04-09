@@ -15,14 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtCore, QtGui
-
-# QtWebKit is not installed by default on FreeBSD, Solaris and possibly other systems.
-try:
-    from .ui.news_dialog_ui import Ui_NewsDialog
-    from .qt import QtWebKit
-except ImportError:
-    pass
+from .qt import QtCore, QtGui, QtWebKit
+from .ui.news_dialog_ui import Ui_NewsDialog
 
 
 class NewsDialog(QtGui.QDialog, Ui_NewsDialog):

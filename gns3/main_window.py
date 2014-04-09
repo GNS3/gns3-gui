@@ -29,7 +29,6 @@ from .servers import Servers
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .about_dialog import AboutDialog
-from .news_dialog import NewsDialog
 from .early_release_dialog import EarlyReleaseDialog
 from .preferences_dialog import PreferencesDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES
@@ -518,8 +517,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         try:
-            # QtWebKit is not installed by default on FreeBSD, Solaris and possibly other systems.
-            from .qt import QtWebKit
+            # QtWebKit which is used by NewsDialog is not installed
+            # by default on FreeBSD, Solaris and possibly other systems.
+            from .news_dialog import NewsDialog
         except ImportError:
             return
 
