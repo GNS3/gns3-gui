@@ -24,6 +24,7 @@ import json
 import socket
 from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
+from ws4py.exc import HandshakeError
 from .qt import QtCore
 
 import logging
@@ -48,6 +49,7 @@ class WebSocketClient(WebSocketBaseClient):
         self.callbacks = {}
         self._connected = False
         self._local = False
+        self._fd_notifier = None
 
         # create an unique ID
         self._id = WebSocketClient._instance_count
@@ -96,6 +98,17 @@ class WebSocketClient(WebSocketBaseClient):
         log.info("connected to {}:{}".format(self.host, self.port))
         self._connected = True
 
+    def connect(self):
+        """
+        Connects to the server.
+        """
+
+        try:
+            WebSocketBaseClient.connect(self)
+        except HandshakeError as e:
+            log.error("could to connect {}: {}".format(self.url, e))
+            raise OSError(str(e))
+
     def reconnect(self):
         """
         Reconnects to the server.
@@ -127,8 +140,8 @@ class WebSocketClient(WebSocketBaseClient):
 
         fd = self.connection.fileno()
         # we are interested in all data received.
-        self.fd_notifier = QtCore.QSocketNotifier(fd, QtCore.QSocketNotifier.Read)
-        self.fd_notifier.activated.connect(self.data_received)
+        self._fd_notifier = QtCore.QSocketNotifier(fd, QtCore.QSocketNotifier.Read)
+        self._fd_notifier.activated.connect(self.data_received)
         self.opened()
 
     def closed(self, code, reason):
@@ -235,7 +248,9 @@ class WebSocketClient(WebSocketBaseClient):
 
         self._connected = False
         WebSocketBaseClient.close_connection(self)
-        self.fd_notifier.setEnabled(False)
+        if self._fd_notifier:
+            self._fd_notifier.setEnabled(False)
+            self._fd_notifier = None
 
     def data_received(self, fd):
         """
