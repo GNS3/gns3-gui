@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Mon Feb 10 16:54:06 2014
+# Created: Thu Apr 10 11:39:31 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,7 +45,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.uiProjectsPathLineEdit = QtGui.QLineEdit(self.uiLocalPathsGroupBox)
-        self.uiProjectsPathLineEdit.setPlaceholderText(_fromUtf8(""))
         self.uiProjectsPathLineEdit.setObjectName(_fromUtf8("uiProjectsPathLineEdit"))
         self.horizontalLayout_2.addWidget(self.uiProjectsPathLineEdit)
         self.uiProjectsPathToolButton = QtGui.QToolButton(self.uiLocalPathsGroupBox)

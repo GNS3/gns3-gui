@@ -40,11 +40,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLineEdit" name="uiProjectsPathLineEdit">
-              <property name="placeholderText">
-               <string/>
-              </property>
-             </widget>
+             <widget class="QLineEdit" name="uiProjectsPathLineEdit"/>
             </item>
             <item>
              <widget class="QToolButton" name="uiProjectsPathToolButton">
