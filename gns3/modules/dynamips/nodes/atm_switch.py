@@ -20,6 +20,7 @@ Dynamips ATMSW implementation on the client side.
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
+import re
 from gns3.node import Node
 from gns3.ports.serial_port import SerialPort
 
@@ -281,7 +282,61 @@ class ATMSwitch(Node):
         :returns: formated string
         """
 
-        return ""
+        info = """ATM switch {name} is always-on
+Hardware is Dynamips emulated simple ATM switch
+Switch's server runs on {host}:{port}
+""".format(name=self.name(),
+           host=self._server.host,
+           port=self._server.port)
+
+        port_info = ""
+        mapping = re.compile(r"""^([0-9]*):([0-9]*):([0-9]*)$""")
+        for port in self._ports:
+            if port.isFree():
+                port_info += "   Port {} is empty\n".format(port.name())
+            else:
+                port_info += "   Port {name} {description}\n".format(name=port.name(),
+                                                                      description=port.description())
+
+            for source, destination in self._settings["mappings"].items():
+                match_source_mapping = mapping.search(source)
+                match_destination_mapping = mapping.search(destination)
+                if match_source_mapping and match_destination_mapping:
+                    source_port, source_vpi, source_vci = match_source_mapping.group(1, 2, 3)
+                    destination_port, destination_vpi, destination_vci = match_destination_mapping.group(1, 2, 3)
+                else:
+                    source_port, source_vpi = source.split(":")
+                    destination_port, destination_vpi = destination.split(":")
+                    source_vci = destination_vci = 0
+
+                if port.name() == source_port or port.name() == destination_port:
+                    if port.name() == source_port:
+                        vpi1 = source_vpi
+                        vci1 = source_vci
+                        port = destination_port
+                        vci2 = destination_vci
+                        vpi2 = destination_vpi
+                    else:
+                        vpi1 = destination_vpi
+                        vci1 = destination_vci
+                        port = source_port
+                        vci2 = source_vci
+                        vpi2 = source_vpi
+
+                    if vci1 and vci2:
+                        port_info += "      incoming VPI {vpi1} and VCI {vci1} is switched to port {port} outgoing VPI {vpi2} and VCI {vci2}\n".format(vpi1=vpi1,
+                                                                                                                                                       vci1=vci1,
+                                                                                                                                                       port=port,
+                                                                                                                                                       vpi2=vpi2,
+                                                                                                                                                       vci2=vci2)
+                    else:
+                        port_info += "      incoming VPI {vpi1} is switched to port {port} outgoing VPI {vpi2}\n".format(vpi1=vpi1,
+                                                                                                                         port=port,
+                                                                                                                         vpi2=vpi2)
+
+                    break
+
+        return info + port_info
 
     def dump(self):
         """

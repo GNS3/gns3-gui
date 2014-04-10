@@ -437,18 +437,17 @@ class IOUDevice(Node):
 
         info = """Device {name} [id={id}] is {state}
   Hardware is Cisco IOU generic device with {ram} MB RAM and {nvram} KB NVRAM
-  Device uptime is unknown
   Router's server runs on {host}:{port}, console is on port {console}
   Image is {image_name}
-  {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters
+  {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
            id=self._iou_id,
            state=state,
-           ram=str(self._settings["ram"]),
-           nvram=str(self._settings["nvram"]),
+           ram=self._settings["ram"],
+           nvram=self._settings["nvram"],
            host=self._server.host,
-           port=str(self._server.port),
-           console=str(self._settings["console"]),
+           port=self._server.port,
+           console=self._settings["console"],
            image_name=os.path.basename(self._settings["path"]),
            nb_ethernet=self._settings["ethernet_adapters"],
            nb_serial=self._settings["serial_adapters"])

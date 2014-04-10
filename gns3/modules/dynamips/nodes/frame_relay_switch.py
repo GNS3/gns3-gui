@@ -281,7 +281,40 @@ class FrameRelaySwitch(Node):
         :returns: formated string
         """
 
-        return ""
+        info = """Frame relay switch {name} is always-on
+Hardware is Dynamips emulated simple Frame relay switch
+Switch's server runs on {host}:{port}
+""".format(name=self.name(),
+           host=self._server.host,
+           port=self._server.port)
+
+        port_info = ""
+        for port in self._ports:
+            if port.isFree():
+                port_info += "   Port {} is empty\n".format(port.name())
+            else:
+                port_info += "   Port {name} {description}\n".format(name=port.name(),
+                                                                      description=port.description())
+
+            for source, destination in self._settings["mappings"].items():
+                source_port, source_dlci = source.split(":")
+                destination_port, destination_dlci = destination.split(":")
+
+                if port.name() == source_port or port.name() == destination_port:
+                    if port.name() == source_port:
+                        dlci1 = source_dlci
+                        port = destination_port
+                        dlci2 = destination_dlci
+                    else:
+                        dlci1 = destination_dlci
+                        port = source_port
+                        dlci2 = source_dlci
+                    port_info += "      incoming DLCI {dlci1} is switched to port {port} outgoing DLCI {dlci2}\n".format(dlci1=dlci1,
+                                                                                                                         port=port,
+                                                                                                                         dlci2=dlci2)
+                    break
+
+        return info + port_info
 
     def dump(self):
         """

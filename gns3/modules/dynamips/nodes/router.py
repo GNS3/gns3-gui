@@ -664,11 +664,14 @@ class Router(Node):
                 adapter_name = value
                 nb_ports = ADAPTER_MATRIX[adapter_name]["nb_ports"]
                 if nb_ports == 1:
-                    port_string = ' port\n'
+                    port_string = "port"
                 else:
-                    port_string = ' ports\n'
+                    port_string = "ports"
 
-                slot_info = slot_info + '   slot ' + str(slot_number) + ' hardware is ' + adapter_name + ' with ' + str(nb_ports) + port_string
+                slot_info = slot_info + "   slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
+                                                                                                                             adapter=adapter_name,
+                                                                                                                             nb_ports=nb_ports,
+                                                                                                                             port_string=port_string)
 
                 port_names = {}
                 for port in self._ports:
@@ -679,20 +682,24 @@ class Router(Node):
                 for port_name in sorted_ports:
                     port_info = port_names[port_name]
                     if port_info.isFree():
-                        slot_info += '     ' + port_name + ' is empty\n'
+                        slot_info += "     {} is empty\n".format(port_name)
                     else:
-                        slot_info += '     ' + port_name + ' ' + port_info.description() + '\n'
+                        slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                    port_description=port_info.description())
 
             if name.startswith("wic") and value != None:
                 wic_slot_number = int(name[-1])
                 wic_name = value
                 nb_ports = WIC_MATRIX[wic_name]["nb_ports"]
                 if nb_ports == 1:
-                    port_string = ' port\n'
+                    port_string = "port"
                 else:
-                    port_string = ' ports\n'
+                    port_string = "ports"
 
-                slot_info = slot_info + "   " + wic_name + " installed in WIC slot " + str(wic_slot_number) + " with " + str(nb_ports) + port_string
+                slot_info = slot_info + "   {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
+                                                                                                                                       wic_slot_number=wic_slot_number,
+                                                                                                                                       nb_ports=nb_ports,
+                                                                                                                                       port_string=port_string)
 
                 base = 16 * (wic_slot_number + 1)
                 port_names = {}
@@ -705,9 +712,10 @@ class Router(Node):
                 for port_name in sorted_ports:
                     port_info = port_names[port_name]
                     if port_info.isFree():
-                        slot_info += '     ' + port_name + ' is empty\n'
+                        slot_info += "     {} is empty\n".format(port_name)
                     else:
-                        slot_info += '     ' + port_name + ' ' + port_info.description() + '\n'
+                        slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                    port_description=port_info.description())
 
         return slot_info
 
@@ -736,7 +744,7 @@ class Router(Node):
         # get info about JIT sharing
         jitsharing_group_info = "No JIT blocks sharing enabled"
         if self._settings["jit_sharing_group"] != None:
-            jitsharing_group_info = "JIT blocks sharing group is {group}".format(group=str(self._settings["jit_sharing_group"]))
+            jitsharing_group_info = "JIT blocks sharing group is {group}".format(group=self._settings["jit_sharing_group"])
 
         # get info about idle-pc
         idlepc_info = "with no idlepc value"
@@ -747,7 +755,6 @@ class Router(Node):
 
         info = """Router {name} [id={id}] is {state}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
-  Device uptime is unknown
   Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}
   Image is {image_name}
   {idlepc_info}
@@ -758,17 +765,17 @@ class Router(Node):
            state=state,
            platform=platform,
            specific_info=router_specific_info,
-           ram=str(self._settings["ram"]),
-           nvram=str(self._settings["nvram"]),
+           ram=self._settings["ram"],
+           nvram=self._settings["nvram"],
            host=self._server.host,
-           port=str(self._server.port),
-           console=str(self._settings["console"]),
-           aux=str(self._settings["aux"]),
+           port=self._server.port,
+           console=self._settings["console"],
+           aux=self._settings["aux"],
            image_name=os.path.basename(self._settings["image"]),
            idlepc_info=idlepc_info,
            jitsharing_group_info=jitsharing_group_info,
-           disk0=str(self._settings["disk0"]),
-           disk1=str(self._settings["disk1"]))
+           disk0=self._settings["disk0"],
+           disk1=self._settings["disk1"])
 
         #gather information about PA, their interfaces and connections
         slot_info = self._slot_info()

@@ -265,22 +265,31 @@ class EthernetSwitch(Node):
         :returns: formated string
         """
 
-        info = "Ethernet switch " + self.name() + " is always-on\n  Hardware is Dynamips emulated simple Ethernet switch\n  Switch's server runs on " + self._server.host + ':' + str(self._server.port) + '\n'
+        info = """Ethernet switch {name} is always-on
+Hardware is Dynamips emulated simple Ethernet switch
+Switch's server runs on {host}:{port}
+""".format(name=self.name(),
+           host=self._server.host,
+           port=self._server.port)
 
         port_info = ""
         for port in self._ports:
             if port.isFree():
-                port_info += '   Port ' + port.name() + ' is empty\n'
+                port_info += "   Port {} is empty\n".format(port.name())
             else:
                 port_type = self._settings["ports"][port.portNumber()]["type"]
                 port_vlan = str(self._settings["ports"][port.portNumber()]["vlan"])
                 if port_type == "access":
-                    port_vlan_info = " VLAN ID " + port_vlan
+                    port_vlan_info = "VLAN ID {}".format(port_vlan)
                 elif port_type == "dot1q":
-                    port_vlan_info = " native VLAN " + port_vlan
+                    port_vlan_info = "native VLAN {}".format(port_vlan)
                 elif port_type == "qinq":
-                    port_vlan_info = " outer VLAN " + port_vlan
-                port_info += '   Port ' + port.name() + ' is in ' + port_type + ' mode, with ' + port_vlan_info + ',\n    ' + port.description() + '\n'
+                    port_vlan_info = "outer VLAN {}".format(port_vlan)
+
+                port_info += "   Port {name} is in {port_type} mode, with {port_vlan_info},\n".format(name=port.name(),
+                                                                                                      port_type=port_type,
+                                                                                                      port_vlan_info=port_vlan_info)
+                port_info += "    {port_description}\n".format(port_description=port.description())
 
         return info + port_info
 

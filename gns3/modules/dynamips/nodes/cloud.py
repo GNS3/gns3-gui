@@ -266,7 +266,19 @@ class Cloud(Node):
         :returns: formated string
         """
 
-        return ""
+        info = """Cloud device {name} is always-on
+This is a pseudo-device for external connections
+""".format(name=self.name())
+
+        port_info = ""
+        for port in self._ports:
+            if port.isFree():
+                port_info += "   Port {} is empty\n".format(port.name())
+            else:
+                port_info += "   Port {name} {description}\n".format(name=port.name(),
+                                                                     description=port.description())
+
+        return info + port_info
 
     def dump(self):
         """

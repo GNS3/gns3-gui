@@ -266,14 +266,20 @@ class EthernetHub(Node):
         :returns: formated string
         """
 
-        info = "Ethernet hub " + self.name() + " is always-on\n  Hardware is Dynamips emulated simple Ethernet hub\n  Hub's server runs on " + self._server.host + ':' + str(self._server.port) + '\n'
+        info = """Ethernet hub {name} is always-on
+Hardware is Dynamips emulated simple Ethernet hub
+Hub's server runs on {host}:{port}
+""".format(name=self.name(),
+           host=self._server.host,
+           port=self._server.port)
 
         port_info = ""
         for port in self._ports:
             if port.isFree():
-                port_info += '   Port ' + port.name() + ' is empty\n'
+                port_info += "   Port {} is empty\n".format(port.name())
             else:
-                port_info += '   Port ' + port.name() + ' ' + port.description() + '\n'
+                port_info += "   Port {name} {description}\n".format(name=port.name(),
+                                                                     description=port.description())
 
         return info + port_info
 
