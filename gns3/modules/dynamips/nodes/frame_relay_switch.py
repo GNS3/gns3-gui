@@ -353,6 +353,8 @@ Switch's server runs on {host}:{port}
         settings = node_info["properties"]
         name = settings.pop("name")
 
+        if "mappings" in settings:
+            self._settings["mappings"] = settings["mappings"].copy()
         # create the ports with the correct port numbers and IDs
         if "ports" in node_info:
             ports = node_info["ports"]
@@ -362,6 +364,7 @@ Switch's server runs on {host}:{port}
                 port.setId(topology_port["id"])
                 port.setStatus(SerialPort.started)
                 self._ports.append(port)
+
         log.info("Frame-Relay switch {} is loading".format(name))
         self.setup(name)
 
