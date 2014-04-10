@@ -353,8 +353,10 @@ Switch's server runs on {host}:{port}
         settings = node_info["properties"]
         name = settings.pop("name")
 
+        # restore mappings
         if "mappings" in settings:
             self._settings["mappings"] = settings["mappings"].copy()
+
         # create the ports with the correct port numbers and IDs
         if "ports" in node_info:
             ports = node_info["ports"]

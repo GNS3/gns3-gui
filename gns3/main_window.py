@@ -849,16 +849,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_files_dir = path[:-4]
         self._project_files_dir = project_files_dir + "-files"
 
-        if not os.path.exists(self._project_files_dir):
-            QtGui.QMessageBox.warning(self, "Load", "Project files directory doesn't exist: {}".format(self._project_files_dir))
-
-        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
-
         topology = Topology.instance()
         try:
             with open(path, "r") as f:
                 log.info("loading project: {}".format(path))
-                topology.load(json.load(f))
+                json_topology = json.load(f)
+                if not os.path.exists(self._project_files_dir):
+                    os.makedirs(self._project_files_dir)
+                self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
+                topology.load(json_topology)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             return False
