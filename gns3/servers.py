@@ -60,14 +60,18 @@ class Servers(QtCore.QObject):
 
         # default path to the local GNS3 server executable or script
         if sys.platform.startswith("win"):
-            DEFAULT_LOCAL_SERVER_PATH = "C:/Program Files (x86)/GNS3-ER/gns3server.exe"
+            DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
         else:
             # look for gns3server in PATH
             gns3server = None
             for path in os.environ["PATH"].split(":"):
-                if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
-                    gns3server = os.path.join(path, "gns3server")
-                    break
+                try:
+                    if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
+                        gns3server = os.path.join(path, "gns3server")
+                        break
+                except OSError:
+                    continue
+
             if gns3server:
                 DEFAULT_LOCAL_SERVER_PATH = gns3server
             else:

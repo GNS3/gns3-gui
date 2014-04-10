@@ -76,6 +76,13 @@ def main():
     if DEFAULT_BINDING == "PySide" and version(QtCore.BINDING_VERSION_STR) < version("1.0"):
         raise RuntimeError("Requirement is PySide version 1.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
+    try:
+        # if tornado is present then enable pretty logging.
+        import tornado.log
+        tornado.log.enable_pretty_logging()
+    except ImportError:
+        pass
+
     # default logging level
     logging.basicConfig(level=logging.INFO)
 
@@ -89,7 +96,7 @@ def main():
             import win32con
             import win32gui
         except ImportError:
-            raise RuntimeError("Python for Windows exentions must be installed.")
+            raise RuntimeError("Python for Windows extensions must be installed.")
 
         try:
             win32console.AllocConsole()

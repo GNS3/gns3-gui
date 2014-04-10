@@ -794,6 +794,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             path = path + ".net"
         new_project_files_dir += "-files"
 
+        # let all modules know about the new working directory
+        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(new_project_files_dir)
+
         if self._temporary_project:
             # move files if saving from a temporary project
             log.info("moving project files from {} to {}".format(self._project_files_dir, new_project_files_dir))
@@ -809,7 +812,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._deleteTemporaryProject()
         self._project_files_dir = new_project_files_dir
-        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
         return self._saveProject(path)
 
     def _saveProject(self, path):
