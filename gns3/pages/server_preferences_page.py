@@ -186,7 +186,9 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
         if local_server_path:
             if not os.path.exists(local_server_path):
-                QtGui.QMessageBox.critical(self, "Local server", "The path to {} doesn't exists.".format(local_server_path))
+                QtGui.QMessageBox.critical(self, "Local server", "The path to {} doesn't exists".format(local_server_path))
+            elif not os.access(local_server_path, os.X_OK):
+                QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
             else:
                 server = servers.localServer()
                 if servers.localServerPath() != local_server_path or server.host != local_server_host or server.port != local_server_port:

@@ -742,8 +742,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             except OSError as e:
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
 
-                if not servers.localServerPath():
+                local_server_path = servers.localServerPath()
+
+                if not local_server_path:
                     log.info("no local server is configured")
+                    return
+
+                if not os.path.exists(local_server_path):
+                    QtGui.QMessageBox.critical(self, "Local server", "The path to {} doesn't exists".format(local_server_path))
+                    return
+
+                elif not os.access(local_server_path, os.X_OK):
+                    QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
                     return
 
                 if servers.startLocalServer(servers.localServerPath(), server.host, server.port):

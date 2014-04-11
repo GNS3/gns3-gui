@@ -135,18 +135,10 @@ class Servers(QtCore.QObject):
         Starts the local server process.
         """
 
-        params = ' --host=' + host + ' --port=' + str(port)
-        # start the server, use Python on all platform but Windows (in release mode)
-        if sys.platform.startswith('win') and os.path.splitext(path)[1] == '.exe':
-            executable = '"' + path + '"'
-        elif hasattr(sys, "frozen"):
-            executable = "python3"
-            params = path + params
-        else:
-            executable = sys.executable
-            params = path + params
+        command = '"{executable}" --host={host} --port={port}'.format(executable=path,
+                                                                      host=host,
+                                                                      port=port)
 
-        command = executable + ' ' + params
         log.info("starting local server process with {}".format(command))
 
         try:
