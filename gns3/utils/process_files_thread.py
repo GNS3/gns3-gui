@@ -59,7 +59,7 @@ class ProcessFilesThread(QtCore.QThread):
         file_count = self._countFiles(self._source)
 
         # create the destination directory if it doesn't exist
-        if not os.path.exists(self._destination):
+        if not os.path.isdir(self._destination):
             try:
                 os.makedirs(self._destination)
             except OSError as e:
@@ -77,7 +77,7 @@ class ProcessFilesThread(QtCore.QThread):
                     return
                 try:
                     destination_dir = os.path.join(base_dir, directory)
-                    if not os.path.exists(destination_dir):
+                    if not os.path.isdir(destination_dir):
                         os.makedirs(destination_dir)
                 except OSError as e:
                     self.error.emit("Could not create directory {}: {}".format(destination_dir, str(e)))

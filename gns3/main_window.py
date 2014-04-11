@@ -748,8 +748,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     log.info("no local server is configured")
                     return
 
-                if not os.path.exists(local_server_path):
-                    QtGui.QMessageBox.critical(self, "Local server", "The path to {} doesn't exists".format(local_server_path))
+                if not os.path.isfile(local_server_path):
+                    QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(local_server_path))
                     return
 
                 elif not os.access(local_server_path, os.X_OK):
@@ -864,7 +864,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             with open(path, "r") as f:
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
-                if not os.path.exists(self._project_files_dir):
+                if not os.path.isdir(self._project_files_dir):
                     os.makedirs(self._project_files_dir)
                 self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
                 topology.load(json_topology)
@@ -904,7 +904,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             with tempfile.NamedTemporaryFile(prefix="gns3-", suffix=".net", delete=False) as f:
                 log.info("creating temporary topology file: {}".format(f.name))
                 project_files_dir = f.name[:-4] + "-files"
-                if not os.path.exists(project_files_dir):
+                if not os.path.isdir(project_files_dir):
                     log.info("creating temporary project files directory: {}".format(project_files_dir))
                     os.mkdir(project_files_dir)
 

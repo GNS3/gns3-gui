@@ -312,7 +312,7 @@ class IOU(Module):
 
         log.info("creating node {}".format(node_class))
 
-        if not self._settings["iourc"] or not os.path.exists(self._settings["iourc"]):
+        if not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"]):
             raise ModuleError("The path to IOURC must be configured")
 
         # allocate a server for the node if none is given

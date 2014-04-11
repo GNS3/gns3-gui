@@ -213,7 +213,7 @@ class IOUDevice(Node):
                 params[name] = value
 
         if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-        and os.path.exists(new_settings["startup_config"]):
+        and os.path.isfile(new_settings["startup_config"]):
             params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
