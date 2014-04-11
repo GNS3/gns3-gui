@@ -38,6 +38,9 @@ def main():
 
     def exceptionHook(exception, value, tb):
 
+        if exception == KeyboardInterrupt:
+            sys.exit(0)
+
         lines = traceback.format_exception(exception, value, tb)
         print("---------Traceback lines (saved in exception.log)----------")
         print("\n" . join(lines))
