@@ -391,8 +391,9 @@ class Dynamips(Module):
 
         for ios_image in self._ios_images.values():
             if ios_image["path"] == image_path:
-                ios_image["idlepc"] = idlepc
-                self._saveIOSImages()
+                if ios_image["idlepc"] != idlepc:
+                    ios_image["idlepc"] = idlepc
+                    self._saveIOSImages()
                 break
 
     def reset(self):

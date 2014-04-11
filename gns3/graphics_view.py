@@ -745,11 +745,16 @@ class GraphicsView(QtGui.QGraphicsView):
         router.idlepc_signal.disconnect(self._showIdlepcProposals)
         router.error_signal.disconnect(self._showIdlepcError)
         idlepcs = router.idlepcs()
-        if idlepcs:
+        if idlepcs and idlepcs[0] != "0x0":
             idlepc, ok = QtGui.QInputDialog.getItem(self, "Idle-PC values", "Please select an idle-pc value", idlepcs, 0, False)
             if ok:
                 idlepc = idlepc.split()[0]
-                router.setIdlepc(idlepc)
+
+                # apply idle-pc to all routers with the same IOS image
+                ios_image = router.settings()["image"]
+                for node in self._topology.nodes():
+                    if hasattr(node, "idlepcs") and node.settings()["image"] == ios_image:
+                        node.setIdlepc(idlepc)
         else:
             QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no idle-pc values could be computed, please check again with Cisco IOS in a different state")
 
