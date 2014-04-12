@@ -23,6 +23,8 @@ import os
 from gns3.qt import QtNetwork, QtGui
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
+from ..topology import Topology
+from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_connection_thread import WaitForConnectionThread
 
@@ -192,6 +194,19 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
             else:
                 server = servers.localServer()
                 if servers.localServerPath() != local_server_path or server.host != local_server_host or server.port != local_server_port:
+
+                    # first check if we have nodes on the local server
+                    local_nodes = []
+                    topology = Topology.instance()
+                    for node in topology.nodes():
+                        if node.server().isLocal():
+                            local_nodes.append(node.name())
+
+                    if local_nodes:
+                        nodes = "\n".join(local_nodes)
+                        MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing settings", nodes)
+                        return
+
                     # local server settings have changed, let's stop the current local server.
                     if server.connected():
                         server.close_connection()
@@ -207,5 +222,6 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
             # save the remote server preferences
             servers.setLocalServer(local_server_path, local_server_host, local_server_port)
+
         servers.updateRemoteServers(self._remote_servers)
         servers.save()
