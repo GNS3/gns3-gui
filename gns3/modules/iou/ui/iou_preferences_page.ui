@@ -195,7 +195,7 @@
           <item>
            <widget class="QSpinBox" name="uiConsoleEndPortSpinBox">
             <property name="suffix">
-             <string notr="true"> UDP</string>
+             <string notr="true"> TCP</string>
             </property>
             <property name="maximum">
              <number>65535</number>

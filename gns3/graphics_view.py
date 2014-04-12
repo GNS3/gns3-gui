@@ -303,16 +303,6 @@ class GraphicsView(QtGui.QGraphicsView):
                 QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
                 return
 
-#             elif type(source_port) in (EthernetPort, FastEthernetPort, GigabitEthernetPort) and \
-#                 not type(destination_port) in (EthernetPort, FastEthernetPort, GigabitEthernetPort):
-#                 QtGui.QMessageBox.critical(self, "Connection", "You must connect an Ethernet port to another Ethernet compatible port")
-#                 return
-#             elif type(source_port) != type(destination_port):
-#                 print(type(source_port))
-#                 print(type(destination_port))
-#                 QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
-#                 return
-
             # check if the 2 nodes can communicate
             source_host = source_item.node().server().host
             destination_host = destination_item.node().server().host

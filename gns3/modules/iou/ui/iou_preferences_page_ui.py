@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Sun Mar 30 16:26:41 2014
+# Created: Sat Apr 12 12:33:43 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,7 +111,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiConsolePortRangeLabel.setObjectName(_fromUtf8("uiConsolePortRangeLabel"))
         self.horizontalLayout.addWidget(self.uiConsolePortRangeLabel)
         self.uiConsoleEndPortSpinBox = QtGui.QSpinBox(self.uiConsolePortRangeGroupBox)
-        self.uiConsoleEndPortSpinBox.setSuffix(_fromUtf8(" UDP"))
+        self.uiConsoleEndPortSpinBox.setSuffix(_fromUtf8(" TCP"))
         self.uiConsoleEndPortSpinBox.setMaximum(65535)
         self.uiConsoleEndPortSpinBox.setProperty("value", 4500)
         self.uiConsoleEndPortSpinBox.setObjectName(_fromUtf8("uiConsoleEndPortSpinBox"))

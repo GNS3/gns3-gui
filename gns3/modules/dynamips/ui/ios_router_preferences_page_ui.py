@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Fri Mar 28 15:40:04 2014
+# Created: Sat Apr 12 12:33:43 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -100,18 +100,18 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiRAMLabel = QtGui.QLabel(self.groupBox)
         self.uiRAMLabel.setObjectName(_fromUtf8("uiRAMLabel"))
         self.gridLayout_2.addWidget(self.uiRAMLabel, 6, 0, 1, 1)
-        self.uiRAMSpinBox = QtGui.QSpinBox(self.groupBox)
-        self.uiRAMSpinBox.setMinimum(16)
-        self.uiRAMSpinBox.setMaximum(65535)
-        self.uiRAMSpinBox.setProperty("value", 128)
-        self.uiRAMSpinBox.setObjectName(_fromUtf8("uiRAMSpinBox"))
-        self.gridLayout_2.addWidget(self.uiRAMSpinBox, 6, 1, 1, 1)
         self.uiPlatformComboBox = QtGui.QComboBox(self.groupBox)
         self.uiPlatformComboBox.setObjectName(_fromUtf8("uiPlatformComboBox"))
         self.gridLayout_2.addWidget(self.uiPlatformComboBox, 3, 1, 1, 2)
         self.uiChassisComboBox = QtGui.QComboBox(self.groupBox)
         self.uiChassisComboBox.setObjectName(_fromUtf8("uiChassisComboBox"))
         self.gridLayout_2.addWidget(self.uiChassisComboBox, 4, 1, 1, 2)
+        self.uiRAMSpinBox = QtGui.QSpinBox(self.groupBox)
+        self.uiRAMSpinBox.setMinimum(16)
+        self.uiRAMSpinBox.setMaximum(65535)
+        self.uiRAMSpinBox.setProperty("value", 128)
+        self.uiRAMSpinBox.setObjectName(_fromUtf8("uiRAMSpinBox"))
+        self.gridLayout_2.addWidget(self.uiRAMSpinBox, 6, 1, 1, 2)
         self.verticalLayout_2.addWidget(self.groupBox)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
