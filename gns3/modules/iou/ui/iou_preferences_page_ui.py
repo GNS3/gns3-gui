@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Sat Apr 12 12:33:43 2014
+# Created: Sat Apr 12 14:54:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -156,7 +156,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiTestSettingsPushButton.setText(_translate("IOUPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults", None))
         self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap (local Linux server only):", None))
-        self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC:", None))
+        self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC (pushed to the server):", None))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server (Linux only)", None))

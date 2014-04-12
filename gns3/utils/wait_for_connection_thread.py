@@ -33,7 +33,7 @@ class WaitForConnectionThread(QtCore.QThread):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str)
+    error = QtCore.pyqtSignal(str, bool)
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
@@ -73,7 +73,7 @@ class WaitForConnectionThread(QtCore.QThread):
             # let the GUI know about the connection was unsuccessful and finish the thread
             self.error.emit("Could not connect to {} on port {}: {}".format(self._host,
                                                                             self._port,
-                                                                            last_exception))
+                                                                            last_exception), True)
             return
 
         # connection has been successful, let's inform the GUI before the thread exits

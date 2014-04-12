@@ -199,12 +199,12 @@
         <widget class="QTreeWidget" name="treeWidget_2">
          <column>
           <property name="text">
-           <string>IOS routers</string>
+           <string>IOU device</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>IOS file</string>
+           <string>IOU file</string>
           </property>
          </column>
         </widget>

@@ -82,7 +82,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="uiIOURCPathLabel">
          <property name="text">
-          <string>Path to IOURC:</string>
+          <string>Path to IOURC (pushed to the server):</string>
          </property>
         </widget>
        </item>

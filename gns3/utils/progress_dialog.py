@@ -39,11 +39,13 @@ class ProgressDialog(QtGui.QProgressDialog):
 
         minimum = 0
         maximum = 100
+
         if busy:
             maximum = 0
 
         QtGui.QProgressDialog.__init__(self, label_text, cancel_button_text, minimum, maximum, parent)
 
+        self._errors = []
         self.setWindowTitle(title)
         self.canceled.connect(self.cancel)
 
@@ -70,15 +72,27 @@ class ProgressDialog(QtGui.QProgressDialog):
 
         QtGui.QProgressDialog.accept(self)
 
-    def _error(self, message):
+    def _error(self, message, stop=False):
         """
         Slot to show an error message sent by the thread.
 
         :param message: error message
         """
 
-        QtGui.QMessageBox.critical(self, "Error", "{}".format(message))
-        self.cancel()
+        if stop:
+            QtGui.QMessageBox.critical(self, "Error", "{}".format(message))
+            self.cancel()
+        else:
+            self._errors.append(message)
+
+    def errors(self):
+        """
+        Returns error messages.
+
+        :returns: error message list
+        """
+
+        return self._errors
 
     def cancel(self):
         """

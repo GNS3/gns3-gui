@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Sun Mar  9 14:21:50 2014
+# Created: Sat Apr 12 14:54:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -150,8 +150,8 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiIOUImagesTreeWidget.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "File", None))
         self.uiIOUImagesTreeWidget.headerItem().setText(1, _translate("IOUDevicePreferencesPageWidget", "Server", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiIOUDeviceTabWidget), _translate("IOUDevicePreferencesPageWidget", "IOU images", None))
-        self.treeWidget_2.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "IOS routers", None))
-        self.treeWidget_2.headerItem().setText(1, _translate("IOUDevicePreferencesPageWidget", "IOS file", None))
+        self.treeWidget_2.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "IOU device", None))
+        self.treeWidget_2.headerItem().setText(1, _translate("IOUDevicePreferencesPageWidget", "IOU file", None))
         self.pushButton_3.setText(_translate("IOUDevicePreferencesPageWidget", "New", None))
         self.pushButton_4.setText(_translate("IOUDevicePreferencesPageWidget", "Edit", None))
         self.pushButton_5.setText(_translate("IOUDevicePreferencesPageWidget", "Delete", None))

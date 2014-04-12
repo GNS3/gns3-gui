@@ -804,6 +804,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             path = path + ".net"
         new_project_files_dir += "-files"
 
+        # create the destination directory for project files
+        try:
+            os.makedirs(new_project_files_dir)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(new_project_files_dir), str(e))
+            return
+
+        # create the sub-directories to avoid race conditions when setting the new working
+        # directory to modules (modules could create directories with different ownership)
+        for curpath, dirs, _ in os.walk(self._project_files_dir):
+            base_dir = curpath.replace(self._project_files_dir, new_project_files_dir)
+            for directory in dirs:
+                try:
+                    destination_dir = os.path.join(base_dir, directory)
+                    os.makedirs(destination_dir)
+                except FileExistsError:
+                    pass
+                except OSError as e:
+                    QtGui.QMessageBox.critical(self, "Save project", "Could not create project sub-directory {}: {}".format(destination_dir, str(e)))
+                    return
+
         # let all modules know about the new working directory
         self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(new_project_files_dir)
 
@@ -819,6 +842,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
         self._progress_dialog.show()
         self._progress_dialog.exec_()
+
+        errors = self._progress_dialog.errors()
+        if errors:
+            errors = "\n".join(errors)
+            MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
         self._deleteTemporaryProject()
         self._project_files_dir = new_project_files_dir

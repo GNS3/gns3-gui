@@ -37,7 +37,7 @@ class ProcessFilesThread(QtCore.QThread):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str)
+    error = QtCore.pyqtSignal(str, bool)
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
@@ -58,13 +58,13 @@ class ProcessFilesThread(QtCore.QThread):
         # count the number of files in the source directory
         file_count = self._countFiles(self._source)
 
-        # create the destination directory if it doesn't exist
-        if not os.path.isdir(self._destination):
-            try:
-                os.makedirs(self._destination)
-            except OSError as e:
-                self.error.emit("Could not create directory {}: {}".format(self._destination, str(e)))
-                return
+        try:
+            os.makedirs(self._destination)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            self.error.emit("Could not create directory {}: {}".format(self._destination, str(e)), True)
+            return
 
         copied = 0
         # start copying/moving from the source directory
@@ -77,10 +77,11 @@ class ProcessFilesThread(QtCore.QThread):
                     return
                 try:
                     destination_dir = os.path.join(base_dir, directory)
-                    if not os.path.isdir(destination_dir):
-                        os.makedirs(destination_dir)
+                    os.makedirs(destination_dir)
+                except FileExistsError:
+                    pass
                 except OSError as e:
-                    self.error.emit("Could not create directory {}: {}".format(destination_dir, str(e)))
+                    self.error.emit("Could not create directory {}: {}".format(destination_dir, str(e)), True)
                     return
 
             # finally the files themselves
@@ -95,14 +96,14 @@ class ProcessFilesThread(QtCore.QThread):
                     else:
                         shutil.copy2(source_file, destination_file)
                 except OSError as e:
-                    if self._move:
-                        log.warning("cannot move: {}".format(e))
-                    else:
-                        log.warning("cannot copy: {}".format(e))
 #                     if self._move:
-#                         self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)))
+#                         log.warning("cannot move: {}".format(e))
 #                     else:
-#                         self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)))
+#                         log.warning("cannot copy: {}".format(e))
+                    if self._move:
+                        self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)), False)
+                    else:
+                        self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)), False)
                 copied += 1
                 # update the progress made
                 progress = float(copied) / file_count * 100
