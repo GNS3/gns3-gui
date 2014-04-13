@@ -126,19 +126,20 @@ class IOU(Module):
         settings.endArray()
         settings.endGroup()
 
-    def setLocalBaseWorkingDir(self, path):
+    def setProjectFilesDir(self, path):
         """
-        Sets the local base working directory for this module.
+        Sets the project files directory path this module.
 
-        :param path: path to the local working directory
+        :param path: path to the local project files directory
         """
 
         self._working_dir = path
         log.info("local working directory for IOU module: {}".format(self._working_dir))
-        servers = Servers.instance()
-        server = servers.localServer()
-        if server.connected():
-            self._sendSettings(server)
+
+        # update the server with the new working directory / project name
+        for server in self._servers:
+            if server.connected():
+                self._sendSettings(server)
 
     def addServer(self, server):
         """

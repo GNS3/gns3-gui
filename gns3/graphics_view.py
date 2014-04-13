@@ -102,12 +102,17 @@ class GraphicsView(QtGui.QGraphicsView):
         Port.reset()
         self._topology.reset()
 
-    def setLocalBaseWorkingDirtoAllModules(self, path):
+    def updateProjectFilesDir(self, path):
+        """
+        Updates the project files directory path for all modules.
+
+        :param path: path to the local project files directory.
+        """
 
         try:
             for module in MODULES:
                 instance = module.instance()
-                instance.setLocalBaseWorkingDir(path)
+                instance.setProjectFilesDir(path)
         except ModuleError as e:
             QtGui.QMessageBox.critical(self, "Local working directory", "{}".format(e))
 
@@ -777,9 +782,9 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            if not node_module.useLocalServer() and self._main_window.isTemporaryProject():
-                self._main_window.setUnsavedState()
-                raise ModuleError("Please save your project first before using remote servers")
+#             if not node_module.useLocalServer() and self._main_window.isTemporaryProject():
+#                 self._main_window.setUnsavedState()
+#                 raise ModuleError("Please save your project first before using remote servers")
 
             node = node_module.createNode(node_class)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)

@@ -827,8 +827,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Save project", "Could not create project sub-directory {}: {}".format(destination_dir, str(e)))
                     return
 
-        # let all modules know about the new working directory
-        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(new_project_files_dir)
+        # let all modules know about the new project files directory
+        self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
 
         if self._temporary_project:
             # move files if saving from a temporary project
@@ -894,7 +894,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 json_topology = json.load(f)
                 if not os.path.isdir(self._project_files_dir):
                     os.makedirs(self._project_files_dir)
-                self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
+                self.uiGraphicsView.updateProjectFilesDir(self._project_files_dir)
                 topology.load(json_topology)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
@@ -942,7 +942,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
 
-        self.uiGraphicsView.setLocalBaseWorkingDirtoAllModules(self._project_files_dir)
+        self.uiGraphicsView.updateProjectFilesDir(self._project_files_dir)
         self._setCurrentFile()
 
     def isTemporaryProject(self):
