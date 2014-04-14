@@ -252,9 +252,17 @@ class Topology(object):
         # finally load the nodes
         node_errors = []
         if "nodes" in topology["topology"]:
+            topology_nodes = {}
             nodes = topology["topology"]["nodes"]
             for topology_node in nodes:
+                # check for duplicate node IDs
+                if topology_node["id"] in topology_nodes:
+                    node_errors.append("Duplicated node ID {} for {}".format(topology_node["id"],
+                                                                             topology_node["description"]))
+                    continue
+                topology_nodes[topology_node["id"]] = topology_node
 
+            for topology_node in topology_nodes.values():
                 log.debug("loading node with ID {}".format(topology_node["id"]))
 
                 try:

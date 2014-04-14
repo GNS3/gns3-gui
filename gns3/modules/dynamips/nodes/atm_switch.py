@@ -282,10 +282,11 @@ class ATMSwitch(Node):
         :returns: formated string
         """
 
-        info = """ATM switch {name} is always-on
+        info = """ATM switch {name} [id={id}] is always-on
 Hardware is Dynamips emulated simple ATM switch
 Switch's server runs on {host}:{port}
 """.format(name=self.name(),
+           id=self._atmsw_id,
            host=self._server.host,
            port=self._server.port)
 
