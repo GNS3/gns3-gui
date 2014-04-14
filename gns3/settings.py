@@ -75,15 +75,16 @@ elif sys.platform.startswith("darwin"):
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Terminal"]
 
 else:
-    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'xterm': 'xterm -T %d -e \'telnet %h %p\'',
+    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Xterm': 'xterm -T %d -e \'telnet %h %p\'',
                                              'Putty': 'putty -telnet %h %p -title %d -sl 2500 -fg SALMON1 -bg BLACK',
                                              'Gnome Terminal': 'gnome-terminal -t %d -e \'telnet %h %p\'',
+                                             'ROXTerm': 'roxterm -n %d --tab -e telnet %h %p',
                                              'KDE Konsole': 'konsole --new-tab -p tabtitle=%d -e telnet %h %p',
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
                                              'Mate Terminal': 'mate-terminal --tab -e \'telnet %h %p\'  -t %d'}
 
     # default Telnet console command on other systems
-    DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["xterm"]
+    DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
 
     if sys.platform.startswith("linux"):
         distro = platform.linux_distribution()[0]
@@ -110,11 +111,11 @@ elif sys.platform.startswith("darwin"):
     DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Terminal + socat"]
 
 else:
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'xterm + socat': 'xterm -T %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\' > /dev/null 2>&1 &',
-                                             'konsole + socat': 'konsole --new-tab -p tabtitle=%d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\' >/dev/null 2>&1 &'}
+    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\' > /dev/null 2>&1 &',
+                                             'Konsole + socat': 'konsole --new-tab -p tabtitle=%d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\' >/dev/null 2>&1 &'}
 
     # default serial console command on other systems
-    DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["xterm + socat"]
+    DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Xterm + socat"]
 
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,
