@@ -31,6 +31,8 @@ from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
 from .topology import Topology
 from .ports.port import Port
+from .utils.progress_dialog import ProgressDialog
+from .utils.wait_for_connection_thread import WaitForConnectionThread
 
 # link items
 from .items.link_item import LinkItem
@@ -782,11 +784,19 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-#             if not node_module.useLocalServer() and self._main_window.isTemporaryProject():
-#                 self._main_window.setUnsavedState()
-#                 raise ModuleError("Please save your project first before using remote servers")
+            server = node_module.allocateServer(node_class)
+            if not server.connected():
+                # connect to server in a non-blocking way.
+                self._thread = WaitForConnectionThread(server.host, server.port)
+                progress_dialog = ProgressDialog(self._thread,
+                                                 "Server",
+                                                 "Connecting to server {} on port {}...".format(server.host, server.port),
+                                                 "Cancel", busy=True, parent=self)
+                progress_dialog.show()
+                if progress_dialog.exec_() == False:
+                    return
 
-            node = node_module.createNode(node_class)
+            node = node_module.createNode(node_class, server)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node_item = NodeItem(node)
             node_module.setupNode(node)

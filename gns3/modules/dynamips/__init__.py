@@ -281,35 +281,36 @@ class Dynamips(Module):
             params.update({"project_name": project_name})
         server.send_notification("dynamips.settings", params)
 
-    def useLocalServer(self):
+    def allocateServer(self, node_class):
         """
-        Returns either the module use the local server or not.
-
-        :returns: boolean
-        """
-
-        return self._settings["use_local_server"]
-
-    def createNode(self, node_class, server=None):
-        """
-        Creates a new node.
+        Allocates a server.
 
         :param node_class: Node object
-        :param server: optional  WebSocketClient instance
+
+        :returns: allocated server (WebSocketClient instance)
         """
 
-        log.info("creating node {}".format(node_class))
-
-        # allocate a server for the node if none is given
+        # allocate a server for the node
         servers = Servers.instance()
-        if self._settings["use_local_server"] and not server:
+        if self._settings["use_local_server"]:
             # use the local server
             server = servers.localServer()
-        elif not server:
+        else:
             # pick up a remote server (round-robin method)
             server = next(iter(servers))
             if not server:
                 raise ModuleError("No remote server is configured")
+        return server
+
+    def createNode(self, node_class, server):
+        """
+        Creates a new node.
+
+        :param node_class: Node object
+        :param server: WebSocketClient instance
+        """
+
+        log.info("creating node {}".format(node_class))
 
         if not server.connected():
             try:

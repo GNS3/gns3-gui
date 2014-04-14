@@ -758,7 +758,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
                         self._thread = WaitForConnectionThread(server.host, server.port)
-                        progress_dialog = ProgressDialog(self._thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                        progress_dialog = ProgressDialog(self._thread,
+                                                         "Local server",
+                                                         "Connecting to server {} on port {}...".format(server.host, server.port),
+                                                         "Cancel", busy=True, parent=self)
                         progress_dialog.show()
                         if progress_dialog.exec_() == False:
                             return

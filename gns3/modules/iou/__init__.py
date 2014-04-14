@@ -294,38 +294,39 @@ class IOU(Module):
             params.update({"project_name": project_name})
         server.send_notification("iou.settings", params)
 
-    def useLocalServer(self):
+    def allocateServer(self, node_class):
         """
-        Returns either the module use the local server or not.
+        Allocates a server.
 
-        :returns: boolean
+        :param node_class: Node object
+
+        :returns: allocated server (WebSocketClient instance)
         """
 
-        return self._settings["use_local_server"]
+        # allocate a server for the node
+        servers = Servers.instance()
+        if self._settings["use_local_server"]:
+            # use the local server
+            server = servers.localServer()
+        else:
+            # pick up a remote server (round-robin method)
+            server = next(iter(servers))
+            if not server:
+                raise ModuleError("No remote server is configured")
+        return server
 
-    def createNode(self, node_class, server=None):
+    def createNode(self, node_class, server):
         """
         Creates a new node.
 
         :param node_class: Node object
-        :param server: optional  WebSocketClient instance
+        :param server: WebSocketClient instance
         """
 
         log.info("creating node {}".format(node_class))
 
         if not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"]):
             raise ModuleError("The path to IOURC must be configured")
-
-        # allocate a server for the node if none is given
-        servers = Servers.instance()
-        if self._settings["use_local_server"] and not server:
-            # use the local server
-            server = servers.localServer()
-        elif not server:
-            # pick up a remote server (round-robin method)
-            server = next(iter(servers))
-            if not server:
-                raise ModuleError("No remote server is configured")
 
         if not server.connected():
             try:
