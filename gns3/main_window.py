@@ -757,10 +757,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     return
 
                 if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
-                        thread = WaitForConnectionThread(server.host, server.port)
-                        self._progress_dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
-                        self._progress_dialog.show()
-                        if self._progress_dialog.exec_() == False:
+                        self._thread = WaitForConnectionThread(server.host, server.port)
+                        progress_dialog = ProgressDialog(self._thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                        progress_dialog.show()
+                        if progress_dialog.exec_() == False:
                             return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
@@ -833,17 +833,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._temporary_project:
             # move files if saving from a temporary project
             log.info("moving project files from {} to {}".format(self._project_files_dir, new_project_files_dir))
-            thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir, move=True)
-            self._progress_dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
+            self._thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir, move=True)
+            progress_dialog = ProgressDialog(self._thread, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
             log.info("copying project files from {} to {}".format(self._project_files_dir, new_project_files_dir))
-            thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir)
-            self._progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
-        self._progress_dialog.show()
-        self._progress_dialog.exec_()
+            self._thread = ProcessFilesThread(self._project_files_dir, new_project_files_dir)
+            progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
+        progress_dialog.show()
+        progress_dialog.exec_()
 
-        errors = self._progress_dialog.errors()
+        errors = progress_dialog.errors()
         if errors:
             errors = "\n".join(errors)
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)

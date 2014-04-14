@@ -70,6 +70,7 @@ class ProgressDialog(QtGui.QProgressDialog):
         Slot to close this dialog when the thread is finished.
         """
 
+        self._thread.wait()
         QtGui.QProgressDialog.accept(self)
 
     def _error(self, message, stop=False):

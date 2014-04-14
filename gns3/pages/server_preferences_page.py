@@ -213,8 +213,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                     servers.stopLocalServer(wait=True)
                     #TODO: ASK if the user wants to start local server
                     if servers.startLocalServer(local_server_path, local_server_host, local_server_port):
-                        thread = WaitForConnectionThread(local_server_host, local_server_port)
-                        dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                        self._thread = WaitForConnectionThread(local_server_host, local_server_port)
+                        dialog = ProgressDialog(self._thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
                         dialog.show()
                         dialog.exec_()
                     else:
