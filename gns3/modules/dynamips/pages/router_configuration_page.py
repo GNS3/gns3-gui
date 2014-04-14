@@ -97,11 +97,11 @@ for chassis in ("1751", "1760"):
 for chassis in ("2620", "2610XM", "2620XM", "2650XM"):
     ADAPTER_MATRIX["c2600"][chassis] = {0: "C2600-MB-1FE", 1: C2600_NMS}
 
-for chassis in ("2620", "2610XM", "2620XM", "2650XM"):
+for chassis in ("2621", "2611XM", "2621XM", "2651XM"):
     ADAPTER_MATRIX["c2600"][chassis] = {0: "C2600-MB-2FE", 1: C2600_NMS}
 
-ADAPTER_MATRIX["c1700"]["2610"] = {0: "C2600-MB-1E", 1: C2600_NMS}
-ADAPTER_MATRIX["c1700"]["2611"] = {0: "C2600-MB-2E", 1: C2600_NMS}
+ADAPTER_MATRIX["c2600"]["2610"] = {0: "C2600-MB-1E", 1: C2600_NMS}
+ADAPTER_MATRIX["c2600"]["2611"] = {0: "C2600-MB-2E", 1: C2600_NMS}
 
 # 2691s have two FEs on the motherboard and one NM slot
 ADAPTER_MATRIX["c2691"][""] = {0: "GT96100-FE", 1: C3700_NMS}
