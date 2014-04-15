@@ -45,7 +45,8 @@ setup(
     description="GNS3 graphical interface for the GNS3 server.",
     long_description=open("README.rst", "r").read(),
     install_requires=[
-        "ws4py==0.3.4"],
+        "ws4py==0.3.4",
+        "apache-libcloud==0.14.1"],
     entry_points={
         "console_scripts": [
             "gns3 = gns3.main:main",

@@ -1,1 +1,2 @@
 ws4py
+apache-libcloud
