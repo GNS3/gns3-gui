@@ -428,15 +428,17 @@ class GraphicsView(QtGui.QGraphicsView):
             # zoom out
             factor_out = pow(2.0, -120 / 240.0)
             self.scaleView(factor_out)
-
-        # TODO: handle the delete key
-#         elif event.key() == QtCore.Qt.Key_Delete:
-#             # check if we are editing an Annotation instance, then send the Delete event to it
+        elif event.key() == QtCore.Qt.Key_Delete:
+            # check if we are editing an Annotation instance, then send the Delete event to it
 #             for item in self.__topology.selectedItems():
 #                 if isinstance(item, Annotation) and item.hasFocus():
 #                     QtGui.QGraphicsView.keyPressEvent(self, event)
 #                     return
-#             self.slotDeleteNode()
+            if self.scene().selectedItems():
+                reply = QtGui.QMessageBox.question(self, "Delete", "Do you want to delete these nodes?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.No:
+                    return
+            self.deleteActionSlot()
         else:
             QtGui.QGraphicsView.keyPressEvent(self, event)
 
