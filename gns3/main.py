@@ -103,8 +103,9 @@ def main():
 
         try:
             win32console.AllocConsole()
-            console_window = win32console.GetConsoleWindow()
-            win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+            #FIXME: do not hide the console for alpha releases to help with debugging
+            #console_window = win32console.GetConsoleWindow()
+            #win32gui.ShowWindow(console_window, win32con.SW_HIDE)
         except win32console.error as e:
             print("warning: could not allocate console: {}".format(e))
 

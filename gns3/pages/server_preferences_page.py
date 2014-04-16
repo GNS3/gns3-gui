@@ -20,6 +20,7 @@ Configuration page for server preferences.
 """
 
 import os
+import sys
 from gns3.qt import QtNetwork, QtGui
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
@@ -208,7 +209,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                         return
 
                     # local server settings have changed, let's stop the current local server.
-                    if server.connected():
+                    if server.connected() and not sys.platform.startswith('win'):
                         server.close_connection()
                     servers.stopLocalServer(wait=True)
                     #TODO: ASK if the user wants to start local server
