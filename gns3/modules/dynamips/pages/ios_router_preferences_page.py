@@ -119,22 +119,25 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             image = os.path.basename(path)
 
         if image.startswith("c7200p"):
-            QtGui.QMessageBox.warning(self, "IOS Image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
+            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
 
         #TODO: mutiple remote server
         if Dynamips.instance().settings()["use_local_server"]:
             server = "local"
         else:
-            server = server = next(iter(Servers.instance())).host
+            server = next(iter(Servers.instance()))
+            if not server:
+                QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
+                return
 
         #ios_images = Dynamips.instance().iosImages()
-        key = "{server}:{image}".format(server=server, image=image)
+        key = "{server}:{image}".format(server=server.host, image=image)
         item = self.uiIOSImagesTreeWidget.currentItem()
 
         if key in self._ios_images and item and item.text(0) == image:
             item.setText(0, image)
             item.setText(1, platform)
-            item.setText(2, server)
+            item.setText(2, server.host)
         elif key in self._ios_images:
             print("Image already added")
             return
@@ -143,7 +146,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item = QtGui.QTreeWidgetItem(self.uiIOSImagesTreeWidget)
             item.setText(0, image)
             item.setText(1, platform)
-            item.setText(2, server)
+            item.setText(2, server.host)
             self.uiIOSImagesTreeWidget.setCurrentItem(item)
 
         self._ios_images[key] = {"path": path,
@@ -154,7 +157,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                  "chassis": chassis,
                                  "idlepc": idlepc,
                                  "ram": ram,
-                                 "server": server}
+                                 "server": server.host}
 
         self.uiIOSImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOSImagesTreeWidget.resizeColumnToContents(1)

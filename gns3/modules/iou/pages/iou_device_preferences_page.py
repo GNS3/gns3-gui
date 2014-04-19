@@ -96,21 +96,24 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         if IOU.instance().settings()["use_local_server"]:
             server = "local"
         else:
-            server = server = next(iter(Servers.instance())).host
+            server = next(iter(Servers.instance()))
+            if not server:
+                QtGui.QMessageBox.critical(self, "IOU image", "No remote server available!")
+                return
 
-        key = "{server}:{image}".format(server=server, image=image)
+        key = "{server}:{image}".format(server=server.host, image=image)
         item = self.uiIOUImagesTreeWidget.currentItem()
 
         if key in self._iou_images and item and item.text(0) == image:
             item.setText(0, image)
-            item.setText(1, server)
+            item.setText(1, server.host)
         elif key in self._iou_images:
             return
         else:
             # add a new entry in the tree widget
             item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
             item.setText(0, image)
-            item.setText(1, server)
+            item.setText(1, server.host)
             self.uiIOUImagesTreeWidget.setCurrentItem(item)
 
         self._iou_images[key] = {"path": path,
@@ -118,7 +121,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                                  "startup_config": startup_config,
                                  "ram": ram,
                                  "nvram": nvram,
-                                 "server": server}
+                                 "server": server.host}
 
         self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
