@@ -266,11 +266,13 @@ class EthernetHub(Node):
         :returns: formated string
         """
 
-        info = """Ethernet hub {name} [id={id}] is always-on
-Hardware is Dynamips emulated simple Ethernet hub
-Hub's server runs on {host}:{port}
+        info = """Ethernet hub {name} is always-on
+  Node ID is {id}, server's Ethernet hub ID is {ethhub_id}
+  Hardware is Dynamips emulated simple Ethernet hub
+  Hub's server runs on {host}:{port}
 """.format(name=self.name(),
-           id=self._ethhub_id,
+           id=self.id(),
+           ethhub_id=self._ethhub_id,
            host=self._server.host,
            port=self._server.port)
 

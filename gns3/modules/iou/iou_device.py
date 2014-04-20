@@ -435,13 +435,15 @@ class IOUDevice(Node):
         else:
             state = "stopped"
 
-        info = """Device {name} [id={id}] is {state}
+        info = """Device {name} is {state}
+  Node ID is {id}, server's IOU device ID is {iou_id}
   Hardware is Cisco IOU generic device with {ram} MB RAM and {nvram} KB NVRAM
-  Router's server runs on {host}:{port}, console is on port {console}
+  Device's server runs on {host}:{port}, console is on port {console}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
-           id=self._iou_id,
+           id=self.id(),
+           iou_id=self._iou_id,
            state=state,
            ram=self._settings["ram"],
            nvram=self._settings["nvram"],

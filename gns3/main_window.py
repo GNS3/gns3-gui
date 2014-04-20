@@ -901,6 +901,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 topology.load(json_topology)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
+            #log.error("exception {type}".format(type=type(e)), exc_info=1)
             return False
         except ValueError as e:
             QtGui.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))

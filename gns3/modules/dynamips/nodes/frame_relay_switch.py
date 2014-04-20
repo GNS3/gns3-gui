@@ -281,11 +281,13 @@ class FrameRelaySwitch(Node):
         :returns: formated string
         """
 
-        info = """Frame relay switch {name} [id={id}] is always-on
-Hardware is Dynamips emulated simple Frame relay switch
-Switch's server runs on {host}:{port}
+        info = """Frame relay switch {name} is always-on
+  Node ID is {id}, server's frame relay switch ID is {frsw_id}
+  Hardware is Dynamips emulated simple Frame relay switch
+  Switch's server runs on {host}:{port}
 """.format(name=self.name(),
-           id=self._frsw_id,
+           id=self.id(),
+           frsw_id=self._frsw_id,
            host=self._server.host,
            port=self._server.port)
 

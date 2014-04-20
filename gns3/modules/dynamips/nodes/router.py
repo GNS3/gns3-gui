@@ -753,7 +753,8 @@ class Router(Node):
                                                                                                                        idlemax=self._settings["idlemax"],
                                                                                                                        idlesleep=self._settings["idlesleep"])
 
-        info = """Router {name} [id={id}] is {state}
+        info = """Router {name} is {state}
+  Node ID is {id}, server's router ID is {router_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
   Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}
   Image is {image_name}
@@ -761,7 +762,8 @@ class Router(Node):
   {jitsharing_group_info}
   {disk0} MB disk0 size, {disk1} MB disk1 size
 """.format(name=self.name(),
-           id=self._router_id,
+           id=self.id(),
+           router_id=self._router_id,
            state=state,
            platform=platform,
            specific_info=router_specific_info,
