@@ -272,6 +272,9 @@ class Router(Node):
 
         self._router_id = result["id"]
 
+        if not self._router_id:
+            log.error("returned ID from server is null")
+
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:

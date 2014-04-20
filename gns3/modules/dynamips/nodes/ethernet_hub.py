@@ -73,6 +73,8 @@ class EthernetHub(Node):
             return
 
         self._ethhub_id = result["id"]
+        if not self._ethhub_id:
+            log.error("returned ID from server is null")
         self._settings["name"] = result["name"]
 
         log.info("Ethernet hub {} has been created".format(self.name()))

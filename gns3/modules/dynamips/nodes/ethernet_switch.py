@@ -73,6 +73,8 @@ class EthernetSwitch(Node):
             return
 
         self._ethsw_id = result["id"]
+        if not self._ethsw_id:
+            log.error("returned ID from server is null")
         self._settings["name"] = result["name"]
 
         log.info("Ethernet switch {} has been created".format(self.name()))
