@@ -723,7 +723,7 @@ class GraphicsView(QtGui.QGraphicsView):
             router.error_signal.connect(self._showIdlepcError)
             self._idlepc_progress_dialog.show()
 
-    def _showIdlepcError(self, name, code, message):
+    def _showIdlepcError(self, node_id, code, message):
         """
         Shows an error message if the idle-pc values cannot be computed.
         """

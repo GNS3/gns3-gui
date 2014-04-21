@@ -184,12 +184,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.scene().removeItem(self)
         self.setUnsavedState()
 
-    def errorSlot(self, name, code, message):
+    def errorSlot(self, node_id, code, message):
         """
         Slot to receive events from the attached Node instance
         when the node has received an error from the server.
 
-        :param name: node name
+        :param node_id: node identifier
         :param code: error code
         :param message: error message
         """
