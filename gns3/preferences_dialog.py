@@ -72,7 +72,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
 
         # load cloud settings page
         cloud_page = CloudPreferencesPage()
-        # TODO load settings
+        cloud_page.loadPreferences()
         name = cloud_page.windowTitle()
         item = QtGui.QListWidgetItem(name, self.uiListWidget)
         item.setData(QtCore.Qt.UserRole, cloud_page)
