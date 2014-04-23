@@ -23,6 +23,7 @@ from .qt import QtCore, QtGui
 from .ui.preferences_dialog_ui import Ui_PreferencesDialog
 from .pages.server_preferences_page import ServerPreferencesPage
 from .pages.general_preferences_page import GeneralPreferencesPage
+from .pages.cloud_preferences_page import CloudPreferencesPage
 from .modules import MODULES
 
 
@@ -67,6 +68,15 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         item = QtGui.QListWidgetItem(name, self.uiListWidget)
         item.setData(QtCore.Qt.UserRole, servers_page)
         self.uiStackedWidget.addWidget(servers_page)
+        self._items.append(item)
+
+        # load cloud settings page
+        cloud_page = CloudPreferencesPage()
+        # TODO load settings
+        name = cloud_page.windowTitle()
+        item = QtGui.QListWidgetItem(name, self.uiListWidget)
+        item.setData(QtCore.Qt.UserRole, cloud_page)
+        self.uiStackedWidget.addWidget(cloud_page)
         self._items.append(item)
 
         # load module preference pages

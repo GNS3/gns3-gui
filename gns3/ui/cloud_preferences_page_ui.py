@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
 #
-# Created: Wed Apr 23 12:35:38 2014
+# Created: Wed Apr 23 16:27:01 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,7 +58,7 @@ class Ui_CloudPreferencesPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(CloudPreferencesPageWidget)
 
     def retranslateUi(self, CloudPreferencesPageWidget):
-        CloudPreferencesPageWidget.setWindowTitle(_translate("CloudPreferencesPageWidget", "Form", None))
+        CloudPreferencesPageWidget.setWindowTitle(_translate("CloudPreferencesPageWidget", "Cloud Preferences", None))
         self.uiUserNameLabel.setText(_translate("CloudPreferencesPageWidget", "User Name:", None))
         self.uiAPIKeyLabel.setText(_translate("CloudPreferencesPageWidget", "API Key", None))
         self.uiCreateAccountLabel.setText(_translate("CloudPreferencesPageWidget", "No API Key? <a href=\"#\">Create Cloud Account.</a>", None))
