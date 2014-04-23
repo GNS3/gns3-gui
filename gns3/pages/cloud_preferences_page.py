@@ -26,8 +26,8 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         """
         Check if settings are ok
         """
-        if not (self.uiRememberAPIKeyRadioButton.isChecked() and
-                self.uiForgetAPIKeyRadioButton.isChecked()):
+        if (not self.uiRememberAPIKeyRadioButton.isChecked() and
+                not self.uiForgetAPIKeyRadioButton.isChecked()):
             QtGui.QMessageBox.critical(self, "Cloud Preferences",
                                        "Please choose if you want to persist your API keys or not.")
             return False
