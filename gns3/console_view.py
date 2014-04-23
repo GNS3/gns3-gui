@@ -147,15 +147,16 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         """
 
         node = Topology.instance().getNode(node_id)
-        name = ""
-        if node.name():
+        server = name = ""
+        if node and node.name():
             name = " {}:".format(node.name())
-        server = node.server()
-        text = "Server error [{code}] from {host}:{port}:{name} {message}".format(code=code,
-                                                                                   host=server.host,
-                                                                                   port=server.port,
-                                                                                   name=name,
-                                                                                   message=message)
+            server = "from {}:{}".format(node.server().host,
+                                    node.server().port)
+
+        text = "Server error [{code}] {server}:{name} {message}".format(code=code,
+                                                                        server=server,
+                                                                        name=name,
+                                                                        message=message)
         self.write(text, error=True)
         self.write("\n")
 

@@ -255,6 +255,8 @@ class Router(Node):
         if name:
             params["name"] = self._settings["name"] = name
 
+
+        params["nio"] = {"type": "nio_udp"}
         self._server.send_message("dynamips.vm.create", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
@@ -588,15 +590,13 @@ class Router(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._router_id,
-                  "nio": nio_type,
                   "slot": port.slotNumber(),
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        params["nio"] = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.vm.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):

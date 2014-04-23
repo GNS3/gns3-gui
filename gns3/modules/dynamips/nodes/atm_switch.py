@@ -215,13 +215,11 @@ class ATMSwitch(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._atmsw_id,
-                  "nio": nio_type,
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
+        params["nio"] = self.getNIOInfo(nio)
         params["mappings"] = {}
         for source, destination in self._settings["mappings"].items():
             source_port = source.split(":")[0]
@@ -231,7 +229,7 @@ class ATMSwitch(Node):
             if port.name() == destination_port:
                 params["mappings"][destination] = source
 
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.atmsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):

@@ -194,73 +194,91 @@ class Node(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def addNIOInfo(self, nio, params):
+    def getNIOInfo(self, nio):
         """
-        Adds NIO information to a dictionary.
+        Returns NIO information for a specific NIO.
 
         :param nio: NIO instance
-        :param params: dictionary
+
+        :returns: NIO information (dictionary)
         """
 
-        nio_type = str(nio)
-        if nio_type == "NIO_UDP":
-            # add NIO UDP params
-            params["lport"] = nio.lport()
-            params["rhost"] = nio.rhost()
-            params["rport"] = nio.rport()
+        nio_type = str(nio).lower()
+        nio_info = {}
+        if nio_type == "nio_udp":
+            # return NIO UDP info
+            nio_info["type"] = nio_type
+            nio_info["lport"] = nio.lport()
+            nio_info["rhost"] = nio.rhost()
+            nio_info["rport"] = nio.rport()
 
             log.debug("creating {} for {} with lport={}, rhost={}, rport={}".format(nio,
                                                                                     self.name(),
                                                                                     nio.lport(),
                                                                                     nio.rhost(),
                                                                                     nio.rport()))
+            return nio_info
 
-        elif nio_type == "NIO_GenericEthernet":
-            # add NIO generic Ethernet param
-            params["ethernet_device"] = nio.ethernetDevice()
-
-            log.debug("creating {} for {} with Ethernet device {}".format(nio,
-                                                                          self.name(),
-                                                                          nio.ethernetDevice()))
-
-        elif nio_type == "NIO_LinuxEthernet":
-            # add NIO Linux Ethernet param
-            params["ethernet_device"] = nio.ethernetDevice()
+        elif nio_type == "nio_generic_ethernet":
+            # return NIO generic Ethernet info
+            nio_info["type"] = nio_type
+            nio_info["ethernet_device"] = nio.ethernetDevice()
 
             log.debug("creating {} for {} with Ethernet device {}".format(nio,
                                                                           self.name(),
                                                                           nio.ethernetDevice()))
+            return nio_info
 
-        elif nio_type == "NIO_TAP":
-            # add NIO TAP param
-            params["tap_device"] = nio.tapDevice()
+        elif nio_type == "nio_linux_ethernet":
+            # return NIO Linux Ethernet info
+            nio_info["type"] = nio_type
+            nio_info["ethernet_device"] = nio.ethernetDevice()
+
+            log.debug("creating {} for {} with Ethernet device {}".format(nio,
+                                                                          self.name(),
+                                                                          nio.ethernetDevice()))
+            return nio_info
+
+        elif nio_type == "nio_tap":
+            # return NIO TAP info
+            nio_info["type"] = nio_type
+            nio_info["tap_device"] = nio.tapDevice()
 
             log.debug("creating {} for {} with TAP device {}".format(nio,
                                                                      self.name(),
                                                                      nio.tapDevice()))
+            return nio_info
 
-        elif nio_type == "NIO_UNIX":
-            # add NIO UNIX params
-            params["local_file"] = nio.localFile()
-            params["remote_file"] = nio.remoteFile()
+        elif nio_type == "nio_unix":
+            # return NIO UNIX info
+            nio_info["type"] = nio_type
+            nio_info["local_file"] = nio.localFile()
+            nio_info["remote_file"] = nio.remoteFile()
 
             log.debug("creating {} for {} with local file '{}' and remote file '{}'".format(nio,
                                                                                             nio.localFile(),
                                                                                             nio.remoteFile()))
+            return nio_info
 
-        elif nio_type == "NIO_VDE":
-            # add NIO VDE params
-            params["control_file"] = nio.controlFile()
-            params["local_file"] = nio.localFile()
+        elif nio_type == "nio_vde":
+            # return NIO VDE info
+            nio_info["type"] = nio_type
+            nio_info["control_file"] = nio.controlFile()
+            nio_info["local_file"] = nio.localFile()
 
             log.debug("creating {} for {} with control file '{}' and local file '{}'".format(nio,
                                                                                              nio.controlFile(),
                                                                                              nio.localFile()))
-        elif nio_type == "NIO_Null":
+            return nio_info
 
+        elif nio_type == "nio_null":
+            nio_info["type"] = nio_type
             log.debug("creating {} for {} with identifier '{}'".format(nio,
                                                                        self.name(),
                                                                        nio.identifier()))
+            return nio_info
+
+        assert("Not supposed to get here!")
 
     def configPage(self):
         """

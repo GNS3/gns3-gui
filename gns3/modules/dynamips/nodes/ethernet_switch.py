@@ -205,16 +205,14 @@ class EthernetSwitch(Node):
         """
 
         port_info = self._settings["ports"][port.portNumber()]
-        nio_type = str(nio)
         params = {"id": self._ethsw_id,
-                  "nio": nio_type,
                   "port": port.portNumber(),
                   "port_id": port.id(),
                   "vlan": port_info["vlan"],
                   "port_type": port_info["type"]}
 
-        self.addNIOInfo(nio, params)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        params["nio"] = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.ethsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):

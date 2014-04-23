@@ -369,15 +369,13 @@ class IOUDevice(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._iou_id,
-                  "nio": nio_type,
                   "slot": port.slotNumber(),
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        params["nio"] = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("iou.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
