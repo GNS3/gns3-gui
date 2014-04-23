@@ -1,21 +1,80 @@
-<ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
- <class>Form</class>
- <widget class="QWidget" name="Form" >
-  <property name="geometry" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CloudPreferencesPageWidget</class>
+ <widget class="QWidget" name="CloudPreferencesPageWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>567</width>
+    <height>406</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="uiUserNameLabel">
+     <property name="text">
+      <string>User Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="uiAPIKeyLabel">
+     <property name="text">
+      <string>API Key</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="uiCreateAccountLabel">
+     <property name="text">
+      <string>No API Key? &lt;a href=&quot;#&quot;&gt;Create Cloud Account.&lt;/a&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
+     <property name="text">
+      <string>Remeber these settings
+(Suggested for private computers)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QRadioButton" name="uiForgetAPIKeyRadioButton">
+     <property name="text">
+      <string>Forget these settings on exit
+(Suggested for public computers)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLineEdit" name="uiUserNameLineEdit"/>
+   </item>
+  </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
+ <resources/>
  <connections/>
 </ui>
