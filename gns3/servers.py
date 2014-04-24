@@ -23,6 +23,7 @@ import sys
 import os
 import shlex
 import signal
+import socket
 import subprocess
 from .qt import QtCore
 from .websocket_client import WebSocketClient
@@ -78,7 +79,14 @@ class Servers(QtCore.QObject):
                 DEFAULT_LOCAL_SERVER_PATH = "gns3server"
 
         # set the local server
-        local_server_host = settings.value("local_server_host", "127.0.0.1")
+        default_local_server_host = "127.0.0.1"
+        try:
+            address = socket.gethostbyname(socket.gethostname())
+            if not address.startswith("127") and address != "::1":
+                default_local_server_host = address
+        except OSError as e:
+            log.warn("could not determine a default local server address other than 127.0.0.1: {}".format(e))
+        local_server_host = settings.value("local_server_host", default_local_server_host)
         local_server_port = settings.value("local_server_port", 8000, type=int)
         local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
         self.setLocalServer(local_server_path, local_server_host, local_server_port)
