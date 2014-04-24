@@ -18,9 +18,12 @@
 
 import datetime
 import sys
-import logging
 import traceback
 import time
+import locale
+
+import logging
+log = logging.getLogger(__name__)
 
 try:
     from gns3.qt import QtCore, QtGui, DEFAULT_BINDING
@@ -29,6 +32,44 @@ except ImportError:
 
 from gns3.main_window import MainWindow
 from gns3.version import __version__
+
+
+def locale_check():
+    """
+    Checks if this application runs with a correct locale (i.e. supports UTF-8 encoding) and attempt to fix
+    if this is not the case.
+
+    This is to prevent UnicodeEncodeError with unicode paths when using standard library I/O operation
+    methods (e.g. os.stat() or os.path.*) which rely on the system or user locale.
+
+    More information can be found there: http://seasonofcode.com/posts/unicode-i-o-and-locales-in-python.html
+    or there: http://robjwells.com/post/61198832297/get-your-us-ascii-out-of-my-face
+    """
+
+    # no need to check on Windows
+    if sys.platform.startswith("win"):
+        return
+
+    language = encoding = None
+    try:
+        language, encoding = locale.getlocale()
+    except ValueError as e:
+        log.error("could not determine the current locale: {}".format(e))
+    if not language and not encoding:
+        try:
+            log.warn("could not find a default locale, switching to C.UTF-8...")
+            locale.setlocale(locale.LC_ALL, ("C", "UTF-8"))
+        except locale.Error as e:
+            log.error("could not switch to the C.UTF-8 locale: {}".format(e))
+            raise SystemExit
+    elif encoding != "UTF-8":
+        log.warn("your locale {}.{} encoding is not UTF-8, switching to the UTF-8 version...".format(language, encoding))
+        try:
+            locale.setlocale(locale.LC_ALL, (language, "UTF-8"))
+        except locale.Error as e:
+            log.error("could not set an UTF-8 encoding for the {} locale: {}".format(language, e))
+    else:
+        log.info("current locale is {}.{}".format(language, encoding))
 
 
 def main():
@@ -86,8 +127,9 @@ def main():
     except ImportError:
         pass
 
-    # default logging level
-    logging.basicConfig(level=logging.INFO)
+    # check for the correct locale
+    # (UNIX/Linux only)
+    locale_check()
 
     # don't use the registry to store settings on Windows
     # because we don't like it!
