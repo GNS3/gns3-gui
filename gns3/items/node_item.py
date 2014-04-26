@@ -110,7 +110,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param link: LinkItem instance
         """
 
-        self._links.remove(link)
+        if link in self._links:
+            self._links.remove(link)
         self.setUnsavedState()
 
     def links(self):
@@ -181,7 +182,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when the node has been deleted.
         """
 
-        self.scene().removeItem(self)
+        if self in self.scene().items():
+            self.scene().removeItem(self)
         self.setUnsavedState()
 
     def errorSlot(self, node_id, code, message):

@@ -113,7 +113,8 @@ class LinkItem(QtGui.QGraphicsPathItem):
         self._source_item.removeLink(self)
         self._destination_item.removeLink(self)
         self._link.deleteLink()
-        self.scene().removeItem(self)
+        if self in self.scene().items():
+            self.scene().removeItem(self)
 
     def setCustomToolTip(self):
         """

@@ -740,6 +740,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 server.connect()
                 log.info("use an already started local server on {}:{}".format(server.host, server.port))
             except OSError as e:
+
+                if not e.errno:
+                    # not a normal OSError, thrown
+                    # from the Websocket client.
+                    MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
+                                                                                                                                                                               server.port),
+                                                                                                                                                                               str(e))
+                    return
+
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
 
                 local_server_path = servers.localServerPath()
@@ -769,7 +778,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                     return
                 try:
-                    server.connect()
+                    servers.localServer().connect()
                 except OSError as e:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,

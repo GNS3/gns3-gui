@@ -24,7 +24,6 @@ import json
 import socket
 from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
-from ws4py.exc import HandshakeError
 from .qt import QtCore
 
 import logging
@@ -49,6 +48,7 @@ class WebSocketClient(WebSocketBaseClient):
         self.callbacks = {}
         self._connected = False
         self._local = False
+        self._version = ""
         self._fd_notifier = None
 
         # create an unique ID
@@ -67,6 +67,15 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         return self._id
+
+    def version(self):
+        """
+        Returns the received server version.
+
+        :returns: server version (string)
+        """
+
+        return self._version
 
     @classmethod
     def reset(cls):
@@ -109,9 +118,11 @@ class WebSocketClient(WebSocketBaseClient):
 
         try:
             WebSocketBaseClient.connect(self)
-        except HandshakeError as e:
+        except OSError:
+            raise
+        except Exception as e:
             log.error("could to connect {}: {}".format(self.url, e))
-            raise OSError(str(e))
+            raise OSError("Websocket exception {}: {}".format(type(e), e))
 
     def reconnect(self):
         """
@@ -149,6 +160,17 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         fd = self.connection.fileno()
+
+        try:
+            # get the GNS3 server version (JSON encoded)
+            data = self.connection.recv(128)[2:]
+            json_data = json.loads(data.decode("utf-8"))
+        except Exception as e:
+            raise OSError("Websocket exception {}: {}".format(type(e), e))
+
+        if "version" in json_data:
+            self._version = json_data.get("version")
+
         # we are interested in all data received.
         self._fd_notifier = QtCore.QSocketNotifier(fd, QtCore.QSocketNotifier.Read)
         self._fd_notifier.activated.connect(self.data_received)
@@ -257,6 +279,7 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         self._connected = False
+        self._version = ""
         WebSocketBaseClient.close_connection(self)
         if self._fd_notifier:
             self._fd_notifier.setEnabled(False)
