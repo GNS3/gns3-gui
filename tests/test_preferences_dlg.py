@@ -9,22 +9,19 @@ from PyQt4.QtCore import QTimer
 from PyQt4 import QtGui
 
 from gns3.pages.cloud_preferences_page import CloudPreferencesPage
+from gns3.settings import CLOUD_SETTINGS
 
 
-settings_mock = {
-    'cloud_user_name': '',
-    'cloud_api_key': '',
-    'cloud_store_api_key': False,
-    'cloud_store_api_key_chosen': False,
-}
+def make_getitem(container):
+    def getitem(name):
+        return container[name]
+    return getitem
 
 
-def getitem(name):
-    return settings_mock[name]
-
-
-def setitem(name, val):
-    settings_mock[name] = val
+def make_setitem(container):
+    def setitem(name, val):
+        container[name] = val
+    return setitem
 
 
 class TestCloudPreferencesPage(TestCase):
@@ -38,10 +35,17 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings = mock.MagicMock()
         self.page.settings.__getitem__.side_effect = getitem
         self.page.settings.__setitem__.side_effect = setitem
+        self._init_page()
 
     def tearDown(self):
         # Explicitly deallocate QApplication instance to avoid crashes
         del self.app
+
+    def _init_page(self):
+        self.page = CloudPreferencesPage()
+        self.page.settings = mock.MagicMock()
+        self.page.settings.__getitem__.side_effect = make_getitem(CLOUD_SETTINGS)
+        self.page.settings.__setitem__.side_effect = make_setitem(CLOUD_SETTINGS)
 
     def test_defaults(self):
         self.page.loadPreferences()
@@ -54,6 +58,8 @@ class TestCloudPreferencesPage(TestCase):
         QTimer.singleShot(50, closeMsgBox)
         valid = self.page._validate()
         self.assertFalse(valid)
+        self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
+        self.assertEqual(self.page.uiRegionComboBox.currentIndex(), 0)
 
     def test_user_interaction(self):
         """
@@ -75,6 +81,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_api_key'] = '1234567890€'
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
+        self.page.settings['cloud_provider'] = 'rackspace'
 
         self.page.loadPreferences()
 
