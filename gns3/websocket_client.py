@@ -161,15 +161,15 @@ class WebSocketClient(WebSocketBaseClient):
 
         fd = self.connection.fileno()
 
-        try:
-            # get the GNS3 server version (JSON encoded)
-            data = self.connection.recv(128)[2:]
-            json_data = json.loads(data.decode("utf-8"))
-        except Exception as e:
-            raise OSError("Websocket exception {}: {}".format(type(e), e))
+        #try:
+        #    # get the GNS3 server version (JSON encoded)
+        #    data = self.connection.recv(128)[2:]
+        #    json_data = json.loads(data.decode("utf-8"))
+        #except Exception as e:
+        #    raise OSError("Websocket exception {}: {}".format(type(e), e))
 
-        if "version" in json_data:
-            self._version = json_data.get("version")
+        #if "version" in json_data:
+        #    self._version = json_data.get("version")
 
         # we are interested in all data received.
         self._fd_notifier = QtCore.QSocketNotifier(fd, QtCore.QSocketNotifier.Read)

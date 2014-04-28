@@ -76,6 +76,10 @@ class Port(object):
 
         self._id = new_id
 
+        # update the instance count to avoid conflicts
+        if new_id <= Port._instance_count:
+            Port._instance_count = new_id + 1
+
     @classmethod
     def reset(cls):
         """
