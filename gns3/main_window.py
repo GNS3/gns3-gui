@@ -96,9 +96,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
         settings.endGroup()
 
-        settings.beginGroup("CLOUD")
+        settings.beginGroup("Cloud")
         # restore cloud settings
-        # TODO: move following code elsewhere? Does it relate with MainWindow?
         for name, value in CLOUD_SETTINGS.items():
             self._settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
         settings.endGroup()
