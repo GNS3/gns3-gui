@@ -18,6 +18,7 @@
 
 import datetime
 import sys
+import os
 import traceback
 import time
 import locale
@@ -77,23 +78,24 @@ def main():
     Entry point for GNS3 GUI.
     """
 
+    exception_file_path = "exception.log"
     def exceptionHook(exception, value, tb):
 
         if exception == KeyboardInterrupt:
             sys.exit(0)
 
         lines = traceback.format_exception(exception, value, tb)
-        print("---------Traceback lines (saved in exception.log)----------")
+        print("****** Exception detected, traceback information saved in {} ******".format(exception_file_path))
+        print("\n----> PLEASE REPORT ON http://forum.gns3.net/development-f14.html OR http://github.com/GNS3/gns3-gui/issues\n")
         print("\n" . join(lines))
-        print("-----------------------------------------------------------")
         try:
             curdate = time.strftime("%d %b %Y %H:%M:%S")
-            logfile = open('exception.log', 'a')
+            logfile = open(exception_file_path, "a")
             logfile.write("=== GNS3 {} traceback on {} ===\n".format(__version__, curdate))
             logfile.write("\n" . join(lines))
             logfile.close()
         except OSError as e:
-            print("Could not save in exception.log: {}".format(e))
+            print("Could not save traceback to {}: {}".format(exception_file_path, e))
 
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
@@ -162,6 +164,9 @@ def main():
         app.setOrganizationDomain("gns3.net")
         app.setApplicationName("GNS3")
         app.setApplicationVersion(__version__)
+        
+        # update the exception file path to have it in the same directory as the settings file.
+        exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
 
         mainwindow = MainWindow.instance()
         mainwindow.show()
