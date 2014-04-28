@@ -163,4 +163,15 @@ CLOUD_SETTINGS = {
     "cloud_store_api_key": False,
     # no default value at startup, users must choose and we need to know if they've already done it
     "cloud_store_api_key_chosen": False,
+    "cloud_provider": "",
+    "cloud_region": "us",
+}
+
+CLOUD_PROVIDERS = {
+    "rackspace": "Rackspace"
+}
+
+# TODO following should be retrieved from the cloud API
+CLOUD_REGIONS = {
+    "us": "United States"
 }
