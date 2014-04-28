@@ -28,29 +28,19 @@ def setitem(name, val):
 
 
 class TestCloudPreferencesPage(TestCase):
-    """
-    Test Cloud Preferences Page
-    """
     def setUp(self):
-        """
-        Instantiate a QtApplication and the form to be tested
-        """
         self.app = QApplication(sys.argv)
         self.page = CloudPreferencesPage()
+        # mock settings instance inside the page widget
         self.page.settings = mock.MagicMock()
         self.page.settings.__getitem__.side_effect = getitem
         self.page.settings.__setitem__.side_effect = setitem
 
     def tearDown(self):
-        """
-        Teardown as cleaner as possible
-        """
+        # Explicitly deallocate QApplication instance to avoid crashes
         del self.app
 
     def test_defaults(self):
-        """
-        Test default values for page widget
-        """
         self.page.loadPreferences()
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertFalse(self.page.uiRememberAPIKeyRadioButton.isChecked())
@@ -64,7 +54,7 @@ class TestCloudPreferencesPage(TestCase):
 
     def test_user_interaction(self):
         """
-        Simulate user interactions via keyboard or muse and check the dialog
+        Simulate user interactions via keyboard or mouse and check dialog status
         """
         QTest.keyClicks(self.page.uiUserNameLineEdit, "Bob")
         self.assertEqual(self.page.uiUserNameLineEdit.text(), 'Bob')
@@ -78,14 +68,10 @@ class TestCloudPreferencesPage(TestCase):
         self.assertTrue(self.page._validate())
 
     def test_load_settings(self):
-        """
-        Load some settings and test widget status
-        """
         self.page.settings['cloud_user_name'] = 'Bob'
         self.page.settings['cloud_api_key'] = '1234567890€'
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
-
 
         self.page.loadPreferences()
 
