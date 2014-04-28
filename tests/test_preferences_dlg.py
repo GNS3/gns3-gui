@@ -44,8 +44,9 @@ class TestCloudPreferencesPage(TestCase):
     def _init_page(self):
         self.page = CloudPreferencesPage()
         self.page.settings = mock.MagicMock()
-        self.page.settings.__getitem__.side_effect = make_getitem(CLOUD_SETTINGS)
-        self.page.settings.__setitem__.side_effect = make_setitem(CLOUD_SETTINGS)
+        fake_settings = CLOUD_SETTINGS.copy()
+        self.page.settings.__getitem__.side_effect = make_getitem(fake_settings)
+        self.page.settings.__setitem__.side_effect = make_setitem(fake_settings)
 
     def test_defaults(self):
         self.page.loadPreferences()
@@ -82,6 +83,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
+        self.page.settings['cloud_region'] = 'us'
 
         self.page.loadPreferences()
 
@@ -89,3 +91,5 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.uiAPIKeyLineEdit.text(), '1234567890€')
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
+        self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
+        self.assertEqual(self.page.uiRegionComboBox.currentText(), "United States")
