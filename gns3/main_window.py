@@ -94,11 +94,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         settings.beginGroup(self.__class__.__name__)
         for name, value in GENERAL_SETTINGS.items():
             self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
+        settings.endGroup()
 
-        # restore cloud settings TODO: move elsewhere?
+        settings.beginGroup("CLOUD")
+        # restore cloud settings
+        # TODO: move following code elsewhere? Does it relate with MainWindow?
         for name, value in CLOUD_SETTINGS.items():
             self._settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
-
         settings.endGroup()
 
     def settings(self):
