@@ -43,6 +43,8 @@ from .topology import Topology
 import logging
 log = logging.getLogger(__name__)
 
+CLOUD_SETTINGS_GROUP = "Cloud"
+
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
@@ -98,7 +100,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         settings.endGroup()
 
         # restore cloud settings
-        settings.beginGroup("Cloud")
+        settings.beginGroup(CLOUD_SETTINGS_GROUP)
         for name, value in CLOUD_SETTINGS.items():
             self._cloud_settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
         settings.endGroup()
@@ -145,7 +147,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._cloud_settings.update(new_settings)
         settings = QtCore.QSettings()
-        settings.beginGroup("Cloud")
+        settings.beginGroup(CLOUD_SETTINGS_GROUP)
         for name, value in self._cloud_settings.items():
             settings.setValue(name, value)
         settings.endGroup()
