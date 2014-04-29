@@ -74,9 +74,6 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
     def savePreferences(self):
         """
         Save cloud preferences
-
-        TODO: cloud settings are temporarily hosted in MainWindow settings,
-        move elsewhere?
         """
         if self._validate():
             if self._store_api_key():
@@ -99,7 +96,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.settings['cloud_store_api_key_chosen'] = True
 
             from ..main_window import MainWindow
-            MainWindow.instance().setCloudSettings(self.settings)
+            MainWindow.instance().setCloudSettings(self.settings, store=self._store_api_key())
 
             return True
         return False

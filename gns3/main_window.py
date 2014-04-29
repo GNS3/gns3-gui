@@ -138,19 +138,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def setCloudSettings(self, new_settings):
+    def setCloudSettings(self, new_settings, store):
         """
-        Set new cloud settings.
+        Set new cloud settings and store them only when users asks for it
 
         :param new_settings: cloud settings dictionary
+        :param store: whether to persist settings on disk or not
         """
 
         self._cloud_settings.update(new_settings)
-        settings = QtCore.QSettings()
-        settings.beginGroup(CLOUD_SETTINGS_GROUP)
-        for name, value in self._cloud_settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        if store:
+            settings = QtCore.QSettings()
+            settings.beginGroup(CLOUD_SETTINGS_GROUP)
+            for name, value in self._cloud_settings.items():
+                settings.setValue(name, value)
+            settings.endGroup()
 
     def _connections(self):
         """
