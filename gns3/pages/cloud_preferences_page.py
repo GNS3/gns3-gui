@@ -50,6 +50,12 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         from ..main_window import MainWindow
         self.settings = MainWindow.instance().cloud_settings()
 
+    def _get_region_index(self, region_id):
+        try:
+            return self.region_index_id.index(region_id)
+        except ValueError:
+            return -1
+
     def _store_api_key(self):
         """
         helper method, returns whether user wants to store api keys or not
@@ -93,20 +99,24 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         region = self.settings['cloud_region']
 
         # instance a provider controller and try to use it
-        provider = self.provider_controllers[provider_id]()
-        if provider.authenticate():
-            # fill region combo box
-            self.region_index_id = [""]
-            self.uiRegionComboBox.addItem("Select region...")
-            for r in provider.list_regions():
-                self.uiRegionComboBox.addItem(r)
-                self.region_index_id.append(r)
+        try:
+            provider = self.provider_controllers[provider_id]()
+            if provider.authenticate():
+                # fill region combo box
+                self.region_index_id = [""]
+                self.uiRegionComboBox.addItem("Select region...")
+                for r in provider.list_regions():
+                    self.uiRegionComboBox.addItem(r)
+                    self.region_index_id.append(r)
+        except KeyError:
+            # username/apikey are not set
+            pass
 
         # populate all the cloud stuff
         self.uiUserNameLineEdit.setText(username)
         self.uiAPIKeyLineEdit.setText(apikey)
         self.uiCloudProviderComboBox.setCurrentIndex(self.provider_index_id.index(provider_id))
-        self.uiRegionComboBox.setCurrentIndex(self.region_index_id.index(region))
+        self.uiRegionComboBox.setCurrentIndex(self._get_region_index(region))
         if self.settings.get("cloud_store_api_key"):
             self.uiRememberAPIKeyRadioButton.setChecked(True)
         else:
@@ -121,16 +131,18 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.settings['cloud_user_name'] = self.uiUserNameLineEdit.text()
                 self.settings['cloud_api_key'] = self.uiAPIKeyLineEdit.text()
                 self.settings['cloud_store_api_key'] = True
-                self.settings['cloud_provider'] = \
-                    self.provider_index_id[self.uiCloudProviderComboBox.currentIndex()]
-                self.settings['cloud_region'] = \
-                    self.region_index_id[self.uiRegionComboBox.currentIndex()]
+                if self.uiCloudProviderComboBox.currentIndex() >= 0:
+                    self.settings['cloud_provider'] = \
+                        self.provider_index_id[self.uiCloudProviderComboBox.currentIndex()]
+                if self.uiRegionComboBox.currentIndex() >= 0:
+                    self.settings['cloud_region'] = \
+                        self.region_index_id[self.uiRegionComboBox.currentIndex()]
             else:
                 self.settings['cloud_user_name'] = ""
                 self.settings['cloud_api_key'] = ""
                 self.settings['cloud_store_api_key'] = False
-                del self.settings['cloud_provider']
-                del self.settings['cloud_region']
+                self.settings['cloud_provider'] = ""
+                self.settings['cloud_region'] = ""
 
             if not self.settings['cloud_store_api_key_chosen']:
                 # user made a choice

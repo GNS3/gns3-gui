@@ -81,6 +81,10 @@ class TestCloudPreferencesPage(TestCase):
         self.assertTrue(self.page._validate())
 
     def test_load_settings(self):
+        self.page.settings['cloud_store_api_key_chosen'] = True
+
+        self.page.loadPreferences()
+
         self.page.settings['cloud_user_name'] = 'Bob'
         self.page.settings['cloud_api_key'] = '1234567890€'
         self.page.settings['cloud_store_api_key'] = True
@@ -96,3 +100,9 @@ class TestCloudPreferencesPage(TestCase):
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
         self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
         self.assertEqual(self.page.uiRegionComboBox.currentText(), "United States")
+
+    def test_save_preferences(self):
+        self.page.uiUserNameLineEdit.setText("foo")
+        self.page.uiAPIKeyLineEdit.setText("bar")
+        self.page.uiRememberAPIKeyRadioButton.setChecked(True)
+        self.page.savePreferences()
