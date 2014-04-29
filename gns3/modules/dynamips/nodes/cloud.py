@@ -101,7 +101,7 @@ class Cloud(Node):
             self.warning_signal.emit(self.id(), result["message"])
         else:
             for interface in result:
-                self._settings["interfaces"].append(interface)
+                self._settings["interfaces"].append(interface["name"])
 
         log.info("cloud {} has been created".format(self.name()))
         self.setInitialized(True)
