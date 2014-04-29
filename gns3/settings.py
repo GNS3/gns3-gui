@@ -164,10 +164,3 @@ CLOUD_SETTINGS = {
     # no default value at startup, users must choose and we need to know if they've already done it
     "cloud_store_api_key_chosen": False,
 }
-
-CLOUD_SETTINGS_TYPES = {
-    "cloud_user_name": str,
-    "cloud_api_key": str,
-    "cloud_store_api_key": bool,
-    "cloud_store_api_key_chosen": bool,
-}
