@@ -146,7 +146,7 @@ class PyCutExt(QtGui.QTextEdit):
         else:
             return self.line
 
-    def write(self, text, error=False):
+    def write(self, text, error=False, warning=False):
         """
         Simulates stdin, stdout, and stderr.
         """
@@ -166,6 +166,8 @@ class PyCutExt(QtGui.QTextEdit):
         char_format = cursor.charFormat()
         if error:
             color = QtGui.QColor(255, 0, 0)  # red
+        elif warning:
+            color = QtGui.QColor(255, 128, 0)  # orange
         else:
             color = QtGui.QColor(0, 0, 0)  # black
         char_format.setForeground(QtGui.QBrush(color))

@@ -286,6 +286,9 @@ class Topology(object):
 
                     node = node_module.createNode(node_class, server)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
+                    node.warning_signal.connect(main_window.uiConsoleTextEdit.writeWarning)
+                    node.server_error_signal.connect(main_window.uiConsoleTextEdit.writeServerError)
+
                 except ModuleError as e:
                     node_errors.append(str(e))
                     continue

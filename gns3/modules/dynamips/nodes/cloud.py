@@ -94,10 +94,11 @@ class Cloud(Node):
         :param result: server response
         :param error: indicates an error (boolean)
         """
-        
+
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            # a warning message instead of a error is more appropriate here
+            self.warning_signal.emit(self.id(), result["message"])
         else:
             for interface in result:
                 self._settings["interfaces"].append(interface)

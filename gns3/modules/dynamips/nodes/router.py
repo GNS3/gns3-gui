@@ -213,7 +213,7 @@ class Router(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("router {} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -255,7 +255,6 @@ class Router(Node):
         if name:
             params["name"] = self._settings["name"] = name
 
-
         params["nio"] = {"type": "nio_udp"}
         self._server.send_message("dynamips.vm.create", params, self._setupCallback)
 
@@ -269,7 +268,7 @@ class Router(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._router_id = result["id"]
@@ -356,7 +355,7 @@ class Router(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         updated = False
@@ -415,7 +414,7 @@ class Router(Node):
 
         if error:
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
@@ -442,7 +441,7 @@ class Router(Node):
 
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -469,7 +468,7 @@ class Router(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has suspended".format(self.name()))
             self.setStatus(Node.suspended)
@@ -496,7 +495,7 @@ class Router(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
 
@@ -518,7 +517,7 @@ class Router(Node):
 
         if error:
             log.error("error while computing idle-pc proposals {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has received idle-pc proposals".format(self.name()))
             self._idlepcs = result["idlepcs"]
@@ -575,7 +574,7 @@ class Router(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -609,7 +608,7 @@ class Router(Node):
 
         if error:
             log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])
@@ -639,7 +638,7 @@ class Router(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))

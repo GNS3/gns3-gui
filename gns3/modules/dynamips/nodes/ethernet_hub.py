@@ -69,7 +69,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._ethhub_id = result["id"]
@@ -106,7 +106,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -167,7 +167,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
                 self._settings["name"] = result["name"]
@@ -194,7 +194,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -227,7 +227,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             self.nio_signal.emit(self.id(), result["port_id"])
 
@@ -254,7 +254,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
