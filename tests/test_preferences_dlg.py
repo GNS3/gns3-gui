@@ -30,6 +30,9 @@ def setitem(name, val):
 class TestCloudPreferencesPage(TestCase):
     def setUp(self):
         self.app = QApplication(sys.argv)
+        self.app.setOrganizationName("GNS3")
+        self.app.setOrganizationDomain("gns3.net")
+        self.app.setApplicationName("Testsuite")
         self.page = CloudPreferencesPage()
         # mock settings instance inside the page widget
         self.page.settings = mock.MagicMock()

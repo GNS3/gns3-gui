@@ -12,6 +12,9 @@ from gns3.main_window import MainWindow
 class TestCloudPreferencesPage(TestCase):
     def setUp(self):
         self.app = QApplication(sys.argv)
+        self.app.setOrganizationName("GNS3")
+        self.app.setOrganizationDomain("gns3.net")
+        self.app.setApplicationName("Testsuite")
         self.mw = MainWindow()
 
     def tearDown(self):
