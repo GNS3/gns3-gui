@@ -64,6 +64,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self._settings = {}
+        self._cloud_settings = {}
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
@@ -111,6 +112,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return self._settings
 
+    def cloud_settings(self):
+        """
+        Returns the cloud settings.
+
+        :returns: cloud settings dictionary
+        """
+
+        return self._cloud_settings
+
     def setSettings(self, new_settings):
         """
         Set new general settings.
@@ -123,6 +133,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
         for name, value in self._settings.items():
+            settings.setValue(name, value)
+        settings.endGroup()
+
+    def setCloudSettings(self, new_settings):
+        """
+        Set new cloud settings.
+
+        :param new_settings: cloud settings dictionary
+        """
+
+        self._cloud_settings.update(new_settings)
+        settings = QtCore.QSettings()
+        settings.beginGroup("Cloud")
+        for name, value in self._cloud_settings.items():
             settings.setValue(name, value)
         settings.endGroup()
 
