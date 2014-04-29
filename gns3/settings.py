@@ -164,7 +164,7 @@ CLOUD_SETTINGS = {
     # no default value at startup, users must choose and we need to know if they've already done it
     "cloud_store_api_key_chosen": False,
     "cloud_provider": "",
-    "cloud_region": "us",
+    "cloud_region": "",
 }
 
 CLOUD_SETTINGS_TYPES = {
@@ -176,9 +176,11 @@ CLOUD_SETTINGS_TYPES = {
     "cloud_region": str,
 }
 
+# TODO proof of concept, needs review
 CLOUD_PROVIDERS = {
-    "rackspace": "Rackspace"
+    "rackspace": ("Rackspace", 'gns3.cloud.RackspaceCtrl'),
 }
+
 
 # TODO following should be retrieved from the cloud API
 CLOUD_REGIONS = {
