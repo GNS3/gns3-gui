@@ -167,6 +167,15 @@ CLOUD_SETTINGS = {
     "cloud_region": "us",
 }
 
+CLOUD_SETTINGS_TYPES = {
+    "cloud_user_name": str,
+    "cloud_api_key": str,
+    "cloud_store_api_key": bool,
+    "cloud_store_api_key_chosen": bool,
+    "cloud_provider": str,
+    "cloud_region": str,
+}
+
 CLOUD_PROVIDERS = {
     "rackspace": "Rackspace"
 }
