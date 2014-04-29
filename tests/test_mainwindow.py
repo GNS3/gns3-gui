@@ -7,6 +7,7 @@ from PyQt4.QtCore import QSettings
 import sys
 
 from gns3.main_window import MainWindow
+from gns3.main_window import CLOUD_SETTINGS_GROUP
 
 
 class TestCloudPreferencesPage(TestCase):
@@ -16,22 +17,38 @@ class TestCloudPreferencesPage(TestCase):
         self.app.setOrganizationDomain("gns3.net")
         self.app.setApplicationName("Testsuite")
         self.mw = MainWindow()
+        self.settings = QSettings()
 
     def tearDown(self):
         del self.app
+        self.settings.clear()
 
     def test_settings_groups(self):
-        settings = QSettings()
         fake_settings = {'foo': 'bar'}
 
-        self.mw.setCloudSettings(fake_settings)
-        self.assertIsNone(settings.value('foo'))
-        settings.beginGroup('Cloud')
-        self.assertEqual(settings.value('foo'), 'bar')
-        settings.endGroup()
+        self.mw.setCloudSettings(fake_settings, store=True)
+        self.assertIsNone(self.settings.value('foo'))
+        self.settings.beginGroup(CLOUD_SETTINGS_GROUP)
+        self.assertEqual(self.settings.value('foo'), 'bar')
+        self.settings.endGroup()
 
         self.mw.setSettings(fake_settings)
-        self.assertIsNone(settings.value('foo'))
-        settings.beginGroup(self.mw.__class__.__name__)
-        self.assertEqual(settings.value('foo'), 'bar')
-        settings.endGroup()
+        self.assertIsNone(self.settings.value('foo'))
+        self.settings.beginGroup(self.mw.__class__.__name__)
+        self.assertEqual(self.settings.value('foo'), 'bar')
+        self.settings.endGroup()
+
+    def test_cloud_settings_store(self):
+        fake_settings = {'foo': 'bar'}
+        
+        self.mw.setCloudSettings(fake_settings, store=True)
+        self.settings.beginGroup(CLOUD_SETTINGS_GROUP)
+        self.assertEqual(self.settings.value('foo'), 'bar')
+        self.settings.endGroup()
+
+        self.settings.clear()
+
+        self.mw.setCloudSettings(fake_settings, store=False)
+        self.settings.beginGroup(CLOUD_SETTINGS_GROUP)
+        self.assertIsNone(self.settings.value('foo'))
+        self.settings.endGroup()
