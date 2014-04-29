@@ -34,3 +34,14 @@ nosetests.xml
 .project
 .pydevproject
 .settings
+
+# PyCharm
+.idea
+
+# OSX
+.DS_Store
+
+# Testing output
+*_log.txt
+*.log
+
