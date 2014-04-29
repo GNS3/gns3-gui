@@ -33,8 +33,9 @@ class TestCloudPreferencesPage(TestCase):
         self.page = CloudPreferencesPage()
         # mock settings instance inside the page widget
         self.page.settings = mock.MagicMock()
-        self.page.settings.__getitem__.side_effect = getitem
-        self.page.settings.__setitem__.side_effect = setitem
+        settings_copy = CLOUD_SETTINGS.copy()
+        self.page.settings.__getitem__.side_effect = make_getitem(settings_copy)
+        self.page.settings.__setitem__.side_effect = make_setitem(settings_copy)
         self._init_page()
 
     def tearDown(self):
