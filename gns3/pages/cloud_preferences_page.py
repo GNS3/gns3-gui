@@ -4,6 +4,32 @@ from ..settings import CLOUD_PROVIDERS, CLOUD_REGIONS
 
 from PyQt4 import QtGui
 
+import importlib
+from unittest import mock
+
+
+# mock api cloud interface until cloud.py module is merged
+RackspaceCtrl = mock.MagicMock()
+RackspaceCtrl.return_value = RackspaceCtrl
+RackspaceCtrl.list_regions.return_value = ['United States', 'Ireland']
+FAKE_PROVIDERS = {
+    "rackspace": ("Rackspace", 'gns3.pages.cloud_preferences_page.RackspaceCtrl'),
+}
+
+
+def import_from_string(string_val):
+    """
+    Attempt to import a class from a string representation.
+    """
+    try:
+        parts = string_val.split('.')
+        module_path, class_name = '.'.join(parts[:-1]), parts[-1]
+        module = importlib.import_module(module_path)
+        return getattr(module, class_name)
+    except ImportError:
+        msg = "Could not import '%s'." % string_val
+        raise ImportError(msg)
+
 
 class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
     """
@@ -14,18 +40,12 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        # fill providers combo box
-        self.provider_index_id = [""]
-        self.uiCloudProviderComboBox.addItem("Select provider...")
-        for k, v in CLOUD_PROVIDERS.items():
-            self.uiCloudProviderComboBox.addItem(v)
-            self.provider_index_id.append(k)
-
-        # fill region combo box
+        # the list containing provider controller classes
+        self.provider_controllers = {}
+        # map region ids to combobox indexes
         self.region_index_id = []
-        for k, v in CLOUD_REGIONS.items():
-            self.uiRegionComboBox.addItem(v)
-            self.region_index_id.append(k)
+        # map provider ids to combobox indexes
+        self.provider_index_id = []
 
         from ..main_window import MainWindow
         self.settings = MainWindow.instance().cloud_settings()
@@ -53,23 +73,42 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         """
         Load cloud preferences and populate the panel
         """
+        self.provider_controllers.clear()
 
-        self.uiUserNameLineEdit.setText(self.settings['cloud_user_name'])
-        self.uiAPIKeyLineEdit.setText(self.settings['cloud_api_key'])
-        do_store_api_key = self.settings.get("cloud_store_api_key")
+        # fill provider combobox
+        self.provider_index_id = [""]
+        self.uiCloudProviderComboBox.addItem("Select provider...")
+        for k, v in FAKE_PROVIDERS.items():
+            self.uiCloudProviderComboBox.addItem(v[0])
+            self.provider_controllers[k] = import_from_string(v[1])
+            self.provider_index_id.append(k)
 
+        # do not select anything the very first time this page is loaded
         if not self.settings['cloud_store_api_key_chosen']:
-            # do not select any radio button the first time
-            pass
-        elif do_store_api_key:
-            # populate all the cloud stuff
-            self.uiRememberAPIKeyRadioButton.setChecked(True)
-            cloud_p = self.settings['cloud_provider']
-            if cloud_p:
-                self.uiCloudProviderComboBox.setCurrentIndex(self.provider_index_id.index(cloud_p))
-            self.uiRegionComboBox.setCurrentIndex(
-                self.region_index_id.index(self.settings['cloud_region']))
+            return
 
+        username = self.settings['cloud_user_name']
+        apikey = self.settings['cloud_api_key']
+        provider_id = self.settings['cloud_provider']
+        region = self.settings['cloud_region']
+
+        # instance a provider controller and try to use it
+        provider = self.provider_controllers[provider_id]()
+        if provider.authenticate():
+            # fill region combo box
+            self.region_index_id = [""]
+            self.uiRegionComboBox.addItem("Select region...")
+            for r in provider.list_regions():
+                self.uiRegionComboBox.addItem(r)
+                self.region_index_id.append(r)
+
+        # populate all the cloud stuff
+        self.uiUserNameLineEdit.setText(username)
+        self.uiAPIKeyLineEdit.setText(apikey)
+        self.uiCloudProviderComboBox.setCurrentIndex(self.provider_index_id.index(provider_id))
+        self.uiRegionComboBox.setCurrentIndex(self.region_index_id.index(region))
+        if self.settings.get("cloud_store_api_key"):
+            self.uiRememberAPIKeyRadioButton.setChecked(True)
         else:
             self.uiForgetAPIKeyRadioButton.setChecked(True)
 

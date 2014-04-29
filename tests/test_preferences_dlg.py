@@ -63,7 +63,7 @@ class TestCloudPreferencesPage(TestCase):
         valid = self.page._validate()
         self.assertFalse(valid)
         self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
-        self.assertEqual(self.page.uiRegionComboBox.currentIndex(), 0)
+        self.assertEqual(self.page.uiRegionComboBox.currentIndex(), -1)  # not set
 
     def test_user_interaction(self):
         """
@@ -86,7 +86,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
-        self.page.settings['cloud_region'] = 'us'
+        self.page.settings['cloud_region'] = 'United States'
 
         self.page.loadPreferences()
 
