@@ -40,7 +40,7 @@ class TestCloudPreferencesPage(TestCase):
 
     def test_cloud_settings_store(self):
         fake_settings = {'foo': 'bar'}
-        
+
         self.mw.setCloudSettings(fake_settings, store=True)
         self.settings.beginGroup(CLOUD_SETTINGS_GROUP)
         self.assertEqual(self.settings.value('foo'), 'bar')

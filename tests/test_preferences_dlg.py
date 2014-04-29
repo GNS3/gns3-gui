@@ -58,6 +58,8 @@ class TestCloudPreferencesPage(TestCase):
             self.assertIsInstance(self.app.activeModalWidget(), QtGui.QMessageBox)
             self.app.activeModalWidget().close()
         QTimer.singleShot(50, closeMsgBox)
+        self.page.uiUserNameLineEdit.setText('foo')
+        self.page.uiAPIKeyLineEdit.setText('bar')
         valid = self.page._validate()
         self.assertFalse(valid)
         self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
