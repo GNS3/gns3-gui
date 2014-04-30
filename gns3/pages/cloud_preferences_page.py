@@ -3,6 +3,7 @@ from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..settings import CLOUD_PROVIDERS, CLOUD_REGIONS
 
 from PyQt4 import QtGui
+from PyQt4 import Qt
 
 import importlib
 from unittest import mock
@@ -62,16 +63,26 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         """
         return self.uiRememberAPIKeyRadioButton.isChecked()
 
+    def _terms_accepted(self):
+        return self.uiTermsCheckBox.checkState() == Qt.Qt.Checked
+
     def _validate(self):
         """
         Check if settings are ok
         """
-        check_remember_setting = self.uiUserNameLineEdit.text() and self.uiAPIKeyLineEdit.text()
+        errors = ""
+        can_authenticate = self.uiUserNameLineEdit.text() and self.uiAPIKeyLineEdit.text()
         remember_have_been_set = self.uiRememberAPIKeyRadioButton.isChecked() or \
             self.uiForgetAPIKeyRadioButton.isChecked()
-        if check_remember_setting and not remember_have_been_set:
-            QtGui.QMessageBox.critical(self, "Cloud Preferences",
-                                       "Please choose if you want to persist your API keys or not.")
+
+        if can_authenticate and not remember_have_been_set:
+            errors += "Please choose if you want to persist your API keys or not.\n"
+
+        if can_authenticate and not self._terms_accepted():
+            errors += "You have to accept Terms and Conditions to proceed.\n"
+
+        if errors:
+            QtGui.QMessageBox.critical(self, "Cloud Preferences", errors)
             return False
         return True
 
