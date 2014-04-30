@@ -411,7 +411,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "start"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "start") and item.node().initialized():
                 item.node().start()
 
     def _suspendAllActionSlot(self):
@@ -420,7 +420,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend") and item.node().initialized():
                 item.node().suspend()
 
     def _stopAllActionSlot(self):
@@ -429,7 +429,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "stop"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "stop") and item.node().initialized():
                 item.node().stop()
 
     def _reloadAllActionSlot(self):
@@ -438,7 +438,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "reload"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
 
     def _auxConsoleAllActionSlot(self):
@@ -456,7 +456,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         from .telnet_console import telnetConsole
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
                 node = item.node()
                 if node.status() != Node.started:
                     continue
