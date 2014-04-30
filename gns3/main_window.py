@@ -77,6 +77,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # do not show the nodes dock widget my default
         self.uiNodesDockWidget.setVisible(False)
 
+        # populate the view -> docks menu
+        self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiCaptureDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
+
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
 

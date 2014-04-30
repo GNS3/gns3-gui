@@ -115,6 +115,11 @@ background-none;
      <addaction name="uiDefaultStyleAction"/>
      <addaction name="uiEnergySavingStyleAction"/>
     </widget>
+    <widget class="QMenu" name="uiDocksMenu">
+     <property name="title">
+      <string>Docks</string>
+     </property>
+    </widget>
     <addaction name="uiZoomInAction"/>
     <addaction name="uiZoomOutAction"/>
     <addaction name="uiZoomResetAction"/>
@@ -125,6 +130,8 @@ background-none;
     <addaction name="uiShowNamesAction"/>
     <addaction name="uiShowPortNames"/>
     <addaction name="uiStyleMenu"/>
+    <addaction name="separator"/>
+    <addaction name="uiDocksMenu"/>
    </widget>
    <widget class="QMenu" name="uiControlMenu">
     <property name="title">
