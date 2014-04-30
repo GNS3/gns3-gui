@@ -272,9 +272,9 @@ class Router(Node):
             return
 
         self._router_id = result["id"]
-
         if not self._router_id:
-            log.error("returned ID from server is null")
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return
 
         # update the settings using the defaults sent by the server
         for name, value in result.items():

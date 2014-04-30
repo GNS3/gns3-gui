@@ -77,9 +77,10 @@ class ATMSwitch(Node):
 
         self._atmsw_id = result["id"]
         if not self._frsw_id:
-            log.error("returned ID from server is null")
-        self._settings["name"] = result["name"]
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return
 
+        self._settings["name"] = result["name"]
         log.info("ATM switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())

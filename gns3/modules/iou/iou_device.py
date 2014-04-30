@@ -133,6 +133,9 @@ class IOUDevice(Node):
             return
 
         self._iou_id = result["id"]
+        if not self._iou_id:
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return
 
         # update the settings using the defaults sent by the server
         for name, value in result.items():

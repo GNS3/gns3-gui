@@ -58,6 +58,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         node.updated_signal.connect(self.updatedSlot)
         node.deleted_signal.connect(self.deletedSlot)
         node.delete_links_signal.connect(self.deleteLinksSlot)
+        node.error_signal.connect(self.errorSlot)
         node.server_error_signal.connect(self.serverErrorSlot)
 
         # link items connected to this node item.
@@ -193,6 +194,17 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         :param node_id: node identifier
         :param code: error code
+        :param message: error message
+        """
+
+        self._last_error = "{message}".format(message=message)
+
+    def errorSlot(self, node_id, message):
+        """
+        Slot to receive events from the attached Node instance
+        when the node wants to report an error.
+
+        :param node_id: node identifier
         :param message: error message
         """
 
