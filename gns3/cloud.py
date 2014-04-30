@@ -95,12 +95,16 @@ class RackspaceCtrl(BaseCloudCtrl):
             }
         })
 
-        headers = {'Content-type': 'application/json'}
+        headers = {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+        }
+
         response = self.post_fn(self.identity_ep, data=data, headers=headers)
 
         if response.status_code == 200:
 
-            api_data = json.loads(response.json())
+            api_data = response.json()
 
             self.token = self._parse_token(api_data)
 
@@ -112,6 +116,8 @@ class RackspaceCtrl(BaseCloudCtrl):
         else:
             self.regions = []
             self.token = None
+
+        response.connection.close()
 
         return self.authenticated
 

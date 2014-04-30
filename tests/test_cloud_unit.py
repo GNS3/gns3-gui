@@ -77,14 +77,20 @@ class MockApiResponse(object):
 
     """ Emulate a requests.Response object. """
 
+    class Connection(object):
+
+        def close(self):
+            pass
+
     def __init__(self, status_code, response_text):
         self.status_code = status_code
         self.text = response_text
+        self.connection = MockApiResponse.Connection()
 
     def json(self):
-        """ Return self.text in JSON format. """
+        """ Return self.text. """
 
-        return json.dumps(self.text)
+        return self.text
 
 
 def stub_rackspace_identity_post(identity_ep, data=None, headers=None):
