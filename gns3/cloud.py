@@ -80,6 +80,12 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         self.authenticated = False
 
+        if len(self.username) < 1:
+            return False
+
+        if len(self.api_key) < 1:
+            return False
+
         data = json.dumps({
             "auth": {
                 "RAX-KSKEY:apiKeyCredentials": {
@@ -94,15 +100,17 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         if response.status_code == 200:
 
-            self.token = self._parse_token(response.json())
+            api_data = json.loads(response.json())
+
+            self.token = self._parse_token(api_data)
 
             if self.token:
                 self.authenticated = True
-                user_regions = self._parse_endpoints(response.json())
+                user_regions = self._parse_endpoints(api_data)
                 self.regions = self._make_region_list(user_regions)
 
         else:
-            self.regions= []
+            self.regions = []
             self.token = None
 
         return self.authenticated
