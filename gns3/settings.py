@@ -165,6 +165,10 @@ CLOUD_SETTINGS = {
     "cloud_store_api_key_chosen": False,
     "cloud_provider": "",
     "cloud_region": "",
+    "instances_per_project": 0,
+    "memory_per_instance": 0,
+    "memory_per_new_instance": 0,
+    "accepted_terms": False,
 }
 
 CLOUD_SETTINGS_TYPES = {
@@ -174,6 +178,10 @@ CLOUD_SETTINGS_TYPES = {
     "cloud_store_api_key_chosen": bool,
     "cloud_provider": str,
     "cloud_region": str,
+    "instances_per_project": int,
+    "memory_per_instance": int,
+    "memory_per_new_instance": int,
+    "accepted_terms": bool,
 }
 
 # TODO proof of concept, needs review
