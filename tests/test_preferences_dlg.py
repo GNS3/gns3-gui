@@ -64,6 +64,10 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(valid)
         self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
         self.assertEqual(self.page.uiRegionComboBox.currentIndex(), -1)  # not set
+        self.assertEqual(self.page.uiGbPerInstanceSpinBox.value(), 0)
+        self.assertEqual(self.page.uiGbPerNewInstanceSpinBox.value(), 0)
+        self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 0)
+        self.assertFalse(self.page.uiTermsCheckBox.isChecked())
 
     def test_user_interaction(self):
         """
@@ -74,6 +78,7 @@ class TestCloudPreferencesPage(TestCase):
         QTest.keyClick(self.page.uiAPIKeyLineEdit, Qt.Key_Eacute)
         self.assertEqual(self.page.uiAPIKeyLineEdit.text(), 'É')
         QTest.mouseClick(self.page.uiRememberAPIKeyRadioButton, Qt.LeftButton)
+        QTest.mouseClick(self.page.uiTermsCheckBox, Qt.LeftButton)
         self.assertTrue(self.page._store_api_key())
         self.assertTrue(self.page._validate())
         QTest.mouseClick(self.page.uiForgetAPIKeyRadioButton, Qt.LeftButton)
@@ -91,6 +96,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
         self.page.settings['cloud_region'] = 'United States'
+        self.page.settings['accepted_terms'] = True
 
         self.page.loadPreferences()
 
@@ -100,9 +106,11 @@ class TestCloudPreferencesPage(TestCase):
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
         self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
         self.assertEqual(self.page.uiRegionComboBox.currentText(), "United States")
+        #self.assertTrue(self.page.uiTermsCheckBox.isChecked())
 
     def test_save_preferences(self):
         self.page.uiUserNameLineEdit.setText("foo")
         self.page.uiAPIKeyLineEdit.setText("bar")
         self.page.uiRememberAPIKeyRadioButton.setChecked(True)
+        self.page.uiTermsCheckBox.setChecked(True)
         self.page.savePreferences()
