@@ -87,7 +87,7 @@ class Cloud(Node):
             self.update(initial_settings)
         self._server.send_message("dynamips.nio.get_interfaces", None, self._setupCallback)
 
-    def _setupCallback(self, response, error=False):
+    def _setupCallback(self, result, error=False):
         """
         Callback for setup.
 
@@ -95,8 +95,13 @@ class Cloud(Node):
         :param error: indicates an error (boolean)
         """
 
-        for interface in response:
-            self._settings["interfaces"].append(interface)
+        if error:
+            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
+            # a warning message instead of a error is more appropriate here
+            self.warning_signal.emit(self.id(), result["message"])
+        else:
+            for interface in result:
+                self._settings["interfaces"].append(interface)
 
         log.info("cloud {} has been created".format(self.name()))
         self.setInitialized(True)

@@ -71,10 +71,12 @@ class FrameRelaySwitch(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._frsw_id = result["id"]
+        if not self._frsw_id:
+            log.error("returned ID from server is null")
         self._settings["name"] = result["name"]
 
         log.info("Frame Relay switch {} has been created".format(self.name()))
@@ -106,7 +108,7 @@ class FrameRelaySwitch(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -171,7 +173,7 @@ class FrameRelaySwitch(Node):
 
         if error:
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
                 self._settings["name"] = result["name"]
@@ -196,7 +198,7 @@ class FrameRelaySwitch(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -211,13 +213,11 @@ class FrameRelaySwitch(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._frsw_id,
-                  "nio": nio_type,
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
+        params["nio"] = self.getNIOInfo(nio)
         params["mappings"] = {}
         for source, destination in self._settings["mappings"].items():
             source_port = source.split(":")[0]
@@ -228,7 +228,7 @@ class FrameRelaySwitch(Node):
                 params["mappings"][destination] = source
             log.debug("{} is adding an UDP NIO: {}".format(self.name(), params))
 
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.frsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -241,7 +241,7 @@ class FrameRelaySwitch(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])
@@ -269,7 +269,7 @@ class FrameRelaySwitch(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
@@ -281,11 +281,13 @@ class FrameRelaySwitch(Node):
         :returns: formated string
         """
 
-        info = """Frame relay switch {name} [id={id}] is always-on
-Hardware is Dynamips emulated simple Frame relay switch
-Switch's server runs on {host}:{port}
+        info = """Frame relay switch {name} is always-on
+  Node ID is {id}, server's frame relay switch ID is {frsw_id}
+  Hardware is Dynamips emulated simple Frame relay switch
+  Switch's server runs on {host}:{port}
 """.format(name=self.name(),
-           id=self._frsw_id,
+           id=self.id(),
+           frsw_id=self._frsw_id,
            host=self._server.host,
            port=self._server.port)
 

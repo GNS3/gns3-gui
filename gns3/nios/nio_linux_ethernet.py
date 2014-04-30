@@ -36,7 +36,7 @@ class NIOLinuxEthernet(NIO):
 
     def __str__(self):
 
-        return "NIO_LinuxEthernet"
+        return "NIO_Linux_Ethernet"
 
     def ethernetDevice(self):
         """

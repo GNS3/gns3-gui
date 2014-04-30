@@ -31,7 +31,7 @@ from .ui.main_window_ui import Ui_MainWindow
 from .about_dialog import AboutDialog
 from .early_release_dialog import EarlyReleaseDialog
 from .preferences_dialog import PreferencesDialog
-from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES
+from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
@@ -64,6 +64,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self._settings = {}
+        self._cloud_settings = {}
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
@@ -93,7 +94,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # restore the general settings
         settings.beginGroup(self.__class__.__name__)
         for name, value in GENERAL_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
+            self._settings[name] = settings.value(name, value)
+        settings.endGroup()
+
+        # restore cloud settings
+        settings.beginGroup("Cloud")
+        for name, value in CLOUD_SETTINGS.items():
+            self._cloud_settings[name] = settings.value(name, value)
         settings.endGroup()
 
     def settings(self):
@@ -104,6 +111,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         return self._settings
+
+    def cloud_settings(self):
+        """
+        Returns the cloud settings.
+
+        :returns: cloud settings dictionary
+        """
+
+        return self._cloud_settings
 
     def setSettings(self, new_settings):
         """
@@ -117,6 +133,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
         for name, value in self._settings.items():
+            settings.setValue(name, value)
+        settings.endGroup()
+
+    def setCloudSettings(self, new_settings):
+        """
+        Set new cloud settings.
+
+        :param new_settings: cloud settings dictionary
+        """
+
+        self._cloud_settings.update(new_settings)
+        settings = QtCore.QSettings()
+        settings.beginGroup("Cloud")
+        for name, value in self._cloud_settings.items():
             settings.setValue(name, value)
         settings.endGroup()
 
@@ -740,6 +770,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 server.connect()
                 log.info("use an already started local server on {}:{}".format(server.host, server.port))
             except OSError as e:
+
+                if not e.errno:
+                    # not a normal OSError, thrown
+                    # from the Websocket client.
+                    MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
+                                                                                                                                                                               server.port),
+                                                                                                                                                                               str(e))
+                    return
+
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
 
                 local_server_path = servers.localServerPath()
@@ -769,7 +808,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                     return
                 try:
-                    server.connect()
+                    servers.localServer().connect()
                 except OSError as e:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
@@ -901,6 +940,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 topology.load(json_topology)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
+            #log.error("exception {type}".format(type=type(e)), exc_info=1)
             return False
         except ValueError as e:
             QtGui.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))

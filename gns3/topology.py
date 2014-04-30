@@ -63,8 +63,8 @@ class Topology(object):
         :param node: Node instance
         """
 
-        #self._topology.remove_node(node)
-        self._nodes.remove(node)
+        if node in self._nodes:
+            self._nodes.remove(node)
 
     def getNode(self, node_id):
         """
@@ -95,8 +95,8 @@ class Topology(object):
         :param link: Link instance
         """
 
-        #self._topology.remove_node(node)
-        self._links.remove(link)
+        if link in self._links:
+            self._links.remove(link)
 
     def getLink(self, link_id):
         """
@@ -286,6 +286,9 @@ class Topology(object):
 
                     node = node_module.createNode(node_class, server)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
+                    node.warning_signal.connect(main_window.uiConsoleTextEdit.writeWarning)
+                    node.server_error_signal.connect(main_window.uiConsoleTextEdit.writeServerError)
+
                 except ModuleError as e:
                     node_errors.append(str(e))
                     continue

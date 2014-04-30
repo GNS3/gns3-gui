@@ -58,7 +58,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         node.updated_signal.connect(self.updatedSlot)
         node.deleted_signal.connect(self.deletedSlot)
         node.delete_links_signal.connect(self.deleteLinksSlot)
-        node.error_signal.connect(self.errorSlot)
+        node.server_error_signal.connect(self.serverErrorSlot)
 
         # link items connected to this node item.
         self._links = []
@@ -110,7 +110,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param link: LinkItem instance
         """
 
-        self._links.remove(link)
+        if link in self._links:
+            self._links.remove(link)
         self.setUnsavedState()
 
     def links(self):
@@ -181,15 +182,16 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when the node has been deleted.
         """
 
-        self.scene().removeItem(self)
+        if self in self.scene().items():
+            self.scene().removeItem(self)
         self.setUnsavedState()
 
-    def errorSlot(self, name, code, message):
+    def serverErrorSlot(self, node_id, code, message):
         """
         Slot to receive events from the attached Node instance
         when the node has received an error from the server.
 
-        :param name: node name
+        :param node_id: node identifier
         :param code: error code
         :param message: error message
         """

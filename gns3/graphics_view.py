@@ -715,15 +715,15 @@ class GraphicsView(QtGui.QGraphicsView):
 
             def cancel():
                 router.idlepc_signal.disconnect(self._showIdlepcProposals)
-                router.error_signal.disconnect(self._showIdlepcError)
+                router.server_error_signal.disconnect(self._showIdlepcError)
                 router.setIdlepc(idlepc)
 
             self._idlepc_progress_dialog.canceled.connect(cancel)
             router.idlepc_signal.connect(self._showIdlepcProposals)
-            router.error_signal.connect(self._showIdlepcError)
+            router.server_error_signal.connect(self._showIdlepcError)
             self._idlepc_progress_dialog.show()
 
-    def _showIdlepcError(self, name, code, message):
+    def _showIdlepcError(self, node_id, code, message):
         """
         Shows an error message if the idle-pc values cannot be computed.
         """
@@ -731,7 +731,7 @@ class GraphicsView(QtGui.QGraphicsView):
         self._idlepc_progress_dialog.reject()
         QtGui.QMessageBox.critical(self, "Idle-PC", "Error: {}".format(message))
         router = self.scene().selectedItems()[0].node()
-        router.error_signal.disconnect(self._showIdlepcError)
+        router.server_error_signal.disconnect(self._showIdlepcError)
         router.idlepc_signal.disconnect(self._showIdlepcProposals)
 
     def _showIdlepcProposals(self):
@@ -742,7 +742,7 @@ class GraphicsView(QtGui.QGraphicsView):
         self._idlepc_progress_dialog.accept()
         router = self.scene().selectedItems()[0].node()
         router.idlepc_signal.disconnect(self._showIdlepcProposals)
-        router.error_signal.disconnect(self._showIdlepcError)
+        router.server_error_signal.disconnect(self._showIdlepcError)
         idlepcs = router.idlepcs()
         if idlepcs and idlepcs[0] != "0x0":
             idlepc, ok = QtGui.QInputDialog.getItem(self, "Idle-PC values", "Please select an idle-pc value", idlepcs, 0, False)
@@ -800,6 +800,8 @@ class GraphicsView(QtGui.QGraphicsView):
 
             node = node_module.createNode(node_class, server)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
+            node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
+            node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
             node_item = NodeItem(node)
             node_module.setupNode(node)
         except ModuleError as e:

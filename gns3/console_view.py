@@ -17,6 +17,7 @@
 
 
 import sys
+from .topology import Topology
 from .version import __version__
 from .console_cmd import ConsoleCmd
 from .pycutext import PyCutExt
@@ -136,19 +137,62 @@ class ConsoleView(PyCutExt, ConsoleCmd):
             self.write(details)
             self.write("\n")
 
-    def writeError(self, name, code, message):
+    def writeError(self, node_id, message):
         """
-        Write error messages coming from the server.
+        Write error messages.
 
-        :param name: node name
+        :param node_id: node identifier
+        :param message: error message
+        """
+
+        node = Topology.instance().getNode(node_id)
+        name = ""
+        if node and node.name():
+            name = " {}:".format(node.name())
+
+        text = "Error:{name} {message}".format(name=name,
+                                               message=message)
+        self.write(text, error=True)
+        self.write("\n")
+
+    def writeWarning(self, node_id, message):
+        """
+        Write warning messages.
+
+        :param node_id: node identifier
+        :param message: warning message
+        """
+
+        node = Topology.instance().getNode(node_id)
+        name = ""
+        if node and node.name():
+            name = " {}:".format(node.name())
+
+        text = "Warning:{name} {message}".format(name=name,
+                                                 message=message)
+        self.write(text, warning=True)
+        self.write("\n")
+
+    def writeServerError(self, node_id, code, message):
+        """
+        Write server error messages coming from the server.
+
+        :param node_id: node identifier
         :param code: error code
         :param message: error message
         """
 
-        #print("Error received from {} with code {} and message: {}\n".format(name, code, message))
-        if name:
-            name = name + ": "
-        text = "Server error [{code}]: {name} {message}".format(code=code, name=name, message=message)
+        node = Topology.instance().getNode(node_id)
+        server = name = ""
+        if node and node.name():
+            name = " {}:".format(node.name())
+            server = "from {}:{}".format(node.server().host,
+                                    node.server().port)
+
+        text = "Server error [{code}] {server}:{name} {message}".format(code=code,
+                                                                        server=server,
+                                                                        name=name,
+                                                                        message=message)
         self.write(text, error=True)
         self.write("\n")
 

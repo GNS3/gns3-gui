@@ -69,10 +69,12 @@ class EthernetSwitch(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._ethsw_id = result["id"]
+        if not self._ethsw_id:
+            log.error("returned ID from server is null")
         self._settings["name"] = result["name"]
 
         log.info("Ethernet switch {} has been created".format(self.name()))
@@ -104,7 +106,7 @@ class EthernetSwitch(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("Ethernet switch {} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -160,7 +162,7 @@ class EthernetSwitch(Node):
 
         if error:
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
                 self._settings["name"] = result["name"]
@@ -187,7 +189,7 @@ class EthernetSwitch(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -203,16 +205,14 @@ class EthernetSwitch(Node):
         """
 
         port_info = self._settings["ports"][port.portNumber()]
-        nio_type = str(nio)
         params = {"id": self._ethsw_id,
-                  "nio": nio_type,
                   "port": port.portNumber(),
                   "port_id": port.id(),
                   "vlan": port_info["vlan"],
                   "port_type": port_info["type"]}
 
-        self.addNIOInfo(nio, params)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        params["nio"] = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.ethsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -225,7 +225,7 @@ class EthernetSwitch(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])
@@ -253,7 +253,7 @@ class EthernetSwitch(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
@@ -265,11 +265,13 @@ class EthernetSwitch(Node):
         :returns: formated string
         """
 
-        info = """Ethernet switch {name} [id={id}] is always-on
-Hardware is Dynamips emulated simple Ethernet switch
-Switch's server runs on {host}:{port}
+        info = """Ethernet switch {name} is always-on
+  Node ID is {id}, server's Ethernet switch ID is {ethsw_id}
+  Hardware is Dynamips emulated simple Ethernet switch
+  Switch's server runs on {host}:{port}
 """.format(name=self.name(),
-           id=self._ethsw_id,
+           id=self.id(),
+           ethsw_id=self._ethsw_id,
            host=self._server.host,
            port=self._server.port)
 

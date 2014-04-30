@@ -129,7 +129,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._iou_id = result["id"]
@@ -175,7 +175,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -229,7 +229,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         updated = False
@@ -276,7 +276,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
@@ -303,7 +303,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -330,7 +330,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
 
@@ -354,7 +354,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -369,15 +369,13 @@ class IOUDevice(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._iou_id,
-                  "nio": nio_type,
                   "slot": port.slotNumber(),
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        params["nio"] = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("iou.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -390,7 +388,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             self.nio_signal.emit(self.id(), result["port_id"])
 
@@ -418,7 +416,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
@@ -435,13 +433,15 @@ class IOUDevice(Node):
         else:
             state = "stopped"
 
-        info = """Device {name} [id={id}] is {state}
+        info = """Device {name} is {state}
+  Node ID is {id}, server's IOU device ID is {iou_id}
   Hardware is Cisco IOU generic device with {ram} MB RAM and {nvram} KB NVRAM
-  Router's server runs on {host}:{port}, console is on port {console}
+  Device's server runs on {host}:{port}, console is on port {console}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
-           id=self._iou_id,
+           id=self.id(),
+           iou_id=self._iou_id,
            state=state,
            ram=self._settings["ram"],
            nvram=self._settings["nvram"],

@@ -72,10 +72,12 @@ class ATMSwitch(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._atmsw_id = result["id"]
+        if not self._frsw_id:
+            log.error("returned ID from server is null")
         self._settings["name"] = result["name"]
 
         log.info("ATM switch {} has been created".format(self.name()))
@@ -107,7 +109,7 @@ class ATMSwitch(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("ATM switch {} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -171,7 +173,7 @@ class ATMSwitch(Node):
 
         if error:
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
                 self._settings["name"] = result["name"]
@@ -198,7 +200,7 @@ class ATMSwitch(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -213,13 +215,11 @@ class ATMSwitch(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._atmsw_id,
-                  "nio": nio_type,
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
+        params["nio"] = self.getNIOInfo(nio)
         params["mappings"] = {}
         for source, destination in self._settings["mappings"].items():
             source_port = source.split(":")[0]
@@ -229,7 +229,7 @@ class ATMSwitch(Node):
             if port.name() == destination_port:
                 params["mappings"][destination] = source
 
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.atmsw.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -242,7 +242,7 @@ class ATMSwitch(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])
@@ -270,7 +270,7 @@ class ATMSwitch(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
@@ -282,11 +282,13 @@ class ATMSwitch(Node):
         :returns: formated string
         """
 
-        info = """ATM switch {name} [id={id}] is always-on
-Hardware is Dynamips emulated simple ATM switch
-Switch's server runs on {host}:{port}
+        info = """ATM switch {name} is always-on
+  Node ID is {id}, server's ATM switch ID is {atmsw_id}
+  Hardware is Dynamips emulated simple ATM switch
+  Switch's server runs on {host}:{port}
 """.format(name=self.name(),
-           id=self._atmsw_id,
+           id=self.id(),
+           atmsw_id=self._atmsw_id,
            host=self._server.host,
            port=self._server.port)
 

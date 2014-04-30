@@ -129,15 +129,16 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             if not server:
                 QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
                 return
+            server = server.host
 
         #ios_images = Dynamips.instance().iosImages()
-        key = "{server}:{image}".format(server=server.host, image=image)
+        key = "{server}:{image}".format(server=server, image=image)
         item = self.uiIOSImagesTreeWidget.currentItem()
 
         if key in self._ios_images and item and item.text(0) == image:
             item.setText(0, image)
             item.setText(1, platform)
-            item.setText(2, server.host)
+            item.setText(2, server)
         elif key in self._ios_images:
             print("Image already added")
             return
@@ -146,7 +147,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item = QtGui.QTreeWidgetItem(self.uiIOSImagesTreeWidget)
             item.setText(0, image)
             item.setText(1, platform)
-            item.setText(2, server.host)
+            item.setText(2, server)
             self.uiIOSImagesTreeWidget.setCurrentItem(item)
 
         self._ios_images[key] = {"path": path,
@@ -157,7 +158,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                  "chassis": chassis,
                                  "idlepc": idlepc,
                                  "ram": ram,
-                                 "server": server.host}
+                                 "server": server}
 
         self.uiIOSImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOSImagesTreeWidget.resizeColumnToContents(1)
@@ -204,7 +205,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             QtGui.QMessageBox.critical(self, "IOS image", "Cannot read ELF magic number: {}".format(e))
             return
 
-        # file must start with the ELF magic number, be 32-bit, little endian and have an ELF version of 1
+        # file must start with the ELF magic number, be 32-bit, big endian and have an ELF version of 1
         if elf_header_start != b'\x7fELF\x01\x02\x01':
             QtGui.QMessageBox.critical(self, "IOS image", "Sorry, this is not a valid IOS image!")
             return

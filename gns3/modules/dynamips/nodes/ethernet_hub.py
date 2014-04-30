@@ -69,10 +69,12 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         self._ethhub_id = result["id"]
+        if not self._ethhub_id:
+            log.error("returned ID from server is null")
         self._settings["name"] = result["name"]
 
         log.info("Ethernet hub {} has been created".format(self.name()))
@@ -104,7 +106,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -165,7 +167,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
                 self._settings["name"] = result["name"]
@@ -192,7 +194,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             port_id = result["port_id"]
             lport = result["lport"]
@@ -207,14 +209,12 @@ class EthernetHub(Node):
         :param nio: NIO instance
         """
 
-        nio_type = str(nio)
         params = {"id": self._ethhub_id,
-                  "nio": nio_type,
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
-        self.addNIOInfo(nio, params)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio_type, params))
+        params["nio"] = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.ethhub.add_nio", params, self._addNIOCallback)
 
     def _addNIOCallback(self, result, error=False):
@@ -227,7 +227,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             self.nio_signal.emit(self.id(), result["port_id"])
 
@@ -254,7 +254,7 @@ class EthernetHub(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.error_signal.emit(self.name(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
@@ -266,11 +266,13 @@ class EthernetHub(Node):
         :returns: formated string
         """
 
-        info = """Ethernet hub {name} [id={id}] is always-on
-Hardware is Dynamips emulated simple Ethernet hub
-Hub's server runs on {host}:{port}
+        info = """Ethernet hub {name} is always-on
+  Node ID is {id}, server's Ethernet hub ID is {ethhub_id}
+  Hardware is Dynamips emulated simple Ethernet hub
+  Hub's server runs on {host}:{port}
 """.format(name=self.name(),
-           id=self._ethhub_id,
+           id=self.id(),
+           ethhub_id=self._ethhub_id,
            host=self._server.host,
            port=self._server.port)
 
