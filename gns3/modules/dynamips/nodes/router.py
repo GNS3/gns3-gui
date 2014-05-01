@@ -609,6 +609,7 @@ class Router(Node):
         if error:
             log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.nio_cancel_signal.emit(self.id())
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])

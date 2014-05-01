@@ -45,6 +45,7 @@ class Node(QtCore.QObject):
     warning_signal = QtCore.Signal(int, str)
     server_error_signal = QtCore.Signal(int, int, str)
     nio_signal = QtCore.Signal(int, int)
+    nio_cancel_signal = QtCore.Signal(int)
     allocate_udp_nio_signal = QtCore.Signal(int, int, int)
 
     _instance_count = 1

@@ -106,10 +106,12 @@ class Link(QtCore.QObject):
             if not source_port.isStub() and destination_port.isStub():
                 source_node.nio_signal.connect(self.newNIOSlot)
                 self._source_nio = self._destination_port.defaultNio()
+                self._source_node.nio_cancel_signal.connect(self.cancelNIOSlot)
                 self._source_node.addNIO(self._source_port, self._source_nio)
             elif not destination_port.isStub() and source_port.isStub():
                 destination_node.nio_signal.connect(self.newNIOSlot)
                 self._destination_nio = self._source_port.defaultNio()
+                self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
                 self._destination_node.addNIO(self._destination_port, self._destination_nio)
             else:
                 log.error("both ports are stub!")
@@ -201,7 +203,9 @@ class Link(QtCore.QObject):
             log.debug("creating UDP tunnel from {}:{} to {}:{} ".format(laddr, lport, raddr, rport))
 
             # add the UDP NIOs to the nodes
+            self._source_node.nio_cancel_signal.connect(self.cancelNIOSlot)
             self._source_node.addNIO(self._source_port, self._source_nio)
+            self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
             self._destination_node.addNIO(self._destination_port, self._destination_nio)
 
     def newNIOSlot(self, node_id, port_id):
@@ -231,6 +235,8 @@ class Link(QtCore.QObject):
             self._addToSourcePort(self._source_nio)
             self._addToDestinationPort(self._destination_nio)
 
+            self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
+            self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
             self._source_nio_active = False
             self._destination_nio_active = False
 
@@ -240,11 +246,15 @@ class Link(QtCore.QObject):
             self._addToSourcePort(self._source_nio)
             # add the NIO to destination to show the port is not free.
             self._addToDestinationPort(self._source_nio)
+            self._source_nio_active = False
+            self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
             self.add_link_signal.emit(self._id)
         elif self._stub and self._destination_nio_active:
             # add the NIO to source to show the port is not free.
             self._addToSourcePort(self._destination_nio)
             self._addToDestinationPort(self._destination_nio)
+            self._destination_nio_active = False
+            self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
             self.add_link_signal.emit(self._id)
 
     def _addToSourcePort(self, nio):
@@ -279,6 +289,44 @@ class Link(QtCore.QObject):
         log.debug("{} attached to {} on port {}".format(nio,
                                                         self._destination_node.name(),
                                                         self._destination_port.name()))
+
+    def cancelNIOSlot(self, node_id):
+        """
+        Slot to receive events from Node instances
+        when a NIO has been canceled because of an
+        error returned by the server.
+
+        :param node_id: node identifier
+        """
+
+        if not self._stub:
+            if not self._source_node.id() == node_id:
+                # the destination node has canceled its NIO allocation
+                self._destination_node.nio_signal.disconnect(self.newNIOSlot)
+                self._source_node.deleteNIO(self._source_port)
+                self._source_port.setFree()
+                self._source_node.updated_signal.emit()
+
+            elif not self._destination_node.id() == node_id:
+                # the source node has canceled its NIO allocation
+                self._source_node.nio_signal.disconnect(self.newNIOSlot)
+
+                self._destination_node.deleteNIO(self._destination_port)
+                self._destination_port.setFree()
+                self._destination_node.updated_signal.emit()
+
+            self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
+            self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
+        else:
+            if self._source_node.id() == node_id:
+                self._source_node.nio_signal.disconnect(self.newNIOSlot)
+                self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
+            else:
+                self._destination_node.nio_signal.disconnect(self.newNIOSlot)
+                self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
+
+        self._source_nio_active = False
+        self._destination_nio_active = False
 
     def description(self):
         """
