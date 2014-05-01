@@ -300,14 +300,15 @@ class Link(QtCore.QObject):
         """
 
         if not self._stub:
-            if not self._source_node.id() == node_id:
+            if self._source_node.id() != node_id:
                 # the destination node has canceled its NIO allocation
                 self._destination_node.nio_signal.disconnect(self.newNIOSlot)
+
                 self._source_node.deleteNIO(self._source_port)
                 self._source_port.setFree()
                 self._source_node.updated_signal.emit()
 
-            elif not self._destination_node.id() == node_id:
+            elif self._destination_node.id() != node_id:
                 # the source node has canceled its NIO allocation
                 self._source_node.nio_signal.disconnect(self.newNIOSlot)
 

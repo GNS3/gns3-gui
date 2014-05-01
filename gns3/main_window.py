@@ -24,6 +24,7 @@ import tempfile
 import socket
 import shutil
 import json
+
 from .qt import QtGui, QtCore
 from .servers import Servers
 from .node import Node
@@ -38,7 +39,6 @@ from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
 from .topology import Topology
-
 
 import logging
 log = logging.getLogger(__name__)
@@ -777,8 +777,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             except OSError as e:
 
                 if not e.errno:
-                    # not a normal OSError, thrown
-                    # from the Websocket client.
+                    # not a normal OSError, thrown from the Websocket client.
                     MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
                                                                                                                                                                                server.port),
                                                                                                                                                                                str(e))
