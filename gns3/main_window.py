@@ -239,7 +239,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if not self._ignore_unsaved_state:
             self.setWindowModified(True)
-            self.uiSaveProjectAction.setEnabled(True)
 
     def ignoreUnsavedState(self, value):
         """
@@ -1015,7 +1014,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._temporary_project = False
             self.setWindowFilePath(path)
         self.setWindowModified(False)
-        self.uiSaveProjectAction.setEnabled(False)
 
     @staticmethod
     def instance():
