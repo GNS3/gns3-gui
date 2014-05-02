@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
 #
-# Created: Fri May  2 15:24:25 2014
+# Created: Fri May  2 17:41:36 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,8 +111,13 @@ class Ui_CloudPreferencesPageWidget(object):
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.uiTermsCheckBox = QtGui.QCheckBox(CloudPreferencesPageWidget)
+        self.uiTermsCheckBox.setText(_fromUtf8(""))
         self.uiTermsCheckBox.setObjectName(_fromUtf8("uiTermsCheckBox"))
         self.horizontalLayout_2.addWidget(self.uiTermsCheckBox)
+        self.uiTermsLabel = QtGui.QLabel(CloudPreferencesPageWidget)
+        self.uiTermsLabel.setTextFormat(QtCore.Qt.RichText)
+        self.uiTermsLabel.setObjectName(_fromUtf8("uiTermsLabel"))
+        self.horizontalLayout_2.addWidget(self.uiTermsLabel)
         self.gridLayout.addLayout(self.horizontalLayout_2, 10, 0, 2, 2)
 
         self.retranslateUi(CloudPreferencesPageWidget)
@@ -135,5 +140,5 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiMemLabel.setText(_translate("CloudPreferencesPageWidget", "Gb", None))
         self.uiHourlyPriceLabel.setText(_translate("CloudPreferencesPageWidget", "($0.00 per hour per instance)", None))
         self.uiMemNewLabel.setText(_translate("CloudPreferencesPageWidget", "Gb in size", None))
-        self.uiTermsCheckBox.setText(_translate("CloudPreferencesPageWidget", "Accept Terms and Conditions", None))
+        self.uiTermsLabel.setText(_translate("CloudPreferencesPageWidget", "Accept Terms and Conditions", None))
 

@@ -48,6 +48,9 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         # map provider ids to combobox indexes
         self.provider_index_id = []
 
+        # insert Terms&Condition link inside the checkbox
+        self.uiTermsLabel.setText('Accept <a href="{}">Terms and Conditions</a>'.format('#'))
+
         from ..main_window import MainWindow
         self.settings = MainWindow.instance().cloud_settings()
 

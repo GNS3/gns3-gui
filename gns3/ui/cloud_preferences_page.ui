@@ -188,7 +188,17 @@
      <item>
       <widget class="QCheckBox" name="uiTermsCheckBox">
        <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiTermsLabel">
+       <property name="text">
         <string>Accept Terms and Conditions</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::RichText</enum>
        </property>
       </widget>
      </item>
