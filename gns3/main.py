@@ -22,6 +22,7 @@ import os
 import traceback
 import time
 import locale
+import argparse
 
 import logging
 log = logging.getLogger(__name__)
@@ -78,7 +79,11 @@ def main():
     Entry point for GNS3 GUI.
     """
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--version', help="show the version", action='version', version=__version__)
+    parser.parse_args()
     exception_file_path = "exception.log"
+
     def exceptionHook(exception, value, tb):
 
         if exception == KeyboardInterrupt:
@@ -164,7 +169,7 @@ def main():
         app.setOrganizationDomain("gns3.net")
         app.setApplicationName("GNS3")
         app.setApplicationVersion(__version__)
-        
+
         # update the exception file path to have it in the same directory as the settings file.
         exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
 
