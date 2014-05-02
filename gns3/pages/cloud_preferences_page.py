@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
-from ..settings import CLOUD_PROVIDERS, CLOUD_REGIONS
+from ..settings import CLOUD_SETTINGS
 
 from PyQt4 import QtGui
 from PyQt4 import Qt
@@ -132,6 +132,10 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
             self.uiRememberAPIKeyRadioButton.setChecked(True)
         else:
             self.uiForgetAPIKeyRadioButton.setChecked(True)
+        self.uiNumOfInstancesSpinBox.setValue(self.settings['instances_per_project'])
+        self.uiMemPerInstanceSpinBox.setValue(self.settings['memory_per_instance'])
+        self.uiMemPerNewInstanceSpinBox.setValue(self.settings['memory_per_new_instance'])
+        self.uiTermsCheckBox.setChecked(self.settings['accepted_terms'])
 
     def savePreferences(self):
         """
@@ -148,15 +152,18 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 if self.uiRegionComboBox.currentIndex() >= 0:
                     self.settings['cloud_region'] = \
                         self.region_index_id[self.uiRegionComboBox.currentIndex()]
+                self.settings['instances_per_project'] = self.uiNumOfInstancesSpinBox.value()
+                self.settings['memory_per_instance'] = self.uiMemPerInstanceSpinBox.value()
+                self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
+                self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
+
             else:
-                self.settings['cloud_user_name'] = ""
-                self.settings['cloud_api_key'] = ""
-                self.settings['cloud_store_api_key'] = False
-                self.settings['cloud_provider'] = ""
-                self.settings['cloud_region'] = ""
+                # reset cloud preferences to default values
+                for k, v in CLOUD_SETTINGS:
+                    self.settings[k] = v
 
             if not self.settings['cloud_store_api_key_chosen']:
-                # user made a choice
+                # user made a choice at this point
                 self.settings['cloud_store_api_key_chosen'] = True
 
             from ..main_window import MainWindow
