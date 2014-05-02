@@ -97,6 +97,9 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_provider'] = 'rackspace'
         self.page.settings['cloud_region'] = 'United States'
         self.page.settings['accepted_terms'] = True
+        self.page.settings['instances_per_project'] = 3
+        self.page.settings['memory_per_instance'] = 2
+        self.page.settings['memory_per_new_instance'] = 6
 
         self.page.loadPreferences()
 
@@ -106,7 +109,10 @@ class TestCloudPreferencesPage(TestCase):
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
         self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
         self.assertEqual(self.page.uiRegionComboBox.currentText(), "United States")
-        #self.assertTrue(self.page.uiTermsCheckBox.isChecked())
+        self.assertTrue(self.page.uiTermsCheckBox.isChecked())
+        self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 3)
+        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 2)
+        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 6)
 
     def test_save_preferences(self):
         self.page.uiUserNameLineEdit.setText("foo")
