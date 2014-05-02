@@ -149,7 +149,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.settings['cloud_store_api_key_chosen'] = True
 
             from ..main_window import MainWindow
-            MainWindow.instance().setCloudSettings(self.settings, store=self._store_api_key())
+            MainWindow.instance().setCloudSettings(self.settings, persist=self._store_api_key())
 
             return True
         return False
