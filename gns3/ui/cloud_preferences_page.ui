@@ -6,18 +6,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>406</height>
+    <width>471</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Cloud</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLabel" name="uiAPIKeyLabel">
+   <item row="9" column="0" colspan="2">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>API Key</string>
+      <string>New instances are:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="uiCloudProviderLabel">
+     <property name="text">
+      <string>Cloud provider</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QComboBox" name="uiRegionComboBox"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="uiRegionLabel">
+     <property name="text">
+      <string>Region (optional)</string>
      </property>
     </widget>
    </item>
@@ -29,9 +46,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLineEdit" name="uiUserNameLineEdit"/>
-   </item>
    <item row="2" column="1">
     <widget class="QLabel" name="uiCreateAccountLabel">
      <property name="text">
@@ -42,7 +56,89 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLineEdit" name="uiUserNameLineEdit"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="uiAPIKeyLabel">
+     <property name="text">
+      <string>API Key</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QComboBox" name="uiCloudProviderComboBox"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
+     <property name="text">
+      <string>Remeber these settings
+(Suggested for private computers)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="uiUserNameLabel">
+     <property name="text">
+      <string>User Name:</string>
+     </property>
+    </widget>
+   </item>
    <item row="6" column="0" colspan="2">
+    <widget class="QLabel" name="uiStartNewProjectsLabel">
+     <property name="text">
+      <string>Start new projects with:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QSpinBox" name="uiNumOfInstancesSpinBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiNumOfInstancesLabel">
+       <property name="text">
+        <string>instance(s) with</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="uiMemPerInstanceSpinBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiMemLabel">
+       <property name="text">
+        <string>Gb</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiHourlyPriceLabel">
+       <property name="text">
+        <string>($0.00 per hour per instance)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="14" column="0">
     <widget class="QFrame" name="PLACEHOLDER">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -64,43 +160,39 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="uiCloudProviderLabel">
-     <property name="text">
-      <string>Cloud provider</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
-   </item>
-   <item row="5" column="0">
-    <widget class="QComboBox" name="uiRegionComboBox"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QComboBox" name="uiCloudProviderComboBox"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="uiRegionLabel">
-     <property name="text">
-      <string>Region (optional)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
-     <property name="text">
-      <string>Remeber these settings
-(Suggested for private computers)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="uiUserNameLabel">
-     <property name="text">
-      <string>User Name:</string>
-     </property>
-    </widget>
+   <item row="10" column="0" rowspan="2" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QSpinBox" name="uiMemPerNewInstanceSpinBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiMemNewLabel">
+       <property name="text">
+        <string>Gb in size</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="uiTermsCheckBox">
+       <property name="text">
+        <string>Accept Terms and Conditions</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
