@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Interacts with Cloud API(s) to create and manage cloud instances. """
+""" Interacts with Rackspace API to create and manage cloud instances. """
 
+from gns3.cloud.base_cloud_ctrl import BaseCloudCtrl
 import json
 import requests
 from libcloud.compute.drivers.rackspace import ENDPOINT_ARGS_MAP
@@ -26,30 +27,6 @@ log = logging.getLogger(__name__)
 
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
-
-
-class BaseCloudCtrl(object):
-
-    """ Base class for interacting with a cloud provider API. """
-
-    def __init__(self, username, api_key):
-        self.username = username
-        self.api_key = api_key
-
-    def authenticate(self):
-        raise NotImplementedError
-
-    def list_regions(self):
-        raise NotImplementedError
-
-    def list_instances(self):
-        raise NotImplementedError
-
-    def get_instance(self, instance_id):
-        raise NotImplementedError
-
-    def terminate_instance(self, instance_id):
-        raise NotImplementedError
 
 
 class RackspaceCtrl(BaseCloudCtrl):

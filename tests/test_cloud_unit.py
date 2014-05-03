@@ -1,4 +1,4 @@
-from gns3.cloud import RackspaceCtrl
+from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 import json
 import unittest
 
