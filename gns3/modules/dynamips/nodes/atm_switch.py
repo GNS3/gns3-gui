@@ -76,7 +76,7 @@ class ATMSwitch(Node):
             return
 
         self._atmsw_id = result["id"]
-        if not self._frsw_id:
+        if not self._atmsw_id:
             self.error_signal.emit(self.id(), "returned ID from server is null")
             return
 

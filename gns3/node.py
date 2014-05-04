@@ -109,7 +109,7 @@ class Node(QtCore.QObject):
         self._id = new_id
 
         # update the instance count to avoid conflicts
-        if new_id <= Node._instance_count:
+        if new_id >= Node._instance_count:
             Node._instance_count = new_id + 1
 
     def status(self):
