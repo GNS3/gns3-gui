@@ -68,21 +68,26 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 0)
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 0)
         self.assertFalse(self.page.uiTermsCheckBox.isChecked())
+        self.assertEqual(self.page.uiTimeoutSpinBox.value(), 30)
 
     def test_user_interaction(self):
         """
         Simulate user interactions via keyboard or mouse and check dialog status
         """
+        # following line is because of https://bugreports.qt-project.org/browse/QTBUG-14483
+        self.page.show()
+
         QTest.keyClicks(self.page.uiUserNameLineEdit, "Bob")
         self.assertEqual(self.page.uiUserNameLineEdit.text(), 'Bob')
         QTest.keyClick(self.page.uiAPIKeyLineEdit, Qt.Key_Eacute)
         self.assertEqual(self.page.uiAPIKeyLineEdit.text(), 'É')
         QTest.mouseClick(self.page.uiRememberAPIKeyRadioButton, Qt.LeftButton)
-        QTest.mouseClick(self.page.uiTermsCheckBox, Qt.LeftButton)
         self.assertTrue(self.page._store_api_key())
-        self.assertTrue(self.page._validate())
+        QTest.mouseClick(self.page.uiTermsCheckBox, Qt.LeftButton)
+        self.assertTrue(self.page.uiTermsCheckBox.isChecked())
         QTest.mouseClick(self.page.uiForgetAPIKeyRadioButton, Qt.LeftButton)
         self.assertFalse(self.page._store_api_key())
+
         self.assertTrue(self.page._validate())
 
     def test_load_settings(self):
@@ -100,6 +105,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['instances_per_project'] = 3
         self.page.settings['memory_per_instance'] = 2
         self.page.settings['memory_per_new_instance'] = 6
+        self.page.settings['instance_timeout'] = 120
 
         self.page.loadPreferences()
 
@@ -113,10 +119,35 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 3)
         self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 2)
         self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 6)
+        self.assertEqual(self.page.uiTimeoutSpinBox.value(), 120)
 
     def test_save_preferences(self):
+        self.page.settings['cloud_store_api_key_chosen'] = True
+        self.page.settings['cloud_provider'] = 'rackspace'
+        self.page.loadPreferences()
+
         self.page.uiUserNameLineEdit.setText("foo")
         self.page.uiAPIKeyLineEdit.setText("bar")
         self.page.uiRememberAPIKeyRadioButton.setChecked(True)
         self.page.uiTermsCheckBox.setChecked(True)
+        self.page.uiRememberAPIKeyRadioButton.setChecked(True)
+        self.page.uiCloudProviderComboBox.setCurrentIndex(1)
+        self.page.uiRegionComboBox.setCurrentIndex(1)
+        self.page.uiTermsCheckBox.setChecked(True)
+        self.page.uiNumOfInstancesSpinBox.setValue(8)
+        self.page.uiMemPerInstanceSpinBox.setValue(16)
+        self.page.uiMemPerNewInstanceSpinBox.setValue(32)
+        self.page.uiTimeoutSpinBox.setValue(5)
+
         self.page.savePreferences()
+
+        self.assertTrue(self.page.settings['cloud_store_api_key'])
+        self.assertEqual(self.page.settings['cloud_provider'], 'rackspace')
+        self.assertEqual(self.page.settings['cloud_region'], 'United States')
+        self.assertTrue(self.page.settings['accepted_terms'])
+        self.assertEqual(self.page.settings['instances_per_project'], 8)
+        self.assertEqual(self.page.settings['memory_per_instance'], 16)
+        self.assertEqual(self.page.settings['memory_per_new_instance'], 32)
+        self.assertEqual(self.page.settings['instance_timeout'], 5)
+
+
