@@ -70,16 +70,14 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         self.uiStackedWidget.addWidget(servers_page)
         self._items.append(item)
 
-        # Deactivate cloud settings page for alpha3 release
-
         # load cloud settings page
-        #cloud_page = CloudPreferencesPage()
-        #cloud_page.loadPreferences()
-        #name = cloud_page.windowTitle()
-        #item = QtGui.QListWidgetItem(name, self.uiListWidget)
-        #item.setData(QtCore.Qt.UserRole, cloud_page)
-        #self.uiStackedWidget.addWidget(cloud_page)
-        #self._items.append(item)
+        cloud_page = CloudPreferencesPage()
+        cloud_page.loadPreferences()
+        name = cloud_page.windowTitle()
+        item = QtGui.QListWidgetItem(name, self.uiListWidget)
+        item.setData(QtCore.Qt.UserRole, cloud_page)
+        self.uiStackedWidget.addWidget(cloud_page)
+        self._items.append(item)
 
         # load module preference pages
         for module in MODULES:
