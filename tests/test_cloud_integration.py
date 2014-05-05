@@ -44,7 +44,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(auth_result, False)
         self.assertIsNone(ctrl.token)
 
-    def test_invalid_user(self):
+    def test_authenticate_invalid_user(self):
         """  Ensure authentication with invalid user credentials fails. """
 
         ctrl = RackspaceCtrl('invalid_user', 'invalid_api_key')
@@ -53,10 +53,25 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(auth_result, False)
         self.assertIsNone(ctrl.token)
 
+    def test_delete_instance(self):
+        """ Test deleting an instance. """
+
+        self.ctrl.set_region('ord')
+
+        # TODO: create an instance first, and get its ID
+
+        #self.ctrl.delete_instance('invalid_instance_id')
+
+    def test_deleted_invalid_instance_id(self):
+
+        self.ctrl.set_region('ord')
+
+        self.assertRaises(LookupError, self.ctrl.delete_instance,
+                          'invalid_instance_id')
+
     def test_list_regions(self):
         """ Ensure that list_regions returns the correct result. """
 
-        self.ctrl.authenticate()
         regions = self.ctrl.list_regions()
 
         expected_regions = [
@@ -68,6 +83,14 @@ class TestRackspaceCtrl(unittest.TestCase):
         ]
 
         self.assertCountEqual(regions, expected_regions)
+
+    def test_list_instances(self):
+
+        self.ctrl.set_region('ord')
+
+        instances = self.ctrl.list_instances()
+
+        self.assertIsInstance(instances, dict)
 
     def test_token_parsed(self):
         """ Ensure that the token is set. """
@@ -94,6 +117,8 @@ class TestRackspaceCtrl(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    username = input('Enter username: ')
-    api_key = input('Enter api key: ')
+    username = 'kieronbulloch'
+    api_key = '2d907b75752b4650b230469213d97cd3'
+    #username = input('Enter username: ')
+    #api_key = input('Enter api key: ')
     unittest.main()
