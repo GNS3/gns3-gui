@@ -31,7 +31,7 @@ from .ui.main_window_ui import Ui_MainWindow
 from .about_dialog import AboutDialog
 from .early_release_dialog import EarlyReleaseDialog
 from .preferences_dialog import PreferencesDialog
-from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS
+from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
@@ -42,6 +42,8 @@ from .topology import Topology
 
 import logging
 log = logging.getLogger(__name__)
+
+CLOUD_SETTINGS_GROUP = "Cloud"
 
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -94,13 +96,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # restore the general settings
         settings.beginGroup(self.__class__.__name__)
         for name, value in GENERAL_SETTINGS.items():
-            self._settings[name] = settings.value(name, value)
+            self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
         settings.endGroup()
 
         # restore cloud settings
-        settings.beginGroup("Cloud")
+        settings.beginGroup(CLOUD_SETTINGS_GROUP)
         for name, value in CLOUD_SETTINGS.items():
-            self._cloud_settings[name] = settings.value(name, value)
+            self._cloud_settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
         settings.endGroup()
 
     def settings(self):
@@ -136,19 +138,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def setCloudSettings(self, new_settings):
+    def setCloudSettings(self, new_settings, persist):
         """
-        Set new cloud settings.
+        Set new cloud settings and store them only when users asks for it
 
         :param new_settings: cloud settings dictionary
+        :param persist: whether to persist settings on disk or not
         """
 
         self._cloud_settings.update(new_settings)
-        settings = QtCore.QSettings()
-        settings.beginGroup("Cloud")
-        for name, value in self._cloud_settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        if persist:
+            settings = QtCore.QSettings()
+            settings.beginGroup(CLOUD_SETTINGS_GROUP)
+            for name, value in self._cloud_settings.items():
+                settings.setValue(name, value)
+            settings.endGroup()
 
     def _connections(self):
         """
