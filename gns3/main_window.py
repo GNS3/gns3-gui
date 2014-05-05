@@ -43,6 +43,8 @@ from .topology import Topology
 import logging
 log = logging.getLogger(__name__)
 
+CLOUD_SETTINGS_GROUP = "Cloud"
+
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
@@ -103,7 +105,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         settings.endGroup()
 
         # restore cloud settings
-        settings.beginGroup("Cloud")
+        settings.beginGroup(CLOUD_SETTINGS_GROUP)
         for name, value in CLOUD_SETTINGS.items():
             self._cloud_settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
         settings.endGroup()
@@ -141,19 +143,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def setCloudSettings(self, new_settings):
+    def setCloudSettings(self, new_settings, persist):
         """
-        Set new cloud settings.
+        Set new cloud settings and store them only when the user asks for it
 
         :param new_settings: cloud settings dictionary
+        :param persist: whether to persist settings on disk or not
         """
 
         self._cloud_settings.update(new_settings)
-        settings = QtCore.QSettings()
-        settings.beginGroup("Cloud")
-        for name, value in self._cloud_settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        if persist:
+            settings = QtCore.QSettings()
+            settings.beginGroup(CLOUD_SETTINGS_GROUP)
+            for name, value in self._cloud_settings.items():
+                settings.setValue(name, value)
+            settings.endGroup()
 
     def _connections(self):
         """

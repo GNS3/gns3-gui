@@ -14,38 +14,10 @@
    <string>Cloud</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="uiUserNameLabel">
-     <property name="text">
-      <string>User Name:</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1">
     <widget class="QLabel" name="uiAPIKeyLabel">
      <property name="text">
       <string>API Key</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="uiCreateAccountLabel">
-     <property name="text">
-      <string>No API Key? &lt;a href=&quot;#&quot;&gt;Create Cloud Account.&lt;/a&gt;</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::RichText</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
-     <property name="text">
-      <string>Remeber these settings
-(Suggested for private computers)</string>
      </property>
     </widget>
    </item>
@@ -57,21 +29,78 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="1" column="0">
     <widget class="QLineEdit" name="uiUserNameLineEdit"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="uiCreateAccountLabel">
+     <property name="text">
+      <string>No API Key? &lt;a href=&quot;#&quot;&gt;Create Cloud Account.&lt;/a&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QFrame" name="PLACEHOLDER">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="uiCloudProviderLabel">
+     <property name="text">
+      <string>Cloud provider</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QComboBox" name="uiRegionComboBox"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QComboBox" name="uiCloudProviderComboBox"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="uiRegionLabel">
+     <property name="text">
+      <string>Region (optional)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
+     <property name="text">
+      <string>Remeber these settings
+(Suggested for private computers)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="uiUserNameLabel">
+     <property name="text">
+      <string>User Name:</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
