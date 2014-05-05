@@ -164,7 +164,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
 
             else:
                 # reset cloud preferences to default values
-                for k, v in CLOUD_SETTINGS:
+                for k, v in CLOUD_SETTINGS.items():
                     self.settings[k] = v
 
             if not self.settings['cloud_store_api_key_chosen']:

@@ -10,6 +10,7 @@ from PyQt4 import QtGui
 
 from gns3.pages.cloud_preferences_page import CloudPreferencesPage
 from gns3.settings import CLOUD_SETTINGS
+from gns3.main_window import MainWindow
 
 
 def make_getitem(container):
@@ -57,7 +58,7 @@ class TestCloudPreferencesPage(TestCase):
         def closeMsgBox():
             self.assertIsInstance(self.app.activeModalWidget(), QtGui.QMessageBox)
             self.app.activeModalWidget().close()
-        QTimer.singleShot(50, closeMsgBox)
+        QTimer.singleShot(100, closeMsgBox)
         self.page.uiUserNameLineEdit.setText('foo')
         self.page.uiAPIKeyLineEdit.setText('bar')
         valid = self.page._validate()
@@ -150,4 +151,23 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.settings['memory_per_new_instance'], 32)
         self.assertEqual(self.page.settings['instance_timeout'], 5)
 
-
+    def test_clear_settings_on_user_request(self):
+        # no mocking for this testcase
+        page = CloudPreferencesPage()
+        # first run, user stores settings on disk
+        page.uiRememberAPIKeyRadioButton.setChecked(True)
+        page.uiAPIKeyLineEdit.setText("myapikey")
+        page.uiUserNameLineEdit.setText("myusername")
+        page.uiTermsCheckBox.setChecked(True)
+        page.savePreferences()
+        settings = MainWindow.instance().cloud_settings()
+        self.assertTrue(settings.get('cloud_store_api_key'))
+        self.assertEqual(settings.get('cloud_api_key'), 'myapikey')
+        self.assertEqual(settings.get('cloud_user_name'), 'myusername')
+        # now users change their mind
+        page.uiForgetAPIKeyRadioButton.setChecked(True)
+        page.savePreferences()
+        # reload and ensure settings were erased
+        self.assertFalse(settings.get('cloud_store_api_key'))
+        self.assertEqual(settings.get('cloud_api_key'), '')
+        self.assertEqual(settings.get('cloud_user_name'), '')
