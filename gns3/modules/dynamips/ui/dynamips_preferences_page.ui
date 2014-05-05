@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>508</height>
+    <width>430</width>
+    <height>505</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,35 +24,7 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiDynamipsPathLabel">
-         <property name="text">
-          <string>Path to Dynamips:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiBaseHypervisorPortLabel">
-         <property name="text">
-          <string>Base port for hypervisors:</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="uiBaseConsolePortLabel">
-         <property name="text">
-          <string>Base console port for routers:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QLabel" name="uiBaseAuxPortLabel">
-         <property name="text">
-          <string>Base auxiliary console port for routers:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QPushButton" name="uiTestSettingsPushButton">
@@ -70,71 +42,6 @@
          </item>
         </layout>
        </item>
-       <item row="8" column="1">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>164</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <spacer name="spacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>390</width>
-           <height>193</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QSpinBox" name="uiBaseAuxPortSpinBox">
-         <property name="suffix">
-          <string notr="true"> TCP</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>2501</number>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QSpinBox" name="uiBaseConsolePortSpinBox">
-         <property name="suffix">
-          <string notr="true"> TCP</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>2001</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QSpinBox" name="uiBaseHypervisorPortSpinBox">
-         <property name="suffix">
-          <string notr="true"> TCP</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>7200</number>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
@@ -151,6 +58,149 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="uiDynamipsPathLabel">
+         <property name="text">
+          <string>Path to Dynamips:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>164</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>390</width>
+           <height>193</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="uiConsolePortRangeGroupBox">
+         <property name="title">
+          <string>Console port range for routers</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QSpinBox" name="uiConsoleStartPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>2001</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="uiConsolePortRangeLabel">
+            <property name="text">
+             <string>to</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="uiConsoleEndPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>2500</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QGroupBox" name="uiAuxPortRangeGroupBox">
+         <property name="title">
+          <string>Auxiliary console port range for routers</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QSpinBox" name="uiAuxStartPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>2501</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="uiAuxPortRangeLabel">
+            <property name="text">
+             <string>to</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="uiAuxEndPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>3000</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -201,7 +251,7 @@
       <attribute name="title">
        <string>Advanced settings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QGroupBox" name="uiHypervisorAllocationGroupBox">
          <property name="title">
@@ -261,20 +311,68 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="uiUDPTunnelingGroupBox">
+        <widget class="QGroupBox" name="uiHypervisorPortRangeGroupBox">
          <property name="title">
-          <string>UDP tunneling</string>
+          <string>Dynamips hypervisor port range</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QLabel" name="uiBaseUDPPortLabel">
-            <property name="text">
-             <string> Base UDP port:</string>
+           <widget class="QSpinBox" name="uiHypervisorStartPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>7200</number>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="uiBaseUDPPortSpinBox">
+           <widget class="QLabel" name="uiHypervisorPortRangeLabel">
+            <property name="text">
+             <string>to</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="uiHypervisorEndPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>7700</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiUDPPortRangeGroupBox">
+         <property name="title">
+          <string>UDP tunneling port range</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QSpinBox" name="uiUDPStartPortSpinBox">
             <property name="suffix">
              <string notr="true"> UDP</string>
             </property>
@@ -287,24 +385,37 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="uiBaseUDPPortIncrementationLabel">
+           <widget class="QLabel" name="uiUDPPortRangeLabel">
             <property name="text">
-             <string>UDP incrementation per hypervisor:</string>
+             <string>to</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="uiBaseUDPPortIncrementationSpinBox">
-            <property name="maximum">
-             <number>100000</number>
+           <widget class="QSpinBox" name="uiUDPEndPortSpinBox">
+            <property name="suffix">
+             <string notr="true"> UDP</string>
             </property>
-            <property name="singleStep">
-             <number>10</number>
+            <property name="maximum">
+             <number>65535</number>
             </property>
             <property name="value">
-             <number>100</number>
+             <number>20000</number>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>147</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -373,26 +484,21 @@
        </item>
       </layout>
       <zorder>spacer_2</zorder>
-      <zorder>uiUDPTunnelingGroupBox</zorder>
       <zorder>uiMemoryUsageOptimisationGroupBox</zorder>
       <zorder>uiHypervisorAllocationGroupBox</zorder>
+      <zorder>uiHypervisorPortRangeGroupBox</zorder>
+      <zorder>uiUDPPortRangeGroupBox</zorder>
      </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>uiTabWidget</tabstop>
   <tabstop>uiDynamipsPathLineEdit</tabstop>
   <tabstop>uiDynamipsPathToolButton</tabstop>
-  <tabstop>uiBaseHypervisorPortSpinBox</tabstop>
-  <tabstop>uiBaseConsolePortSpinBox</tabstop>
-  <tabstop>uiBaseAuxPortSpinBox</tabstop>
   <tabstop>uiAllocateHypervisorPerDeviceCheckBox</tabstop>
   <tabstop>uiMemoryUsageLimitPerHypervisorSpinBox</tabstop>
   <tabstop>uiAllocateHypervisorPerIOSCheckBox</tabstop>
-  <tabstop>uiBaseUDPPortSpinBox</tabstop>
-  <tabstop>uiBaseUDPPortIncrementationSpinBox</tabstop>
   <tabstop>uiGhostIOSSupportCheckBox</tabstop>
   <tabstop>uiMmapSupportCheckBox</tabstop>
   <tabstop>uiJITSharingSupportCheckBox</tabstop>

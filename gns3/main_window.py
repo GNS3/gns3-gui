@@ -24,6 +24,7 @@ import tempfile
 import socket
 import shutil
 import json
+
 from .qt import QtGui, QtCore
 from .servers import Servers
 from .node import Node
@@ -38,7 +39,6 @@ from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
 from .topology import Topology
-
 
 import logging
 log = logging.getLogger(__name__)
@@ -79,6 +79,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # do not show the nodes dock widget my default
         self.uiNodesDockWidget.setVisible(False)
+
+        # populate the view -> docks menu
+        self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiCaptureDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -238,7 +243,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if not self._ignore_unsaved_state:
             self.setWindowModified(True)
-            self.uiSaveProjectAction.setEnabled(True)
 
     def ignoreUnsavedState(self, value):
         """
@@ -263,8 +267,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to open a project.
         """
 
-        directory = self._settings["projects_path"]
-        path = QtGui.QFileDialog.getOpenFileName(self, "Open project", directory)
+        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+                                                             "Open project",
+                                                             self._settings["projects_path"],
+                                                             "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
+                                                             "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
             self._loadProject(path)
 
@@ -440,7 +447,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "start"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "start") and item.node().initialized():
                 item.node().start()
 
     def _suspendAllActionSlot(self):
@@ -449,7 +456,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend") and item.node().initialized():
                 item.node().suspend()
 
     def _stopAllActionSlot(self):
@@ -458,7 +465,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "stop"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "stop") and item.node().initialized():
                 item.node().stop()
 
     def _reloadAllActionSlot(self):
@@ -467,7 +474,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "reload"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
 
     def _auxConsoleAllActionSlot(self):
@@ -485,7 +492,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         from .telnet_console import telnetConsole
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
                 node = item.node()
                 if node.status() != Node.started:
                     continue
@@ -726,7 +733,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
             if self._temporary_project:
-                destination_file = "untitled.net"
+                destination_file = "untitled.gns3"
             else:
                 destination_file = os.path.basename(self._project_path)
             reply = QtGui.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
@@ -776,8 +783,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             except OSError as e:
 
                 if not e.errno:
-                    # not a normal OSError, thrown
-                    # from the Websocket client.
+                    # not a normal OSError, thrown from the Websocket client.
                     MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
                                                                                                                                                                                server.port),
                                                                                                                                                                                str(e))
@@ -821,6 +827,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _saveProjectAs(self):
         """
         Saves a project to another location/name.
+
+        :returns: GNS3 project file (.gns3)
         """
 
         # first check if any node that can be started is running
@@ -836,19 +844,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         if self._temporary_project:
-            destination_file = os.path.join(self._settings["projects_path"], "untitled.net")
+            default_project_name = "untitled"
         else:
-            destination_file = os.path.join(self._settings["projects_path"], os.path.basename(self._project_path))
-        path = QtGui.QFileDialog.getSaveFileName(self, "Save project", destination_file, "NET File (*.net)")
-        if not path:
+            default_project_name = os.path.basename(self._project_path)
+            if default_project_name.endswith(".gns3"):
+                default_project_name = default_project_name[:-5]
+
+        file_dialog = QtGui.QFileDialog(self)
+        file_dialog.setWindowTitle("Save project")
+        file_dialog.setNameFilters(["Directories"])
+        file_dialog.setDirectory(self._settings["projects_path"])
+        file_dialog.setFileMode(QtGui.QFileDialog.AnyFile)
+        file_dialog.setDefaultSuffix("gns3")
+        file_dialog.setLabelText(QtGui.QFileDialog.FileName, "Project name:")
+        file_dialog.selectFile(default_project_name)
+        file_dialog.setOptions(QtGui.QFileDialog.ShowDirsOnly)
+        file_dialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+        if file_dialog.exec_() == QtGui.QFileDialog.Rejected:
             return False
 
-        new_project_files_dir = path
-        if path.endswith(".net"):
-            new_project_files_dir = path[:-4]
-        else:
-            path = path + ".net"
-        new_project_files_dir += "-files"
+        project_dir = file_dialog.selectedFiles()[0]
+        project_name = os.path.basename(project_dir)[:-5]
+        topology_file_path = os.path.join(project_dir, project_name + ".gns3")
+        new_project_files_dir = os.path.join(project_dir, project_name + "-files")
 
         # create the destination directory for project files
         try:
@@ -896,7 +914,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._deleteTemporaryProject()
         self._project_files_dir = new_project_files_dir
-        return self._saveProject(path)
+        return self._saveProject(topology_file_path)
 
     def _saveProject(self, path):
         """
@@ -929,7 +947,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiGraphicsView.reset()
 
         project_files_dir = path
-        if path.endswith(".net"):
+        if path.endswith(".gns3"):
+            project_files_dir = path[:-5]
+        elif path.endswith(".net"):
             project_files_dir = path[:-4]
         self._project_files_dir = project_files_dir + "-files"
 
@@ -976,9 +996,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.uiGraphicsView.reset()
         try:
-            with tempfile.NamedTemporaryFile(prefix="gns3-", suffix=".net", delete=False) as f:
+            with tempfile.NamedTemporaryFile(prefix="gns3-", suffix=".gns3", delete=False) as f:
                 log.info("creating temporary topology file: {}".format(f.name))
-                project_files_dir = f.name[:-4] + "-files"
+                project_files_dir = f.name[:-5] + "-files"
                 if not os.path.isdir(project_files_dir):
                     log.info("creating temporary project files directory: {}".format(project_files_dir))
                     os.mkdir(project_files_dir)
@@ -1015,7 +1035,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._temporary_project = False
             self.setWindowFilePath(path)
         self.setWindowModified(False)
-        self.uiSaveProjectAction.setEnabled(False)
 
     @staticmethod
     def instance():

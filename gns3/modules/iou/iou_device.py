@@ -133,6 +133,9 @@ class IOUDevice(Node):
             return
 
         self._iou_id = result["id"]
+        if not self._iou_id:
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return
 
         # update the settings using the defaults sent by the server
         for name, value in result.items():
@@ -389,6 +392,7 @@ class IOUDevice(Node):
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.nio_cancel_signal.emit(self.id())
         else:
             self.nio_signal.emit(self.id(), result["port_id"])
 

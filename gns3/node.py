@@ -45,6 +45,7 @@ class Node(QtCore.QObject):
     warning_signal = QtCore.Signal(int, str)
     server_error_signal = QtCore.Signal(int, int, str)
     nio_signal = QtCore.Signal(int, int)
+    nio_cancel_signal = QtCore.Signal(int)
     allocate_udp_nio_signal = QtCore.Signal(int, int, int)
 
     _instance_count = 1
@@ -108,7 +109,7 @@ class Node(QtCore.QObject):
         self._id = new_id
 
         # update the instance count to avoid conflicts
-        if new_id <= Node._instance_count:
+        if new_id >= Node._instance_count:
             Node._instance_count = new_id + 1
 
     def status(self):

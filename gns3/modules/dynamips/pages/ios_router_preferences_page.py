@@ -182,7 +182,11 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         #TODO: current directory for IOS image + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select an IOS image", ".", "IOS image (*.bin *.image)")
+        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+                                                             "Select an IOS image",
+                                                             ".",
+                                                             "All files (*.*);;IOS image (*.bin *.image)",
+                                                             "IOS image (*.bin *.image)")
         if not path:
             return
 

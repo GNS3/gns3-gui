@@ -76,9 +76,10 @@ class FrameRelaySwitch(Node):
 
         self._frsw_id = result["id"]
         if not self._frsw_id:
-            log.error("returned ID from server is null")
-        self._settings["name"] = result["name"]
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return
 
+        self._settings["name"] = result["name"]
         log.info("Frame Relay switch {} has been created".format(self.name()))
         self.setInitialized(True)
         self.created_signal.emit(self.id())
@@ -242,6 +243,7 @@ class FrameRelaySwitch(Node):
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.nio_cancel_signal.emit(self.id())
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])

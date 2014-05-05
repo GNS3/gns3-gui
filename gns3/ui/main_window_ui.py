@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Thu Mar 20 16:15:47 2014
+# Created: Tue Apr 29 17:59:09 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -76,6 +76,8 @@ class Ui_MainWindow(object):
         self.uiViewMenu.setObjectName(_fromUtf8("uiViewMenu"))
         self.uiStyleMenu = QtGui.QMenu(self.uiViewMenu)
         self.uiStyleMenu.setObjectName(_fromUtf8("uiStyleMenu"))
+        self.uiDocksMenu = QtGui.QMenu(self.uiViewMenu)
+        self.uiDocksMenu.setObjectName(_fromUtf8("uiDocksMenu"))
         self.uiControlMenu = QtGui.QMenu(self.uiMenuBar)
         self.uiControlMenu.setObjectName(_fromUtf8("uiControlMenu"))
         self.uiAnnotateMenu = QtGui.QMenu(self.uiMenuBar)
@@ -444,6 +446,8 @@ class Ui_MainWindow(object):
         self.uiViewMenu.addAction(self.uiShowNamesAction)
         self.uiViewMenu.addAction(self.uiShowPortNames)
         self.uiViewMenu.addAction(self.uiStyleMenu.menuAction())
+        self.uiViewMenu.addSeparator()
+        self.uiViewMenu.addAction(self.uiDocksMenu.menuAction())
         self.uiControlMenu.addAction(self.uiStartAllAction)
         self.uiControlMenu.addAction(self.uiSuspendAllAction)
         self.uiControlMenu.addAction(self.uiStopAllAction)
@@ -507,6 +511,7 @@ class Ui_MainWindow(object):
         self.uiHelpMenu.setTitle(_translate("MainWindow", "&Help", None))
         self.uiViewMenu.setTitle(_translate("MainWindow", "&View", None))
         self.uiStyleMenu.setTitle(_translate("MainWindow", "Window Style", None))
+        self.uiDocksMenu.setTitle(_translate("MainWindow", "Docks", None))
         self.uiControlMenu.setTitle(_translate("MainWindow", "Control", None))
         self.uiAnnotateMenu.setTitle(_translate("MainWindow", "Annotate", None))
         self.uiDeviceMenu.setTitle(_translate("MainWindow", "Device", None))

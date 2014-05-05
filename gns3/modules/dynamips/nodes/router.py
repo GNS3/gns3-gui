@@ -272,9 +272,9 @@ class Router(Node):
             return
 
         self._router_id = result["id"]
-
         if not self._router_id:
-            log.error("returned ID from server is null")
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return
 
         # update the settings using the defaults sent by the server
         for name, value in result.items():
@@ -609,6 +609,7 @@ class Router(Node):
         if error:
             log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.nio_cancel_signal.emit(self.id())
         else:
             log.debug("{} has added a new NIO: {}".format(self.name(), result))
             self.nio_signal.emit(self.id(), result["port_id"])

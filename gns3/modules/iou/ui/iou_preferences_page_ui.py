@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Sat Apr 12 14:54:36 2014
+# Created: Wed Apr 30 16:43:13 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -135,7 +135,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiUDPEndPortSpinBox = QtGui.QSpinBox(self.uiUDPPortRangeGroupBox)
         self.uiUDPEndPortSpinBox.setSuffix(_fromUtf8(" UDP"))
         self.uiUDPEndPortSpinBox.setMaximum(65535)
-        self.uiUDPEndPortSpinBox.setProperty("value", 40001)
+        self.uiUDPEndPortSpinBox.setProperty("value", 40000)
         self.uiUDPEndPortSpinBox.setObjectName(_fromUtf8("uiUDPEndPortSpinBox"))
         self.horizontalLayout_4.addWidget(self.uiUDPEndPortSpinBox)
         spacerItem3 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)

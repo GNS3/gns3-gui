@@ -21,7 +21,7 @@ Configuration page for IOU preferences.
 
 import os
 import sys
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
@@ -83,6 +83,50 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
     def _testSettingsSlot(self):
 
         QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
+        return
+
+        servers = Servers.instance()
+        if self.uiUseLocalServercheckBox.isChecked():
+            server = servers.localServer()
+        else:
+            QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
+
+        try:
+            if not server.connected():
+                server.reconnect()
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
+                                                                                                                                           port=server.port,
+                                                                                                                                           error=e))
+
+        self._progress_dialog = QtGui.QProgressDialog("Testing settings...", "Cancel", 0, 0, parent=self)
+        self._progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+        self._progress_dialog.setWindowTitle("Settings")
+        self._progress_dialog.show()
+
+        iou_module = IOU.instance()
+        if server not in iou_module.servers():
+            server_added = True
+            iou_module.addServer(server)
+        self.savePreferences()
+        if server_added:
+            iou_module.removeServer(server)
+        server.send_message("iou.test_settings", None, self._testSettingsCallback)
+
+    def _testSettingsCallback(self, result, error=False):
+
+        if self._progress_dialog.wasCanceled():
+            print("Was canceled")
+            return
+
+        self._progress_dialog.accept()
+
+        if error:
+            pass
+            #log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
+
+        print("Report received")
+        print(result)
 
     def _restoreDefaultsSlot(self):
         """

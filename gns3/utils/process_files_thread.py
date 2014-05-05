@@ -96,13 +96,11 @@ class ProcessFilesThread(QtCore.QThread):
                     else:
                         shutil.copy2(source_file, destination_file)
                 except OSError as e:
-#                     if self._move:
-#                         log.warning("cannot move: {}".format(e))
-#                     else:
-#                         log.warning("cannot copy: {}".format(e))
                     if self._move:
+                        log.warning("cannot move: {}".format(e))
                         self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)), False)
                     else:
+                        log.warning("cannot copy: {}".format(e))
                         self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)), False)
                 copied += 1
                 # update the progress made
