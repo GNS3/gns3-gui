@@ -187,9 +187,3 @@ CLOUD_REGIONS = {
     "us": "United States"
 }
 
-CLOUD_SETTINGS_TYPES = {
-    "cloud_user_name": str,
-    "cloud_api_key": str,
-    "cloud_store_api_key": bool,
-    "cloud_store_api_key_chosen": bool,
-}
