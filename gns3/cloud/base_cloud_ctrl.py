@@ -68,6 +68,21 @@ class BaseCloudCtrl(object):
 
         return self.driver.list_nodes()
 
+    def create_key_pair(self):
+        """ Create and return a new Key Pair. """
+
+        return self.driver.create_key_pair()
+
+    def delete_key_pair(self, keypair):
+        """ Delete the keypair. """
+
+        return self.driver.delete_key_pair(keypair)
+
+    def list_key_pairs(self):
+        """ Return a list of Key Pairs. """
+
+        return self.driver.list_key_pairs()
+
     def list_regions(self):
         raise NotImplementedError
 
