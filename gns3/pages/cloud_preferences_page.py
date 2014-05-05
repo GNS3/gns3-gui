@@ -139,6 +139,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiMemPerInstanceSpinBox.setValue(self.settings['memory_per_instance'])
         self.uiMemPerNewInstanceSpinBox.setValue(self.settings['memory_per_new_instance'])
         self.uiTermsCheckBox.setChecked(self.settings['accepted_terms'])
+        self.uiTimeoutSpinBox.setValue(self.settings['instance_timeout'])
 
     def savePreferences(self):
         """
@@ -159,6 +160,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.settings['memory_per_instance'] = self.uiMemPerInstanceSpinBox.value()
                 self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
                 self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
+                self.settings['instance_timeout'] = self.uiTimeoutSpinBox.value()
 
             else:
                 # reset cloud preferences to default values
