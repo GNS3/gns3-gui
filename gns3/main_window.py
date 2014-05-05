@@ -145,7 +145,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def setCloudSettings(self, new_settings, persist):
         """
-        Set new cloud settings and store them only when users asks for it
+        Set new cloud settings and store them only when the user asks for it
 
         :param new_settings: cloud settings dictionary
         :param persist: whether to persist settings on disk or not
