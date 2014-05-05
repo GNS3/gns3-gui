@@ -41,42 +41,32 @@ class BaseCloudCtrl(object):
         pass
         #self.
 
-    def delete_instance(self, instance_id):
-        """ Delete the instance with id of instance_id. Return True/False. """
-
-        #class FakeNode(object):
-        #
-        #    def __init__(self):
-        #        pass
-
-        ## TODO: remove this temporary bit
-        #self.instances[instance_id] = FakeNode()
-        #setattr(self.instances[instance_id], 'id', instance_id)
+    def delete_instance(self, instance):
+        """ Delete the specified instance.  Return True or False. """
 
         try:
-            return self.driver.destroy_node(self.instances[instance_id])
+            return self.driver.destroy_node(instance)
 
-        except (KeyError, Exception) as e:
+        except Exception as e:
 
-            # libcloud raises generic 'Exception' with error in text
-            if (type(e) is KeyError) or str(e) == \
-                    "404 Not Found Instance could not be found":
+            # libcloud raises generic 'Exception' with the error in the text
+            if str(e) == "404 Not Found Instance could not be found":
 
-                raise LookupError('Instance with id "%s" not found' %
-                                 instance_id)
+                raise LookupError('Instance not found')
 
-    def get_instance(self, instance_id):
+    def get_instance(self, instance):
         """ Return a Node object representing the requested instance. """
 
-        return self.instances[instance_id]
+        for i in self.driver.list_nodes():
+            if i.id == instance.id:
+                return i
+
+        return None
 
     def list_instances(self):
         """ Return a dict of instances in the current region ('id' as key). """
 
-        # save the list of instances to reduce API calls
-        self.instances = self.driver.list_nodes()
-
-        return {i.id: i for i in self.instances}
+        return self.driver.list_nodes()
 
     def list_regions(self):
         raise NotImplementedError

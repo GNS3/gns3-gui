@@ -9,6 +9,14 @@ from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 import unittest
 
 
+class StubNodeObject(object):
+
+    def __init__(self, **kwargs):
+
+        for arg in kwargs:
+            setattr(self, arg, kwargs[arg])
+
+
 class TestRackspaceCtrl(unittest.TestCase):
 
     def setUp(self):
@@ -66,8 +74,10 @@ class TestRackspaceCtrl(unittest.TestCase):
 
         self.ctrl.set_region('ord')
 
+        fake_instance = StubNodeObject(id='invalid_id')
+
         self.assertRaises(LookupError, self.ctrl.delete_instance,
-                          'invalid_instance_id')
+                          fake_instance)
 
     def test_list_regions(self):
         """ Ensure that list_regions returns the correct result. """
@@ -90,7 +100,7 @@ class TestRackspaceCtrl(unittest.TestCase):
 
         instances = self.ctrl.list_instances()
 
-        self.assertIsInstance(instances, dict)
+        self.assertIsInstance(instances, list)
 
     def test_token_parsed(self):
         """ Ensure that the token is set. """
