@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>384</height>
+    <width>474</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Cloud</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="9" column="0" colspan="2">
-    <widget class="QLabel" name="label">
+   <item row="9" column="0" colspan="3">
+    <widget class="QLabel" name="uiNewInstancesLabel">
      <property name="text">
       <string>New instances are:</string>
      </property>
@@ -38,7 +38,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="4" column="2">
     <widget class="QRadioButton" name="uiForgetAPIKeyRadioButton">
      <property name="text">
       <string>Forget these settings on exit
@@ -46,7 +46,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="2">
     <widget class="QLabel" name="uiCreateAccountLabel">
      <property name="text">
       <string>No API Key? &lt;a href=&quot;#&quot;&gt;Create Cloud Account.&lt;/a&gt;</string>
@@ -59,10 +59,10 @@
    <item row="1" column="0">
     <widget class="QLineEdit" name="uiUserNameLineEdit"/>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="2">
     <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="2">
     <widget class="QLabel" name="uiAPIKeyLabel">
      <property name="text">
       <string>API Key</string>
@@ -72,7 +72,7 @@
    <item row="3" column="0">
     <widget class="QComboBox" name="uiCloudProviderComboBox"/>
    </item>
-   <item row="3" column="1">
+   <item row="3" column="2">
     <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
      <property name="text">
       <string>Remeber these settings
@@ -87,14 +87,14 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="6" column="0" colspan="3">
     <widget class="QLabel" name="uiStartNewProjectsLabel">
      <property name="text">
       <string>Start new projects with:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
+   <item row="7" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QSpinBox" name="uiNumOfInstancesSpinBox"/>
@@ -138,29 +138,7 @@
      </item>
     </layout>
    </item>
-   <item row="14" column="0">
-    <widget class="QFrame" name="PLACEHOLDER">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0" rowspan="2" colspan="2">
+   <item row="10" column="0" rowspan="2" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QSpinBox" name="uiMemPerNewInstanceSpinBox"/>
@@ -203,6 +181,65 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="17" column="0">
+    <widget class="QFrame" name="PLACEHOLDER">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0" rowspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QSpinBox" name="uiTimeoutSpinBox">
+       <property name="maximum">
+        <number>999</number>
+       </property>
+       <property name="value">
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiTimeoutLabel2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>minutes of inactivity</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="12" column="0" colspan="2">
+    <widget class="QLabel" name="uiTimeoutLabel">
+     <property name="text">
+      <string>Instances are halted + deleted after</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
