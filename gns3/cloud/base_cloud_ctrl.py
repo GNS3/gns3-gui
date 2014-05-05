@@ -35,13 +35,50 @@ class BaseCloudCtrl(object):
     def authenticate(self):
         raise NotImplementedError
 
-    def list_regions(self):
-        raise NotImplementedError
+    def create_instance(self, name, size, image, keypair):
+        """ Create a new instance with the supplied attributes. """
 
-    def list_instances(self):
-        raise NotImplementedError
+        pass
+        #self.
+
+    def delete_instance(self, instance_id):
+        """ Delete the instance with id of instance_id. Return True/False. """
+
+        #class FakeNode(object):
+        #
+        #    def __init__(self):
+        #        pass
+
+        ## TODO: remove this temporary bit
+        #self.instances[instance_id] = FakeNode()
+        #setattr(self.instances[instance_id], 'id', instance_id)
+
+        try:
+            return self.driver.destroy_node(self.instances[instance_id])
+
+        except (KeyError, Exception) as e:
+
+            # libcloud raises generic 'Exception' with error in text
+            if (type(e) is KeyError) or str(e) == \
+                    "404 Not Found Instance could not be found":
+
+                raise LookupError('Instance with id "%s" not found' %
+                                 instance_id)
 
     def get_instance(self, instance_id):
+        """ Return a Node object representing the requested instance. """
+
+        return self.instances[instance_id]
+
+    def list_instances(self):
+        """ Return a dict of instances in the current region ('id' as key). """
+
+        # save the list of instances to reduce API calls
+        self.instances = self.driver.list_nodes()
+
+        return {i.id: i for i in self.instances}
+
+    def list_regions(self):
         raise NotImplementedError
 
     def terminate_instance(self, instance_id):

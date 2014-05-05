@@ -44,6 +44,7 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         self.driver = None
         self.region = None
+        self.instances = {}
 
         self.authenticated = False
         self.identity_ep = \
@@ -103,11 +104,6 @@ class RackspaceCtrl(BaseCloudCtrl):
         response.connection.close()
 
         return self.authenticated
-
-    def list_instances(self):
-        """ Return a list of instances in the current region. """
-
-        return self.driver.list_nodes()
 
     def list_regions(self):
         """ Return a list the regions available to the user. """
