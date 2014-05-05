@@ -7,10 +7,12 @@ from PyQt4.QtTest import QTest
 from PyQt4.Qt import QApplication, Qt
 from PyQt4.QtCore import QTimer
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 
 from gns3.pages.cloud_preferences_page import CloudPreferencesPage
 from gns3.settings import CLOUD_SETTINGS
 from gns3.main_window import MainWindow
+from gns3.main_window import CLOUD_SETTINGS_GROUP
 
 
 def make_getitem(container):
@@ -167,7 +169,13 @@ class TestCloudPreferencesPage(TestCase):
         # now users change their mind
         page.uiForgetAPIKeyRadioButton.setChecked(True)
         page.savePreferences()
-        # reload and ensure settings were erased
-        self.assertFalse(settings.get('cloud_store_api_key'))
-        self.assertEqual(settings.get('cloud_api_key'), '')
-        self.assertEqual(settings.get('cloud_user_name'), '')
+        # mainwindow settings should be still valid at this point...
+        self.assertTrue(settings.get('cloud_store_api_key'))
+        self.assertEqual(settings.get('cloud_api_key'), 'myapikey')
+        self.assertEqual(settings.get('cloud_user_name'), 'myusername')
+        # ...and values on disk should be gone
+        stored_settings = QtCore.QSettings()
+        stored_settings.beginGroup(CLOUD_SETTINGS_GROUP)
+        self.assertFalse(stored_settings.value('cloud_store_api_key', type=bool))
+        self.assertEqual(stored_settings.value('cloud_api_key', type=str), '')
+        self.assertEqual(stored_settings.value('cloud_user_name', type=str), '')

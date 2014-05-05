@@ -146,26 +146,20 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         Save cloud preferences
         """
         if self._validate():
-            if self._store_api_key():
-                self.settings['cloud_user_name'] = self.uiUserNameLineEdit.text()
-                self.settings['cloud_api_key'] = self.uiAPIKeyLineEdit.text()
-                self.settings['cloud_store_api_key'] = True
-                if self.uiCloudProviderComboBox.currentIndex() >= 0:
-                    self.settings['cloud_provider'] = \
-                        self.provider_index_id[self.uiCloudProviderComboBox.currentIndex()]
-                if self.uiRegionComboBox.currentIndex() >= 0:
-                    self.settings['cloud_region'] = \
-                        self.region_index_id[self.uiRegionComboBox.currentIndex()]
-                self.settings['instances_per_project'] = self.uiNumOfInstancesSpinBox.value()
-                self.settings['memory_per_instance'] = self.uiMemPerInstanceSpinBox.value()
-                self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
-                self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
-                self.settings['instance_timeout'] = self.uiTimeoutSpinBox.value()
-
-            else:
-                # reset cloud preferences to default values
-                for k, v in CLOUD_SETTINGS.items():
-                    self.settings[k] = v
+            self.settings['cloud_user_name'] = self.uiUserNameLineEdit.text()
+            self.settings['cloud_api_key'] = self.uiAPIKeyLineEdit.text()
+            self.settings['cloud_store_api_key'] = True
+            if self.uiCloudProviderComboBox.currentIndex() >= 0:
+                self.settings['cloud_provider'] = \
+                    self.provider_index_id[self.uiCloudProviderComboBox.currentIndex()]
+            if self.uiRegionComboBox.currentIndex() >= 0:
+                self.settings['cloud_region'] = \
+                    self.region_index_id[self.uiRegionComboBox.currentIndex()]
+            self.settings['instances_per_project'] = self.uiNumOfInstancesSpinBox.value()
+            self.settings['memory_per_instance'] = self.uiMemPerInstanceSpinBox.value()
+            self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
+            self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
+            self.settings['instance_timeout'] = self.uiTimeoutSpinBox.value()
 
             if not self.settings['cloud_store_api_key_chosen']:
                 # user made a choice at this point

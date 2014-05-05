@@ -152,12 +152,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._cloud_settings.update(new_settings)
-        if persist:
-            settings = QtCore.QSettings()
-            settings.beginGroup(CLOUD_SETTINGS_GROUP)
-            for name, value in self._cloud_settings.items():
+
+        settings = QtCore.QSettings()
+        settings.beginGroup(CLOUD_SETTINGS_GROUP)
+
+        settings_to_persist = self._cloud_settings if persist else CLOUD_SETTINGS
+        for name, value in settings_to_persist.items():
                 settings.setValue(name, value)
-            settings.endGroup()
+        settings.endGroup()
 
     def _connections(self):
         """
