@@ -41,6 +41,11 @@ class BaseCloudCtrl(object):
         pass
         #self.
 
+    def create_key_pair(self):
+        """ Create and return a new Key Pair. """
+
+        return self.driver.create_key_pair()
+
     def delete_instance(self, instance_id):
         """ Delete the instance with id of instance_id. Return True/False. """
 
@@ -65,10 +70,20 @@ class BaseCloudCtrl(object):
                 raise LookupError('Instance with id "%s" not found' %
                                  instance_id)
 
+    def delete_key_pair(self, keypair):
+        """ Delete the keypair. """
+
+        return self.driver.delete_key_pair(keypair)
+
     def get_instance(self, instance_id):
         """ Return a Node object representing the requested instance. """
 
         return self.instances[instance_id]
+
+    def list_key_pairs(self):
+        """ Return a list of Key Pairs. """
+
+        return self.driver.list_key_pairs()
 
     def list_instances(self):
         """ Return a dict of instances in the current region ('id' as key). """
