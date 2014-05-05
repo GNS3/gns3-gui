@@ -1,3 +1,10 @@
+"""
+Integration tests for RackspaceCtrl.
+
+WARNING: These tests start up real instances in the Rackspace Cloud.
+
+"""
+
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 import unittest
 
@@ -7,6 +14,8 @@ class TestRackspaceCtrl(unittest.TestCase):
     def setUp(self):
         self.username = username
         self.api_key = api_key
+        self.ctrl = RackspaceCtrl(self.username, self.api_key)
+        self.ctrl.authenticate()
 
     def test_authenticate_valid_user(self):
         """ Test authentication with a valid user and api key. """
@@ -47,10 +56,8 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_list_regions(self):
         """ Ensure that list_regions returns the correct result. """
 
-        ctrl = RackspaceCtrl(self.username, self.api_key)
-
-        ctrl.authenticate()
-        regions = ctrl.list_regions()
+        self.ctrl.authenticate()
+        regions = self.ctrl.list_regions()
 
         expected_regions = [
             {'IAD': 'iad'},
@@ -65,11 +72,25 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_token_parsed(self):
         """ Ensure that the token is set. """
 
-        ctrl = RackspaceCtrl(self.username, self.api_key)
+        self.assertIsNotNone(self.ctrl.token)
 
-        ctrl.authenticate()
+    def test_set_region(self):
+        """ Ensure that set_region sets 'region' and 'driver'. """
 
-        self.assertIsNotNone(ctrl.token)
+        result = self.ctrl.set_region('iad')
+
+        self.assertEqual(result, True)
+        self.assertEqual(self.ctrl.region, 'iad')
+        self.assertIsNotNone(self.ctrl.driver)
+
+    def test_set_invalid_region(self):
+        """ Ensure that calling 'set_region' with an invalid param fails. """
+
+        result = self.ctrl.set_region('invalid')
+
+        self.assertEqual(result, False)
+        self.assertIsNone(self.ctrl.region)
+        self.assertIsNone(self.ctrl.driver)
 
 
 if __name__ == '__main__':

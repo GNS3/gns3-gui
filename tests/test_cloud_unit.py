@@ -120,15 +120,18 @@ def stub_rackspace_identity_post(identity_ep, data=None, headers=None):
 
 class TestRackspaceCtrl(unittest.TestCase):
 
+    def setUp(self):
+        """ Set up the objects used by most of the tests. """
+
+        self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
+        self.ctrl.post_fn = stub_rackspace_identity_post
+
     def test_authenticate_valid_user(self):
         """ Test authentication with a valid user and api key. """
 
-        ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
-        ctrl.post_fn = stub_rackspace_identity_post
-
-        auth_result = ctrl.authenticate()
+        auth_result = self.ctrl.authenticate()
         self.assertEqual(auth_result, True)
-        self.assertIsNotNone(ctrl.token)
+        self.assertIsNotNone(self.ctrl.token)
 
     def test_authenticate_empty_user(self):
         """ Ensure authentication with empty string as username fails. """
@@ -163,11 +166,8 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_list_regions(self):
         """ Ensure that list_regions returns the correct result. """
 
-        ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
-        ctrl.post_fn = stub_rackspace_identity_post
-
-        ctrl.authenticate()
-        regions = ctrl.list_regions()
+        self.ctrl.authenticate()
+        regions = self.ctrl.list_regions()
 
         expected_regions = [
             {'IAD': 'iad'},
@@ -177,6 +177,28 @@ class TestRackspaceCtrl(unittest.TestCase):
         ]
 
         self.assertCountEqual(regions, expected_regions)
+
+    def test_set_region(self):
+        """ Ensure that set_region sets 'region' and 'driver'. """
+
+        self.ctrl.authenticate()
+
+        result = self.ctrl.set_region('iad')
+
+        self.assertEqual(result, True)
+        self.assertEqual(self.ctrl.region, 'iad')
+        self.assertIsNotNone(self.ctrl.driver)
+
+    def test_set_invalid_region(self):
+        """ Ensure that calling 'set_region' with an invalid param fails. """
+
+        self.ctrl.authenticate()
+
+        result = self.ctrl.set_region('invalid')
+
+        self.assertEqual(result, False)
+        self.assertIsNone(self.ctrl.region)
+        self.assertIsNone(self.ctrl.driver)
 
     def test_token_parsed(self):
         """ Ensure that the token is set. """

@@ -21,6 +21,8 @@ from gns3.cloud.base_cloud_ctrl import BaseCloudCtrl
 import json
 import requests
 from libcloud.compute.drivers.rackspace import ENDPOINT_ARGS_MAP
+from libcloud.compute.providers import get_driver
+from libcloud.compute.types import Provider
 
 import logging
 log = logging.getLogger(__name__)
@@ -28,6 +30,7 @@ log = logging.getLogger(__name__)
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
 
+driver_cls = get_driver(Provider.RACKSPACE)
 
 class RackspaceCtrl(BaseCloudCtrl):
 
@@ -38,6 +41,9 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post
+
+        self.driver = None
+        self.region = None
 
         self.authenticated = False
         self.identity_ep = \
@@ -98,6 +104,11 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         return self.authenticated
 
+    def list_instances(self):
+        """ Return a list of instances in the current region. """
+
+        return self.driver.list_nodes()
+
     def list_regions(self):
         """ Return a list the regions available to the user. """
 
@@ -155,3 +166,17 @@ class RackspaceCtrl(BaseCloudCtrl):
                 region_list.append({ENDPOINT_ARGS_MAP[ep]['region']: ep})
 
         return region_list
+
+    def set_region(self, region):
+        """ Set self.region and instantiate self.driver. """
+
+        try:
+            self.driver = driver_cls(self.username, self.api_key,
+                                     region=region)
+
+        except ValueError:
+            return False
+
+        self.region = region
+        return True
+
