@@ -146,7 +146,12 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         #TODO: current directory for IOU image + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select an IOU image", ".", "IOU image (*.bin *.image)")
+        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+                                                             "Select an IOU image",
+                                                             ".",
+                                                             "All files (*.*);;IOU image (*.bin *.image)",
+                                                             "IOU image (*.bin *.image)")
+
         if not path:
             return
 
