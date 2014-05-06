@@ -16,39 +16,39 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for IOU image & device preferences.
+Configuration page for VPCS image & device preferences.
 """
 
 import os
 import sys
 from gns3.qt import QtGui
 from gns3.servers import Servers
-from .. import IOU
-from ..ui.iou_device_preferences_page_ui import Ui_IOUDevicePreferencesPageWidget
+from .. import VPCS
+from ..ui.vpcs_device_preferences_page_ui import Ui_VPCSDevicePreferencesPageWidget
 
 
-class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget):
+class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidget):
     """
-    QWidget preference page for IOU image & device preferences.
+    QWidget preference page for VPCS image & device preferences.
     """
 
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self._iou_images = {}
+        self._vpcs_images = {}
 
-        self.uiSaveIOUImagePushButton.clicked.connect(self._iouImageSaveSlot)
-        self.uiDeleteIOUImagePushButton.clicked.connect(self._iouImageDeleteSlot)
-        self.uiIOUImagesTreeWidget.itemClicked.connect(self._iouImageClickedSlot)
-        self.uiIOUImagesTreeWidget.itemSelectionChanged.connect(self._iouImageChangedSlot)
-        self.uiIOUPathToolButton.clicked.connect(self._iouImageBrowserSlot)
+        self.uiSaveVPCSImagePushButton.clicked.connect(self._vpcsImageSaveSlot)
+        self.uiDeleteVPCSImagePushButton.clicked.connect(self._vpcsImageDeleteSlot)
+        self.uiVPCSImagesTreeWidget.itemClicked.connect(self._vpcsImageClickedSlot)
+        self.uiVPCSImagesTreeWidget.itemSelectionChanged.connect(self._vpcsImageChangedSlot)
+        self.uiVPCSPathToolButton.clicked.connect(self._vpcsImageBrowserSlot)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
-        self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
+        self.uiVPCSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
-    def _iouImageClickedSlot(self, item, column):
+    def _vpcsImageClickedSlot(self, item, column):
         """
-        Loads a selected IOU image from the tree widget.
+        Loads a selected VPCS image from the tree widget.
 
         :param item: selected QTreeWidgetItem instance
         :param column: ignored
@@ -57,31 +57,29 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         image = item.text(0)
         server = item.text(1)
         key = "{server}:{image}".format(server=server, image=image)
-        iou_image = self._iou_images[key]
+        vpcs_image = self._vpcs_images[key]
 
-        self.uiIOUPathLineEdit.setText(iou_image["path"])
-        self.uiStartupConfigLineEdit.setText(iou_image["startup_config"])
-        self.uiRAMSpinBox.setValue(iou_image["ram"])
-        self.uiNVRAMSpinBox.setValue(iou_image["nvram"])
+        self.uiVPCSPathLineEdit.setText(vpcs_image["path"])
+        self.uiStartupConfigLineEdit.setText(vpcs_image["script_file"])
 
-    def _iouImageChangedSlot(self):
+    def _vpcsImageChangedSlot(self):
         """
         Enables the use of the delete button.
         """
 
-        item = self.uiIOUImagesTreeWidget.currentItem()
+        item = self.uiVPCSImagesTreeWidget.currentItem()
         if item:
-            self.uiDeleteIOUImagePushButton.setEnabled(True)
+            self.uiDeleteVPCSImagePushButton.setEnabled(True)
         else:
-            self.uiDeleteIOUImagePushButton.setEnabled(False)
+            self.uiDeleteVPCSImagePushButton.setEnabled(False)
 
-    def _iouImageSaveSlot(self):
+    def _vpcsImageSaveSlot(self):
         """
-        Adds/Saves an IOU image.
+        Adds/Saves an VPCS image.
         """
 
-        path = self.uiIOUPathLineEdit.text()
-        startup_config = self.uiStartupConfigLineEdit.text()
+        path = self.uiVPCSPathLineEdit.text()
+        script_file = self.uiStartupConfigLineEdit.text()
         nvram = self.uiNVRAMSpinBox.value()
         ram = self.uiRAMSpinBox.value()
 
@@ -93,65 +91,62 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             image = os.path.basename(path)
 
         #TODO: mutiple remote server
-        if IOU.instance().settings()["use_local_server"]:
+        if VPCS.instance().settings()["use_local_server"]:
             server = "local"
         else:
             server = next(iter(Servers.instance()))
             if not server:
-                QtGui.QMessageBox.critical(self, "IOU image", "No remote server available!")
+                QtGui.QMessageBox.critical(self, "VPCS image", "No remote server available!")
                 return
             server = server.host
 
         key = "{server}:{image}".format(server=server, image=image)
-        item = self.uiIOUImagesTreeWidget.currentItem()
+        item = self.uiVPCSImagesTreeWidget.currentItem()
 
-        if key in self._iou_images and item and item.text(0) == image:
+        if key in self._vpcs_images and item and item.text(0) == image:
             item.setText(0, image)
             item.setText(1, server)
-        elif key in self._iou_images:
+        elif key in self._vpcs_images:
             return
         else:
             # add a new entry in the tree widget
-            item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
+            item = QtGui.QTreeWidgetItem(self.uiVPCSImagesTreeWidget)
             item.setText(0, image)
             item.setText(1, server)
-            self.uiIOUImagesTreeWidget.setCurrentItem(item)
+            self.uiVPCSImagesTreeWidget.setCurrentItem(item)
 
-        self._iou_images[key] = {"path": path,
+        self._vpcs_images[key] = {"path": path,
                                  "image": image,
-                                 "startup_config": startup_config,
-                                 "ram": ram,
-                                 "nvram": nvram,
-                                 "server": server}
+                                 "script_file": script_file}
 
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
+        self.uiVPCSImagesTreeWidget.resizeColumnToContents(0)
+        self.uiVPCSImagesTreeWidget.resizeColumnToContents(1)
 
-    def _iouImageDeleteSlot(self):
+    def _vpcsImageDeleteSlot(self):
         """
-        Deletes an IOU image.
+        Deletes an VPCS image.
         """
 
-        item = self.uiIOUImagesTreeWidget.currentItem()
+        item = self.uiVPCSImagesTreeWidget.currentItem()
         if item:
             image = item.text(0)
             server = item.text(1)
             key = "{server}:{image}".format(server=server, image=image)
-            del self._iou_images[key]
-            self.uiIOUImagesTreeWidget.takeTopLevelItem(self.uiIOUImagesTreeWidget.indexOfTopLevelItem(item))
+            del self._vpcs_images[key]
+            self.uiVPCSImagesTreeWidget.takeTopLevelItem(self.uiVPCSImagesTreeWidget.indexOfTopLevelItem(item))
 
-    def _iouImageBrowserSlot(self):
+    def _vpcsImageBrowserSlot(self):
         """
-        Slot to open a file browser and select an IOU image.
+        Slot to open a file browser and select an VPCS image.
         """
 
-        #TODO: current directory for IOU image + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select an IOU image", ".", "IOU image (*.bin *.image)")
+        #TODO: current directory for VPCS image + filter?
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select an VPCS image", ".", "VPCS image (*.bin *.image)")
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "IOU image", "Cannot read {}".format(path))
+            QtGui.QMessageBox.critical(self, "VPCS image", "Cannot read {}".format(path))
             return
 
         try:
@@ -159,26 +154,26 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 # read the first 7 bytes of the file.
                 elf_header_start = f.read(7)
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "IOU image", "Cannot read ELF magic number: {}".format(e))
+            QtGui.QMessageBox.critical(self, "VPCS image", "Cannot read ELF magic number: {}".format(e))
             return
 
         # file must start with the ELF magic number, be 32-bit, little endian and have an ELF version of 1
         # normal IOS image are big endian!
         if elf_header_start != b'\x7fELF\x01\x01\x01':
-            QtGui.QMessageBox.critical(self, "IOU image", "Sorry, this is not a valid IOU image!")
+            QtGui.QMessageBox.critical(self, "VPCS image", "Sorry, this is not a valid VPCS image!")
             return
 
-        self.uiIOUPathLineEdit.clear()
-        self.uiIOUPathLineEdit.setText(path)
+        self.uiVPCSPathLineEdit.clear()
+        self.uiVPCSPathLineEdit.setText(path)
         self.uiRAMSpinBox.setValue(256)
         self.uiNVRAMSpinBox.setValue(128)
 
     def _startupConfigBrowserSlot(self):
         """
-        Slot to open a file browser and select a startup-config file.
+        Slot to open a file browser and select a script-file file.
         """
 
-        #TODO: current directory for startup-config + filter?
+        #TODO: current directory for script-file + filter?
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", ".")
         if not path:
             return
@@ -196,25 +191,25 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
     def loadPreferences(self):
         """
-        Loads the IOU image & device preferences.
+        Loads the VPCS image & device preferences.
         """
 
-        self._iou_images.clear()
-        self.uiIOUImagesTreeWidget.clear()
+        self._vpcs_images.clear()
+        self.uiVPCSImagesTreeWidget.clear()
 
-        iou_images = IOU.instance().iouImages()
-        for iou_image in iou_images.values():
-            item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
-            item.setText(0, iou_image["image"])
-            item.setText(1, iou_image["server"])
+        vpcs_images = VPCS.instance().vpcsImages()
+        for vpcs_image in vpcs_images.values():
+            item = QtGui.QTreeWidgetItem(self.uiVPCSImagesTreeWidget)
+            item.setText(0, vpcs_image["image"])
+            item.setText(1, vpcs_image["server"])
 
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
-        self._iou_images.update(iou_images)
+        self.uiVPCSImagesTreeWidget.resizeColumnToContents(0)
+        self.uiVPCSImagesTreeWidget.resizeColumnToContents(1)
+        self._vpcs_images.update(vpcs_images)
 
     def savePreferences(self):
         """
-        Saves the IOU image & device preferences.
+        Saves the VPCS image & device preferences.
         """
 
-        IOU.instance().setIOUImages(self._iou_images)
+        VPCS.instance().setVPCSImages(self._vpcs_images)

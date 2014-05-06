@@ -50,15 +50,11 @@ class VPCSDevice(Node):
         self._ports = []
         self._settings = {"name": "",
                           "path": "",
-                          "startup_config": "",
-                          "ram": 256,
-                          "nvram": 128,
-                          "ethernet_adapters": 2,
-                          "serial_adapters": 2,
+                          "script_file": "",
                           "console": None}
 
         #self._occupied_slots = []
-        self._addAdapters(2, 2)
+        self._addAdapters(1, 0)
 
         # save the default settings
         self._defaults = self._settings.copy()
@@ -75,7 +71,7 @@ class VPCSDevice(Node):
         for slot_number in range(0, nb_adapters):
 #             if slot_number in self._occupied_slots:
 #                 continue
-            for port_number in range(0, 4):
+            for port_number in range(0, 1):
                 if slot_number < nb_ethernet_adapters:
                     port = EthernetPort
                 else:
@@ -215,9 +211,9 @@ class VPCSDevice(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-        and os.path.isfile(new_settings["startup_config"]):
-            params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
+        if "script_file" in new_settings and self._settings["script_file"] != new_settings["script_file"] \
+        and os.path.isfile(new_settings["script_file"]):
+            params["script_file_base64"] = self._base64Config(new_settings["script_file"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("vpcs.update", params, self._updateCallback)
@@ -447,14 +443,10 @@ class VPCSDevice(Node):
            id=self.id(),
            vpcs_id=self._vpcs_id,
            state=state,
-           ram=self._settings["ram"],
-           nvram=self._settings["nvram"],
            host=self._server.host,
            port=self._server.port,
            console=self._settings["console"],
-           image_name=os.path.basename(self._settings["path"]),
-           nb_ethernet=self._settings["ethernet_adapters"],
-           nb_serial=self._settings["serial_adapters"])
+           image_name=os.path.basename(self._settings["path"]))
 
         port_info = ""
         for port in self._ports:

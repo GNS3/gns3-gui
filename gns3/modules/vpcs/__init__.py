@@ -90,17 +90,11 @@ class VPCS(Module):
             settings.setArrayIndex(index)
             path = settings.value("path", "")
             image = settings.value("image", "")
-            startup_config = settings.value("startup_config", "")
-            ram = settings.value("ram", 256, type=int)
-            nvram = settings.value("nvram", 128, type=int)
-            server = settings.value("server", "local")
+            script_file = settings.value("script_file", "")
             key = "{server}:{image}".format(server=server, image=image)
             self._vpcs_images[key] = {"path": path,
                                      "image": image,
-                                     "startup_config": startup_config,
-                                     "ram": ram,
-                                     "nvram": nvram,
-                                     "server": server}
+                                     "script_file": script_file}
 
         settings.endArray()
         settings.endGroup()
@@ -218,25 +212,6 @@ class VPCS(Module):
 
         return self._settings
 
-    def _base64vpcsrc(self, vpcsrc_path):
-        """
-        Get the content of the VPCSRC file base64 encoded.
-
-        :param config_path: path to the vpcsrc file.
-
-        :returns: base64 encoded string
-        """
-
-        try:
-            with open(vpcsrc_path, "r") as f:
-                log.info("opening vpcsrc file: {}".format(vpcsrc_path))
-                config = f.read()
-                encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-                return encoded
-        except OSError as e:
-            log.warn("could not base64 encode {}: {}".format(vpcsrc_path, e))
-            return ""
-
     def setSettings(self, settings):
         """
         Sets the module settings
@@ -250,16 +225,11 @@ class VPCS(Module):
                 params[name] = value
 
         if params:
-            if "vpcsrc" in params:
-                # encode the vpcsrc file in base64
-                params["vpcsrc"] = self._base64vpcsrc(params["vpcsrc"])
             for server in self._servers:
                 # send the local working directory only if this is a local server
                 if server.isLocal():
                     params.update({"working_dir": self._working_dir})
                 else:
-                    if "vpcsyap" in params:
-                        del params["vpcsyap"]  # do not send vpcsyap path to remote servers
                     project_name = os.path.basename(self._working_dir)
                     if project_name.endswith("-files"):
                         project_name = project_name[:-6]
@@ -279,15 +249,10 @@ class VPCS(Module):
         log.info("sending VPCS settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
 
-        # encode the vpcsrc file in base64
-        params["vpcsrc"] = self._base64vpcsrc(params["vpcsrc"])
-
         # send the local working directory only if this is a local server
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            if "vpcsyap" in params:
-                del params["vpcsyap"]  # do not send vpcsyap path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
@@ -324,9 +289,6 @@ class VPCS(Module):
         """
 
         log.info("creating node {}".format(node_class))
-
-        if not self._settings["vpcsrc"] or not os.path.isfile(self._settings["vpcsrc"]):
-            raise ModuleError("The path to VPCSRC must be configured")
 
         if not server.connected():
             try:
@@ -373,10 +335,10 @@ class VPCS(Module):
         else:
             vpcsimage = selected_images[0]
 
-        startup_config = self._vpcs_images[vpcsimage]["startup_config"]
+        script_file = self._vpcs_images[vpcsimage]["script_file"]
         vpcs_path = self._vpcs_images[vpcsimage]["path"]
-        if startup_config:
-            settings = {"startup_config": startup_config}
+        if script_file:
+            settings = {"script_file": script_file}
         node.setup(vpcs_path, initial_settings=settings)
 
     def reset(self):

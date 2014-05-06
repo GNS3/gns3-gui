@@ -18,12 +18,10 @@
 import sys
 
 """
-Default IOU settings.
+Default VPCS settings.
 """
 
-IOU_SETTINGS = {
-    "iourc": "",
-    "iouyap": "",
+VPCS_SETTINGS = {
     "console_start_port_range": 4001,
     "console_end_port_range": 4512,
     "udp_start_port_range": 30001,
@@ -31,13 +29,7 @@ IOU_SETTINGS = {
     "use_local_server": True,
 }
 
-# IOU is only available on Linux
-if not sys.platform.startswith("linux"):
-    IOU_SETTINGS["use_local_server"] = False
-
-IOU_SETTING_TYPES = {
-    "iourc": str,
-    "iouyap": str,
+VPCS_SETTING_TYPES = {
     "console_start_port_range": int,
     "console_end_port_range": int,
     "udp_start_port_range": int,

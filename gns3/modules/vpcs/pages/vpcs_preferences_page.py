@@ -16,21 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for IOU preferences.
+Configuration page for VPCS preferences.
 """
 
 import os
 import sys
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
-from .. import IOU
-from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
-from ..settings import IOU_SETTINGS
+from .. import VPCS
+from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
+from ..settings import VPCS_SETTINGS
 
 
-class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
+class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
     """
-    QWidget preference page for IOU.
+    QWidget preference page for VPCS.
     """
 
     def __init__(self):
@@ -44,41 +44,11 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             self.uiUseLocalServercheckBox.setEnabled(False)
 
         # connect signals
-        self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
-        self.uiIouyapPathToolButton.clicked.connect(self._iouyapPathBrowserSlot)
+        self.uiVPCSRCPathToolButton.clicked.connect(self._vpcsrcPathBrowserSlot)
+        self.uiIouyapPathToolButton.clicked.connect(self._vpcsyapPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
-
-    def _iourcPathBrowserSlot(self):
-        """
-        Slot to open a file browser and select an iourc file
-        """
-
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select the IOURC file", ".")
-        if not path:
-            return
-
-        if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "IOURC file", "{} cannot be read".format(os.path.basename(path)))
-            return
-
-        self.uiIOURCPathLineEdit.setText(os.path.normpath(path))
-
-    def _iouyapPathBrowserSlot(self):
-        """
-        Slot to open a file browser and select iouyap.
-        """
-
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select iouyap", ".")
-        if not path:
-            return
-
-        if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
-            return
-
-        self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
 
     def _testSettingsSlot(self):
 
@@ -104,14 +74,14 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self._progress_dialog.setWindowTitle("Settings")
         self._progress_dialog.show()
 
-        iou_module = IOU.instance()
-        if server not in iou_module.servers():
+        vpcs_module = VPCS.instance()
+        if server not in vpcs_module.servers():
             server_added = True
-            iou_module.addServer(server)
+            vpcs_module.addServer(server)
         self.savePreferences()
         if server_added:
-            iou_module.removeServer(server)
-        server.send_message("iou.test_settings", None, self._testSettingsCallback)
+            vpcs_module.removeServer(server)
+        server.send_message("vpcs.test_settings", None, self._testSettingsCallback)
 
     def _testSettingsCallback(self, result, error=False):
 
@@ -133,7 +103,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         Slot to populate the page widgets with the default settings.
         """
 
-        self._populateWidgets(IOU_SETTINGS)
+        self._populateWidgets(VPCS_SETTINGS)
 
     def _useLocalServerSlot(self, state):
         """
@@ -149,11 +119,9 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         """
         Populates the widgets with the settings.
 
-        :param settings: IOU settings
+        :param settings: VPCS settings
         """
 
-        self.uiIOURCPathLineEdit.setText(settings["iourc"])
-        self.uiIouyapPathLineEdit.setText(settings["iouyap"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
@@ -178,11 +146,11 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
     def loadPreferences(self):
         """
-        Loads IOU preferences.
+        Loads VPCS preferences.
         """
 
-        iou_settings = IOU.instance().settings()
-        self._populateWidgets(iou_settings)
+        vpcs_settings = VPCS.instance().settings()
+        self._populateWidgets(vpcs_settings)
 
         servers = Servers.instance()
         servers.updated_signal.connect(self._updateRemoteServersSlot)
@@ -190,15 +158,13 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
     def savePreferences(self):
         """
-        Saves IOU preferences.
+        Saves VPCS preferences.
         """
 
         new_settings = {}
-        new_settings["iourc"] = self.uiIOURCPathLineEdit.text()
-        new_settings["iouyap"] = self.uiIouyapPathLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
-        IOU.instance().setSettings(new_settings)
+        VPCS.instance().setSettings(new_settings)
