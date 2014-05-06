@@ -110,6 +110,13 @@ class TopologySummaryView(QtGui.QTreeWidget):
         # we want to have this node listed only when completely created.
         node.created_signal.connect(self._createdNodeSlot)
 
+    def clear(self):
+        """
+        Clears all the topology summary.
+        """
+
+        QtGui.QTreeWidget.clear(self)
+
     def _createdNodeSlot(self, node_id):
         """
         Received events for node creation.
