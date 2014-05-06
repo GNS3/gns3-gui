@@ -23,6 +23,8 @@ instances.
 
 """
 
+from libcloud.compute.base import NodeAuthSSHKey
+
 
 class BaseCloudCtrl(object):
 
@@ -38,8 +40,14 @@ class BaseCloudCtrl(object):
     def create_instance(self, name, size, image, keypair):
         """ Create a new instance with the supplied attributes. """
 
-        pass
-        #self.
+        auth_key = NodeAuthSSHKey(keypair.public_key)
+
+        return self.driver.create_node(
+            name=name,
+            size=size,
+            image=image,
+            auth=auth_key
+        )
 
     def delete_instance(self, instance):
         """ Delete the specified instance.  Return True or False. """
@@ -64,7 +72,7 @@ class BaseCloudCtrl(object):
         return None
 
     def list_instances(self):
-        """ Return a dict of instances in the current region ('id' as key). """
+        """ Return a list of instances in the current region. """
 
         return self.driver.list_nodes()
 
