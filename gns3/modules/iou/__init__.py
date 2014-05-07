@@ -374,8 +374,11 @@ class IOU(Module):
 
         startup_config = self._iou_images[iouimage]["startup_config"]
         iou_path = self._iou_images[iouimage]["path"]
+        settings = {}
         if startup_config:
-            settings = {"startup_config": startup_config}
+            settings["startup_config"] = startup_config
+        settings["ram"] = self._iou_images[iouimage]["ram"]
+        settings["nvram"] = self._iou_images[iouimage]["nvram"]
         node.setup(iou_path, initial_settings=settings)
 
     def reset(self):
