@@ -175,4 +175,3 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         self.region = region
         return True
-

@@ -24,6 +24,31 @@ instances.
 """
 
 from libcloud.compute.base import NodeAuthSSHKey
+from .exceptions import ItemNotFound, KeyPairExists
+
+
+def parse_exception(exception):
+    """
+    Parse the exception value to separate the HTTP status code from the text.
+
+    Libcloud raises many exceptions of the form:
+        Exception("<http status code> <http error> <reponse body>")
+
+    in lieu of raising specific incident-based exceptions.
+
+    """
+
+    e_str = str(exception)
+
+    try:
+        status = int(e_str[0:3])
+        error_text = e_str[3:]
+
+    except ValueError:
+        status = None
+        error_text = e_str
+
+    return status, error_text
 
 
 class BaseCloudCtrl(object):
@@ -42,12 +67,22 @@ class BaseCloudCtrl(object):
 
         auth_key = NodeAuthSSHKey(keypair.public_key)
 
-        return self.driver.create_node(
-            name=name,
-            size=size,
-            image=image,
-            auth=auth_key
-        )
+        try:
+            return self.driver.create_node(
+                name=name,
+                size=size,
+                image=image,
+                auth=auth_key
+            )
+
+        except Exception as e:
+            status, error_text = parse_exception(e)
+
+            if status:
+                pass
+
+            else:
+                raise e
 
     def delete_instance(self, instance):
         """ Delete the specified instance.  Return True or False. """
@@ -57,10 +92,12 @@ class BaseCloudCtrl(object):
 
         except Exception as e:
 
-            # libcloud raises generic 'Exception' with the error in the text
-            if str(e) == "404 Not Found Instance could not be found":
+            status, error_text = parse_exception(e)
 
-                raise LookupError('Instance not found')
+            if status == 404:
+                raise ItemNotFound(error_text)
+            else:
+                raise e
 
     def get_instance(self, instance):
         """ Return a Node object representing the requested instance. """
@@ -69,22 +106,41 @@ class BaseCloudCtrl(object):
             if i.id == instance.id:
                 return i
 
-        return None
+        raise ItemNotFound("Instance not found")
 
     def list_instances(self):
         """ Return a list of instances in the current region. """
 
         return self.driver.list_nodes()
 
-    def create_key_pair(self):
+    def create_key_pair(self, name):
         """ Create and return a new Key Pair. """
 
-        return self.driver.create_key_pair()
+        try:
+            return self.driver.create_key_pair(name)
+
+        except Exception as e:
+
+            status, error_text = parse_exception(e)
+            if status == 409:
+                raise KeyPairExists(error_text)
+            else:
+                raise e
 
     def delete_key_pair(self, keypair):
         """ Delete the keypair. """
 
-        return self.driver.delete_key_pair(keypair)
+        try:
+            return self.driver.delete_key_pair(keypair)
+
+        except Exception as e:
+
+            status, error_text = parse_exception(e)
+
+            if status == 404:
+                raise ItemNotFound(error_text)
+            else:
+                raise e
 
     def list_key_pairs(self):
         """ Return a list of Key Pairs. """
