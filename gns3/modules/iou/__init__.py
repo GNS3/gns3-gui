@@ -90,6 +90,7 @@ class IOU(Module):
             path = settings.value("path", "")
             image = settings.value("image", "")
             startup_config = settings.value("startup_config", "")
+            use_default_iou_values = settings.value("use_default_iou_values", True, type=bool)
             ram = settings.value("ram", 256, type=int)
             nvram = settings.value("nvram", 128, type=int)
             server = settings.value("server", "local")
@@ -97,6 +98,7 @@ class IOU(Module):
             self._iou_images[key] = {"path": path,
                                      "image": image,
                                      "startup_config": startup_config,
+                                     "use_default_iou_values": use_default_iou_values,
                                      "ram": ram,
                                      "nvram": nvram,
                                      "server": server}
@@ -374,11 +376,14 @@ class IOU(Module):
 
         startup_config = self._iou_images[iouimage]["startup_config"]
         iou_path = self._iou_images[iouimage]["path"]
+        use_default_iou_values = self._iou_images[iouimage]["use_default_iou_values"]
         settings = {}
         if startup_config:
             settings["startup_config"] = startup_config
-        settings["ram"] = self._iou_images[iouimage]["ram"]
-        settings["nvram"] = self._iou_images[iouimage]["nvram"]
+        settings["use_default_iou_values"] = use_default_iou_values
+        if not use_default_iou_values:
+            settings["ram"] = self._iou_images[iouimage]["ram"]
+            settings["nvram"] = self._iou_images[iouimage]["nvram"]
         node.setup(iou_path, initial_settings=settings)
 
     def reset(self):

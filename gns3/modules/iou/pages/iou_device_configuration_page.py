@@ -37,6 +37,19 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
+
+    def _useDefaultValuesSlot(self, state):
+        """
+        Slot to enable or not the RAM and NVRAM spin boxes.
+        """
+
+        if state:
+            self.uiRamSpinBox.setEnabled(False)
+            self.uiNvramSpinBox.setEnabled(False)
+        else:
+            self.uiRamSpinBox.setEnabled(True)
+            self.uiNvramSpinBox.setEnabled(True)
 
     def _startupConfigBrowserSlot(self):
         """
@@ -92,7 +105,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
 
-        # load the memories and disks settings
+        # load the memories settings
+        self.uiDefaultValuesCheckBox.setChecked(settings["use_default_iou_values"])
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiNvramSpinBox.setValue(settings["nvram"])
 
@@ -130,7 +144,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             del settings["name"]
             del settings["console"]
 
-        # save the memories and disks settings
+        # save the memories settings
+        settings["use_default_iou_values"] = self.uiDefaultValuesCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()
         settings["nvram"] = self.uiNvramSpinBox.value()
 

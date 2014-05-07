@@ -92,15 +92,20 @@ def main():
         lines = traceback.format_exception(exception, value, tb)
         print("****** Exception detected, traceback information saved in {} ******".format(exception_file_path))
         print("\n----> PLEASE REPORT ON http://forum.gns3.net/development-f14.html OR http://github.com/GNS3/gns3-gui/issues\n")
-        print("\n" . join(lines))
+        print("".join(lines))
         try:
             curdate = time.strftime("%d %b %Y %H:%M:%S")
             logfile = open(exception_file_path, "a")
             logfile.write("=== GNS3 {} traceback on {} ===\n".format(__version__, curdate))
-            logfile.write("\n" . join(lines))
+            logfile.write("".join(lines))
             logfile.close()
         except OSError as e:
             print("Could not save traceback to {}: {}".format(exception_file_path, e))
+            
+        if not sys.stdout.isatty():
+            # if stdout is not a tty (redirected to the console view),
+            # then print the exception on stderr too.
+            print("".join(lines), file=sys.stderr)
 
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
