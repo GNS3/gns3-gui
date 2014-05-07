@@ -138,6 +138,12 @@ def main():
     # (UNIX/Linux only)
     locale_check()
 
+    try:
+        os.getcwd()
+    except FileNotFoundError:
+        log.critical("the current working directory doesn't exist")
+        return
+
     # don't use the registry to store settings on Windows
     # because we don't like it!
     if sys.platform.startswith('win'):

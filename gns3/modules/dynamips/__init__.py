@@ -19,7 +19,6 @@
 Dynamips module implementation.
 """
 
-import socket
 import os
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
