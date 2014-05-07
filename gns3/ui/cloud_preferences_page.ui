@@ -109,7 +109,7 @@
      <item>
       <widget class="QLabel" name="uiMemLabel">
        <property name="text">
-        <string>Gb</string>
+        <string>Gb RAM</string>
        </property>
       </widget>
      </item>
@@ -140,7 +140,7 @@
      <item>
       <widget class="QLabel" name="uiMemNewLabel">
        <property name="text">
-        <string>Gb in size</string>
+        <string>Gb RAM</string>
        </property>
       </widget>
      </item>
@@ -198,7 +198,17 @@
      </property>
     </widget>
    </item>
-   <item row="14" column="0" rowspan="2">
+   <item row="12" column="0" colspan="2">
+    <widget class="QLabel" name="uiTimeoutLabel">
+     <property name="text">
+      <string>Instances are  deleted after</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0" rowspan="2" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QSpinBox" name="uiTimeoutSpinBox">
@@ -219,21 +229,24 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>minutes of inactivity</string>
+        <string>minutes of lost communication</string>
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
-   </item>
-   <item row="12" column="0" colspan="2">
-    <widget class="QLabel" name="uiTimeoutLabel">
-     <property name="text">
-      <string>Instances are halted + deleted after</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

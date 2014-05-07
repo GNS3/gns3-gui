@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
 #
-# Created: Wed May  7 23:52:59 2014
+# Created: Thu May  8 00:36:05 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -113,6 +113,10 @@ class Ui_CloudPreferencesPageWidget(object):
         self.PLACEHOLDER.setFrameShadow(QtGui.QFrame.Raised)
         self.PLACEHOLDER.setObjectName(_fromUtf8("PLACEHOLDER"))
         self.gridLayout.addWidget(self.PLACEHOLDER, 17, 0, 1, 1)
+        self.uiTimeoutLabel = QtGui.QLabel(CloudPreferencesPageWidget)
+        self.uiTimeoutLabel.setWordWrap(True)
+        self.uiTimeoutLabel.setObjectName(_fromUtf8("uiTimeoutLabel"))
+        self.gridLayout.addWidget(self.uiTimeoutLabel, 12, 0, 1, 2)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.uiTimeoutSpinBox = QtGui.QSpinBox(CloudPreferencesPageWidget)
@@ -128,11 +132,9 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiTimeoutLabel2.setSizePolicy(sizePolicy)
         self.uiTimeoutLabel2.setObjectName(_fromUtf8("uiTimeoutLabel2"))
         self.horizontalLayout_3.addWidget(self.uiTimeoutLabel2)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 14, 0, 2, 1)
-        self.uiTimeoutLabel = QtGui.QLabel(CloudPreferencesPageWidget)
-        self.uiTimeoutLabel.setWordWrap(True)
-        self.uiTimeoutLabel.setObjectName(_fromUtf8("uiTimeoutLabel"))
-        self.gridLayout.addWidget(self.uiTimeoutLabel, 12, 0, 1, 2)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem2)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 14, 0, 2, 3)
 
         self.retranslateUi(CloudPreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(CloudPreferencesPageWidget)
@@ -151,10 +153,10 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiUserNameLabel.setText(_translate("CloudPreferencesPageWidget", "User Name:", None))
         self.uiStartNewProjectsLabel.setText(_translate("CloudPreferencesPageWidget", "Start new projects with:", None))
         self.uiNumOfInstancesLabel.setText(_translate("CloudPreferencesPageWidget", "instance(s) with", None))
-        self.uiMemLabel.setText(_translate("CloudPreferencesPageWidget", "Gb", None))
+        self.uiMemLabel.setText(_translate("CloudPreferencesPageWidget", "Gb RAM", None))
         self.uiHourlyPriceLabel.setText(_translate("CloudPreferencesPageWidget", "($0.00 per hour per instance)", None))
-        self.uiMemNewLabel.setText(_translate("CloudPreferencesPageWidget", "Gb in size", None))
+        self.uiMemNewLabel.setText(_translate("CloudPreferencesPageWidget", "Gb RAM", None))
         self.uiTermsLabel.setText(_translate("CloudPreferencesPageWidget", "Accept Terms and Conditions", None))
-        self.uiTimeoutLabel2.setText(_translate("CloudPreferencesPageWidget", "minutes of inactivity", None))
-        self.uiTimeoutLabel.setText(_translate("CloudPreferencesPageWidget", "Instances are halted + deleted after", None))
+        self.uiTimeoutLabel.setText(_translate("CloudPreferencesPageWidget", "Instances are  deleted after", None))
+        self.uiTimeoutLabel2.setText(_translate("CloudPreferencesPageWidget", "minutes of lost communication", None))
 
