@@ -1,7 +1,9 @@
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
+import pytest
 import unittest
 
 
+@pytest.mark.skipif(True, reason="temporarily disable rackspace integration test")
 class TestRackspaceCtrl(unittest.TestCase):
 
     def setUp(self):
