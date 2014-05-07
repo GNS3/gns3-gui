@@ -38,14 +38,8 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        if not sys.platform.startswith("linux"):
-            self.uiIouyapPathLineEdit.setEnabled(False)
-            self.uiIouyapPathToolButton.setEnabled(False)
-            self.uiUseLocalServercheckBox.setEnabled(False)
-
         # connect signals
-        self.uiVPCSRCPathToolButton.clicked.connect(self._vpcsrcPathBrowserSlot)
-        self.uiIouyapPathToolButton.clicked.connect(self._vpcsyapPathBrowserSlot)
+        self.uiVPCSPathToolButton.clicked.connect(self._vpcsrcPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)

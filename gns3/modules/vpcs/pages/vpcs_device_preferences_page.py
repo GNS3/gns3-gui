@@ -80,8 +80,6 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
 
         path = self.uiVPCSPathLineEdit.text()
         script_file = self.uiStartupConfigLineEdit.text()
-        nvram = self.uiNVRAMSpinBox.value()
-        ram = self.uiRAMSpinBox.value()
 
         # basename doesn't work on Unix with Windows paths
         if not sys.platform.startswith('win') and len(path) > 2 and path[1] == ":":
@@ -165,8 +163,6 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
 
         self.uiVPCSPathLineEdit.clear()
         self.uiVPCSPathLineEdit.setText(path)
-        self.uiRAMSpinBox.setValue(256)
-        self.uiNVRAMSpinBox.setValue(128)
 
     def _startupConfigBrowserSlot(self):
         """

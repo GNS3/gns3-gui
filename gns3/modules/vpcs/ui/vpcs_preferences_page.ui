@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IOUPreferencesPageWidget</class>
- <widget class="QWidget" name="IOUPreferencesPageWidget">
+ <class>VPCSPreferencesPageWidget</class>
+ <widget class="QWidget" name="VPCSPreferencesPageWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,11 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>IOS on UNIX</string>
+   <string>VPCS</string>
   </property>
   <layout class="QVBoxLayout">
    <item>
     <widget class="QTabWidget" name="uiTabWidget">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -27,10 +30,10 @@
        <item row="3" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLineEdit" name="uiIOURCPathLineEdit"/>
+          <widget class="QLineEdit" name="uiVPCSPathLineEdit"/>
          </item>
          <item>
-          <widget class="QToolButton" name="uiIOURCPathToolButton">
+          <widget class="QToolButton" name="uiVPCSPathToolButton">
            <property name="text">
             <string>...</string>
            </property>
@@ -41,7 +44,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="1">
+       <item row="4" column="1">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -54,7 +57,7 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="0">
+       <item row="4" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QPushButton" name="uiTestSettingsPushButton">
@@ -72,21 +75,14 @@
          </item>
         </layout>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiIouyapPathLabel">
-         <property name="text">
-          <string>Path to iouyap (local Linux server only):</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="uiIOURCPathLabel">
+        <widget class="QLabel" name="uiVPCSPathLabel">
          <property name="text">
-          <string>Path to IOURC (pushed to the server):</string>
+          <string>Path to VPCS:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -98,66 +94,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QLineEdit" name="uiIouyapPathLineEdit"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="uiIouyapPathToolButton">
-           <property name="text">
-            <string>...</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="uiServerSettingsTabWidget">
-      <attribute name="title">
-       <string>Server settings</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
-         <property name="text">
-          <string>Use the local server (Linux only)</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="uiRemoteServersGroupBox">
-         <property name="title">
-          <string>Remote servers</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <column>
-             <property name="text">
-              <string>Host</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Port</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
        </item>
       </layout>
      </widget>

@@ -435,10 +435,9 @@ class VPCSDevice(Node):
 
         info = """Device {name} is {state}
   Node ID is {id}, server's VPCS device ID is {vpcs_id}
-  Hardware is Cisco VPCS generic device with {ram} MB RAM and {nvram} KB NVRAM
-  Device's server runs on {host}:{port}, console is on port {console}
+  console is on port {console}
   Image is {image_name}
-  {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
+  {nb_ethernet} Ethernet adapters
 """.format(name=self.name(),
            id=self.id(),
            vpcs_id=self._vpcs_id,
