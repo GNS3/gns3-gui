@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
+    <width>482</width>
     <height>485</height>
    </rect>
   </property>
@@ -95,7 +95,7 @@
     </widget>
    </item>
    <item row="7" column="0" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="uiStartNewProjectLayout">
      <item>
       <widget class="QSpinBox" name="uiNumOfInstancesSpinBox"/>
      </item>
@@ -105,9 +105,6 @@
         <string>instance(s) with</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="uiMemPerInstanceSpinBox"/>
      </item>
      <item>
       <widget class="QLabel" name="uiMemLabel">
@@ -139,10 +136,7 @@
     </layout>
    </item>
    <item row="10" column="0" rowspan="2" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QSpinBox" name="uiMemPerNewInstanceSpinBox"/>
-     </item>
+    <layout class="QHBoxLayout" name="uiNewInstancesLayout">
      <item>
       <widget class="QLabel" name="uiMemNewLabel">
        <property name="text">

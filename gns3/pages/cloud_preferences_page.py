@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..settings import CLOUD_SETTINGS
+from ..utils.choices_spinbox import ChoicesSpinBox
 
 from PyQt4 import QtGui
 from PyQt4 import Qt
@@ -16,6 +17,9 @@ RackspaceCtrl.list_regions.return_value = ['United States', 'Ireland']
 FAKE_PROVIDERS = {
     "rackspace": ("Rackspace", 'gns3.pages.cloud_preferences_page.RackspaceCtrl'),
 }
+
+# TODO move this to provider ctrl?
+RACKSPACE_RAM_CHOICES = [1, 2, 4, 8, 15, 30, 60, 90, 120]
 
 
 def import_from_string(string_val):
@@ -50,6 +54,12 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
 
         # insert Terms&Condition link inside the checkbox
         self.uiTermsLabel.setText('Accept <a href="{}">Terms and Conditions</a>'.format('#'))
+
+        # custom spinboxes
+        self.uiMemPerInstanceSpinBox = ChoicesSpinBox(choices=RACKSPACE_RAM_CHOICES, parent=self)
+        self.uiStartNewProjectLayout.insertWidget(2, self.uiMemPerInstanceSpinBox)
+        self.uiMemPerNewInstanceSpinBox = ChoicesSpinBox(choices=RACKSPACE_RAM_CHOICES, parent=self)
+        self.uiNewInstancesLayout.insertWidget(0, self.uiMemPerNewInstanceSpinBox)
 
         from ..main_window import MainWindow
         self.settings = MainWindow.instance().cloud_settings()
