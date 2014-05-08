@@ -27,6 +27,7 @@ def make_setitem(container):
     return setitem
 
 
+@mock.patch('gns3.pages.cloud_preferences_page.import_from_string')
 class TestCloudPreferencesPage(TestCase):
     def setUp(self):
         self.app = QApplication(sys.argv)
@@ -40,6 +41,11 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings.__getitem__.side_effect = make_getitem(settings_copy)
         self.page.settings.__setitem__.side_effect = make_setitem(settings_copy)
         self._init_page()
+        # RackspaceCtrl mock
+        self.ctrl_mock = mock.MagicMock()
+        self.ctrl_mock.return_value = self.ctrl_mock
+        self.ctrl_mock.authenticate.return_value = True
+        self.ctrl_mock.list_regions.return_value = ['United States', 'Ireland']
 
     def tearDown(self):
         # Explicitly deallocate QApplication instance to avoid crashes
@@ -52,7 +58,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings.__getitem__.side_effect = make_getitem(fake_settings)
         self.page.settings.__setitem__.side_effect = make_setitem(fake_settings)
 
-    def test_defaults(self):
+    def test_defaults(self, *args, **kwargs):
         self.page.loadPreferences()
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertFalse(self.page.uiRememberAPIKeyRadioButton.isChecked())
@@ -67,13 +73,13 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(valid)
         self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
         self.assertEqual(self.page.uiRegionComboBox.currentIndex(), -1)  # not set
-        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 0)
-        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 0)
+        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 1)
+        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 1)
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 0)
         self.assertFalse(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 30)
 
-    def test_user_interaction(self):
+    def test_user_interaction(self, *args, **kwargs):
         """
         Simulate user interactions via keyboard or mouse and check dialog status
         """
@@ -93,7 +99,9 @@ class TestCloudPreferencesPage(TestCase):
 
         self.assertTrue(self.page._validate())
 
-    def test_load_settings(self):
+    def test_load_settings(self, mock_1):
+        mock_1.return_value = self.ctrl_mock
+
         self.page.settings['cloud_store_api_key_chosen'] = True
 
         self.page.loadPreferences()
@@ -124,7 +132,9 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 6)
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 120)
 
-    def test_save_preferences(self):
+    def test_save_preferences(self, mock_1):
+        mock_1.return_value = self.ctrl_mock
+
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
         self.page.loadPreferences()
@@ -153,7 +163,7 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.settings['memory_per_new_instance'], 32)
         self.assertEqual(self.page.settings['instance_timeout'], 5)
 
-    def test_clear_settings_on_user_request(self):
+    def test_clear_settings_on_user_request(self, *args, **kwargs):
         # no mocking for this testcase
         page = CloudPreferencesPage()
         # first run, user stores settings on disk
