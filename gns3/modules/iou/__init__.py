@@ -351,7 +351,6 @@ class IOU(Module):
         """
 
         log.info("configuring node {}".format(node))
-        settings = {}
 
         selected_images = []
         for image, info in self._iou_images.items():
