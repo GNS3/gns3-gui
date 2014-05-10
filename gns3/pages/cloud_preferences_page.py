@@ -121,10 +121,11 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.region_index_id = [""]
                 self.uiRegionComboBox.addItem("Select region...")
                 for r in provider.list_regions():
-                    self.uiRegionComboBox.addItem(r)
-                    self.region_index_id.append(r)
+                    provider_tuple = r.popitem()
+                    self.uiRegionComboBox.addItem(provider_tuple[1])
+                    self.region_index_id.append(provider_tuple[0])
         except KeyError:
-            # username/apikey are not set
+            # username/apikey/provider are not set
             pass
 
         # populate all the cloud stuff
