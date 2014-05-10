@@ -1,4 +1,6 @@
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
+from gns3.cloud.exceptions import OverLimit, BadRequest, ServiceUnavailable
+from gns3.cloud.exceptions import Unauthorized, ApiError
 import json
 import unittest
 
@@ -118,6 +120,40 @@ def stub_rackspace_identity_post(identity_ep, data=None, headers=None):
     return MockApiResponse(status_code, response_text)
 
 
+class MockLibCloudDriver(object):
+
+    def __init__(self, username, api_key, region):
+        pass
+
+    def create_node(self, name, size, image, auth):
+
+        if name == 'bad_request':
+            raise Exception("400 Bad request")
+
+        elif name == 'over_limit':
+            raise Exception("413 Over Limit")
+
+        elif name == 'service_unavailable':
+            raise Exception("503 Service Unavailable")
+
+        elif name == 'unauthorized':
+            raise Exception("401 Unauthorized")
+
+        elif name == 'api_error':
+            raise Exception("500 Compute Error")
+
+        return True
+
+    def delete_node(self, node):
+        pass
+
+    def create_key_pair(self, name):
+        pass
+
+    def delete_key_pair(self, keypair):
+        pass
+
+
 class TestRackspaceCtrl(unittest.TestCase):
 
     def setUp(self):
@@ -125,6 +161,7 @@ class TestRackspaceCtrl(unittest.TestCase):
 
         self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
         self.ctrl.post_fn = stub_rackspace_identity_post
+        self.driver_cls = MockLibCloudDriver
 
     def test_authenticate_valid_user(self):
         """ Test authentication with a valid user and api key. """
@@ -209,6 +246,57 @@ class TestRackspaceCtrl(unittest.TestCase):
         ctrl.authenticate()
 
         self.assertEqual('abcdefgh0123456789', ctrl.token)
+
+
+class TestRackspaceCtrlDriver(unittest.TestCase):
+
+    """ Test the libcloud Rackspace driver. """
+
+    class MockKeyPair(object):
+
+        def __init__(self, public_key='public_key_string'):
+            self.public_key = public_key
+
+    def setUp(self):
+        """ Set up the objects used by most of the tests. """
+
+        self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
+        self.ctrl.post_fn = stub_rackspace_identity_post
+        self.ctrl.driver_cls = MockLibCloudDriver
+        self.ctrl.authenticate()
+        self.ctrl.set_region('iad')
+        self.key_pair = TestRackspaceCtrlDriver.MockKeyPair()
+
+    def test_create_instance_over_limit(self):
+        """ Ensure '413 Over Limit' error is handled properly. """
+
+        self.assertRaises(OverLimit, self.ctrl.create_instance,
+                          'over_limit', 'size', 'image', self.key_pair)
+
+    def test_create_instance_bad_request(self):
+        """ Ensure '400 Bad Request' error is handled properly. """
+
+        self.assertRaises(BadRequest, self.ctrl.create_instance,
+                          'bad_request', 'size', 'image', self.key_pair)
+
+    def test_service_uavailable(self):
+        """ Ensure '503 Service Unavailable' error is handled properly. """
+
+        self.assertRaises(ServiceUnavailable, self.ctrl.create_instance,
+                          'service_unavailable', 'size', 'image',
+                          self.key_pair)
+
+    def test_unauthorized(self):
+        """ Ensure '401 Unauthroized' error is handled properly. """
+
+        self.assertRaises(Unauthorized, self.ctrl.create_instance,
+                          'unauthorized', 'size', 'image', self.key_pair)
+
+    def test_api_error(self):
+        """ Ensure '500 ...' error is handled properly. """
+
+        self.assertRaises(ApiError, self.ctrl.create_instance,
+                         'api_error', 'size', 'image', self.key_pair)
 
 
 if __name__ == '__main__':

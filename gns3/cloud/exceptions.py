@@ -1,9 +1,22 @@
 """ Exception classes for CloudCtrl classes. """
 
 
-class Unauthorized(Exception):
+class ApiError(Exception):
 
-    """ Raised when the server returns 401 Unauthorized. """
+    """ Raised when the server returns 500 Compute Error. """
+
+    pass
+
+class BadRequest(Exception):
+
+    """ Raised when the server returns 400 Bad Request. """
+
+    pass
+
+
+class ComputeFault(Exception):
+
+    """ Raised when the server returns 400|500 Compute Fault. """
 
     pass
 
@@ -22,16 +35,23 @@ class ItemNotFound(Exception):
     pass
 
 
-class OverLimit(Exception):
+class KeyPairExists(Exception):
 
-    """ Raised when the server returns 413 Over Limit. """
+    """ Raised when the server returns 409 Conflict Key pair exists. """
 
     pass
 
 
-class ServiceUnavailable(Exception):
+class MethodNotAllowed(Exception):
 
-    """ Raised when the server returns 503 Service Unavailable. """
+    """ Raised when the server returns 405 Method Not Allowed. """
+
+    pass
+
+
+class OverLimit(Exception):
+
+    """ Raised when the server returns 413 Over Limit. """
 
     pass
 
@@ -43,15 +63,15 @@ class ServerCapacityUnavailable(Exception):
     pass
 
 
-class ComputeFault(Exception):
+class ServiceUnavailable(Exception):
 
-    """ Raised when the server returns 400|500 Compute Fault. """
+    """ Raised when the server returns 503 Service Unavailable. """
 
     pass
 
 
-class KeyPairExists(Exception):
+class Unauthorized(Exception):
 
-    """ Raised when the server returns 409 Conflict Key pair exists. """
+    """ Raised when the server returns 401 Unauthorized. """
 
     pass

@@ -24,12 +24,14 @@ instances.
 """
 
 from libcloud.compute.base import NodeAuthSSHKey
-from .exceptions import ItemNotFound, KeyPairExists
+from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
+from .exceptions import OverLimit, BadRequest, ServiceUnavailable
+from .exceptions import Unauthorized, ApiError
 
 
 def parse_exception(exception):
     """
-    Parse the exception value to separate the HTTP status code from the text.
+    Parse the exception to separate the HTTP status code from the text.
 
     Libcloud raises many exceptions of the form:
         Exception("<http status code> <http error> <reponse body>")
@@ -55,9 +57,28 @@ class BaseCloudCtrl(object):
 
     """ Base class for interacting with a cloud provider API. """
 
+    http_status_to_exception = {
+        400: BadRequest,
+        401: Unauthorized,
+        404: ItemNotFound,
+        405: MethodNotAllowed,
+        413: OverLimit,
+        500: ApiError,
+        503: ServiceUnavailable
+    }
+
     def __init__(self, username, api_key):
         self.username = username
         self.api_key = api_key
+
+    def _handle_exception(self, status, error_text, response_overrides=None):
+        """ Raise an exception based on the HTTP status. """
+
+        if response_overrides:
+            if status in response_overrides:
+                raise response_overrides[status](error_text)
+
+        raise self.http_status_to_exception[status](error_text)
 
     def authenticate(self):
         raise NotImplementedError
@@ -79,8 +100,7 @@ class BaseCloudCtrl(object):
             status, error_text = parse_exception(e)
 
             if status:
-                pass
-
+                self._handle_exception(status, error_text)
             else:
                 raise e
 
@@ -94,8 +114,9 @@ class BaseCloudCtrl(object):
 
             status, error_text = parse_exception(e)
 
-            if status == 404:
-                raise ItemNotFound(error_text)
+            if status:
+                self._handle_exception(status, error_text)
+
             else:
                 raise e
 
@@ -116,14 +137,19 @@ class BaseCloudCtrl(object):
     def create_key_pair(self, name):
         """ Create and return a new Key Pair. """
 
+        response_overrides = {
+            409: KeyPairExists
+        }
+
         try:
             return self.driver.create_key_pair(name)
 
         except Exception as e:
 
             status, error_text = parse_exception(e)
-            if status == 409:
-                raise KeyPairExists(error_text)
+
+            if status:
+                self._handle_exception(status, error_text, response_overrides)
             else:
                 raise e
 
@@ -137,8 +163,9 @@ class BaseCloudCtrl(object):
 
             status, error_text = parse_exception(e)
 
-            if status == 404:
-                raise ItemNotFound(error_text)
+            if status:
+                self._handle_exception(status, error_text)
+
             else:
                 raise e
 

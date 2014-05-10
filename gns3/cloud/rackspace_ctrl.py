@@ -30,8 +30,6 @@ log = logging.getLogger(__name__)
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
 
-driver_cls = get_driver(Provider.RACKSPACE)
-
 class RackspaceCtrl(BaseCloudCtrl):
 
     """ Controller class for interacting with Rackspace API. """
@@ -41,6 +39,7 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post
+        self.driver_cls = get_driver(Provider.RACKSPACE)
 
         self.driver = None
         self.region = None
@@ -167,7 +166,7 @@ class RackspaceCtrl(BaseCloudCtrl):
         """ Set self.region and instantiate self.driver. """
 
         try:
-            self.driver = driver_cls(self.username, self.api_key,
+            self.driver = self.driver_cls(self.username, self.api_key,
                                      region=region)
 
         except ValueError:

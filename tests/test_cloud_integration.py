@@ -6,10 +6,13 @@ WARNING: These tests start up real instances in the Rackspace Cloud.
 """
 
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
+from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
+from libcloud.compute.base import Node
+import os
 import unittest
 
 
-class StubNodeObject(object):
+class StubObject(object):
 
     def __init__(self, **kwargs):
 
@@ -61,6 +64,35 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(auth_result, False)
         self.assertIsNone(ctrl.token)
 
+    def test_create_instance(self):
+        """ Test creating an instance. """
+
+        self.ctrl.set_region('ord')
+
+        image = self.ctrl.driver.list_images()[0]
+        size = self.ctrl.driver.list_sizes()[0]
+        key_pair = self.ctrl.list_key_pairs()[0]
+
+        self.ctrl.create_instance('test instance', size, image, key_pair)
+
+    def test_create_key_pair(self):
+        """ Test creating a key pair. """
+
+        self.ctrl.set_region('ord')
+
+        self.ctrl.create_key_pair('test key pair')
+
+    def test_create_key_pair_existing_name(self):
+        """ Test creating a key pair with an existing name. """
+
+        self.ctrl.set_region('ord')
+
+        # Create the first instance
+        self.ctrl.create_key_pair('existing_name')
+
+        self.assertRaises(KeyPairExists, self.ctrl.create_key_pair,
+                          'existing_name')
+
     def test_delete_instance(self):
         """ Test deleting an instance. """
 
@@ -70,14 +102,35 @@ class TestRackspaceCtrl(unittest.TestCase):
 
         #self.ctrl.delete_instance('invalid_instance_id')
 
-    def test_deleted_invalid_instance_id(self):
+    def test_delete_invalid_instance_id(self):
 
         self.ctrl.set_region('ord')
 
-        fake_instance = StubNodeObject(id='invalid_id')
+        fake_instance = StubObject(id='invalid_id')
 
-        self.assertRaises(LookupError, self.ctrl.delete_instance,
+        self.assertRaises(ItemNotFound, self.ctrl.delete_instance,
                           fake_instance)
+
+    def test_delete_key_pair(self):
+        """ Test deleting a key pair. """
+
+        self.ctrl.set_region('ord')
+
+        key_pair = self.ctrl.list_key_pairs()[0]
+
+        result = self.ctrl.delete_key_pair(key_pair)
+
+        self.assertEqual(result, True)
+
+    def test_delete_nonexistant_key_pair(self):
+        """ Test deleting a key pair that doesn't exist. """
+
+        self.ctrl.set_region('ord')
+
+        fake_key_pair = StubObject(name='invalid_name')
+
+        self.assertRaises(ItemNotFound, self.ctrl.delete_key_pair,
+                          fake_key_pair)
 
     def test_list_regions(self):
         """ Ensure that list_regions returns the correct result. """
@@ -101,6 +154,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         instances = self.ctrl.list_instances()
 
         self.assertIsInstance(instances, list)
+        self.assertIsInstance(instances[0], Node)
 
     def test_token_parsed(self):
         """ Ensure that the token is set. """
@@ -127,8 +181,9 @@ class TestRackspaceCtrl(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    username = 'kieronbulloch'
-    api_key = '2d907b75752b4650b230469213d97cd3'
-    #username = input('Enter username: ')
-    #api_key = input('Enter api key: ')
+    username = os.getenv('RACKSPACE_USERNAME',
+                         input('Enter Rackspace username: '))
+
+    api_key = os.getenv('RACKSPACE_APIKEY', input('Enter Rackspace api key: '))
+
     unittest.main()
