@@ -45,7 +45,8 @@ class TestCloudPreferencesPage(TestCase):
         self.ctrl_mock = mock.MagicMock()
         self.ctrl_mock.return_value = self.ctrl_mock
         self.ctrl_mock.authenticate.return_value = True
-        self.ctrl_mock.list_regions.return_value = ['United States', 'Ireland']
+        self.ctrl_mock.list_regions.return_value = [{'ORD': 'ord'}, {'SYD': 'syd'}, {'DFW': 'dfw'},
+                                                    {'HKG': 'hkg'}, {'IAD': 'iad'}]
 
     def tearDown(self):
         # Explicitly deallocate QApplication instance to avoid crashes
@@ -111,7 +112,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
-        self.page.settings['cloud_region'] = 'United States'
+        self.page.settings['cloud_region'] = 'ORD'
         self.page.settings['accepted_terms'] = True
         self.page.settings['instances_per_project'] = 3
         self.page.settings['memory_per_instance'] = 2
@@ -125,7 +126,7 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
         self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
-        self.assertEqual(self.page.uiRegionComboBox.currentText(), "United States")
+        self.assertEqual(self.page.uiRegionComboBox.currentText(), "ord")
         self.assertTrue(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 3)
         self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 2)
@@ -156,7 +157,7 @@ class TestCloudPreferencesPage(TestCase):
 
         self.assertTrue(self.page.settings['cloud_store_api_key'])
         self.assertEqual(self.page.settings['cloud_provider'], 'rackspace')
-        self.assertEqual(self.page.settings['cloud_region'], 'United States')
+        self.assertEqual(self.page.settings['cloud_region'], 'ORD')
         self.assertTrue(self.page.settings['accepted_terms'])
         self.assertEqual(self.page.settings['instances_per_project'], 8)
         self.assertEqual(self.page.settings['memory_per_instance'], 16)
