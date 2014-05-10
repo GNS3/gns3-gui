@@ -14,6 +14,8 @@ from gns3.settings import CLOUD_SETTINGS
 from gns3.main_window import MainWindow
 from gns3.main_window import CLOUD_SETTINGS_GROUP
 
+import pytest
+
 
 def make_getitem(container):
     def getitem(name):
@@ -190,3 +192,29 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(stored_settings.value('cloud_store_api_key', type=bool))
         self.assertEqual(stored_settings.value('cloud_api_key', type=str), '')
         self.assertEqual(stored_settings.value('cloud_user_name', type=str), '')
+
+
+@pytest.mark.skipif(not pytest.config.getvalue("username"),
+                    reason="--username <user> was not specified")
+@pytest.mark.skipif(not pytest.config.getvalue("apikey"),
+                    reason="--apikey <key> was not specified")
+class TestCloudPreferencesPageIntegration(TestCase):
+    def setUp(self):
+        self.app = QApplication(sys.argv)
+        self.page = CloudPreferencesPage()
+
+    def tearDown(self):
+        del self.app
+
+    def test_fill_region(self):
+        self.page.settings['cloud_store_api_key_chosen'] = True
+        self.page.settings['cloud_user_name'] = pytest.config.getvalue("username")
+        self.page.settings['cloud_api_key'] = pytest.config.getvalue("apikey")
+        self.page.settings['cloud_provider'] = 'rackspace'
+        self.page.loadPreferences()
+        region_labels = []
+        for i in range(self.page.uiRegionComboBox.model().rowCount()):
+            region_labels.append(self.page.uiRegionComboBox.model().item(i,0).text())
+        self.assertTrue(len(region_labels) > 1)
+        self.assertIn('ord', region_labels)
+
