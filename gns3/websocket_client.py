@@ -138,6 +138,7 @@ class WebSocketClient(WebSocketBaseClient):
 
         #FIXME: temporary version check
         if (self._version != __version__):
+            self.close_connection()
             raise OSError("GUI version {} differs with the server version {}".format(__version__, self._version))
 
     def reconnect(self):
@@ -289,6 +290,7 @@ class WebSocketClient(WebSocketBaseClient):
         if self._fd_notifier:
             self._fd_notifier.setEnabled(False)
             self._fd_notifier = None
+        log.info("connection closed with server {}:{}".format(self.host, self.port))
 
     def data_received(self, fd):
         """

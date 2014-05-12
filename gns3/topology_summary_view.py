@@ -23,6 +23,9 @@ from .qt import QtGui, QtCore
 from .node import Node
 from .topology import Topology
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class TopologyNodeItem(QtGui.QTreeWidgetItem):
     """
@@ -110,6 +113,13 @@ class TopologySummaryView(QtGui.QTreeWidget):
         # we want to have this node listed only when completely created.
         node.created_signal.connect(self._createdNodeSlot)
 
+    def clear(self):
+        """
+        Clears all the topology summary.
+        """
+
+        QtGui.QTreeWidget.clear(self)
+
     def _createdNodeSlot(self, node_id):
         """
         Received events for node creation.
@@ -117,7 +127,15 @@ class TopologySummaryView(QtGui.QTreeWidget):
         :param node_id: node identifier
         """
 
+        if not node_id:
+            log.error("node ID is null")
+            return
+
         node = self._topology.getNode(node_id)
+        if not node:
+            log.error("could not find node with ID {}".format(node_id))
+            return
+
         TopologyNodeItem(self, node)
 
     def mousePressEvent(self, event):

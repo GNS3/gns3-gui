@@ -75,6 +75,14 @@ class ConsoleView(PyCutExt, ConsoleCmd):
             instance = module.instance()
             instance.notification_signal.connect(self.writeNotification)
 
+    def isatty(self):
+        """
+        For exception handling purposes
+        (see exception hook in the program entry point).
+        """
+        
+        return False
+
     def onKeyPress_Tab(self):
         """
         Imitate cmd.Cmd.complete(self, text, state) function.
