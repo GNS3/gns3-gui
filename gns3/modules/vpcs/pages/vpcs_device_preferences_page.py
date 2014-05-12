@@ -39,11 +39,11 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
         self._vpcs_images = {}
 
         self.uiSaveVPCSImagePushButton.clicked.connect(self._vpcsImageSaveSlot)
-        self.uiDeleteVPCSImagePushButton.clicked.connect(self._vpcsImageDeleteSlot)
+        self.uiDeleteImagePushButton.clicked.connect(self._vpcsImageDeleteSlot)
         self.uiVPCSImagesTreeWidget.itemClicked.connect(self._vpcsImageClickedSlot)
         self.uiVPCSImagesTreeWidget.itemSelectionChanged.connect(self._vpcsImageChangedSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsImageBrowserSlot)
-        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
         self.uiVPCSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
     def _vpcsImageClickedSlot(self, item, column):
@@ -60,7 +60,7 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
         vpcs_image = self._vpcs_images[key]
 
         self.uiVPCSPathLineEdit.setText(vpcs_image["path"])
-        self.uiStartupConfigLineEdit.setText(vpcs_image["script_file"])
+        self.uiScriptFileLineEdit.setText(vpcs_image["script_file"])
 
     def _vpcsImageChangedSlot(self):
         """
@@ -69,9 +69,9 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
 
         item = self.uiVPCSImagesTreeWidget.currentItem()
         if item:
-            self.uiDeleteVPCSImagePushButton.setEnabled(True)
+            self.uiDeleteImagePushButton.setEnabled(True)
         else:
-            self.uiDeleteVPCSImagePushButton.setEnabled(False)
+            self.uiDeleteImagePushButton.setEnabled(False)
 
     def _vpcsImageSaveSlot(self):
         """
@@ -79,7 +79,7 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
         """
 
         path = self.uiVPCSPathLineEdit.text()
-        script_file = self.uiStartupConfigLineEdit.text()
+        script_file = self.uiScriptFileLineEdit.text()
 
         # basename doesn't work on Unix with Windows paths
         if not sys.platform.startswith('win') and len(path) > 2 and path[1] == ":":
@@ -164,7 +164,7 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
         self.uiVPCSPathLineEdit.clear()
         self.uiVPCSPathLineEdit.setText(path)
 
-    def _startupConfigBrowserSlot(self):
+    def _scriptFileBrowserSlot(self):
         """
         Slot to open a file browser and select a script-file file.
         """
@@ -178,8 +178,8 @@ class VPCSDevicePreferencesPage(QtGui.QWidget, Ui_VPCSDevicePreferencesPageWidge
             QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
             return
 
-        self.uiStartupConfigLineEdit.clear()
-        self.uiStartupConfigLineEdit.setText(path)
+        self.uiScriptFileLineEdit.clear()
+        self.uiScriptFileLineEdit.setText(path)
 
     def _testSettingsSlot(self):
 

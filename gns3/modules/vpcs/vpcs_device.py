@@ -436,16 +436,11 @@ class VPCSDevice(Node):
         info = """Device {name} is {state}
   Node ID is {id}, server's VPCS device ID is {vpcs_id}
   console is on port {console}
-  Image is {image_name}
-  {nb_ethernet} Ethernet adapters
 """.format(name=self.name(),
            id=self.id(),
            vpcs_id=self._vpcs_id,
            state=state,
-           host=self._server.host,
-           port=self._server.port,
-           console=self._settings["console"],
-           image_name=os.path.basename(self._settings["path"]))
+           console=self._settings["console"])
 
         port_info = ""
         for port in self._ports:

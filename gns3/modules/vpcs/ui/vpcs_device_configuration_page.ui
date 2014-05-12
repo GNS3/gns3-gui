@@ -25,7 +25,7 @@
     <widget class="QLineEdit" name="uiNameLineEdit"/>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="uiStartupConfigLabel">
+    <widget class="QLabel" name="uiScriptFileLabel">
      <property name="text">
       <string>Script-File:</string>
      </property>

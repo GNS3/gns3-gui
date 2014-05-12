@@ -35,9 +35,9 @@ class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
 
-    def _startupConfigBrowserSlot(self):
+    def _scriptFileBrowserSlot(self):
         """
         Slot to open a file browser and select a script-file file.
         """
@@ -51,8 +51,8 @@ class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
             QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
             return
 
-        self.uiStartupConfigLineEdit.clear()
-        self.uiStartupConfigLineEdit.setText(path)
+        self.uiScriptFileLineEdit.clear()
+        self.uiScriptFileLineEdit.setText(path)
 
     def loadSettings(self, settings, node, group=False):
         """
@@ -68,32 +68,16 @@ class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
             self.uiConsolePortSpinBox.setValue(settings["console"])
 
             # load the script-file
-            self.uiStartupConfigLineEdit.setText(settings["script_file"])
-
-            # load the available VPCS images
-            vpcs_images = VPCS.instance().vpcsImages()
-            for vpcs_image in vpcs_images.values():
-                #TODO: remote server aware
-                self.uiVPCSImageComboBox.addItem(vpcs_image["image"], vpcs_image["path"])
-
-            index = self.uiVPCSImageComboBox.findText(os.path.basename(settings["path"]))
-            if index != -1:
-                self.uiVPCSImageComboBox.setCurrentIndex(index)
+            self.uiScriptFileLineEdit.setText(settings["script_file"])
 
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
-            self.uiVPCSImageLabel.hide()
-            self.uiVPCSImageComboBox.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-            self.uiStartupConfigLabel.hide()
-            self.uiStartupConfigLineEdit.hide()
-            self.uiStartupConfigToolButton.hide()
-
-
-        # load the number of adapters
-        self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
+            self.uiScriptFileLabel.hide()
+            self.uiScriptFileLineEdit.hide()
+            self.uiScriptFileToolButton.hide()
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -110,17 +94,12 @@ class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
             settings["name"] = self.uiNameLineEdit.text()
             settings["console"] = self.uiConsolePortSpinBox.value()
 
-            script_file = self.uiStartupConfigLineEdit.text()
+            script_file = self.uiScriptFileLineEdit.text()
             if script_file != settings["script_file"]:
                 if os.access(script_file, os.R_OK):
                     settings["script_file"] = script_file
                 else:
                     QtGui.QMessageBox.critical(self, "Script-file", "Cannot read the script-file file")
-
-            # save the VPCS image path
-            index = self.uiVPCSImageComboBox.currentIndex()
-            ios_path = self.uiVPCSImageComboBox.itemData(index)
-            settings["path"] = ios_path
         else:
             del settings["name"]
             del settings["console"]

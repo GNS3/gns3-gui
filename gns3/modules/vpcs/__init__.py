@@ -91,10 +91,12 @@ class VPCS(Module):
             path = settings.value("path", "")
             image = settings.value("image", "")
             script_file = settings.value("script_file", "")
+            server = settings.value("server", "local")
             key = "{server}:{image}".format(server=server, image=image)
             self._vpcs_images[key] = {"path": path,
                                      "image": image,
-                                     "script_file": script_file}
+                                     "script_file": script_file,
+                                     "server": server}
 
         settings.endArray()
         settings.endGroup()

@@ -39,9 +39,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
-        self.uiVPCSPathToolButton.clicked.connect(self._vpcsrcPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
     def _testSettingsSlot(self):
@@ -116,27 +114,11 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         :param settings: VPCS settings
         """
 
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
-    def _updateRemoteServersSlot(self):
-        """
-        Adds/Updates the available remote servers.
-        """
-
-        servers = Servers.instance()
-        self.uiRemoteServersTreeWidget.clear()
-        for server in servers.remoteServers().values():
-            host = server.host
-            port = server.port
-            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, host)
-            item.setText(1, str(port))
-
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
 
     def loadPreferences(self):
         """
@@ -146,17 +128,12 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         vpcs_settings = VPCS.instance().settings()
         self._populateWidgets(vpcs_settings)
 
-        servers = Servers.instance()
-        servers.updated_signal.connect(self._updateRemoteServersSlot)
-        self._updateRemoteServersSlot()
-
     def savePreferences(self):
         """
         Saves VPCS preferences.
         """
 
         new_settings = {}
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
