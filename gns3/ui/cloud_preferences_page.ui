@@ -6,22 +6,39 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>406</height>
+    <width>482</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Cloud</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLabel" name="uiAPIKeyLabel">
+   <item row="9" column="0" colspan="3">
+    <widget class="QLabel" name="uiNewInstancesLabel">
      <property name="text">
-      <string>API Key</string>
+      <string>New instances are:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="2" column="0">
+    <widget class="QLabel" name="uiCloudProviderLabel">
+     <property name="text">
+      <string>Cloud provider</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QComboBox" name="uiRegionComboBox"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="uiRegionLabel">
+     <property name="text">
+      <string>Region (optional)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
     <widget class="QRadioButton" name="uiForgetAPIKeyRadioButton">
      <property name="text">
       <string>Forget these settings on exit
@@ -29,10 +46,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLineEdit" name="uiUserNameLineEdit"/>
-   </item>
-   <item row="2" column="1">
+   <item row="2" column="2">
     <widget class="QLabel" name="uiCreateAccountLabel">
      <property name="text">
       <string>No API Key? &lt;a href=&quot;#&quot;&gt;Create Cloud Account.&lt;/a&gt;</string>
@@ -42,7 +56,127 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="1" column="0">
+    <widget class="QLineEdit" name="uiUserNameLineEdit"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="uiAPIKeyLabel">
+     <property name="text">
+      <string>API Key</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QComboBox" name="uiCloudProviderComboBox"/>
+   </item>
+   <item row="3" column="2">
+    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
+     <property name="text">
+      <string>Remeber these settings
+(Suggested for private computers)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="uiUserNameLabel">
+     <property name="text">
+      <string>User Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="3">
+    <widget class="QLabel" name="uiStartNewProjectsLabel">
+     <property name="text">
+      <string>Start new projects with:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="3">
+    <layout class="QHBoxLayout" name="uiStartNewProjectLayout">
+     <item>
+      <widget class="QSpinBox" name="uiNumOfInstancesSpinBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiNumOfInstancesLabel">
+       <property name="text">
+        <string>instance(s) with</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiMemLabel">
+       <property name="text">
+        <string>Gb RAM</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiHourlyPriceLabel">
+       <property name="text">
+        <string>($0.00 per hour per instance)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="10" column="0" rowspan="2" colspan="3">
+    <layout class="QHBoxLayout" name="uiNewInstancesLayout">
+     <item>
+      <widget class="QLabel" name="uiMemNewLabel">
+       <property name="text">
+        <string>Gb RAM</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="uiTermsCheckBox">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiTermsLabel">
+       <property name="text">
+        <string>Accept Terms and Conditions</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::RichText</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="17" column="0">
     <widget class="QFrame" name="PLACEHOLDER">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -64,43 +198,55 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="uiCloudProviderLabel">
+   <item row="12" column="0" colspan="2">
+    <widget class="QLabel" name="uiTimeoutLabel">
      <property name="text">
-      <string>Cloud provider</string>
+      <string>Instances are  deleted after</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="uiAPIKeyLineEdit"/>
-   </item>
-   <item row="5" column="0">
-    <widget class="QComboBox" name="uiRegionComboBox"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QComboBox" name="uiCloudProviderComboBox"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="uiRegionLabel">
-     <property name="text">
-      <string>Region (optional)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QRadioButton" name="uiRememberAPIKeyRadioButton">
-     <property name="text">
-      <string>Remeber these settings
-(Suggested for private computers)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="uiUserNameLabel">
-     <property name="text">
-      <string>User Name:</string>
-     </property>
-    </widget>
+   <item row="14" column="0" rowspan="2" colspan="3">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QSpinBox" name="uiTimeoutSpinBox">
+       <property name="maximum">
+        <number>999</number>
+       </property>
+       <property name="value">
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="uiTimeoutLabel2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>minutes of lost communication</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

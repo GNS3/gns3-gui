@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
-from ..settings import CLOUD_PROVIDERS, CLOUD_REGIONS
+from ..settings import CLOUD_SETTINGS
+from ..utils.choices_spinbox import ChoicesSpinBox
 
 from PyQt4 import QtGui
+from PyQt4 import Qt
 
 import importlib
 from unittest import mock
@@ -15,6 +17,9 @@ RackspaceCtrl.list_regions.return_value = ['United States', 'Ireland']
 FAKE_PROVIDERS = {
     "rackspace": ("Rackspace", 'gns3.pages.cloud_preferences_page.RackspaceCtrl'),
 }
+
+# TODO move this to provider ctrl?
+RACKSPACE_RAM_CHOICES = [1, 2, 4, 8, 15, 30, 60, 90, 120]
 
 
 def import_from_string(string_val):
@@ -47,6 +52,15 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         # map provider ids to combobox indexes
         self.provider_index_id = []
 
+        # insert Terms&Condition link inside the checkbox
+        self.uiTermsLabel.setText('Accept <a href="{}">Terms and Conditions</a>'.format('#'))
+
+        # custom spinboxes
+        self.uiMemPerInstanceSpinBox = ChoicesSpinBox(choices=RACKSPACE_RAM_CHOICES, parent=self)
+        self.uiStartNewProjectLayout.insertWidget(2, self.uiMemPerInstanceSpinBox)
+        self.uiMemPerNewInstanceSpinBox = ChoicesSpinBox(choices=RACKSPACE_RAM_CHOICES, parent=self)
+        self.uiNewInstancesLayout.insertWidget(0, self.uiMemPerNewInstanceSpinBox)
+
         from ..main_window import MainWindow
         self.settings = MainWindow.instance().cloud_settings()
 
@@ -62,16 +76,26 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         """
         return self.uiRememberAPIKeyRadioButton.isChecked()
 
+    def _terms_accepted(self):
+        return self.uiTermsCheckBox.checkState() == Qt.Qt.Checked
+
     def _validate(self):
         """
         Check if settings are ok
         """
-        check_remember_setting = self.uiUserNameLineEdit.text() and self.uiAPIKeyLineEdit.text()
+        errors = ""
+        can_authenticate = self.uiUserNameLineEdit.text() and self.uiAPIKeyLineEdit.text()
         remember_have_been_set = self.uiRememberAPIKeyRadioButton.isChecked() or \
             self.uiForgetAPIKeyRadioButton.isChecked()
-        if check_remember_setting and not remember_have_been_set:
-            QtGui.QMessageBox.critical(self, "Cloud Preferences",
-                                       "Please choose if you want to persist your API keys or not.")
+
+        if can_authenticate and not remember_have_been_set:
+            errors += "Please choose if you want to persist your API keys or not.\n"
+
+        if can_authenticate and not self._terms_accepted():
+            errors += "You have to accept Terms and Conditions to proceed.\n"
+
+        if errors:
+            QtGui.QMessageBox.critical(self, "Cloud Preferences", errors)
             return False
         return True
 
@@ -121,31 +145,34 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
             self.uiRememberAPIKeyRadioButton.setChecked(True)
         else:
             self.uiForgetAPIKeyRadioButton.setChecked(True)
+        self.uiNumOfInstancesSpinBox.setValue(self.settings['instances_per_project'])
+        self.uiMemPerInstanceSpinBox.setValue(self.settings['memory_per_instance'])
+        self.uiMemPerNewInstanceSpinBox.setValue(self.settings['memory_per_new_instance'])
+        self.uiTermsCheckBox.setChecked(self.settings['accepted_terms'])
+        self.uiTimeoutSpinBox.setValue(self.settings['instance_timeout'])
 
     def savePreferences(self):
         """
         Save cloud preferences
         """
         if self._validate():
-            if self._store_api_key():
-                self.settings['cloud_user_name'] = self.uiUserNameLineEdit.text()
-                self.settings['cloud_api_key'] = self.uiAPIKeyLineEdit.text()
-                self.settings['cloud_store_api_key'] = True
-                if self.uiCloudProviderComboBox.currentIndex() >= 0:
-                    self.settings['cloud_provider'] = \
-                        self.provider_index_id[self.uiCloudProviderComboBox.currentIndex()]
-                if self.uiRegionComboBox.currentIndex() >= 0:
-                    self.settings['cloud_region'] = \
-                        self.region_index_id[self.uiRegionComboBox.currentIndex()]
-            else:
-                self.settings['cloud_user_name'] = ""
-                self.settings['cloud_api_key'] = ""
-                self.settings['cloud_store_api_key'] = False
-                self.settings['cloud_provider'] = ""
-                self.settings['cloud_region'] = ""
+            self.settings['cloud_user_name'] = self.uiUserNameLineEdit.text()
+            self.settings['cloud_api_key'] = self.uiAPIKeyLineEdit.text()
+            self.settings['cloud_store_api_key'] = True
+            if self.uiCloudProviderComboBox.currentIndex() >= 0:
+                self.settings['cloud_provider'] = \
+                    self.provider_index_id[self.uiCloudProviderComboBox.currentIndex()]
+            if self.uiRegionComboBox.currentIndex() >= 0:
+                self.settings['cloud_region'] = \
+                    self.region_index_id[self.uiRegionComboBox.currentIndex()]
+            self.settings['instances_per_project'] = self.uiNumOfInstancesSpinBox.value()
+            self.settings['memory_per_instance'] = self.uiMemPerInstanceSpinBox.value()
+            self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
+            self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
+            self.settings['instance_timeout'] = self.uiTimeoutSpinBox.value()
 
             if not self.settings['cloud_store_api_key_chosen']:
-                # user made a choice
+                # user made a choice at this point
                 self.settings['cloud_store_api_key_chosen'] = True
 
             from ..main_window import MainWindow
