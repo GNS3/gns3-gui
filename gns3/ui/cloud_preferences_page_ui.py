@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/jseutterlst/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
 #
-# Created: Thu May  8 00:36:05 2014
+# Created: Mon May 12 15:40:23 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -157,6 +157,6 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiHourlyPriceLabel.setText(_translate("CloudPreferencesPageWidget", "($0.00 per hour per instance)", None))
         self.uiMemNewLabel.setText(_translate("CloudPreferencesPageWidget", "Gb RAM", None))
         self.uiTermsLabel.setText(_translate("CloudPreferencesPageWidget", "Accept Terms and Conditions", None))
-        self.uiTimeoutLabel.setText(_translate("CloudPreferencesPageWidget", "Instances are  deleted after", None))
+        self.uiTimeoutLabel.setText(_translate("CloudPreferencesPageWidget", "Instances are deleted after", None))
         self.uiTimeoutLabel2.setText(_translate("CloudPreferencesPageWidget", "minutes of lost communication", None))
 
