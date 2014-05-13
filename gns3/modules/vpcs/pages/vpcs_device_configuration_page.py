@@ -16,19 +16,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for VPCS devices.
+Configuration page for vpcs devices.
 """
 
 import os
 from gns3.qt import QtGui
-from .. import VPCS
+from .. import vpcs
 from gns3.node_configurator import ConfigurationError
 from ..ui.vpcs_device_configuration_page_ui import Ui_vpcsDeviceConfigPageWidget
 
 
 class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
     """
-    QWidget configuration page for VPCS devices.
+    QWidget configuration page for vpcs devices.
     """
 
     def __init__(self):
@@ -56,7 +56,7 @@ class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
 
     def loadSettings(self, settings, node, group=False):
         """
-        Loads the VPCS device settings.
+        Loads the vpcs device settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance
@@ -81,7 +81,7 @@ class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
 
     def saveSettings(self, settings, node, group=False):
         """
-        Saves the VPCS device settings.
+        Saves the vpcs device settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance

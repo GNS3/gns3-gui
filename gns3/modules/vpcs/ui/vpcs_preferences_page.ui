@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VPCSPreferencesPageWidget</class>
- <widget class="QWidget" name="VPCSPreferencesPageWidget">
+ <class>vpcsPreferencesPageWidget</class>
+ <widget class="QWidget" name="vpcsPreferencesPageWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VPCS</string>
+   <string>vpcs</string>
   </property>
   <layout class="QVBoxLayout">
    <item>
@@ -30,10 +30,10 @@
        <item row="3" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLineEdit" name="uiVPCSPathLineEdit"/>
+          <widget class="QLineEdit" name="uivpcsPathLineEdit"/>
          </item>
          <item>
-          <widget class="QToolButton" name="uiVPCSPathToolButton">
+          <widget class="QToolButton" name="uivpcsPathToolButton">
            <property name="text">
             <string>...</string>
            </property>
@@ -76,9 +76,9 @@
         </layout>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="uiVPCSPathLabel">
+        <widget class="QLabel" name="uivpcsPathLabel">
          <property name="text">
-          <string>Path to VPCS:</string>
+          <string>Path to vpcs:</string>
          </property>
         </widget>
        </item>

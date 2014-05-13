@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/jbbowen/Desktop/Toptal/github/gns3-gui/gns3/modules/vpcs/ui/vpcs_device_configuration_page.ui'
 #
-# Created: Thu May  8 10:54:16 2014
+# Created: Tue May 13 13:18:58 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,7 +62,7 @@ class Ui_vpcsDeviceConfigPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(vpcsDeviceConfigPageWidget)
 
     def retranslateUi(self, vpcsDeviceConfigPageWidget):
-        vpcsDeviceConfigPageWidget.setWindowTitle(_translate("vpcsDeviceConfigPageWidget", "VPCS device configuration", None))
+        vpcsDeviceConfigPageWidget.setWindowTitle(_translate("vpcsDeviceConfigPageWidget", "vpcs device configuration", None))
         self.uiNameLabel.setText(_translate("vpcsDeviceConfigPageWidget", "Name:", None))
         self.uiScriptFileLabel.setText(_translate("vpcsDeviceConfigPageWidget", "Script-File:", None))
         self.uiScriptFileToolButton.setText(_translate("vpcsDeviceConfigPageWidget", "...", None))

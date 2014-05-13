@@ -16,21 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for VPCS preferences.
+Configuration page for vpcs preferences.
 """
 
 import os
 import sys
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
-from .. import VPCS
-from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
+from .. import vpcs
+from ..ui.vpcs_preferences_page_ui import Ui_vpcsPreferencesPageWidget
 from ..settings import VPCS_SETTINGS
 
 
-class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
+class vpcsPreferencesPage(QtGui.QWidget, Ui_vpcsPreferencesPageWidget):
     """
-    QWidget preference page for VPCS.
+    QWidget preference page for vpcs.
     """
 
     def __init__(self):
@@ -66,7 +66,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self._progress_dialog.setWindowTitle("Settings")
         self._progress_dialog.show()
 
-        vpcs_module = VPCS.instance()
+        vpcs_module = vpcs.instance()
         if server not in vpcs_module.servers():
             server_added = True
             vpcs_module.addServer(server)
@@ -95,7 +95,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         Slot to populate the page widgets with the default settings.
         """
 
-        self._populateWidgets(VPCS_SETTINGS)
+        self._populateWidgets(vpcs_SETTINGS)
 
     def _useLocalServerSlot(self, state):
         """
@@ -111,7 +111,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         """
         Populates the widgets with the settings.
 
-        :param settings: VPCS settings
+        :param settings: vpcs settings
         """
 
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
@@ -122,15 +122,15 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
 
     def loadPreferences(self):
         """
-        Loads VPCS preferences.
+        Loads vpcs preferences.
         """
 
-        vpcs_settings = VPCS.instance().settings()
+        vpcs_settings = vpcs.instance().settings()
         self._populateWidgets(vpcs_settings)
 
     def savePreferences(self):
         """
-        Saves VPCS preferences.
+        Saves vpcs preferences.
         """
 
         new_settings = {}
@@ -138,4 +138,4 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
-        VPCS.instance().setSettings(new_settings)
+        vpcs.instance().setSettings(new_settings)

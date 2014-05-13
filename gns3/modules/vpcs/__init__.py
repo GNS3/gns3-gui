@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-VPCS module implementation.
+vpcs module implementation.
 """
 
 import socket
@@ -26,16 +26,16 @@ from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
-from .vpcs_device import VPCSDevice
+from .vpcs_device import vpcsDevice
 from .settings import VPCS_SETTINGS, VPCS_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class VPCS(Module):
+class vpcs(Module):
     """
-    VPCS module.
+    vpcs module.
     """
 
     def __init__(self):
@@ -49,7 +49,7 @@ class VPCS(Module):
 
         # load the settings
         self._loadSettings()
-        self._loadVPCSImages()
+        self._loadvpcsImages()
 
     def _loadSettings(self):
         """
@@ -75,16 +75,16 @@ class VPCS(Module):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def _loadVPCSImages(self):
+    def _loadvpcsImages(self):
         """
-        Load the VPCS images from the persistent settings file.
+        Load the vpcs images from the persistent settings file.
         """
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("VPCSImages")
+        settings.beginGroup("vpcsImages")
 
-        # load the VPCS images
+        # load the vpcs images
         size = settings.beginReadArray("vpcs_image")
         for index in range(0, size):
             settings.setArrayIndex(index)
@@ -101,17 +101,17 @@ class VPCS(Module):
         settings.endArray()
         settings.endGroup()
 
-    def _saveVPCSImages(self):
+    def _savevpcsImages(self):
         """
-        Saves the VPCS images to the persistent settings file.
+        Saves the vpcs images to the persistent settings file.
         """
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("VPCSImages")
+        settings.beginGroup("vpcsImages")
         settings.remove("")
 
-        # save the VPCS images
+        # save the vpcs images
         settings.beginWriteArray("vpcs_image", len(self._vpcs_images))
         index = 0
         for ios_image in self._vpcs_images.values():
@@ -130,7 +130,7 @@ class VPCS(Module):
         """
 
         self._working_dir = path
-        log.info("local working directory for VPCS module: {}".format(self._working_dir))
+        log.info("local working directory for vpcs module: {}".format(self._working_dir))
 
         # update the server with the new working directory / project name
         for server in self._servers:
@@ -144,7 +144,7 @@ class VPCS(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("adding server {}:{} to VPCS module".format(server.host, server.port))
+        log.info("adding server {}:{} to vpcs module".format(server.host, server.port))
         self._servers.append(server)
         self._sendSettings(server)
 
@@ -155,7 +155,7 @@ class VPCS(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("removing server {}:{} from VPCS module".format(server.host, server.port))
+        log.info("removing server {}:{} from vpcs module".format(server.host, server.port))
         self._servers.remove(server)
 
     def servers(self):
@@ -188,14 +188,14 @@ class VPCS(Module):
 
     def vpcsImages(self):
         """
-        Returns VPCS images settings.
+        Returns vpcs images settings.
 
-        :returns: VPCS images settings (dictionary)
+        :returns: vpcs images settings (dictionary)
         """
 
         return self._vpcs_images
 
-    def setVPCSImages(self, new_vpcs_images):
+    def setvpcsImages(self, new_vpcs_images):
         """
         Sets IOS images settings.
 
@@ -203,7 +203,7 @@ class VPCS(Module):
         """
 
         self._vpcs_images = new_vpcs_images.copy()
-        self._saveVPCSImages()
+        self._savevpcsImages()
 
     def settings(self):
         """
@@ -248,7 +248,7 @@ class VPCS(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("sending VPCS settings to server {}:{}".format(server.host, server.port))
+        log.info("sending vpcs settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
 
         # send the local working directory only if this is a local server
@@ -322,17 +322,17 @@ class VPCS(Module):
                 selected_images.append(image)
 
         if not selected_images:
-            raise ModuleError("No VPCS image found for this device")
+            raise ModuleError("No vpcs image found for this device")
         elif len(selected_images) > 1:
 
             from gns3.main_window import MainWindow
             mainwindow = MainWindow.instance()
 
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "VPCS image", "Please choose an image", selected_images, 0, False)
+            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "vpcs image", "Please choose an image", selected_images, 0, False)
             if ok:
                 vpcsimage = selection
             else:
-                raise ModuleError("Please select an VPCS image")
+                raise ModuleError("Please select an vpcs image")
 
         else:
             vpcsimage = selected_images[0]
@@ -348,7 +348,7 @@ class VPCS(Module):
         Resets the servers.
         """
 
-        log.info("VPCS module reset")
+        log.info("vpcs module reset")
         for server in self._servers:
             if server.connected():
                 server.send_notification("vpcs.reset")
@@ -389,7 +389,7 @@ class VPCS(Module):
         :returns: list of classes
         """
 
-        return [VPCSDevice]
+        return [vpcsDevice]
 
     @staticmethod
     def preferencePages():
@@ -397,18 +397,17 @@ class VPCS(Module):
         :returns: QWidget object list
         """
 
-        from .pages.vpcs_preferences_page import VPCSPreferencesPage
-        from .pages.vpcs_device_preferences_page import VPCSDevicePreferencesPage
-        return [VPCSPreferencesPage, VPCSDevicePreferencesPage]
+        from .pages.vpcs_preferences_page import vpcsPreferencesPage
+        return [vpcsPreferencesPage]
 
     @staticmethod
     def instance():
         """
-        Singleton to return only on instance of VPCS module.
+        Singleton to return only on instance of vpcs module.
 
-        :returns: instance of VPCS
+        :returns: instance of vpcs
         """
 
-        if not hasattr(VPCS, "_instance"):
-            VPCS._instance = VPCS()
-        return VPCS._instance
+        if not hasattr(vpcs, "_instance"):
+            vpcs._instance = vpcs()
+        return vpcs._instance
