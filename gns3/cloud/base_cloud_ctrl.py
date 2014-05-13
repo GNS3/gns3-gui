@@ -122,7 +122,6 @@ class BaseCloudCtrl(object):
 
             if status:
                 self._handle_exception(status, error_text)
-
             else:
                 raise e
 
@@ -146,14 +145,11 @@ class BaseCloudCtrl(object):
         response_overrides = {
             409: KeyPairExists
         }
-
         try:
             return self.driver.create_key_pair(name)
 
         except Exception as e:
-
             status, error_text = parse_exception(e)
-
             if status:
                 self._handle_exception(status, error_text, response_overrides)
             else:
@@ -166,12 +162,9 @@ class BaseCloudCtrl(object):
             return self.driver.delete_key_pair(keypair)
 
         except Exception as e:
-
             status, error_text = parse_exception(e)
-
             if status:
                 self._handle_exception(status, error_text)
-
             else:
                 raise e
 

@@ -89,7 +89,6 @@ class RackspaceCtrl(BaseCloudCtrl):
         if response.status_code == 200:
 
             api_data = response.json()
-
             self.token = self._parse_token(api_data)
 
             if self.token:
