@@ -24,7 +24,6 @@ import base64
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
-from gns3.ports.serial_port import SerialPort
 
 import logging
 log = logging.getLogger(__name__)
@@ -54,12 +53,12 @@ class VPCSDevice(Node):
                           "console": None}
 
         #self._occupied_slots = []
-        self._addAdapters(1, 0)
+        self._addAdapters(1)
 
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def _addAdapters(self, nb_ethernet_adapters, nb_serial_adapters):
+    def _addAdapters(self, nb_ethernet_adapters):
         """
         Adds ports based on what adapter is inserted in which slot.
 
@@ -67,15 +66,13 @@ class VPCSDevice(Node):
         :param slot_number: slot number (integer)
         """
 
-        nb_adapters = nb_ethernet_adapters + nb_serial_adapters
+        nb_adapters = nb_ethernet_adapters
         for slot_number in range(0, nb_adapters):
 #             if slot_number in self._occupied_slots:
 #                 continue
             for port_number in range(0, 1):
                 if slot_number < nb_ethernet_adapters:
                     port = EthernetPort
-                else:
-                    port = SerialPort
                 port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
                 new_port = port(port_name)
                 new_port.setPortNumber(port_number)
@@ -84,7 +81,7 @@ class VPCSDevice(Node):
                 self._ports.append(new_port)
                 log.debug("port {} has been added".format(port_name))
 
-    def _removeAdapters(self, nb_ethernet_adapters, nb_serial_adapters):
+    def _removeAdapters(self, nb_ethernet_adapters):
         """
         Removes ports when an adapter is removed from a slot.
 
@@ -92,8 +89,7 @@ class VPCSDevice(Node):
         """
 
         for port in self._ports.copy():
-            if (port.slotNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet") or \
-                (port.slotNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
+            if (port.slotNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet"):
                 #self._occupied_slots.remove(port.slotNumber())
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
