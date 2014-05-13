@@ -30,6 +30,7 @@ log = logging.getLogger(__name__)
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
 
+
 class RackspaceCtrl(BaseCloudCtrl):
 
     """ Controller class for interacting with Rackspace API. """
@@ -163,11 +164,11 @@ class RackspaceCtrl(BaseCloudCtrl):
         return region_list
 
     def set_region(self, region):
-        """ Set self.region and instantiate self.driver. """
+        """ Set self.region and self.driver. Returns True or False. """
 
         try:
             self.driver = self.driver_cls(self.username, self.api_key,
-                                     region=region)
+                                          region=region)
 
         except ValueError:
             return False

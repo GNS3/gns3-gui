@@ -1,6 +1,7 @@
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import OverLimit, BadRequest, ServiceUnavailable
-from gns3.cloud.exceptions import Unauthorized, ApiError
+from gns3.cloud.exceptions import Unauthorized, ApiError, KeyPairExists
+from gns3.cloud.exceptions import ItemNotFound
 import json
 import unittest
 
@@ -144,14 +145,17 @@ class MockLibCloudDriver(object):
 
         return True
 
-    def delete_node(self, node):
-        pass
+    def destroy_node(self, node):
+
+        if node.name == 'nonexistant':
+            raise Exception("404 Instance not found")
 
     def create_key_pair(self, name):
-        pass
 
-    def delete_key_pair(self, keypair):
-        pass
+        if name == 'duplicate_name':
+            raise Exception("409 Key Pair exists.")
+
+        return True
 
 
 class TestRackspaceCtrl(unittest.TestCase):
@@ -190,7 +194,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(auth_result, False)
         self.assertIsNone(ctrl.token)
 
-    def test_invalid_user(self):
+    def test_authenticate_invalid_user(self):
         """  Ensure authentication with invalid user credentials fails. """
 
         ctrl = RackspaceCtrl('invalid_user', 'invalid_api_key')
@@ -252,10 +256,12 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
 
     """ Test the libcloud Rackspace driver. """
 
-    class MockKeyPair(object):
+    class StubObject(object):
 
-        def __init__(self, public_key='public_key_string'):
-            self.public_key = public_key
+        def __init__(self, **kwargs):
+
+            for arg in kwargs:
+                setattr(self, arg, kwargs[arg])
 
     def setUp(self):
         """ Set up the objects used by most of the tests. """
@@ -265,7 +271,7 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
         self.ctrl.driver_cls = MockLibCloudDriver
         self.ctrl.authenticate()
         self.ctrl.set_region('iad')
-        self.key_pair = TestRackspaceCtrlDriver.MockKeyPair()
+        self.key_pair = TestRackspaceCtrlDriver.StubObject(public_key='keystr')
 
     def test_create_instance_over_limit(self):
         """ Ensure '413 Over Limit' error is handled properly. """
@@ -278,6 +284,20 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
 
         self.assertRaises(BadRequest, self.ctrl.create_instance,
                           'bad_request', 'size', 'image', self.key_pair)
+
+    def test_delete_instance_nonexistant(self):
+        """ Ensure '404 Instance not found' error is handled properly. """
+
+        instance = TestRackspaceCtrlDriver.StubObject(name='nonexistant')
+
+        self.assertRaises(ItemNotFound, self.ctrl.delete_instance,
+                          instance)
+
+    def test_create_key_pair_duplicate_name(self):
+        """ Ensure '409 Key Pair exists' error is handled properly. """
+
+        self.assertRaises(KeyPairExists, self.ctrl.create_key_pair,
+                          'duplicate_name')
 
     def test_service_uavailable(self):
         """ Ensure '503 Service Unavailable' error is handled properly. """
@@ -295,9 +315,8 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
     def test_api_error(self):
         """ Ensure '500 ...' error is handled properly. """
 
-        self.assertRaises(ApiError, self.ctrl.create_instance,
-                         'api_error', 'size', 'image', self.key_pair)
-
+        self.assertRaises(ApiError, self.ctrl.create_instance, 'api_error',
+                          'size', 'image', self.key_pair)
 
 if __name__ == '__main__':
     unittest.main()

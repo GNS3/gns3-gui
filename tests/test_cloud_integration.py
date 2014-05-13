@@ -7,7 +7,7 @@ WARNING: These tests start up real instances in the Rackspace Cloud.
 
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
-from libcloud.compute.base import Node
+from libcloud.compute.base import Node, KeyPair
 import os
 import unittest
 
@@ -25,8 +25,30 @@ class TestRackspaceCtrl(unittest.TestCase):
     def setUp(self):
         self.username = username
         self.api_key = api_key
+        # prefix to identify created objects
+        self.object_prefix = "int_test_"
+        self.prefix_length = len(self.object_prefix)
         self.ctrl = RackspaceCtrl(self.username, self.api_key)
         self.ctrl.authenticate()
+        self.ctrl.set_region('ord')
+
+    def tearDown(self):
+        self._remove_instances()
+        self._remove_key_pairs()
+
+    def _remove_instances(self):
+        """ Remove any instances that were created. """
+
+        for instance in self.ctrl.driver.list_nodes():
+            if instance.name[0:self.prefix_length] == self.object_prefix:
+                self.ctrl.driver.destroy_node(instance)
+
+    def _remove_key_pairs(self):
+        """ Remove any key pairs that were created. """
+
+        for key_pair in self.ctrl.driver.list_key_pairs():
+            if key_pair.name[0:self.prefix_length] == self.object_prefix:
+                self.ctrl.driver.delete_key_pair(key_pair)
 
     def test_authenticate_valid_user(self):
         """ Test authentication with a valid user and api key. """
@@ -64,59 +86,93 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(auth_result, False)
         self.assertIsNone(ctrl.token)
 
+    def test_set_region(self):
+        """ Ensure that set_region sets 'region' and 'driver'. """
+
+        ctrl = RackspaceCtrl(self.username, self.api_key)
+        ctrl.authenticate()
+
+        result = ctrl.set_region('iad')
+
+        self.assertEqual(result, True)
+        self.assertEqual(ctrl.region, 'iad')
+        self.assertIsNotNone(ctrl.driver)
+
+    def test_set_invalid_region(self):
+        """ Ensure that calling 'set_region' with an invalid param fails. """
+
+        ctrl = RackspaceCtrl(self.username, self.api_key)
+        ctrl.authenticate()
+
+        result = self.ctrl.set_region('invalid')
+
+        self.assertEqual(result, False)
+        self.assertIsNone(ctrl.region)
+        self.assertIsNone(ctrl.driver)
+
     def test_create_instance(self):
         """ Test creating an instance. """
 
-        self.ctrl.set_region('ord')
+        name = "%screate_instance" % self.object_prefix
 
         image = self.ctrl.driver.list_images()[0]
         size = self.ctrl.driver.list_sizes()[0]
-        key_pair = self.ctrl.list_key_pairs()[0]
+        key_pair = self.ctrl.create_key_pair(name)
 
-        self.ctrl.create_instance('test instance', size, image, key_pair)
-
-    def test_create_key_pair(self):
-        """ Test creating a key pair. """
-
-        self.ctrl.set_region('ord')
-
-        self.ctrl.create_key_pair('test key pair')
-
-    def test_create_key_pair_existing_name(self):
-        """ Test creating a key pair with an existing name. """
-
-        self.ctrl.set_region('ord')
-
-        # Create the first instance
-        self.ctrl.create_key_pair('existing_name')
-
-        self.assertRaises(KeyPairExists, self.ctrl.create_key_pair,
-                          'existing_name')
+        instance = self.ctrl.create_instance(name, size, image, key_pair)
+        self.ctrl.driver.wait_until_running([instance])
+        self.assertIsInstance(instance, Node)
 
     def test_delete_instance(self):
         """ Test deleting an instance. """
 
-        self.ctrl.set_region('ord')
+        name = "%sdelete_instances" % self.object_prefix
 
-        # TODO: create an instance first, and get its ID
+        image = self.ctrl.driver.list_images()[0]
+        size = self.ctrl.driver.list_sizes()[0]
+        key_pair = self.ctrl.create_key_pair(name)
 
-        #self.ctrl.delete_instance('invalid_instance_id')
+        instance = self.ctrl.create_instance(name, size, image, key_pair)
+        self.ctrl.driver.wait_until_running([instance])
+
+        response = self.ctrl.delete_instance(instance)
+
+        self.assertEqual(response, True)
 
     def test_delete_invalid_instance_id(self):
-
-        self.ctrl.set_region('ord')
 
         fake_instance = StubObject(id='invalid_id')
 
         self.assertRaises(ItemNotFound, self.ctrl.delete_instance,
                           fake_instance)
 
+    def test_create_key_pair(self):
+        """ Test creating a key pair. """
+
+        name = "%screate_key_pair" % self.object_prefix
+        key_pair = self.ctrl.create_key_pair(name)
+
+        self.assertIsInstance(key_pair, KeyPair)
+
+        response = self.ctrl.delete_key_pair(key_pair)
+
+        self.assertEqual(response, True)
+
+    def test_create_key_pair_existing_name(self):
+        """ Test creating a key pair with an existing name. """
+
+        name = "%screate_key_pair_existing_name" % self.object_prefix
+        # Create the first instance
+        self.ctrl.create_key_pair(name)
+
+        self.assertRaises(KeyPairExists, self.ctrl.create_key_pair, name)
+
     def test_delete_key_pair(self):
         """ Test deleting a key pair. """
 
-        self.ctrl.set_region('ord')
+        name = "%sdelete_key_pair" % self.object_prefix
 
-        key_pair = self.ctrl.list_key_pairs()[0]
+        key_pair = self.ctrl.create_key_pair(name)
 
         result = self.ctrl.delete_key_pair(key_pair)
 
@@ -124,8 +180,6 @@ class TestRackspaceCtrl(unittest.TestCase):
 
     def test_delete_nonexistant_key_pair(self):
         """ Test deleting a key pair that doesn't exist. """
-
-        self.ctrl.set_region('ord')
 
         fake_key_pair = StubObject(name='invalid_name')
 
@@ -149,7 +203,14 @@ class TestRackspaceCtrl(unittest.TestCase):
 
     def test_list_instances(self):
 
-        self.ctrl.set_region('ord')
+        name = "%slist_instances" % self.object_prefix
+
+        image = self.ctrl.driver.list_images()[0]
+        size = self.ctrl.driver.list_sizes()[0]
+        key_pair = self.ctrl.create_key_pair(name)
+
+        instance = self.ctrl.create_instance(name, size, image, key_pair)
+        self.ctrl.driver.wait_until_running([instance])
 
         instances = self.ctrl.list_instances()
 
@@ -161,29 +222,17 @@ class TestRackspaceCtrl(unittest.TestCase):
 
         self.assertIsNotNone(self.ctrl.token)
 
-    def test_set_region(self):
-        """ Ensure that set_region sets 'region' and 'driver'. """
-
-        result = self.ctrl.set_region('iad')
-
-        self.assertEqual(result, True)
-        self.assertEqual(self.ctrl.region, 'iad')
-        self.assertIsNotNone(self.ctrl.driver)
-
-    def test_set_invalid_region(self):
-        """ Ensure that calling 'set_region' with an invalid param fails. """
-
-        result = self.ctrl.set_region('invalid')
-
-        self.assertEqual(result, False)
-        self.assertIsNone(self.ctrl.region)
-        self.assertIsNone(self.ctrl.driver)
-
 
 if __name__ == '__main__':
-    username = os.getenv('RACKSPACE_USERNAME',
-                         input('Enter Rackspace username: '))
 
-    api_key = os.getenv('RACKSPACE_APIKEY', input('Enter Rackspace api key: '))
+    if 'RACKSPACE_USERNAME' in os.environ:
+        username = os.environ.get('RACKSPACE_USERNAME')
+    else:
+        username = input('Enter Rackspace username: ')
+
+    if 'RACKSPACE_APIKEY' in os.environ:
+        api_key = os.environ.get('RACKSPACE_APIKEY')
+    else:
+        api_key = input('Enter Rackspace api key: ')
 
     unittest.main()

@@ -81,10 +81,16 @@ class BaseCloudCtrl(object):
         raise self.http_status_to_exception[status](error_text)
 
     def authenticate(self):
+        """ Validate cloud account credentials.  Return boolean. """
         raise NotImplementedError
 
     def create_instance(self, name, size, image, keypair):
-        """ Create a new instance with the supplied attributes. """
+        """
+        Create a new instance with the supplied attributes.
+
+        Return a Node object.
+
+        """
 
         auth_key = NodeAuthSSHKey(keypair.public_key)
 
@@ -105,7 +111,7 @@ class BaseCloudCtrl(object):
                 raise e
 
     def delete_instance(self, instance):
-        """ Delete the specified instance.  Return True or False. """
+        """ Delete the specified instance.  Returns True or False. """
 
         try:
             return self.driver.destroy_node(instance)
@@ -154,7 +160,7 @@ class BaseCloudCtrl(object):
                 raise e
 
     def delete_key_pair(self, keypair):
-        """ Delete the keypair. """
+        """ Delete the keypair. Returns True or False. """
 
         try:
             return self.driver.delete_key_pair(keypair)
@@ -173,9 +179,3 @@ class BaseCloudCtrl(object):
         """ Return a list of Key Pairs. """
 
         return self.driver.list_key_pairs()
-
-    def list_regions(self):
-        raise NotImplementedError
-
-    def terminate_instance(self, instance_id):
-        raise NotImplementedError
