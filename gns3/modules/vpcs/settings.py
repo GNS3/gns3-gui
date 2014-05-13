@@ -15,9 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gns3.modules.builtin import Builtin
-from gns3.modules.dynamips import Dynamips
-from gns3.modules.iou import IOU
-from gns3.modules.vpcs import VPCS
+import sys
 
-MODULES = [Builtin, Dynamips, IOU, VPCS]
+"""
+Default VPCS settings.
+"""
+
+VPCS_SETTINGS = {
+    "console_start_port_range": 4001,
+    "console_end_port_range": 4512,
+    "udp_start_port_range": 30001,
+    "udp_end_port_range": 40000,
+    "use_local_server": True,
+}
+
+VPCS_SETTING_TYPES = {
+    "console_start_port_range": int,
+    "console_end_port_range": int,
+    "udp_start_port_range": int,
+    "udp_end_port_range": int,
+    "use_local_server": bool,
+}
