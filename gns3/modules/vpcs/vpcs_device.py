@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-vpcs device implementation.
+VPCS device implementation.
 """
 
 import os
@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 
 class VPCSDevice(Node):
     """
-    vpcs device.
+    VPCS device.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
@@ -40,7 +40,7 @@ class VPCSDevice(Node):
     def __init__(self, module, server):
         Node.__init__(self, server)
 
-        log.info("vpcs instance is being created")
+        log.info("VPCS instance is being created")
         self._vpcs_id = None
         self._defaults = {}
         self._inital_settings = None
@@ -96,7 +96,7 @@ class VPCSDevice(Node):
 
     def setup(self, vpcs_path, name=None, initial_settings={}):
         """
-        Setups this vpcs device.
+        Setups this VPCS device.
 
         :param name: optional name
         """
@@ -132,7 +132,7 @@ class VPCSDevice(Node):
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
-                log.info("vpcs instance setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
+                log.info("VPCS instance setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
                 self._settings[name] = value
 
         # update the node with setup initial settings if any
@@ -142,16 +142,16 @@ class VPCSDevice(Node):
             self.updated_signal.emit()
         else:
             self.setInitialized(True)
-            log.info("vpcs instance {} has been created".format(self.name()))
+            log.info("VPCS instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
     def delete(self):
         """
-        Deletes this vpcs instance.
+        Deletes this VPCS instance.
         """
 
-        log.debug("vpcs device {} is being deleted".format(self.name()))
+        log.debug("VPCS device {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         if self._vpcs_id:
@@ -197,7 +197,7 @@ class VPCSDevice(Node):
 
     def update(self, new_settings):
         """
-        Updates the settings for this vpcs device.
+        Updates the settings for this VPCS device.
 
         :param new_settings: settings dictionary
         """
@@ -245,17 +245,17 @@ class VPCSDevice(Node):
 
         if self._inital_settings and not self._loading:
             self.setInitialized(True)
-            log.info("vpcs device {} has been created".format(self.name()))
+            log.info("VPCS device {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
             self._inital_settings = None
         elif updated or self._loading:
-            log.info("vpcs device {} has been updated".format(self.name()))
+            log.info("VPCS device {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
     def start(self):
         """
-        Starts this vpcs instance.
+        Starts this VPCS instance.
         """
 
         log.debug("{} is starting".format(self.name()))
@@ -282,7 +282,7 @@ class VPCSDevice(Node):
 
     def stop(self):
         """
-        Stops this vpcs instance.
+        Stops this VPCS instance.
         """
 
         log.debug("{} is stopping".format(self.name()))
@@ -309,7 +309,7 @@ class VPCSDevice(Node):
 
     def reload(self):
         """
-        Reloads this vpcs instance.
+        Reloads this VPCS instance.
         """
 
         log.debug("{} is being reloaded".format(self.name()))
@@ -358,7 +358,7 @@ class VPCSDevice(Node):
 
     def addNIO(self, port, nio):
         """
-        Adds a new NIO on the specified port for this vpcs instance.
+        Adds a new NIO on the specified port for this VPCS instance.
 
         :param port: Port instance
         :param nio: NIO instance
@@ -390,7 +390,7 @@ class VPCSDevice(Node):
 
     def deleteNIO(self, port):
         """
-        Deletes an NIO from the specified port on this vpcs instance
+        Deletes an NIO from the specified port on this VPCS instance
 
         :param port: Port instance
         """
@@ -419,7 +419,7 @@ class VPCSDevice(Node):
 
     def info(self):
         """
-        Returns information about this vpcs device.
+        Returns information about this VPCS device.
 
         :returns: formated string
         """
@@ -430,7 +430,7 @@ class VPCSDevice(Node):
             state = "stopped"
 
         info = """Device {name} is {state}
-  Node ID is {id}, server's vpcs device ID is {vpcs_id}
+  Node ID is {id}, server's VPCS device ID is {vpcs_id}
   console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
@@ -450,7 +450,7 @@ class VPCSDevice(Node):
 
     def dump(self):
         """
-        Returns a representation of this vpcs device.
+        Returns a representation of this VPCS device.
         (to be saved in a topology file).
 
         :returns: representation of the node (dictionary)
@@ -480,7 +480,7 @@ class VPCSDevice(Node):
 
     def load(self, node_info):
         """
-        Loads an vpcs device representation
+        Loads a VPCS device representation
         (from a topology file).
 
         :param node_info: representation of the node (dictionary)
@@ -493,7 +493,7 @@ class VPCSDevice(Node):
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
-        log.info("vpcs device {} is loading".format(name))
+        log.info("VPCS device {} is loading".format(name))
         self.setup(path, name, settings)
 
     def _updatePortSettings(self):
@@ -521,7 +521,7 @@ class VPCSDevice(Node):
 
     def name(self):
         """
-        Returns the name of this vpcs device.
+        Returns the name of this VPCS device.
 
         :returns: name (string)
         """
@@ -530,7 +530,7 @@ class VPCSDevice(Node):
 
     def settings(self):
         """
-        Returns all this vpcs device settings.
+        Returns all this VPCS device settings.
 
         :returns: settings dictionary
         """
@@ -539,7 +539,7 @@ class VPCSDevice(Node):
 
     def ports(self):
         """
-        Returns all the ports for this vpcs device.
+        Returns all the ports for this VPCS device.
 
         :returns: list of Port instances
         """
@@ -548,7 +548,7 @@ class VPCSDevice(Node):
 
     def console(self):
         """
-        Returns the console port for this vpcs device.
+        Returns the console port for this VPCS device.
 
         :returns: port (integer)
         """
@@ -573,7 +573,7 @@ class VPCSDevice(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/multilayer_switch.normal.svg"
+        return ":/symbols/computer.normal.svg"
 
     @staticmethod
     def hoverSymbol():
@@ -583,12 +583,12 @@ class VPCSDevice(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/multilayer_switch.selected.svg"
+        return ":/symbols/computer.selected.svg"
 
     @staticmethod
     def symbolName():
 
-        return "vpcs device"
+        return "VPCS"
 
     @staticmethod
     def categories():
@@ -598,8 +598,8 @@ class VPCSDevice(Node):
         :returns: list of node category (integer)
         """
 
-        return [Node.routers, Node.switches]
+        return [Node.end_devices]
 
     def __str__(self):
 
-        return "vpcs device"
+        return "VPCS device"

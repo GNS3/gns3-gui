@@ -16,13 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for vpcs preferences.
+Configuration page for VPCS preferences.
 """
 
-import os
-import sys
-from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+
+from gns3.qt import QtGui
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
 from ..settings import VPCS_SETTINGS
@@ -30,7 +28,7 @@ from ..settings import VPCS_SETTINGS
 
 class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
     """
-    QWidget preference page for vpcs.
+    QWidget preference page for VPCS
     """
 
     def __init__(self):
@@ -45,57 +43,13 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
     def _testSettingsSlot(self):
 
         QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
-        return
-
-        servers = Servers.instance()
-        if self.uiUseLocalServercheckBox.isChecked():
-            server = servers.localServer()
-        else:
-            QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
-
-        try:
-            if not server.connected():
-                server.reconnect()
-        except OSError as e:
-            QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
-                                                                                                                                           port=server.port,
-                                                                                                                                           error=e))
-
-        self._progress_dialog = QtGui.QProgressDialog("Testing settings...", "Cancel", 0, 0, parent=self)
-        self._progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-        self._progress_dialog.setWindowTitle("Settings")
-        self._progress_dialog.show()
-
-        vpcs_module = vpcs.instance()
-        if server not in vpcs_module.servers():
-            server_added = True
-            vpcs_module.addServer(server)
-        self.savePreferences()
-        if server_added:
-            vpcs_module.removeServer(server)
-        server.send_message("vpcs.test_settings", None, self._testSettingsCallback)
-
-    def _testSettingsCallback(self, result, error=False):
-
-        if self._progress_dialog.wasCanceled():
-            print("Was canceled")
-            return
-
-        self._progress_dialog.accept()
-
-        if error:
-            pass
-            #log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-
-        print("Report received")
-        print(result)
 
     def _restoreDefaultsSlot(self):
         """
         Slot to populate the page widgets with the default settings.
         """
 
-        self._populateWidgets(vpcs_SETTINGS)
+        self._populateWidgets(VPCS_SETTINGS)
 
     def _useLocalServerSlot(self, state):
         """
@@ -111,7 +65,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         """
         Populates the widgets with the settings.
 
-        :param settings: vpcs settings
+        :param settings: VPCS settings
         """
 
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
@@ -119,10 +73,9 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
-
     def loadPreferences(self):
         """
-        Loads vpcs preferences.
+        Loads VPCS preferences.
         """
 
         vpcs_settings = VPCS.instance().settings()
@@ -130,7 +83,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
 
     def savePreferences(self):
         """
-        Saves vpcs preferences.
+        Saves VPCS preferences.
         """
 
         new_settings = {}

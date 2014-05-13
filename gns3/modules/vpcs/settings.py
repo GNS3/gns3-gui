@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 
 """
 Default VPCS settings.
@@ -27,6 +26,7 @@ VPCS_SETTINGS = {
     "udp_start_port_range": 30001,
     "udp_end_port_range": 40000,
     "use_local_server": True,
+    "base_script_file": "",
 }
 
 VPCS_SETTING_TYPES = {
@@ -35,4 +35,5 @@ VPCS_SETTING_TYPES = {
     "udp_start_port_range": int,
     "udp_end_port_range": int,
     "use_local_server": bool,
+    "base_script_file": str,
 }

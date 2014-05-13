@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-vpcs module implementation.
+VPCS module implementation.
 """
 
 import socket
@@ -35,7 +35,7 @@ log = logging.getLogger(__name__)
 
 class VPCS(Module):
     """
-    vpcs module.
+    VPCS module.
     """
 
     def __init__(self):
@@ -43,13 +43,11 @@ class VPCS(Module):
 
         self._settings = {}
         self._nodes = []
-        self._vpcs_images = {}
         self._servers = []
         self._working_dir = ""
 
         # load the settings
         self._loadSettings()
-        self._loadvpcsImages()
 
     def _loadSettings(self):
         """
@@ -75,53 +73,6 @@ class VPCS(Module):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def _loadvpcsImages(self):
-        """
-        Load the vpcs images from the persistent settings file.
-        """
-
-        # load the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("vpcsImages")
-
-        # load the vpcs images
-        size = settings.beginReadArray("vpcs_image")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            path = settings.value("path", "")
-            image = settings.value("image", "")
-            script_file = settings.value("script_file", "")
-            server = settings.value("server", "local")
-            key = "{server}:{image}".format(server=server, image=image)
-            self._vpcs_images[key] = {"path": path,
-                                     "image": image,
-                                     "script_file": script_file,
-                                     "server": server}
-
-        settings.endArray()
-        settings.endGroup()
-
-    def _savevpcsImages(self):
-        """
-        Saves the vpcs images to the persistent settings file.
-        """
-
-        # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("vpcsImages")
-        settings.remove("")
-
-        # save the vpcs images
-        settings.beginWriteArray("vpcs_image", len(self._vpcs_images))
-        index = 0
-        for ios_image in self._vpcs_images.values():
-            settings.setArrayIndex(index)
-            for name, value in ios_image.items():
-                settings.setValue(name, value)
-            index += 1
-        settings.endArray()
-        settings.endGroup()
-
     def setProjectFilesDir(self, path):
         """
         Sets the project files directory path this module.
@@ -130,7 +81,7 @@ class VPCS(Module):
         """
 
         self._working_dir = path
-        log.info("local working directory for vpcs module: {}".format(self._working_dir))
+        log.info("local working directory for VPCS module: {}".format(self._working_dir))
 
         # update the server with the new working directory / project name
         for server in self._servers:
@@ -144,7 +95,7 @@ class VPCS(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("adding server {}:{} to vpcs module".format(server.host, server.port))
+        log.info("adding server {}:{} to VPCS module".format(server.host, server.port))
         self._servers.append(server)
         self._sendSettings(server)
 
@@ -155,7 +106,7 @@ class VPCS(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("removing server {}:{} from vpcs module".format(server.host, server.port))
+        log.info("removing server {}:{} from VPCS module".format(server.host, server.port))
         self._servers.remove(server)
 
     def servers(self):
@@ -185,25 +136,6 @@ class VPCS(Module):
 
         if node in self._nodes:
             self._nodes.remove(node)
-
-    def vpcsImages(self):
-        """
-        Returns vpcs images settings.
-
-        :returns: vpcs images settings (dictionary)
-        """
-
-        return self._vpcs_images
-
-    def setvpcsImages(self, new_vpcs_images):
-        """
-        Sets IOS images settings.
-
-        :param new_vpcs_images: IOS images settings (dictionary)
-        """
-
-        self._vpcs_images = new_vpcs_images.copy()
-        self._savevpcsImages()
 
     def settings(self):
         """
@@ -248,7 +180,7 @@ class VPCS(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("sending vpcs settings to server {}:{}".format(server.host, server.port))
+        log.info("sending VPCS settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
 
         # send the local working directory only if this is a local server
@@ -316,29 +248,9 @@ class VPCS(Module):
         log.info("configuring node {}".format(node))
         settings = {}
 
-        selected_images = []
-        for image, info in self._vpcs_images.items():
-            if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
-                selected_images.append(image)
+        script_file = self._settings["base_script_file"]
+        vpcs_path = self._settings["path"]
 
-        if not selected_images:
-            raise ModuleError("No vpcs image found for this device")
-        elif len(selected_images) > 1:
-
-            from gns3.main_window import MainWindow
-            mainwindow = MainWindow.instance()
-
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "vpcs image", "Please choose an image", selected_images, 0, False)
-            if ok:
-                vpcsimage = selection
-            else:
-                raise ModuleError("Please select an vpcs image")
-
-        else:
-            vpcsimage = selected_images[0]
-
-        script_file = self._vpcs_images[vpcsimage]["script_file"]
-        vpcs_path = self._vpcs_images[vpcsimage]["path"]
         if script_file:
             settings = {"script_file": script_file}
         node.setup(vpcs_path, initial_settings=settings)
@@ -403,9 +315,9 @@ class VPCS(Module):
     @staticmethod
     def instance():
         """
-        Singleton to return only on instance of vpcs module.
+        Singleton to return only on instance of VPCS module.
 
-        :returns: instance of vpcs
+        :returns: instance of VPCS
         """
 
         if not hasattr(VPCS, "_instance"):

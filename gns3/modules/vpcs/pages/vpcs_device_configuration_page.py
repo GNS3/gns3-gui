@@ -16,19 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for vpcs devices.
+Configuration page for VPCS devices.
 """
 
 import os
 from gns3.qt import QtGui
 from .. import VPCS
-from gns3.node_configurator import ConfigurationError
 from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 
 class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
     """
-    QWidget configuration page for vpcs devices.
+    QWidget configuration page for VPCS devices.
     """
 
     def __init__(self):
@@ -56,7 +55,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
     def loadSettings(self, settings, node, group=False):
         """
-        Loads the vpcs device settings.
+        Loads the VPCS device settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance
@@ -81,7 +80,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
     def saveSettings(self, settings, node, group=False):
         """
-        Saves the vpcs device settings.
+        Saves the VPCS device settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance
@@ -103,13 +102,3 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
         else:
             del settings["name"]
             del settings["console"]
-
-        node_ports = node.ports()
-        for node_port in node_ports:
-            if not node_port.isFree():
-                QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-#             if (node_port.linkType() == "Ethernet" and node_port.slotNumber() > ethernet_adapters) or \
-#                (node_port.linkType() == "Serial" and node_port.slotNumber() > serial_adapters) and not node_port.isFree():
-#                 QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter in slot {}, please remove it first".format(node_port.name(),
-#                                                                                                                                                     node_port.slotNumber()))
-                raise ConfigurationError()
