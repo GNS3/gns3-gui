@@ -9,6 +9,7 @@ from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
 from libcloud.compute.base import Node, KeyPair
 import os
+import pytest
 import unittest
 
 
@@ -20,6 +21,7 @@ class StubObject(object):
             setattr(self, arg, kwargs[arg])
 
 
+@pytest.mark.skipif(True, reason="temporarily disable rackspace integration test")
 class TestRackspaceCtrl(unittest.TestCase):
 
     def setUp(self):

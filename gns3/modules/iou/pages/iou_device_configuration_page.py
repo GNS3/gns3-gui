@@ -21,8 +21,9 @@ Configuration page for IOU devices.
 
 import os
 from gns3.qt import QtGui
-from .. import IOU
 from gns3.node_configurator import ConfigurationError
+
+from .. import IOU
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
 
@@ -36,6 +37,19 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
+
+    def _useDefaultValuesSlot(self, state):
+        """
+        Slot to enable or not the RAM and NVRAM spin boxes.
+        """
+
+        if state:
+            self.uiRamSpinBox.setEnabled(False)
+            self.uiNvramSpinBox.setEnabled(False)
+        else:
+            self.uiRamSpinBox.setEnabled(True)
+            self.uiNvramSpinBox.setEnabled(True)
 
     def _startupConfigBrowserSlot(self):
         """
@@ -91,7 +105,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
 
-        # load the memories and disks settings
+        # load the memories settings
+        self.uiDefaultValuesCheckBox.setChecked(settings["use_default_iou_values"])
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiNvramSpinBox.setValue(settings["nvram"])
 
@@ -129,7 +144,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             del settings["name"]
             del settings["console"]
 
-        # save the memories and disks settings
+        # save the memories settings
+        settings["use_default_iou_values"] = self.uiDefaultValuesCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()
         settings["nvram"] = self.uiNvramSpinBox.value()
 
@@ -139,15 +155,13 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             QtGui.QMessageBox.warning(self, node.name(), "The total number of adapters cannot exceed 16")
             raise ConfigurationError()
 
-        node_ports = node.ports()
-        for node_port in node_ports:
-            if not node_port.isFree():
-                QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-#             if (node_port.linkType() == "Ethernet" and node_port.slotNumber() > ethernet_adapters) or \
-#                (node_port.linkType() == "Serial" and node_port.slotNumber() > serial_adapters) and not node_port.isFree():
-#                 QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter in slot {}, please remove it first".format(node_port.name(),
-#                                                                                                                                                     node_port.slotNumber()))
-                raise ConfigurationError()
+        if settings["ethernet_adapters"] != ethernet_adapters or settings["serial_adapters"] != serial_adapters:
+            # check if the adapters settings have changed
+            node_ports = node.ports()
+            for node_port in node_ports:
+                if not node_port.isFree():
+                    QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                    raise ConfigurationError()
 
         settings["ethernet_adapters"] = ethernet_adapters
         settings["serial_adapters"] = serial_adapters

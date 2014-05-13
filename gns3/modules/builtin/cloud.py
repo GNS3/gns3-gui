@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Dynamips NIO implementation on the client side (in the form of a pseudo node represented as a cloud).
+NIO implementation on the client side (in the form of a pseudo node represented as a cloud).
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
@@ -80,12 +80,10 @@ class Cloud(Node):
 
         if name:
             self._settings["name"] = name
-        #if "nios" in initial_settings:
-        #    self._settings["nios"] = initial_settings["nios"]
         if "nios" in initial_settings:
             initial_settings["interfaces"] = []
             self.update(initial_settings)
-        self._server.send_message("dynamips.nio.get_interfaces", None, self._setupCallback)
+        self._server.send_message("builtin.interfaces", None, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
         """
@@ -371,7 +369,7 @@ This is a pseudo-device for external connections
         :returns: QWidget object
         """
 
-        from ..pages.cloud_configuration_page import CloudConfigurationPage
+        from .pages.cloud_configuration_page import CloudConfigurationPage
         return CloudConfigurationPage
 
     @staticmethod
