@@ -51,6 +51,10 @@ def recursive(function, path):
 
 
 if __name__ == '__main__':
+
+    if not PYUIC4 or not PYRCC4:
+        raise RuntimeError("pyuic4 or pyrcc4 could't be found, please install PyQt4 development tools")
+
     cwd = os.path.dirname(os.path.abspath(__file__))
     gns3_path = os.path.abspath(os.path.join(cwd, "../gns3/"))
     ui_path = os.path.abspath(os.path.join(cwd, "../gns3/ui"))

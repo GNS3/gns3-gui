@@ -45,6 +45,19 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiIOUPathToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
+        self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
+
+    def _useDefaultValuesSlot(self, state):
+        """
+        Slot to enable or not the RAM and NVRAM spin boxes.
+        """
+
+        if state:
+            self.uiRAMSpinBox.setEnabled(False)
+            self.uiNVRAMSpinBox.setEnabled(False)
+        else:
+            self.uiRAMSpinBox.setEnabled(True)
+            self.uiNVRAMSpinBox.setEnabled(True)
 
     def _iouImageClickedSlot(self, item, column):
         """
@@ -61,6 +74,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         self.uiIOUPathLineEdit.setText(iou_image["path"])
         self.uiStartupConfigLineEdit.setText(iou_image["startup_config"])
+        self.uiDefaultValuesCheckBox.setChecked(iou_image["use_default_iou_values"])
         self.uiRAMSpinBox.setValue(iou_image["ram"])
         self.uiNVRAMSpinBox.setValue(iou_image["nvram"])
 
@@ -82,6 +96,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         path = self.uiIOUPathLineEdit.text()
         startup_config = self.uiStartupConfigLineEdit.text()
+        use_default_iou_values = self.uiDefaultValuesCheckBox.isChecked()
         nvram = self.uiNVRAMSpinBox.value()
         ram = self.uiRAMSpinBox.value()
 
@@ -120,6 +135,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self._iou_images[key] = {"path": path,
                                  "image": image,
                                  "startup_config": startup_config,
+                                 "use_default_iou_values": use_default_iou_values,
                                  "ram": ram,
                                  "nvram": nvram,
                                  "server": server}

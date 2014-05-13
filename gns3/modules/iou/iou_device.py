@@ -51,6 +51,7 @@ class IOUDevice(Node):
         self._settings = {"name": "",
                           "path": "",
                           "startup_config": "",
+                          "use_default_iou_values": True,
                           "ram": 256,
                           "nvram": 128,
                           "ethernet_adapters": 2,

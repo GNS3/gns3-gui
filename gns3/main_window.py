@@ -152,12 +152,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._cloud_settings.update(new_settings)
-        if persist:
-            settings = QtCore.QSettings()
-            settings.beginGroup(CLOUD_SETTINGS_GROUP)
-            for name, value in self._cloud_settings.items():
+
+        settings = QtCore.QSettings()
+        settings.beginGroup(CLOUD_SETTINGS_GROUP)
+
+        settings_to_persist = self._cloud_settings if persist else CLOUD_SETTINGS
+        for name, value in settings_to_persist.items():
                 settings.setValue(name, value)
-            settings.endGroup()
+        settings.endGroup()
 
     def _connections(self):
         """
@@ -855,7 +857,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         file_dialog.setNameFilters(["Directories"])
         file_dialog.setDirectory(self._settings["projects_path"])
         file_dialog.setFileMode(QtGui.QFileDialog.AnyFile)
-        file_dialog.setDefaultSuffix("gns3")
+        #file_dialog.setDefaultSuffix("gns3")
         file_dialog.setLabelText(QtGui.QFileDialog.FileName, "Project name:")
         file_dialog.selectFile(default_project_name)
         file_dialog.setOptions(QtGui.QFileDialog.ShowDirsOnly)
@@ -864,7 +866,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return False
 
         project_dir = file_dialog.selectedFiles()[0]
-        project_name = os.path.basename(project_dir)[:-5]
+        project_name = os.path.basename(project_dir)
         topology_file_path = os.path.join(project_dir, project_name + ".gns3")
         new_project_files_dir = os.path.join(project_dir, project_name + "-files")
 
@@ -996,9 +998,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.uiGraphicsView.reset()
         try:
-            with tempfile.NamedTemporaryFile(prefix="gns3-", suffix=".gns3", delete=False) as f:
+            with tempfile.NamedTemporaryFile(prefix="gns3-", delete=False) as f:
                 log.info("creating temporary topology file: {}".format(f.name))
-                project_files_dir = f.name[:-5] + "-files"
+                project_files_dir = f.name + "-files"
                 if not os.path.isdir(project_files_dir):
                     log.info("creating temporary project files directory: {}".format(project_files_dir))
                     os.mkdir(project_files_dir)

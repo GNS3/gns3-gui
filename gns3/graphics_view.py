@@ -85,24 +85,25 @@ class GraphicsView(QtGui.QGraphicsView):
         reset the instances count.
         """
 
-        #FIXME: check server is up to send a delete
-        for item in self.scene().items():
-            if isinstance(item, NodeItem):
-                self._topology.removeNode(item.node())
-                if item.node().server().connected():
-                    item.node().delete()
-                else:
-                    self.scene().removeItem(item)
-
         # reset the modules
         for module in MODULES:
             instance = module.instance()
             instance.reset()
 
+        # reset instance IDs for
+        # nodes, links and ports
         Node.reset()
         Link.reset()
         Port.reset()
+
+        # reset the topology
         self._topology.reset()
+
+        # clear the topology summary
+        self._main_window.uiTopologySummaryTreeWidget.clear()
+
+        # clear all objects on the scene
+        self.scene().clear()
 
     def updateProjectFilesDir(self, path):
         """
