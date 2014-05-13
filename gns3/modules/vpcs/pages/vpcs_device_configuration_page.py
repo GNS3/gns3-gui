@@ -21,12 +21,12 @@ Configuration page for vpcs devices.
 
 import os
 from gns3.qt import QtGui
-from .. import vpcs
+from .. import VPCS
 from gns3.node_configurator import ConfigurationError
-from ..ui.vpcs_device_configuration_page_ui import Ui_vpcsDeviceConfigPageWidget
+from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 
-class vpcsDeviceConfigurationPage(QtGui.QWidget, Ui_vpcsDeviceConfigPageWidget):
+class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
     """
     QWidget configuration page for vpcs devices.
     """

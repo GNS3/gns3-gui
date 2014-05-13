@@ -17,6 +17,6 @@
 
 from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
-from gns3.modules.vpcs import vpcs
+from gns3.modules.vpcs import VPCS
 
-MODULES = [Dynamips, IOU, vpcs]
+MODULES = [Dynamips, IOU, VPCS]

@@ -29,7 +29,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class vpcsDevice(Node):
+class VPCSDevice(Node):
     """
     vpcs device.
 
@@ -562,8 +562,8 @@ class vpcsDevice(Node):
         :returns: QWidget object
         """
 
-        from .pages.vpcs_device_configuration_page import vpcsDeviceConfigurationPage
-        return vpcsDeviceConfigurationPage
+        from .pages.vpcs_device_configuration_page import VPCSDeviceConfigurationPage
+        return VPCSDeviceConfigurationPage
 
     @staticmethod
     def defaultSymbol():

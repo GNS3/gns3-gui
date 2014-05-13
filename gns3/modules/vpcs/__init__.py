@@ -26,14 +26,14 @@ from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
-from .vpcs_device import vpcsDevice
+from .vpcs_device import VPCSDevice
 from .settings import VPCS_SETTINGS, VPCS_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class vpcs(Module):
+class VPCS(Module):
     """
     vpcs module.
     """
@@ -389,7 +389,7 @@ class vpcs(Module):
         :returns: list of classes
         """
 
-        return [vpcsDevice]
+        return [VPCSDevice]
 
     @staticmethod
     def preferencePages():
@@ -397,8 +397,8 @@ class vpcs(Module):
         :returns: QWidget object list
         """
 
-        from .pages.vpcs_preferences_page import vpcsPreferencesPage
-        return [vpcsPreferencesPage]
+        from .pages.vpcs_preferences_page import VPCSPreferencesPage
+        return [VPCSPreferencesPage]
 
     @staticmethod
     def instance():
@@ -408,6 +408,6 @@ class vpcs(Module):
         :returns: instance of vpcs
         """
 
-        if not hasattr(vpcs, "_instance"):
-            vpcs._instance = vpcs()
-        return vpcs._instance
+        if not hasattr(VPCS, "_instance"):
+            VPCS._instance = VPCS()
+        return VPCS._instance

@@ -23,12 +23,12 @@ import os
 import sys
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
-from .. import vpcs
-from ..ui.vpcs_preferences_page_ui import Ui_vpcsPreferencesPageWidget
+from .. import VPCS
+from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
 from ..settings import VPCS_SETTINGS
 
 
-class vpcsPreferencesPage(QtGui.QWidget, Ui_vpcsPreferencesPageWidget):
+class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
     """
     QWidget preference page for vpcs.
     """
@@ -125,7 +125,7 @@ class vpcsPreferencesPage(QtGui.QWidget, Ui_vpcsPreferencesPageWidget):
         Loads vpcs preferences.
         """
 
-        vpcs_settings = vpcs.instance().settings()
+        vpcs_settings = VPCS.instance().settings()
         self._populateWidgets(vpcs_settings)
 
     def savePreferences(self):
@@ -138,4 +138,4 @@ class vpcsPreferencesPage(QtGui.QWidget, Ui_vpcsPreferencesPageWidget):
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
-        vpcs.instance().setSettings(new_settings)
+        VPCS.instance().setSettings(new_settings)
