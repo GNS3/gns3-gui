@@ -8,6 +8,7 @@ WARNING: These tests start up real instances in the Rackspace Cloud.
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
 from libcloud.compute.base import Node, KeyPair
+import pytest
 import os
 import pytest
 import unittest
