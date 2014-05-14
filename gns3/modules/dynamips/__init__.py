@@ -168,7 +168,7 @@ class Dynamips(Module):
         :param path: path to the local project files directory
         """
 
-        self._delete_dynamips_files()
+        #self._delete_dynamips_files()  #FIXME: cause issues
         self._working_dir = path
         log.info("local working directory for Dynamips module: {}".format(self._working_dir))
 

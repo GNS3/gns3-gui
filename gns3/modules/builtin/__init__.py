@@ -124,7 +124,7 @@ class Builtin(Module):
         local_server = servers.localServer()
         remote_servers = servers.remoteServers()
 
-        if not all(using_local_server):
+        if not all(using_local_server) and len(remote_servers):
             # a module is not using a local server
 
             if not True in using_local_server and len(remote_servers) == 1:

@@ -22,8 +22,6 @@ Dependencies:
    sudo python3 setup.py install
    gns3
 
-`Detailed instructions for Debian Jesse <http://forum.gns3.net/topic8988.html>`_. 
-
 Windows
 -------
 
@@ -36,7 +34,7 @@ DMG package is not available yet.
 
 You can manually install using the following steps (experimental):
 
-First install homebrew `http://brew.sh/`_.
+`First install homebrew <http://brew.sh/>`_.
 
 Then install GNS3 dependencies.
 

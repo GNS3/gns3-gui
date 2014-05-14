@@ -301,6 +301,7 @@ class VPCS(Module):
         :returns: list of classes
         """
 
+        return []
         return [VPCSDevice]
 
     @staticmethod
@@ -309,6 +310,7 @@ class VPCS(Module):
         :returns: QWidget object list
         """
 
+        return []
         from .pages.vpcs_preferences_page import VPCSPreferencesPage
         return [VPCSPreferencesPage]
 
