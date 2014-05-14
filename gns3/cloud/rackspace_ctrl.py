@@ -21,6 +21,8 @@ from gns3.cloud.base_cloud_ctrl import BaseCloudCtrl
 import json
 import requests
 from libcloud.compute.drivers.rackspace import ENDPOINT_ARGS_MAP
+from libcloud.compute.providers import get_driver
+from libcloud.compute.types import Provider
 
 import logging
 log = logging.getLogger(__name__)
@@ -38,6 +40,11 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post
+        self.driver_cls = get_driver(Provider.RACKSPACE)
+
+        self.driver = None
+        self.region = None
+        self.instances = {}
 
         self.authenticated = False
         self.identity_ep = \
@@ -82,7 +89,6 @@ class RackspaceCtrl(BaseCloudCtrl):
         if response.status_code == 200:
 
             api_data = response.json()
-
             self.token = self._parse_token(api_data)
 
             if self.token:
@@ -155,3 +161,16 @@ class RackspaceCtrl(BaseCloudCtrl):
                 region_list.append({ENDPOINT_ARGS_MAP[ep]['region']: ep})
 
         return region_list
+
+    def set_region(self, region):
+        """ Set self.region and self.driver. Returns True or False. """
+
+        try:
+            self.driver = self.driver_cls(self.username, self.api_key,
+                                          region=region)
+
+        except ValueError:
+            return False
+
+        self.region = region
+        return True
