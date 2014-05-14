@@ -20,6 +20,7 @@ Dynamips module implementation.
 """
 
 import os
+import glob
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from ..module import Module
@@ -142,6 +143,24 @@ class Dynamips(Module):
         settings.endArray()
         settings.endGroup()
 
+    def _delete_dynamips_files(self):
+        """
+        Deletes useless local Dynamips files from the working directory
+        """
+
+        files = glob.glob(os.path.join(self._working_dir, "dynamips", "*.ghost"))
+        files += glob.glob(os.path.join(self._working_dir, "dynamips", "*_lock"))
+        files += glob.glob(os.path.join(self._working_dir, "dynamips", "ilt_*"))
+        files += glob.glob(os.path.join(self._working_dir, "dynamips", "c[0-9][0-9][0-9][0-9]_*_rommon_vars"))
+        files += glob.glob(os.path.join(self._working_dir, "dynamips", "c[0-9][0-9][0-9][0-9]_*_ssa"))
+        for file in files:
+            try:
+                log.debug("deleting file {}".format(file))
+                os.remove(file)
+            except OSError as e:
+                log.warn("could not delete file {}: {}".format(file, e))
+                continue
+
     def setProjectFilesDir(self, path):
         """
         Sets the project files directory path this module.
@@ -149,6 +168,7 @@ class Dynamips(Module):
         :param path: path to the local project files directory
         """
 
+        self._delete_dynamips_files()
         self._working_dir = path
         log.info("local working directory for Dynamips module: {}".format(self._working_dir))
 
