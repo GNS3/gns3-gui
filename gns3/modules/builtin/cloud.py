@@ -276,15 +276,17 @@ This is a pseudo-device for external connections
         for port in self._ports:
             if port.isFree():
                 port_info += "   Port {} is empty\n".format(port.name())
-                match = re.search(r"""^nio_gen_eth:(\\Device\\NPF_.+)$""", port.name())
-                if match:
-                    for interface in self._settings["interfaces"]:
-                        if interface["name"] == match.group(1):
-                            port_info += "      Windows name: {}\n".format(interface["description"])
-                            break
             else:
                 port_info += "   Port {name} {description}\n".format(name=port.name(),
                                                                      description=port.description())
+
+            # add the Windows interface name
+            match = re.search(r"""^nio_gen_eth:(\\device\\npf_.+)$""", port.name())
+            if match:
+                for interface in self._settings["interfaces"]:
+                    if interface["name"].lower() == match.group(1):
+                        port_info += "      Windows name: {}\n".format(interface["description"])
+                        break
 
         return info + port_info
 
