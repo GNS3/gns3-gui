@@ -48,8 +48,8 @@ class VPCSDevice(Node):
         self._module = module
         self._ports = []
         self._settings = {"name": "",
-                          "path": "",
                           "script_file": "",
+                          "path":"",
                           "console": None}
 
         #self._occupied_slots = []
