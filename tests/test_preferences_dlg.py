@@ -67,8 +67,8 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(valid)
         self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
         self.assertEqual(self.page.uiRegionComboBox.currentIndex(), -1)  # not set
-        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 0)
-        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 0)
+        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 1)
+        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 1)
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 0)
         self.assertFalse(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 30)
