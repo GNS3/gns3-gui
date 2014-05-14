@@ -185,6 +185,7 @@ class Servers(QtCore.QObject):
         :param port: port of the server (integer)
         """
 
+        self._local_server_path = path
         if self._local_server:
             if self._local_server.host == host and self._local_server.port == port:
                 return
@@ -192,7 +193,6 @@ class Servers(QtCore.QObject):
                 self._local_server.close_connection()
             log.info("local server connection {} unregistered".format(self._local_server.url))
 
-        self._local_server_path = path
         url = "ws://{host}:{port}".format(host=host, port=port)
         self._local_server = WebSocketClient(url)
         self._local_server.setLocal(True)
