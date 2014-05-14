@@ -59,7 +59,7 @@ class Cloud(Node):
         self._ports = []
         self._module = module
         self._settings = {"nios": [],
-                          "interfaces": [],
+                          "interfaces": {},
                           "name": name}
 
     def delete(self):
@@ -81,7 +81,7 @@ class Cloud(Node):
         if name:
             self._settings["name"] = name
         if "nios" in initial_settings:
-            initial_settings["interfaces"] = []
+            initial_settings["interfaces"] = {}
             self.update(initial_settings)
         self._server.send_message("builtin.interfaces", None, self._setupCallback)
 
@@ -98,8 +98,7 @@ class Cloud(Node):
             # a warning message instead of a error is more appropriate here
             self.warning_signal.emit(self.id(), result["message"])
         else:
-            for interface in result:
-                self._settings["interfaces"].append(interface["name"])
+            self._settings["interfaces"] = result.copy()
 
         log.info("cloud {} has been created".format(self.name()))
         self.setInitialized(True)
@@ -277,6 +276,12 @@ This is a pseudo-device for external connections
         for port in self._ports:
             if port.isFree():
                 port_info += "   Port {} is empty\n".format(port.name())
+                match = re.search(r"""^nio_gen_eth:(\\Device\\NPF_.+)$""", port.name())
+                if match:
+                    for interface in self._settings["interfaces"]:
+                        if interface["name"] == match.group(1):
+                            port_info += "      Windows name: {}\n".format(interface["description"])
+                            break
             else:
                 port_info += "   Port {name} {description}\n".format(name=port.name(),
                                                                      description=port.description())

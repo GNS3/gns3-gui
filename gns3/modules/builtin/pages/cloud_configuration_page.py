@@ -20,7 +20,7 @@ Configuration page for clouds.
 """
 
 import re
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
 
 
@@ -472,12 +472,21 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
 
         # load all network interfaces
         self.uiGenericEthernetComboBox.clear()
-        self.uiGenericEthernetComboBox.addItems(settings["interfaces"])
+        index = 0
+        for interface in settings["interfaces"]:
+            self.uiGenericEthernetComboBox.addItem(interface["name"])
+            self.uiGenericEthernetComboBox.setItemData(index, interface["description"], QtCore.Qt.ToolTipRole)
+            index += 1
         self.uiGenericEthernetComboBox.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
 
         # load all network interfaces
         self.uiLinuxEthernetComboBox.clear()
-        self.uiLinuxEthernetComboBox.addItems(settings["interfaces"])
+        index = 0
+        for interface in settings["interfaces"]:
+            if not interface["name"].startswith(r"\Device\NPF_"):
+                self.uiLinuxEthernetComboBox.addItem(interface["name"])
+                self.uiLinuxEthernetComboBox.setItemData(index, interface["description"], QtCore.Qt.ToolTipRole)
+                index += 1
         self.uiLinuxEthernetComboBox.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
 
         # populate the NIO lists
