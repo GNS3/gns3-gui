@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Apr 29 17:59:09 2014
+# Created: Wed May 14 15:50:18 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,7 +47,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 ""))
-        MainWindow.setUnifiedTitleAndToolBarOnMac(True)
+        MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.uiCentralWidget = QtGui.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName(_fromUtf8("uiCentralWidget"))
         self.gridlayout = QtGui.QGridLayout(self.uiCentralWidget)
@@ -128,6 +128,7 @@ class Ui_MainWindow(object):
         self.uiBrowsersToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.uiBrowsersToolBar.setObjectName(_fromUtf8("uiBrowsersToolBar"))
         MainWindow.addToolBar(QtCore.Qt.LeftToolBarArea, self.uiBrowsersToolBar)
+        MainWindow.insertToolBarBreak(self.uiBrowsersToolBar)
         self.uiControlToolBar = QtGui.QToolBar(MainWindow)
         self.uiControlToolBar.setIconSize(QtCore.QSize(32, 32))
         self.uiControlToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)

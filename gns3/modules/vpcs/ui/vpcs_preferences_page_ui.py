@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/jbbowen/Desktop/Toptal/github/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Tue May 13 14:41:22 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Wed May 14 15:50:18 2014
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 

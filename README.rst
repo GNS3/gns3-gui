@@ -33,3 +33,28 @@ Mac OS X
 --------
 
 DMG package is not available yet.
+
+You can manually install using the following steps (experimental):
+
+First install homebrew `http://brew.sh/`_.
+
+Then install GNS3 dependencies.
+
+.. code:: bash
+
+   brew install python3
+   brew install qt
+   brew install sip --without-python --with-python3
+   brew install pyqt --without-python --with-python3
+
+Finally, install both the GUI & server from the source.
+
+.. code:: bash
+
+   cd gns3-gui-master
+   python3 setup.py install
+
+.. code:: bash
+
+   cd gns3-server-master
+   python3 setup.py install
