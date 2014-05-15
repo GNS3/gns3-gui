@@ -73,6 +73,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
         self.uiVPCSPathLineEdit.setText(settings["path"])
+        self.uiVPCSBaseScriptFileEdit.setText(settings["base_script_file"])
 
     def loadPreferences(self):
         """
@@ -93,4 +94,5 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         new_settings["path"] = self.uiVPCSPathLineEdit.text()
+        new_settings["base_script_file"] = self.uiVPCSBaseScriptFileEdit.text()
         VPCS.instance().setSettings(new_settings)

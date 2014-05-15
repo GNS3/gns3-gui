@@ -48,7 +48,7 @@ class VPCSDevice(Node):
         self._module = module
         self._ports = []
         self._settings = {"name": "",
-                          "script_file": "",
+                          "base_script_file": "",
                           "path":"",
                           "console": None}
 
@@ -94,7 +94,7 @@ class VPCSDevice(Node):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, vpcs_path, name=None, initial_settings={}):
+    def setup(self, vpcs_path, name=None, base_script_file=None, initial_settings={}):
         """
         Setups this VPCS device.
 
@@ -104,6 +104,9 @@ class VPCSDevice(Node):
 
         if name:
             params["name"] = self._settings["name"] = name
+
+        if base_script_file:
+            params["base_script_file"] = self._settings["base_script_file"] = base_script_file
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
@@ -175,26 +178,6 @@ class VPCSDevice(Node):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def _base64Config(self, config_path):
-        """
-        Get the base64 encoded config from a file.
-
-        :param config_path: path to the configuration file.
-
-        :returns: base64 encoded string
-        """
-
-        try:
-            with open(config_path, "r") as f:
-                log.info("opening configuration file: {}".format(config_path))
-                config = f.read()
-                config = '!\n' + config.replace('\r', "")
-                encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-                return encoded
-        except OSError as e:
-            log.warn("could not base64 encode {}: {}".format(config_path, e))
-            return ""
-
     def update(self, new_settings):
         """
         Updates the settings for this VPCS device.
@@ -206,10 +189,6 @@ class VPCSDevice(Node):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
-        if "script_file" in new_settings and self._settings["script_file"] != new_settings["script_file"] \
-        and os.path.isfile(new_settings["script_file"]):
-            params["script_file_base64"] = self._base64Config(new_settings["script_file"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("vpcs.update", params, self._updateCallback)
@@ -490,11 +469,12 @@ class VPCSDevice(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
+        base_script_file = settings.pop("base_script_file")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
-        self.setup(path, name, settings)
+        self.setup(path, name, base_script_file, settings)
 
     def _updatePortSettings(self):
         """

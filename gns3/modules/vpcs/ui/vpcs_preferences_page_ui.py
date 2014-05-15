@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/jbbowen/Desktop/Toptal/github/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Tue May 13 14:41:22 2014
+# Created: Thu May 15 08:53:49 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,6 +36,8 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiGeneralSettingsTabWidget.setObjectName(_fromUtf8("uiGeneralSettingsTabWidget"))
         self.gridLayout = QtGui.QGridLayout(self.uiGeneralSettingsTabWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 5, 1, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.uiVPCSPathLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
@@ -46,8 +48,11 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiVPCSPathToolButton.setObjectName(_fromUtf8("uiVPCSPathToolButton"))
         self.horizontalLayout_5.addWidget(self.uiVPCSPathToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_5, 3, 0, 1, 2)
-        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 4, 1, 1, 1)
+        self.uiVPCSPathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
+        self.uiVPCSPathLabel.setObjectName(_fromUtf8("uiVPCSPathLabel"))
+        self.gridLayout.addWidget(self.uiVPCSPathLabel, 2, 0, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem1, 6, 0, 1, 2)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.uiTestSettingsPushButton = QtGui.QPushButton(self.uiGeneralSettingsTabWidget)
@@ -56,12 +61,17 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiGeneralSettingsTabWidget)
         self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
         self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 4, 0, 1, 1)
-        self.uiVPCSPathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
-        self.uiVPCSPathLabel.setObjectName(_fromUtf8("uiVPCSPathLabel"))
-        self.gridLayout.addWidget(self.uiVPCSPathLabel, 2, 0, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 5, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 5, 0, 1, 1)
+        self.horizontalLayout_51 = QtGui.QHBoxLayout()
+        self.horizontalLayout_51.setObjectName(_fromUtf8("horizontalLayout_51"))
+        self.uiVPCSBaseScriptFileEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
+        self.uiVPCSBaseScriptFileEdit.setObjectName(_fromUtf8("uiVPCSBaseScriptFileEdit"))
+        self.horizontalLayout_51.addWidget(self.uiVPCSBaseScriptFileEdit)
+        self.uiVPCSPathToolButton1 = QtGui.QToolButton(self.uiGeneralSettingsTabWidget)
+        self.uiVPCSPathToolButton1.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiVPCSPathToolButton1.setObjectName(_fromUtf8("uiVPCSPathToolButton1"))
+        self.horizontalLayout_51.addWidget(self.uiVPCSPathToolButton1)
+        self.gridLayout.addLayout(self.horizontalLayout_51, 4, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, _fromUtf8(""))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
@@ -123,9 +133,10 @@ class Ui_VPCSPreferencesPageWidget(object):
     def retranslateUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setWindowTitle(_translate("VPCSPreferencesPageWidget", "VPCS", None))
         self.uiVPCSPathToolButton.setText(_translate("VPCSPreferencesPageWidget", "...", None))
+        self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS:", None))
         self.uiTestSettingsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults", None))
-        self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS:", None))
+        self.uiVPCSPathToolButton1.setText(_translate("VPCSPreferencesPageWidget", "...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "General settings", None))
         self.uiConsolePortRangeGroupBox.setTitle(_translate("VPCSPreferencesPageWidget", "Console port range", None))
         self.uiConsolePortRangeLabel.setText(_translate("VPCSPreferencesPageWidget", "to", None))
