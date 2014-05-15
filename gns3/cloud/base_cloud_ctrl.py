@@ -84,6 +84,11 @@ class BaseCloudCtrl(object):
         """ Validate cloud account credentials.  Return boolean. """
         raise NotImplementedError
 
+    def list_sizes(self):
+        """ Return a list of NodeSize objects. """
+
+        return self.driver.list_sizes()
+
     def create_instance(self, name, size, image, keypair):
         """
         Create a new instance with the supplied attributes.
