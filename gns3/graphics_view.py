@@ -466,6 +466,11 @@ class GraphicsView(QtGui.QGraphicsView):
             self._newlink.setMousePoint(self.mapToScene(event.pos()))
             event.ignore()
         else:
+            item = self.itemAt(event.pos())
+            if item and isinstance(item, NodeItem):
+                # show item coords in the status bar
+                coords = "X: {} Y: {} Z: {}".format(item.x(), item.y(), item.zValue())
+                self._main_window.uiStatusBar.showMessage(coords, 2000)
             QtGui.QGraphicsView.mouseMoveEvent(self, event)
 
     def mouseDoubleClickEvent(self, event):
