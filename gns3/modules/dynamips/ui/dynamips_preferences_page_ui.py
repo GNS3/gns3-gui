@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/git/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Wed May  7 13:39:06 2014
+# Created: Wed May  7 20:38:10 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -209,7 +209,8 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiMmapSupportCheckBox.setObjectName(_fromUtf8("uiMmapSupportCheckBox"))
         self.verticalLayout.addWidget(self.uiMmapSupportCheckBox)
         self.uiJITSharingSupportCheckBox = QtGui.QCheckBox(self.uiMemoryUsageOptimisationGroupBox)
-        self.uiJITSharingSupportCheckBox.setChecked(True)
+        self.uiJITSharingSupportCheckBox.setEnabled(True)
+        self.uiJITSharingSupportCheckBox.setChecked(False)
         self.uiJITSharingSupportCheckBox.setObjectName(_fromUtf8("uiJITSharingSupportCheckBox"))
         self.verticalLayout.addWidget(self.uiJITSharingSupportCheckBox)
         self.uiSparseMemorySupportCheckBox = QtGui.QCheckBox(self.uiMemoryUsageOptimisationGroupBox)
@@ -262,7 +263,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiMemoryUsageOptimisationGroupBox.setTitle(_translate("DynamipsPreferencesPageWidget", "Memory usage optimisation", None))
         self.uiGhostIOSSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable ghost IOS support", None))
         self.uiMmapSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable mmap support", None))
-        self.uiJITSharingSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable JIT sharing support", None))
+        self.uiJITSharingSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable JIT sharing support (unstable)", None))
         self.uiSparseMemorySupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable sparse memory support", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced settings", None))
 
