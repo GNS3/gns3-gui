@@ -267,6 +267,10 @@ class IOUDevice(Node):
         Starts this IOU instance.
         """
 
+        if self.status() == Node.started:
+            log.debug("{} is already running".format(self.name()))
+            return
+
         log.debug("{} is starting".format(self.name()))
         self._server.send_message("iou.start", {"id": self._iou_id}, self._startCallback)
 
@@ -293,6 +297,10 @@ class IOUDevice(Node):
         """
         Stops this IOU instance.
         """
+
+        if self.status() == Node.stopped:
+            log.debug("{} is already stopped".format(self.name()))
+            return
 
         log.debug("{} is stopping".format(self.name()))
         self._server.send_message("iou.stop", {"id": self._iou_id}, self._stopCallback)

@@ -258,6 +258,10 @@ class VPCSDevice(Node):
         Starts this VPCS instance.
         """
 
+        if self.status() == Node.started:
+            log.debug("{} is already running".format(self.name()))
+            return
+
         log.debug("{} is starting".format(self.name()))
         self._server.send_message("vpcs.start", {"id": self._vpcs_id}, self._startCallback)
 
@@ -284,6 +288,10 @@ class VPCSDevice(Node):
         """
         Stops this VPCS instance.
         """
+
+        if self.status() == Node.stopped:
+            log.debug("{} is already stopped".format(self.name()))
+            return
 
         log.debug("{} is stopping".format(self.name()))
         self._server.send_message("vpcs.stop", {"id": self._vpcs_id}, self._stopCallback)

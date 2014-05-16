@@ -401,6 +401,10 @@ class Router(Node):
         Starts this router.
         """
 
+        if self.status() == Node.started:
+            log.debug("{} is already running".format(self.name()))
+            return
+
         log.debug("{} is starting".format(self.name()))
         self._server.send_message("dynamips.vm.start", {"id": self._router_id}, self._startCallback)
 
@@ -428,6 +432,10 @@ class Router(Node):
         Stops this router.
         """
 
+        if self.status() == Node.stopped:
+            log.debug("{} is already stopped".format(self.name()))
+            return
+
         log.debug("{} is stopping".format(self.name()))
         self._server.send_message("dynamips.vm.stop", {"id": self._router_id}, self._stopCallback)
 
@@ -454,6 +462,10 @@ class Router(Node):
         """
         Suspends this router.
         """
+
+        if self.status() == Node.suspended:
+            log.debug("{} is already suspended".format(self.name()))
+            return
 
         log.debug("{} is being suspended".format(self.name()))
         self._server.send_message("dynamips.vm.suspend", {"id": self._router_id}, self._suspendCallback)
