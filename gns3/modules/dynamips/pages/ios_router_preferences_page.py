@@ -22,6 +22,7 @@ Configuration page for IOS image & router preferences.
 import os
 import sys
 import re
+import pkg_resources
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
@@ -50,6 +51,18 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
+        
+        # set the default base startup-config
+        resource_name = "configs/ios_base_startup-config.txt"
+        if pkg_resources.resource_exists("gns3", resource_name):
+            ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+            self.uiStartupConfigLineEdit.setText(ios_base_config_path)
+            
+        # set the default base private-config
+        resource_name = "configs/ios_base_private-config.txt"
+        if pkg_resources.resource_exists("gns3", resource_name):
+            ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+            self.uiPrivateConfigLineEdit.setText(ios_base_config_path)
 
     def _platformChangedSlot(self, platform):
         """
@@ -252,8 +265,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Slot to open a file browser and select a startup-config file.
         """
 
-        #TODO: current directory for startup-config + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", ".")
+        config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
 
@@ -269,8 +282,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Slot to open a file browser and select a private-config file.
         """
 
-        #TODO: current directory for private-config + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", ".")
+        config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
         if not path:
             return
 

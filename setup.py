@@ -54,6 +54,7 @@ setup(
         },
     packages=find_packages(),
     include_package_data=True,
+    package_data={"gns3": ["configs/*.txt"]},
     platforms="any",
     classifiers=[
         "Development Status :: 3 - Alpha",

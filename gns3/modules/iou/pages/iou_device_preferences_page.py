@@ -21,6 +21,7 @@ Configuration page for IOU image & device preferences.
 
 import os
 import sys
+import pkg_resources
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from .. import IOU
@@ -46,6 +47,12 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
+
+        # set the default base startup-config
+        resource_name = "configs/iou_base_startup-config.txt"
+        if pkg_resources.resource_exists("gns3", resource_name):
+            iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+            self.uiStartupConfigLineEdit.setText(iou_base_config_path)
 
     def _useDefaultValuesSlot(self, state):
         """
@@ -199,8 +206,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Slot to open a file browser and select a startup-config file.
         """
 
-        #TODO: current directory for startup-config + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", ".")
+        config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
 
