@@ -56,19 +56,19 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         resource_name = "configs/ios_base_startup-config.txt"
         if hasattr(sys, "frozen"):
             ios_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-            self.uiStartupConfigLineEdit.setText(ios_base_config_path)
+            self.uiStartupConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
         elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiStartupConfigLineEdit.setText(ios_base_config_path)
+            self.uiStartupConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
 
         # set the default base private-config
         resource_name = "configs/ios_base_private-config.txt"
         if hasattr(sys, "frozen"):
             ios_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-            self.uiPrivateConfigLineEdit.setText(ios_base_config_path)
+            self.uiPrivateConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
         elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiPrivateConfigLineEdit.setText(ios_base_config_path)
+            self.uiPrivateConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
 
     def _platformChangedSlot(self, platform):
         """
@@ -291,7 +291,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Slot to open a file browser and select a private-config file.
         """
 
-        config_dir = pkg_resources.resource_filename("gns3", "configs")
+        if hasattr(sys, "frozen"):
+            config_dir = os.path.join(os.path.dirname(sys.executable), "configs")
+        else:
+            config_dir = pkg_resources.resource_filename("gns3", "configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
         if not path:
             return

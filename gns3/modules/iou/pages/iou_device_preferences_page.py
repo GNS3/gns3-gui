@@ -198,19 +198,19 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             resource_name = "configs/iou_l2_base_startup-config.txt"
             if hasattr(sys, "frozen"):
                 iou_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-                self.uiStartupConfigLineEdit.setText(iou_base_config_path)
+                self.uiStartupConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiStartupConfigLineEdit.setText(iou_base_config_path)
+                self.uiStartupConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
         else:
             # set the default L3 base startup-config
             resource_name = "configs/iou_l3_base_startup-config.txt"
             if hasattr(sys, "frozen"):
                 iou_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-                self.uiStartupConfigLineEdit.setText(iou_base_config_path)
+                self.uiStartupConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiStartupConfigLineEdit.setText(iou_base_config_path)
+                self.uiStartupConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
 
     def _startupConfigBrowserSlot(self):
         """
