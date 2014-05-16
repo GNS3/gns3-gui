@@ -27,6 +27,7 @@ from .node_configurator import NodeConfigurator
 from .link import Link
 from .node import Node
 from .modules import MODULES
+from .modules.builtin.cloud import Cloud
 from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
 from .topology import Topology
@@ -284,6 +285,9 @@ class GraphicsView(QtGui.QGraphicsView):
             source_port = source_item.connectToPort()
             if not source_port:
                 return
+            if not source_item.node().initialized():
+                QtGui.QMessageBox.critical(self, "Connection", "This node hasn't been initialized correctly")
+                return
             if not source_port.isFree():
                 QtGui.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(source_port.name()))
                 return
@@ -302,6 +306,9 @@ class GraphicsView(QtGui.QGraphicsView):
             destination_port = destination_item.connectToPort()
             if not destination_port:
                 return
+            if not destination_item.node().initialized():
+                QtGui.QMessageBox.critical(self, "Connection", "This node hasn't been initialized correctly")
+                return
             if not destination_port.isFree():
                 QtGui.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(destination_port.name()))
                 return
@@ -311,9 +318,19 @@ class GraphicsView(QtGui.QGraphicsView):
                 QtGui.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
                 return
 
-            # check if the 2 nodes can communicate
+            if isinstance(source_item.node(), Cloud) and isinstance(destination_item.node(), Cloud):
+                QtGui.QMessageBox.critical(self, "Connection", "Sorry, you cannot connect a cloud to another cloud!")
+                return
+
             source_host = source_item.node().server().host
             destination_host = destination_item.node().server().host
+
+            # check that the node can be connected to a cloud
+            if (isinstance(source_item.node(), Cloud) or isinstance(destination_item.node(), Cloud)) and source_host != destination_host:
+                QtGui.QMessageBox.critical(self, "Connection", "This device can only be connected to a cloud on the same host")
+                return
+
+            # check if the 2 nodes can communicate
             if (source_host in self._local_addresses and destination_host not in self._local_addresses) or \
                (destination_host in self._local_addresses and source_host not in self._local_addresses):
                 QtGui.QMessageBox.critical(self, "Connection", "Server {} cannot communicate with server {}, most likely because your local server host binding is set to a local address".format(source_host, destination_host))
