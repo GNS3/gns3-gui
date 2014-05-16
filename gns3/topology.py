@@ -134,6 +134,7 @@ class Topology(object):
         self._links.clear()
         self._nodes.clear()
         self._initialized_nodes.clear()
+        self._resources_type = None
         log.info("topology has been reset")
 
     def _dump_gui_settings(self, topology):
@@ -394,7 +395,8 @@ class Topology(object):
     def resourcesType(self):
         return self._resources_type
 
-    @resourcesType.setter
-    def resourcesType(self, val):
-        if val in ('local', 'cloud'):
-            self._resources_type = val
+    def setCloudResourcesType(self):
+        self._resources_type = 'cloud'
+
+    def setLocalResourcesType(self):
+        self._resources_type = 'local'

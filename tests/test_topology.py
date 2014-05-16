@@ -12,15 +12,14 @@ class TestTopology(TestCase):
         del Topology._instance
 
     def test_resources_type(self):
-        self.t.resourcesType = 'foo'
         self.assertIsNone(self.t.resourcesType)
-        self.t.resourcesType = 'local'
+        self.t.setLocalResourcesType()
         self.assertEqual(self.t.resourcesType, 'local')
-        self.t.resourcesType = 'cloud'
+        self.t.setCloudResourcesType()
         self.assertEqual(self.t.resourcesType, 'cloud')
 
     def test_resources_type_dumped(self):
-        self.t.resourcesType = 'cloud'
+        self.t.setCloudResourcesType()
         topology = self.t.dump()
         self.assertIn('resources_type', topology)
         self.assertEqual(topology['resources_type'], 'cloud')
@@ -34,3 +33,16 @@ class TestTopology(TestCase):
         }
         self.t.load(topology)
         self.assertEqual(self.t.resourcesType, 'cloud')
+
+    def test_reset(self):
+        self.t._links = ['foo', 'baz', 'bar']
+        self.t._nodes = ['foo', 'baz', 'bar']
+        self.t._initialized_nodes = ['foo', 'baz', 'bar']
+        self.t.setCloudResourcesType()
+
+        self.t.reset()
+
+        self.assertEqual(len(self.t._links), 0)
+        self.assertEqual(len(self.t._nodes), 0)
+        self.assertEqual(len(self.t._initialized_nodes), 0)
+        self.assertIsNone(self.t._resources_type)
