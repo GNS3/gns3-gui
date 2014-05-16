@@ -27,6 +27,7 @@ VPCS_SETTINGS = {
     "udp_end_port_range": 40000,
     "use_local_server": True,
     "base_script_file": "",
+    "path": "",
 }
 
 VPCS_SETTING_TYPES = {
@@ -36,4 +37,5 @@ VPCS_SETTING_TYPES = {
     "udp_end_port_range": int,
     "use_local_server": bool,
     "base_script_file": str,
+    "path": str,
 }
