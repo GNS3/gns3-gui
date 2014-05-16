@@ -51,16 +51,22 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
-        
+
         # set the default base startup-config
         resource_name = "configs/ios_base_startup-config.txt"
-        if pkg_resources.resource_exists("gns3", resource_name):
+        if hasattr(sys, "frozen"):
+            ios_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
+            self.uiStartupConfigLineEdit.setText(ios_base_config_path)
+        elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
             self.uiStartupConfigLineEdit.setText(ios_base_config_path)
-            
+
         # set the default base private-config
         resource_name = "configs/ios_base_private-config.txt"
-        if pkg_resources.resource_exists("gns3", resource_name):
+        if hasattr(sys, "frozen"):
+            ios_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
+            self.uiPrivateConfigLineEdit.setText(ios_base_config_path)
+        elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
             self.uiPrivateConfigLineEdit.setText(ios_base_config_path)
 
@@ -265,7 +271,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Slot to open a file browser and select a startup-config file.
         """
 
-        config_dir = pkg_resources.resource_filename("gns3", "configs")
+        if hasattr(sys, "frozen"):
+            config_dir = os.path.join(os.path.dirname(sys.executable), "configs")
+        else:
+            config_dir = pkg_resources.resource_filename("gns3", "configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
