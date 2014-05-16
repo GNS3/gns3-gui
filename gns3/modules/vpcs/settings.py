@@ -15,15 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-__version__ is a human-readable version number.
 
-__version_info__ is a four-tuple for programmatic comparison. The first
-three numbers are the components of the version number. The fourth
-is zero for an official release, positive for a development branch,
-or negative for a release candidate or beta (after the base version
-number has been incremented)
+"""
+Default VPCS settings.
 """
 
-__version__ = "1.0a4.dev2"
-__version_info__ = (1, 0, 0, -99)
+VPCS_SETTINGS = {
+    "console_start_port_range": 4001,
+    "console_end_port_range": 4512,
+    "udp_start_port_range": 30001,
+    "udp_end_port_range": 40000,
+    "use_local_server": True,
+    "base_script_file": "",
+}
+
+VPCS_SETTING_TYPES = {
+    "console_start_port_range": int,
+    "console_end_port_range": int,
+    "udp_start_port_range": int,
+    "udp_end_port_range": int,
+    "use_local_server": bool,
+    "base_script_file": str,
+}

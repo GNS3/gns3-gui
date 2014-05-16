@@ -45,3 +45,5 @@ nosetests.xml
 *_log.txt
 *.log
 
+# Gedit Temp Files
+*~

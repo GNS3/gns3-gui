@@ -193,7 +193,6 @@ class Link(QtCore.QObject):
             lport, laddr = self._source_udp
             rport, raddr = self._destination_udp
 
-            #TODO: check address compatibility? for instance 127.0.0.1 <-> 83.15.12.2 isn't likely gonna work.
             self._source_nio = NIOUDP(lport, raddr, rport)
             self._destination_nio = NIOUDP(rport, laddr, lport)
 
