@@ -33,6 +33,7 @@ from .topology import Topology
 from .ports.port import Port
 from .utils.progress_dialog import ProgressDialog
 from .utils.wait_for_connection_thread import WaitForConnectionThread
+from .resources_type_dialog import ResourcesTypeDialog
 
 # link items
 from .items.link_item import LinkItem
@@ -777,6 +778,15 @@ class GraphicsView(QtGui.QGraphicsView):
         :param pos: position of the drop event
         """
 
+        if self._topology.resourcesType is None:
+            dlg = ResourcesTypeDialog(self)
+            if dlg.exec_() != QtGui.QDialog.Accepted:
+                return
+            if dlg.uiLocalRadioButton.isChecked():
+                self._topology.setLocalResourcesType()
+            else:
+                self._topology.setCloudResourcesType()
+
         try:
             node_module = None
             for module in MODULES:
@@ -814,5 +824,4 @@ class GraphicsView(QtGui.QGraphicsView):
         y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
         node_item.setPos(x, y)
         self._topology.addNode(node)
-        # TODO set topology type
         self._main_window.uiTopologySummaryTreeWidget.addNode(node)
