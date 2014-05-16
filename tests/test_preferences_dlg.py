@@ -14,6 +14,8 @@ from gns3.settings import CLOUD_SETTINGS
 from gns3.main_window import MainWindow
 from gns3.main_window import CLOUD_SETTINGS_GROUP
 
+import pytest
+
 
 def make_getitem(container):
     def getitem(name):
@@ -27,6 +29,7 @@ def make_setitem(container):
     return setitem
 
 
+@mock.patch('gns3.pages.cloud_preferences_page.import_from_string')
 class TestCloudPreferencesPage(TestCase):
     def setUp(self):
         self.app = QApplication(sys.argv)
@@ -40,6 +43,12 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings.__getitem__.side_effect = make_getitem(settings_copy)
         self.page.settings.__setitem__.side_effect = make_setitem(settings_copy)
         self._init_page()
+        # RackspaceCtrl mock
+        self.ctrl_mock = mock.MagicMock()
+        self.ctrl_mock.return_value = self.ctrl_mock
+        self.ctrl_mock.authenticate.return_value = True
+        self.ctrl_mock.list_regions.return_value = [{'ORD': 'ord'}, {'SYD': 'syd'}, {'DFW': 'dfw'},
+                                                    {'HKG': 'hkg'}, {'IAD': 'iad'}]
 
     def tearDown(self):
         # Explicitly deallocate QApplication instance to avoid crashes
@@ -52,7 +61,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings.__getitem__.side_effect = make_getitem(fake_settings)
         self.page.settings.__setitem__.side_effect = make_setitem(fake_settings)
 
-    def test_defaults(self):
+    def test_defaults(self, *args, **kwargs):
         self.page.loadPreferences()
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertFalse(self.page.uiRememberAPIKeyRadioButton.isChecked())
@@ -73,7 +82,7 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 30)
 
-    def test_user_interaction(self):
+    def test_user_interaction(self, *args, **kwargs):
         """
         Simulate user interactions via keyboard or mouse and check dialog status
         """
@@ -93,7 +102,9 @@ class TestCloudPreferencesPage(TestCase):
 
         self.assertTrue(self.page._validate())
 
-    def test_load_settings(self):
+    def test_load_settings(self, mock_1):
+        mock_1.return_value = self.ctrl_mock
+
         self.page.settings['cloud_store_api_key_chosen'] = True
 
         self.page.loadPreferences()
@@ -103,7 +114,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
-        self.page.settings['cloud_region'] = 'United States'
+        self.page.settings['cloud_region'] = 'ORD'
         self.page.settings['accepted_terms'] = True
         self.page.settings['instances_per_project'] = 3
         self.page.settings['memory_per_instance'] = 2
@@ -117,14 +128,16 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
         self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
-        self.assertEqual(self.page.uiRegionComboBox.currentText(), "United States")
+        self.assertEqual(self.page.uiRegionComboBox.currentText(), "ord")
         self.assertTrue(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 3)
         self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 2)
         self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 6)
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 120)
 
-    def test_save_preferences(self):
+    def test_save_preferences(self, mock_1):
+        mock_1.return_value = self.ctrl_mock
+
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
         self.page.loadPreferences()
@@ -146,14 +159,14 @@ class TestCloudPreferencesPage(TestCase):
 
         self.assertTrue(self.page.settings['cloud_store_api_key'])
         self.assertEqual(self.page.settings['cloud_provider'], 'rackspace')
-        self.assertEqual(self.page.settings['cloud_region'], 'United States')
+        self.assertEqual(self.page.settings['cloud_region'], 'ORD')
         self.assertTrue(self.page.settings['accepted_terms'])
         self.assertEqual(self.page.settings['instances_per_project'], 8)
         self.assertEqual(self.page.settings['memory_per_instance'], 16)
         self.assertEqual(self.page.settings['memory_per_new_instance'], 32)
         self.assertEqual(self.page.settings['instance_timeout'], 5)
 
-    def test_clear_settings_on_user_request(self):
+    def test_clear_settings_on_user_request(self, *args, **kwargs):
         # no mocking for this testcase
         page = CloudPreferencesPage()
         # first run, user stores settings on disk
@@ -179,3 +192,29 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(stored_settings.value('cloud_store_api_key', type=bool))
         self.assertEqual(stored_settings.value('cloud_api_key', type=str), '')
         self.assertEqual(stored_settings.value('cloud_user_name', type=str), '')
+
+
+@pytest.mark.skipif(not pytest.config.getvalue("username"),
+                    reason="--username <user> was not specified")
+@pytest.mark.skipif(not pytest.config.getvalue("apikey"),
+                    reason="--apikey <key> was not specified")
+class TestCloudPreferencesPageIntegration(TestCase):
+    def setUp(self):
+        self.app = QApplication(sys.argv)
+        self.page = CloudPreferencesPage()
+
+    def tearDown(self):
+        del self.app
+
+    def test_fill_region(self):
+        self.page.settings['cloud_store_api_key_chosen'] = True
+        self.page.settings['cloud_user_name'] = pytest.config.getvalue("username")
+        self.page.settings['cloud_api_key'] = pytest.config.getvalue("apikey")
+        self.page.settings['cloud_provider'] = 'rackspace'
+        self.page.loadPreferences()
+        region_labels = []
+        for i in range(self.page.uiRegionComboBox.model().rowCount()):
+            region_labels.append(self.page.uiRegionComboBox.model().item(i,0).text())
+        self.assertTrue(len(region_labels) > 1)
+        self.assertIn('ord', region_labels)
+
