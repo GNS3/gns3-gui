@@ -48,12 +48,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
 
-        # set the default base startup-config
-        resource_name = "configs/iou_base_startup-config.txt"
-        if pkg_resources.resource_exists("gns3", resource_name):
-            iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiStartupConfigLineEdit.setText(iou_base_config_path)
-
     def _useDefaultValuesSlot(self, state):
         """
         Slot to enable or not the RAM and NVRAM spin boxes.
@@ -198,8 +192,19 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         self.uiIOUPathLineEdit.clear()
         self.uiIOUPathLineEdit.setText(path)
-        self.uiRAMSpinBox.setValue(256)
-        self.uiNVRAMSpinBox.setValue(128)
+
+        if "l2" in path:
+            # set the default L2 base startup-config
+            resource_name = "configs/iou_l2_base_startup-config.txt"
+            if pkg_resources.resource_exists("gns3", resource_name):
+                iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+                self.uiStartupConfigLineEdit.setText(iou_base_config_path)
+        else:
+            # set the default L3 base startup-config
+            resource_name = "configs/iou_l3_base_startup-config.txt"
+            if pkg_resources.resource_exists("gns3", resource_name):
+                iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+                self.uiStartupConfigLineEdit.setText(iou_base_config_path)
 
     def _startupConfigBrowserSlot(self):
         """

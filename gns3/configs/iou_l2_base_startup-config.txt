@@ -7,16 +7,23 @@ hostname %h
 !
 !
 !
+logging discriminator EXCESS severity drops 6 msg-body drops EXCESSCOLL 
+logging buffered 50000
+logging console discriminator EXCESS
+!
 no ip icmp rate-limit unreachable
 !
-!         
-!
-!
 ip cef
-no ip domain lookup
+no ip domain-lookup
+!
+!
+!
+!
 !
 !
 ip tcp synwait-time 5
+! 
+!
 !
 !
 !
@@ -24,34 +31,42 @@ ip tcp synwait-time 5
 interface Ethernet0/0
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet0/1
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet0/2
  no ip address
- shutdown 
+ shutdown
+ duplex auto
 !
 interface Ethernet0/3
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/0
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/1
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/2
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/3
  no ip address
  shutdown
+ duplex auto
 !
 interface Serial2/0
  no ip address
@@ -65,7 +80,7 @@ interface Serial2/1
 !
 interface Serial2/2
  no ip address
- shutdown
+ shutdown 
  serial restart-delay 0
 !
 interface Serial2/3
@@ -77,7 +92,7 @@ interface Serial3/0
  no ip address
  shutdown
  serial restart-delay 0
-!         
+!
 interface Serial3/1
  no ip address
  shutdown
@@ -93,8 +108,17 @@ interface Serial3/3
  shutdown
  serial restart-delay 0
 !
+interface Vlan1
+ no ip address
+ shutdown
 !
-no cdp log mismatch duplex
+!
+!
+!
+!
+!
+!
+!
 !
 line con 0
  exec-timeout 0 0
@@ -104,7 +128,5 @@ line aux 0
  exec-timeout 0 0
  privilege level 15
  logging synchronous
-line vty 0 4
- login
 !
 end
