@@ -248,12 +248,10 @@ class VPCS(Module):
         log.info("configuring node {}".format(node))
         settings = {}
 
-        script_file = self._settings["base_script_file"]
+        base_script_file = self._settings["base_script_file"]
         vpcs_path = self._settings["path"]
 
-        if script_file:
-            settings = {"script_file": script_file}
-        node.setup(vpcs_path, initial_settings=settings)
+        node.setup(vpcs_path, None, base_script_file, initial_settings=settings)
 
     def reset(self):
         """
