@@ -45,6 +45,7 @@ class Topology(object):
         self._topology = None
         self._initialized_nodes = []
         #self._topology = nx.Graph()
+        self._resources_type = None
 
     def addNode(self, node):
         """
@@ -169,6 +170,7 @@ class Topology(object):
         topology = {"version": __version__,
                     "type": "topology",
                     "topology": {},
+                    "resources_type": self._resources_type,
                     }
 
         servers = {}
@@ -308,6 +310,8 @@ class Topology(object):
                 self.addNode(node)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)
 
+        self._resources_type = topology['resources_type']
+
         if node_errors:
             errors = "\n".join(node_errors)
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
@@ -385,3 +389,12 @@ class Topology(object):
         if not hasattr(Topology, "_instance"):
             Topology._instance = Topology()
         return Topology._instance
+
+    @property
+    def resourcesType(self):
+        return self._resources_type
+
+    @resourcesType.setter
+    def resourcesType(self, val):
+        if val in ('local', 'cloud'):
+            self._resources_type = val

@@ -814,4 +814,5 @@ class GraphicsView(QtGui.QGraphicsView):
         y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
         node_item.setPos(x, y)
         self._topology.addNode(node)
+        # TODO set topology type
         self._main_window.uiTopologySummaryTreeWidget.addNode(node)
