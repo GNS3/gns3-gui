@@ -52,6 +52,9 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
+        #FIXME: temporally hide test button
+        self.uiIOSImageTestSettingsPushButton.hide()
+
         # set the default base startup-config
         resource_name = "configs/ios_base_startup-config.txt"
         if hasattr(sys, "frozen"):

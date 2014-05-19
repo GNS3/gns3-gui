@@ -45,6 +45,9 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
+        #FIXME: temporally hide test button
+        self.uiTestSettingsPushButton.hide()
+
     def _dynamipsPathBrowserSlot(self):
         """
         Slot to open a file browser and select Dynamips executable.

@@ -50,6 +50,9 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
+        #FIXME: temporally hide test button
+        self.uiTestSettingsPushButton.hide()
+
     def _iourcPathBrowserSlot(self):
         """
         Slot to open a file browser and select an iourc file

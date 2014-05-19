@@ -46,6 +46,9 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
 
+        #FIXME: temporally hide test button
+        self.uiTestSettingsPushButton.hide()
+
     def _vpcsPathBrowserSlot(self):
         """
         Slot to open a file browser and select vpcs

@@ -49,6 +49,9 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
+        #FIXME: temporally hide test button
+        self.uiTestSettingsPushButton.hide()
+
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
             address_string = address.toString()

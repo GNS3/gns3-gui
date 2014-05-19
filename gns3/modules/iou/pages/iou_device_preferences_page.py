@@ -48,6 +48,9 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
 
+        #FIXME: temporally hide test button
+        self.uiIOUImageTestSettingsPushButton.hide()
+
     def _useDefaultValuesSlot(self, state):
         """
         Slot to enable or not the RAM and NVRAM spin boxes.
