@@ -90,6 +90,7 @@ class IOU(Module):
             path = settings.value("path", "")
             image = settings.value("image", "")
             startup_config = settings.value("startup_config", "")
+            l1_keepalives = settings.value("l1_keepalives", True, type=bool)
             use_default_iou_values = settings.value("use_default_iou_values", True, type=bool)
             ram = settings.value("ram", 256, type=int)
             nvram = settings.value("nvram", 128, type=int)
@@ -98,6 +99,7 @@ class IOU(Module):
             self._iou_images[key] = {"path": path,
                                      "image": image,
                                      "startup_config": startup_config,
+                                     "l1_keepalives": l1_keepalives,
                                      "use_default_iou_values": use_default_iou_values,
                                      "ram": ram,
                                      "nvram": nvram,
@@ -376,9 +378,11 @@ class IOU(Module):
         startup_config = self._iou_images[iouimage]["startup_config"]
         iou_path = self._iou_images[iouimage]["path"]
         use_default_iou_values = self._iou_images[iouimage]["use_default_iou_values"]
+        l1_keepalives = self._iou_images[iouimage]["l1_keepalives"]
         settings = {}
         if startup_config:
             settings["startup_config"] = startup_config
+        settings["l1_keepalives"] = l1_keepalives
         settings["use_default_iou_values"] = use_default_iou_values
         if not use_default_iou_values:
             settings["ram"] = self._iou_images[iouimage]["ram"]

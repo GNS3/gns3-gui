@@ -51,6 +51,7 @@ class IOUDevice(Node):
         self._settings = {"name": "",
                           "path": "",
                           "startup_config": "",
+                          "l1_keepalives": True,
                           "use_default_iou_values": True,
                           "ram": 256,
                           "nvram": 128,

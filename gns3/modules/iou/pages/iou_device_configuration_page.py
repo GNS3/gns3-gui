@@ -95,17 +95,10 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
                 self.uiIOUImageComboBox.setCurrentIndex(index)
 
         else:
-            self.uiNameLabel.hide()
-            self.uiNameLineEdit.hide()
-            self.uiIOUImageLabel.hide()
-            self.uiIOUImageComboBox.hide()
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
-            self.uiStartupConfigLabel.hide()
-            self.uiStartupConfigLineEdit.hide()
-            self.uiStartupConfigToolButton.hide()
+            self.uiGeneralgroupBox.hide()
 
-        # load the memories settings
+        # load advanced settings
+        self.uiL1KeepalivesCheckBox.setChecked(settings["l1_keepalives"])
         self.uiDefaultValuesCheckBox.setChecked(settings["use_default_iou_values"])
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiNvramSpinBox.setValue(settings["nvram"])
@@ -144,7 +137,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             del settings["name"]
             del settings["console"]
 
-        # save the memories settings
+        # save advanced settings
+        settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()
         settings["use_default_iou_values"] = self.uiDefaultValuesCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()
         settings["nvram"] = self.uiNvramSpinBox.value()

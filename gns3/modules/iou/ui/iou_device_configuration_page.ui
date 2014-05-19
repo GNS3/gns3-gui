@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>405</width>
-    <height>468</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,29 +85,39 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="uiMemoriesGroupBox">
+    <widget class="QGroupBox" name="uiAdvancedGroupBox">
      <property name="title">
-      <string>Memories</string>
+      <string>Advanced</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0" colspan="2">
-       <widget class="QCheckBox" name="uiDefaultValuesCheckBox">
+       <widget class="QCheckBox" name="uiL1KeepalivesCheckBox">
         <property name="text">
-         <string>Use default IOU values</string>
+         <string>Enable layer 1 keepalive messages if supported</string>
         </property>
         <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="uiDefaultValuesCheckBox">
+        <property name="text">
+         <string>Use default IOU values for memories</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QLabel" name="uiRamLabel">
         <property name="text">
          <string>RAM size:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QSpinBox" name="uiRamSpinBox">
         <property name="enabled">
          <bool>false</bool>
@@ -132,14 +142,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="uiNvramLabel">
         <property name="text">
          <string>NVRAM size:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QSpinBox" name="uiNvramSpinBox">
         <property name="enabled">
          <bool>false</bool>
