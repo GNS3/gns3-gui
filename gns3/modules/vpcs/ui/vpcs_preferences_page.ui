@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>VPCS</string>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="uiTabWidget">
      <property name="contextMenuPolicy">
@@ -40,30 +40,6 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QLineEdit" name="uiVPCSPathLineEdit"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="uiVPCSPathToolButton">
-           <property name="text">
-            <string>...</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiVPCSPathLabel">
-         <property name="text">
-          <string>Path to VPCS:</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
         <widget class="QLabel" name="uiScriptFileLabel">
          <property name="text">
@@ -71,18 +47,12 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
-        <spacer name="spacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiVPCSPathLabel">
+         <property name="text">
+          <string>Path to VPCS:</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>390</width>
-           <height>193</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
        <item row="6" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -97,6 +67,23 @@
           <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
            <property name="text">
             <string>Restore defaults</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLineEdit" name="uiVPCSPathLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiVPCSPathToolButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
            </property>
           </widget>
          </item>
@@ -119,9 +106,65 @@
          </item>
         </layout>
        </item>
+       <item row="7" column="0" colspan="2">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>390</width>
+           <height>193</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="uiServerSettingsTabWidget">
+      <attribute name="title">
+       <string>Server settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
+         <property name="text">
+          <string>Use the local server (Linux only)</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiRemoteServersGroupBox">
+         <property name="title">
+          <string>Remote servers</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <column>
+             <property name="text">
+              <string>Host</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Port</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiAdvancedSettingsTabWidget">
       <attribute name="title">
        <string>Advanced settings</string>
       </attribute>

@@ -23,6 +23,7 @@ import os
 import sys
 import pkg_resources
 from gns3.qt import QtGui
+from gns3.servers import Servers
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
 from ..settings import VPCS_SETTINGS
@@ -39,6 +40,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
+        self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
@@ -102,12 +104,13 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         :param settings: VPCS settings
         """
 
+        self.uiVPCSPathLineEdit.setText(settings["path"])
+        self.uiScriptFileEdit.setText(settings["base_script_file"])
+        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
-        self.uiVPCSPathLineEdit.setText(settings["path"])
-        self.uiScriptFileEdit.setText(settings["base_script_file"])
 
         if not self.uiScriptFileEdit.text():
             resource_name = "configs/vpcs_base_config.txt"
@@ -118,6 +121,22 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
                 vpcs_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
                 self.uiScriptFileEdit.setText(os.path.normpath(vpcs_base_config_path))
 
+    def _updateRemoteServersSlot(self):
+        """
+        Adds/Updates the available remote servers.
+        """
+
+        servers = Servers.instance()
+        self.uiRemoteServersTreeWidget.clear()
+        for server in servers.remoteServers().values():
+            host = server.host
+            port = server.port
+            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
+            item.setText(0, host)
+            item.setText(1, str(port))
+
+        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
+
     def loadPreferences(self):
         """
         Loads VPCS preferences.
@@ -126,16 +145,21 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         vpcs_settings = VPCS.instance().settings()
         self._populateWidgets(vpcs_settings)
 
+        servers = Servers.instance()
+        servers.updated_signal.connect(self._updateRemoteServersSlot)
+        self._updateRemoteServersSlot()
+
     def savePreferences(self):
         """
         Saves VPCS preferences.
         """
 
         new_settings = {}
+        new_settings["path"] = self.uiVPCSPathLineEdit.text()
+        new_settings["base_script_file"] = self.uiScriptFileEdit.text()
+        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
-        new_settings["path"] = self.uiVPCSPathLineEdit.text()
-        new_settings["base_script_file"] = self.uiScriptFileEdit.text()
         VPCS.instance().setSettings(new_settings)
