@@ -183,10 +183,15 @@ class VPCS(Module):
         log.info("sending VPCS settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
 
+        # do not send the base script file path.
+        del params["base_script_file"]
+
         # send the local working directory only if this is a local server
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
+            if "path" in params:
+                del params["path"]  # do not send VPCS path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
@@ -248,10 +253,11 @@ class VPCS(Module):
         log.info("configuring node {}".format(node))
         settings = {}
 
-        base_script_file = self._settings["base_script_file"]
-        vpcs_path = self._settings["path"]
+        script_file = self._settings["base_script_file"]
+        if script_file:
+            settings["script_file"] = script_file
 
-        node.setup(vpcs_path, None, base_script_file, initial_settings=settings)
+        node.setup(None, initial_settings=settings)
 
     def reset(self):
         """

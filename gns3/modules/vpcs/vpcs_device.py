@@ -48,66 +48,28 @@ class VPCSDevice(Node):
         self._module = module
         self._ports = []
         self._settings = {"name": "",
-                          "base_script_file": "",
-                          "path":"",
+                          "script_file": "",
                           "console": None}
 
-        #self._occupied_slots = []
-        self._addAdapters(1)
+        port_name = EthernetPort.longNameType() + str(0)
+        port = EthernetPort(port_name)
+        port.setPortNumber(0)
+        self._ports.append(port)
+        log.debug("port {} has been added".format(port_name))
 
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def _addAdapters(self, nb_ethernet_adapters):
-        """
-        Adds ports based on what adapter is inserted in which slot.
-
-        :param adapter: adapter name
-        :param slot_number: slot number (integer)
-        """
-
-        nb_adapters = nb_ethernet_adapters
-        for slot_number in range(0, nb_adapters):
-#             if slot_number in self._occupied_slots:
-#                 continue
-            for port_number in range(0, 1):
-                if slot_number < nb_ethernet_adapters:
-                    port = EthernetPort
-                port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
-                new_port = port(port_name)
-                new_port.setPortNumber(port_number)
-                new_port.setSlotNumber(slot_number)
-                #self._occupied_slots.append(slot_number)
-                self._ports.append(new_port)
-                log.debug("port {} has been added".format(port_name))
-
-    def _removeAdapters(self, nb_ethernet_adapters):
-        """
-        Removes ports when an adapter is removed from a slot.
-
-        :param slot_number: slot number (integer)
-        """
-
-        for port in self._ports.copy():
-            if (port.slotNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet"):
-                #self._occupied_slots.remove(port.slotNumber())
-                self._ports.remove(port)
-                log.info("port {} has been removed".format(port.name()))
-
-    def setup(self, vpcs_path, name=None, base_script_file=None, initial_settings={}):
+    def setup(self, name=None, initial_settings={}):
         """
         Setups this VPCS device.
 
         :param name: optional name
         """
-        params = {"path": vpcs_path}
 
+        params = {}
         if name:
             params["name"] = self._settings["name"] = name
-
-        if base_script_file:
-            params["base_script_file"] = self._settings["base_script_file"] = base_script_file
-            params["base_script_file_base64"] = self._base64Config(base_script_file)
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
@@ -192,13 +154,12 @@ class VPCSDevice(Node):
             with open(config_path, "r") as f:
                 log.info("opening configuration file: {}".format(config_path))
                 config = f.read()
-                config = '!\n' + config.replace('\r', "")
+                config = config.replace('\r', "")
                 encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
                 return encoded
         except OSError as e:
             log.warn("could not base64 encode {}: {}".format(config_path, e))
             return ""
-
 
     def update(self, new_settings):
         """
@@ -212,9 +173,9 @@ class VPCSDevice(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "base_script_file" in new_settings and self._settings["base_script_file"] != new_settings["base_script_file"] \
-        and os.path.isfile(new_settings["base_script_file"]):
-            params["base_script_file_base64"] = self._base64Config(new_settings["base_script_file"])
+        if "script_file" in new_settings and self._settings["script_file"] != new_settings["script_file"] \
+        and os.path.isfile(new_settings["script_file"]):
+            params["script_file_base64"] = self._base64Config(new_settings["script_file"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("vpcs.update", params, self._updateCallback)
@@ -233,20 +194,11 @@ class VPCSDevice(Node):
             return
 
         updated = False
-        nb_adapters_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                 updated = True
-                if (name == "ethernet_adapters" or name == "serial_adapters"):
-                    nb_adapters_changed = True
                 self._settings[name] = value
-
-        if nb_adapters_changed:
-            log.debug("number of adapters has changed: Ethernet={} Serial={}".format(self._settings["ethernet_adapters"], self._settings["serial_adapters"]))
-            #TODO: dynamically add/remove adapters
-            self._ports.clear()
-            self._addAdapters(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
 
         if self._inital_settings and not self._loading:
             self.setInitialized(True)
@@ -502,13 +454,11 @@ class VPCSDevice(Node):
         self.node_info = node_info
         settings = node_info["properties"]
         name = settings.pop("name")
-        path = settings.pop("path")
-        base_script_file = settings.pop("base_script_file")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
-        self.setup(path, name, base_script_file, settings)
+        self.setup(name, settings)
 
     def _updatePortSettings(self):
         """
@@ -521,13 +471,13 @@ class VPCSDevice(Node):
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.slotNumber():
+                    if topology_port["port_number"] == port.portNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
         # now we can set the node has initialized and trigger the signal
         self.setInitialized(True)
-        log.info("router {} has been loaded".format(self.name()))
+        log.info("vpcs {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
         self._inital_settings = None

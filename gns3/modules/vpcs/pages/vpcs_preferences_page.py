@@ -19,7 +19,9 @@
 Configuration page for VPCS preferences.
 """
 
-
+import os
+import sys
+import pkg_resources
 from gns3.qt import QtGui
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -39,6 +41,38 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         # connect signals
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
+        self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
+        self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
+
+    def _vpcsPathBrowserSlot(self):
+        """
+        Slot to open a file browser and select vpcs
+        """
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select VPCS", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.X_OK):
+            QtGui.QMessageBox.critical(self, "VPCS", "{} is not an executable".format(os.path.basename(path)))
+            return
+
+        self.uiVPCSPathLineEdit.setText(os.path.normpath(path))
+
+    def _scriptFileBrowserSlot(self):
+        """
+        Slot to open a file browser and select a base script file for VPCS
+        """
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a script file", ".")
+        if not path:
+            return
+
+        if not os.access(path, os.R_OK):
+            QtGui.QMessageBox.critical(self, "Script file", "{} cannot be read".format(os.path.basename(path)))
+            return
+
+        self.uiScriptFileEdit.setText(os.path.normpath(path))
 
     def _testSettingsSlot(self):
 
@@ -73,7 +107,16 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
         self.uiVPCSPathLineEdit.setText(settings["path"])
-        self.uiVPCSBaseScriptFileEdit.setText(settings["base_script_file"])
+        self.uiScriptFileEdit.setText(settings["base_script_file"])
+
+        if not self.uiScriptFileEdit.text():
+            resource_name = "configs/vpcs_base_config.txt"
+            if hasattr(sys, "frozen"):
+                vpcs_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
+                self.uiScriptFileEdit.setText(os.path.normpath(vpcs_base_config_path))
+            elif pkg_resources.resource_exists("gns3", resource_name):
+                vpcs_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+                self.uiScriptFileEdit.setText(os.path.normpath(vpcs_base_config_path))
 
     def loadPreferences(self):
         """
@@ -94,5 +137,5 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         new_settings["path"] = self.uiVPCSPathLineEdit.text()
-        new_settings["base_script_file"] = self.uiVPCSBaseScriptFileEdit.text()
+        new_settings["base_script_file"] = self.uiScriptFileEdit.text()
         VPCS.instance().setSettings(new_settings)

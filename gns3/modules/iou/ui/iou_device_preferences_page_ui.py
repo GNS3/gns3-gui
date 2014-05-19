@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Wed May 14 15:50:18 2014
+# Created: Sun May 18 18:28:53 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!

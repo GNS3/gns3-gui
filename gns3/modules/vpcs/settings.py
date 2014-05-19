@@ -21,21 +21,21 @@ Default VPCS settings.
 """
 
 VPCS_SETTINGS = {
-    "console_start_port_range": 4001,
-    "console_end_port_range": 4512,
-    "udp_start_port_range": 30001,
-    "udp_end_port_range": 40000,
+    "path": "",
+    "console_start_port_range": 4512,
+    "console_end_port_range": 5000,
+    "udp_start_port_range": 20001,
+    "udp_end_port_range": 20512,
     "use_local_server": True,
     "base_script_file": "",
-    "path": "",
 }
 
 VPCS_SETTING_TYPES = {
+    "path": str,
     "console_start_port_range": int,
     "console_end_port_range": int,
     "udp_start_port_range": int,
     "udp_end_port_range": int,
     "use_local_server": bool,
     "base_script_file": str,
-    "path": str,
 }
