@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Sun Mar 30 16:26:41 2014
+# Created: Mon May 19 11:19:38 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,6 +57,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerPortLabel = QtGui.QLabel(self.uiLocalTabWidget)
         self.uiLocalServerPortLabel.setObjectName(_fromUtf8("uiLocalServerPortLabel"))
         self.gridLayout.addWidget(self.uiLocalServerPortLabel, 4, 0, 1, 1)
+        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 7, 1, 1, 1)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.uiTestSettingsPushButton = QtGui.QPushButton(self.uiLocalTabWidget)
@@ -65,17 +67,19 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiLocalTabWidget)
         self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
         self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 6, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 6, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 7, 0, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 7, 0, 1, 2)
+        self.gridLayout.addItem(spacerItem1, 8, 0, 1, 2)
         self.uiLocalServerPortSpinBox = QtGui.QSpinBox(self.uiLocalTabWidget)
         self.uiLocalServerPortSpinBox.setSuffix(_fromUtf8(" TCP"))
         self.uiLocalServerPortSpinBox.setMaximum(65535)
         self.uiLocalServerPortSpinBox.setProperty("value", 8000)
         self.uiLocalServerPortSpinBox.setObjectName(_fromUtf8("uiLocalServerPortSpinBox"))
         self.gridLayout.addWidget(self.uiLocalServerPortSpinBox, 5, 0, 1, 2)
+        self.uiLocalServerAutoStartCheckBox = QtGui.QCheckBox(self.uiLocalTabWidget)
+        self.uiLocalServerAutoStartCheckBox.setChecked(True)
+        self.uiLocalServerAutoStartCheckBox.setObjectName(_fromUtf8("uiLocalServerAutoStartCheckBox"))
+        self.gridLayout.addWidget(self.uiLocalServerAutoStartCheckBox, 6, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiLocalTabWidget, _fromUtf8(""))
         self.uiRemoteTabWidget = QtGui.QWidget()
         self.uiRemoteTabWidget.setObjectName(_fromUtf8("uiRemoteTabWidget"))
@@ -131,6 +135,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
         self.uiTestSettingsPushButton.setText(_translate("ServerPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults", None))
+        self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Automatically start the server on startup", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("ServerPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("ServerPreferencesPageWidget", "Port", None))

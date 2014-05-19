@@ -160,6 +160,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
         self.uiLocalServerPortSpinBox.setValue(local_server.port)
         self.uiLocalServerPathLineEdit.setText(servers.localServerPath())
+        self.uiLocalServerAutoStartCheckBox.setChecked(servers.localServerAutoStart())
 
         # load remote server preferences
         self._remote_servers.clear()
@@ -186,6 +187,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         local_server_host = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
         local_server_port = self.uiLocalServerPortSpinBox.value()
         local_server_path = self.uiLocalServerPathLineEdit.text()
+        local_server_auto_start = self.uiLocalServerAutoStartCheckBox.isChecked()
 
         if local_server_path:
             if not os.path.isfile(local_server_path):
@@ -221,8 +223,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                     else:
                         QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(local_server_path))
 
-            # save the remote server preferences
-            servers.setLocalServer(local_server_path, local_server_host, local_server_port)
+            servers.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start)
 
+        # save the remote server preferences
         servers.updateRemoteServers(self._remote_servers)
         servers.save()

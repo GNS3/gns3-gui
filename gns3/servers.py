@@ -46,6 +46,7 @@ class Servers(QtCore.QObject):
         self._local_server = None
         self._remote_servers = {}
         self._local_server_path = ""
+        self._local_server_auto_start = True
         self._local_server_proccess = None
         self._loadSettings()
         self._remote_server_iter_pos = 0
@@ -89,7 +90,8 @@ class Servers(QtCore.QObject):
         local_server_host = settings.value("local_server_host", default_local_server_host)
         local_server_port = settings.value("local_server_port", 8000, type=int)
         local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
-        self.setLocalServer(local_server_path, local_server_host, local_server_port)
+        local_server_auto_start = settings.value("local_server_auto_start", True, type=bool)
+        self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start)
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -117,6 +119,7 @@ class Servers(QtCore.QObject):
             settings.setValue("local_server_host", self._local_server.host)
             settings.setValue("local_server_port", self._local_server.port)
             settings.setValue("local_server_path", self._local_server_path)
+            settings.setValue("local_server_auto_start", self._local_server_auto_start)
 
         # save the remote servers
         settings.beginWriteArray("remote", len(self._remote_servers))
@@ -128,6 +131,16 @@ class Servers(QtCore.QObject):
             index += 1
         settings.endArray()
         settings.endGroup()
+
+    def localServerAutoStart(self):
+        """
+        Returns either the local server
+        is automatically started on startup.
+
+        :returns: boolean
+        """
+
+        return self._local_server_auto_start
 
     def localServerPath(self):
         """
@@ -176,16 +189,19 @@ class Servers(QtCore.QObject):
             if wait:
                 self._local_server_proccess.wait()
 
-    def setLocalServer(self, path, host, port):
+    def setLocalServer(self, path, host, port, auto_start):
         """
         Sets the local server.
 
         :param path: path to the local server
         :param host: host or address of the server
         :param port: port of the server (integer)
+        :param auto_start: either the local server should be
+        automatically started on startup (boolean)
         """
 
         self._local_server_path = path
+        self._local_server_auto_start = auto_start
         if self._local_server:
             if self._local_server.host == host and self._local_server.port == port:
                 return

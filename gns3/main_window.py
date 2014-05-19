@@ -792,6 +792,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                                                                                                                                                str(e))
                     return
 
+                if not servers.localServerAutoStart():
+                    return
+
                 log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
 
                 local_server_path = servers.localServerPath()
