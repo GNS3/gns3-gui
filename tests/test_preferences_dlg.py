@@ -13,6 +13,7 @@ from gns3.pages.cloud_preferences_page import CloudPreferencesPage
 from gns3.settings import CLOUD_SETTINGS
 from gns3.main_window import MainWindow
 from gns3.main_window import CLOUD_SETTINGS_GROUP
+from gns3.preferences_dialog import PreferencesDialog
 
 import pytest
 
@@ -27,6 +28,25 @@ def make_setitem(container):
     def setitem(name, val):
         container[name] = val
     return setitem
+
+
+class TestPreferencesPage(TestCase):
+    def setUp(self):
+        self.app = QApplication(sys.argv)
+        self.dialog = PreferencesDialog(None)
+
+    def tearDown(self):
+        del self.app
+
+    def test_apply_preferences(self):
+        self.assertTrue(self.dialog._applyPreferences())
+        mock_page = mock.MagicMock()
+        mock_page.data.return_value = mock_page
+        mock_page.savePreferences.return_value = False
+        self.dialog._items = [mock_page]
+        self.assertFalse(self.dialog._applyPreferences())
+        mock_page.savePreferences.return_value = None
+        self.assertTrue(self.dialog._applyPreferences())
 
 
 @mock.patch('gns3.pages.cloud_preferences_page.import_from_string')
