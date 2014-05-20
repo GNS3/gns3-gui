@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Choose resources type for this project</string>
+      <string>Choose the resource type for this project</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>

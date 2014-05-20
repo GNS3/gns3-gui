@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/resources_type_dialog.ui'
+# Form implementation generated from reading ui file '/home/jseutterlst/gns3/gns3-gui/gns3/ui/resources_type_dialog.ui'
 #
-# Created: Fri May 16 17:24:01 2014
+# Created: Tue May 20 17:02:27 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,7 +56,7 @@ class Ui_ResourcesTypeDialog(object):
 
     def retranslateUi(self, ResourcesTypeDialog):
         ResourcesTypeDialog.setWindowTitle(_translate("ResourcesTypeDialog", "Dialog", None))
-        self.groupBox.setTitle(_translate("ResourcesTypeDialog", "Choose resources type for this project", None))
+        self.groupBox.setTitle(_translate("ResourcesTypeDialog", "Choose the resource type for this project", None))
         self.uiLocalRadioButton.setText(_translate("ResourcesTypeDialog", "Local", None))
         self.uiCloudRadioButton.setText(_translate("ResourcesTypeDialog", "Cloud", None))
 
