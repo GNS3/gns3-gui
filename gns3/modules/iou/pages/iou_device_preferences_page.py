@@ -78,7 +78,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         self.uiIOUPathLineEdit.setText(iou_image["path"])
         self.uiStartupConfigLineEdit.setText(iou_image["startup_config"])
-        self.uiL1KeepalivesCheckBox.setChecked(iou_image["l1_keepalives"])
         self.uiDefaultValuesCheckBox.setChecked(iou_image["use_default_iou_values"])
         self.uiRAMSpinBox.setValue(iou_image["ram"])
         self.uiNVRAMSpinBox.setValue(iou_image["nvram"])
@@ -101,7 +100,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         path = self.uiIOUPathLineEdit.text()
         startup_config = self.uiStartupConfigLineEdit.text()
-        l1_keepalives = self.uiL1KeepalivesCheckBox.isChecked()
         use_default_iou_values = self.uiDefaultValuesCheckBox.isChecked()
         nvram = self.uiNVRAMSpinBox.value()
         ram = self.uiRAMSpinBox.value()
@@ -141,7 +139,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self._iou_images[key] = {"path": path,
                                  "image": image,
                                  "startup_config": startup_config,
-                                 "l1_keepalives": l1_keepalives,
                                  "use_default_iou_values": use_default_iou_values,
                                  "ram": ram,
                                  "nvram": nvram,

@@ -60,7 +60,7 @@ class VPCSDevice(Node):
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def setup(self, name=None, initial_settings={}):
+    def setup(self, name=None, console=None, initial_settings={}):
         """
         Setups this VPCS device.
 
@@ -70,6 +70,8 @@ class VPCSDevice(Node):
         params = {}
         if name:
             params["name"] = self._settings["name"] = name
+        if console:
+            params["console"] = self._settings["console"] = console
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
@@ -454,11 +456,12 @@ class VPCSDevice(Node):
         self.node_info = node_info
         settings = node_info["properties"]
         name = settings.pop("name")
+        console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
-        self.setup(name, settings)
+        self.setup(name, console, settings)
 
     def _updatePortSettings(self):
         """

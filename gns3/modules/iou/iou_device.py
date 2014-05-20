@@ -104,16 +104,20 @@ class IOUDevice(Node):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, initial_settings={}):
+    def setup(self, iou_path, name=None, console=None, initial_settings={}):
         """
         Setups this IOU device.
 
+        :param iou_path: path to an IOU image
         :param name: optional name
+        :param console: optional TCP console port
         """
         params = {"path": iou_path}
 
         if name:
             params["name"] = self._settings["name"] = name
+        if console:
+            params["console"] = self._settings["console"] = console
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
@@ -518,11 +522,12 @@ class IOUDevice(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
+        console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("iou device {} is loading".format(name))
-        self.setup(path, name, settings)
+        self.setup(path, name, console, settings)
 
     def _updatePortSettings(self):
         """

@@ -48,8 +48,8 @@ def locale_check():
     or there: http://robjwells.com/post/61198832297/get-your-us-ascii-out-of-my-face
     """
 
-    # no need to check on Windows
-    if sys.platform.startswith("win"):
+    # no need to check on Windows or when frozen
+    if sys.platform.startswith("win") or hasattr(sys, "frozen"):
         return
 
     language = encoding = None
