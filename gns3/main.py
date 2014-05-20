@@ -101,7 +101,7 @@ def main():
             logfile.close()
         except OSError as e:
             print("Could not save traceback to {}: {}".format(exception_file_path, e))
-            
+
         if not sys.stdout.isatty():
             # if stdout is not a tty (redirected to the console view),
             # then print the exception on stderr too.
@@ -149,11 +149,11 @@ def main():
         log.critical("the current working directory doesn't exist")
         return
 
-    # don't use the registry to store settings on Windows
-    # because we don't like it!
-    if sys.platform.startswith('win'):
+    # always use the INI format on Windows and OSX (because we don't like the registry and plist files)
+    if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
         QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
 
+    if sys.platform.startswith('win'):
         try:
             import win32console
             import win32con
