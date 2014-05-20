@@ -7,7 +7,7 @@ WARNING: These tests start up real instances in the Rackspace Cloud.
 
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
-from libcloud.compute.base import Node, KeyPair
+from libcloud.compute.base import Node, NodeSize, KeyPair
 import pytest
 import os
 import pytest
@@ -219,6 +219,13 @@ class TestRackspaceCtrl(unittest.TestCase):
 
         self.assertIsInstance(instances, list)
         self.assertIsInstance(instances[0], Node)
+
+    def test_list_sizes(self):
+
+        sizes = self.ctrl.list_sizes()
+
+        self.assertIsInstance(sizes, list)
+        self.assertIsInstance(sizes[0], NodeSize)
 
     def test_token_parsed(self):
         """ Ensure that the token is set. """
