@@ -65,19 +65,14 @@ class Servers(QtCore.QObject):
             DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
         else:
             # look for gns3server in PATH
-            gns3server = None
+            DEFAULT_LOCAL_SERVER_PATH = "gns3server"
             for path in os.environ["PATH"].split(":"):
                 try:
                     if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
-                        gns3server = os.path.join(path, "gns3server")
+                        DEFAULT_LOCAL_SERVER_PATH = os.path.join(path, "gns3server")
                         break
                 except OSError:
                     continue
-
-            if gns3server:
-                DEFAULT_LOCAL_SERVER_PATH = gns3server
-            else:
-                DEFAULT_LOCAL_SERVER_PATH = "gns3server"
 
         # set the local server
         default_local_server_host = "127.0.0.1"

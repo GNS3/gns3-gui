@@ -16,14 +16,29 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import os
 
 """
 Default IOU settings.
 """
 
+if sys.platform.startswith("linux"):
+    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    # look for iouyap in the current working directory and $PATH
+    DEFAULT_IOUYAP_PATH = "iouyap"
+    for path in paths:
+        try:
+            if "iouyap" in os.listdir(path) and os.access(os.path.join(path, "iouyap"), os.X_OK):
+                DEFAULT_IOUYAP_PATH = os.path.join(path, "iouyap")
+                break
+        except OSError:
+            continue
+else:
+    DEFAULT_IOUYAP_PATH = ""
+
 IOU_SETTINGS = {
     "iourc": "",
-    "iouyap": "",
+    "iouyap": DEFAULT_IOUYAP_PATH,
     "console_start_port_range": 4001,
     "console_end_port_range": 4512,
     "udp_start_port_range": 30001,

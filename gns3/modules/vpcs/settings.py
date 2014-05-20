@@ -15,13 +15,32 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 """
 Default VPCS settings.
 """
 
+import sys
+import os
+
+# default path to Dynamips executable
+if sys.platform.startswith("win"):
+    DEFAULT_VPCS_PATH = "vpcs\vpcs.exe"
+elif sys.platform.startswith('darwin') and hasattr(sys, "frozen"):
+    DEFAULT_VPCS_PATH = os.path.join(os.getcwd(), "../Resources/vpcs")
+else:
+    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    # look for VPCS in the current working directory and $PATH
+    DEFAULT_VPCS_PATH = "vpcs"
+    for path in paths:
+        try:
+            if "vpcs" in os.listdir(path) and os.access(os.path.join(path, "vpcs"), os.X_OK):
+                DEFAULT_VPCS_PATH = os.path.join(path, "vpcs")
+                break
+        except OSError:
+            continue
+
 VPCS_SETTINGS = {
-    "path": "",
+    "path": DEFAULT_VPCS_PATH,
     "console_start_port_range": 4512,
     "console_end_port_range": 5000,
     "udp_start_port_range": 20001,

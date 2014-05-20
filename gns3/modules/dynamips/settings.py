@@ -24,14 +24,20 @@ import os
 
 # default path to Dynamips executable
 if sys.platform.startswith("win"):
-    DEFAULT_DYNAMIPS_PATH = "C:/Program Files (x86)/GNS3-ER/dynamips.exe"
-elif sys.platform.startswith('darwin'):
-    if hasattr(sys, "frozen"):
-        DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwd(), "../Resources/dynamips-0.2.12-OSX.intel64.bin")
-    else:
-        DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwd(), "dynamips-0.2.12-OSX.intel64.bin")
+    DEFAULT_DYNAMIPS_PATH = "dynamips\dynamips.exe"
+elif sys.platform.startswith('darwin') and hasattr(sys, "frozen"):
+    DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwd(), "../Resources/dynamips.bin")
 else:
+    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    # look for dynamips in the current working directory and $PATH
     DEFAULT_DYNAMIPS_PATH = "dynamips"
+    for path in paths:
+        try:
+            if "dynamips" in os.listdir(path) and os.access(os.path.join(path, "dynamips"), os.X_OK):
+                DEFAULT_DYNAMIPS_PATH = os.path.join(path, "dynamips")
+                break
+        except OSError:
+            continue
 
 DYNAMIPS_SETTINGS = {
     "path": DEFAULT_DYNAMIPS_PATH,
