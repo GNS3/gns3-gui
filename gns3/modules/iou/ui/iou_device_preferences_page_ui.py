@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Mon May 19 15:05:35 2014
+# Created: Tue May 20 11:19:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -109,7 +109,8 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiNVRAMSpinBox.setObjectName(_fromUtf8("uiNVRAMSpinBox"))
         self.gridLayout_3.addWidget(self.uiNVRAMSpinBox, 4, 1, 1, 1)
         self.uiL1KeepalivesCheckBox = QtGui.QCheckBox(self.uiAdvancedSettingsGroupBox)
-        self.uiL1KeepalivesCheckBox.setChecked(True)
+        self.uiL1KeepalivesCheckBox.setEnabled(True)
+        self.uiL1KeepalivesCheckBox.setChecked(False)
         self.uiL1KeepalivesCheckBox.setObjectName(_fromUtf8("uiL1KeepalivesCheckBox"))
         self.gridLayout_3.addWidget(self.uiL1KeepalivesCheckBox, 0, 0, 1, 2)
         self.verticalLayout_2.addWidget(self.uiAdvancedSettingsGroupBox)
@@ -173,7 +174,7 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiRAMSpinBox.setSuffix(_translate("IOUDevicePreferencesPageWidget", " MB", None))
         self.uiNVRAMLabel.setText(_translate("IOUDevicePreferencesPageWidget", "NVRAM:", None))
         self.uiNVRAMSpinBox.setSuffix(_translate("IOUDevicePreferencesPageWidget", " KB", None))
-        self.uiL1KeepalivesCheckBox.setText(_translate("IOUDevicePreferencesPageWidget", "Enable layer 1 keepalive messages if supported", None))
+        self.uiL1KeepalivesCheckBox.setText(_translate("IOUDevicePreferencesPageWidget", "Enable layer 1 keepalive messages", None))
         self.uiIOUImageTestSettingsPushButton.setText(_translate("IOUDevicePreferencesPageWidget", "Test settings", None))
         self.uiSaveIOUImagePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "Save", None))
         self.uiDeleteIOUImagePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "Delete", None))

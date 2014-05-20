@@ -93,10 +93,10 @@
       <item row="0" column="0" colspan="2">
        <widget class="QCheckBox" name="uiL1KeepalivesCheckBox">
         <property name="text">
-         <string>Enable layer 1 keepalive messages if supported</string>
+         <string>Enable layer 1 keepalive messages</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>

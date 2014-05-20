@@ -45,8 +45,12 @@ class WebSocketClient(WebSocketBaseClient):
     def __init__(self, url, protocols=None, extensions=None, heartbeat_freq=None,
                  ssl_options=None, headers=None):
 
-        WebSocketBaseClient.__init__(self, url, protocols, extensions, heartbeat_freq,
-                                     ssl_options, headers=headers)
+        WebSocketBaseClient.__init__(self, url,
+                                     protocols,
+                                     extensions,
+                                     heartbeat_freq,
+                                     ssl_options,
+                                     headers)
 
         self.callbacks = {}
         self._connected = False

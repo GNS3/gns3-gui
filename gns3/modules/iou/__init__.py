@@ -90,7 +90,7 @@ class IOU(Module):
             path = settings.value("path", "")
             image = settings.value("image", "")
             startup_config = settings.value("startup_config", "")
-            l1_keepalives = settings.value("l1_keepalives", True, type=bool)
+            l1_keepalives = settings.value("l1_keepalives", False, type=bool)
             use_default_iou_values = settings.value("use_default_iou_values", True, type=bool)
             ram = settings.value("ram", 256, type=int)
             nvram = settings.value("nvram", 128, type=int)

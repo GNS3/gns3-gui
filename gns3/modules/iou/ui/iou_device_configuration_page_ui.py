@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Mon May 19 15:14:44 2014
+# Created: Tue May 20 11:19:36 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -72,7 +72,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.gridLayout_2 = QtGui.QGridLayout(self.uiAdvancedGroupBox)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.uiL1KeepalivesCheckBox = QtGui.QCheckBox(self.uiAdvancedGroupBox)
-        self.uiL1KeepalivesCheckBox.setChecked(True)
+        self.uiL1KeepalivesCheckBox.setChecked(False)
         self.uiL1KeepalivesCheckBox.setObjectName(_fromUtf8("uiL1KeepalivesCheckBox"))
         self.gridLayout_2.addWidget(self.uiL1KeepalivesCheckBox, 0, 0, 1, 2)
         self.uiDefaultValuesCheckBox = QtGui.QCheckBox(self.uiAdvancedGroupBox)
@@ -156,7 +156,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiStartupConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "...", None))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:", None))
         self.uiAdvancedGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Advanced", None))
-        self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages if supported", None))
+        self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages", None))
         self.uiDefaultValuesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Use default IOU values for memories", None))
         self.uiRamLabel.setText(_translate("iouDeviceConfigPageWidget", "RAM size:", None))
         self.uiRamSpinBox.setSuffix(_translate("iouDeviceConfigPageWidget", " MB", None))

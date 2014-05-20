@@ -824,7 +824,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                     return
                 try:
-                    servers.localServer().connect()
+                    servers.localServer().reconnect()
                 except OSError as e:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
