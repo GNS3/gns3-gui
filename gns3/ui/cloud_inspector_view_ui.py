@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_inspector_view.ui'
 #
-# Created: Wed May 21 11:12:50 2014
+# Created: Wed May 21 16:20:52 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,6 +38,7 @@ class Ui_CloudInspectorView(object):
         self.verticalLayout.setMargin(6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiInstancesTableView = QtGui.QTableView(self.uiInstancesGroupBox)
+        self.uiInstancesTableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.uiInstancesTableView.setObjectName(_fromUtf8("uiInstancesTableView"))
         self.verticalLayout.addWidget(self.uiInstancesTableView)
         self.verticalLayout_3.addWidget(self.uiInstancesGroupBox)
