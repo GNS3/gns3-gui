@@ -255,7 +255,6 @@ class Router(Node):
         if name:
             params["name"] = self._settings["name"] = name
 
-        params["nio"] = {"type": "nio_udp"}
         self._server.send_message("dynamips.vm.create", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
