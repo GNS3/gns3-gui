@@ -3,7 +3,10 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QIcon
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
+from PyQt4.QtCore import QTimer
 from PyQt4.Qt import Qt
+
+import random
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
@@ -23,15 +26,21 @@ def gen_fake_nodes(how_many):
 
 class InstanceTableModel(QAbstractTableModel):
     """
-
+    A custom table model storing data of cloud instances
     """
     def __init__(self, *args, **kwargs):
         super(InstanceTableModel, self).__init__(*args, **kwargs)
         self._header_data = ['Status', 'Instance', 'Size', 'Devices']
         self._width = len(self._header_data)
         self._instances = []
+        self._pollingTimer = QTimer(self)
+        self._pollingTimer.timeout.connect(self._update)
+        self._pollingTimer.start(1000)
 
     def _get_status_icon_path(self, state):
+        """
+        Return a string pointing to the graphic resource
+        """
         if state == NodeState.RUNNING:
             return ':/icons/led_green.svg'
         elif state in (NodeState.REBOOTING, NodeState.PENDING, NodeState.UNKNOWN):
@@ -71,7 +80,7 @@ class InstanceTableModel(QAbstractTableModel):
             try:
                 return self._header_data[section]
             except IndexError:
-                return 'fava'
+                return None
         return super(InstanceTableModel, self).headerData(section, orientation, role)
 
     def addInstance(self, instance):
@@ -83,18 +92,32 @@ class InstanceTableModel(QAbstractTableModel):
         self.endInsertRows()
 
     def update_instance_status(self, instance):
+        """
+        Update model data and notify connected views
+        """
         try:
             i = self._instances.index(instance)
             current = self._instances[i]
             current.state = instance.state
-            self.dataChanged.emit(self.createIndex(i, 0), self.createIndex(i, self._width-1))
+            status_index = self.createIndex(i, 0)
+            self.dataChanged.emit(status_index, status_index)
         except ValueError:
             pass
+
+    def _update(self):
+        """
+        Sync model data with instances status
+
+        FIXME get real data from libcloud
+        """
+        for i in self._instances:
+            i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
+            self.update_instance_status(i)
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
-
+    Table view showing data coming from InstanceTableModel
     """
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
