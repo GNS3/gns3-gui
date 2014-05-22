@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QMenu
+from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
@@ -91,6 +94,15 @@ class InstanceTableModel(QAbstractTableModel):
         self._instances.append(instance)
         self.endInsertRows()
 
+    def getInstance(self, index):
+        """
+        Retrieve the i-th instance if index is in range
+        """
+        try:
+            return self._instances[index]
+        except ValueError:
+            return None
+
     def update_instance_status(self, instance):
         """
         Update model data and notify connected views
@@ -126,8 +138,32 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._model = InstanceTableModel()
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
+        self.uiInstancesTableView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
 
     def load(self):
+        """
+        FIXME: This is a stub, waiting for the cloud api
+        """
         for i in gen_fake_nodes(5):
             self._model.addInstance(i)
 
+    def _contextMenu(self, pos):
+        # create actions
+        delete_action = QAction("Delete", self)
+        delete_action.triggered.connect(self._deleteSelectedInstance)
+        # create context menu and add actions
+        menu = QMenu(self.uiInstancesTableView)
+        menu.addAction(delete_action)
+        # show the menu
+        menu.popup(self.uiInstancesTableView.viewport().mapToGlobal(pos))
+
+    def _deleteSelectedInstance(self, index):
+        """
+        FIXME: This is a stub, waiting for actual code for removing instances
+        """
+        sel = self.uiInstancesTableView.selectedIndexes()
+        if len(sel):
+            index = sel[0].row()
+            instance = self._model.getInstance(index)
+            QMessageBox.information(self, "Info", "delete {}".format(instance.name))
