@@ -332,7 +332,6 @@ class VPCSDevice(Node):
         """
 
         params = {"id": self._vpcs_id,
-                  "slot": port.slotNumber(),
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
@@ -363,8 +362,7 @@ class VPCSDevice(Node):
         """
 
         params = {"id": self._vpcs_id,
-                  "port": port.portNumber(),
-                  "slot": port.slotNumber()}
+                  "port": port.portNumber()}
 
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
         self._server.send_message("vpcs.delete_nio", params, self._deleteNIOCallback)

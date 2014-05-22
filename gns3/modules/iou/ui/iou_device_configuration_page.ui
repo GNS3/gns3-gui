@@ -92,8 +92,11 @@
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0" colspan="2">
        <widget class="QCheckBox" name="uiL1KeepalivesCheckBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
-         <string>Enable layer 1 keepalive messages</string>
+         <string>Enable layer 1 keepalive messages (testing only)</string>
         </property>
         <property name="checked">
          <bool>false</bool>

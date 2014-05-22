@@ -24,7 +24,7 @@ import os
 
 # default path to Dynamips executable
 if sys.platform.startswith("win"):
-    DEFAULT_VPCS_PATH = "vpcs\vpcs.exe"
+    DEFAULT_VPCS_PATH = r"vpcs\vpcs.exe"
 elif sys.platform.startswith('darwin') and hasattr(sys, "frozen"):
     DEFAULT_VPCS_PATH = os.path.join(os.getcwd(), "../Resources/vpcs")
 else:
