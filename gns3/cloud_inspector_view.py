@@ -28,6 +28,7 @@ class InstanceTableModel(QAbstractTableModel):
     def __init__(self, *args, **kwargs):
         super(InstanceTableModel, self).__init__(*args, **kwargs)
         self._header_data = ['Status', 'Instance', 'Size', 'Devices']
+        self._width = len(self._header_data)
         self._instances = []
 
     def _get_status_icon_path(self, state):
@@ -42,7 +43,7 @@ class InstanceTableModel(QAbstractTableModel):
         return len(self._instances)
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
-        return 4 if len(self._instances) else 0
+        return self._width if len(self._instances) else 0
 
     def data(self, index, role=None):
         instance = self._instances[index.row()]
@@ -51,7 +52,7 @@ class InstanceTableModel(QAbstractTableModel):
         if role == Qt.DecorationRole:
             if col == 0:
                 # status
-                return QIcon(self._get_status_icon(instance.state))
+                return QIcon(self._get_status_icon_path(instance.state))
 
         elif role == Qt.DisplayRole:
             if col == 1:
@@ -76,10 +77,19 @@ class InstanceTableModel(QAbstractTableModel):
     def addInstance(self, instance):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         if not len(self._instances):
-            self.beginInsertColumns(QModelIndex(), 0, 3)
+            self.beginInsertColumns(QModelIndex(), 0, self._width-1)
             self.endInsertColumns()
         self._instances.append(instance)
         self.endInsertRows()
+
+    def update_instance_status(self, instance):
+        try:
+            i = self._instances.index(instance)
+            current = self._instances[i]
+            current.state = instance.state
+            self.dataChanged.emit(self.createIndex(i, 0), self.createIndex(i, self._width-1))
+        except ValueError:
+            pass
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
