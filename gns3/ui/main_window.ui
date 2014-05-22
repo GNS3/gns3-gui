@@ -554,7 +554,11 @@ background-none;
       <number>0</number>
      </property>
      <item>
-      <widget class="CloudInspectorView" name="CloudInspectorView" native="true"/>
+      <widget class="CloudInspectorView" name="CloudInspectorView" native="true">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -1239,7 +1243,7 @@ background-none;
   <customwidget>
    <class>CloudInspectorView</class>
    <extends>QWidget</extends>
-   <header>cloud_inspector_view.h</header>
+   <header>..cloud_inspector_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
