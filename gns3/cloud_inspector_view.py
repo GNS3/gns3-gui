@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QIcon
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.Qt import Qt
@@ -7,6 +8,7 @@ from PyQt4.Qt import Qt
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
+from libcloud.compute.types import NodeState
 from libcloud.compute.drivers.dummy import DummyNodeDriver
 
 
@@ -28,6 +30,14 @@ class InstanceTableModel(QAbstractTableModel):
         self._header_data = ['Status', 'Instance', 'Size', 'Devices']
         self._instances = []
 
+    def _get_status_icon_path(self, state):
+        if state == NodeState.RUNNING:
+            return ':/icons/led_green.svg'
+        elif state in (NodeState.REBOOTING, NodeState.PENDING, NodeState.UNKNOWN):
+            return ':/icons/led_yellow.svg'
+        else:
+            return ':/icons/led_red.svg'
+
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self._instances)
 
@@ -35,13 +45,16 @@ class InstanceTableModel(QAbstractTableModel):
         return 4 if len(self._instances) else 0
 
     def data(self, index, role=None):
-        if role == Qt.DisplayRole:
-            instance = self._instances[index.row()]
-            col = index.column()
+        instance = self._instances[index.row()]
+        col = index.column()
+
+        if role == Qt.DecorationRole:
             if col == 0:
                 # status
-                return 'running'
-            elif col == 1:
+                return QIcon(self._get_status_icon(instance.state))
+
+        elif role == Qt.DisplayRole:
+            if col == 1:
                 # name
                 return instance.name
             elif col == 2:
