@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/news_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/news_dialog.ui'
 #
-# Created: Wed Mar 19 16:26:12 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Sun May 25 01:46:50 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -32,6 +32,7 @@ class Ui_NewsDialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(NewsDialog.sizePolicy().hasHeightForWidth())
         NewsDialog.setSizePolicy(sizePolicy)
+        NewsDialog.setModal(True)
         self.uiWebView = QtWebKit.QWebView(NewsDialog)
         self.uiWebView.setGeometry(QtCore.QRect(12, 12, 400, 400))
         self.uiWebView.setMinimumSize(QtCore.QSize(400, 400))

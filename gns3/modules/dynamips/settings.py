@@ -24,9 +24,7 @@ import os
 
 # default path to Dynamips executable
 if sys.platform.startswith("win"):
-    DEFAULT_DYNAMIPS_PATH = "dynamips\dynamips.exe"
-elif sys.platform.startswith('darwin') and hasattr(sys, "frozen"):
-    DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwd(), "../Resources/dynamips.bin")
+    DEFAULT_DYNAMIPS_PATH = r"dynamips\dynamips.exe"
 else:
     paths = [os.getcwd()] + os.environ["PATH"].split(":")
     # look for dynamips in the current working directory and $PATH
@@ -34,7 +32,7 @@ else:
     for path in paths:
         try:
             if "dynamips" in os.listdir(path) and os.access(os.path.join(path, "dynamips"), os.X_OK):
-                DEFAULT_DYNAMIPS_PATH = os.path.join(path, "dynamips")
+                DEFAULT_DYNAMIPS_PATH = os.path.realpath(os.path.join(path, "dynamips"))
                 break
         except OSError:
             continue

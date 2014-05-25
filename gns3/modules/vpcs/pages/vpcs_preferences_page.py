@@ -54,7 +54,10 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         Slot to open a file browser and select vpcs
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select VPCS", ".")
+        filter = ""
+        if sys.platform.startswith("win"):
+            filter = "Executable (*.exe);;All files (*.*)"
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select VPCS", ".", filter)
         if not path:
             return
 

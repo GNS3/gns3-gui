@@ -33,6 +33,26 @@ else:
 # Temporary files location
 DEFAULT_TEMPORARY_FILES_PATH = tempfile.gettempdir()
 
+# Default path to the local GNS3 server executable
+if sys.platform.startswith("win"):
+    DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
+elif sys.platform.startswith('darwin') and hasattr(sys, "frozen"):
+    DEFAULT_LOCAL_SERVER_PATH = "server/Contents/MacOS/gns3server"
+else:
+    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    # look for gns3server in the current working directory and $PATH
+    DEFAULT_LOCAL_SERVER_PATH = "gns3server"
+    for path in paths:
+        try:
+            if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
+                DEFAULT_LOCAL_SERVER_PATH = os.path.realpath(os.path.join(path, "gns3server"))
+                break
+        except OSError:
+            continue
+
+DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
+DEFAULT_LOCAL_SERVER_PORT = 8000
+
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
     # windows 64-bit

@@ -20,6 +20,7 @@ Configuration page for Dynamips preferences.
 """
 
 import os
+import sys
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from .. import Dynamips
@@ -53,7 +54,10 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         Slot to open a file browser and select Dynamips executable.
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select Dynamips", ".")
+        filter = ""
+        if sys.platform.startswith("win"):
+            filter = "Executable (*.exe);;All files (*.*)"
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select Dynamips", ".", filter)
         if not path:
             return
 

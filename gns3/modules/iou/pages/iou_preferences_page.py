@@ -73,7 +73,10 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         Slot to open a file browser and select iouyap.
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select iouyap", ".")
+        filter = ""
+        if sys.platform.startswith("win"):
+            filter = "Executable (*.exe);;All files (*.*)"
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select iouyap", ".", filter)
         if not path:
             return
 

@@ -273,7 +273,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Open project",
                                                              self._settings["projects_path"],
-                                                             "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
+                                                             "All files (*.*);;GNS3 project files (*.gns3)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
             self._loadProject(path)

@@ -20,13 +20,15 @@ Keeps track of all the local and remote servers and their settings.
 """
 
 import sys
-import os
 import shlex
 import signal
 import socket
 import subprocess
 from .qt import QtCore
 from .websocket_client import WebSocketClient
+from .settings import DEFAULT_LOCAL_SERVER_PATH
+from .settings import DEFAULT_LOCAL_SERVER_HOST
+from .settings import DEFAULT_LOCAL_SERVER_PORT
 
 import logging
 log = logging.getLogger(__name__)
@@ -60,22 +62,8 @@ class Servers(QtCore.QObject):
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
 
-        # default path to the local GNS3 server executable or script
-        if sys.platform.startswith("win"):
-            DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
-        else:
-            # look for gns3server in PATH
-            DEFAULT_LOCAL_SERVER_PATH = "gns3server"
-            for path in os.environ["PATH"].split(":"):
-                try:
-                    if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
-                        DEFAULT_LOCAL_SERVER_PATH = os.path.join(path, "gns3server")
-                        break
-                except OSError:
-                    continue
-
         # set the local server
-        default_local_server_host = "127.0.0.1"
+        default_local_server_host = DEFAULT_LOCAL_SERVER_HOST
         try:
             address = socket.gethostbyname(socket.gethostname())
             if not address.startswith("127") and address != "::1":
@@ -83,7 +71,7 @@ class Servers(QtCore.QObject):
         except OSError as e:
             log.warn("could not determine a default local server address other than 127.0.0.1: {}".format(e))
         local_server_host = settings.value("local_server_host", default_local_server_host)
-        local_server_port = settings.value("local_server_port", 8000, type=int)
+        local_server_port = settings.value("local_server_port", DEFAULT_LOCAL_SERVER_PORT, type=int)
         local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
         local_server_auto_start = settings.value("local_server_auto_start", True, type=bool)
         self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start)

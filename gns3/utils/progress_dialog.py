@@ -45,6 +45,7 @@ class ProgressDialog(QtGui.QProgressDialog):
 
         QtGui.QProgressDialog.__init__(self, label_text, cancel_button_text, minimum, maximum, parent)
 
+        self.setModal(True)
         self._errors = []
         self.setWindowTitle(title)
         self.canceled.connect(self.cancel)

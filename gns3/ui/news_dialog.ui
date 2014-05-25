@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>GNS3 News</string>
   </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
   <widget class="QWebView" name="uiWebView" native="true">
    <property name="geometry">
     <rect>

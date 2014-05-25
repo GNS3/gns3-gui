@@ -75,7 +75,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to open a file browser and select a local server.
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select the local server", ".", "GNS3 server (*.exe *.py)")
+        filter = ""
+        if sys.platform.startswith("win"):
+            filter = "Executable (*.exe);;All files (*.*)"
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select the local server", ".", filter)
         if not path:
             return
 
