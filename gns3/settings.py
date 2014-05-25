@@ -36,7 +36,7 @@ DEFAULT_TEMPORARY_FILES_PATH = tempfile.gettempdir()
 # Default path to the local GNS3 server executable
 if sys.platform.startswith("win"):
     DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
-elif sys.platform.startswith('darwin') and hasattr(sys, "frozen"):
+elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_LOCAL_SERVER_PATH = "server/Contents/MacOS/gns3server"
 else:
     paths = [os.getcwd()] + os.environ["PATH"].split(":")
@@ -45,7 +45,7 @@ else:
     for path in paths:
         try:
             if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
-                DEFAULT_LOCAL_SERVER_PATH = os.path.realpath(os.path.join(path, "gns3server"))
+                DEFAULT_LOCAL_SERVER_PATH = os.path.relpath(os.path.join(path, "gns3server"))
                 break
         except OSError:
             continue

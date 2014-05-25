@@ -57,18 +57,16 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         # set the default base startup-config
         resource_name = "configs/ios_base_startup-config.txt"
-        if hasattr(sys, "frozen"):
-            ios_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-            self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(ios_base_config_path)))
+        if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+            self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name ))
         elif pkg_resources.resource_exists("gns3", resource_name):
-            ios_base_config_path = os.path.relpath(pkg_resources.resource_filename("gns3", resource_name))
+            ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
             self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(ios_base_config_path)))
 
         # set the default base private-config
         resource_name = "configs/ios_base_private-config.txt"
-        if hasattr(sys, "frozen"):
-            ios_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-            self.uiPrivateConfigLineEdit.setText(os.path.relpath(os.path.normpath(ios_base_config_path)))
+        if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+            self.uiPrivateConfigLineEdit.setText(os.path.normpath(resource_name))
         elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
             self.uiPrivateConfigLineEdit.setText(os.path.relpath(os.path.normpath(ios_base_config_path)))
@@ -275,7 +273,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         if hasattr(sys, "frozen"):
-            config_dir = os.path.join(os.path.dirname(sys.executable), "configs")
+            config_dir = "configs"
         else:
             config_dir = pkg_resources.resource_filename("gns3", "configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
@@ -295,7 +293,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         if hasattr(sys, "frozen"):
-            config_dir = os.path.join(os.path.dirname(sys.executable), "configs")
+            config_dir = "configs"
         else:
             config_dir = pkg_resources.resource_filename("gns3", "configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)

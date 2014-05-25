@@ -29,7 +29,7 @@ if sys.platform.startswith("linux"):
     for path in paths:
         try:
             if "iouyap" in os.listdir(path) and os.access(os.path.join(path, "iouyap"), os.X_OK):
-                DEFAULT_IOUYAP_PATH = os.path.realpath(os.path.join(path, "iouyap"))
+                DEFAULT_IOUYAP_PATH = os.path.join(path, "iouyap")
                 break
         except OSError:
             continue

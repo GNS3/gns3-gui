@@ -203,18 +203,16 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         if "l2" in path:
             # set the default L2 base startup-config
             resource_name = "configs/iou_l2_base_startup-config.txt"
-            if hasattr(sys, "frozen"):
-                iou_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-                self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
+            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+                self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
                 self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
         else:
             # set the default L3 base startup-config
             resource_name = "configs/iou_l3_base_startup-config.txt"
-            if hasattr(sys, "frozen"):
-                iou_base_config_path = os.path.join(os.path.dirname(sys.executable), resource_name)
-                self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
+            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+                self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
                 self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
@@ -225,7 +223,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         if hasattr(sys, "frozen"):
-            config_dir = os.path.join(os.path.dirname(sys.executable), "configs")
+            config_dir = "configs"
         else:
             config_dir = pkg_resources.resource_filename("gns3", "configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
