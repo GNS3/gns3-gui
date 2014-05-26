@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>467</width>
-    <height>512</height>
+    <width>502</width>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,21 +23,21 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="uiLocalPathsGroupBox">
          <property name="title">
           <string>Local paths</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
            <widget class="QLabel" name="uiProjectsPathLabel">
             <property name="text">
              <string>My projects:</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QLineEdit" name="uiProjectsPathLineEdit"/>
@@ -54,14 +54,38 @@
             </item>
            </layout>
           </item>
-          <item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiImagesPathLabel">
+            <property name="text">
+             <string>My images:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLineEdit" name="uiImagesPathLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiImagesPathToolButton">
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
            <widget class="QLabel" name="uiTemporaryFilesPathLabel">
             <property name="text">
              <string>Temporary files:</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="5" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLineEdit" name="uiTemporaryFilesPathLineEdit"/>

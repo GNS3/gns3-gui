@@ -48,6 +48,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiConfigurationFileLabel.setText(settings.fileName())
 
         self.uiProjectsPathToolButton.clicked.connect(self._projectsPathSlot)
+        self.uiImagesPathToolButton.clicked.connect(self._imagesPathSlot)
         self.uiTemporaryFilesPathToolButton.clicked.connect(self._temporaryFilesPathSlot)
         self.uiImportConfigurationFilePushButton.clicked.connect(self._importConfigurationFileSlot)
         self.uiExportConfigurationFilePushButton.clicked.connect(self._exportConfigurationFileSlot)
@@ -64,6 +65,17 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         if path:
             self.uiProjectsPathLineEdit.setText(path)
             self.uiProjectsPathLineEdit.setCursorPosition(0)
+
+    def _imagesPathSlot(self):
+        """
+        Slot to select the images directory path.
+        """
+
+        directory = self._general_settings["images_path"]
+        path = QtGui.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtGui.QFileDialog.ShowDirsOnly)
+        if path:
+            self.uiImagesPathLineEdit.setText(path)
+            self.uiImagesPathLineEdit.setCursorPosition(0)
 
     def _temporaryFilesPathSlot(self):
         """
@@ -149,6 +161,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         """
 
         self.uiProjectsPathLineEdit.setText(settings["projects_path"])
+        self.uiImagesPathLineEdit.setText(settings["images_path"])
         self.uiTemporaryFilesPathLineEdit.setText(settings["temporary_files_path"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
@@ -192,6 +205,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         new_settings = {}
         new_settings["projects_path"] = self.uiProjectsPathLineEdit.text()
+        new_settings["images_path"] = self.uiImagesPathLineEdit.text()
         new_settings["temporary_files_path"] = self.uiTemporaryFilesPathLineEdit.text()
         new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()
         new_settings["link_manual_mode"] = self.uiLinkManualModeCheckBox.isChecked()

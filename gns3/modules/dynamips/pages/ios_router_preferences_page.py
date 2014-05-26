@@ -25,6 +25,9 @@ import re
 import pkg_resources
 from gns3.qt import QtGui
 from gns3.servers import Servers
+from gns3.main_window import MainWindow
+from gns3.utils.progress_dialog import ProgressDialog
+from gns3.utils.process_files_thread import ProcessFilesThread
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
@@ -39,6 +42,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
+        self._main_window = MainWindow.instance()
         self._ios_images = {}
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
@@ -201,10 +205,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Slot to open a file browser and select an IOS image.
         """
 
-        #TODO: current directory for IOS image + filter?
+        destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOS")
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Select an IOS image",
-                                                             ".",
+                                                             destination_directory,
                                                              "All files (*.*);;IOS image (*.bin *.image)",
                                                              "IOS image (*.bin *.image)")
         if not path:
@@ -233,6 +237,34 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         if elf_header_start != b'\x7fELF\x01\x02\x01':
             QtGui.QMessageBox.critical(self, "IOS image", "Sorry, this is not a valid IOS image!")
             return
+
+        try:
+            os.makedirs(destination_directory)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Images directory", "Could not create the images directory {}: {}".format(destination_directory, str(e)))
+            return
+
+        if os.path.dirname(path) != destination_directory:
+            # the IOS image is not in the default images directory
+            new_destination_path = os.path.join(destination_directory, os.path.basename(path))
+            try:
+                # try to create a symbolic link to it
+                symlink_path = new_destination_path
+                os.symlink(path, symlink_path)
+                path = symlink_path
+            except (OSError, NotImplementedError):
+                # if unsuccessful, then copy the IOS image itself
+                self._thread = ProcessFilesThread(path, new_destination_path)
+                progress_dialog = ProgressDialog(self._thread, "IOS image", "Copying the IOS image...", "Cancel", parent=self)
+                progress_dialog.show()
+                progress_dialog.exec_()
+                errors = progress_dialog.errors()
+                if errors:
+                    QtGui.QMessageBox.critical(self, "IOS image", "Could not copy the IOS image {}".format("".join(errors)))
+                else:
+                    path = new_destination_path
 
         self.uiIOSPathLineEdit.clear()
         self.uiIOSPathLineEdit.setText(path)

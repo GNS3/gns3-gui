@@ -25,10 +25,10 @@ import tempfile
 import platform
 
 # Projects directory location
-if sys.platform.startswith('win'):
-    DEFAULT_PROJECTS_PATH = os.path.expanduser("~\Documents")
-else:
-    DEFAULT_PROJECTS_PATH = os.path.expanduser("~/Documents")
+DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
+
+# Images directory location
+DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
 # Temporary files location
 DEFAULT_TEMPORARY_FILES_PATH = tempfile.gettempdir()
@@ -45,7 +45,7 @@ else:
     for path in paths:
         try:
             if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
-                DEFAULT_LOCAL_SERVER_PATH = os.path.relpath(os.path.join(path, "gns3server"))
+                DEFAULT_LOCAL_SERVER_PATH = os.path.join(path, "gns3server")
                 break
         except OSError:
             continue
@@ -139,6 +139,7 @@ else:
 
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,
+    "images_path": DEFAULT_IMAGES_PATH,
     "temporary_files_path": DEFAULT_TEMPORARY_FILES_PATH,
     "check_for_update": True,
     "slow_device_start_all": 0,
@@ -152,6 +153,7 @@ GENERAL_SETTINGS = {
 
 GENERAL_SETTING_TYPES = {
     "projects_path": str,
+    "images_path": str,
     "temporary_files_path": str,
     "check_for_update": bool,
     "slow_device_start_all": int,

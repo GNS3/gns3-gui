@@ -272,7 +272,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Open project",
-                                                             self._settings["projects_path"],
+                                                             self.projectsDirPath(),
                                                              "All files (*.*);;GNS3 project files (*.gns3)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
@@ -856,10 +856,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
 
+        try:
+            projects_dir_path = self.projectsDirPath()
+            os.makedirs(projects_dir_path)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Save project", "Could not create the projects directory {}: {}".format(projects_dir_path, str(e)))
+            return
+
         file_dialog = QtGui.QFileDialog(self)
         file_dialog.setWindowTitle("Save project")
         file_dialog.setNameFilters(["Directories"])
-        file_dialog.setDirectory(self._settings["projects_path"])
+        file_dialog.setDirectory(projects_dir_path)
         file_dialog.setFileMode(QtGui.QFileDialog.AnyFile)
         #file_dialog.setDefaultSuffix("gns3")
         file_dialog.setLabelText(QtGui.QFileDialog.FileName, "Project name:")
@@ -867,7 +876,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         file_dialog.setOptions(QtGui.QFileDialog.ShowDirsOnly)
         file_dialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
         if file_dialog.exec_() == QtGui.QFileDialog.Rejected:
-            return False
+            return
 
         project_dir = file_dialog.selectedFiles()[0]
         project_name = os.path.basename(project_dir)
@@ -1041,6 +1050,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._temporary_project = False
             self.setWindowFilePath(path)
         self.setWindowModified(False)
+
+    def projectsDirPath(self):
+        """
+        Returns the projects directory path.
+
+        :returns: path to the default projects directory
+        """
+
+        return self._settings["projects_path"]
+
+
+    def imagesDirPath(self):
+        """
+        Returns the images directory path.
+
+        :returns: path to the default images directory
+        """
+
+        return self._settings["images_path"]
 
     @staticmethod
     def instance():
