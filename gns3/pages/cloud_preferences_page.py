@@ -1,22 +1,13 @@
 # -*- coding: utf-8 -*-
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
-from ..settings import CLOUD_SETTINGS
+from ..settings import CLOUD_PROVIDERS
 from ..utils.choices_spinbox import ChoicesSpinBox
 
 from PyQt4 import QtGui
 from PyQt4 import Qt
 
 import importlib
-from unittest import mock
 
-
-# mock api cloud interface until cloud.py module is merged
-RackspaceCtrl = mock.MagicMock()
-RackspaceCtrl.return_value = RackspaceCtrl
-RackspaceCtrl.list_regions.return_value = ['United States', 'Ireland']
-FAKE_PROVIDERS = {
-    "rackspace": ("Rackspace", 'gns3.pages.cloud_preferences_page.RackspaceCtrl'),
-}
 
 # TODO move this to provider ctrl?
 RACKSPACE_RAM_CHOICES = [1, 2, 4, 8, 15, 30, 60, 90, 120]
@@ -108,7 +99,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         # fill provider combobox
         self.provider_index_id = [""]
         self.uiCloudProviderComboBox.addItem("Select provider...")
-        for k, v in FAKE_PROVIDERS.items():
+        for k, v in CLOUD_PROVIDERS.items():
             self.uiCloudProviderComboBox.addItem(v[0])
             self.provider_controllers[k] = import_from_string(v[1])
             self.provider_index_id.append(k)
@@ -124,16 +115,17 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
 
         # instance a provider controller and try to use it
         try:
-            provider = self.provider_controllers[provider_id]()
+            provider = self.provider_controllers[provider_id](username, apikey)
             if provider.authenticate():
                 # fill region combo box
                 self.region_index_id = [""]
                 self.uiRegionComboBox.addItem("Select region...")
                 for r in provider.list_regions():
-                    self.uiRegionComboBox.addItem(r)
-                    self.region_index_id.append(r)
+                    provider_tuple = r.popitem()
+                    self.uiRegionComboBox.addItem(provider_tuple[1])
+                    self.region_index_id.append(provider_tuple[0])
         except KeyError:
-            # username/apikey are not set
+            # username/apikey/provider are not set
             pass
 
         # populate all the cloud stuff

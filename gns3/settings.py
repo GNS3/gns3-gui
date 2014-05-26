@@ -188,8 +188,8 @@ CLOUD_SETTINGS = {
     "cloud_provider": "",
     "cloud_region": "",
     "instances_per_project": 0,
-    "memory_per_instance": 0,
-    "memory_per_new_instance": 0,
+    "memory_per_instance": 1,
+    "memory_per_new_instance": 1,
     "accepted_terms": False,
     "instance_timeout": 30,
 }
@@ -210,7 +210,7 @@ CLOUD_SETTINGS_TYPES = {
 
 # TODO proof of concept, needs review
 CLOUD_PROVIDERS = {
-    "rackspace": ("Rackspace", 'gns3.cloud.RackspaceCtrl'),
+    "rackspace": ("Rackspace", 'gns3.cloud.rackspace_ctrl.RackspaceCtrl'),
 }
 
 

@@ -115,10 +115,14 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         Saves all the preferences.
         """
 
+        success = True
         for item in self._items:
             preferences_page = item.data(QtCore.Qt.UserRole)
-            preferences_page.savePreferences()
-        return True
+            ok = preferences_page.savePreferences()
+            # if page.savePreferences() returns None, assume success
+            if ok is not None and not ok:
+                success = False
+        return success
 
     def reject(self):
         """
