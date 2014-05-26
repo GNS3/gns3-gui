@@ -140,6 +140,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.verticalHeader().hide()
         self.uiInstancesTableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
+        self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
 
     def load(self):
         """
@@ -147,6 +148,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         """
         for i in gen_fake_nodes(5):
             self._model.addInstance(i)
+        self.uiInstancesTableView.resizeColumnsToContents()
 
     def _contextMenu(self, pos):
         # create actions
