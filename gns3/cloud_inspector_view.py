@@ -9,6 +9,9 @@ from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
 from PyQt4.Qt import Qt
 
+from .main_window import MainWindow
+from .settings import CLOUD_PROVIDERS
+
 import random
 
 # this widget was promoted on Creator, must use absolute imports
@@ -142,6 +145,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
 
+        settings = MainWindow.instance().cloud_settings()
+        self.provider = CLOUD_PROVIDERS[settings['cloud_provider']]()
+
     def load(self):
         """
         FIXME: This is a stub, waiting for the cloud api
@@ -160,12 +166,14 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # show the menu
         menu.popup(self.uiInstancesTableView.viewport().mapToGlobal(pos))
 
-    def _deleteSelectedInstance(self, index):
+    def _deleteSelectedInstance(self):
         """
-        FIXME: This is a stub, waiting for actual code for removing instances
+        Delete the instance corresponding to the selected table row
         """
         sel = self.uiInstancesTableView.selectedIndexes()
         if len(sel):
             index = sel[0].row()
             instance = self._model.getInstance(index)
+            self.provider.delete_instance(instance)
+            # FIXME remove this message
             QMessageBox.information(self, "Info", "delete {}".format(instance.name))
