@@ -46,7 +46,8 @@ setup(
     long_description=open("README.rst", "r").read(),
     install_requires=[
         "ws4py==0.3.4",
-        "apache-libcloud==0.14.1"],
+        "apache-libcloud==0.14.1",
+        "requests"],
     entry_points={
         "gui_scripts": [
             "gns3 = gns3.main:main",
