@@ -45,6 +45,7 @@ class IOU(Module):
         self._iou_images = {}
         self._servers = []
         self._working_dir = ""
+        self._images_dir = ""
 
         # load the settings
         self._loadSettings()
@@ -141,6 +142,24 @@ class IOU(Module):
         for server in self._servers:
             if server.connected():
                 self._sendSettings(server)
+
+    def setImageFilesDir(self, path):
+        """
+        Sets the image files directory path this module.
+
+        :param path: path to the local image files directory
+        """
+
+        self._images_dir = path
+
+    def imageFilesDir(self):
+        """
+        Returns the files directory path this module.
+
+        :returns: path to the local image files directory
+        """
+
+        return self._images_dir
 
     def addServer(self, server):
         """

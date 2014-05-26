@@ -86,6 +86,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
 
+        # set the images directory
+        self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
+
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
 
@@ -135,6 +138,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         :param new_settings: settings dictionary
         """
+
+        # set a new images directory
+        if new_settings["images_path"] != self.imagesDirPath():
+            self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
         # save the settings
         self._settings.update(new_settings)
@@ -1059,7 +1066,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         return self._settings["projects_path"]
-
 
     def imagesDirPath(self):
         """

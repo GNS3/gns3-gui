@@ -49,7 +49,16 @@ class Builtin(Module):
         :param path: path to the local project files directory
         """
 
-        pass
+        pass  # not used by this module
+
+    def setImageFilesDir(self, path):
+        """
+        Sets the image files directory path this module.
+
+        :param path: path to the local image files directory
+        """
+
+        pass  # not used by this module
 
     def addServer(self, server):
         """

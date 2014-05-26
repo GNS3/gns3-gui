@@ -56,6 +56,7 @@ class Dynamips(Module):
         self._servers = []
         self._nodes = []
         self._working_dir = ""
+        self._images_dir = ""
 
         # load the settings and IOS images.
         self._loadSettings()
@@ -176,6 +177,24 @@ class Dynamips(Module):
         for server in self._servers:
             if server.connected():
                 self._sendSettings(server)
+
+    def setImageFilesDir(self, path):
+        """
+        Sets the image files directory path this module.
+
+        :param path: path to the local image files directory
+        """
+
+        self._images_dir = os.path.join(path, "IOS")
+
+    def imageFilesDir(self):
+        """
+        Returns the files directory path this module.
+
+        :returns: path to the local image files directory
+        """
+
+        return self._images_dir
 
     def addServer(self, server):
         """

@@ -22,8 +22,10 @@ Configuration page for IOU image & device preferences.
 import os
 import sys
 import pkg_resources
+import shutil
 from gns3.qt import QtGui
 from gns3.servers import Servers
+from gns3.main_window import MainWindow
 from .. import IOU
 from ..ui.iou_device_preferences_page_ui import Ui_IOUDevicePreferencesPageWidget
 
@@ -37,8 +39,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
+        self._main_window = MainWindow.instance()
         self._iou_images = {}
-
         self.uiSaveIOUImagePushButton.clicked.connect(self._iouImageSaveSlot)
         self.uiDeleteIOUImagePushButton.clicked.connect(self._iouImageDeleteSlot)
         self.uiIOUImagesTreeWidget.itemClicked.connect(self._iouImageClickedSlot)
@@ -165,10 +167,10 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Slot to open a file browser and select an IOU image.
         """
 
-        #TODO: current directory for IOU image + filter?
+        destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOU")
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Select an IOU image",
-                                                             ".",
+                                                             destination_directory,
                                                              "All files (*.*);;IOU image (*.bin *.image)",
                                                              "IOU image (*.bin *.image)")
 
@@ -196,6 +198,30 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         if not os.access(path, os.X_OK):
             QtGui.QMessageBox.critical(self, "IOU image", "{} is not executable".format(path))
             return
+
+        try:
+            os.makedirs(destination_directory)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, str(e)))
+            return
+
+        if os.path.dirname(path) != destination_directory:
+            # the IOU image is not in the default images directory
+            new_destination_path = os.path.join(destination_directory, os.path.basename(path))
+            try:
+                # try to create a symbolic link to it
+                symlink_path = new_destination_path
+                os.symlink(path, symlink_path)
+                path = symlink_path
+            except (OSError, NotImplementedError):
+                # if unsuccessful, then copy the IOU image itself
+                try:
+                    shutil.copyfile(path, new_destination_path)
+                    path = new_destination_path
+                except OSError:
+                    pass
 
         self.uiIOUPathLineEdit.clear()
         self.uiIOUPathLineEdit.setText(path)

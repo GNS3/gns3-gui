@@ -23,11 +23,10 @@ import os
 import sys
 import re
 import pkg_resources
+import shutil
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
-from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.process_files_thread import ProcessFilesThread
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
@@ -243,7 +242,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Images directory", "Could not create the images directory {}: {}".format(destination_directory, str(e)))
+            QtGui.QMessageBox.critical(self, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, str(e)))
             return
 
         if os.path.dirname(path) != destination_directory:
@@ -256,15 +255,11 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 path = symlink_path
             except (OSError, NotImplementedError):
                 # if unsuccessful, then copy the IOS image itself
-                self._thread = ProcessFilesThread(path, new_destination_path)
-                progress_dialog = ProgressDialog(self._thread, "IOS image", "Copying the IOS image...", "Cancel", parent=self)
-                progress_dialog.show()
-                progress_dialog.exec_()
-                errors = progress_dialog.errors()
-                if errors:
-                    QtGui.QMessageBox.critical(self, "IOS image", "Could not copy the IOS image {}".format("".join(errors)))
-                else:
+                try:
+                    shutil.copyfile(path, new_destination_path)
                     path = new_destination_path
+                except OSError:
+                    pass
 
         self.uiIOSPathLineEdit.clear()
         self.uiIOSPathLineEdit.setText(path)

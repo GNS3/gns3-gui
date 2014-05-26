@@ -36,6 +36,24 @@ class Module(QtCore.QObject):
 
         super(Module, self).__init__()
 
+    def setProjectFilesDir(self, path):
+        """
+        Sets the project files directory path this module.
+
+        :param path: path to the local project files directory
+        """
+
+        raise NotImplementedError()
+
+    def setImageFilesDir(self, path):
+        """
+        Sets the image files directory path this module.
+
+        :param path: path to the local image files directory
+        """
+
+        raise NotImplementedError()
+
     @staticmethod
     def nodes(self):
         """

@@ -46,6 +46,7 @@ class Router(Node):
         Node.__init__(self, server)
 
         log.info("router {} is being created".format(platform))
+
         self._defaults = {}
         self._ports = []
         self._router_id = None
@@ -826,8 +827,10 @@ class Router(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
-        #TODO: handle the image path
-        # router["properties"]["image"]
+        image_path = router["properties"]["image"]
+        if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
+            # save only the image name if it is stored the images directory
+            router["properties"]["image"] = os.path.basename(image_path)
 
         return router
 
@@ -843,6 +846,11 @@ class Router(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         image = settings.pop("image")
+        if not os.path.isfile(image):
+            # add the default images directory path to the image name to see if it exists
+            updated_path = os.path.join(self._module.imageFilesDir(), image)
+            if os.path.isfile(updated_path):
+                image = updated_path
         ram = settings.get("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done

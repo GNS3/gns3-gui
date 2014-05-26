@@ -88,6 +88,15 @@ class VPCS(Module):
             if server.connected():
                 self._sendSettings(server)
 
+    def setImageFilesDir(self, path):
+        """
+        Sets the image files directory path this module.
+
+        :param path: path to the local image files directory
+        """
+
+        pass  # not used by this module
+
     def addServer(self, server):
         """
         Adds a server to be used by this module.

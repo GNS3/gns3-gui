@@ -247,7 +247,7 @@ class IOUDevice(Node):
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                 updated = True
-                if (name == "ethernet_adapters" or name == "serial_adapters"):
+                if name == "ethernet_adapters" or name == "serial_adapters":
                     nb_adapters_changed = True
                 self._settings[name] = value
 
@@ -505,8 +505,10 @@ class IOUDevice(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
-        #TODO: handle the image path
-        # router["properties"]["image"]
+        image_path = router["properties"]["path"]
+        if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
+            # save only the image name if it is stored the images directory
+            router["properties"]["path"] = os.path.basename(image_path)
 
         return router
 
@@ -522,6 +524,11 @@ class IOUDevice(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
+        if not os.path.isfile(path):
+            # add the default images directory path to the image name to see if it exists
+            updated_path = os.path.join(self._module.imageFilesDir(), path)
+            if os.path.isfile(updated_path):
+                path = updated_path
         console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
