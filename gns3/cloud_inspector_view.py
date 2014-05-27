@@ -9,8 +9,8 @@ from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
 from PyQt4.Qt import Qt
 
-from .main_window import MainWindow
 from .settings import CLOUD_PROVIDERS
+from .utils import import_from_string
 
 import random
 
@@ -138,6 +138,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
 
+        self._provider = None
         self._model = InstanceTableModel()
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
@@ -145,15 +146,29 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
 
-        settings = MainWindow.instance().cloud_settings()
-        self.provider = CLOUD_PROVIDERS[settings['cloud_provider']]()
-
-    def load(self):
+    def load(self, cloud_settings):
         """
         FIXME: This is a stub, waiting for the cloud api
         """
+        provider_id = cloud_settings['cloud_provider']
+        username = cloud_settings['cloud_user_name']
+        apikey = cloud_settings['cloud_api_key']
+        region = cloud_settings['cloud_region']
+        provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
+        self._provider = provider_controller_class(username, apikey)
+
+        if self._provider.authenticate():
+            if not region:
+                region = self._provider.list_regions().values()[0]
+
+            if self._provider.set_region(region):
+                for i in self._provider.list_instances():
+                    self._model.addInstance(i)
+
+        # TODO remove this block
         for i in gen_fake_nodes(5):
             self._model.addInstance(i)
+
         self.uiInstancesTableView.resizeColumnsToContents()
 
     def _contextMenu(self, pos):
@@ -174,6 +189,6 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if len(sel):
             index = sel[0].row()
             instance = self._model.getInstance(index)
-            self.provider.delete_instance(instance)
+            self._provider.delete_instance(instance)
             # FIXME remove this message
             QMessageBox.information(self, "Info", "delete {}".format(instance.name))
