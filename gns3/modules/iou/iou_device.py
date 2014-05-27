@@ -112,10 +112,18 @@ class IOUDevice(Node):
         :param name: optional name
         :param console: optional TCP console port
         """
-        params = {"path": iou_path}
 
-        if name:
-            params["name"] = self._settings["name"] = name
+        # let's create a unique name if none has been chosen
+        if not name:
+            name = self.allocateName("IOU")
+
+        if not name:
+            self.error_signal.emit(self.id(), "could not allocate a name for this IOU device")
+            return
+
+        params = {"name": name,
+                  "path": iou_path}
+
         if console:
             params["console"] = self._settings["console"] = console
 
@@ -216,6 +224,10 @@ class IOUDevice(Node):
         :param new_settings: settings dictionary
         """
 
+        if "name" in new_settings and self.hasAllocatedName(new_settings["name"]):
+            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
+            return
+
         params = {"id": self._iou_id}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
@@ -249,6 +261,9 @@ class IOUDevice(Node):
                 updated = True
                 if name == "ethernet_adapters" or name == "serial_adapters":
                     nb_adapters_changed = True
+                if name == "name":
+                    # update the node name
+                    self.updateAllocatedName(value)
                 self._settings[name] = value
 
         if nb_adapters_changed:
@@ -451,9 +466,15 @@ class IOUDevice(Node):
         else:
             state = "stopped"
 
+        if self._settings["use_default_iou_values"]:
+            memories_info = "default RAM and NVRAM IOU values"
+        else:
+            memories_info = "{ram} MB RAM and {nvram} KB NVRAM".format(ram=self._settings["ram"],
+                                                                       nvram=self._settings["nvram"])
+
         info = """Device {name} is {state}
   Node ID is {id}, server's IOU device ID is {iou_id}
-  Hardware is Cisco IOU generic device with {ram} MB RAM and {nvram} KB NVRAM
+  Hardware is Cisco IOU generic device with {memories_info}
   Device's server runs on {host}:{port}, console is on port {console}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
@@ -461,8 +482,7 @@ class IOUDevice(Node):
            id=self.id(),
            iou_id=self._iou_id,
            state=state,
-           ram=self._settings["ram"],
-           nvram=self._settings["nvram"],
+           memories_info=memories_info,
            host=self._server.host,
            port=self._server.port,
            console=self._settings["console"],

@@ -42,8 +42,6 @@ class Router(Node):
     :param platform: c7200, c3745, c3725, c3600, c2691, c2600 or c1700
     """
 
-    _allocated_names = []
-
     def __init__(self, module, server, platform="c7200"):
         Node.__init__(self, server)
 
@@ -88,14 +86,6 @@ class Router(Node):
                           "wic0": None,
                           "wic1": None,
                           "wic2": None}
-
-    @classmethod
-    def reset(cls):
-        """
-        Resets the allocated names list.
-        """
-
-        cls._allocated_names.clear()
 
     def _addAdapterPorts(self, adapter, slot_number):
         """
@@ -213,7 +203,6 @@ class Router(Node):
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
-        self._allocated_names.remove(self.name())
 
     def _deleteCallback(self, result, error=False):
         """
@@ -242,14 +231,10 @@ class Router(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            for number in range(1, 10000):
-                name = "R" + str(number)
-                if name not in self._allocated_names:
-                    self._allocated_names.append(name)
-                    break
+            name = self.allocateName("R")
 
         if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this router, maybe you reached the 10000 routers limit?")
+            self.error_signal.emit(self.id(), "could not allocate a name for this router")
             return
 
         platform = self._settings["platform"]
@@ -346,8 +331,8 @@ class Router(Node):
         :param new_settings: settings dictionary
         """
 
-        if "name" in new_settings and new_settings["name"] in self._allocated_names:
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another router'.format(new_settings["name"]))
+        if "name" in new_settings and self.hasAllocatedName(new_settings["name"]):
+            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
         params = {"id": self._router_id}
@@ -387,9 +372,8 @@ class Router(Node):
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                 updated = True
                 if name == "name":
-                    # update the allocated names list
-                    self._allocated_names.remove(self.name())
-                    self._allocated_names.append(value)
+                    # update the node name
+                    self.updateAllocatedName(value)
                 if name.startswith("slot"):
                     # add or remove adapters ports
                     slot_number = int(name[-1])

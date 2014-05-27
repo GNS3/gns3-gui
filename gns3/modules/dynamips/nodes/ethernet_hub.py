@@ -35,8 +35,6 @@ class EthernetHub(Node):
     :param server: GNS3 server instance
     """
 
-    _allocated_names = []
-
     def __init__(self, module, server):
         Node.__init__(self, server)
 
@@ -48,14 +46,6 @@ class EthernetHub(Node):
         self._settings = {"name": "",
                           "ports": []}
 
-    @classmethod
-    def reset(cls):
-        """
-        Resets the allocated names list.
-        """
-
-        cls._allocated_names.clear()
-
     def setup(self, name=None, initial_settings={}):
         """
         Setups this hub.
@@ -65,14 +55,10 @@ class EthernetHub(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            for number in range(1, 10000):
-                name = "HUB" + str(number)
-                if name not in self._allocated_names:
-                    self._allocated_names.append(name)
-                    break
+            name = self.allocateName("HUB")
 
         if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet hub, maybe you reached the 10000 routers limit?")
+            self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet hub")
             return
 
         params = {"name": name}
@@ -115,7 +101,6 @@ class EthernetHub(Node):
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
-        self._allocated_names.remove(self.name())
 
     def _deleteCallback(self, result, error=False):
         """
@@ -138,10 +123,6 @@ class EthernetHub(Node):
 
         :param new_settings: settings dictionary
         """
-
-        if "name" in new_settings and new_settings["name"] in self._allocated_names:
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another Ethernet hub'.format(new_settings["name"]))
-            return
 
         ports_to_create = []
         ports = new_settings["ports"]
@@ -169,6 +150,9 @@ class EthernetHub(Node):
 
         params = {}
         if "name" in new_settings and new_settings["name"] != self.name():
+            if self.hasAllocatedName(new_settings["name"]):
+                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
+                return
             params = {"id": self._ethhub_id,
                       "name": new_settings["name"]}
             updated = True
@@ -195,9 +179,7 @@ class EthernetHub(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
-                self._allocated_names.remove(self.name())
-                self._settings["name"] = result["name"]
-                self._allocated_names.append(self._settings["name"])
+                self.updateAllocatedName(result["name"])
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 

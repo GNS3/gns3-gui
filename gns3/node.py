@@ -49,6 +49,7 @@ class Node(QtCore.QObject):
     allocate_udp_nio_signal = QtCore.Signal(int, int, int)
 
     _instance_count = 1
+    _allocated_names = []
 
     # node statuses
     stopped = 0
@@ -80,6 +81,55 @@ class Node(QtCore.QObject):
         """
 
         cls._instance_count = 1
+        cls._allocated_names.clear()
+
+    def allocateName(self, base_name):
+        """
+        Allocates a new name for a node.
+
+        :param base_name: base name for the node which will be completed with a
+        unique number
+
+        :returns: allocated name or None if one could not be found
+        """
+
+        for number in range(1, 100000):
+            name = base_name + str(number)
+            if name not in self._allocated_names:
+                self._allocated_names.append(name)
+                return name
+        return None
+
+    def removeAllocatedName(self):
+        """
+        Removes an allocated name from a node.
+        """
+
+        if self.name() in self._allocated_names:
+            self._allocated_names.remove(self.name())
+
+    def updateAllocatedName(self, name):
+        """
+        Updates a name for a node.
+
+        :param name: new node name
+        """
+
+        self.removeAllocatedName()
+        self._allocated_names.append(name)
+
+    def hasAllocatedName(self, name):
+        """
+        Returns either a name is already allocated or not.
+
+        :param name: node name
+
+        :returns: boolean
+        """
+
+        if name in self._allocated_names:
+            return True
+        return False
 
     def server(self):
         """

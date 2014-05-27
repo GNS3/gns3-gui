@@ -67,9 +67,15 @@ class VPCSDevice(Node):
         :param name: optional name
         """
 
-        params = {}
-        if name:
-            params["name"] = self._settings["name"] = name
+        # let's create a unique name if none has been chosen
+        if not name:
+            name = self.allocateName("VPCS")
+
+        if not name:
+            self.error_signal.emit(self.id(), "could not allocate a name for this VPCS device")
+            return
+
+        params = {"name": name}
         if console:
             params["console"] = self._settings["console"] = console
 
@@ -170,6 +176,10 @@ class VPCSDevice(Node):
         :param new_settings: settings dictionary
         """
 
+        if "name" in new_settings and self.hasAllocatedName(new_settings["name"]):
+            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
+            return
+
         params = {"id": self._vpcs_id}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
@@ -200,6 +210,9 @@ class VPCSDevice(Node):
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                 updated = True
+                if name == "name":
+                    # update the node name
+                    self.updateAllocatedName(value)
                 self._settings[name] = value
 
         if self._inital_settings and not self._loading:

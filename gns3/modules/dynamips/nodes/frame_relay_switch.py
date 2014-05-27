@@ -35,8 +35,6 @@ class FrameRelaySwitch(Node):
     :param server: GNS3 server instance
     """
 
-    _allocated_names = []
-
     def __init__(self, module, server):
         Node.__init__(self, server)
 
@@ -48,14 +46,6 @@ class FrameRelaySwitch(Node):
         self._settings = {"name": "",
                           "mappings": {}}
 
-    @classmethod
-    def reset(cls):
-        """
-        Resets the allocated names list.
-        """
-
-        cls._allocated_names.clear()
-
     def setup(self, name=None, initial_settings={}):
         """
         Setups this Frame Relay switch.
@@ -65,14 +55,10 @@ class FrameRelaySwitch(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            for number in range(1, 10000):
-                name = "FR" + str(number)
-                if name not in self._allocated_names:
-                    self._allocated_names.append(name)
-                    break
+            name = self.allocateName("FR")
 
         if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this Frame Relay switch, maybe you reached the 10000 routers limit?")
+            self.error_signal.emit(self.id(), "could not allocate a name for this Frame Relay switch")
             return
 
         params = {"name": name}
@@ -117,7 +103,6 @@ class FrameRelaySwitch(Node):
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
-        self._allocated_names.remove(self.name())
 
     def _deleteCallback(self, result, error=False):
         """
@@ -140,10 +125,6 @@ class FrameRelaySwitch(Node):
 
         :param new_settings: settings dictionary
         """
-
-        if "name" in new_settings and new_settings["name"] in self._allocated_names:
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another Frame Relay switch'.format(new_settings["name"]))
-            return
 
         ports_to_create = []
         mapping = new_settings["mappings"]
@@ -175,6 +156,9 @@ class FrameRelaySwitch(Node):
 
         params = {}
         if "name" in new_settings and new_settings["name"] != self.name():
+            if self.hasAllocatedName(new_settings["name"]):
+                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
+                return
             params = {"id": self._frsw_id,
                       "name": new_settings["name"]}
             updated = True
@@ -201,9 +185,7 @@ class FrameRelaySwitch(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             if "name" in result:
-                self._allocated_names.remove(self.name())
-                self._settings["name"] = result["name"]
-                self._allocated_names.append(self._settings["name"])
+                self.updateAllocatedName(result["name"])
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
