@@ -42,6 +42,8 @@ class Router(Node):
     :param platform: c7200, c3745, c3725, c3600, c2691, c2600 or c1700
     """
 
+    _allocated_names = []
+
     def __init__(self, module, server, platform="c7200"):
         Node.__init__(self, server)
 
@@ -86,6 +88,14 @@ class Router(Node):
                           "wic0": None,
                           "wic1": None,
                           "wic2": None}
+
+    @classmethod
+    def reset(cls):
+        """
+        Resets the allocated names list.
+        """
+
+        cls._allocated_names.clear()
 
     def _addAdapterPorts(self, adapter, slot_number):
         """
@@ -203,6 +213,7 @@ class Router(Node):
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
+        self._allocated_names.remove(self.name())
 
     def _deleteCallback(self, result, error=False):
         """
@@ -229,11 +240,24 @@ class Router(Node):
         :param initial_settings: other additional and not mandatory settings
         """
 
+        # let's create a unique name if none has been chosen
+        if not name:
+            for number in range(1, 10000):
+                name = "R" + str(number)
+                if name not in self._allocated_names:
+                    self._allocated_names.append(name)
+                    break
+
+        if not name:
+            self.error_signal.emit(self.id(), "could not allocate a name for this router, maybe you reached the 10000 routers limit?")
+            return
+
         platform = self._settings["platform"]
 
         # Minimum settings to send to the server in order
         # to create a new router
-        params = {"platform": platform,
+        params = {"name": name,
+                  "platform": platform,
                   "ram": ram,
                   "image": image}
 
@@ -250,11 +274,6 @@ class Router(Node):
         # other initial settings will be applied when the router has been created
         if initial_settings:
             self._inital_settings = initial_settings
-
-        # a name for this router is optional, the server
-        # will create one if there is no name set.
-        if name:
-            params["name"] = self._settings["name"] = name
 
         self._server.send_message("dynamips.vm.create", params, self._setupCallback)
 
@@ -327,6 +346,10 @@ class Router(Node):
         :param new_settings: settings dictionary
         """
 
+        if "name" in new_settings and new_settings["name"] in self._allocated_names:
+            self.error_signal.emit(self.id(), 'Name "{}" is already used by another router'.format(new_settings["name"]))
+            return
+
         params = {"id": self._router_id}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
@@ -363,6 +386,10 @@ class Router(Node):
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                 updated = True
+                if name == "name":
+                    # update the allocated names list
+                    self._allocated_names.remove(self.name())
+                    self._allocated_names.append(value)
                 if name.startswith("slot"):
                     # add or remove adapters ports
                     slot_number = int(name[-1])

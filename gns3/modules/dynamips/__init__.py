@@ -437,7 +437,7 @@ class Dynamips(Module):
 
     def reset(self):
         """
-        Resets the servers.
+        Resets the servers and nodes.
         """
 
         log.info("Dynamips module reset")
@@ -445,6 +445,9 @@ class Dynamips(Module):
             if server.connected():
                 server.send_notification("dynamips.reset")
         self._servers.clear()
+
+        for node in self._nodes:
+            node.reset()
 
     def notification(self, destination, params):
         """
