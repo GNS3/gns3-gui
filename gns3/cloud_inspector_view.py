@@ -103,7 +103,7 @@ class InstanceTableModel(QAbstractTableModel):
         """
         try:
             return self._instances[index]
-        except ValueError:
+        except IndexError:
             return None
 
     def update_instance_status(self, instance):
