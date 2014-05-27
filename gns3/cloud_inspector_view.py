@@ -33,7 +33,7 @@ class InstanceTableModel(QAbstractTableModel):
     """
     def __init__(self, *args, **kwargs):
         super(InstanceTableModel, self).__init__(*args, **kwargs)
-        self._header_data = ['Status', 'Instance', 'Size', 'Devices']
+        self._header_data = ['Instance', '', 'Size', 'Devices']  # status has an empty header label
         self._width = len(self._header_data)
         self._instances = []
         self._pollingTimer = QTimer(self)
@@ -62,12 +62,12 @@ class InstanceTableModel(QAbstractTableModel):
         col = index.column()
 
         if role == Qt.DecorationRole:
-            if col == 0:
+            if col == 1:
                 # status
                 return QIcon(self._get_status_icon_path(instance.state))
 
         elif role == Qt.DisplayRole:
-            if col == 1:
+            if col == 0:
                 # name
                 return instance.name
             elif col == 2:
