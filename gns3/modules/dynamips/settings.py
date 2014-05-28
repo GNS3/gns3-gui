@@ -86,7 +86,7 @@ PLATFORMS_DEFAULT_RAM = {"c1700": 64,
                          "c3600": 128,
                          "c3725": 128,
                          "c3745": 128,
-                         "c7200": 256}
+                         "c7200": 512}
 
 # platforms with supported chassis
 CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),

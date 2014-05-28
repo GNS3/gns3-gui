@@ -311,7 +311,7 @@ class Topology(object):
                 self.addNode(node)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)
 
-        self._resources_type = topology['resources_type']
+        self._resources_type = topology.get('resources_type')
 
         if node_errors:
             errors = "\n".join(node_errors)
