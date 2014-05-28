@@ -21,6 +21,8 @@ Configuration page for Dynamips IOS routers.
 
 import os
 import re
+import sys
+import pkg_resources
 from gns3.qt import QtGui
 from .. import Dynamips
 from gns3.node_configurator import ConfigurationError
@@ -179,8 +181,11 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         Slot to open a file browser and select a startup-config file.
         """
 
-        #TODO: current directory for startup-config + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", ".")
+        if hasattr(sys, "frozen"):
+            config_dir = "configs"
+        else:
+            config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
 
@@ -196,8 +201,11 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         Slot to open a file browser and select a private-config file.
         """
 
-        #TODO: current directory for startup-config + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", ".")
+        if hasattr(sys, "frozen"):
+            config_dir = "configs"
+        else:
+            config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
         if not path:
             return
 

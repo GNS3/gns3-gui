@@ -72,7 +72,11 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         Slot to open a file browser and select a base script file for VPCS
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a script file", ".")
+        if hasattr(sys, "frozen"):
+            config_dir = "configs"
+        else:
+            config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
         if not path:
             return
 

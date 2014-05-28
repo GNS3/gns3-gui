@@ -376,7 +376,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff)"
 
-        path, selected_filter = QtGui.QFileDialog.getSaveFileNameAndFilter(self, "Screenshot", ".", file_formats)
+        path, selected_filter = QtGui.QFileDialog.getSaveFileNameAndFilter(self, "Screenshot", self.projectsDirPath(), file_formats)
         if not path:
             return
 
@@ -913,7 +913,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         file_dialog.setNameFilters(["Directories"])
         file_dialog.setDirectory(projects_dir_path)
         file_dialog.setFileMode(QtGui.QFileDialog.AnyFile)
-        #file_dialog.setDefaultSuffix("gns3")
         file_dialog.setLabelText(QtGui.QFileDialog.FileName, "Project name:")
         file_dialog.selectFile(default_project_name)
         file_dialog.setOptions(QtGui.QFileDialog.ShowDirsOnly)

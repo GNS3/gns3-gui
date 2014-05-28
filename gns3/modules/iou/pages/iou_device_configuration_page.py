@@ -20,6 +20,8 @@ Configuration page for IOU devices.
 """
 
 import os
+import sys
+import pkg_resources
 from gns3.qt import QtGui
 from gns3.node_configurator import ConfigurationError
 
@@ -56,8 +58,11 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         Slot to open a file browser and select a startup-config file.
         """
 
-        #TODO: current directory for startup-config + filter?
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", ".")
+        if hasattr(sys, "frozen"):
+            config_dir = "configs"
+        else:
+            config_dir = pkg_resources.resource_filename("gns3", "configs")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
 
