@@ -20,7 +20,6 @@ Contains this entire topology: nodes and links.
 Handles the saving and loading of a topology.
 """
 
-#import networkx as nx
 from .qt import QtCore
 from .items.node_item import NodeItem
 from .servers import Servers
@@ -44,8 +43,7 @@ class Topology(object):
         self._links = []
         self._topology = None
         self._initialized_nodes = []
-        #self._topology = nx.Graph()
-        self._resources_type = None
+        self._resources_type = "local"
 
     def addNode(self, node):
         """
@@ -134,7 +132,7 @@ class Topology(object):
         self._links.clear()
         self._nodes.clear()
         self._initialized_nodes.clear()
-        self._resources_type = None
+        self._resources_type = "local"
         log.info("topology has been reset")
 
     def _dump_gui_settings(self, topology):
@@ -168,11 +166,16 @@ class Topology(object):
 
         log.info("starting to save the topology (version {})".format(__version__))
 
-        topology = {"version": __version__,
+        from .main_window import MainWindow
+        project_settings = MainWindow.instance().projectSettings()
+        topology = {"name": project_settings["project_name"],
+                    "version": __version__,
                     "type": "topology",
                     "topology": {},
-                    "resources_type": self._resources_type,
+                    "resources_type": project_settings["project_type"],
                     }
+
+        self._resources_type = project_settings["project_type"]
 
         servers = {}
 
@@ -311,7 +314,7 @@ class Topology(object):
                 self.addNode(node)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)
 
-        self._resources_type = topology.get('resources_type')
+        self._resources_type = topology.get("project_type")
 
         if node_errors:
             errors = "\n".join(node_errors)
@@ -394,9 +397,3 @@ class Topology(object):
     @property
     def resourcesType(self):
         return self._resources_type
-
-    def setCloudResourcesType(self):
-        self._resources_type = 'cloud'
-
-    def setLocalResourcesType(self):
-        self._resources_type = 'local'

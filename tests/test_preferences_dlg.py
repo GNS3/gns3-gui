@@ -195,7 +195,7 @@ class TestCloudPreferencesPage(TestCase):
         page.uiUserNameLineEdit.setText("myusername")
         page.uiTermsCheckBox.setChecked(True)
         page.savePreferences()
-        settings = MainWindow.instance().cloud_settings()
+        settings = MainWindow.instance().cloudSettings()
         self.assertTrue(settings.get('cloud_store_api_key'))
         self.assertEqual(settings.get('cloud_api_key'), 'myapikey')
         self.assertEqual(settings.get('cloud_user_name'), 'myusername')

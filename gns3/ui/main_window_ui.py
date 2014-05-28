@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Wed May 14 15:50:18 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed May 28 08:51:00 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(980, 720)
+        MainWindow.resize(980, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -128,7 +128,6 @@ class Ui_MainWindow(object):
         self.uiBrowsersToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.uiBrowsersToolBar.setObjectName(_fromUtf8("uiBrowsersToolBar"))
         MainWindow.addToolBar(QtCore.Qt.LeftToolBarArea, self.uiBrowsersToolBar)
-        MainWindow.insertToolBarBreak(self.uiBrowsersToolBar)
         self.uiControlToolBar = QtGui.QToolBar(MainWindow)
         self.uiControlToolBar.setIconSize(QtCore.QSize(32, 32))
         self.uiControlToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
@@ -538,8 +537,8 @@ class Ui_MainWindow(object):
         self.uiQuitAction.setStatusTip(_translate("MainWindow", "Quit", None))
         self.uiQuitAction.setShortcut(_translate("MainWindow", "Ctrl+Q", None))
         self.uiOpenProjectAction.setText(_translate("MainWindow", "&Open Project", None))
-        self.uiOpenProjectAction.setToolTip(_translate("MainWindow", "Open project or topology file", None))
-        self.uiOpenProjectAction.setStatusTip(_translate("MainWindow", "Open project or topology file", None))
+        self.uiOpenProjectAction.setToolTip(_translate("MainWindow", "Open project", None))
+        self.uiOpenProjectAction.setStatusTip(_translate("MainWindow", "Open project", None))
         self.uiOpenProjectAction.setShortcut(_translate("MainWindow", "Ctrl+O", None))
         self.uiSaveProjectAction.setText(_translate("MainWindow", "&Save project", None))
         self.uiSaveProjectAction.setToolTip(_translate("MainWindow", "Save project", None))

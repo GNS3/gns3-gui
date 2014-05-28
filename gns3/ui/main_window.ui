@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>980</width>
-    <height>720</height>
+    <height>715</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -282,7 +282,7 @@ background-none;
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="uiBrowseRoutersAction"/>
    <addaction name="separator"/>
@@ -522,10 +522,10 @@ background-none;
     <string>&amp;Open Project</string>
    </property>
    <property name="toolTip">
-    <string>Open project or topology file</string>
+    <string>Open project</string>
    </property>
    <property name="statusTip">
-    <string>Open project or topology file</string>
+    <string>Open project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>

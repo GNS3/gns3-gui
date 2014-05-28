@@ -1,0 +1,101 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2014 GNS3 Technologies Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+from .qt import QtCore, QtGui
+from .ui.new_project_dialog_ui import Ui_NewProjectDialog
+
+
+class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
+    """
+    New project dialog.
+    """
+
+    def __init__(self, parent):
+
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
+
+        self._main_window = parent
+        self._project_settings = parent.projectSettings().copy()
+        default_project_name = "untitled"
+        self.uiNameLineEdit.setText(default_project_name)
+        self.uiLocationLineEdit.setText(os.path.join(self._main_window.projectsDirPath(), default_project_name))
+
+        self.uiNameLineEdit.textEdited.connect(self._projectNameSlot)
+        self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
+
+    def keyPressEvent(self, e):
+        """
+        Event handler in order to properly handle escape.
+        """
+
+        if e.key() == QtCore.Qt.Key_Escape:
+            self.close()
+
+    def _projectNameSlot(self, text):
+
+        project_dir = self._main_window.projectsDirPath()
+        if os.path.dirname(self.uiLocationLineEdit.text()) == project_dir:
+            self.uiLocationLineEdit.setText(os.path.join(project_dir, text))
+
+    def _projectPathSlot(self):
+        """
+        Slot to select the a new project location.
+        """
+
+        path = QtGui.QFileDialog.getSaveFileName(self, "Project location", os.path.join(self._main_window.projectsDirPath(),
+                                                                                        self.uiNameLineEdit.text()))
+        if path:
+            self.uiLocationLineEdit.setText(path)
+
+    def getNewProjectSettings(self):
+
+        return self._project_settings
+
+    def done(self, result):
+
+        if result:
+            project_name = self.uiNameLineEdit.text()
+            project_location = self.uiLocationLineEdit.text()
+            if self.uiCloudRadioButton.isChecked():
+                project_type = "cloud"
+            else:
+                project_type = "local"
+
+            if not project_name:
+                QtGui.QMessageBox.critical(self, "New project", "Project name is empty")
+                return
+
+            if not project_location:
+                QtGui.QMessageBox.critical(self, "New project", "Project location is empty")
+                return
+
+            if os.path.isdir(project_location):
+                reply = QtGui.QMessageBox.question(self,
+                                                   "New project",
+                                                   "Location {} already exists, overwrite it?".format(project_location),
+                                                   QtGui.QMessageBox.Yes,
+                                                   QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.No:
+                    return
+
+            self._project_settings["project_name"] = project_name
+            self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
+            self._project_settings["project_files_dir"] = os.path.join(project_location, project_name + "-files")
+            self._project_settings["project_type"] = project_type
+        QtGui.QDialog.done(self, result)

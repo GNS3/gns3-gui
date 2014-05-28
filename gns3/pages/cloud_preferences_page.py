@@ -53,7 +53,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiNewInstancesLayout.insertWidget(0, self.uiMemPerNewInstanceSpinBox)
 
         from ..main_window import MainWindow
-        self.settings = MainWindow.instance().cloud_settings()
+        self.settings = MainWindow.instance().cloudSettings()
 
     def _get_region_index(self, region_id):
         try:
