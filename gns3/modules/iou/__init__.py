@@ -248,10 +248,10 @@ class IOU(Module):
         """
 
         try:
-            with open(iourc_path, "r") as f:
+            with open(iourc_path, "r", errors="replace") as f:
                 log.info("opening iourc file: {}".format(iourc_path))
                 config = f.read()
-                encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
+                encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
                 return encoded
         except OSError as e:
             log.warn("could not base64 encode {}: {}".format(iourc_path, e))

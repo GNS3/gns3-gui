@@ -314,11 +314,11 @@ class Router(Node):
         """
 
         try:
-            with open(config_path, "r") as f:
+            with open(config_path, "r", errors="replace") as f:
                 log.info("opening configuration file: {}".format(config_path))
                 config = f.read()
-                config = '!\n' + config.replace('\r', "")
-                encoded = ("").join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
+                config = "!\n" + config.replace('\r', "")
+                encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
                 return encoded
         except OSError as e:
             log.warn("could not base64 encode {}: {}".format(config_path, e))
@@ -331,7 +331,7 @@ class Router(Node):
         :param new_settings: settings dictionary
         """
 
-        if "name" in new_settings and self.hasAllocatedName(new_settings["name"]):
+        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
