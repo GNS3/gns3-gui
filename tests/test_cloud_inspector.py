@@ -114,4 +114,5 @@ class TestCloudInspectorView(GUIBaseTest):
 
             self.view.load(settings)
 
-            self.assertEqual(self.view._model.rowCount(), 7) # FIXME shoul be 2 as soon as we remove fake instances
+            # FIXME should be 2 as soon as we remove fake instances
+            self.assertEqual(self.view._model.rowCount(), 7)

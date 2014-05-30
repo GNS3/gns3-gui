@@ -40,9 +40,6 @@ class InstanceTableModel(QAbstractTableModel):
         self._header_data = ['Instance', '', 'Size', 'Devices']  # status has an empty header label
         self._width = len(self._header_data)
         self._instances = []
-        self._pollingTimer = QTimer(self)
-        self._pollingTimer.timeout.connect(self._update)
-        self._pollingTimer.start(1000)
 
     def _get_status_icon_path(self, state):
         """
@@ -120,16 +117,6 @@ class InstanceTableModel(QAbstractTableModel):
         except ValueError:
             pass
 
-    def _update(self):
-        """
-        Sync model data with instances status
-
-        FIXME get real data from libcloud
-        """
-        for i in self._instances:
-            i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
-            self.update_instance_status(i)
-
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
@@ -146,7 +133,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.setupUi(self)
 
         self._provider = None
-        self._model = InstanceTableModel()
+        self._model = InstanceTableModel()  # shortcut for self.uiInstancesTableView.model()
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
         self.uiInstancesTableView.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -154,6 +141,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # connections
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
+
+        self._pollingTimer = QTimer(self)
+        self._pollingTimer.timeout.connect(self._update_model)
+        self._pollingTimer.start(1000)
 
     def load(self, cloud_settings):
         """
@@ -211,3 +202,15 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if current.isValid():
             instance = self._model.getInstance(current.row())
             self.instanceSelected.emit(instance.id)
+
+    def _update_model(self):
+        """
+        Sync model data with instances status
+        """
+        for i in self._provider.list_instances():
+            self._model.update_instance_status(i)
+
+        # FIXME remove the following to stop mocking
+        for i in self._model._instances:
+            i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
+            self.update_instance_status(i)
