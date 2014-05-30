@@ -336,6 +336,7 @@ class EthernetHub(Node):
             for topology_port in ports:
                 port = EthernetPort(topology_port["name"])
                 port.setPortNumber(topology_port["port_number"])
+                port.setId(topology_port["id"])
                 port.setStatus(EthernetPort.started)
                 self._ports.append(port)
                 self._settings["ports"].append(port.portNumber())

@@ -184,6 +184,15 @@ def main():
         # update the exception file path to have it in the same directory as the settings file.
         exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
 
+        # save client logging info to a file
+        logger = logging.getLogger("gns3")
+        handler = logging.FileHandler(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log"), "w")
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
+                                      datefmt="%y%m%d %H:%M:%S")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
         mainwindow = MainWindow.instance()
         mainwindow.show()
         exit_code = app.exec_()

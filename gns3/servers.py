@@ -19,6 +19,7 @@
 Keeps track of all the local and remote servers and their settings.
 """
 
+import os
 import sys
 import shlex
 import signal
@@ -139,9 +140,19 @@ class Servers(QtCore.QObject):
         Starts the local server process.
         """
 
-        command = '"{executable}" --host={host} --port={port}'.format(executable=path,
-                                                                      host=host,
-                                                                      port=port)
+        # save server logging info to a file
+        logpath = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_server.log")
+        if os.path.isfile(logpath):
+            try:
+                os.remove(logpath)
+            except OSError:
+                log.warn("could not delete {}".format(logpath))
+
+        command = '"{executable}" --host={host} --port={port} --log_file_prefix={logpath} ' \
+                  '--log_file_num_backups=0 --log_to_stderr'.format(executable=path,
+                                                                    host=host,
+                                                                    port=port,
+                                                                    logpath=logpath)
 
         log.info("starting local server process with {}".format(command))
 
