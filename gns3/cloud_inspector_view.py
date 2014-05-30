@@ -7,6 +7,7 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import Qt
 
 from .settings import CLOUD_PROVIDERS
@@ -133,7 +134,13 @@ class InstanceTableModel(QAbstractTableModel):
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
     Table view showing data coming from InstanceTableModel
+
+    Signals:
+        instanceSelected(int) Emitted when users click and select an instance on the inspector.
+        Param int is the ID of the instance
     """
+    instanceSelected = pyqtSignal(int)
+
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
@@ -143,8 +150,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
         self.uiInstancesTableView.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
+        # connections
+        self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
+        self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
 
     def load(self, cloud_settings):
         """
@@ -193,3 +202,12 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             self._provider.delete_instance(instance)
             # FIXME remove this message
             QMessageBox.information(self, "Info", "delete {}".format(instance.name))
+
+    def _rowChanged(self, current, previous):
+        """
+        This slot is invoked every time users change the current selected row on the
+        inspector
+        """
+        if current.isValid():
+            instance = self._model.getInstance(current.row())
+            self.instanceSelected.emit(instance.id)
