@@ -145,6 +145,8 @@ class Servers(QtCore.QObject):
         if os.path.isfile(logpath):
             try:
                 os.remove(logpath)
+            except FileNotFoundError:
+                pass
             except OSError:
                 log.warn("could not delete {}".format(logpath))
 

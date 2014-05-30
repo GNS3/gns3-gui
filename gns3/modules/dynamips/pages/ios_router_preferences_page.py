@@ -205,6 +205,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOS")
+        if not os.path.isdir(destination_directory):
+            destination_directory = "."
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Select an IOS image",
                                                              destination_directory,
