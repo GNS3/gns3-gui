@@ -6,6 +6,7 @@ from . import make_getitem
 
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import QIcon
+from PyQt4.QtCore import QPoint
 
 from gns3.cloud_inspector_view import InstanceTableModel
 from gns3.cloud_inspector_view import CloudInspectorView
@@ -116,3 +117,28 @@ class TestCloudInspectorView(GUIBaseTest):
 
             # FIXME should be 2 as soon as we remove fake instances
             self.assertEqual(self.view._model.rowCount(), 7)
+
+    def test_contextMenu(self):
+        with mock.patch('gns3.cloud_inspector_view.QMenu') as qmenu:
+            m = qmenu.return_value
+            actions = []
+
+            def add_action(action):
+                actions.append(action)
+            m.addAction.side_effect = add_action
+
+            self.view._contextMenu(QPoint(10, 10))
+
+            qmenu.assert_called_with(self.view.uiInstancesTableView)
+            self.assertEqual(len(actions), 1)
+
+    def test_delete_instance(self):
+        self.view._provider = mock.MagicMock()
+        self.view.uiInstancesTableView = mock.MagicMock()
+        self.view._model = mock.MagicMock()
+        instance = mock.MagicMock()
+        self.view._model.getInstance.return_value = instance
+        self.view.uiInstancesTableView.selectedIndexes.return_value = [mock.MagicMock()]
+        self.view._deleteSelectedInstance()
+
+        self.view._provider.delete_instance.assert_called_with(instance)

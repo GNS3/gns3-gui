@@ -3,7 +3,6 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QAction
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
@@ -192,7 +191,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance = self._model.getInstance(index)
             self._provider.delete_instance(instance)
             # FIXME remove this message
-            QMessageBox.information(self, "Info", "delete {}".format(instance.name))
+            print("delete {}".format(instance.name))
 
     def _rowChanged(self, current, previous):
         """
