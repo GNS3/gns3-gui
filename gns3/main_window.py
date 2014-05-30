@@ -1043,9 +1043,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             shutil.rmtree(self._project_settings["project_files_dir"], ignore_errors=True)
             try:
                 log.info("deleting temporary topology file: {}".format(self._project_settings["project_path"]))
-                os.remove(self._project_settings["project_files_dir"])
+                os.remove(self._project_settings["project_path"])
             except OSError as e:
-                log.warning("could not delete temporary topology file: {}: e".format(self._project_settings["project_path"], e))
+                log.warning("could not delete temporary topology file: {}: {}".format(self._project_settings["project_path"], e))
 
     def _createTemporaryProject(self):
         """
