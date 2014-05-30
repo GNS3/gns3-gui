@@ -283,10 +283,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to create a new project.
         """
 
-        project_dialog = NewProjectDialog(self)
-        project_dialog.show()
-        create_new_project = project_dialog.exec_()
         if self.checkForUnsavedChanges():
+            project_dialog = NewProjectDialog(self)
+            project_dialog.show()
+            create_new_project = project_dialog.exec_()
             if create_new_project:
                 self.uiGraphicsView.reset()
                 new_project_settings = project_dialog.getNewProjectSettings()
