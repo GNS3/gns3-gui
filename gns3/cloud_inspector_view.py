@@ -148,7 +148,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def load(self, cloud_settings):
         """
-        FIXME: This is a stub, waiting for the cloud api
+        Fill the model data layer with instances retrieved through libcloud
         """
         provider_id = cloud_settings['cloud_provider']
         username = cloud_settings['cloud_user_name']
@@ -168,6 +168,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # TODO remove this block
         for i in gen_fake_nodes(5):
             self._model.addInstance(i)
+        # end TODO
 
         self.uiInstancesTableView.resizeColumnsToContents()
 
