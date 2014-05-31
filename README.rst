@@ -30,9 +30,7 @@ Please use our all-in-one installer.
 Mac OS X
 --------
 
-DMG package is not available yet.
-
-You can manually install using the following steps (experimental):
+Please use our DMG package or you can manually install using the following steps (experimental):
 
 `First install homebrew <http://brew.sh/>`_.
 
