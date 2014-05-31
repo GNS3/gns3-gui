@@ -147,8 +147,8 @@ class Servers(QtCore.QObject):
                 os.remove(logpath)
             except FileNotFoundError:
                 pass
-            except OSError:
-                log.warn("could not delete {}".format(logpath))
+            except OSError as e:
+                log.warn("could not delete server log file {}: {}".format(logpath, e))
 
         command = '"{executable}" --host={host} --port={port} --log_file_prefix={logpath} ' \
                   '--log_file_num_backups=0 --log_to_stderr'.format(executable=path,

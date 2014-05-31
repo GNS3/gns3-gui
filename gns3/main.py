@@ -181,17 +181,25 @@ def main():
         app.setApplicationName("GNS3")
         app.setApplicationVersion(__version__)
 
+        # save client logging info to a file
+        logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")
+        try:
+            logger = logging.getLogger("gns3")
+            try:
+                os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))
+            except FileExistsError:
+                pass
+            handler = logging.FileHandler(logfile, "w")
+            handler.setLevel(logging.INFO)
+            formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
+                                          datefmt="%y%m%d %H:%M:%S")
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+        except OSError as e:
+            log.warn("could not log to {}: {}".format(logfile, e))
+
         # update the exception file path to have it in the same directory as the settings file.
         exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
-
-        # save client logging info to a file
-        logger = logging.getLogger("gns3")
-        handler = logging.FileHandler(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log"), "w")
-        handler.setLevel(logging.INFO)
-        formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
-                                      datefmt="%y%m%d %H:%M:%S")
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
 
         mainwindow = MainWindow.instance()
         mainwindow.show()
