@@ -82,13 +82,18 @@ class TestInstanceModel(BaseTest):
     def test_update_instance_status(self):
         node1, node2 = gen_fake_nodes(2)
         self.model.addInstance(node1)
-        self.assertEqual(node1.state, NodeState.RUNNING)
+        self.model.addInstance(node2)
+
         node = self.model.getInstance(0)
         node.state = NodeState.STOPPED
         self.model.update_instance_status(node)
         node = self.model.getInstance(0)
         self.assertEqual(node.state, NodeState.STOPPED)
-        self.model.update_instance_status(node2)  # noop
+
+        node = self.model.getInstance(1)
+        self.model.update_instance_status(node)  # instance didn't change
+        node = self.model.getInstance(1)
+        self.assertEqual(node.state, NodeState.RUNNING)
 
     def test_update(self):
         pass
