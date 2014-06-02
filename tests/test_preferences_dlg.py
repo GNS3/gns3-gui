@@ -134,7 +134,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_store_api_key'] = True
         self.page.settings['cloud_store_api_key_chosen'] = True
         self.page.settings['cloud_provider'] = 'rackspace'
-        self.page.settings['cloud_region'] = 'ORD'
+        self.page.settings['cloud_region'] = 'ord'
         self.page.settings['accepted_terms'] = True
         self.page.settings['instances_per_project'] = 3
         self.page.settings['memory_per_instance'] = 2
@@ -148,7 +148,7 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertTrue(self.page.uiRememberAPIKeyRadioButton.isChecked())
         self.assertEqual(self.page.uiCloudProviderComboBox.currentText(), "Rackspace")
-        self.assertEqual(self.page.uiRegionComboBox.currentText(), "ord")
+        self.assertEqual(self.page.uiRegionComboBox.currentText(), "ORD")
         self.assertTrue(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 3)
         self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 2)
@@ -179,7 +179,7 @@ class TestCloudPreferencesPage(TestCase):
 
         self.assertTrue(self.page.settings['cloud_store_api_key'])
         self.assertEqual(self.page.settings['cloud_provider'], 'rackspace')
-        self.assertEqual(self.page.settings['cloud_region'], 'ORD')
+        self.assertEqual(self.page.settings['cloud_region'], 'ord')
         self.assertTrue(self.page.settings['accepted_terms'])
         self.assertEqual(self.page.settings['instances_per_project'], 8)
         self.assertEqual(self.page.settings['memory_per_instance'], 16)
