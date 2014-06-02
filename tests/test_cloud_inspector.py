@@ -52,10 +52,10 @@ class TestInstanceModel(BaseTest):
 
         self.model.addInstance(node)
 
-        index = self.model.createIndex(0, 1)
-        self.assertIsInstance(self.model.data(index, Qt.DecorationRole), QIcon)
         index = self.model.createIndex(0, 0)
         self.assertEqual(self.model.data(index, Qt.DisplayRole), 'Foo')
+        index = self.model.createIndex(0, 1)
+        self.assertIsInstance(self.model.data(index, Qt.DecorationRole), QIcon)
         index = self.model.createIndex(0, 2)
         self.assertEqual(self.model.data(index, Qt.DisplayRole), 2048)
         index = self.model.createIndex(0, 3)
