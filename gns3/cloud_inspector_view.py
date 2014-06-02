@@ -213,4 +213,4 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # FIXME remove the following to stop mocking
         for i in self._model._instances:
             i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
-            self.update_instance_status(i)
+            self._model.update_instance_status(i)
