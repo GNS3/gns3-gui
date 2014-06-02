@@ -144,7 +144,6 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
         self._pollingTimer = QTimer(self)
         self._pollingTimer.timeout.connect(self._update_model)
-        self._pollingTimer.start(1000)
 
     def load(self, cloud_settings):
         """
@@ -171,6 +170,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # end TODO
 
         self.uiInstancesTableView.resizeColumnsToContents()
+        self._pollingTimer.start(1000)
 
     def _contextMenu(self, pos):
         # create actions
