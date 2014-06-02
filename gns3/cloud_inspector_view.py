@@ -111,8 +111,9 @@ class InstanceTableModel(QAbstractTableModel):
             i = self._instances.index(instance)
             current = self._instances[i]
             current.state = instance.state
-            status_index = self.createIndex(i, 0)
-            self.dataChanged.emit(status_index, status_index)
+            first_index = self.createIndex(i, 0)
+            last_index = self.createIndex(i, self.columnCount()-1)
+            self.dataChanged.emit(first_index, last_index)
         except ValueError:
             pass
 
