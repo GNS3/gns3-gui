@@ -84,6 +84,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiCaptureDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -764,6 +765,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             dialog.exec_()
 
         self._newsActionSlot()
+
+        # TODO check if this is the right place
+        self.CloudInspectorView.load()
 
         # connect to the local server
         servers = Servers.instance()
