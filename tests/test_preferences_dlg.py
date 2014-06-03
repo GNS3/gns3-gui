@@ -234,7 +234,7 @@ class TestCloudPreferencesPageIntegration(TestCase):
         self.page.loadPreferences()
         region_labels = []
         for i in range(self.page.uiRegionComboBox.model().rowCount()):
-            region_labels.append(self.page.uiRegionComboBox.model().item(i,0).text())
+            region_labels.append(self.page.uiRegionComboBox.model().item(i, 0).text())
         self.assertTrue(len(region_labels) > 1)
-        self.assertIn('ord', region_labels)
+        self.assertIn('ORD', region_labels)
 
