@@ -123,6 +123,10 @@ class TestCloudInspectorView(GUIBaseTest):
             # FIXME should be 2 as soon as we remove fake instances
             self.assertEqual(self.view._model.rowCount(), 7)
 
+            provider.authenticate.return_value = False
+            self.view.load(settings)
+            self.assertIsNone(self.view._provider)
+
     def test_contextMenu(self):
         with mock.patch('gns3.cloud_inspector_view.QMenu') as qmenu:
             m = qmenu.return_value
@@ -147,3 +151,15 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view._deleteSelectedInstance()
 
         self.view._provider.delete_instance.assert_called_with(instance)
+
+    def test_update_model(self):
+        nodes = list(gen_fake_nodes(2))
+        self.view._provider = mock.MagicMock()
+        self.view._provider.list_instances.return_value = nodes
+        self.view._model = mock.MagicMock()
+
+        self.view._update_model()
+        # FIXME method contains mocks, this ensure right calls are performed *beside* mock calls
+        self.view._model.update_instance_status.assert_has_calls([mock.call(x) for x in nodes])
+        # FIXME once removed mocks, we can test right calls are *solely* performed with:
+        # self.view._model.update_instance_status.assert_called_with(*nodes)

@@ -156,21 +156,21 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
         self._provider = provider_controller_class(username, apikey)
 
-        if self._provider.authenticate():
-            if not region:
-                region = self._provider.list_regions().values()[0]
+        if not region:
+            region = self._provider.list_regions().values()[0]
 
-            if self._provider.set_region(region):
-                for i in self._provider.list_instances():
-                    self._model.addInstance(i)
+        if self._provider.authenticate() and self._provider.set_region(region):
+            for i in self._provider.list_instances():
+                self._model.addInstance(i)
+            self.uiInstancesTableView.resizeColumnsToContents()
+            self._pollingTimer.start(5000)
+        else:
+            self._provider = None
 
         # TODO remove this block
         for i in gen_fake_nodes(5):
             self._model.addInstance(i)
         # end TODO
-
-        self.uiInstancesTableView.resizeColumnsToContents()
-        self._pollingTimer.start(1000)
 
     def _contextMenu(self, pos):
         # create actions
@@ -187,7 +187,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         Delete the instance corresponding to the selected table row
         """
         sel = self.uiInstancesTableView.selectedIndexes()
-        if len(sel):
+        if len(sel) and self._provider is not None:
             index = sel[0].row()
             instance = self._model.getInstance(index)
             self._provider.delete_instance(instance)
@@ -207,6 +207,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         """
         Sync model data with instances status
         """
+        if self._provider is None:
+            return
+
         for i in self._provider.list_instances():
             self._model.update_instance_status(i)
 
