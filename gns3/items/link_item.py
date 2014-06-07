@@ -96,6 +96,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
 #                                             'FR': 'FRELAY',
 #                                             'HDLC': 'C_HDLC',
 #                                             'PPP': 'PPP_SERIAL'}
+
             self.setCustomToolTip()
 
         else:
@@ -122,7 +123,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
         """
 
         if self._link:
-            self.setToolTip(self._link.description())
+            self.setToolTip(str(self._link))
 
     def sourceItem(self):
         """

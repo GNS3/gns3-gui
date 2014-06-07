@@ -49,10 +49,11 @@ class Port(object):
         self._slot_number = None
         self._stub = stub
         self._link_id = None
-        self._description = ""
         self._status = Port.stopped
         self._data = {}
-        if default_nio == None:
+        self._destination_node = None
+        self._destination_port = None
+        if default_nio is None:
             self._default_nio = NIOUDP
         else:
             self._default_nio = default_nio
@@ -162,6 +163,42 @@ class Port(object):
 
         self._port_number = port_number
 
+    def destinationNode(self):
+        """
+        Returns the destination node
+
+        :returns: destination Node instance
+        """
+
+        return self._destination_node
+
+    def setDestinationNode(self, node):
+        """
+        Sets a new destination Node instance for this port.
+
+        :param node: new destination Node instance
+        """
+
+        self._destination_node = node
+
+    def destinationPort(self):
+        """
+        Returns the destination Port instance
+
+        :returns: destination Port instance
+        """
+
+        return self._destination_port
+
+    def setDestinationPort(self, port):
+        """
+        Sets a new destination Port instance for this port.
+
+        :param port: new destination Port instance
+        """
+
+        self._destination_port = port
+
     def defaultNio(self):
         """
         Returns the default NIO for this port.
@@ -214,16 +251,10 @@ class Port(object):
         :returns: description
         """
 
-        return self._description
-
-    def setDescription(self, description):
-        """
-        Adds a text description to this port.
-
-        :param description: description
-        """
-
-        self._description = description
+        if self._destination_node and self._destination_port:
+            return "connected to {name} on port {port}".format(name=self._destination_node.name(),
+                                                               port=self._destination_port.name())
+        return ""
 
     def setFree(self):
         """
@@ -232,7 +263,8 @@ class Port(object):
 
         self._nio = None
         self._link_id = None
-        self._description = ""
+        self._destination_node = None
+        self._destination_port = None
 
     def isFree(self):
         """
@@ -300,8 +332,8 @@ class Port(object):
             port["slot_number"] = self._slot_number
         if self._stub:
             port["stub"] = self._stub
-        if self._description:
-            port["description"] = self._description
+        if self.description():
+            port["description"] = self.description()
         if self._link_id != None:
             port["link_id"] = self._link_id
 

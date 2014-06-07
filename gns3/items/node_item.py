@@ -164,9 +164,18 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             link.update()
 
     def updatedSlot(self):
+        """
+        Slot to receive events from the attached Node instance
+        when a the node has been updated.
+        """
 
         self.textItem.setPlainText(self._node.name())
         self.setUnsavedState()
+
+        # update the link tooltips in case the
+        # node name has changed
+        for link in self._links:
+            link.setCustomToolTip()
 
     def deleteLinksSlot(self):
         """

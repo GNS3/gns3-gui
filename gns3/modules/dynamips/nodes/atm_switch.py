@@ -309,7 +309,7 @@ class ATMSwitch(Node):
                 port_info += "   Port {} is empty\n".format(port.name())
             else:
                 port_info += "   Port {name} {description}\n".format(name=port.name(),
-                                                                      description=port.description())
+                                                                     description=port.description())
 
             for source, destination in self._settings["mappings"].items():
                 match_source_mapping = mapping.search(source)

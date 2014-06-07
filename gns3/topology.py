@@ -192,7 +192,7 @@ class Topology(object):
         if self._links:
             topology_links = topology["topology"]["links"] = []
             for link in self._links:
-                log.info("saving {}".format(link.description()))
+                log.info("saving {}".format(str(link)))
                 topology_links.append(link.dump())
 
         # finally the servers
