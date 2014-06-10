@@ -466,10 +466,6 @@ class GraphicsView(QtGui.QGraphicsView):
 #                 if isinstance(item, Annotation) and item.hasFocus():
 #                     QtGui.QGraphicsView.keyPressEvent(self, event)
 #                     return
-            if self.scene().selectedItems():
-                reply = QtGui.QMessageBox.question(self, "Delete", "Do you want to delete these nodes?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                if reply == QtGui.QMessageBox.No:
-                    return
             self.deleteActionSlot()
         else:
             QtGui.QGraphicsView.keyPressEvent(self, event)
@@ -800,7 +796,17 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        for item in self.scene().selectedItems():
+        selected_items = self.scene().selectedItems()
+        if selected_items:
+            if len(selected_items) > 1:
+                question = "Do you want to permanently delete these modes?"
+            else:
+                question = "Do you want to permanently delete {}?".format(selected_items[0].node().name())
+            reply = QtGui.QMessageBox.question(self, "Delete", question,
+                                               QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.No:
+                return
+        for item in selected_items:
             if isinstance(item, NodeItem):
                 item.node().delete()
                 self._topology.removeNode(item.node())

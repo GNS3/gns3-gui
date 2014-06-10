@@ -69,7 +69,7 @@ class VPCSDevice(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName("VPCS")
+            name = self.allocateName("PC")
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this VPCS device")
@@ -472,6 +472,7 @@ class VPCSDevice(Node):
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
+        self.setName(name)
         self.setup(name, console, settings)
 
     def _updatePortSettings(self):

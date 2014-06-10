@@ -403,6 +403,7 @@ class ATMSwitch(Node):
                 self._ports.append(port)
 
         log.info("ATM switch {} is loading".format(name))
+        self.setName(name)
         self.setup(name)
 
     def name(self):

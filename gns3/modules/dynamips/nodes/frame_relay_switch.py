@@ -381,6 +381,7 @@ class FrameRelaySwitch(Node):
                 self._ports.append(port)
 
         log.info("Frame-Relay switch {} is loading".format(name))
+        self.setName(name)
         self.setup(name)
 
     def name(self):

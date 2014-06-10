@@ -61,7 +61,7 @@ class NewsDialog(QtGui.QDialog, Ui_NewsDialog):
 
         self.disconnect(self.uiWebView, QtCore.SIGNAL('loadFinished(bool)'), self._loadFinishedSlot)
         if result == False:
-            QtGui.QMessageBox.information(self, "News", "Cannot load the online page, trying with your default browser ...")
-            if QtGui.QDesktopServices.openUrl(self.webpage) == False:
-                print("Failed to open the URL: {}".format(self.webpage.toString()))
+            #QtGui.QMessageBox.information(self, "News", "Cannot load the online page, trying with your default browser ...")
+            #if QtGui.QDesktopServices.openUrl(self.webpage) == False:
+            #    print("Failed to open the URL: {}".format(self.webpage.toString()))
             self.close()

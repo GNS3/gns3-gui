@@ -118,6 +118,16 @@ class Node(QtCore.QObject):
         self.removeAllocatedName()
         self._allocated_names.append(name)
 
+    def setName(self, name):
+        """
+        Set a name for a node.
+
+        :param name: node name
+        """
+
+        assert name not in self._allocated_names
+        self._allocated_names.append(name)
+
     def hasAllocatedName(self, name):
         """
         Returns either a name is already allocated or not.

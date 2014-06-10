@@ -150,7 +150,7 @@ class IOU(Module):
         :param path: path to the local image files directory
         """
 
-        self._images_dir = path
+        self._images_dir = os.path.join(path, "IOU")
 
     def imageFilesDir(self):
         """

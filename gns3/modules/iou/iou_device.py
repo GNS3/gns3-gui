@@ -554,6 +554,7 @@ class IOUDevice(Node):
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("iou device {} is loading".format(name))
+        self.setName(name)
         self.setup(path, name, console, settings)
 
     def _updatePortSettings(self):

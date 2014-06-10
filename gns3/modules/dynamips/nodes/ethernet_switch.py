@@ -357,6 +357,7 @@ class EthernetSwitch(Node):
                                                           "vlan": topology_port["vlan"]}
 
         log.info("Ethernet switch {} is loading".format(name))
+        self.setName(name)
         self.setup(name)
 
     def name(self):
