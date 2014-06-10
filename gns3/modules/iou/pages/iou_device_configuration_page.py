@@ -40,6 +40,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         self.setupUi(self)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
+        self.uiIOUImageComboBox.currentIndexChanged.connect(self._IOUImageSelectedSlot)
+        self._current_iou_image = ""
 
     def _useDefaultValuesSlot(self, state):
         """
@@ -73,6 +75,18 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         self.uiStartupConfigLineEdit.clear()
         self.uiStartupConfigLineEdit.setText(path)
 
+    def _IOUImageSelectedSlot(self, index):
+        """
+        Warn about changing the IOU image of a device.
+
+        :param index: ignored
+        """
+
+        #TODO: finish IOU image switch tests
+        if self._current_iou_image and self._current_iou_image != self.uiIOUImageComboBox.currentText():
+            QtGui.QMessageBox.warning(self, "IOU image", "The IOU image has been changed, your device may not boot correctly if you apply the new settings")
+            self._current_iou_image = ""
+
     def loadSettings(self, settings, node, group=False):
         """
         Loads the IOU device settings.
@@ -92,12 +106,13 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             # load the available IOU images
             iou_images = IOU.instance().iouImages()
             for iou_image in iou_images.values():
-                #TODO: remote server aware
-                self.uiIOUImageComboBox.addItem(iou_image["image"], iou_image["path"])
+                if iou_image["server"] == "local" and node.server().isLocal() or iou_image["server"] == node.server().host:
+                    self.uiIOUImageComboBox.addItem(iou_image["image"], iou_image["path"])
 
             index = self.uiIOUImageComboBox.findText(os.path.basename(settings["path"]))
             if index != -1:
                 self.uiIOUImageComboBox.setCurrentIndex(index)
+                self._current_iou_image = iou_image["image"]
 
         else:
             self.uiGeneralgroupBox.hide()

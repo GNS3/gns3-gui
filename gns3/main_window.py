@@ -24,6 +24,7 @@ import tempfile
 import socket
 import shutil
 import json
+import glob
 
 from .qt import QtGui, QtCore
 from .servers import Servers
@@ -615,13 +616,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
-    def _labInstructionsActionSlot(self):
+    def _labInstructionsActionSlot(self, silent=False):
         """
         Slot to open lab instructions.
         """
 
-        #TODO: lab instructions
-        QtGui.QMessageBox.critical(self, "Lab instructions", "Sorry, to be implemented!")
+        project_dir = os.path.dirname(self._project_settings["project_path"])
+        instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
+        instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
+        if len(instructions_files):
+            path = instructions_files[0]
+            if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + path, QtCore.QUrl.TolerantMode)) == False and silent == False:
+                QtGui.QMessageBox.critical(self, "Lab instructions", "Could not open {}".format(path))
+        elif silent is False:
+            QtGui.QMessageBox.critical(self, "Lab instructions", "No instructions found")
+
 
     def _aboutQtActionSlot(self):
         """
@@ -1035,6 +1044,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._project_settings["project_path"] = path
         self._setCurrentFile(path)
+        self._labInstructionsActionSlot(silent=True)
 
     def _deleteTemporaryProject(self):
         """
