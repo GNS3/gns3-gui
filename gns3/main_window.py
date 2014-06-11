@@ -558,8 +558,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when adding a new note on the scene.
         """
 
-        #TODO: add notes
-        pass
+        self.uiGraphicsView.addNote(self.uiAddNoteAction.isChecked())
 
     def _insertImageActionSlot(self):
         """

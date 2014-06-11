@@ -19,8 +19,8 @@
 Graphical view on the scene where items are drawn.
 """
 
-
 import pickle
+
 from .qt import QtCore, QtGui, QtNetwork
 from .items.node_item import NodeItem
 from .node_configurator import NodeConfigurator
@@ -35,11 +35,14 @@ from .ports.port import Port
 from .utils.progress_dialog import ProgressDialog
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 
+
 # link items
 from .items.link_item import LinkItem
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
 
+# other items
+from .items.note_item import NoteItem
 
 class GraphicsView(QtGui.QGraphicsView):
     """
@@ -59,6 +62,7 @@ class GraphicsView(QtGui.QGraphicsView):
         self._loadSettings()
 
         self._adding_link = False
+        self._adding_note = False
         self._newlink = None
         self._dragging = False
         self._last_mouse_position = None
@@ -186,6 +190,20 @@ class GraphicsView(QtGui.QGraphicsView):
                 self._newlink = None
             self.setCursor(QtCore.Qt.ArrowCursor)
         self._adding_link = enabled
+
+    def addNote(self, state):
+        """
+        Adds a note.
+
+        :param state: test
+        """
+
+        if state:
+            self._adding_note = True
+            self.setCursor(QtCore.Qt.IBeamCursor)
+        else:
+            self._adding_note = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
 
     def addLink(self, source_node, source_port, destination_node, destination_port):
         """
@@ -401,6 +419,18 @@ class GraphicsView(QtGui.QGraphicsView):
                 self._showContextualMenu(QtGui.QCursor.pos())
         elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
             self._userNodeLinking(event, item)
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
+            note = NoteItem()
+            note.setPos(self.mapToScene(event.pos()))
+            pos_x = note.pos().x()
+            pos_y = note.pos().y() - (note.boundingRect().height() / 2)
+            note.setPos(pos_x, pos_y)
+            self.scene().addItem(note)
+            self._topology.addNote(note)
+            note.editText()
+            self._main_window.uiAddNoteAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_note = False
         else:
             QtGui.QGraphicsView.mousePressEvent(self, event)
 
@@ -604,42 +634,43 @@ class GraphicsView(QtGui.QGraphicsView):
         if not items:
             return
 
-        configure_action = QtGui.QAction("Configure", menu)
-        configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
-        configure_action.triggered.connect(self.configureActionSlot)
-        menu.addAction(configure_action)
+        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
+            configure_action = QtGui.QAction("Configure", menu)
+            configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
+            configure_action.triggered.connect(self.configureActionSlot)
+            menu.addAction(configure_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "console"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
             console_action = QtGui.QAction("Console", menu)
             console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
             console_action.triggered.connect(self.consoleActionSlot)
             menu.addAction(console_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "idlepcs"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepcs"), items)):
             idlepc_action = QtGui.QAction("Idle-PC", menu)
             idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
             idlepc_action.triggered.connect(self.idlepcActionSlot)
             menu.addAction(idlepc_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "start"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "start"), items)):
             start_action = QtGui.QAction("Start", menu)
             start_action.setIcon(QtGui.QIcon(':/icons/play.svg'))
             start_action.triggered.connect(self.startActionSlot)
             menu.addAction(start_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "suspend"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "suspend"), items)):
             suspend_action = QtGui.QAction("Suspend", menu)
             suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
             suspend_action.triggered.connect(self.suspendActionSlot)
             menu.addAction(suspend_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "stop"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "stop"), items)):
             stop_action = QtGui.QAction("Stop", menu)
             stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
             stop_action.triggered.connect(self.stopActionSlot)
             menu.addAction(stop_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "reload"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "reload"), items)):
             reload_action = QtGui.QAction("Reload", menu)
             reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
             reload_action.triggered.connect(self.reloadActionSlot)
@@ -796,20 +827,25 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        selected_items = self.scene().selectedItems()
-        if selected_items:
-            if len(selected_items) > 1:
-                question = "Do you want to permanently delete these modes?"
+        selected_nodes = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem):
+                selected_nodes.append(item.node())
+        if selected_nodes:
+            if len(selected_nodes) > 1:
+                question = "Do you want to permanently delete these {} nodes?".format(len(selected_nodes))
             else:
-                question = "Do you want to permanently delete {}?".format(selected_items[0].node().name())
+                question = "Do you want to permanently delete {}?".format(selected_nodes[0].name())
             reply = QtGui.QMessageBox.question(self, "Delete", question,
                                                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.No:
                 return
-        for item in selected_items:
+        for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
                 item.node().delete()
                 self._topology.removeNode(item.node())
+            else:
+                item.delete()
 
     def createNode(self, node_class, pos):
         """

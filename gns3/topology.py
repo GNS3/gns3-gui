@@ -20,13 +20,15 @@ Contains this entire topology: nodes and links.
 Handles the saving and loading of a topology.
 """
 
-from .qt import QtCore
+from .qt import QtCore, QtGui
 from .items.node_item import NodeItem
+from .items.note_item import NoteItem
 from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
 from .version import __version__
+from pkg_resources import parse_version
 
 import logging
 log = logging.getLogger(__name__)
@@ -41,6 +43,7 @@ class Topology(object):
 
         self._nodes = []
         self._links = []
+        self._notes = []
         self._topology = None
         self._initialized_nodes = []
         self._resources_type = "local"
@@ -109,6 +112,25 @@ class Topology(object):
                 return link
         return None
 
+    def addNote(self, note):
+        """
+        Adds a new note to this topology.
+
+        :param note: NoteItem instance
+        """
+
+        self._notes.append(note)
+
+    def removeNote(self, note):
+        """
+        Removes a note from this topology.
+
+        :param note: NoteItem instance
+        """
+
+        if note in self._notes:
+            self._notes.remove(note)
+
     def nodes(self):
         """
         Returns all the nodes in this topology.
@@ -123,6 +145,13 @@ class Topology(object):
 
         return self._links
 
+    def notes(self):
+        """
+        Returns all the notes in this topology.
+        """
+
+        return self._notes
+
     def reset(self):
         """
         Resets this topology.
@@ -131,6 +160,7 @@ class Topology(object):
         #self._topology.clear()
         self._links.clear()
         self._nodes.clear()
+        self._notes.clear()
         self._initialized_nodes.clear()
         self._resources_type = "local"
         log.info("topology has been reset")
@@ -195,12 +225,18 @@ class Topology(object):
                 log.info("saving {}".format(str(link)))
                 topology_links.append(link.dump())
 
-        # finally the servers
+        # then the servers
         if servers:
             topology_servers = topology["topology"]["servers"] = []
             for server in servers.values():
                 log.info("saving server {}:{}".format(server.host, server.port))
                 topology_servers.append(server.dump())
+
+        # finally the notes
+        if self._notes:
+            topology_notes = topology["topology"]["notes"] = []
+            for note in self._notes:
+                topology_notes.append(note.dump())
 
         if include_gui_data:
             self._dump_gui_settings(topology)
@@ -218,14 +254,17 @@ class Topology(object):
         main_window = MainWindow.instance()
         view = main_window.uiGraphicsView
 
+        if "topology" not in topology or "version" not in topology:
+            log.warn("not a topology file")
+            return
+
+        if parse_version(topology["version"]) <= parse_version("1.0a6"):
+            QtGui.QMessageBox.warning(main_window, "Version", "Importing a project made with an old alpha version may not work properly")
+
         # deactivate the unsaved state support
         main_window.ignoreUnsavedState(True)
         # trick: no matter what, reactivate the unsaved state support after 3 seconds
         QtCore.QTimer.singleShot(3000, self._reactivateUnsavedState)
-
-        if "topology" not in topology:
-            log.warn("not a topology file")
-            return
 
         self._node_to_links_mapping = {}
         # first create a mapping node ID to links
@@ -255,7 +294,7 @@ class Topology(object):
                     port = topology_server["port"]
                     self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
 
-        # finally load the nodes
+        # then load the nodes
         node_errors = []
         if "nodes" in topology["topology"]:
             topology_nodes = {}
@@ -319,6 +358,15 @@ class Topology(object):
         if node_errors:
             errors = "\n".join(node_errors)
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
+
+        # finally load the notes
+        if "notes" in topology["topology"]:
+            notes = topology["topology"]["notes"]
+            for topology_note in notes:
+                note_item = NoteItem()
+                note_item.load(topology_note)
+                view.scene().addItem(note_item)
+                self.addNote(note_item)
 
     def _nodeCreatedSlot(self, node_id):
         """
