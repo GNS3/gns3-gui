@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Graphical representation of a node on the QGraphicsScene.
+Graphical representation of a note on the QGraphicsScene.
 """
 
 from ..qt import QtCore, QtGui
@@ -35,8 +35,8 @@ class NoteItem(QtGui.QGraphicsTextItem):
         self.setFont(QtGui.QFont("TypeWriter", 10, QtGui.QFont.Bold))
         self.setFlag(self.ItemIsMovable)
         self.setFlag(self.ItemIsSelectable)
-        self.rotation = 0
         self.setZValue(2)
+        self._rotation = 0
 
     def delete(self):
         """

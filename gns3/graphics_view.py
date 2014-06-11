@@ -43,6 +43,9 @@ from .items.serial_link_item import SerialLinkItem
 
 # other items
 from .items.note_item import NoteItem
+from .items.rectangle_item import RectangleItem
+from .items.ellipse_item import EllipseItem
+
 
 class GraphicsView(QtGui.QGraphicsView):
     """
@@ -63,6 +66,8 @@ class GraphicsView(QtGui.QGraphicsView):
 
         self._adding_link = False
         self._adding_note = False
+        self._adding_rectangle = False
+        self._adding_ellipse = False
         self._newlink = None
         self._dragging = False
         self._last_mouse_position = None
@@ -195,7 +200,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
         Adds a note.
 
-        :param state: test
+        :param state: boolean
         """
 
         if state:
@@ -203,6 +208,34 @@ class GraphicsView(QtGui.QGraphicsView):
             self.setCursor(QtCore.Qt.IBeamCursor)
         else:
             self._adding_note = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addRectangle(self, state):
+        """
+        Adds a rectangle.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_rectangle = True
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self._adding_rectangle = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addEllipse(self, state):
+        """
+        Adds an ellipse.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_ellipse = True
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self._adding_ellipse = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
     def addLink(self, source_node, source_port, destination_node, destination_port):
@@ -431,6 +464,20 @@ class GraphicsView(QtGui.QGraphicsView):
             self._main_window.uiAddNoteAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_note = False
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
+            rectangle = RectangleItem(self.mapToScene(event.pos()))
+            self.scene().addItem(rectangle)
+            self._topology.addRectangle(rectangle)
+            self._main_window.uiDrawRectangleAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_rectangle = False
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
+            ellipse = EllipseItem(self.mapToScene(event.pos()))
+            self.scene().addItem(ellipse)
+            self._topology.addEllipse(ellipse)
+            self._main_window.uiDrawEllipseAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_ellipse = False
         else:
             QtGui.QGraphicsView.mousePressEvent(self, event)
 

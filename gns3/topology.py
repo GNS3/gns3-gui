@@ -23,6 +23,8 @@ Handles the saving and loading of a topology.
 from .qt import QtCore, QtGui
 from .items.node_item import NodeItem
 from .items.note_item import NoteItem
+from .items.rectangle_item import RectangleItem
+from .items.ellipse_item import EllipseItem
 from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
@@ -44,6 +46,8 @@ class Topology(object):
         self._nodes = []
         self._links = []
         self._notes = []
+        self._rectangles = []
+        self._ellipses = []
         self._topology = None
         self._initialized_nodes = []
         self._resources_type = "local"
@@ -131,6 +135,44 @@ class Topology(object):
         if note in self._notes:
             self._notes.remove(note)
 
+    def addRectangle(self, rectangle):
+        """
+        Adds a new rectangle to this topology.
+
+        :param rectangle: RectangleItem instance
+        """
+
+        self._rectangles.append(rectangle)
+
+    def removeRectangle(self, rectangle):
+        """
+        Removes a rectangle from this topology.
+
+        :param rectangle: RectangleItem instance
+        """
+
+        if rectangle in self._rectangles:
+            self._rectangles.remove(rectangle)
+
+    def addEllipse(self, ellipse):
+        """
+        Adds a new ellipse to this topology.
+
+        :param ellipse: EllipseItem instance
+        """
+
+        self._ellipses.append(ellipse)
+
+    def removeEllipse(self, ellipse):
+        """
+        Removes an ellipse from this topology.
+
+        :param ellipse: EllipseItem instance
+        """
+
+        if ellipse in self._ellipses:
+            self._ellipses.remove(ellipse)
+
     def nodes(self):
         """
         Returns all the nodes in this topology.
@@ -152,6 +194,20 @@ class Topology(object):
 
         return self._notes
 
+    def rectangles(self):
+        """
+        Returns all the rectangles in this topology.
+        """
+
+        return self._rectangles
+
+    def ellipses(self):
+        """
+        Returns all the ellipses in this topology.
+        """
+
+        return self._ellipses
+
     def reset(self):
         """
         Resets this topology.
@@ -161,6 +217,8 @@ class Topology(object):
         self._links.clear()
         self._nodes.clear()
         self._notes.clear()
+        self._rectangles.clear()
+        self._ellipses.clear()
         self._initialized_nodes.clear()
         self._resources_type = "local"
         log.info("topology has been reset")
@@ -209,7 +267,7 @@ class Topology(object):
 
         servers = {}
 
-        # first the nodes
+        # nodes
         if self._nodes:
             topology_nodes = topology["topology"]["nodes"] = []
             for node in self._nodes:
@@ -218,25 +276,37 @@ class Topology(object):
                 log.info("saving node: {}".format(node.name()))
                 topology_nodes.append(node.dump())
 
-        # then the links
+        # links
         if self._links:
             topology_links = topology["topology"]["links"] = []
             for link in self._links:
                 log.info("saving {}".format(str(link)))
                 topology_links.append(link.dump())
 
-        # then the servers
+        # servers
         if servers:
             topology_servers = topology["topology"]["servers"] = []
             for server in servers.values():
                 log.info("saving server {}:{}".format(server.host, server.port))
                 topology_servers.append(server.dump())
 
-        # finally the notes
+        # notes
         if self._notes:
             topology_notes = topology["topology"]["notes"] = []
             for note in self._notes:
                 topology_notes.append(note.dump())
+
+        # rectangles
+        if self._rectangles:
+            topology_rectangles = topology["topology"]["rectangles"] = []
+            for rectangle in self._rectangles:
+                topology_rectangles.append(rectangle.dump())
+
+        # ellipses
+        if self._ellipses:
+            topology_ellipses = topology["topology"]["ellipses"] = []
+            for ellipse in self._ellipses:
+                topology_ellipses.append(ellipse.dump())
 
         if include_gui_data:
             self._dump_gui_settings(topology)
@@ -267,7 +337,7 @@ class Topology(object):
         QtCore.QTimer.singleShot(3000, self._reactivateUnsavedState)
 
         self._node_to_links_mapping = {}
-        # first create a mapping node ID to links
+        # create a mapping node ID to links
         if "links" in topology["topology"]:
             links = topology["topology"]["links"]
             for topology_link in links:
@@ -281,7 +351,7 @@ class Topology(object):
                 self._node_to_links_mapping[source_id].append(topology_link)
                 self._node_to_links_mapping[destination_id].append(topology_link)
 
-        # then load the servers
+        # servers
         self._servers = {}
         server_manager = Servers.instance()
         if "servers" in topology["topology"]:
@@ -294,7 +364,7 @@ class Topology(object):
                     port = topology_server["port"]
                     self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
 
-        # then load the nodes
+        # nodes
         node_errors = []
         if "nodes" in topology["topology"]:
             topology_nodes = {}
@@ -359,7 +429,7 @@ class Topology(object):
             errors = "\n".join(node_errors)
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
 
-        # finally load the notes
+        # notes
         if "notes" in topology["topology"]:
             notes = topology["topology"]["notes"]
             for topology_note in notes:
@@ -367,6 +437,24 @@ class Topology(object):
                 note_item.load(topology_note)
                 view.scene().addItem(note_item)
                 self.addNote(note_item)
+
+        # rectangles
+        if "rectangles" in topology["topology"]:
+            rectangles = topology["topology"]["rectangles"]
+            for topology_rectangle in rectangles:
+                rectangle_item = RectangleItem()
+                rectangle_item.load(topology_rectangle)
+                view.scene().addItem(rectangle_item)
+                self.addRectangle(rectangle_item)
+
+        # ellipses
+        if "ellipses" in topology["topology"]:
+            ellipses = topology["topology"]["ellipses"]
+            for topology_ellipse in ellipses:
+                ellipse_item = EllipseItem()
+                ellipse_item.load(topology_ellipse)
+                view.scene().addItem(ellipse_item)
+                self.addEllipse(ellipse_item)
 
     def _nodeCreatedSlot(self, node_id):
         """

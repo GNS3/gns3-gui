@@ -573,16 +573,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when adding a rectangle on the scene.
         """
 
-        #TODO: draw rectangles
-        pass
+        self.uiGraphicsView.addRectangle(self.uiDrawRectangleAction.isChecked())
 
     def _drawEllipseActionSlot(self):
         """
         Slot called when adding a ellipse on the scene.
         """
 
-        #TODO: draw ellipse
-        pass
+        self.uiGraphicsView.addEllipse(self.uiDrawEllipseAction.isChecked())
 
     def _onlineHelpActionSlot(self):
         """
