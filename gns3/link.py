@@ -155,6 +155,42 @@ class Link(QtCore.QObject):
 
         return self._id
 
+    def sourceNode(self):
+        """
+        Returns the source node for this link.
+
+        :returns: Node instance
+        """
+
+        return self._source_node
+
+    def destinationNode(self):
+        """
+        Returns the destination node for this link.
+
+        :returns: Node instance
+        """
+
+        return self._destination_node
+
+    def sourcePort(self):
+        """
+        Returns the source port for this link.
+
+        :returns: Port instance
+        """
+
+        return self._source_port
+
+    def destinationPort(self):
+        """
+        Returns the destination port for this link.
+
+        :returns: Port instance
+        """
+
+        return self._destination_port
+
     def UDPPortAllocatedSlot(self, node_id, port_id, lport):
         """
         Slot to receive events from Node instances

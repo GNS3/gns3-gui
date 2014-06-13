@@ -49,6 +49,7 @@ class Port(object):
         self._slot_number = None
         self._stub = stub
         self._link_id = None
+        self._port_label = None
         self._status = Port.stopped
         self._data = {}
         self._destination_node = None
@@ -265,6 +266,7 @@ class Port(object):
         self._link_id = None
         self._destination_node = None
         self._destination_port = None
+        self._port_label = None
 
     def isFree(self):
         """
@@ -314,6 +316,24 @@ class Port(object):
 
         self._data = new_data
 
+    def label(self):
+        """
+        Returns the port label.
+
+        :return: NoteItem instance.
+        """
+
+        return self._port_label
+
+    def setLabel(self, label):
+        """
+        Sets a port label.
+
+        :param label: NoteItem instance.
+        """
+
+        self._port_label = label
+
     def dump(self):
         """
         Returns a representation of this port.
@@ -326,15 +346,15 @@ class Port(object):
 
         if self._nio:
             port["nio"] = str(self._nio)
-        if self._port_number != None:
+        if self._port_number is not None:
             port["port_number"] = self._port_number
-        if self._slot_number != None:
+        if self._slot_number is not None:
             port["slot_number"] = self._slot_number
         if self._stub:
             port["stub"] = self._stub
         if self.description():
             port["description"] = self.description()
-        if self._link_id != None:
+        if self._link_id is not None:
             port["link_id"] = self._link_id
 
         return port

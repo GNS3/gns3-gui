@@ -267,15 +267,15 @@ class GraphicsView(QtGui.QGraphicsView):
         link = self._topology.getLink(link_id)
         source_item = None
         destination_item = None
-        source_port = link._source_port
-        destination_port = link._destination_port
+        source_port = link.sourcePort()
+        destination_port = link.destinationPort()
 
         # find the correct source and destination node items
         for item in self.scene().items():
             if isinstance(item, NodeItem):
-                if item.node().id() == link._source_node.id():
+                if item.node().id() == link.sourceNode().id():
                     source_item = item
-                if item.node().id() == link._destination_node.id():
+                if item.node().id() == link.destinationNode().id():
                     destination_item = item
             if source_item and destination_item:
                 break
@@ -571,7 +571,7 @@ class GraphicsView(QtGui.QGraphicsView):
             event.ignore()
         else:
             item = self.itemAt(event.pos())
-            if item and isinstance(item, NodeItem):
+            if item:
                 # show item coords in the status bar
                 coords = "X: {} Y: {} Z: {}".format(item.x(), item.y(), item.zValue())
                 self._main_window.uiStatusBar.showMessage(coords, 2000)

@@ -40,6 +40,7 @@ from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
+from .items.link_item import LinkItem
 from .topology import Topology
 
 import logging
@@ -215,6 +216,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiShowLayersAction.triggered.connect(self._showLayersActionSlot)
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowNamesAction.triggered.connect(self._showNamesActionSlot)
+        self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
 
         # style menu connections
         self.uiDefaultStyleAction.triggered.connect(self._defaultStyleActionSlot)
@@ -472,6 +474,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         #TODO: show/hide node names
         pass
+
+    def _showPortNamesActionSlot(self):
+        """
+        Slot called to show the port names on the scene.
+        """
+
+        LinkItem.showPortLabels(self.uiShowPortNamesAction.isChecked())
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, LinkItem):
+                item.adjust()
 
     def _defaultStyleActionSlot(self):
         """

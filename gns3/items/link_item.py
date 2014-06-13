@@ -37,6 +37,8 @@ class LinkItem(QtGui.QGraphicsPathItem):
     :param multilink: used to draw multiple link between the same source and destination
     """
 
+    _draw_port_labels = False
+
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
 
         QtGui.QGraphicsPathItem.__init__(self)
@@ -117,6 +119,15 @@ class LinkItem(QtGui.QGraphicsPathItem):
         if self in self.scene().items():
             self.scene().removeItem(self)
 
+    def link(self):
+        """
+        Returns the link attached to this link item.
+
+        :returns: Link instance
+        """
+
+        return self._link
+
     def setCustomToolTip(self):
         """
         Sets a custom tool tip for this link.
@@ -160,6 +171,16 @@ class LinkItem(QtGui.QGraphicsPathItem):
         """
 
         return self._destination_port
+
+    @classmethod
+    def showPortLabels(cls, state):
+        """
+        Shows or hides port labels.
+
+        :param state: boolean
+        """
+
+        cls._draw_port_labels = state
 
     def mousePressEvent(self, event):
         """

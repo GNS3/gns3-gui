@@ -22,6 +22,7 @@ Handles the saving and loading of a topology.
 
 from .qt import QtCore, QtGui
 from .items.node_item import NodeItem
+from .items.link_item import LinkItem
 from .items.note_item import NoteItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
@@ -242,6 +243,33 @@ class Topology(object):
                             node["y"] = item.y()
                             if item.zValue() != 1.0:
                                 node["z"] = item.zValue()
+                if isinstance(item, LinkItem):
+                    for link in topology["topology"]["links"]:
+                        if link["id"] == item.link().id():
+                            source_port_label = item.sourcePort().label()
+                            destination_port_label = item.destinationPort().label()
+                            if source_port_label:
+                                link["source_port_label"] = source_port_label.dump()
+                            if destination_port_label:
+                                link["destination_port_label"] = destination_port_label.dump()
+
+        # notes
+        if self._notes:
+            topology_notes = topology["topology"]["notes"] = []
+            for note in self._notes:
+                topology_notes.append(note.dump())
+
+        # rectangles
+        if self._rectangles:
+            topology_rectangles = topology["topology"]["rectangles"] = []
+            for rectangle in self._rectangles:
+                topology_rectangles.append(rectangle.dump())
+
+        # ellipses
+        if self._ellipses:
+            topology_ellipses = topology["topology"]["ellipses"] = []
+            for ellipse in self._ellipses:
+                topology_ellipses.append(ellipse.dump())
 
     def dump(self, include_gui_data=True):
         """
@@ -289,24 +317,6 @@ class Topology(object):
             for server in servers.values():
                 log.info("saving server {}:{}".format(server.host, server.port))
                 topology_servers.append(server.dump())
-
-        # notes
-        if self._notes:
-            topology_notes = topology["topology"]["notes"] = []
-            for note in self._notes:
-                topology_notes.append(note.dump())
-
-        # rectangles
-        if self._rectangles:
-            topology_rectangles = topology["topology"]["rectangles"] = []
-            for rectangle in self._rectangles:
-                topology_rectangles.append(rectangle.dump())
-
-        # ellipses
-        if self._ellipses:
-            topology_ellipses = topology["topology"]["ellipses"] = []
-            for ellipse in self._ellipses:
-                topology_ellipses.append(ellipse.dump())
 
         if include_gui_data:
             self._dump_gui_settings(topology)
@@ -494,16 +504,43 @@ class Topology(object):
                     for port in source_node.ports():
                         if port.id() == link["source_port_id"]:
                             source_port = port
+                            if "source_port_label" in link:
+                                source_port.setLabel(self._createPortLabel(source_node, link["source_port_label"]))
                             break
 
                     # find the destination port
                     for port in destination_node.ports():
                         if port.id() == link["destination_port_id"]:
                             destination_port = port
+                            if "destination_port_label" in link:
+                                destination_port.setLabel(self._createPortLabel(destination_node, link["destination_port_label"]))
                             break
 
                     if source_port and destination_port:
                         view.addLink(source_node, source_port, destination_node, destination_port)
+
+    def _createPortLabel(self, node, label_info):
+        """
+        Creates a port label.
+
+        :param node: Node instance
+        :param label_info:  label info (dictionary)
+
+        :return: NoteItem instance
+        """
+
+        from .main_window import MainWindow
+        view = MainWindow.instance().uiGraphicsView
+
+        for item in view.scene().items():
+            if isinstance(item, NodeItem) and node.id() == item.node().id():
+                port_label = NoteItem(item)
+                port_label.setPlainText(label_info["text"])
+                port_label.setPos(label_info["x"], label_info["y"])
+                port_label.setZValue(label_info["z"])
+                port_label.hide()
+                return port_label
+        return None
 
     def _reactivateUnsavedState(self):
         """
