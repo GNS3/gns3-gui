@@ -19,6 +19,7 @@
 Graphical view on the scene where items are drawn.
 """
 
+import os
 import pickle
 
 from .qt import QtCore, QtGui, QtNetwork
@@ -618,10 +619,8 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QDragMoveEvent instance
         """
 
-        # TODO: drag of a topology file
-
         # check if what is dragged is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-node"):
+        if event.mimeData().hasFormat("application/x-gns3-node") or event.mimeData().hasFormat("text/uri-list"):
             event.acceptProposedAction()
             event.accept()
         else:
@@ -634,8 +633,6 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QDropEvent instance
         """
 
-        # TODO: drop of a topology file
-
         # TODO: multi-drop
 
         # check if what has been dropped is handled by this view
@@ -646,6 +643,14 @@ class GraphicsView(QtGui.QGraphicsView):
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             self.createNode(node_class, event.pos())
+        elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
+            if len(event.mimeData().urls()) > 1:
+                QtGui.QMessageBox.critical(self, "Project files", "Please drop only one file")
+                return
+            path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isfile(path) and self._main_window.checkForUnsavedChanges():
+                self._main_window.loadProject(path)
+            event.acceptProposedAction()
         else:
             event.ignore()
 

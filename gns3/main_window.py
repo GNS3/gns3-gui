@@ -326,7 +326,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "All files (*.*);;GNS3 project files (*.gns3)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
-            self._loadProject(path)
+            self.loadProject(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -1028,7 +1028,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._setCurrentFile(path)
         return True
 
-    def _loadProject(self, path):
+    def loadProject(self, path):
         """
         Loads a project into GNS3.
 
