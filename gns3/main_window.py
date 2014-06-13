@@ -230,6 +230,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiAuxConsoleAllAction.triggered.connect(self._auxConsoleAllActionSlot)
         self.uiConsoleAllAction.triggered.connect(self._consoleAllActionSlot)
 
+        # device menu is contextual and is build on-the-fly
+        self.uiDeviceMenu.aboutToShow.connect(self._deviceMenuActionSlot)
+
         # annotate menu connections
         self.uiAddNoteAction.triggered.connect(self._addNoteActionSlot)
         self.uiInsertImageAction.triggered.connect(self._insertImageActionSlot)
@@ -536,6 +539,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
+
+    def _deviceMenuActionSlot(self):
+        """
+        Slot to contextually show the device menu.
+        """
+
+        self.uiDeviceMenu.clear()
+        self.uiGraphicsView.populateDeviceContextualMenu(self.uiDeviceMenu)
 
     def _auxConsoleAllActionSlot(self):
         """

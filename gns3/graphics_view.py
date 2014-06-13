@@ -441,15 +441,15 @@ class GraphicsView(QtGui.QGraphicsView):
                     if item.zValue() < 0:
                         item.setFlag(item.ItemIsSelectable, True)
                     item.setSelected(True)
-                    self._showContextualMenu(QtGui.QCursor.pos())
+                    self._showDeviceContextualMenu(QtGui.QCursor.pos())
                     if item.zValue() < 0:
                         item.setFlag(item.ItemIsSelectable, False)
 
                 else:
-                    self._showContextualMenu(QtGui.QCursor.pos())
+                    self._showDeviceContextualMenu(QtGui.QCursor.pos())
             # when more than one item is selected display the contextual menu even if mouse is not above an item
             elif len(self.scene().selectedItems()) > 1:
-                self._showContextualMenu(QtGui.QCursor.pos())
+                self._showDeviceContextualMenu(QtGui.QCursor.pos())
         elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
             self._userNodeLinking(event, item)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
@@ -658,21 +658,21 @@ class GraphicsView(QtGui.QGraphicsView):
 # 
 #         self._showContextualMenu(event.globalPos())
 
-    def _showContextualMenu(self, pos):
+    def _showDeviceContextualMenu(self, pos):
         """
-        Create and display a contextual menu.
+        Create and display the device contextual menu on the view.
 
         :param pos: position where to display the menu
         """
 
         menu = QtGui.QMenu()
-        self._populateContextMenu(menu)
+        self.populateDeviceContextualMenu(menu)
         menu.exec_(pos)
         menu.clear()
 
-    def _populateContextMenu(self, menu):
+    def populateDeviceContextualMenu(self, menu):
         """
-        Adds actions to the contextual menu.
+        Adds device actions to the device contextual menu.
 
         :param menu: QMenu instance
         """
