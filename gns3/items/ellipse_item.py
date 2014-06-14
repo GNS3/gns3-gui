@@ -81,3 +81,17 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
         self.rect().setHeight(height)
         self.setPos(x, y)
         self.setZValue(z)
+
+    def duplicate(self):
+        """
+        Duplicates this ellipse item.
+
+        :return: EllipseItem instance
+        """
+
+        ellipse_item = EllipseItem()
+        ellipse_item.rect().setWidth(self.rect().width())
+        ellipse_item.rect().setHeight(self.rect().height())
+        ellipse_item.setPos(self.x() + 20, self.y() + 20)
+        ellipse_item.setZValue(self.zValue())
+        return ellipse_item

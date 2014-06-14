@@ -81,3 +81,17 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
         self.rect().setHeight(height)
         self.setPos(x, y)
         self.setZValue(z)
+
+    def duplicate(self):
+        """
+        Duplicates this rectangle item.
+
+        :return: RectangleItem instance
+        """
+
+        rectangle_item = RectangleItem()
+        rectangle_item.rect().setWidth(self.rect().width())
+        rectangle_item.rect().setHeight(self.rect().height())
+        rectangle_item.setPos(self.x() + 20, self.y() + 20)
+        rectangle_item.setZValue(self.zValue())
+        return rectangle_item

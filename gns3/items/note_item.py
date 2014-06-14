@@ -163,3 +163,16 @@ class NoteItem(QtGui.QGraphicsTextItem):
         self.setPlainText(text)
         self.setPos(x, y)
         self.setZValue(z)
+
+    def duplicate(self):
+        """
+        Duplicates this node item.
+
+        :return: NoteItem instance
+        """
+
+        note_item = NoteItem(self.parent())
+        note_item.setPlainText(self.toPlainText())
+        note_item.setPos(self.x() + 20, self.y() + 20)
+        note_item.setZValue(self.zValue())
+        return note_item

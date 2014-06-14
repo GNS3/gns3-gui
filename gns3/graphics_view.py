@@ -44,6 +44,7 @@ from .items.serial_link_item import SerialLinkItem
 
 # other items
 from .items.note_item import NoteItem
+from .items.shape_item import ShapeItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 
@@ -728,6 +729,12 @@ class GraphicsView(QtGui.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
+        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, ShapeItem), items)):
+            duplicate_action = QtGui.QAction("Duplicate", menu)
+            duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
+            duplicate_action.triggered.connect(self.duplicateActionSlot)
+            menu.addAction(duplicate_action)
+
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
         delete_action.triggered.connect(self.deleteActionSlot)
@@ -872,6 +879,26 @@ class GraphicsView(QtGui.QGraphicsView):
                         node.setIdlepc(idlepc)
         else:
             QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no idle-pc values could be computed, please check again with Cisco IOS in a different state")
+
+    def duplicateActionSlot(self):
+        """
+        Slot to receive events from the duplicate action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NoteItem):
+                note_item = item.duplicate()
+                self.scene().addItem(note_item)
+                self._topology.addNote(note_item)
+            elif isinstance(item, RectangleItem):
+                rectangle_item = item.duplicate()
+                self.scene().addItem(rectangle_item)
+                self._topology.addRectangle(rectangle_item)
+            elif isinstance(item, EllipseItem):
+                ellipse_item = item.duplicate()
+                self.scene().addItem(ellipse_item)
+                self._topology.addEllipse(ellipse_item)
 
     def deleteActionSlot(self):
         """
