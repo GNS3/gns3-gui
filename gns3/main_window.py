@@ -74,6 +74,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._connections()
         self._ignore_unsaved_state = False
         self._temporary_project = True
+        self._max_recent_files = 5
+        self._recent_file_actions = []
 
         self._project_settings = {
             "project_name": "unsaved",
@@ -96,6 +98,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # set the images directory
         self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
+
+        # add recent file actions to the File menu
+        for i in range(0, self._max_recent_files):
+            action = QtGui.QAction(self.uiFileMenu)
+            action.setVisible(False)
+            action.triggered.connect(self._openRecentFileSlot)
+            self._recent_file_actions.append(action)
+        self.uiFileMenu.insertActions(self.uiQuitAction, self._recent_file_actions)
+        self._recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
+        self._recent_file_actions_separator.setVisible(False)
+        self._updateRecentFileActions()
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -327,6 +340,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
             self.loadProject(path)
+
+    def _openRecentFileSlot(self):
+        """
+        Slot called to open recent file from the File menu.
+        """
+
+        action = self.sender()
+        if action:
+            path = action.data()
+            if not os.path.isfile(path):
+                QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
+                return
+            if self.checkForUnsavedChanges():
+                self.loadProject(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -1046,6 +1073,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         topology = Topology.instance()
         try:
+            QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             with open(path, "r") as f:
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
@@ -1053,6 +1081,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
                 topology.load(json_topology)
+            QtGui.QApplication.restoreOverrideCursor()
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1126,7 +1155,72 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self._temporary_project = False
             self.setWindowFilePath(path)
+            self._updateRecentFileSettings(path)
+            self._updateRecentFileActions()
+
         self.setWindowModified(False)
+
+    def _updateRecentFileSettings(self, path):
+        """
+        Updates the recent file settings.
+
+        :param path: path to the new file
+        """
+
+        recent_files = []
+        settings = QtCore.QSettings()
+
+        # read the recent file list
+        settings.beginGroup("RecentFiles")
+        size = settings.beginReadArray("file")
+        for index in range(0, size):
+            settings.setArrayIndex(index)
+            file_path = settings.value("path", "")
+            if file_path:
+                recent_files.append(file_path)
+        settings.endArray()
+
+        # update the recent file list
+        if path in recent_files:
+            recent_files.remove(path)
+        recent_files.insert(0, path)
+        if len(recent_files) > self._max_recent_files:
+            recent_files.pop()
+
+        # write the recent file list
+        settings.beginWriteArray("file", len(recent_files))
+        index = 0
+        for file_path in recent_files:
+            settings.setArrayIndex(index)
+            settings.setValue("path", file_path)
+            index += 1
+        settings.endArray()
+        settings.endGroup()
+
+    def _updateRecentFileActions(self):
+        """
+        Updates recent file actions.
+        """
+
+        settings = QtCore.QSettings()
+        settings.beginGroup("RecentFiles")
+        size = settings.beginReadArray("file")
+        for index in range(0, size):
+            settings.setArrayIndex(index)
+            file_path = settings.value("path", "")
+            if file_path:
+                action = self._recent_file_actions[index]
+                action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                action.setData(file_path)
+                action.setVisible(True)
+                index += 1
+        settings.endArray()
+
+        for index in range(size + 1, self._max_recent_files):
+            self._recent_file_actions[index].setVisible(False)
+
+        if size:
+            self._recent_file_actions_separator.setVisible(True)
 
     def projectsDirPath(self):
         """
