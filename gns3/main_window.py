@@ -1081,7 +1081,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
                 topology.load(json_topology)
-            QtGui.QApplication.restoreOverrideCursor()
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1089,6 +1088,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except ValueError as e:
             QtGui.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))
             return False
+        finally:
+            QtGui.QApplication.restoreOverrideCursor()
 
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._project_settings["project_path"] = path

@@ -219,7 +219,7 @@ class Router(Node):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def setup(self, image, ram, name=None, initial_settings={}):
+    def setup(self, image, ram, name=None, router_id=None, initial_settings={}):
         """
         Setups this router.
 
@@ -245,6 +245,9 @@ class Router(Node):
                   "platform": platform,
                   "ram": ram,
                   "image": image}
+
+        if router_id:
+            params["router_id"] = router_id
 
         # add some initial settings
         if "console" in initial_settings:
@@ -822,6 +825,7 @@ class Router(Node):
         self._saveConfig()
 
         router = {"id": self.id(),
+                  "router_id": self._router_id,
                   "type": self.__class__.__name__,
                   "description": str(self),
                   "properties": {},
@@ -854,6 +858,7 @@ class Router(Node):
         """
 
         self.node_info = node_info
+        router_id = node_info.get("router_id")
         settings = node_info["properties"]
         name = settings.pop("name")
         image = settings.pop("image")
@@ -868,7 +873,7 @@ class Router(Node):
         self._loading = True
         log.info("router {} is loading".format(name))
         self.setName(name)
-        self.setup(image, ram, name, settings)
+        self.setup(image, ram, name, router_id, settings)
 
     def _updatePortSettings(self):
         """

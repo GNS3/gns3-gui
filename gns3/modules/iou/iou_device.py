@@ -104,7 +104,7 @@ class IOUDevice(Node):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, console=None, initial_settings={}):
+    def setup(self, iou_path, name=None, console=None, iou_id=None, initial_settings={}):
         """
         Setups this IOU device.
 
@@ -123,6 +123,9 @@ class IOUDevice(Node):
 
         params = {"name": name,
                   "path": iou_path}
+
+        if iou_id:
+            params["iou_id"] = iou_id
 
         if console:
             params["console"] = self._settings["console"] = console
@@ -509,6 +512,7 @@ class IOUDevice(Node):
         """
 
         router = {"id": self.id(),
+                  "iou_id": self._iou_id,
                   "type": self.__class__.__name__,
                   "description": str(self),
                   "properties": {},
@@ -541,6 +545,7 @@ class IOUDevice(Node):
         """
 
         self.node_info = node_info
+        iou_id = node_info.get("iou_id")
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
@@ -555,7 +560,7 @@ class IOUDevice(Node):
         self._loading = True
         log.info("iou device {} is loading".format(name))
         self.setName(name)
-        self.setup(path, name, console, settings)
+        self.setup(path, name, console, iou_id, settings)
 
     def _updatePortSettings(self):
         """
