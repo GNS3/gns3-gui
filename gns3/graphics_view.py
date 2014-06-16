@@ -540,11 +540,11 @@ class GraphicsView(QtGui.QGraphicsView):
             factor_out = pow(2.0, -120 / 240.0)
             self.scaleView(factor_out)
         elif event.key() == QtCore.Qt.Key_Delete:
-            # check if we are editing an Annotation instance, then send the Delete event to it
-#             for item in self.__topology.selectedItems():
-#                 if isinstance(item, Annotation) and item.hasFocus():
-#                     QtGui.QGraphicsView.keyPressEvent(self, event)
-#                     return
+            # check if we are editing an NoteItem instance, then send the delete key event to it
+            for item in self.scene().selectedItems():
+                if isinstance(item, NoteItem) and item.hasFocus():
+                    QtGui.QGraphicsView.keyPressEvent(self, event)
+                    return
             self.deleteActionSlot()
         else:
             QtGui.QGraphicsView.keyPressEvent(self, event)
