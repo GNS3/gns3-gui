@@ -3,11 +3,14 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QAction
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import Qt
+
+from .settings import CLOUD_PROVIDERS
+from .utils import import_from_string
 
 import random
 
@@ -36,9 +39,6 @@ class InstanceTableModel(QAbstractTableModel):
         self._header_data = ['Instance', '', 'Size', 'Devices']  # status has an empty header label
         self._width = len(self._header_data)
         self._instances = []
-        self._pollingTimer = QTimer(self)
-        self._pollingTimer.timeout.connect(self._update)
-        self._pollingTimer.start(1000)
 
     def _get_status_icon_path(self, state):
         """
@@ -100,7 +100,7 @@ class InstanceTableModel(QAbstractTableModel):
         """
         try:
             return self._instances[index]
-        except ValueError:
+        except IndexError:
             return None
 
     def update_instance_status(self, instance):
@@ -111,44 +111,66 @@ class InstanceTableModel(QAbstractTableModel):
             i = self._instances.index(instance)
             current = self._instances[i]
             current.state = instance.state
-            status_index = self.createIndex(i, 0)
-            self.dataChanged.emit(status_index, status_index)
+            first_index = self.createIndex(i, 0)
+            last_index = self.createIndex(i, self.columnCount()-1)
+            self.dataChanged.emit(first_index, last_index)
         except ValueError:
             pass
-
-    def _update(self):
-        """
-        Sync model data with instances status
-
-        FIXME get real data from libcloud
-        """
-        for i in self._instances:
-            i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
-            self.update_instance_status(i)
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
     Table view showing data coming from InstanceTableModel
+
+    Signals:
+        instanceSelected(int) Emitted when users click and select an instance on the inspector.
+        Param int is the ID of the instance
     """
+    instanceSelected = pyqtSignal(int)
+
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
 
-        self._model = InstanceTableModel()
+        self._provider = None
+        self._model = InstanceTableModel()  # shortcut for self.uiInstancesTableView.model()
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
         self.uiInstancesTableView.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
+        # connections
+        self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
+        self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
 
-    def load(self):
+        self._pollingTimer = QTimer(self)
+        self._pollingTimer.timeout.connect(self._update_model)
+
+    def load(self, cloud_settings):
         """
-        FIXME: This is a stub, waiting for the cloud api
+        Fill the model data layer with instances retrieved through libcloud
         """
+        provider_id = cloud_settings['cloud_provider']
+        username = cloud_settings['cloud_user_name']
+        apikey = cloud_settings['cloud_api_key']
+        region = cloud_settings['cloud_region']
+        provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
+        self._provider = provider_controller_class(username, apikey)
+
+        if not region:
+            region = self._provider.list_regions().values()[0]
+
+        if self._provider.authenticate() and self._provider.set_region(region):
+            for i in self._provider.list_instances():
+                self._model.addInstance(i)
+            self.uiInstancesTableView.resizeColumnsToContents()
+            self._pollingTimer.start(5000)
+        else:
+            self._provider = None
+
+        # TODO remove this block
         for i in gen_fake_nodes(5):
             self._model.addInstance(i)
-        self.uiInstancesTableView.resizeColumnsToContents()
+        # end TODO
 
     def _contextMenu(self, pos):
         # create actions
@@ -160,12 +182,38 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # show the menu
         menu.popup(self.uiInstancesTableView.viewport().mapToGlobal(pos))
 
-    def _deleteSelectedInstance(self, index):
+    def _deleteSelectedInstance(self):
         """
-        FIXME: This is a stub, waiting for actual code for removing instances
+        Delete the instance corresponding to the selected table row
         """
         sel = self.uiInstancesTableView.selectedIndexes()
-        if len(sel):
+        if len(sel) and self._provider is not None:
             index = sel[0].row()
             instance = self._model.getInstance(index)
-            QMessageBox.information(self, "Info", "delete {}".format(instance.name))
+            self._provider.delete_instance(instance)
+            # FIXME remove this message
+            print("delete {}".format(instance.name))
+
+    def _rowChanged(self, current, previous):
+        """
+        This slot is invoked every time users change the current selected row on the
+        inspector
+        """
+        if current.isValid():
+            instance = self._model.getInstance(current.row())
+            self.instanceSelected.emit(instance.id)
+
+    def _update_model(self):
+        """
+        Sync model data with instances status
+        """
+        if self._provider is None:
+            return
+
+        for i in self._provider.list_instances():
+            self._model.update_instance_status(i)
+
+        # FIXME remove the following to stop mocking
+        for i in self._model._instances:
+            i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
+            self._model.update_instance_status(i)

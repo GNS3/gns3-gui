@@ -2,29 +2,14 @@
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..settings import CLOUD_PROVIDERS
 from ..utils.choices_spinbox import ChoicesSpinBox
+from ..utils import import_from_string
 
 from PyQt4 import QtGui
 from PyQt4 import Qt
 
-import importlib
-
 
 # TODO move this to provider ctrl?
 RACKSPACE_RAM_CHOICES = [1, 2, 4, 8, 15, 30, 60, 90, 120]
-
-
-def import_from_string(string_val):
-    """
-    Attempt to import a class from a string representation.
-    """
-    try:
-        parts = string_val.split('.')
-        module_path, class_name = '.'.join(parts[:-1]), parts[-1]
-        module = importlib.import_module(module_path)
-        return getattr(module, class_name)
-    except ImportError:
-        msg = "Could not import '%s'." % string_val
-        raise ImportError(msg)
 
 
 class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
@@ -122,8 +107,8 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.uiRegionComboBox.addItem("Select region...")
                 for r in provider.list_regions():
                     provider_tuple = r.popitem()
-                    self.uiRegionComboBox.addItem(provider_tuple[1])
-                    self.region_index_id.append(provider_tuple[0])
+                    self.uiRegionComboBox.addItem(provider_tuple[0])
+                    self.region_index_id.append(provider_tuple[1])
         except KeyError:
             # username/apikey/provider are not set
             pass

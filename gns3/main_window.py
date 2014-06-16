@@ -767,7 +767,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._newsActionSlot()
 
         # TODO check if this is the right place
-        self.CloudInspectorView.load()
+        self.CloudInspectorView.load(self.cloud_settings())
 
         # connect to the local server
         servers = Servers.instance()
