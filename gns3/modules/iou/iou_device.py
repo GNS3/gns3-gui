@@ -50,7 +50,7 @@ class IOUDevice(Node):
         self._ports = []
         self._settings = {"name": "",
                           "path": "",
-                          "startup_config": "",
+                          "initial_config": "",
                           "l1_keepalives": False,
                           "use_default_iou_values": True,
                           "ram": 256,
@@ -236,9 +236,9 @@ class IOUDevice(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-        and os.path.isfile(new_settings["startup_config"]):
-            params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
+        if "initial_config" in new_settings and self._settings["initial_config"] != new_settings["initial_config"] \
+        and os.path.isfile(new_settings["initial_config"]):
+            params["initial_config_base64"] = self._base64Config(new_settings["initial_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("iou.update", params, self._updateCallback)

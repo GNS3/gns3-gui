@@ -38,7 +38,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
         self.uiIOUImageComboBox.currentIndexChanged.connect(self._IOUImageSelectedSlot)
         self._current_iou_image = ""
@@ -55,25 +55,25 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             self.uiRamSpinBox.setEnabled(True)
             self.uiNvramSpinBox.setEnabled(True)
 
-    def _startupConfigBrowserSlot(self):
+    def _initialConfigBrowserSlot(self):
         """
-        Slot to open a file browser and select a startup-config file.
+        Slot to open a file browser and select a initial-config file.
         """
 
         if hasattr(sys, "frozen"):
             config_dir = "configs"
         else:
             config_dir = pkg_resources.resource_filename("gns3", "configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
+            QtGui.QMessageBox.critical(self, "Initial configuration", "Cannot read {}".format(path))
             return
 
-        self.uiStartupConfigLineEdit.clear()
-        self.uiStartupConfigLineEdit.setText(path)
+        self.uiInitialConfigLineEdit.clear()
+        self.uiInitialConfigLineEdit.setText(path)
 
     def _IOUImageSelectedSlot(self, index):
         """
@@ -100,8 +100,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
 
-            # load the startup-config
-            self.uiStartupConfigLineEdit.setText(settings["startup_config"])
+            # load the initial-config
+            self.uiInitialConfigLineEdit.setText(settings["initial_config"])
 
             # load the available IOU images
             iou_images = IOU.instance().iouImages()
@@ -142,12 +142,12 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             settings["name"] = self.uiNameLineEdit.text()
             settings["console"] = self.uiConsolePortSpinBox.value()
 
-            startup_config = self.uiStartupConfigLineEdit.text()
-            if startup_config != settings["startup_config"]:
-                if os.access(startup_config, os.R_OK):
-                    settings["startup_config"] = startup_config
+            initial_config = self.uiInitialConfigLineEdit.text()
+            if initial_config != settings["initial_config"]:
+                if os.access(initial_config, os.R_OK):
+                    settings["initial_config"] = initial_config
                 else:
-                    QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+                    QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
 
             # save the IOU image path
             index = self.uiIOUImageComboBox.currentIndex()

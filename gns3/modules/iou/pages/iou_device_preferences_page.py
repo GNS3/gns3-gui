@@ -46,7 +46,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiIOUImagesTreeWidget.itemClicked.connect(self._iouImageClickedSlot)
         self.uiIOUImagesTreeWidget.itemSelectionChanged.connect(self._iouImageChangedSlot)
         self.uiIOUPathToolButton.clicked.connect(self._iouImageBrowserSlot)
-        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
         self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
 
@@ -79,7 +79,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         iou_image = self._iou_images[key]
 
         self.uiIOUPathLineEdit.setText(iou_image["path"])
-        self.uiStartupConfigLineEdit.setText(iou_image["startup_config"])
+        self.uiInitialConfigLineEdit.setText(iou_image["initial_config"])
         self.uiDefaultValuesCheckBox.setChecked(iou_image["use_default_iou_values"])
         self.uiRAMSpinBox.setValue(iou_image["ram"])
         self.uiNVRAMSpinBox.setValue(iou_image["nvram"])
@@ -101,7 +101,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         path = self.uiIOUPathLineEdit.text()
-        startup_config = self.uiStartupConfigLineEdit.text()
+        initial_config = self.uiInitialConfigLineEdit.text()
         use_default_iou_values = self.uiDefaultValuesCheckBox.isChecked()
         nvram = self.uiNVRAMSpinBox.value()
         ram = self.uiRAMSpinBox.value()
@@ -140,7 +140,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         self._iou_images[key] = {"path": path,
                                  "image": image,
-                                 "startup_config": startup_config,
+                                 "initial_config": initial_config,
                                  "use_default_iou_values": use_default_iou_values,
                                  "ram": ram,
                                  "nvram": nvram,
@@ -229,41 +229,41 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiIOUPathLineEdit.setText(path)
 
         if "l2" in path:
-            # set the default L2 base startup-config
-            resource_name = "configs/iou_l2_base_startup-config.txt"
+            # set the default L2 base initial-config
+            resource_name = "configs/iou_l2_base_initial-config.txt"
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name))
+                self.uiInitialConfigLineEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
+                self.uiInitialConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
         else:
-            # set the default L3 base startup-config
-            resource_name = "configs/iou_l3_base_startup-config.txt"
+            # set the default L3 base initial-config
+            resource_name = "configs/iou_l3_base_initial-config.txt"
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name))
+                self.uiInitialConfigLineEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
+                self.uiInitialConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
 
-    def _startupConfigBrowserSlot(self):
+    def _initialConfigBrowserSlot(self):
         """
-        Slot to open a file browser and select a startup-config file.
+        Slot to open a file browser and select a initial-config file.
         """
 
         if hasattr(sys, "frozen"):
             config_dir = "configs"
         else:
             config_dir = pkg_resources.resource_filename("gns3", "configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
+            QtGui.QMessageBox.critical(self, "Initial configuration", "Cannot read {}".format(path))
             return
 
-        self.uiStartupConfigLineEdit.clear()
-        self.uiStartupConfigLineEdit.setText(path)
+        self.uiInitialConfigLineEdit.clear()
+        self.uiInitialConfigLineEdit.setText(path)
 
     def _testSettingsSlot(self):
 
