@@ -4,14 +4,16 @@ Integration tests for RackspaceCtrl.
 WARNING: These tests start up real instances in the Rackspace Cloud.
 
 """
-
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
 from libcloud.compute.base import Node, NodeSize, KeyPair
-import pytest
 import os
 import pytest
 import unittest
+
+
+# custom flag to skip tests if rackspace credentials was not provided
+rackspace_authentication = pytest.mark.rackspace_authentication
 
 
 class StubObject(object):
@@ -22,12 +24,10 @@ class StubObject(object):
             setattr(self, arg, kwargs[arg])
 
 
-@pytest.mark.skipif(True, reason="temporarily disable rackspace integration test")
+@rackspace_authentication
+@pytest.mark.usefixtures("username", "api_key")
 class TestRackspaceCtrl(unittest.TestCase):
-
     def setUp(self):
-        self.username = username
-        self.api_key = api_key
         # prefix to identify created objects
         self.object_prefix = "int_test_"
         self.prefix_length = len(self.object_prefix)
@@ -123,7 +123,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         key_pair = self.ctrl.create_key_pair(name)
 
         instance = self.ctrl.create_instance(name, size, image, key_pair)
-        self.ctrl.driver.wait_until_running([instance])
+        #self.ctrl.driver.wait_until_running([instance])
         self.assertIsInstance(instance, Node)
 
     def test_delete_instance(self):
@@ -136,7 +136,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         key_pair = self.ctrl.create_key_pair(name)
 
         instance = self.ctrl.create_instance(name, size, image, key_pair)
-        self.ctrl.driver.wait_until_running([instance])
+        #self.ctrl.driver.wait_until_running([instance])
 
         response = self.ctrl.delete_instance(instance)
 
@@ -213,7 +213,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         key_pair = self.ctrl.create_key_pair(name)
 
         instance = self.ctrl.create_instance(name, size, image, key_pair)
-        self.ctrl.driver.wait_until_running([instance])
+        #self.ctrl.driver.wait_until_running([instance])
 
         instances = self.ctrl.list_instances()
 
