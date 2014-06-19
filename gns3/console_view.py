@@ -60,7 +60,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         sys.ps1 = '=> '
 
         # Set introduction message
-        self.intro = "GNS3 management console. Running GNS3 Early Release (ER) version %s.\nCopyright (c) 2006-2014 GNS3 Project." % __version__
+        self.intro = "GNS3 management console. Running GNS3 Early Release (ER) version {} on {}.\nCopyright (c) 2006-2014 GNS3 Project.".format(__version__, sys.platform)
 
         # Parent class initialization
         try:

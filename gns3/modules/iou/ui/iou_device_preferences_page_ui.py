@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Tue May 20 17:22:28 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed Jun 18 05:49:41 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -61,13 +61,13 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.gridLayout_2.addWidget(self.uiStartupConfigLabel, 1, 0, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.uiStartupConfigLineEdit = QtGui.QLineEdit(self.uiGeneralGroupBox)
-        self.uiStartupConfigLineEdit.setObjectName(_fromUtf8("uiStartupConfigLineEdit"))
-        self.horizontalLayout_4.addWidget(self.uiStartupConfigLineEdit)
-        self.uiStartupConfigToolButton = QtGui.QToolButton(self.uiGeneralGroupBox)
-        self.uiStartupConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-        self.uiStartupConfigToolButton.setObjectName(_fromUtf8("uiStartupConfigToolButton"))
-        self.horizontalLayout_4.addWidget(self.uiStartupConfigToolButton)
+        self.uiInitialConfigLineEdit = QtGui.QLineEdit(self.uiGeneralGroupBox)
+        self.uiInitialConfigLineEdit.setObjectName(_fromUtf8("uiInitialConfigLineEdit"))
+        self.horizontalLayout_4.addWidget(self.uiInitialConfigLineEdit)
+        self.uiInitialConfigToolButton = QtGui.QToolButton(self.uiGeneralGroupBox)
+        self.uiInitialConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiInitialConfigToolButton.setObjectName(_fromUtf8("uiInitialConfigToolButton"))
+        self.horizontalLayout_4.addWidget(self.uiInitialConfigToolButton)
         self.gridLayout_2.addLayout(self.horizontalLayout_4, 1, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.uiGeneralGroupBox)
         self.uiMemoriesGroupBox = QtGui.QGroupBox(self.uiIOUDeviceTabWidget)
@@ -161,8 +161,8 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiGeneralGroupBox.setTitle(_translate("IOUDevicePreferencesPageWidget", "General", None))
         self.uiIOUPathLabel.setText(_translate("IOUDevicePreferencesPageWidget", "IOU path:", None))
         self.uiIOUPathToolButton.setText(_translate("IOUDevicePreferencesPageWidget", "...", None))
-        self.uiStartupConfigLabel.setText(_translate("IOUDevicePreferencesPageWidget", "Startup-config:", None))
-        self.uiStartupConfigToolButton.setText(_translate("IOUDevicePreferencesPageWidget", "...", None))
+        self.uiStartupConfigLabel.setText(_translate("IOUDevicePreferencesPageWidget", "Initial config:", None))
+        self.uiInitialConfigToolButton.setText(_translate("IOUDevicePreferencesPageWidget", "...", None))
         self.uiMemoriesGroupBox.setTitle(_translate("IOUDevicePreferencesPageWidget", "Memories", None))
         self.uiDefaultValuesCheckBox.setText(_translate("IOUDevicePreferencesPageWidget", "Use default IOU values", None))
         self.uiRAMLabel.setText(_translate("IOUDevicePreferencesPageWidget", "RAM:", None))

@@ -19,8 +19,9 @@
 Graphical view on the scene where items are drawn.
 """
 
-
+import os
 import pickle
+
 from .qt import QtCore, QtGui, QtNetwork
 from .items.node_item import NodeItem
 from .node_configurator import NodeConfigurator
@@ -35,10 +36,17 @@ from .ports.port import Port
 from .utils.progress_dialog import ProgressDialog
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 
+
 # link items
 from .items.link_item import LinkItem
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
+
+# other items
+from .items.note_item import NoteItem
+from .items.shape_item import ShapeItem
+from .items.rectangle_item import RectangleItem
+from .items.ellipse_item import EllipseItem
 
 
 class GraphicsView(QtGui.QGraphicsView):
@@ -59,6 +67,9 @@ class GraphicsView(QtGui.QGraphicsView):
         self._loadSettings()
 
         self._adding_link = False
+        self._adding_note = False
+        self._adding_rectangle = False
+        self._adding_ellipse = False
         self._newlink = None
         self._dragging = False
         self._last_mouse_position = None
@@ -187,6 +198,48 @@ class GraphicsView(QtGui.QGraphicsView):
             self.setCursor(QtCore.Qt.ArrowCursor)
         self._adding_link = enabled
 
+    def addNote(self, state):
+        """
+        Adds a note.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_note = True
+            self.setCursor(QtCore.Qt.IBeamCursor)
+        else:
+            self._adding_note = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addRectangle(self, state):
+        """
+        Adds a rectangle.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_rectangle = True
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self._adding_rectangle = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addEllipse(self, state):
+        """
+        Adds an ellipse.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_ellipse = True
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self._adding_ellipse = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
     def addLink(self, source_node, source_port, destination_node, destination_port):
         """
         Creates a Link instance representing a connection between 2 devices.
@@ -216,15 +269,15 @@ class GraphicsView(QtGui.QGraphicsView):
         link = self._topology.getLink(link_id)
         source_item = None
         destination_item = None
-        source_port = link._source_port
-        destination_port = link._destination_port
+        source_port = link.sourcePort()
+        destination_port = link.destinationPort()
 
         # find the correct source and destination node items
         for item in self.scene().items():
             if isinstance(item, NodeItem):
-                if item.node().id() == link._source_node.id():
+                if item.node().id() == link.sourceNode().id():
                     source_item = item
-                if item.node().id() == link._destination_node.id():
+                if item.node().id() == link.destinationNode().id():
                     destination_item = item
             if source_item and destination_item:
                 break
@@ -390,17 +443,43 @@ class GraphicsView(QtGui.QGraphicsView):
                     if item.zValue() < 0:
                         item.setFlag(item.ItemIsSelectable, True)
                     item.setSelected(True)
-                    self._showContextualMenu(QtGui.QCursor.pos())
+                    self._showDeviceContextualMenu(QtGui.QCursor.pos())
                     if item.zValue() < 0:
                         item.setFlag(item.ItemIsSelectable, False)
 
                 else:
-                    self._showContextualMenu(QtGui.QCursor.pos())
+                    self._showDeviceContextualMenu(QtGui.QCursor.pos())
             # when more than one item is selected display the contextual menu even if mouse is not above an item
             elif len(self.scene().selectedItems()) > 1:
-                self._showContextualMenu(QtGui.QCursor.pos())
+                self._showDeviceContextualMenu(QtGui.QCursor.pos())
         elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
             self._userNodeLinking(event, item)
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
+            note = NoteItem()
+            note.setPos(self.mapToScene(event.pos()))
+            pos_x = note.pos().x()
+            pos_y = note.pos().y() - (note.boundingRect().height() / 2)
+            note.setPos(pos_x, pos_y)
+            self.scene().addItem(note)
+            self._topology.addNote(note)
+            note.editText()
+            self._main_window.uiAddNoteAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_note = False
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
+            rectangle = RectangleItem(self.mapToScene(event.pos()))
+            self.scene().addItem(rectangle)
+            self._topology.addRectangle(rectangle)
+            self._main_window.uiDrawRectangleAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_rectangle = False
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
+            ellipse = EllipseItem(self.mapToScene(event.pos()))
+            self.scene().addItem(ellipse)
+            self._topology.addEllipse(ellipse)
+            self._main_window.uiDrawEllipseAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_ellipse = False
         else:
             QtGui.QGraphicsView.mousePressEvent(self, event)
 
@@ -461,14 +540,10 @@ class GraphicsView(QtGui.QGraphicsView):
             factor_out = pow(2.0, -120 / 240.0)
             self.scaleView(factor_out)
         elif event.key() == QtCore.Qt.Key_Delete:
-            # check if we are editing an Annotation instance, then send the Delete event to it
-#             for item in self.__topology.selectedItems():
-#                 if isinstance(item, Annotation) and item.hasFocus():
-#                     QtGui.QGraphicsView.keyPressEvent(self, event)
-#                     return
-            if self.scene().selectedItems():
-                reply = QtGui.QMessageBox.question(self, "Delete", "Do you want to delete these nodes?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                if reply == QtGui.QMessageBox.No:
+            # check if we are editing an NoteItem instance, then send the delete key event to it
+            for item in self.scene().selectedItems():
+                if isinstance(item, NoteItem) and item.hasFocus():
+                    QtGui.QGraphicsView.keyPressEvent(self, event)
                     return
             self.deleteActionSlot()
         else:
@@ -498,7 +573,7 @@ class GraphicsView(QtGui.QGraphicsView):
             event.ignore()
         else:
             item = self.itemAt(event.pos())
-            if item and isinstance(item, NodeItem):
+            if item:
                 # show item coords in the status bar
                 coords = "X: {} Y: {} Z: {}".format(item.x(), item.y(), item.zValue())
                 self._main_window.uiStatusBar.showMessage(coords, 2000)
@@ -545,10 +620,8 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QDragMoveEvent instance
         """
 
-        # TODO: drag of a topology file
-
         # check if what is dragged is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-node"):
+        if event.mimeData().hasFormat("application/x-gns3-node") or event.mimeData().hasFormat("text/uri-list"):
             event.acceptProposedAction()
             event.accept()
         else:
@@ -561,8 +634,6 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QDropEvent instance
         """
 
-        # TODO: drop of a topology file
-
         # TODO: multi-drop
 
         # check if what has been dropped is handled by this view
@@ -573,6 +644,14 @@ class GraphicsView(QtGui.QGraphicsView):
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             self.createNode(node_class, event.pos())
+        elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
+            if len(event.mimeData().urls()) > 1:
+                QtGui.QMessageBox.critical(self, "Project files", "Please drop only one file")
+                return
+            path = event.mimeData().urls()[0].toLocalFile()
+            if os.path.isfile(path) and self._main_window.checkForUnsavedChanges():
+                self._main_window.loadProject(path)
+            event.acceptProposedAction()
         else:
             event.ignore()
 
@@ -585,21 +664,21 @@ class GraphicsView(QtGui.QGraphicsView):
 # 
 #         self._showContextualMenu(event.globalPos())
 
-    def _showContextualMenu(self, pos):
+    def _showDeviceContextualMenu(self, pos):
         """
-        Create and display a contextual menu.
+        Create and display the device contextual menu on the view.
 
         :param pos: position where to display the menu
         """
 
         menu = QtGui.QMenu()
-        self._populateContextMenu(menu)
+        self.populateDeviceContextualMenu(menu)
         menu.exec_(pos)
         menu.clear()
 
-    def _populateContextMenu(self, menu):
+    def populateDeviceContextualMenu(self, menu):
         """
-        Adds actions to the contextual menu.
+        Adds device actions to the device contextual menu.
 
         :param menu: QMenu instance
         """
@@ -608,46 +687,53 @@ class GraphicsView(QtGui.QGraphicsView):
         if not items:
             return
 
-        configure_action = QtGui.QAction("Configure", menu)
-        configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
-        configure_action.triggered.connect(self.configureActionSlot)
-        menu.addAction(configure_action)
+        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
+            configure_action = QtGui.QAction("Configure", menu)
+            configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
+            configure_action.triggered.connect(self.configureActionSlot)
+            menu.addAction(configure_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "console"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
             console_action = QtGui.QAction("Console", menu)
             console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
             console_action.triggered.connect(self.consoleActionSlot)
             menu.addAction(console_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "idlepcs"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepcs"), items)):
             idlepc_action = QtGui.QAction("Idle-PC", menu)
             idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
             idlepc_action.triggered.connect(self.idlepcActionSlot)
             menu.addAction(idlepc_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "start"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "start"), items)):
             start_action = QtGui.QAction("Start", menu)
             start_action.setIcon(QtGui.QIcon(':/icons/play.svg'))
             start_action.triggered.connect(self.startActionSlot)
             menu.addAction(start_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "suspend"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "suspend"), items)):
             suspend_action = QtGui.QAction("Suspend", menu)
             suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
             suspend_action.triggered.connect(self.suspendActionSlot)
             menu.addAction(suspend_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "stop"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "stop"), items)):
             stop_action = QtGui.QAction("Stop", menu)
             stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
             stop_action.triggered.connect(self.stopActionSlot)
             menu.addAction(stop_action)
 
-        if True in list(map(lambda item: hasattr(item.node(), "reload"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "reload"), items)):
             reload_action = QtGui.QAction("Reload", menu)
             reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
+
+        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, ShapeItem), items)):
+            duplicate_action = QtGui.QAction("Duplicate", menu)
+            duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
+            duplicate_action.triggered.connect(self.duplicateActionSlot)
+            menu.addAction(duplicate_action)
 
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
@@ -794,16 +880,51 @@ class GraphicsView(QtGui.QGraphicsView):
         else:
             QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no idle-pc values could be computed, please check again with Cisco IOS in a different state")
 
+    def duplicateActionSlot(self):
+        """
+        Slot to receive events from the duplicate action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NoteItem):
+                note_item = item.duplicate()
+                self.scene().addItem(note_item)
+                self._topology.addNote(note_item)
+            elif isinstance(item, RectangleItem):
+                rectangle_item = item.duplicate()
+                self.scene().addItem(rectangle_item)
+                self._topology.addRectangle(rectangle_item)
+            elif isinstance(item, EllipseItem):
+                ellipse_item = item.duplicate()
+                self.scene().addItem(ellipse_item)
+                self._topology.addEllipse(ellipse_item)
+
     def deleteActionSlot(self):
         """
         Slot to receive events from the delete action in the
         contextual menu.
         """
 
+        selected_nodes = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem):
+                selected_nodes.append(item.node())
+        if selected_nodes:
+            if len(selected_nodes) > 1:
+                question = "Do you want to permanently delete these {} nodes?".format(len(selected_nodes))
+            else:
+                question = "Do you want to permanently delete {}?".format(selected_nodes[0].name())
+            reply = QtGui.QMessageBox.question(self, "Delete", question,
+                                               QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.No:
+                return
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
                 item.node().delete()
                 self._topology.removeNode(item.node())
+            else:
+                item.delete()
 
     def createNode(self, node_class, pos):
         """

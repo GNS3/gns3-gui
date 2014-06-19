@@ -342,6 +342,7 @@ class EthernetHub(Node):
                 self._settings["ports"].append(port.portNumber())
 
         log.info("Ethernet hub {} is loading".format(name))
+        self.setName(name)
         self.setup(name)
 
     def name(self):

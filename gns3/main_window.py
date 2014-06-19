@@ -24,6 +24,7 @@ import tempfile
 import socket
 import shutil
 import json
+import glob
 
 from .qt import QtGui, QtCore
 from .servers import Servers
@@ -39,6 +40,7 @@ from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
+from .items.link_item import LinkItem
 from .topology import Topology
 
 import logging
@@ -72,6 +74,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._connections()
         self._ignore_unsaved_state = False
         self._temporary_project = True
+        self._max_recent_files = 5
+        self._recent_file_actions = []
 
         self._project_settings = {
             "project_name": "unsaved",
@@ -94,6 +98,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # set the images directory
         self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
+
+        # add recent file actions to the File menu
+        for i in range(0, self._max_recent_files):
+            action = QtGui.QAction(self.uiFileMenu)
+            action.setVisible(False)
+            action.triggered.connect(self._openRecentFileSlot)
+            self._recent_file_actions.append(action)
+        self.uiFileMenu.insertActions(self.uiQuitAction, self._recent_file_actions)
+        self._recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
+        self._recent_file_actions_separator.setVisible(False)
+        self._updateRecentFileActions()
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -214,6 +229,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiShowLayersAction.triggered.connect(self._showLayersActionSlot)
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowNamesAction.triggered.connect(self._showNamesActionSlot)
+        self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
 
         # style menu connections
         self.uiDefaultStyleAction.triggered.connect(self._defaultStyleActionSlot)
@@ -226,6 +242,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiReloadAllAction.triggered.connect(self._reloadAllActionSlot)
         self.uiAuxConsoleAllAction.triggered.connect(self._auxConsoleAllActionSlot)
         self.uiConsoleAllAction.triggered.connect(self._consoleAllActionSlot)
+
+        # device menu is contextual and is build on-the-fly
+        self.uiDeviceMenu.aboutToShow.connect(self._deviceMenuActionSlot)
 
         # annotate menu connections
         self.uiAddNoteAction.triggered.connect(self._addNoteActionSlot)
@@ -320,7 +339,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "All files (*.*);;GNS3 project files (*.gns3)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
-            self._loadProject(path)
+            self.loadProject(path)
+
+    def _openRecentFileSlot(self):
+        """
+        Slot called to open recent file from the File menu.
+        """
+
+        action = self.sender()
+        if action:
+            path = action.data()
+            if not os.path.isfile(path):
+                QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
+                return
+            if self.checkForUnsavedChanges():
+                self.loadProject(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -472,6 +505,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         #TODO: show/hide node names
         pass
 
+    def _showPortNamesActionSlot(self):
+        """
+        Slot called to show the port names on the scene.
+        """
+
+        LinkItem.showPortLabels(self.uiShowPortNamesAction.isChecked())
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, LinkItem):
+                item.adjust()
+
     def _defaultStyleActionSlot(self):
         """
         Slot called to set the default style.
@@ -524,6 +567,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
 
+    def _deviceMenuActionSlot(self):
+        """
+        Slot to contextually show the device menu.
+        """
+
+        self.uiDeviceMenu.clear()
+        self.uiGraphicsView.populateDeviceContextualMenu(self.uiDeviceMenu)
+
     def _auxConsoleAllActionSlot(self):
         """
         Slot called when connecting to all the nodes using the AUX console.
@@ -557,8 +608,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when adding a new note on the scene.
         """
 
-        #TODO: add notes
-        pass
+        self.uiGraphicsView.addNote(self.uiAddNoteAction.isChecked())
 
     def _insertImageActionSlot(self):
         """
@@ -573,16 +623,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when adding a rectangle on the scene.
         """
 
-        #TODO: draw rectangles
-        pass
+        self.uiGraphicsView.addRectangle(self.uiDrawRectangleAction.isChecked())
 
     def _drawEllipseActionSlot(self):
         """
         Slot called when adding a ellipse on the scene.
         """
 
-        #TODO: draw ellipse
-        pass
+        self.uiGraphicsView.addEllipse(self.uiDrawEllipseAction.isChecked())
 
     def _onlineHelpActionSlot(self):
         """
@@ -615,13 +663,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
-    def _labInstructionsActionSlot(self):
+    def _labInstructionsActionSlot(self, silent=False):
         """
         Slot to open lab instructions.
         """
 
-        #TODO: lab instructions
-        QtGui.QMessageBox.critical(self, "Lab instructions", "Sorry, to be implemented!")
+        project_dir = os.path.dirname(self._project_settings["project_path"])
+        instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
+        instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
+        if len(instructions_files):
+            path = instructions_files[0]
+            if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + path, QtCore.QUrl.TolerantMode)) == False and silent == False:
+                QtGui.QMessageBox.critical(self, "Lab instructions", "Could not open {}".format(path))
+        elif silent is False:
+            QtGui.QMessageBox.critical(self, "Lab instructions", "No instructions found")
+
 
     def _aboutQtActionSlot(self):
         """
@@ -999,7 +1055,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._setCurrentFile(path)
         return True
 
-    def _loadProject(self, path):
+    def loadProject(self, path):
         """
         Loads a project into GNS3.
 
@@ -1017,6 +1073,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         topology = Topology.instance()
         try:
+            QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             with open(path, "r") as f:
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
@@ -1031,10 +1088,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except ValueError as e:
             QtGui.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))
             return False
+        finally:
+            QtGui.QApplication.restoreOverrideCursor()
 
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._project_settings["project_path"] = path
         self._setCurrentFile(path)
+        self._labInstructionsActionSlot(silent=True)
 
     def _deleteTemporaryProject(self):
         """
@@ -1096,7 +1156,72 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self._temporary_project = False
             self.setWindowFilePath(path)
+            self._updateRecentFileSettings(path)
+            self._updateRecentFileActions()
+
         self.setWindowModified(False)
+
+    def _updateRecentFileSettings(self, path):
+        """
+        Updates the recent file settings.
+
+        :param path: path to the new file
+        """
+
+        recent_files = []
+        settings = QtCore.QSettings()
+
+        # read the recent file list
+        settings.beginGroup("RecentFiles")
+        size = settings.beginReadArray("file")
+        for index in range(0, size):
+            settings.setArrayIndex(index)
+            file_path = settings.value("path", "")
+            if file_path:
+                recent_files.append(file_path)
+        settings.endArray()
+
+        # update the recent file list
+        if path in recent_files:
+            recent_files.remove(path)
+        recent_files.insert(0, path)
+        if len(recent_files) > self._max_recent_files:
+            recent_files.pop()
+
+        # write the recent file list
+        settings.beginWriteArray("file", len(recent_files))
+        index = 0
+        for file_path in recent_files:
+            settings.setArrayIndex(index)
+            settings.setValue("path", file_path)
+            index += 1
+        settings.endArray()
+        settings.endGroup()
+
+    def _updateRecentFileActions(self):
+        """
+        Updates recent file actions.
+        """
+
+        settings = QtCore.QSettings()
+        settings.beginGroup("RecentFiles")
+        size = settings.beginReadArray("file")
+        for index in range(0, size):
+            settings.setArrayIndex(index)
+            file_path = settings.value("path", "")
+            if file_path:
+                action = self._recent_file_actions[index]
+                action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                action.setData(file_path)
+                action.setVisible(True)
+                index += 1
+        settings.endArray()
+
+        for index in range(size + 1, self._max_recent_files):
+            self._recent_file_actions[index].setVisible(False)
+
+        if size:
+            self._recent_file_actions_separator.setVisible(True)
 
     def projectsDirPath(self):
         """

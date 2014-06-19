@@ -90,7 +90,7 @@ class IOU(Module):
             settings.setArrayIndex(index)
             path = settings.value("path", "")
             image = settings.value("image", "")
-            startup_config = settings.value("startup_config", "")
+            initial_config = settings.value("initial_config", "")
             use_default_iou_values = settings.value("use_default_iou_values", True, type=bool)
             ram = settings.value("ram", 256, type=int)
             nvram = settings.value("nvram", 128, type=int)
@@ -98,7 +98,7 @@ class IOU(Module):
             key = "{server}:{image}".format(server=server, image=image)
             self._iou_images[key] = {"path": path,
                                      "image": image,
-                                     "startup_config": startup_config,
+                                     "initial_config": initial_config,
                                      "use_default_iou_values": use_default_iou_values,
                                      "ram": ram,
                                      "nvram": nvram,
@@ -150,7 +150,7 @@ class IOU(Module):
         :param path: path to the local image files directory
         """
 
-        self._images_dir = path
+        self._images_dir = os.path.join(path, "IOU")
 
     def imageFilesDir(self):
         """
@@ -392,12 +392,12 @@ class IOU(Module):
         else:
             iouimage = selected_images[0]
 
-        startup_config = self._iou_images[iouimage]["startup_config"]
+        initial_config = self._iou_images[iouimage]["initial_config"]
         iou_path = self._iou_images[iouimage]["path"]
         use_default_iou_values = self._iou_images[iouimage]["use_default_iou_values"]
         settings = {}
-        if startup_config:
-            settings["startup_config"] = startup_config
+        if initial_config:
+            settings["initial_config"] = initial_config
         settings["use_default_iou_values"] = use_default_iou_values
         if not use_default_iou_values:
             settings["ram"] = self._iou_images[iouimage]["ram"]

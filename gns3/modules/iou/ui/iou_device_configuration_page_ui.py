@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Wed May 21 19:12:10 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed Jun 18 06:04:25 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_iouDeviceConfigPageWidget(object):
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName(_fromUtf8("iouDeviceConfigPageWidget"))
-        iouDeviceConfigPageWidget.resize(405, 430)
+        iouDeviceConfigPageWidget.resize(405, 448)
         self.verticalLayout = QtGui.QVBoxLayout(iouDeviceConfigPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiGeneralgroupBox = QtGui.QGroupBox(iouDeviceConfigPageWidget)
@@ -46,18 +46,18 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiIOUImageComboBox = QtGui.QComboBox(self.uiGeneralgroupBox)
         self.uiIOUImageComboBox.setObjectName(_fromUtf8("uiIOUImageComboBox"))
         self.gridLayout.addWidget(self.uiIOUImageComboBox, 1, 1, 1, 1)
-        self.uiStartupConfigLabel = QtGui.QLabel(self.uiGeneralgroupBox)
-        self.uiStartupConfigLabel.setObjectName(_fromUtf8("uiStartupConfigLabel"))
-        self.gridLayout.addWidget(self.uiStartupConfigLabel, 2, 0, 1, 1)
+        self.uiInitialConfigLabel = QtGui.QLabel(self.uiGeneralgroupBox)
+        self.uiInitialConfigLabel.setObjectName(_fromUtf8("uiInitialConfigLabel"))
+        self.gridLayout.addWidget(self.uiInitialConfigLabel, 2, 0, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.uiStartupConfigLineEdit = QtGui.QLineEdit(self.uiGeneralgroupBox)
-        self.uiStartupConfigLineEdit.setObjectName(_fromUtf8("uiStartupConfigLineEdit"))
-        self.horizontalLayout_4.addWidget(self.uiStartupConfigLineEdit)
-        self.uiStartupConfigToolButton = QtGui.QToolButton(self.uiGeneralgroupBox)
-        self.uiStartupConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-        self.uiStartupConfigToolButton.setObjectName(_fromUtf8("uiStartupConfigToolButton"))
-        self.horizontalLayout_4.addWidget(self.uiStartupConfigToolButton)
+        self.uiInitialConfigLineEdit = QtGui.QLineEdit(self.uiGeneralgroupBox)
+        self.uiInitialConfigLineEdit.setObjectName(_fromUtf8("uiInitialConfigLineEdit"))
+        self.horizontalLayout_4.addWidget(self.uiInitialConfigLineEdit)
+        self.uiInitialConfigToolButton = QtGui.QToolButton(self.uiGeneralgroupBox)
+        self.uiInitialConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiInitialConfigToolButton.setObjectName(_fromUtf8("uiInitialConfigToolButton"))
+        self.horizontalLayout_4.addWidget(self.uiInitialConfigToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_4, 2, 1, 1, 1)
         self.uiConsolePortLabel = QtGui.QLabel(self.uiGeneralgroupBox)
         self.uiConsolePortLabel.setObjectName(_fromUtf8("uiConsolePortLabel"))
@@ -153,8 +153,8 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiGeneralgroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "General", None))
         self.uiNameLabel.setText(_translate("iouDeviceConfigPageWidget", "Name:", None))
         self.uiIOUImageLabel.setText(_translate("iouDeviceConfigPageWidget", "IOU image:", None))
-        self.uiStartupConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Startup-config:", None))
-        self.uiStartupConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "...", None))
+        self.uiInitialConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Initial config:", None))
+        self.uiInitialConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "...", None))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:", None))
         self.uiAdvancedGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Advanced", None))
         self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages (testing only)", None))

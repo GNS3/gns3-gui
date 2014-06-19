@@ -60,7 +60,7 @@ class VPCSDevice(Node):
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def setup(self, name=None, console=None, initial_settings={}):
+    def setup(self, name=None, console=None, vpcs_id=None, initial_settings={}):
         """
         Setups this VPCS device.
 
@@ -69,7 +69,7 @@ class VPCSDevice(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName("VPCS")
+            name = self.allocateName("PC")
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this VPCS device")
@@ -78,6 +78,9 @@ class VPCSDevice(Node):
         params = {"name": name}
         if console:
             params["console"] = self._settings["console"] = console
+
+        if vpcs_id:
+            params["vpcs_id"] = vpcs_id
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
@@ -434,27 +437,28 @@ class VPCSDevice(Node):
         :returns: representation of the node (dictionary)
         """
 
-        router = {"id": self.id(),
-                  "type": self.__class__.__name__,
-                  "description": str(self),
-                  "properties": {},
-                  "server_id": self._server.id()}
+        vpcs_device = {"id": self.id(),
+                       "vpcs_id": self._vpcs_id,
+                       "type": self.__class__.__name__,
+                       "description": str(self),
+                       "properties": {},
+                       "server_id": self._server.id()}
 
         # add the properties
         for name, value in self._settings.items():
             if name in self._defaults and self._defaults[name] != value:
-                router["properties"][name] = value
+                vpcs_device["properties"][name] = value
 
         # add the ports
         if self._ports:
-            ports = router["ports"] = []
+            ports = vpcs_device["ports"] = []
             for port in self._ports:
                 ports.append(port.dump())
 
         #TODO: handle the image path
-        # router["properties"]["image"]
+        # vpcs_device["properties"]["image"]
 
-        return router
+        return vpcs_device
 
     def load(self, node_info):
         """
@@ -465,6 +469,7 @@ class VPCSDevice(Node):
         """
 
         self.node_info = node_info
+        vpcs_id = node_info.get("vpcs_id")
         settings = node_info["properties"]
         name = settings.pop("name")
         console = settings.pop("console")
@@ -472,7 +477,8 @@ class VPCSDevice(Node):
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
-        self.setup(name, console, settings)
+        self.setName(name)
+        self.setup(name, console, vpcs_id, settings)
 
     def _updatePortSettings(self):
         """

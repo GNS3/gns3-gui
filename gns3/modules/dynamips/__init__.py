@@ -107,7 +107,7 @@ class Dynamips(Module):
             chassis = settings.value("chassis", "")
             idlepc = settings.value("idlepc", "")
             ram = settings.value("ram", 128, type=int)
-            server = settings.value("server", "local")  # TODO: remote servers
+            server = settings.value("server", "local")
 
             key = "{server}:{image}".format(server=server, image=image)
             self._ios_images[key] = {"path": path,

@@ -67,12 +67,6 @@ class Link(QtCore.QObject):
         self._source_nio_active = False
         self._destination_nio_active = False
 
-        # add a link description
-        self._description = "Link from {} port {} to {} port {}".format(self._source_node.name(),
-                                                                        self._source_port.name(),
-                                                                        self._destination_node.name(),
-                                                                        self._destination_port.name())
-
         if source_port.isStub() or destination_port.isStub():
             self._stub = True
         else:
@@ -124,6 +118,13 @@ class Link(QtCore.QObject):
 
         cls._instance_count = 1
 
+    def __str__(self):
+
+        return "Link from {} port {} to {} port {}".format(self._source_node.name(),
+                                                           self._source_port.name(),
+                                                           self._destination_node.name(),
+                                                           self._destination_port.name())
+
     def deleteLink(self):
         """
         Deletes this link.
@@ -153,6 +154,42 @@ class Link(QtCore.QObject):
         """
 
         return self._id
+
+    def sourceNode(self):
+        """
+        Returns the source node for this link.
+
+        :returns: Node instance
+        """
+
+        return self._source_node
+
+    def destinationNode(self):
+        """
+        Returns the destination node for this link.
+
+        :returns: Node instance
+        """
+
+        return self._destination_node
+
+    def sourcePort(self):
+        """
+        Returns the source port for this link.
+
+        :returns: Port instance
+        """
+
+        return self._source_port
+
+    def destinationPort(self):
+        """
+        Returns the destination port for this link.
+
+        :returns: Port instance
+        """
+
+        return self._destination_port
 
     def UDPPortAllocatedSlot(self, node_id, port_id, lport):
         """
@@ -265,9 +302,9 @@ class Link(QtCore.QObject):
 
         self._source_port.setNio(nio)
         self._source_port.setLinkId(self._id)
-        if not self._source_port.description():
-            self._source_port.setDescription("connected to {name} on port {port}".format(name=self._destination_node.name(),
-                                                                                         port=self._destination_port.name()))
+        self._source_port.setDestinationNode(self._destination_node)
+        self._source_port.setDestinationPort(self._destination_port)
+
         log.debug("{} attached to {} on port {}".format(nio,
                                                         self._source_node.name(),
                                                         self._source_port.name()))
@@ -281,9 +318,8 @@ class Link(QtCore.QObject):
 
         self._destination_port.setNio(nio)
         self._destination_port.setLinkId(self._id)
-        if not self._destination_port.description():
-            self._destination_port.setDescription("connected to {name} on port {port}".format(name=self._source_node.name(),
-                                                                                              port=self._source_port.name()))
+        self._destination_port.setDestinationNode(self._source_node)
+        self._destination_port.setDestinationPort(self._source_port)
 
         log.debug("{} attached to {} on port {}".format(nio,
                                                         self._destination_node.name(),
@@ -328,24 +364,6 @@ class Link(QtCore.QObject):
         self._source_nio_active = False
         self._destination_nio_active = False
 
-    def description(self):
-        """
-        Returns the text description of this link.
-
-        :returns: description
-        """
-
-        return self._description
-
-    def setDescription(self, description):
-        """
-        Adds a text description to this link.
-
-        :param description: description
-        """
-
-        self._description = description
-
     def dump(self):
         """
         Returns a representation of this link.
@@ -354,7 +372,7 @@ class Link(QtCore.QObject):
         """
 
         return {"id": self.id(),
-                "description": self._description,
+                "description": str(self),
                 "source_node_id": self._source_node.id(),
                 "source_port_id": self._source_port.id(),
                 "destination_node_id": self._destination_node.id(),

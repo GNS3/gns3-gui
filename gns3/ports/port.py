@@ -49,10 +49,12 @@ class Port(object):
         self._slot_number = None
         self._stub = stub
         self._link_id = None
-        self._description = ""
+        self._port_label = None
         self._status = Port.stopped
         self._data = {}
-        if default_nio == None:
+        self._destination_node = None
+        self._destination_port = None
+        if default_nio is None:
             self._default_nio = NIOUDP
         else:
             self._default_nio = default_nio
@@ -162,6 +164,42 @@ class Port(object):
 
         self._port_number = port_number
 
+    def destinationNode(self):
+        """
+        Returns the destination node
+
+        :returns: destination Node instance
+        """
+
+        return self._destination_node
+
+    def setDestinationNode(self, node):
+        """
+        Sets a new destination Node instance for this port.
+
+        :param node: new destination Node instance
+        """
+
+        self._destination_node = node
+
+    def destinationPort(self):
+        """
+        Returns the destination Port instance
+
+        :returns: destination Port instance
+        """
+
+        return self._destination_port
+
+    def setDestinationPort(self, port):
+        """
+        Sets a new destination Port instance for this port.
+
+        :param port: new destination Port instance
+        """
+
+        self._destination_port = port
+
     def defaultNio(self):
         """
         Returns the default NIO for this port.
@@ -214,16 +252,10 @@ class Port(object):
         :returns: description
         """
 
-        return self._description
-
-    def setDescription(self, description):
-        """
-        Adds a text description to this port.
-
-        :param description: description
-        """
-
-        self._description = description
+        if self._destination_node and self._destination_port:
+            return "connected to {name} on port {port}".format(name=self._destination_node.name(),
+                                                               port=self._destination_port.name())
+        return ""
 
     def setFree(self):
         """
@@ -232,7 +264,9 @@ class Port(object):
 
         self._nio = None
         self._link_id = None
-        self._description = ""
+        self._destination_node = None
+        self._destination_port = None
+        self._port_label = None
 
     def isFree(self):
         """
@@ -282,6 +316,24 @@ class Port(object):
 
         self._data = new_data
 
+    def label(self):
+        """
+        Returns the port label.
+
+        :return: NoteItem instance.
+        """
+
+        return self._port_label
+
+    def setLabel(self, label):
+        """
+        Sets a port label.
+
+        :param label: NoteItem instance.
+        """
+
+        self._port_label = label
+
     def dump(self):
         """
         Returns a representation of this port.
@@ -294,15 +346,15 @@ class Port(object):
 
         if self._nio:
             port["nio"] = str(self._nio)
-        if self._port_number != None:
+        if self._port_number is not None:
             port["port_number"] = self._port_number
-        if self._slot_number != None:
+        if self._slot_number is not None:
             port["slot_number"] = self._slot_number
         if self._stub:
             port["stub"] = self._stub
-        if self._description:
-            port["description"] = self._description
-        if self._link_id != None:
+        if self.description():
+            port["description"] = self.description()
+        if self._link_id is not None:
             port["link_id"] = self._link_id
 
         return port

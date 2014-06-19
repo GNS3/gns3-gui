@@ -304,7 +304,8 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             # load the available IOS images
             ios_images = Dynamips.instance().iosImages()
             for ios_image in ios_images.values():
-                if ios_image["platform"] == settings["platform"]:
+                if ios_image["platform"] == settings["platform"] and \
+                        (ios_image["server"] == "local" and node.server().isLocal() or ios_image["server"] == node.server().host):
                     self.uiIOSImageComboBox.addItem(ios_image["image"], ios_image["path"])
 
             index = self.uiIOSImageComboBox.findText(os.path.basename(settings["image"]))

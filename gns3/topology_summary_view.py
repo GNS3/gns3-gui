@@ -40,6 +40,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
         QtGui.QTreeWidgetItem.__init__(self, parent)
         self._node = node
+        self._parent = parent
 
         # we want to know about the node events
         node.started_signal.connect(self._refreshStatusSlot)
@@ -66,9 +67,20 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
     def _refreshNodeSlot(self):
         """
+        Slot to update the node.
+        """
+
+        self.refresh()
+
+    def refresh(self):
+        """
         Updates the widget item with the current node name and list all the connections
         as children.
         """
+
+        if self._node.name() != self.text(0):
+            # refresh all the other item if the node name has changed
+            self._parent.refreshAll(self)
 
         self.setText(0, self._node.name())
         ports = self._node.ports()
@@ -119,6 +131,18 @@ class TopologySummaryView(QtGui.QTreeWidget):
         """
 
         QtGui.QTreeWidget.clear(self)
+
+    def refreshAll(self, source_child=None):
+        """
+        Refreshes all the items.
+        """
+
+        root = self.invisibleRootItem()
+        for index in range(0, root.childCount()):
+            child = root.child(index)
+            if source_child and source_child == child:
+                continue
+            child.refresh()
 
     def _createdNodeSlot(self, node_id):
         """
