@@ -3,14 +3,24 @@ Integration tests for RackspaceCtrl.
 
 WARNING: These tests start up real instances in the Rackspace Cloud.
 
+
+Usage:
+
+    You need pytest to run this testsuite, the runner accepts following options:
+        --username <username>: Rackspace username
+        --apikey <key>: Rackspace apikey
+        --run-instances: flag to specify whether tests have to wait for instances to run (very slow)
+
+    If you don't specify username ad apikey at the command line, the runner try to access
+    RACKSPACE_USERNAME and RACKSPACE_APIKEY environment vars. If neither the command line options
+    nor the env vars are set, this testsuite will be skipped.
+
 """
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
 from libcloud.compute.base import Node, NodeSize, KeyPair
-import os
 import pytest
 import unittest
-
 
 # custom flag to skip tests if rackspace credentials was not provided
 rackspace_authentication = pytest.mark.rackspace_authentication
@@ -25,7 +35,7 @@ class StubObject(object):
 
 
 @rackspace_authentication
-@pytest.mark.usefixtures("username", "api_key")
+@pytest.mark.usefixtures("username", "api_key", "run_instances")
 class TestRackspaceCtrl(unittest.TestCase):
     def setUp(self):
         # prefix to identify created objects
@@ -123,7 +133,8 @@ class TestRackspaceCtrl(unittest.TestCase):
         key_pair = self.ctrl.create_key_pair(name)
 
         instance = self.ctrl.create_instance(name, size, image, key_pair)
-        #self.ctrl.driver.wait_until_running([instance])
+        if self.run_instances:
+            self.ctrl.driver.wait_until_running([instance])
         self.assertIsInstance(instance, Node)
 
     def test_delete_instance(self):
@@ -136,7 +147,8 @@ class TestRackspaceCtrl(unittest.TestCase):
         key_pair = self.ctrl.create_key_pair(name)
 
         instance = self.ctrl.create_instance(name, size, image, key_pair)
-        #self.ctrl.driver.wait_until_running([instance])
+        if self.run_instances:
+            self.ctrl.driver.wait_until_running([instance])
 
         response = self.ctrl.delete_instance(instance)
 
@@ -213,7 +225,8 @@ class TestRackspaceCtrl(unittest.TestCase):
         key_pair = self.ctrl.create_key_pair(name)
 
         instance = self.ctrl.create_instance(name, size, image, key_pair)
-        #self.ctrl.driver.wait_until_running([instance])
+        if self.run_instances:
+            self.ctrl.driver.wait_until_running([instance])
 
         instances = self.ctrl.list_instances()
 
@@ -231,18 +244,3 @@ class TestRackspaceCtrl(unittest.TestCase):
         """ Ensure that the token is set. """
 
         self.assertIsNotNone(self.ctrl.token)
-
-
-if __name__ == '__main__':
-
-    if 'RACKSPACE_USERNAME' in os.environ:
-        username = os.environ.get('RACKSPACE_USERNAME')
-    else:
-        username = input('Enter Rackspace username: ')
-
-    if 'RACKSPACE_APIKEY' in os.environ:
-        api_key = os.environ.get('RACKSPACE_APIKEY')
-    else:
-        api_key = input('Enter Rackspace api key: ')
-
-    unittest.main()

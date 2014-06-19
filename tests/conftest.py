@@ -4,8 +4,12 @@ import os
 
 
 def pytest_addoption(parser):
-    parser.addoption("--username", action="store", help="rackspace username for integration tests")
-    parser.addoption("--apikey", action="store", help="rackspace apikey for integration tests")
+    parser.addoption("--username", action="store",
+                     help="rackspace username for integration tests")
+    parser.addoption("--apikey", action="store",
+                     help="rackspace apikey for integration tests")
+    parser.addoption("--run-instances", action="store_true",
+                     help="wait for instances to run while testing")
 
 
 @pytest.fixture(scope="class")
@@ -16,6 +20,11 @@ def username(request):
 @pytest.fixture(scope="class")
 def api_key(request):
     request.cls.api_key = request.config.getoption("--apikey") or os.environ.get('RACKSPACE_APIKEY')
+
+
+@pytest.fixture(scope="class")
+def run_instances(request):
+    request.cls.run_instances = request.config.getoption("--run-instances")
 
 
 def pytest_runtest_setup(item):
