@@ -52,10 +52,10 @@ class TestInstanceModel(BaseTest):
 
         self.model.addInstance(node)
 
-        index = self.model.createIndex(0, 1)
-        self.assertIsInstance(self.model.data(index, Qt.DecorationRole), QIcon)
         index = self.model.createIndex(0, 0)
         self.assertEqual(self.model.data(index, Qt.DisplayRole), 'Foo')
+        index = self.model.createIndex(0, 1)
+        self.assertIsInstance(self.model.data(index, Qt.DecorationRole), QIcon)
         index = self.model.createIndex(0, 2)
         self.assertEqual(self.model.data(index, Qt.DisplayRole), 2048)
         index = self.model.createIndex(0, 3)
@@ -82,13 +82,18 @@ class TestInstanceModel(BaseTest):
     def test_update_instance_status(self):
         node1, node2 = gen_fake_nodes(2)
         self.model.addInstance(node1)
-        self.assertEqual(node1.state, NodeState.RUNNING)
+        self.model.addInstance(node2)
+
         node = self.model.getInstance(0)
         node.state = NodeState.STOPPED
         self.model.update_instance_status(node)
         node = self.model.getInstance(0)
         self.assertEqual(node.state, NodeState.STOPPED)
-        self.model.update_instance_status(node2)  # noop
+
+        node = self.model.getInstance(1)
+        self.model.update_instance_status(node)  # instance didn't change
+        node = self.model.getInstance(1)
+        self.assertEqual(node.state, NodeState.RUNNING)
 
     def test_update(self):
         pass
@@ -118,6 +123,10 @@ class TestCloudInspectorView(GUIBaseTest):
             # FIXME should be 2 as soon as we remove fake instances
             self.assertEqual(self.view._model.rowCount(), 7)
 
+            provider.authenticate.return_value = False
+            self.view.load(settings)
+            self.assertIsNone(self.view._provider)
+
     def test_contextMenu(self):
         with mock.patch('gns3.cloud_inspector_view.QMenu') as qmenu:
             m = qmenu.return_value
@@ -142,3 +151,15 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view._deleteSelectedInstance()
 
         self.view._provider.delete_instance.assert_called_with(instance)
+
+    def test_update_model(self):
+        nodes = list(gen_fake_nodes(2))
+        self.view._provider = mock.MagicMock()
+        self.view._provider.list_instances.return_value = nodes
+        self.view._model = mock.MagicMock()
+
+        self.view._update_model()
+        # FIXME method contains mocks, this ensure right calls are performed *beside* mock calls
+        self.view._model.update_instance_status.assert_has_calls([mock.call(x) for x in nodes])
+        # FIXME once removed mocks, we can test right calls are *solely* performed with:
+        # self.view._model.update_instance_status.assert_called_with(*nodes)
