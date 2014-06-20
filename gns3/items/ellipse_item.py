@@ -51,37 +51,6 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
     #     QtGui.QGraphicsEllipseItem.paint(self, painter, option, widget)
     #     self.drawLayerInfo(painter)
 
-    def dump(self):
-        """
-        Returns a representation of this ellipse.
-
-        :returns: dictionary
-        """
-
-        return {"width": self.rect().width(),
-                "height": self.rect().height(),
-                "x": self.x(),
-                "y": self.y(),
-                "z": self.zValue()}
-
-    def load(self, rectangle_info):
-        """
-        Loads an ellipse representation
-        (from a topology file).
-
-        :param rectangle_info: representation of the ellipse (dictionary)
-        """
-
-        width = rectangle_info["width"]
-        height = rectangle_info["height"]
-        x = rectangle_info["x"]
-        y = rectangle_info["y"]
-        z = rectangle_info["z"]
-        self.rect().setWidth(width)
-        self.rect().setHeight(height)
-        self.setPos(x, y)
-        self.setZValue(z)
-
     def duplicate(self):
         """
         Duplicates this ellipse item.
@@ -93,5 +62,8 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
         ellipse_item.rect().setWidth(self.rect().width())
         ellipse_item.rect().setHeight(self.rect().height())
         ellipse_item.setPos(self.x() + 20, self.y() + 20)
+        ellipse_item.setPen(self.pen())
+        ellipse_item.setBrush(self.brush())
         ellipse_item.setZValue(self.zValue())
+        ellipse_item.setRotation(self.rotation())
         return ellipse_item

@@ -36,7 +36,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
         self.setFlag(self.ItemIsMovable)
         self.setFlag(self.ItemIsSelectable)
         self.setZValue(2)
-        self._rotation = 0
+        self._editable = True
 
     def delete(self):
         """
@@ -47,27 +47,43 @@ class NoteItem(QtGui.QGraphicsTextItem):
         from ..topology import Topology
         Topology.instance().removeNote(self)
 
-    #TODO: handle rotations
-    # def keyPressEvent(self, event):
-    #
-    #     key = event.key()
-    #     modifiers = event.modifiers()
-    #     if (key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier) \
-    #         or (key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier) \
-    #         and self.rotation > -360:
-    #         if self.rotation:
-    #             self.rotate(-self.rotation)
-    #         self.rotation -= 1
-    #         self.rotate(self.rotation)
-    #     elif (key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier) \
-    #         or (key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier) \
-    #         and self.rotation < 360:
-    #         if self.rotation:
-    #             self.rotate(-self.rotation)
-    #         self.rotation += 1
-    #         self.rotate(self.rotation)
-    #     else:
-    #         QtGui.QGraphicsTextItem.keyPressEvent(self, event)
+    def editable(self):
+        """
+        Returns either the note is editable or not.
+
+        :return: boolean
+        """
+
+        return self._editable
+
+    def setEditable(self, value):
+        """
+        Sets the note has editable or not.
+
+        :param value: boolean
+        """
+
+        self._editable = value
+
+    def keyPressEvent(self, event):
+        """
+        Handles all key press events
+
+        :param event: QKeyEvent
+        """
+
+        key = event.key()
+        modifiers = event.modifiers()
+        if key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier \
+                or key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+            if self.rotation() > -360.0:
+                self.setRotation(self.rotation() - 1)
+        elif key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier \
+                or key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+            if self.rotation() < 360.0:
+                self.setRotation(self.rotation() + 1)
+        else:
+            QtGui.QGraphicsTextItem.keyPressEvent(self, event)
 
     def editText(self):
         """
@@ -88,7 +104,8 @@ class NoteItem(QtGui.QGraphicsTextItem):
         :param event: QMouseEvent instance
         """
 
-        self.editText()
+        if self._editable:
+            self.editText()
 
     def focusOutEvent(self, event):
         """
@@ -143,10 +160,20 @@ class NoteItem(QtGui.QGraphicsTextItem):
         :returns: dictionary
         """
 
-        return {"text": self.toPlainText(),
-                "x": self.x(),
-                "y": self.y(),
-                "z": self.zValue()}
+        note_info = {"text": self.toPlainText(),
+                     "x": self.x(),
+                     "y": self.y()}
+
+        if self.font() != QtGui.QFont("TypeWriter", 10, QtGui.QFont.Bold):
+            note_info["font"] = self.font().toString()
+        if self.defaultTextColor() != QtCore.Qt.black:
+            note_info["color"] = self.defaultTextColor().name()
+        if self.rotation() != 0:
+            note_info["rotation"] = self.rotation()
+        if self.zValue() != 2:
+            note_info["z"] = self.zValue()
+
+        return note_info
 
     def load(self, note_info):
         """
@@ -156,13 +183,30 @@ class NoteItem(QtGui.QGraphicsTextItem):
         :param note_info: representation of the note (dictionary)
         """
 
+        # load mandatory properties
         text = note_info["text"]
         x = note_info["x"]
         y = note_info["y"]
-        z = note_info["z"]
+
         self.setPlainText(text)
         self.setPos(x, y)
-        self.setZValue(z)
+
+        # load optional properties
+        font = note_info.get("font")
+        color = note_info.get("color")
+        rotation = note_info.get("rotation")
+        z = note_info.get("z")
+
+        if font:
+            qt_font = QtGui.QFont()
+            if qt_font.fromString(font):
+                self.setFont(qt_font)
+        if color:
+            self.setDefaultTextColor(QtGui.QColor(color))
+        if rotation is not None:
+            self.setRotation(rotation)
+        if z is not None:
+            self.setZValue(z)
 
     def duplicate(self):
         """
@@ -175,4 +219,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
         note_item.setPlainText(self.toPlainText())
         note_item.setPos(self.x() + 20, self.y() + 20)
         note_item.setZValue(self.zValue())
+        note_item.setFont(self.font())
+        note_item.setDefaultTextColor(self.defaultTextColor())
+        note_item.setRotation(self.rotation())
         return note_item

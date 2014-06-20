@@ -32,33 +32,30 @@ class ShapeItem:
         self.setFlags(QtGui.QGraphicsItem.ItemIsMovable | QtGui.QGraphicsItem.ItemIsFocusable | QtGui.QGraphicsItem.ItemIsSelectable)
         self.setAcceptsHoverEvents(True)
         self._border = 5
-        self._rotation = 0
         self._edge = None
 
         from ..main_window import MainWindow
         self._graphics_view = MainWindow.instance().uiGraphicsView
 
-    #TODO: handle rotations
-    # def keyPressEvent(self, event):
-    #
-    #     key = event.key()
-    #     modifiers = event.modifiers()
-    #     if (key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier) \
-    #         or (key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier) \
-    #         and self.rotation > -360:
-    #         if self.rotation:
-    #             self.rotate(-self.rotation)
-    #         self.rotation -= 1
-    #         self.rotate(self.rotation)
-    #     elif (key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier) \
-    #         or (key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier) \
-    #         and self.rotation < 360:
-    #         if self.rotation:
-    #             self.rotate(-self.rotation)
-    #         self.rotation += 1
-    #         self.rotate(self.rotation)
-    #     else:
-    #         QtGui.QGraphicsItem.keyPressEvent(self, event)
+    def keyPressEvent(self, event):
+        """
+        Handles all key press events
+
+        :param event: QKeyEvent
+        """
+
+        key = event.key()
+        modifiers = event.modifiers()
+        if key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier \
+                or key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+            if self.rotation() > -360.0:
+                self.setRotation(self.rotation() - 1)
+        elif key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier \
+                or key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+            if self.rotation() < 360.0:
+                self.setRotation(self.rotation() + 1)
+        else:
+            QtGui.QGraphicsItem.keyPressEvent(self, event)
 
     def mousePressEvent(self, event):
         """
@@ -178,6 +175,7 @@ class ShapeItem:
         if self.zValue() >= 0:
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
+    #TODO: show layer position
     # def drawLayerInfo(self, painter):
     #
     #     # Don't draw if not activated
@@ -200,3 +198,78 @@ class ShapeItem:
     #     painter.setFont(QtGui.QFont("TypeWriter", 14, QtGui.QFont.Bold))
     #     zval = str(int(self.zValue()))
     #     painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+
+    def dump(self):
+        """
+        Returns a representation of this shape item.
+
+        :returns: dictionary
+        """
+
+        shape_info = {"width": self.rect().width(),
+                      "height": self.rect().height(),
+                      "x": self.x(),
+                      "y": self.y()}
+
+        brush = self.brush()
+        if brush.style() != QtCore.Qt.NoBrush and brush.color() != QtCore.Qt.transparent:
+            shape_info["color"] = brush.color().name()
+
+        pen = self.pen()
+        if pen.color() != QtCore.Qt.black:
+            shape_info["border_color"] = pen.color().name()
+        if pen.width() != 2:
+            shape_info["border_width"] = pen.width()
+        if pen.style() != QtCore.Qt.SolidLine:
+            shape_info["border_style"] = pen.style()
+
+        if self.rotation() != 0:
+            shape_info["rotation"] = self.rotation()
+
+        if self.zValue() != 0:
+            shape_info["z"] = self.zValue()
+
+        return shape_info
+
+    def load(self, shape_info):
+        """
+        Loads a rectangle representation
+        (from a topology file).
+
+        :param shape_info: representation of the shape item (dictionary)
+        """
+
+        # load mandatory properties
+        width = shape_info["width"]
+        height = shape_info["height"]
+        x = shape_info["x"]
+        y = shape_info["y"]
+
+        self.rect().setWidth(width)
+        self.rect().setHeight(height)
+        self.setPos(x, y)
+
+        # load optional properties
+        z = shape_info.get("z")
+        color = shape_info.get("color")
+        border_color = shape_info.get("border_color")
+        border_width = shape_info.get("border_width")
+        border_style = shape_info.get("border_style")
+        rotation = shape_info.get("rotation")
+
+        if color:
+            brush = QtGui.QBrush(QtGui.QColor(color))
+            self.setBrush(brush)
+
+        pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        if border_color:
+            pen.setColor(QtGui.QColor(border_color))
+        if border_width is not None:
+            pen.setWidth(border_width)
+        if border_style:
+            pen.setStyle(QtCore.Qt.PenStyle(border_style))
+        self.setPen(pen)
+        if rotation is not None:
+            self.setRotation(rotation)
+        if z is not None:
+            self.setZValue(z)

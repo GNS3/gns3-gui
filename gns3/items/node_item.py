@@ -20,6 +20,7 @@ Graphical representation of a node on the QGraphicsScene.
 """
 
 from ..qt import QtCore, QtGui, QtSvg
+from .note_item import NoteItem
 
 
 class NodeItem(QtSvg.QGraphicsSvgItem):
@@ -35,6 +36,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # attached node
         self._node = node
+
+        # node label
+        self._node_label = None
 
         # set graphical settings for this node
         self.setFlag(QtSvg.QGraphicsSvgItem.ItemIsMovable)
@@ -134,7 +138,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         self._initialized = True
         self.update()
-        self.showName()
+        self._showLabel()
 
     def startedSlot(self):
         """
@@ -169,7 +173,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has been updated.
         """
 
-        self.textItem.setPlainText(self._node.name())
+        self._node_label.setPlainText(self._node.name())
         self.setUnsavedState()
 
         # update the link tooltips in case the
@@ -234,22 +238,40 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         else:
             self.setToolTip(self._node.info())
 
-    def showName(self):
+    def label(self):
         """
-        Shows the node name on the scene.
+        Returns the node label.
+
+        :return: NoteItem instance.
         """
 
-        #TODO: possibility to change the Font size etc.
-        self.textItem = QtGui.QGraphicsTextItem(self._node.name(), self)
-        self.textItem.setFont(QtGui.QFont("TypeWriter", 10, QtGui.QFont.Bold))
-        self.textItem.setFlag(self.textItem.ItemIsMovable)
-        textrect = self.textItem.boundingRect()
-        textmiddle = textrect.topRight() / 2
-        noderect = self.boundingRect()
-        nodemiddle = noderect.topRight() / 2
-        self.default_name_xpos = nodemiddle.x() - textmiddle.x()
-        self.default_name_ypos = -25
-        self.textItem.setPos(self.default_name_xpos, self.default_name_ypos)
+        return self._node_label
+
+    def setLabel(self, label):
+        """
+        Sets the node label.
+
+        :param label: NoteItem instance.
+        """
+
+        self._node_label = label
+
+    def _showLabel(self):
+        """
+        Shows the node label on the scene.
+        """
+
+        if not self._node_label:
+            self._node_label = NoteItem(self)
+            self._node_label.setEditable(False)
+            self._node_label.setPlainText(self._node.name())
+            text_rect = self._node_label.boundingRect()
+            text_middle = text_rect.topRight() / 2
+            node_rect = self.boundingRect()
+            node_middle = node_rect.topRight() / 2
+            label_x_pos = node_middle.x() - text_middle.x()
+            label_y_pos = -25
+            self._node_label.setPos(label_x_pos, label_y_pos)
 
     def connectToPort(self, unavailable_ports=[]):
         """
