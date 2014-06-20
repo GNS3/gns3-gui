@@ -19,8 +19,8 @@
 Text editor to edit Note items.
 """
 
-from .qt import QtCore, QtGui
-from .ui.text_editor_dialog_ui import Ui_TextEditorDialog
+from ..qt import QtCore, QtGui
+from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
 class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):

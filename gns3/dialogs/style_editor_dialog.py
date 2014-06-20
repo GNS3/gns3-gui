@@ -19,8 +19,8 @@
 Style editor to edit Shape items.
 """
 
-from .qt import QtCore, QtGui
-from .ui.style_editor_dialog_ui import Ui_StyleEditorDialog
+from ..qt import QtCore, QtGui
+from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 
 
 class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):

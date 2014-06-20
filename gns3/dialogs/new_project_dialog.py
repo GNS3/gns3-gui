@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from .qt import QtCore, QtGui
-from .ui.new_project_dialog_ui import Ui_NewProjectDialog
+from ..qt import QtCore, QtGui
+from ..ui.new_project_dialog_ui import Ui_NewProjectDialog
 
 
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):

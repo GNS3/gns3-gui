@@ -24,7 +24,7 @@ import pickle
 
 from .qt import QtCore, QtGui, QtNetwork
 from .items.node_item import NodeItem
-from .node_configurator import NodeConfigurator
+from .dialogs.node_configurator_dialog import NodeConfiguratorDialog
 from .link import Link
 from .node import Node
 from .modules import MODULES
@@ -33,8 +33,8 @@ from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
 from .topology import Topology
 from .ports.port import Port
-from .style_editor_dialog import StyleEditorDialog
-from .text_editor_dialog import TextEditorDialog
+from .dialogs.style_editor_dialog import StyleEditorDialog
+from .dialogs.text_editor_dialog import TextEditorDialog
 from .utils.progress_dialog import ProgressDialog
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 
@@ -608,7 +608,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         if not items:
             items = self.scene().selectedItems()
-        node_configurator = NodeConfigurator(items, self._main_window)
+        node_configurator = NodeConfiguratorDialog(items, self._main_window)
         node_configurator.setModal(True)
         node_configurator.show()
         node_configurator.exec_()

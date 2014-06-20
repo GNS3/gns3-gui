@@ -13,7 +13,7 @@ from gns3.pages.cloud_preferences_page import CloudPreferencesPage
 from gns3.settings import CLOUD_SETTINGS
 from gns3.main_window import MainWindow
 from gns3.main_window import CLOUD_SETTINGS_GROUP
-from gns3.preferences_dialog import PreferencesDialog
+from gns3.dialogs.preferences_dialog import PreferencesDialog
 
 import pytest
 

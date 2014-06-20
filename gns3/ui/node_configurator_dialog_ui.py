@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/node_configurator.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/node_configurator_dialog.ui'
 #
-# Created: Sun Jan 26 13:41:56 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Jun 20 14:27:39 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 

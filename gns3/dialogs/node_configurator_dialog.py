@@ -19,11 +19,11 @@
 Dialog to configure and update node settings using widget pages.
 """
 
-from .qt import QtCore, QtGui
-from .ui.node_configurator_ui import Ui_NodeConfiguratorDialog
+from ..qt import QtCore, QtGui
+from ..ui.node_configurator_dialog_ui import Ui_NodeConfiguratorDialog
 
 
-class NodeConfigurator(QtGui.QDialog, Ui_NodeConfiguratorDialog):
+class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
     """
     Node configurator implementation.
 
