@@ -21,6 +21,7 @@ from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
 from libcloud.compute.base import Node, NodeSize, KeyPair
 import pytest
 import unittest
+import time
 
 # custom flag to skip tests if rackspace credentials was not provided
 rackspace_authentication = pytest.mark.rackspace_authentication
@@ -44,10 +45,13 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.ctrl = RackspaceCtrl(self.username, self.api_key)
         self.ctrl.authenticate()
         self.ctrl.set_region('ord')
+        self.gns3_image = None
 
     def tearDown(self):
         self._remove_instances()
         self._remove_key_pairs()
+        if self.gns3_image is not None:
+            self.ctrl.driver.ex_delete_image(self.gns3_image)
 
     def _remove_instances(self):
         """ Remove any instances that were created. """
@@ -244,3 +248,38 @@ class TestRackspaceCtrl(unittest.TestCase):
         """ Ensure that the token is set. """
 
         self.assertIsNotNone(self.ctrl.token)
+
+    def test__get_shared_image_not_found(self):
+        self.assertRaises(ItemNotFound, self.ctrl._get_shared_image, 'user_foo', 'IAD', 'foo_ver')
+
+    def test__get_shared_image(self):
+        name = "%s_get_shared_image" % self.object_prefix
+
+        image = self.ctrl.driver.list_images()[0]
+        size = self.ctrl.driver.list_sizes()[0]
+        key_pair = self.ctrl.create_key_pair(name)
+
+        instance = self.ctrl.create_instance(name, size, image, key_pair)
+
+        # we cannot create images until the build is over
+        self.ctrl.driver.wait_until_running([instance])
+        self.gns3_image = self.ctrl.driver.ex_save_image(instance, 'gns3_3.0', metadata=None)
+        # wait until image is active or gns3-ias will ignore it
+        while self.ctrl.driver.ex_get_image(self.gns3_image.id).extra['status'] != 'ACTIVE':
+            time.sleep(2)
+
+        r_image = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+
+        self.assertTrue('image_id' in r_image)
+        self.assertTrue('member_id' in r_image)
+        self.assertTrue('status' in r_image)
+        self.assertEqual(r_image['status'], 'pending')
+
+        r_image2 = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+
+        self.assertTrue('image_id' in r_image2)
+        self.assertEqual(r_image['image_id'], r_image2['image_id'])
+        self.assertTrue('member_id' in r_image2)
+        self.assertEqual(r_image['member_id'], r_image2['member_id'])
+        self.assertTrue('status' in r_image2)
+        self.assertEqual(r_image2['status'], 'ALREADYREQUESTED')

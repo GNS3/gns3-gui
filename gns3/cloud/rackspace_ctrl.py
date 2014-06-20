@@ -24,11 +24,15 @@ from libcloud.compute.drivers.rackspace import ENDPOINT_ARGS_MAP
 from libcloud.compute.providers import get_driver
 from libcloud.compute.types import Provider
 
+from .exceptions import ItemNotFound, ApiError
+
 import logging
 log = logging.getLogger(__name__)
 
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
+
+GNS3IAS_URL = 'http://localhost:8888'  # TODO find a place for this value
 
 
 class RackspaceCtrl(BaseCloudCtrl):
@@ -174,3 +178,38 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         self.region = region
         return True
+
+    def _get_shared_image(self, user_id, region, gns3_version):
+        """
+        Given a GNS3 version, ask gns3-ias to share a compatible image
+
+        Response:
+            {"created_at": "", "schema": "", "status": "", "member_id": "", "image_id": "", "updated_at": ""}
+            or, if access was already asked
+            {"image_id": "", "member_id": "", "status": "ALREADYREQUESTED"}
+        """
+        endpoint = GNS3IAS_URL+"/images/grant_access"
+        params = {
+            "user_id": user_id,
+            "user_region": region,
+            "gns3_version": gns3_version,
+        }
+        response = requests.get(endpoint, params=params)
+        status = response.status_code
+        if status == 200:
+            return response.json()
+        elif status == 404:
+            raise ItemNotFound()
+        else:
+            raise ApiError("IAS status code: %d" % status)
+
+    def list_images(self):
+        """
+        Retrieve the list of RackSpace server images from gns3-ias server
+        """
+        # call gns3-ias, retrieve image id for current gns3 version
+
+        # set status:accepted for image id:
+        # PUT	/images/{image_id}/members/{member_id} with payload: {"status": "accepted"}
+
+        # return image name
