@@ -185,7 +185,7 @@ CLOUD_SETTINGS = {
     "cloud_store_api_key": False,
     # no default value at startup, users must choose and we need to know if they've already done it
     "cloud_store_api_key_chosen": False,
-    "cloud_provider": "",
+    "cloud_provider": "rackspace",
     "cloud_region": "",
     "instances_per_project": 0,
     "memory_per_instance": 1,
