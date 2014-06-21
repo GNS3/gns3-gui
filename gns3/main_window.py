@@ -170,7 +170,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         # set a new images directory
-        if new_settings["images_path"] != self.imagesDirPath():
+        if new_settings.get("images_path", '') != self.imagesDirPath():
             self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
         # save the settings
