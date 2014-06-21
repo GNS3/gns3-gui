@@ -168,8 +168,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOU")
-        if not os.path.isdir(destination_directory):
-            destination_directory = "."
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Select an IOU image",
                                                              destination_directory,
