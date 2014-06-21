@@ -156,16 +156,21 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
         self._provider = provider_controller_class(username, apikey)
 
-        if not region:
-            region = self._provider.list_regions().values()[0]
+        if not self._provider.authenticate():
+            self._provider = None
+            return
 
-        if self._provider.authenticate() and self._provider.set_region(region):
+        if not region:
+            region = self._provider.list_regions()[0]
+
+        if self._provider.set_region(region):
             for i in self._provider.list_instances():
                 self._model.addInstance(i)
             self.uiInstancesTableView.resizeColumnsToContents()
             self._pollingTimer.start(5000)
         else:
             self._provider = None
+            return
 
         # TODO remove this block
         for i in gen_fake_nodes(5):
