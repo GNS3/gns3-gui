@@ -70,6 +70,7 @@ def locale_check():
             locale.setlocale(locale.LC_ALL, (language, "UTF-8"))
         except locale.Error as e:
             log.error("could not set an UTF-8 encoding for the {} locale: {}".format(language, e))
+            raise SystemExit
     else:
         log.info("current locale is {}.{}".format(language, encoding))
 
