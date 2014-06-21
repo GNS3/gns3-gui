@@ -23,7 +23,7 @@ import os
 import sys
 import pkg_resources
 from gns3.qt import QtGui
-from gns3.node_configurator import ConfigurationError
+from gns3.dialogs.node_configurator_dialog import ConfigurationError
 
 from .. import IOU
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
