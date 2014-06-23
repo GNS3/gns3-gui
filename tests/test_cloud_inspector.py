@@ -113,7 +113,7 @@ class TestCloudInspectorView(GUIBaseTest):
             imp_.return_value = provider
 
             settings = mock.MagicMock()
-            settings_copy = MainWindow.instance().cloud_settings().copy()
+            settings_copy = MainWindow.instance().cloudSettings().copy()
             settings_copy['cloud_provider'] = 'rackspace'
             settings.__getitem__.side_effect = make_getitem(settings_copy)
             settings.__setitem__.side_effect = make_setitem(settings_copy)
