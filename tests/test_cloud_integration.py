@@ -250,7 +250,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertIsNotNone(self.ctrl.token)
 
     def test__get_shared_image_not_found(self):
-        self.assertRaises(ItemNotFound, self.ctrl._get_shared_image, 'user_foo', 'IAD', 'foo_ver')
+        self.assertRaises(ItemNotFound, self.ctrl._get_shared_images, 'user_foo', 'IAD', 'foo_ver')
 
     def test__get_shared_image(self):
         name = "%s_get_shared_image" % self.object_prefix
@@ -286,7 +286,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         print("Image created.")
 
         print("Getting shared images...")
-        r_images = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+        r_images = self.ctrl._get_shared_images('user_foo', 'ORD', '3.0')
 
         self.assertTrue('image_id' in r_images[0])
         self.assertTrue('image_id' in r_images[1])
@@ -299,7 +299,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         print("Done.")
 
         print("Getting shared images...")
-        r_images2 = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+        r_images2 = self.ctrl._get_shared_images('user_foo', 'ORD', '3.0')
 
         self.assertTrue('image_id' in r_images2[0])
         self.assertTrue('image_id' in r_images2[1])
