@@ -254,32 +254,63 @@ class TestRackspaceCtrl(unittest.TestCase):
 
     def test__get_shared_image(self):
         name = "%s_get_shared_image" % self.object_prefix
-
-        image = self.ctrl.driver.list_images()[0]
+        images = self.ctrl.driver.list_images()
+        # use the smallest image available on Rackspace
+        image = [i for i in images if 'boot.rackspace.com' in i.name][0]
         size = self.ctrl.driver.list_sizes()[0]
         key_pair = self.ctrl.create_key_pair(name)
 
+        print("Creating an instance...")
         instance = self.ctrl.create_instance(name, size, image, key_pair)
 
         # we cannot create images until the build is over
         self.ctrl.driver.wait_until_running([instance])
-        self.gns3_image = self.ctrl.driver.ex_save_image(instance, 'gns3_3.0', metadata=None)
+        print("Instance up and running.")
+
+
+        print("Creating an image...")
+        gns3_image1 = self.ctrl.driver.ex_save_image(instance, 'gns3_3.0a', metadata=None)
         # wait until image is active or gns3-ias will ignore it
-        while self.ctrl.driver.ex_get_image(self.gns3_image.id).extra['status'] != 'ACTIVE':
+        while self.ctrl.driver.ex_get_image(gns3_image1.id).extra['status'] != 'ACTIVE':
             time.sleep(2)
+        print("Image created.")
 
-        r_image = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+        # wait to avoid Exception: 409 Conflict Cannot 'createImage' while instance is in task_state image_uploading
+        self.ctrl.driver.wait_until_running([instance])
 
-        self.assertTrue('image_id' in r_image)
-        self.assertTrue('member_id' in r_image)
-        self.assertTrue('status' in r_image)
-        self.assertEqual(r_image['status'], 'pending')
+        print("Creating another image...")
+        gns3_image2 = self.ctrl.driver.ex_save_image(instance, 'gns3_3.0b', metadata=None)
+        # wait until image is active or gns3-ias will ignore it
+        while self.ctrl.driver.ex_get_image(gns3_image2.id).extra['status'] != 'ACTIVE':
+            time.sleep(2)
+        print("Image created.")
 
-        r_image2 = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+        print("Getting shared images...")
+        r_images = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
 
-        self.assertTrue('image_id' in r_image2)
-        self.assertEqual(r_image['image_id'], r_image2['image_id'])
-        self.assertTrue('member_id' in r_image2)
-        self.assertEqual(r_image['member_id'], r_image2['member_id'])
-        self.assertTrue('status' in r_image2)
-        self.assertEqual(r_image2['status'], 'ALREADYREQUESTED')
+        self.assertTrue('image_id' in r_images[0])
+        self.assertTrue('image_id' in r_images[1])
+        self.assertTrue('member_id' in r_images[0])
+        self.assertTrue('member_id' in r_images[1])
+        self.assertTrue('status' in r_images[0])
+        self.assertTrue('status' in r_images[1])
+        self.assertEqual(r_images[0]['status'], 'pending')
+        self.assertEqual(r_images[1]['status'], 'pending')
+        print("Done.")
+
+        print("Getting shared images...")
+        r_images2 = self.ctrl._get_shared_image('user_foo', 'ORD', '3.0')
+
+        self.assertTrue('image_id' in r_images2[0])
+        self.assertTrue('image_id' in r_images2[1])
+        self.assertEqual(r_images[0]['image_id'], r_images2[0]['image_id'])
+        self.assertEqual(r_images[1]['image_id'], r_images2[1]['image_id'])
+        self.assertTrue('member_id' in r_images2[0])
+        self.assertTrue('member_id' in r_images2[1])
+        self.assertEqual(r_images[0]['member_id'], r_images2[0]['member_id'])
+        self.assertEqual(r_images[1]['member_id'], r_images2[1]['member_id'])
+        self.assertTrue('status' in r_images2[0])
+        self.assertTrue('status' in r_images2[1])
+        self.assertEqual(r_images2[0]['status'], 'ALREADYREQUESTED')
+        self.assertEqual(r_images2[1]['status'], 'ALREADYREQUESTED')
+        print("Done.")
