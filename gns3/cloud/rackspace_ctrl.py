@@ -25,6 +25,8 @@ from libcloud.compute.providers import get_driver
 from libcloud.compute.types import Provider
 
 from .exceptions import ItemNotFound, ApiError
+from ..main_window import MainWindow
+from ..version import __version__
 
 import logging
 log = logging.getLogger(__name__)
@@ -179,18 +181,18 @@ class RackspaceCtrl(BaseCloudCtrl):
         self.region = region
         return True
 
-    def _get_shared_image(self, user_id, region, gns3_version):
+    def _get_shared_images(self, username, region, gns3_version):
         """
-        Given a GNS3 version, ask gns3-ias to share a compatible image
+        Given a GNS3 version, ask gns3-ias to share compatible images
 
         Response:
-            {"created_at": "", "schema": "", "status": "", "member_id": "", "image_id": "", "updated_at": ""}
+            [{"created_at": "", "schema": "", "status": "", "member_id": "", "image_id": "", "updated_at": ""},]
             or, if access was already asked
-            {"image_id": "", "member_id": "", "status": "ALREADYREQUESTED"}
+            [{"image_id": "", "member_id": "", "status": "ALREADYREQUESTED"},]
         """
         endpoint = GNS3IAS_URL+"/images/grant_access"
         params = {
-            "user_id": user_id,
+            "user_id": username,
             "user_region": region,
             "gns3_version": gns3_version,
         }
@@ -205,11 +207,20 @@ class RackspaceCtrl(BaseCloudCtrl):
 
     def list_images(self):
         """
-        Retrieve the list of RackSpace server images from gns3-ias server
+        Return a dictionary containing RackSpace server images
+        retrieved from gns3-ias server
         """
-        # call gns3-ias, retrieve image id for current gns3 version
+        if not (self.username and self.region):
+            return []
 
-        # set status:accepted for image id:
-        # PUT	/images/{image_id}/members/{member_id} with payload: {"status": "accepted"}
-
-        # return image name
+        try:
+            response = self._get_shared_images(self.username, self.region, __version__)
+            shared_images = json.loads(response)
+            images = {}
+            for i in shared_images:
+                images[i['image_id']] = i['image_name']
+            return images
+        except ItemNotFound:
+            return []
+        except ApiError as e:
+            log.error('Error while retrieving image list: %s' % e)
