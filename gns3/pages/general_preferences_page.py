@@ -168,8 +168,14 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiSlowStartAllSpinBox.setValue(settings["slow_device_start_all"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
+        index = self.uiTelnetConsolePreconfiguredCommandComboBox.findData(settings["telnet_console_command"])
+        if index != -1:
+            self.uiTelnetConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
         self.uiSerialConsoleCommandLineEdit.setText(settings["serial_console_command"])
         self.uiSerialConsoleCommandLineEdit.setCursorPosition(0)
+        index = self.uiSerialConsolePreconfiguredCommandComboBox.findData(settings["serial_console_command"])
+        if index != -1:
+            self.uiSerialConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
         self.uiCloseConsoleWindowsOnDeleteCheckBox.setChecked(settings["auto_close_console"])
         self.uiBringConsoleWindowToFrontCheckBox.setChecked(settings["bring_console_to_front"])
         self.uiSlowConsoleAllDoubleSpinBox.setValue(settings["slow_console_all"])

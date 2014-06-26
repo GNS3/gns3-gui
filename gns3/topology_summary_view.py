@@ -90,6 +90,8 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
             if not port.isFree():
                 item = QtGui.QTreeWidgetItem()
                 item.setText(0, "{} {}".format(port.name(), port.description()))
+                if port.capturing():
+                    item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
                 self.addChild(item)
 
         self.sortChildren(0, QtCore.Qt.AscendingOrder)

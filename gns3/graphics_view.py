@@ -761,7 +761,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "start") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "start") and item.node().initialized():
                 item.node().start()
 
     def stopActionSlot(self):
@@ -771,7 +771,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "stop") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "stop") and item.node().initialized():
                 item.node().stop()
 
     def suspendActionSlot(self):
@@ -781,7 +781,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "suspend") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend") and item.node().initialized():
                 item.node().suspend()
 
     def reloadActionSlot(self):
@@ -791,7 +791,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "reload") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
 
     def configureActionSlot(self):
@@ -816,7 +816,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         from .telnet_console import telnetConsole
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "console"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
                 node = item.node()
                 if node.status() != Node.started:
                     continue

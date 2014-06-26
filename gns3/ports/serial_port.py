@@ -63,3 +63,15 @@ class SerialPort(Port):
         """
 
         return "Serial"
+
+    @staticmethod
+    def dataLinkTypes():
+        """
+        Returns the supported PCAP DLTs.
+
+        :return: dictionary
+        """
+
+        return {"Frame Relay": "DLT_FRELAY",
+                "Cisco HDLC": "DLT_C_HDLC",
+                "Cisco PPP": "DLT_PPP_SERIAL"}

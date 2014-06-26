@@ -24,6 +24,7 @@ from ..ui.preferences_dialog_ui import Ui_PreferencesDialog
 from ..pages.server_preferences_page import ServerPreferencesPage
 from ..pages.general_preferences_page import GeneralPreferencesPage
 from ..pages.cloud_preferences_page import CloudPreferencesPage
+from ..pages.packet_capture_preferences_page import PacketCapturePreferencesPage
 from ..modules import MODULES
 
 
@@ -52,32 +53,22 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         Loads all preference pages (built-ins and from modules).
         """
 
-        # load general settings pages
-        general_page = GeneralPreferencesPage()
-        general_page.loadPreferences()
-        name = general_page.windowTitle()
-        item = QtGui.QListWidgetItem(name, self.uiListWidget)
-        item.setData(QtCore.Qt.UserRole, general_page)
-        self.uiStackedWidget.addWidget(general_page)
-        self._items.append(item)
+        # load built-in preference pages
+        pages = [
+            GeneralPreferencesPage,
+            ServerPreferencesPage,
+            PacketCapturePreferencesPage,
+            CloudPreferencesPage,
+        ]
 
-        # load server settings page
-        servers_page = ServerPreferencesPage()
-        servers_page.loadPreferences()
-        name = servers_page.windowTitle()
-        item = QtGui.QListWidgetItem(name, self.uiListWidget)
-        item.setData(QtCore.Qt.UserRole, servers_page)
-        self.uiStackedWidget.addWidget(servers_page)
-        self._items.append(item)
-
-        # load cloud settings page
-        cloud_page = CloudPreferencesPage()
-        cloud_page.loadPreferences()
-        name = cloud_page.windowTitle()
-        item = QtGui.QListWidgetItem(name, self.uiListWidget)
-        item.setData(QtCore.Qt.UserRole, cloud_page)
-        self.uiStackedWidget.addWidget(cloud_page)
-        self._items.append(item)
+        for page in pages:
+            preferences_page = page()
+            preferences_page.loadPreferences()
+            name = preferences_page.windowTitle()
+            item = QtGui.QListWidgetItem(name, self.uiListWidget)
+            item.setData(QtCore.Qt.UserRole, preferences_page)
+            self.uiStackedWidget.addWidget(preferences_page)
+            self._items.append(item)
 
         # load module preference pages
         for module in MODULES:

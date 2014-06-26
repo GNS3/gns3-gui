@@ -19,7 +19,14 @@
 Base class for port objects.
 """
 
+import os
+import sys
+import subprocess
+import shlex
+
+from ..qt import QtCore
 from ..nios.nio_udp import NIOUDP
+from ..settings import PACKET_CAPTURE_SETTINGS, PACKET_CAPTURE_SETTING_TYPES
 
 
 class Port(object):
@@ -32,6 +39,7 @@ class Port(object):
     """
 
     _instance_count = 1
+    _settings = {}
 
     # port statuses
     stopped = 0
@@ -54,6 +62,13 @@ class Port(object):
         self._data = {}
         self._destination_node = None
         self._destination_port = None
+
+        self._capture_supported = False
+        self._capture_file_path = ""
+        self._capturing = False
+        self._tail_process = None
+        self._capture_reader_process = None
+
         if default_nio is None:
             self._default_nio = NIOUDP
         else:
@@ -267,6 +282,7 @@ class Port(object):
         self._destination_node = None
         self._destination_port = None
         self._port_label = None
+        self.stopPacketCapture()
 
     def isFree(self):
         """
@@ -297,6 +313,16 @@ class Port(object):
         """
 
         return "Ethernet"
+
+    @staticmethod
+    def dataLinkTypes():
+        """
+        Returns the supported PCAP DLTs.
+
+        :return: dictionary
+        """
+
+        return {"Ethernet": "DLT_EN10MB"}
 
     def data(self):
         """
@@ -333,6 +359,133 @@ class Port(object):
         """
 
         self._port_label = label
+
+    @classmethod
+    def loadPacketCaptureSettings(cls):
+        """
+        Loads the packet capture settings from the persistent settings file.
+        """
+
+        settings = QtCore.QSettings()
+        settings.beginGroup("PacketCapture")
+        for name, value in PACKET_CAPTURE_SETTINGS.items():
+            cls._settings[name] = settings.value(name, value, type=PACKET_CAPTURE_SETTING_TYPES[name])
+        settings.endGroup()
+
+    @classmethod
+    def setPacketCaptureSettings(cls, new_settings):
+        """
+        Sets new packet capture settings.
+
+        :param new_settings: settings dictionary
+        """
+
+        cls._settings.update(new_settings)
+        settings = QtCore.QSettings()
+        settings.beginGroup("PacketCapture")
+        for name, value in cls._settings.items():
+            settings.setValue(name, value)
+        settings.endGroup()
+
+    @classmethod
+    def packetCaptureSettings(cls):
+        """
+        Returns the packet capture settings.
+
+        :returns: settings dictionary
+        """
+
+        return cls._settings
+
+    def setPacketCaptureSupported(self, value):
+        """
+        Sets either packet capture is support or not on this port
+
+        :param value: boolean
+        """
+
+        self._capture_supported = value
+
+    def packetCaptureSupported(self):
+        """
+        Returns either packet capture is support or not on this port
+
+        :return: boolean
+        """
+
+        return self._capture_supported
+
+    def capturing(self):
+        """
+        Returns either packet capture is active
+
+        :return: boolean
+        """
+
+        return self._capturing
+
+    def startPacketCapture(self, capture_file_path):
+        """
+        Starts a packet capture.
+
+        :param capture_file_path: PCAP capture output file
+        """
+
+        self._capturing = True
+        self._capture_file_path = capture_file_path
+        if os.path.isfile(capture_file_path) and self._settings["command_auto_start"]:
+            self.startPacketCaptureReader()
+
+    def stopPacketCapture(self):
+        """
+        Stops a packet capture.
+        """
+
+        self._capturing = False
+        self._capture_file_path = ""
+        if self._tail_process and self._tail_process.poll() is None:
+            self._tail_process.kill()
+            self._tail_process = None
+        self._capture_reader_process = None
+
+    def startPacketCaptureReader(self):
+        """
+        Starts the packet capture reader.
+        """
+
+        if not os.path.isfile(self._capture_file_path):
+            raise FileNotFoundError("the {} capture file does not exist on this host".format(self._capture_file_path))
+
+        if self._tail_process and self._tail_process.poll() is None:
+            self._tail_process.kill()
+            self._tail_process = None
+        if self._capture_reader_process and self._capture_reader_process.poll() is None:
+            self._capture_reader_process.kill()
+            self._capture_reader_process = None
+
+        command = self._settings["packet_capture_reader_command"]
+        command = command.replace("%c", self._capture_file_path)
+
+        if "|" in command:
+            # live traffic capture (using tail)
+            command1, command2 = command.split("|", 1)
+            info = None
+            if sys.platform.startswith("win"):
+                # hide tail window on Windows
+                info = subprocess.STARTUPINFO()
+                info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                info.wShowWindow = subprocess.SW_HIDE
+            else:
+                command1 = shlex.split(command1)
+                command2 = shlex.split(command2)
+
+            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
+            self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout)
+        else:
+            # normal traffic capture
+            if not sys.platform.startswith("win"):
+                command = shlex.split(command)
+            self._capture_reader_process = subprocess.Popen(command)
 
     def dump(self):
         """

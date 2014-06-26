@@ -53,3 +53,14 @@ class POSPort(Port):
         """
 
         return "p"
+
+    @staticmethod
+    def dataLinkTypes():
+        """
+        Returns the supported PCAP DLTs.
+
+        :return: list of DLTs
+        """
+
+        # Packet capture on PoS is not supported
+        return []
