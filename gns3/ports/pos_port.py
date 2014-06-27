@@ -55,12 +55,22 @@ class POSPort(Port):
         return "p"
 
     @staticmethod
+    def linkType():
+        """
+        Returns the link type to be used to connect this port.
+
+        :returns: string
+        """
+
+        return "Serial"
+
+    @staticmethod
     def dataLinkTypes():
         """
         Returns the supported PCAP DLTs.
 
-        :return: list of DLTs
+        :return: dictionary
         """
 
         # Packet capture on PoS is not supported
-        return []
+        return {}
