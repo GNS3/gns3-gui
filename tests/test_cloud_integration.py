@@ -11,7 +11,7 @@ Usage:
         --apikey <key>: Rackspace apikey
         --run-instances: flag to specify whether tests have to wait for instances to run (very slow)
 
-    If you don't specify username ad apikey at the command line, the runner try to access
+    If you don't specify username and apikey at the command line, the runner will try to access
     RACKSPACE_USERNAME and RACKSPACE_APIKEY environment vars. If neither the command line options
     nor the env vars are set, this testsuite will be skipped.
 
