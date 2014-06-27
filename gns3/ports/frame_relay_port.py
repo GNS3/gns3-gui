@@ -16,15 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-ATM port for ATM link end points.
+Frame relay port for serial link end points.
 """
 
-from .port import Port
+from .serial_port import SerialPort
 
 
-class ATMPort(Port):
+class FrameRelayPort(SerialPort):
     """
-    ATM port.
+    Frame port.
 
     :param name: port name (string)
     :param nio: NIO instance to attach to this port
@@ -32,37 +32,7 @@ class ATMPort(Port):
 
     def __init__(self, name, nio=None):
 
-        Port.__init__(self, name, nio)
-
-    @staticmethod
-    def longNameType():
-        """
-        Returns the long name type for this port.
-
-        :returns: string
-        """
-
-        return "ATM"
-
-    @staticmethod
-    def shortNameType():
-        """
-        Returns the short name type for this port.
-
-        :returns: string
-        """
-
-        return "a"
-
-    @staticmethod
-    def linkType():
-        """
-        Returns the link type to be used to connect this port.
-
-        :returns: string
-        """
-
-        return "Serial"
+        SerialPort.__init__(self, name, nio)
 
     @staticmethod
     def dataLinkTypes():
@@ -72,4 +42,4 @@ class ATMPort(Port):
         :return: dictionary
         """
 
-        return {"ATM": "DLT_ATM_RFC1483"}
+        return {"Frame Relay": "DLT_FRELAY"}

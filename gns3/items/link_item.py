@@ -254,12 +254,12 @@ class LinkItem(QtGui.QGraphicsPathItem):
         ports = {}
         if self._source_port.packetCaptureSupported() and not self._source_port.capturing():
             for dlt_name, dlt in self._source_port.dataLinkTypes().items():
-                port = "{} {} ({} encapsulation: {})".format(self._source_item.node().name(), self._source_port.name(), dlt_name, dlt)
+                port = "{} port {} ({} encapsulation: {})".format(self._source_item.node().name(), self._source_port.name(), dlt_name, dlt)
                 ports[port] = [self._source_item.node(), self._source_port, dlt]
 
         if self._destination_port.packetCaptureSupported() and not self._destination_port.capturing():
             for dlt_name, dlt in self._destination_port.dataLinkTypes().items():
-                port = "{} {} ({} encapsulation: {})".format(self._destination_item.node().name(), self._destination_port.name(), dlt_name, dlt)
+                port = "{} port {} ({} encapsulation: {})".format(self._destination_item.node().name(), self._destination_port.name(), dlt_name, dlt)
                 ports[port] = [self._destination_item.node(), self._destination_port, dlt]
 
         if not ports:
@@ -270,7 +270,11 @@ class LinkItem(QtGui.QGraphicsPathItem):
         if ok:
             if selection in ports:
                 node, port, dlt = ports[selection]
-                node.startPacketCapture(port, dlt)
+                capture_file_name = "{}_{}_to_{}_{}.pcap".format(node.name(),
+                                                                 port.name().replace('/', '-'),
+                                                                 port.destinationNode().name(),
+                                                                 port.destinationPort().name().replace('/', '-'))
+                node.startPacketCapture(port, capture_file_name, dlt)
 
     def _stopCaptureActionSlot(self):
         """
@@ -280,9 +284,9 @@ class LinkItem(QtGui.QGraphicsPathItem):
 
         if self._source_port.capturing() and self._destination_port.capturing():
             ports = {}
-            source_port = "{} {}".format(self._source_item.node().name(), self._source_port.name())
+            source_port = "{} port {}".format(self._source_item.node().name(), self._source_port.name())
             ports[source_port] = [self._source_item.node(), self._source_port]
-            destination_port = "{} {}".format(self._destination_item.node().name(), self._destination_port.name())
+            destination_port = "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())
             ports[destination_port] = [self._destination_item.node(), self._destination_port]
             selection, ok = QtGui.QInputDialog.getItem(self._main_window, "Packet capture", "Please select a port:", list(ports.keys()), 0, False)
             if ok:
@@ -302,8 +306,8 @@ class LinkItem(QtGui.QGraphicsPathItem):
 
         try:
             if self._source_port.capturing() and self._destination_port.capturing():
-                ports = ["{} {}".format(self._source_item.node().name(), self._source_port.name()),
-                         "{} {}".format(self._destination_item.node().name(), self._destination_port.name())]
+                ports = ["{} port {}".format(self._source_item.node().name(), self._source_port.name()),
+                         "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())]
                 selection, ok = QtGui.QInputDialog.getItem(self._main_window, "Packet capture", "Please select a port:", ports, 0, False)
                 if ok:
                     if selection.endswith(self._source_port.name()):

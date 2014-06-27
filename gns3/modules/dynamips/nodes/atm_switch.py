@@ -22,7 +22,7 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 
 import re
 from gns3.node import Node
-from gns3.ports.serial_port import SerialPort
+from gns3.ports.atm_port import ATMPort
 
 import logging
 log = logging.getLogger(__name__)
@@ -147,9 +147,10 @@ class ATMSwitch(Node):
                 ports_to_create.remove(port.name())
 
         for port_name in ports_to_create:
-            port = SerialPort(port_name)
+            port = ATMPort(port_name)
             port.setPortNumber(int(port_name))
-            port.setStatus(SerialPort.started)
+            port.setStatus(ATMPort.started)
+            port.setPacketCaptureSupported(True)
             self._ports.append(port)
             updated = True
             log.debug("port {} has been added".format(port_name))
@@ -286,6 +287,79 @@ class ATMSwitch(Node):
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
 
+    def startPacketCapture(self, port, capture_file_name, data_link_type):
+        """
+        Starts a packet capture.
+
+        :param port: Port instance
+        :param capture_file_name: PCAP capture file path
+        :param data_link_type: PCAP data link type
+        """
+
+        params = {"id": self._atmsw_id,
+                  "port_id": port.id(),
+                  "port": port.portNumber(),
+                  "capture_file_name": capture_file_name,
+                  "data_link_type": data_link_type}
+
+        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
+        self._server.send_message("dynamips.atmsw.start_capture", params, self._startPacketCaptureCallback)
+
+    def _startPacketCaptureCallback(self, result, error=False):
+        """
+        Callback for starting a packet capture.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+            for port in self._ports:
+                if port.id() == result["port_id"]:
+                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
+                    try:
+                        port.startPacketCapture(result["capture_file_path"])
+                    except OSError as e:
+                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}".format(e))
+                    self.updated_signal.emit()
+                    break
+
+    def stopPacketCapture(self, port):
+        """
+        Stops a packet capture.
+
+        :param port: Port instance
+        """
+
+        params = {"id": self._atmsw_id,
+                  "port_id": port.id(),
+                  "port": port.portNumber()}
+
+        log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
+        self._server.send_message("dynamips.atmsw.stop_capture", params, self._stopPacketCaptureCallback)
+
+    def _stopPacketCaptureCallback(self, result, error=False):
+        """
+        Callback for stopping a packet capture.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+            for port in self._ports:
+                if port.id() == result["port_id"]:
+                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
+                    port.stopPacketCapture()
+                    self.updated_signal.emit()
+                    break
+
     def info(self):
         """
         Returns information about this ATM switch.
@@ -397,10 +471,11 @@ class ATMSwitch(Node):
         if "ports" in node_info:
             ports = node_info["ports"]
             for topology_port in ports:
-                port = SerialPort(topology_port["name"])
+                port = ATMPort(topology_port["name"])
                 port.setPortNumber(topology_port["port_number"])
                 port.setId(topology_port["id"])
-                port.setStatus(SerialPort.started)
+                port.setStatus(ATMPort.started)
+                port.setPacketCaptureSupported(True)
                 self._ports.append(port)
 
         log.info("ATM switch {} is loading".format(name))

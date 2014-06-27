@@ -527,18 +527,14 @@ class Router(Node):
         else:
             log.info("{} has reloaded".format(self.name()))
 
-    def startPacketCapture(self, port, data_link_type):
+    def startPacketCapture(self, port, capture_file_name, data_link_type):
         """
         Starts a packet capture.
 
         :param port: Port instance
+        :param capture_file_name: PCAP capture file path
         :param data_link_type: PCAP data link type
         """
-
-        capture_file_name = "{}_{}_to_{}_{}.pcap".format(self.name(),
-                                                         port.name().replace('/', '-'),
-                                                         port.destinationNode().name(),
-                                                         port.destinationPort().name().replace('/', '-'))
 
         params = {"id": self._router_id,
                   "port_id": port.id(),
