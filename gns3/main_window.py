@@ -173,7 +173,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         # set a new images directory
-        if new_settings["images_path"] != self.imagesDirPath():
+        if new_settings.get("images_path", '') != self.imagesDirPath():
             self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
         # save the settings
@@ -870,7 +870,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._newsActionSlot()
 
         # TODO check if this is the right place
-        self.CloudInspectorView.load()
+        self.CloudInspectorView.load(self.cloudSettings())
 
         # connect to the local server
         servers = Servers.instance()
