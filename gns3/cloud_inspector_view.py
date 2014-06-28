@@ -149,7 +149,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         """
         Fill the model data layer with instances retrieved through libcloud
         """
-        provider_id = cloud_settings['cloud_provider']
+
+        provider_id = cloud_settings.get('cloud_provider', 'rackspace')  # default provider is Rackspace
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']

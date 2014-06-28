@@ -140,21 +140,22 @@ class Servers(QtCore.QObject):
         Starts the local server process.
         """
 
-        # save server logging info to a file
-        logpath = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_server.log")
-        if os.path.isfile(logpath):
-            try:
-                os.remove(logpath)
-            except FileNotFoundError:
-                pass
-            except OSError as e:
-                log.warn("could not delete server log file {}: {}".format(logpath, e))
+        command = '"{executable}" --host={host} --port={port}'.format(executable=path, host=host, port=port)
 
-        command = '"{executable}" --host={host} --port={port} --log_file_prefix={logpath} ' \
-                  '--log_file_num_backups=0 --log_to_stderr'.format(executable=path,
-                                                                    host=host,
-                                                                    port=port,
-                                                                    logpath=logpath)
+        settings_dir = os.path.dirname(QtCore.QSettings().fileName())
+        if os.path.isdir(settings_dir):
+            # save server logging info to a file in the settings directory
+            logpath = os.path.join(settings_dir, "GNS3_server.log")
+            if os.path.isfile(logpath):
+                # delete the previous log file
+                try:
+                    os.remove(logpath)
+                except FileNotFoundError:
+                    pass
+                except OSError as e:
+                    log.warn("could not delete server log file {}: {}".format(logpath, e))
+
+            command += " --log_file_prefix={logpath} --log_file_num_backups=0 --log_to_stderr".format(logpath=logpath)
 
         log.info("starting local server process with {}".format(command))
 
@@ -177,7 +178,7 @@ class Servers(QtCore.QObject):
         if self._local_server and self._local_server.connected() and not sys.platform.startswith('win'):
             # only gracefully disconnect if we are not on Windows
             self._local_server.close_connection()
-        if self._local_server_proccess and self._local_server_proccess.poll() == None:
+        if self._local_server_proccess and self._local_server_proccess.poll() is None:
             if sys.platform.startswith("win"):
                 self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
             else:
