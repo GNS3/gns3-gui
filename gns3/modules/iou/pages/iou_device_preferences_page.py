@@ -233,7 +233,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 self.uiInitialConfigLineEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiInitialConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
+                self.uiInitialConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
         else:
             # set the default L3 base initial-config
             resource_name = "configs/iou_l3_base_initial-config.txt"
@@ -241,7 +241,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 self.uiInitialConfigLineEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiInitialConfigLineEdit.setText(os.path.relpath(os.path.normpath(iou_base_config_path)))
+                self.uiInitialConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
 
     def _initialConfigBrowserSlot(self):
         """

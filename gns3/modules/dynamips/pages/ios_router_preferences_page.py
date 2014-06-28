@@ -68,7 +68,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name ))
         elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiStartupConfigLineEdit.setText(os.path.relpath(os.path.normpath(ios_base_config_path)))
+            self.uiStartupConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
 
         # set the default base private-config
         resource_name = "configs/ios_base_private-config.txt"
@@ -76,7 +76,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             self.uiPrivateConfigLineEdit.setText(os.path.normpath(resource_name))
         elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiPrivateConfigLineEdit.setText(os.path.relpath(os.path.normpath(ios_base_config_path)))
+            self.uiPrivateConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
 
     def _platformChangedSlot(self, platform):
         """

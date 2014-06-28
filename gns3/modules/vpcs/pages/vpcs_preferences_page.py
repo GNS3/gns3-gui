@@ -128,7 +128,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
                 self.uiScriptFileEdit.setText(os.path.normpath(resource_name))
             elif pkg_resources.resource_exists("gns3", resource_name):
                 vpcs_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiScriptFileEdit.setText(os.path.relpath(os.path.normpath(vpcs_base_config_path)))
+                self.uiScriptFileEdit.setText(os.path.normpath(vpcs_base_config_path))
 
     def _updateRemoteServersSlot(self):
         """
