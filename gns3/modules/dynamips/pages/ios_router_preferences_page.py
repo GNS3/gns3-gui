@@ -27,6 +27,9 @@ import shutil
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
+from gns3.utils.progress_dialog import ProgressDialog
+from ..utils.uncompress_ios import isIOSCompressed
+from ..utils.uncompress_ios_thread import UncompressIOSThread
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
@@ -53,6 +56,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
+        self.uiUncompressIOSPushButton.clicked.connect(self._uncompressIOSSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
         #FIXME: temporally hide test button
@@ -205,8 +209,6 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOS")
-        if not os.path.isdir(destination_directory):
-            destination_directory = "."
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Select an IOS image",
                                                              destination_directory,
@@ -246,6 +248,21 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, str(e)))
             return
+
+        if isIOSCompressed(path):
+            reply = QtGui.QMessageBox.question(self, "IOS image", "Would you like to uncompress this IOS image?",
+                                               QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes:
+                uncompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
+                thread = UncompressIOSThread(path, uncompressed_image_path)
+                progress_dialog = ProgressDialog(thread,
+                                                 "IOS image",
+                                                 "Uncompressing IOS image {}...".format(path),
+                                                 "Cancel", busy=True, parent=self)
+                progress_dialog.show()
+                if progress_dialog.exec_() is not False:
+                    path = uncompressed_image_path
+                thread.wait()
 
         if os.path.dirname(path) != destination_directory:
             # the IOS image is not in the default images directory
@@ -335,6 +352,41 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         self.uiPrivateConfigLineEdit.clear()
         self.uiPrivateConfigLineEdit.setText(path)
+
+    def _uncompressIOSSlot(self):
+        """
+        Slot to uncompress an IOS image.
+        """
+
+        item = self.uiIOSImagesTreeWidget.currentItem()
+        if item:
+            image = item.text(0)
+            server = item.text(2)
+            key = "{server}:{image}".format(server=server, image=image)
+            ios_image = self._ios_images[key]
+            path = ios_image["path"]
+            if not os.path.isfile(path):
+                QtGui.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
+                return
+            if not isIOSCompressed(path):
+                QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+                return
+
+            uncompressed_image_path = os.path.splitext(path)[0] + ".image"
+            if os.path.isfile(uncompressed_image_path):
+                QtGui.QMessageBox.critical(self, "IOS image", "Uncompressed IOS image {} already exist".format(os.path.basename(uncompressed_image_path)))
+                return
+
+            thread = UncompressIOSThread(path, uncompressed_image_path)
+            progress_dialog = ProgressDialog(thread,
+                                             "IOS image",
+                                             "Uncompressing IOS image {}...".format(path),
+                                             "Cancel", busy=True, parent=self)
+            progress_dialog.show()
+            if progress_dialog.exec_() is not False:
+                self.uiIOSPathLineEdit.setText(uncompressed_image_path)
+                self._iosImageSaveSlot()
+            thread.wait()
 
     def _idlePCFinderSlot(self):
 

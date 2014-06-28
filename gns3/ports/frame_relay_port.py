@@ -15,22 +15,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtGui
-from .version import __version__
-from .ui.about_dialog_ui import Ui_AboutDialog
+"""
+Frame relay port for serial link end points.
+"""
+
+from .serial_port import SerialPort
 
 
-class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
+class FrameRelayPort(SerialPort):
     """
-    About dialog.
+    Frame port.
+
+    :param name: port name (string)
+    :param nio: NIO instance to attach to this port
     """
 
-    def __init__(self, parent):
+    def __init__(self, name, nio=None):
 
-        QtGui.QDialog.__init__(self, parent)
-        self.setupUi(self)
+        SerialPort.__init__(self, name, nio)
 
-        # dynamically add the current version number
-        text = self.uiAboutTextLabel.text()
-        text = text.replace("%VERSION%", __version__)
-        self.uiAboutTextLabel.setText(text)
+    @staticmethod
+    def dataLinkTypes():
+        """
+        Returns the supported PCAP DLTs.
+
+        :return: dictionary
+        """
+
+        return {"Frame Relay": "DLT_FRELAY"}

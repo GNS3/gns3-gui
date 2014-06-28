@@ -243,6 +243,8 @@ class Topology(object):
                             node["y"] = item.y()
                             if item.zValue() != 1.0:
                                 node["z"] = item.zValue()
+                            if item.label():
+                                node["label"] = item.label().dump()
                 if isinstance(item, LinkItem):
                     for link in topology["topology"]["links"]:
                         if link["id"] == item.link().id():
@@ -429,6 +431,15 @@ class Topology(object):
                 # create the node item and restore GUI settings
                 node_item = NodeItem(node)
                 node_item.setPos(topology_node["x"], topology_node["y"])
+
+                # create the node label if present
+                label_info = topology_node.get("label")
+                if label_info:
+                    node_label = NoteItem(node_item)
+                    node_label.setEditable(False)
+                    node_label.load(label_info)
+                    node_item.setLabel(node_label)
+
                 view.scene().addItem(node_item)
                 self.addNode(node)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)
@@ -535,9 +546,7 @@ class Topology(object):
         for item in view.scene().items():
             if isinstance(item, NodeItem) and node.id() == item.node().id():
                 port_label = NoteItem(item)
-                port_label.setPlainText(label_info["text"])
-                port_label.setPos(label_info["x"], label_info["y"])
-                port_label.setZValue(label_info["z"])
+                port_label.load(label_info)
                 port_label.hide()
                 return port_label
         return None

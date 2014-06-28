@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Sat Jun 14 06:28:56 2014
+# Created: Tue Jun 24 09:16:04 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -157,25 +157,6 @@ class Ui_MainWindow(object):
         self.uiAnnotationToolBar.setIconSize(QtCore.QSize(32, 32))
         self.uiAnnotationToolBar.setObjectName(_fromUtf8("uiAnnotationToolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.uiAnnotationToolBar)
-        self.uiCaptureDockWidget = QtGui.QDockWidget(MainWindow)
-        self.uiCaptureDockWidget.setObjectName(_fromUtf8("uiCaptureDockWidget"))
-        self.uiCaptureDockWidgetContents = QtGui.QWidget()
-        self.uiCaptureDockWidgetContents.setObjectName(_fromUtf8("uiCaptureDockWidgetContents"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.uiCaptureDockWidgetContents)
-        self.verticalLayout_2.setMargin(0)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.uiCaptureTreeWidget = QtGui.QTreeWidget(self.uiCaptureDockWidgetContents)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiCaptureTreeWidget.sizePolicy().hasHeightForWidth())
-        self.uiCaptureTreeWidget.setSizePolicy(sizePolicy)
-        self.uiCaptureTreeWidget.setIconSize(QtCore.QSize(24, 24))
-        self.uiCaptureTreeWidget.setRootIsDecorated(False)
-        self.uiCaptureTreeWidget.setObjectName(_fromUtf8("uiCaptureTreeWidget"))
-        self.verticalLayout_2.addWidget(self.uiCaptureTreeWidget)
-        self.uiCaptureDockWidget.setWidget(self.uiCaptureDockWidgetContents)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.uiCaptureDockWidget)
         self.uiTopologySummaryDockWidget = QtGui.QDockWidget(MainWindow)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -515,8 +496,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.uiGraphicsView, self.uiNodesView)
         MainWindow.setTabOrder(self.uiNodesView, self.uiConsoleTextEdit)
-        MainWindow.setTabOrder(self.uiConsoleTextEdit, self.uiCaptureTreeWidget)
-        MainWindow.setTabOrder(self.uiCaptureTreeWidget, self.uiTopologySummaryTreeWidget)
+        MainWindow.setTabOrder(self.uiConsoleTextEdit, self.uiTopologySummaryTreeWidget)
 
     def retranslateUi(self, MainWindow):
         self.uiEditMenu.setTitle(_translate("MainWindow", "&Edit", None))
@@ -537,10 +517,6 @@ class Ui_MainWindow(object):
         self.uiControlToolBar.setWindowTitle(_translate("MainWindow", "Emulation", None))
         self.uiConsoleDockWidget.setWindowTitle(_translate("MainWindow", "Console", None))
         self.uiAnnotationToolBar.setWindowTitle(_translate("MainWindow", "Drawing", None))
-        self.uiCaptureDockWidget.setWindowTitle(_translate("MainWindow", "Captures", None))
-        self.uiCaptureTreeWidget.setToolTip(_translate("MainWindow", "Select capture and right-click for menu.", None))
-        self.uiCaptureTreeWidget.headerItem().setText(0, _translate("MainWindow", "Hostname", None))
-        self.uiCaptureTreeWidget.headerItem().setText(1, _translate("MainWindow", "Port", None))
         self.uiTopologySummaryDockWidget.setWindowTitle(_translate("MainWindow", "Topology Summary", None))
         self.uiTopologySummaryTreeWidget.setToolTip(_translate("MainWindow", "Expand device to view connections. Select link and Right-click for menu.", None))
         self.uiTopologySummaryTreeWidget.headerItem().setText(0, _translate("MainWindow", "1", None))

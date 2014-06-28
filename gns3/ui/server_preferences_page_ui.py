@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Mon May 19 11:19:38 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Sat Jun 21 12:24:29 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -128,7 +128,7 @@ class Ui_ServerPreferencesPageWidget(object):
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPortSpinBox, self.uiRemoteServerPortSpinBox)
 
     def retranslateUi(self, ServerPreferencesPageWidget):
-        ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "Server", None))
+        ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "GNS3 server", None))
         self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:", None))
         self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "...", None))
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:", None))

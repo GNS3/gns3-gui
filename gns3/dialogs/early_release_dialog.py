@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-from .qt import QtGui
-from .ui.early_release_dialog_ui import Ui_EarlyReleaseDialog
+from ..qt import QtGui
+from ..ui.early_release_dialog_ui import Ui_EarlyReleaseDialog
 
 
 class EarlyReleaseDialog(QtGui.QDialog, Ui_EarlyReleaseDialog):

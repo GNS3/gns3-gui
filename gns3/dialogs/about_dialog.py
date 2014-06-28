@@ -15,15 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-__version__ is a human-readable version number.
+from ..qt import QtGui
+from ..version import __version__
+from ..ui.about_dialog_ui import Ui_AboutDialog
 
-__version_info__ is a four-tuple for programmatic comparison. The first
-three numbers are the components of the version number. The fourth
-is zero for an official release, positive for a development branch,
-or negative for a release candidate or beta (after the base version
-number has been incremented)
-"""
 
-__version__ = "1.0a7.dev3"
-__version_info__ = (1, 0, 0, -99)
+class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
+    """
+    About dialog.
+    """
+
+    def __init__(self, parent):
+
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
+
+        # dynamically add the current version number
+        text = self.uiAboutTextLabel.text()
+        text = text.replace("%VERSION%", __version__)
+        self.uiAboutTextLabel.setText(text)

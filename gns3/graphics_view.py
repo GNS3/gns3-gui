@@ -24,7 +24,7 @@ import pickle
 
 from .qt import QtCore, QtGui, QtNetwork
 from .items.node_item import NodeItem
-from .node_configurator import NodeConfigurator
+from .dialogs.node_configurator_dialog import NodeConfiguratorDialog
 from .link import Link
 from .node import Node
 from .modules import MODULES
@@ -33,6 +33,8 @@ from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
 from .topology import Topology
 from .ports.port import Port
+from .dialogs.style_editor_dialog import StyleEditorDialog
+from .dialogs.text_editor_dialog import TextEditorDialog
 from .utils.progress_dialog import ProgressDialog
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 
@@ -318,7 +320,7 @@ class GraphicsView(QtGui.QGraphicsView):
         if source_item == destination_item:
             multi = 0
 
-        if link._source_port.linkType() == "Serial" or (source_port.isStub() and link._destination_port.linkType() == "Serial"):
+        if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinatnionPort().linkType() == "Serial"):
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
         else:
             link_item = EthernetLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
@@ -606,7 +608,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         if not items:
             items = self.scene().selectedItems()
-        node_configurator = NodeConfigurator(items, self._main_window)
+        node_configurator = NodeConfiguratorDialog(items, self._main_window)
         node_configurator.setModal(True)
         node_configurator.show()
         node_configurator.exec_()
@@ -735,6 +737,18 @@ class GraphicsView(QtGui.QGraphicsView):
             duplicate_action.triggered.connect(self.duplicateActionSlot)
             menu.addAction(duplicate_action)
 
+        if True in list(map(lambda item: isinstance(item, NoteItem), items)):
+            text_edit_action = QtGui.QAction("Text edit", menu)
+            text_edit_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))  # TODO: change icon for text edit
+            text_edit_action.triggered.connect(self.textEditActionSlot)
+            menu.addAction(text_edit_action)
+
+        if True in list(map(lambda item: isinstance(item, ShapeItem), items)):
+            style_action = QtGui.QAction("Style", menu)
+            style_action.setIcon(QtGui.QIcon(':/icons/drawing.svg'))
+            style_action.triggered.connect(self.styleActionSlot)
+            menu.addAction(style_action)
+
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
         delete_action.triggered.connect(self.deleteActionSlot)
@@ -747,7 +761,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "start") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "start") and item.node().initialized():
                 item.node().start()
 
     def stopActionSlot(self):
@@ -757,7 +771,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "stop") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "stop") and item.node().initialized():
                 item.node().stop()
 
     def suspendActionSlot(self):
@@ -767,7 +781,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "suspend") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend") and item.node().initialized():
                 item.node().suspend()
 
     def reloadActionSlot(self):
@@ -777,7 +791,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "reload") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
 
     def configureActionSlot(self):
@@ -802,7 +816,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         from .telnet_console import telnetConsole
         for item in self.scene().selectedItems():
-            if hasattr(item.node(), "console"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
                 node = item.node()
                 if node.status() != Node.started:
                     continue
@@ -899,6 +913,36 @@ class GraphicsView(QtGui.QGraphicsView):
                 ellipse_item = item.duplicate()
                 self.scene().addItem(ellipse_item)
                 self._topology.addEllipse(ellipse_item)
+
+    def styleActionSlot(self):
+        """
+        Slot to receive events from the style action in the
+        contextual menu.
+        """
+
+        items = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, ShapeItem):
+                items.append(item)
+        if items:
+            style_dialog = StyleEditorDialog(self._main_window, items)
+            style_dialog.show()
+            style_dialog.exec_()
+
+    def textEditActionSlot(self):
+        """
+        Slot to receive events from the text edit action in the
+        contextual menu.
+        """
+
+        items = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NoteItem):
+                items.append(item)
+        if items:
+            text_edit_dialog = TextEditorDialog(self._main_window, items)
+            text_edit_dialog.show()
+            text_edit_dialog.exec_()
 
     def deleteActionSlot(self):
         """

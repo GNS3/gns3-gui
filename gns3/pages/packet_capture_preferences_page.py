@@ -1,0 +1,83 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2014 GNS3 Technologies Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Configuration page for packet capture preferences.
+"""
+
+from gns3.qt import QtCore, QtGui
+from ..ui.packet_capture_preferences_page_ui import Ui_PacketCapturePreferencesPageWidget
+from ..settings import PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
+from ..ports.port import Port
+
+
+class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPageWidget):
+    """
+    QWidget configuration page for packet capture preferences.
+    """
+
+    def __init__(self):
+
+        QtGui.QWidget.__init__(self)
+        self.setupUi(self)
+
+        # Load the pre-configured capture reader commands
+        for name, cmd in sorted(PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS.items()):
+            self.uiPreconfiguredCaptureReaderCommandComboBox.addItem(name, cmd)
+
+        self.uiPreconfiguredCaptureReaderCommandPushButton.clicked.connect(self._preconfiguredCaptureReaderCommandSlot)
+
+    def _preconfiguredCaptureReaderCommandSlot(self):
+        """
+        Slot to set a chosen pre-configured packet capture reader command.
+        """
+
+        self.uiCaptureReaderCommandLineEdit.clear()
+        command = self.uiPreconfiguredCaptureReaderCommandComboBox.itemData(self.uiPreconfiguredCaptureReaderCommandComboBox.currentIndex(), QtCore.Qt.UserRole)
+        self.uiCaptureReaderCommandLineEdit.setText(command)
+        self.uiCaptureReaderCommandLineEdit.setCursorPosition(0)
+
+    def _populatePacketCaptureSettingWiddgets(self, settings):
+        """
+        Populates the widgets with the settings.
+
+        :param settings: packet capture settings
+        """
+
+        self.uiCaptureReaderCommandLineEdit.setText(settings["packet_capture_reader_command"])
+        self.uiCaptureReaderCommandLineEdit.setCursorPosition(0)
+        index = self.uiPreconfiguredCaptureReaderCommandComboBox.findData(settings["packet_capture_reader_command"])
+        if index != -1:
+            self.uiPreconfiguredCaptureReaderCommandComboBox.setCurrentIndex(index)
+        self.uiAutoStartCheckBox.setChecked(settings["command_auto_start"])
+
+    def loadPreferences(self):
+        """
+        Loads the packet capture preferences.
+        """
+
+        packet_capture_settings = Port.packetCaptureSettings()
+        self._populatePacketCaptureSettingWiddgets(packet_capture_settings)
+
+    def savePreferences(self):
+        """
+        Saves the packet capture preferences.
+        """
+
+        new_settings = {"packet_capture_reader_command": self.uiCaptureReaderCommandLineEdit.text(),
+                        "command_auto_start": self.uiAutoStartCheckBox.isChecked()}
+        Port.setPacketCaptureSettings(new_settings)

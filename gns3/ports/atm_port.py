@@ -63,3 +63,13 @@ class ATMPort(Port):
         """
 
         return "Serial"
+
+    @staticmethod
+    def dataLinkTypes():
+        """
+        Returns the supported PCAP DLTs.
+
+        :return: dictionary
+        """
+
+        return {"ATM": "DLT_ATM_RFC1483"}

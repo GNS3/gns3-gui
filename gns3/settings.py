@@ -137,6 +137,35 @@ else:
     # default serial console command on other systems
     DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Xterm + socat"]
 
+# Pre-configured packet capture reader commands on various OSes
+WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
+WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
+
+if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
+    # Windows 64-bit
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files (x86)\Wireshark\wireshark.exe %c",
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files (x86)\Wireshark\wireshark.exe" -k -i -'}
+
+elif sys.platform.startswith("win"):
+    # Windows 32-bit
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files\Wireshark\wireshark.exe %c",
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files\Wireshark\wireshark.exe" -k -i -'}
+
+elif sys.platform.startswith("darwin"):
+    # Mac OS X
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "/usr/bin/open -a /Applications/Wireshark.app %c",
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -k -i -"}
+
+elif sys.platform.startswith("freebsd"):
+    # FreeBSD
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "wireshark %c",
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "gtail -f -c +0b %c | wireshark -k -i -"}
+else:
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "wireshark %c",
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "tail -f -c +0b %c | wireshark -k -i -"}
+
+DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
+
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,
     "images_path": DEFAULT_IMAGES_PATH,
@@ -177,6 +206,16 @@ GRAPHICS_VIEW_SETTING_TYPES = {
     "scene_height": int,
     "draw_rectangle_selected_item": bool,
     "draw_link_status_points": bool,
+}
+
+PACKET_CAPTURE_SETTINGS = {
+    "packet_capture_reader_command": DEFAULT_PACKET_CAPTURE_READER_COMMAND,
+    "command_auto_start": True,
+}
+
+PACKET_CAPTURE_SETTING_TYPES = {
+    "packet_capture_reader_command": str,
+    "command_auto_start": bool,
 }
 
 CLOUD_SETTINGS = {

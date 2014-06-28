@@ -25,7 +25,7 @@ import sys
 import pkg_resources
 from gns3.qt import QtGui
 from .. import Dynamips
-from gns3.node_configurator import ConfigurationError
+from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from ..ui.router_configuration_page_ui import Ui_routerConfigPageWidget
 
 # Network modules for the c2600 platform

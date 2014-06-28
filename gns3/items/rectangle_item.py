@@ -51,37 +51,6 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
     #     QtGui.QGraphicsRectItem.paint(self, painter, option, widget)
     #     self.drawLayerInfo(painter)
 
-    def dump(self):
-        """
-        Returns a representation of this rectangle.
-
-        :returns: dictionary
-        """
-
-        return {"width": self.rect().width(),
-                "height": self.rect().height(),
-                "x": self.x(),
-                "y": self.y(),
-                "z": self.zValue()}
-
-    def load(self, rectangle_info):
-        """
-        Loads a rectangle representation
-        (from a topology file).
-
-        :param rectangle_info: representation of the rectangle (dictionary)
-        """
-
-        width = rectangle_info["width"]
-        height = rectangle_info["height"]
-        x = rectangle_info["x"]
-        y = rectangle_info["y"]
-        z = rectangle_info["z"]
-        self.rect().setWidth(width)
-        self.rect().setHeight(height)
-        self.setPos(x, y)
-        self.setZValue(z)
-
     def duplicate(self):
         """
         Duplicates this rectangle item.
@@ -93,5 +62,8 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
         rectangle_item.rect().setWidth(self.rect().width())
         rectangle_item.rect().setHeight(self.rect().height())
         rectangle_item.setPos(self.x() + 20, self.y() + 20)
+        rectangle_item.setPen(self.pen())
+        rectangle_item.setBrush(self.brush())
         rectangle_item.setZValue(self.zValue())
+        rectangle_item.setRotation(self.rotation())
         return rectangle_item

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
+    <width>431</width>
     <height>530</height>
    </rect>
   </property>
@@ -193,6 +193,13 @@
           <widget class="QPushButton" name="uiIOSImageTestSettingsPushButton">
            <property name="text">
             <string>Test settings</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiUncompressIOSPushButton">
+           <property name="text">
+            <string>Uncompress</string>
            </property>
           </widget>
          </item>

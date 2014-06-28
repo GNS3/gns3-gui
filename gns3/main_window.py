@@ -25,25 +25,26 @@ import socket
 import shutil
 import json
 import glob
+import logging
 
 from .qt import QtGui, QtCore
 from .servers import Servers
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
-from .about_dialog import AboutDialog
-from .early_release_dialog import EarlyReleaseDialog
-from .new_project_dialog import NewProjectDialog
-from .preferences_dialog import PreferencesDialog
+from .dialogs.about_dialog import AboutDialog
+from .dialogs.early_release_dialog import EarlyReleaseDialog
+from .dialogs.new_project_dialog import NewProjectDialog
+from .dialogs.preferences_dialog import PreferencesDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
+from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .topology import Topology
 
-import logging
 log = logging.getLogger(__name__)
 
 CLOUD_SETTINGS_GROUP = "Cloud"
@@ -91,7 +92,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
-        self.uiDocksMenu.addAction(self.uiCaptureDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
@@ -134,6 +134,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for name, value in CLOUD_SETTINGS.items():
             self._cloud_settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
         settings.endGroup()
+
+        # restore packet capture settings
+        Port.loadPacketCaptureSettings()
 
     def settings(self):
         """
@@ -655,7 +658,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         try:
             # QtWebKit which is used by NewsDialog is not installed
             # by default on FreeBSD, Solaris and possibly other systems.
-            from .news_dialog import NewsDialog
+            from .dialogs.news_dialog import NewsDialog
         except ImportError:
             return
 
