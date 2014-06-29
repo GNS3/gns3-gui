@@ -873,7 +873,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._newsActionSlot()
 
         # TODO check if this is the right place
-        self.CloudInspectorView.load(self.cloudSettings())
+        # self.CloudInspectorView.load(self.cloudSettings())  #FIXME: for alpha7
 
         # connect to the local server
         servers = Servers.instance()
