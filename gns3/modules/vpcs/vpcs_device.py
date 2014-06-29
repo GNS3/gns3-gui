@@ -189,7 +189,7 @@ class VPCSDevice(Node):
                 params[name] = value
 
         if "script_file" in new_settings and self._settings["script_file"] != new_settings["script_file"] \
-        and os.path.isfile(new_settings["script_file"]):
+        and not self.server().isLocal() and os.path.isfile(new_settings["script_file"]):
             params["script_file_base64"] = self._base64Config(new_settings["script_file"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))

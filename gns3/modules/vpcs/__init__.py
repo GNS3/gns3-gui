@@ -19,8 +19,6 @@
 VPCS module implementation.
 """
 
-import socket
-import base64
 import os
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers

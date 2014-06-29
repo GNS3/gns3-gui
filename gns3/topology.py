@@ -340,8 +340,9 @@ class Topology(object):
             log.warn("not a topology file")
             return
 
-        if parse_version(topology["version"]) <= parse_version("1.0a6"):
-            QtGui.QMessageBox.warning(main_window, "Version", "Importing a project made with an old alpha version may not work properly")
+        if parse_version(topology["version"]) <= parse_version("1.0a7.dev2"):
+            # temporary warning
+            QtGui.QMessageBox.warning(main_window, "Version", "Importing a project made with an old alpha version ({}) may not work properly".format(topology["version"]))
 
         # deactivate the unsaved state support
         main_window.ignoreUnsavedState(True)

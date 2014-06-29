@@ -347,12 +347,12 @@ class Router(Node):
 
         # push the startup-config
         if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-        and os.path.isfile(new_settings["startup_config"]):
+        and not self.server().isLocal() and os.path.isfile(new_settings["startup_config"]):
             params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
 
         # push the private-config
         if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"] \
-        and os.path.isfile(new_settings["private_config"]):
+        and not self.server().isLocal() and os.path.isfile(new_settings["private_config"]):
             params["private_config_base64"] = self._base64Config(new_settings["private_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
