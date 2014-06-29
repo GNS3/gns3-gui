@@ -625,11 +625,10 @@ class IOUDevice(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
-        if not os.path.isfile(path):
-            # add the default images directory path to the image name to see if it exists
-            updated_path = os.path.join(self._module.imageFilesDir(), path)
-            if os.path.isfile(updated_path):
-                path = updated_path
+        # check and update the path to use the image in the images directory
+        updated_path = os.path.join(self._module.imageFilesDir(), path)
+        if os.path.isfile(updated_path):
+            path = updated_path
         console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done

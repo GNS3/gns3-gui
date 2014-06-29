@@ -939,11 +939,10 @@ class Router(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         image = settings.pop("image")
-        if not os.path.isfile(image):
-            # add the default images directory path to the image name to see if it exists
-            updated_path = os.path.join(self._module.imageFilesDir(), image)
-            if os.path.isfile(updated_path):
-                image = updated_path
+        # check and update the path to use the image in the images directory
+        updated_image_path = os.path.join(self._module.imageFilesDir(), image)
+        if os.path.isfile(updated_image_path):
+            image = updated_image_path
         ram = settings.get("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
