@@ -96,6 +96,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 
+        #FIXME: for alpha7
+        self.uiCloudInspectorDockWidget.hide()
+
         # set the images directory
         self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
