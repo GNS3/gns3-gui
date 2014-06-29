@@ -64,10 +64,10 @@ class NoteItem(QtGui.QGraphicsTextItem):
         """
 
         self._editable = value
-        if not self._editable:
-            self.setFlag(self.ItemIsSelectable, enabled=False)
-        else:
-            self.setFlag(self.ItemIsSelectable)
+        #if not self._editable:
+        #    self.setFlag(self.ItemIsSelectable, enabled=False)
+        #else:
+        #    self.setFlag(self.ItemIsSelectable)
 
     def keyPressEvent(self, event):
         """
