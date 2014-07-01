@@ -58,10 +58,7 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
         :return: RectangleItem instance
         """
 
-        rectangle_item = RectangleItem()
-        rectangle_item.rect().setWidth(self.rect().width())
-        rectangle_item.rect().setHeight(self.rect().height())
-        rectangle_item.setPos(self.x() + 20, self.y() + 20)
+        rectangle_item = RectangleItem(QtCore.QPointF(self.x() + 20, self.y() + 20), self.rect().width(), self.rect().height())
         rectangle_item.setPen(self.pen())
         rectangle_item.setBrush(self.brush())
         rectangle_item.setZValue(self.zValue())

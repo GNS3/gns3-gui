@@ -58,10 +58,7 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
         :return: EllipseItem instance
         """
 
-        ellipse_item = EllipseItem()
-        ellipse_item.rect().setWidth(self.rect().width())
-        ellipse_item.rect().setHeight(self.rect().height())
-        ellipse_item.setPos(self.x() + 20, self.y() + 20)
+        ellipse_item = EllipseItem(QtCore.QPointF(self.x() + 20, self.y() + 20), self.rect().width(), self.rect().height())
         ellipse_item.setPen(self.pen())
         ellipse_item.setBrush(self.brush())
         ellipse_item.setZValue(self.zValue())

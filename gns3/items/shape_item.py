@@ -244,9 +244,7 @@ class ShapeItem:
         height = shape_info["height"]
         x = shape_info["x"]
         y = shape_info["y"]
-
-        self.rect().setWidth(width)
-        self.rect().setHeight(height)
+        self.setRect(0, 0, width, height)
         self.setPos(x, y)
 
         # load optional properties
