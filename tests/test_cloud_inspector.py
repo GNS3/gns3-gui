@@ -5,6 +5,7 @@ from . import make_setitem
 from . import make_getitem
 
 from PyQt4.Qt import Qt
+from PyQt4 import QtGui
 from PyQt4.QtGui import QIcon
 from PyQt4.QtCore import QPoint
 
@@ -119,7 +120,7 @@ class TestCloudInspectorView(GUIBaseTest):
             settings.__setitem__.side_effect = make_setitem(settings_copy)
 
             self.view.load(settings)
-
+            self.app.processEvents()  # let the thread loading instances post its events
             self.assertEqual(self.view._model.rowCount(), 2)
 
             provider.authenticate.return_value = False
@@ -157,5 +158,5 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view._provider.list_instances.return_value = nodes
         self.view._model = mock.MagicMock()
 
-        self.view._update_model()
+        self.view._update_model(nodes)
         self.view._model.update_instance_status.assert_has_calls([mock.call(x) for x in nodes])

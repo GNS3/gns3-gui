@@ -7,6 +7,7 @@ from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import QThread
 from PyQt4.Qt import Qt
 
 from .settings import CLOUD_PROVIDERS
@@ -16,6 +17,8 @@ from .utils import import_from_string
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
 from libcloud.compute.types import NodeState
+
+POLLING_TIMER = 5000  # in milliseconds
 
 
 class InstanceTableModel(QAbstractTableModel):
@@ -107,6 +110,22 @@ class InstanceTableModel(QAbstractTableModel):
             pass
 
 
+class ListInstancesThread(QThread):
+    """
+    Helper class to retrieve data from the provider in a separate thread,
+    avoid freezing the gui
+    """
+    instancesReady = pyqtSignal(object)
+
+    def __init__(self, parent, provider):
+        super(QThread, self).__init__(parent)
+        self._provider = provider
+
+    def run(self):
+        instances = self._provider.list_instances()
+        self.instancesReady.emit(instances)
+
+
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
     Table view showing data coming from InstanceTableModel
@@ -132,7 +151,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
 
         self._pollingTimer = QTimer(self)
-        self._pollingTimer.timeout.connect(self._update_model)
+        self._pollingTimer.timeout.connect(self._polling_slot)
 
     def load(self, cloud_settings):
         """
@@ -153,10 +172,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             region = self._provider.list_regions().values()[0]
 
         if self._provider.set_region(region):
-            for i in self._provider.list_instances():
-                self._model.addInstance(i)
-            self.uiInstancesTableView.resizeColumnsToContents()
-            self._pollingTimer.start(5000)
+            update_thread = ListInstancesThread(self, self._provider)
+            update_thread.instancesReady.connect(self._populate_model)
+            update_thread.start()
+            self._pollingTimer.start(POLLING_TIMER)
         else:
             self._provider = None
             return
@@ -192,12 +211,22 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance = self._model.getInstance(current.row())
             self.instanceSelected.emit(instance.id)
 
-    def _update_model(self):
+    def _polling_slot(self):
         """
         Sync model data with instances status
         """
         if self._provider is None:
             return
 
-        for i in self._provider.list_instances():
+        update_thread = ListInstancesThread(self, self._provider)
+        update_thread.instancesReady.connect(self._update_model)
+        update_thread.start()
+
+    def _update_model(self, instances):
+        for i in instances:
             self._model.update_instance_status(i)
+
+    def _populate_model(self, instances):
+        for i in instances:
+            self._model.addInstance(i)
+        self.uiInstancesTableView.resizeColumnsToContents()
