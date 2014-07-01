@@ -29,7 +29,8 @@ class InstanceTableModel(QAbstractTableModel):
         super(InstanceTableModel, self).__init__(*args, **kwargs)
         self._header_data = ['Instance', '', 'Size', 'Devices']  # status has an empty header label
         self._width = len(self._header_data)
-        self._instances = []
+        self._instances = {}
+        self._ids = []
 
     def _get_status_icon_path(self, state):
         """
@@ -49,7 +50,7 @@ class InstanceTableModel(QAbstractTableModel):
         return self._width if len(self._instances) else 0
 
     def data(self, index, role=None):
-        instance = self._instances[index.row()]
+        instance = self._instances.get(self._ids[index.row()])
         col = index.column()
 
         if role == Qt.DecorationRole:
@@ -83,7 +84,8 @@ class InstanceTableModel(QAbstractTableModel):
         if not len(self._instances):
             self.beginInsertColumns(QModelIndex(), 0, self._width-1)
             self.endInsertColumns()
-        self._instances.append(instance)
+        self._ids.append(instance.id)
+        self._instances[instance.id] = instance
         self.endInsertRows()
 
     def getInstance(self, index):
@@ -91,23 +93,33 @@ class InstanceTableModel(QAbstractTableModel):
         Retrieve the i-th instance if index is in range
         """
         try:
-            return self._instances[index]
+            return self._instances.get(self._ids[index])
         except IndexError:
             return None
+
+    def removeInstance(self, instance):
+        try:
+            index = self._ids.index(instance.id)
+            self.beginRemoveRows(QModelIndex(), index, index)
+            del self._instances[instance.id]
+            del self._ids[index]
+            self.endRemoveRows()
+        except ValueError:
+            pass
 
     def update_instance_status(self, instance):
         """
         Update model data and notify connected views
         """
-        try:
-            i = self._instances.index(instance)
-            current = self._instances[i]
+        if instance.id in self._ids:
+            index = self._ids.index(instance.id)
+            current = self._instances[instance.id]
             current.state = instance.state
-            first_index = self.createIndex(i, 0)
-            last_index = self.createIndex(i, self.columnCount()-1)
+            first_index = self.createIndex(index, 0)
+            last_index = self.createIndex(index, self.columnCount()-1)
             self.dataChanged.emit(first_index, last_index)
-        except ValueError:
-            pass
+        else:
+            self.addInstance(instance)
 
 
 class ListInstancesThread(QThread):
@@ -198,9 +210,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if len(sel) and self._provider is not None:
             index = sel[0].row()
             instance = self._model.getInstance(index)
-            self._provider.delete_instance(instance)
-            # FIXME remove this message
-            print("delete {}".format(instance.name))
+            if self._provider.delete_instance(instance):
+                self._model.removeInstance(instance)
 
     def _rowChanged(self, current, previous):
         """
