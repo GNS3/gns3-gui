@@ -320,7 +320,7 @@ class GraphicsView(QtGui.QGraphicsView):
         if source_item == destination_item:
             multi = 0
 
-        if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinatnionPort().linkType() == "Serial"):
+        if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinationPort().linkType() == "Serial"):
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
         else:
             link_item = EthernetLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
