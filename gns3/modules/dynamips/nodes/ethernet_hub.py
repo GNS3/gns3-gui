@@ -46,11 +46,12 @@ class EthernetHub(Node):
         self._settings = {"name": "",
                           "ports": []}
 
-    def setup(self, name=None, initial_settings={}):
+    def setup(self, name=None, initial_ports=[]):
         """
         Setups this hub.
 
         :param name: optional name for this hub
+        :param initial_ports: ports to be automatically added when creating this hub
         """
 
         # let's create a unique name if none has been chosen
@@ -60,6 +61,24 @@ class EthernetHub(Node):
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet hub")
             return
+
+        if not initial_ports:
+            # default configuration if no initial ports
+            for port_number in range(1, 9):
+                # add 8 ports
+                initial_ports.append({"name": str(port_number),
+                                      "port_number": port_number})
+
+        # add initial ports
+        for initial_port in initial_ports:
+            port = EthernetPort(initial_port["name"])
+            port.setPortNumber(initial_port["port_number"])
+            if "id" in initial_port:
+                port.setId(initial_port["id"])
+            port.setStatus(EthernetPort.started)
+            port.setPacketCaptureSupported(True)
+            self._ports.append(port)
+            self._settings["ports"].append(port.portNumber())
 
         params = {"name": name}
         self._server.send_message("dynamips.ethhub.create", params, self._setupCallback)
@@ -406,20 +425,13 @@ class EthernetHub(Node):
         name = settings.pop("name")
 
         # create the ports with the correct port numbers and IDs
+        ports = []
         if "ports" in node_info:
             ports = node_info["ports"]
-            for topology_port in ports:
-                port = EthernetPort(topology_port["name"])
-                port.setPortNumber(topology_port["port_number"])
-                port.setId(topology_port["id"])
-                port.setStatus(EthernetPort.started)
-                port.setPacketCaptureSupported(True)
-                self._ports.append(port)
-                self._settings["ports"].append(port.portNumber())
 
         log.info("Ethernet hub {} is loading".format(name))
         self.setName(name)
-        self.setup(name)
+        self.setup(name, ports)
 
     def name(self):
         """

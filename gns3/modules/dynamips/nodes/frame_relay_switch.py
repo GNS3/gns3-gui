@@ -46,11 +46,13 @@ class FrameRelaySwitch(Node):
         self._settings = {"name": "",
                           "mappings": {}}
 
-    def setup(self, name=None, initial_settings={}):
+    def setup(self, name=None, initial_ports=[], initial_mappings={}):
         """
         Setups this Frame Relay switch.
 
         :param name: name for this switch.
+        :param initial_ports: ports to be automatically added when creating this Frame relay switch
+        :param initial_mappings: mappings to be automatically added when creating this Frame relay switch
         """
 
         # let's create a unique name if none has been chosen
@@ -61,9 +63,21 @@ class FrameRelaySwitch(Node):
             self.error_signal.emit(self.id(), "could not allocate a name for this Frame Relay switch")
             return
 
+        if initial_mappings:
+            # add initial mappings
+            self._settings["mappings"] = initial_mappings.copy()
+
+        # add initial ports
+        for initial_port in initial_ports:
+            port = FrameRelayPort(initial_port["name"])
+            port.setPortNumber(initial_port["port_number"])
+            if "id" in initial_port:
+                port.setId(initial_port["id"])
+            port.setStatus(FrameRelayPort.started)
+            port.setPacketCaptureSupported(True)
+            self._ports.append(port)
+
         params = {"name": name}
-        if "mappings" in initial_settings:
-            self._settings["mappings"] = initial_settings["mappings"]
         self._server.send_message("dynamips.frsw.create", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
@@ -441,24 +455,17 @@ class FrameRelaySwitch(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
 
-        # restore mappings
+        mappings = {}
         if "mappings" in settings:
-            self._settings["mappings"] = settings["mappings"].copy()
+            mappings = settings["mappings"]
 
-        # create the ports with the correct port numbers and IDs
+        ports = []
         if "ports" in node_info:
             ports = node_info["ports"]
-            for topology_port in ports:
-                port = FrameRelayPort(topology_port["name"])
-                port.setPortNumber(topology_port["port_number"])
-                port.setId(topology_port["id"])
-                port.setStatus(FrameRelayPort.started)
-                port.setPacketCaptureSupported(True)
-                self._ports.append(port)
 
         log.info("Frame-Relay switch {} is loading".format(name))
         self.setName(name)
-        self.setup(name)
+        self.setup(name, ports, mappings)
 
     def name(self):
         """

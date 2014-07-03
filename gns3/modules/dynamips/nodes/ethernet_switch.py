@@ -46,11 +46,12 @@ class EthernetSwitch(Node):
         self._settings = {"name": "",
                           "ports": {}}
 
-    def setup(self, name=None, initial_settings={}):
+    def setup(self, name=None, initial_ports=[]):
         """
         Setups this Ethernet switch.
 
         :param name: optional name for this switch
+        :param initial_ports: ports to be automatically added when creating this switch
         """
 
         # let's create a unique name if none has been chosen
@@ -60,6 +61,27 @@ class EthernetSwitch(Node):
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet switch")
             return
+
+        if not initial_ports:
+            # default configuration if no initial ports
+            for port_number in range(1, 9):
+                # add 8 ports
+                initial_ports.append({"name": str(port_number),
+                                      "port_number": port_number,
+                                      "type": "access",
+                                      "vlan": 1})
+
+        # add initial ports
+        for initial_port in initial_ports:
+            port = EthernetPort(initial_port["name"])
+            port.setPortNumber(initial_port["port_number"])
+            if "id" in initial_port:
+                port.setId(initial_port["id"])
+            port.setStatus(EthernetPort.started)
+            port.setPacketCaptureSupported(True)
+            self._ports.append(port)
+            self._settings["ports"][port.portNumber()] = {"type": initial_port["type"],
+                                                          "vlan": initial_port["vlan"]}
 
         params = {"name": name}
         self._server.send_message("dynamips.ethsw.create", params, self._setupCallback)
@@ -419,22 +441,13 @@ class EthernetSwitch(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
 
-        # create the ports with the correct port numbers, IDs and settings
+        ports = []
         if "ports" in node_info:
             ports = node_info["ports"]
-            for topology_port in ports:
-                port = EthernetPort(topology_port["name"])
-                port.setPortNumber(topology_port["port_number"])
-                port.setId(topology_port["id"])
-                port.setStatus(EthernetPort.started)
-                port.setPacketCaptureSupported(True)
-                self._ports.append(port)
-                self._settings["ports"][port.portNumber()] = {"type": topology_port["type"],
-                                                              "vlan": topology_port["vlan"]}
 
         log.info("Ethernet switch {} is loading".format(name))
         self.setName(name)
-        self.setup(name)
+        self.setup(name, ports)
 
     def name(self):
         """
