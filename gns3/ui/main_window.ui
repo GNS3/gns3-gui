@@ -801,6 +801,9 @@ background-none;
    </property>
   </action>
   <action name="uiInsertImageAction">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/image.svg</normaloff>:/icons/image.svg</iconset>

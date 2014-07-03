@@ -20,12 +20,15 @@ Contains this entire topology: nodes and links.
 Handles the saving and loading of a topology.
 """
 
+import os
+
 from .qt import QtCore, QtGui
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
+from .items.image_item import ImageItem
 from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
@@ -49,6 +52,7 @@ class Topology(object):
         self._notes = []
         self._rectangles = []
         self._ellipses = []
+        self._images = []
         self._topology = None
         self._initialized_nodes = []
         self._resources_type = "local"
@@ -174,6 +178,25 @@ class Topology(object):
         if ellipse in self._ellipses:
             self._ellipses.remove(ellipse)
 
+    def addImage(self, image):
+        """
+        Adds a new image to this topology.
+
+        :param image: ImageItem instance
+        """
+
+        self._images.append(image)
+
+    def removeImage(self, image):
+        """
+        Removes an image from this topology.
+
+        :param image: ImageItem instance
+        """
+
+        if image in self._images:
+            self._images.remove(image)
+
     def nodes(self):
         """
         Returns all the nodes in this topology.
@@ -209,6 +232,13 @@ class Topology(object):
 
         return self._ellipses
 
+    def images(self):
+        """
+        Returns all the images in this topology.
+        """
+
+        return self._images
+
     def reset(self):
         """
         Resets this topology.
@@ -220,6 +250,7 @@ class Topology(object):
         self._notes.clear()
         self._rectangles.clear()
         self._ellipses.clear()
+        self._images.clear()
         self._initialized_nodes.clear()
         self._resources_type = "local"
         log.info("topology has been reset")
@@ -232,7 +263,8 @@ class Topology(object):
         """
 
         from .main_window import MainWindow
-        view = MainWindow.instance().uiGraphicsView
+        main_window = MainWindow.instance()
+        view = main_window.uiGraphicsView
 
         if "nodes" in topology["topology"]:
             for item in view.scene().items():
@@ -272,6 +304,15 @@ class Topology(object):
             topology_ellipses = topology["topology"]["ellipses"] = []
             for ellipse in self._ellipses:
                 topology_ellipses.append(ellipse.dump())
+
+        # images
+        if self._images:
+            topology_images = topology["topology"]["images"] = []
+            for image in self._images:
+                image_info = image.dump()
+                if "path" in image_info:
+                    image_info["path"] = os.path.relpath(image_info["path"], main_window.projectSettings()["project_files_dir"])
+                topology_images.append(image_info)
 
     def dump(self, include_gui_data=True):
         """
@@ -336,6 +377,7 @@ class Topology(object):
         main_window = MainWindow.instance()
         view = main_window.uiGraphicsView
 
+        topology_file_errors = []
         if "topology" not in topology or "version" not in topology:
             log.warn("not a topology file")
             return
@@ -378,15 +420,14 @@ class Topology(object):
                     self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
 
         # nodes
-        node_errors = []
         if "nodes" in topology["topology"]:
             topology_nodes = {}
             nodes = topology["topology"]["nodes"]
             for topology_node in nodes:
                 # check for duplicate node IDs
                 if topology_node["id"] in topology_nodes:
-                    node_errors.append("Duplicated node ID {} for {}".format(topology_node["id"],
-                                                                             topology_node["description"]))
+                    topology_file_errors.append("Duplicated node ID {} for {}".format(topology_node["id"],
+                                                                                      topology_node["description"]))
                     continue
                 topology_nodes[topology_node["id"]] = topology_node
 
@@ -409,7 +450,7 @@ class Topology(object):
                         server = self._servers[topology_node["server_id"]]
 
                     if not server:
-                        node_errors.append("No server reference for node ID {}".format(topology_node["id"]))
+                        topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
                         continue
 
                     node = node_module.createNode(node_class, server)
@@ -418,7 +459,7 @@ class Topology(object):
                     node.server_error_signal.connect(main_window.uiConsoleTextEdit.writeServerError)
 
                 except ModuleError as e:
-                    node_errors.append(str(e))
+                    topology_file_errors.append(str(e))
                     continue
 
                 node.setId(topology_node["id"])
@@ -447,10 +488,6 @@ class Topology(object):
 
         self._resources_type = topology.get("project_type")
 
-        if node_errors:
-            errors = "\n".join(node_errors)
-            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
-
         # notes
         if "notes" in topology["topology"]:
             notes = topology["topology"]["notes"]
@@ -477,6 +514,34 @@ class Topology(object):
                 ellipse_item.load(topology_ellipse)
                 view.scene().addItem(ellipse_item)
                 self.addEllipse(ellipse_item)
+
+        # images
+        if "images" in topology["topology"]:
+            images = topology["topology"]["images"]
+            for topology_image in images:
+
+                updated_image_path = os.path.join(main_window.projectSettings()["project_files_dir"], topology_image["path"])
+                if os.path.isfile(updated_image_path):
+                    image_path = updated_image_path
+                else:
+                    image_path = topology_image["path"]
+                if not os.path.isfile(image_path):
+                    topology_file_errors.append("Path to image {} doesn't exist".format(image_path))
+                    continue
+
+                pixmap = QtGui.QPixmap(image_path)
+                if pixmap.isNull():
+                    topology_file_errors.append("Image format not supported for {}".format(image_path))
+                    continue
+
+                image_item = ImageItem(pixmap, image_path)
+                image_item.load(topology_image)
+                view.scene().addItem(image_item)
+                self.addImage(image_item)
+
+        if topology_file_errors:
+            errors = "\n".join(topology_file_errors)
+            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
 
     def _nodeCreatedSlot(self, node_id):
         """

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Mon May 26 07:20:11 2014
+# Created: Wed Jul  2 17:26:09 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -244,10 +244,13 @@ class Ui_GeneralPreferencesPageWidget(object):
         GeneralPreferencesPageWidget.setWindowTitle(_translate("GeneralPreferencesPageWidget", "General", None))
         self.uiLocalPathsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Local paths", None))
         self.uiProjectsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My projects:", None))
+        self.uiProjectsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your GNS3 projects are stored", None))
         self.uiProjectsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "...", None))
-        self.uiImagesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My images:", None))
+        self.uiImagesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My binary images:", None))
+        self.uiImagesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored", None))
         self.uiImagesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "...", None))
         self.uiTemporaryFilesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "Temporary files:", None))
+        self.uiTemporaryFilesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where temporary files are stored", None))
         self.uiTemporaryFilesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "...", None))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file", None))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import", None))

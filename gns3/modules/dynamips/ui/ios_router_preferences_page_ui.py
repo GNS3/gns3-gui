@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Sat Jun 21 08:43:27 2014
+# Created: Wed Jul  2 19:40:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_IOSRouterPreferencesPageWidget(object):
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName(_fromUtf8("IOSRouterPreferencesPageWidget"))
-        IOSRouterPreferencesPageWidget.resize(431, 530)
+        IOSRouterPreferencesPageWidget.resize(434, 530)
         self.vboxlayout = QtGui.QVBoxLayout(IOSRouterPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(IOSRouterPreferencesPageWidget)
@@ -92,6 +92,8 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiIdlePCLabel.setObjectName(_fromUtf8("uiIdlePCLabel"))
         self.gridLayout_2.addWidget(self.uiIdlePCLabel, 5, 0, 1, 1)
         self.uiIdlePCLineEdit = QtGui.QLineEdit(self.groupBox)
+        self.uiIdlePCLineEdit.setInputMask(_fromUtf8(""))
+        self.uiIdlePCLineEdit.setText(_fromUtf8(""))
         self.uiIdlePCLineEdit.setObjectName(_fromUtf8("uiIdlePCLineEdit"))
         self.gridLayout_2.addWidget(self.uiIdlePCLineEdit, 5, 1, 1, 1)
         self.uiIdlePCFinderPushButton = QtGui.QPushButton(self.groupBox)

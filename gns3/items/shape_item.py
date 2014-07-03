@@ -233,7 +233,7 @@ class ShapeItem:
 
     def load(self, shape_info):
         """
-        Loads a rectangle representation
+        Loads a representation of this shape item.
         (from a topology file).
 
         :param shape_info: representation of the shape item (dictionary)

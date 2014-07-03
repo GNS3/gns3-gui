@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/git/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Wed May  7 20:38:10 2014
+# Created: Wed Jul  2 17:26:09 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -261,9 +261,13 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiUDPPortRangeGroupBox.setTitle(_translate("DynamipsPreferencesPageWidget", "UDP tunneling port range", None))
         self.uiUDPPortRangeLabel.setText(_translate("DynamipsPreferencesPageWidget", "to", None))
         self.uiMemoryUsageOptimisationGroupBox.setTitle(_translate("DynamipsPreferencesPageWidget", "Memory usage optimisation", None))
+        self.uiGhostIOSSupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The ghost IOS feature is a solution that helps to decrease memory usage by sharing an IOS image between different router instances.", None))
         self.uiGhostIOSSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable ghost IOS support", None))
+        self.uiMmapSupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The mmap feature tells Dynamips to use disk files instead of real memory for router instances.", None))
         self.uiMmapSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable mmap support", None))
+        self.uiJITSharingSupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The JIT sharing feature allows router instances to share JIT blocks, instead of recompiling multiple times in a non-shared way.", None))
         self.uiJITSharingSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable JIT sharing support (unstable)", None))
+        self.uiSparseMemorySupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The sparse memory feature reduces the amount of virtual memory used by router instances.", None))
         self.uiSparseMemorySupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable sparse memory support", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced settings", None))
 

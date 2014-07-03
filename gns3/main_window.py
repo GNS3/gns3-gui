@@ -618,8 +618,37 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
 
-        #TODO: insert images
-        pass
+        # supported image file formats
+        file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff);;All files (*.*)"
+
+        path = QtGui.QFileDialog.getOpenFileName(self, "Image", self.projectsDirPath(), file_formats)
+        if not path:
+            return
+
+        pixmap = QtGui.QPixmap(path)
+        if pixmap.isNull():
+            QtGui.QMessageBox.critical(self, "Image", "Image file format not supported")
+            return
+
+        destination_dir = os.path.join(self._project_settings["project_files_dir"], "images")
+        try:
+            os.makedirs(destination_dir)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Image", "Could not create the image directory: {}".format(e))
+            return
+
+        destination_image_path = os.path.join(destination_dir, os.path.basename(path))
+        if not os.path.isfile(destination_image_path):
+            # copy the image to the project files directory
+            try:
+                shutil.copyfile(path, destination_image_path)
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, "Image", "Could not copy the image to the project image directory: {}".format(e))
+                return
+
+        self.uiGraphicsView.addImage(pixmap, destination_image_path)
 
     def _drawRectangleActionSlot(self):
         """

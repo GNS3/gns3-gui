@@ -40,7 +40,11 @@
           <item row="1" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLineEdit" name="uiProjectsPathLineEdit"/>
+             <widget class="QLineEdit" name="uiProjectsPathLineEdit">
+              <property name="toolTip">
+               <string>Directory where your GNS3 projects are stored</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QToolButton" name="uiProjectsPathToolButton">
@@ -57,14 +61,18 @@
           <item row="2" column="0">
            <widget class="QLabel" name="uiImagesPathLabel">
             <property name="text">
-             <string>My images:</string>
+             <string>My binary images:</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLineEdit" name="uiImagesPathLineEdit"/>
+             <widget class="QLineEdit" name="uiImagesPathLineEdit">
+              <property name="toolTip">
+               <string>Directory where your binary images (e.g. IOS) are stored</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QToolButton" name="uiImagesPathToolButton">
@@ -88,7 +96,11 @@
           <item row="5" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLineEdit" name="uiTemporaryFilesPathLineEdit"/>
+             <widget class="QLineEdit" name="uiTemporaryFilesPathLineEdit">
+              <property name="toolTip">
+               <string>Directory where temporary files are stored</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QToolButton" name="uiTemporaryFilesPathToolButton">

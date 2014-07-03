@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Jun 24 09:16:04 2014
+# Created: Wed Jul  2 22:04:17 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -304,6 +304,7 @@ class Ui_MainWindow(object):
         self.uiImportExportStartupConfigsAction.setIcon(icon16)
         self.uiImportExportStartupConfigsAction.setObjectName(_fromUtf8("uiImportExportStartupConfigsAction"))
         self.uiInsertImageAction = QtGui.QAction(MainWindow)
+        self.uiInsertImageAction.setCheckable(False)
         icon17 = QtGui.QIcon()
         icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/image.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiInsertImageAction.setIcon(icon17)

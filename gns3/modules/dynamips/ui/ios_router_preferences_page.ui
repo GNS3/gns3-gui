@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
+    <width>434</width>
     <height>530</height>
    </rect>
   </property>
@@ -146,7 +146,14 @@
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLineEdit" name="uiIdlePCLineEdit"/>
+           <widget class="QLineEdit" name="uiIdlePCLineEdit">
+            <property name="inputMask">
+             <string/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
           </item>
           <item row="5" column="2">
            <widget class="QPushButton" name="uiIdlePCFinderPushButton">

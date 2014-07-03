@@ -428,6 +428,9 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QCheckBox" name="uiGhostIOSSupportCheckBox">
+            <property name="toolTip">
+             <string>The ghost IOS feature is a solution that helps to decrease memory usage by sharing an IOS image between different router instances.</string>
+            </property>
             <property name="text">
              <string>Enable ghost IOS support</string>
             </property>
@@ -438,6 +441,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="uiMmapSupportCheckBox">
+            <property name="toolTip">
+             <string>The mmap feature tells Dynamips to use disk files instead of real memory for router instances.</string>
+            </property>
             <property name="text">
              <string>Enable mmap support</string>
             </property>
@@ -451,6 +457,9 @@
             <property name="enabled">
              <bool>true</bool>
             </property>
+            <property name="toolTip">
+             <string>The JIT sharing feature allows router instances to share JIT blocks, instead of recompiling multiple times in a non-shared way.</string>
+            </property>
             <property name="text">
              <string>Enable JIT sharing support (unstable)</string>
             </property>
@@ -461,6 +470,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="uiSparseMemorySupportCheckBox">
+            <property name="toolTip">
+             <string>The sparse memory feature reduces the amount of virtual memory used by router instances.</string>
+            </property>
             <property name="text">
              <string>Enable sparse memory support</string>
             </property>

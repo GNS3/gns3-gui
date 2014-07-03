@@ -49,6 +49,7 @@ from .items.note_item import NoteItem
 from .items.shape_item import ShapeItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
+from .items.image_item import ImageItem
 
 
 class GraphicsView(QtGui.QGraphicsView):
@@ -241,6 +242,22 @@ class GraphicsView(QtGui.QGraphicsView):
         else:
             self._adding_ellipse = False
             self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addImage(self, pixmap, image_path):
+        """
+        Adds an image.
+
+        :param pixmap: QPixmap instance
+        :param image_path: path to the image
+        """
+
+        image_item = ImageItem(pixmap, image_path)
+        # center the image on the scene
+        x = image_item.pos().x() - (image_item.boundingRect().width() / 2)
+        y = image_item.pos().y() - (image_item.boundingRect().height() / 2)
+        image_item.setPos(x, y)
+        self.scene().addItem(image_item)
+        self._topology.addImage(image_item)
 
     def addLink(self, source_node, source_port, destination_node, destination_port):
         """
@@ -731,7 +748,7 @@ class GraphicsView(QtGui.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
-        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, ShapeItem), items)):
+        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, ShapeItem) or isinstance(item, ImageItem), items)):
             duplicate_action = QtGui.QAction("Duplicate", menu)
             duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
@@ -913,6 +930,10 @@ class GraphicsView(QtGui.QGraphicsView):
                 ellipse_item = item.duplicate()
                 self.scene().addItem(ellipse_item)
                 self._topology.addEllipse(ellipse_item)
+            elif isinstance(item, ImageItem):
+                image_item = item.duplicate()
+                self.scene().addItem(image_item)
+                self._topology.addImage(image_item)
 
     def styleActionSlot(self):
         """
