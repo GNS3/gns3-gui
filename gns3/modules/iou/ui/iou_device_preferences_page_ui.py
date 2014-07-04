@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Wed Jun 18 05:49:41 2014
+# Created: Fri Jul  4 12:42:30 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -88,8 +88,9 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiRAMSpinBox.sizePolicy().hasHeightForWidth())
         self.uiRAMSpinBox.setSizePolicy(sizePolicy)
-        self.uiRAMSpinBox.setMinimum(16)
+        self.uiRAMSpinBox.setMinimum(32)
         self.uiRAMSpinBox.setMaximum(65535)
+        self.uiRAMSpinBox.setSingleStep(32)
         self.uiRAMSpinBox.setProperty("value", 256)
         self.uiRAMSpinBox.setObjectName(_fromUtf8("uiRAMSpinBox"))
         self.gridLayout_3.addWidget(self.uiRAMSpinBox, 2, 1, 1, 1)
@@ -103,8 +104,9 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiNVRAMSpinBox.sizePolicy().hasHeightForWidth())
         self.uiNVRAMSpinBox.setSizePolicy(sizePolicy)
-        self.uiNVRAMSpinBox.setMinimum(16)
+        self.uiNVRAMSpinBox.setMinimum(32)
         self.uiNVRAMSpinBox.setMaximum(65535)
+        self.uiNVRAMSpinBox.setSingleStep(32)
         self.uiNVRAMSpinBox.setProperty("value", 128)
         self.uiNVRAMSpinBox.setObjectName(_fromUtf8("uiNVRAMSpinBox"))
         self.gridLayout_3.addWidget(self.uiNVRAMSpinBox, 3, 1, 1, 1)

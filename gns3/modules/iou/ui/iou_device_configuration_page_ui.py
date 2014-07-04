@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Wed Jun 18 06:04:25 2014
+# Created: Fri Jul  4 12:42:30 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,8 +90,9 @@ class Ui_iouDeviceConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiRamSpinBox.sizePolicy().hasHeightForWidth())
         self.uiRamSpinBox.setSizePolicy(sizePolicy)
-        self.uiRamSpinBox.setMaximum(4096)
-        self.uiRamSpinBox.setSingleStep(4)
+        self.uiRamSpinBox.setMinimum(32)
+        self.uiRamSpinBox.setMaximum(65535)
+        self.uiRamSpinBox.setSingleStep(32)
         self.uiRamSpinBox.setProperty("value", 128)
         self.uiRamSpinBox.setObjectName(_fromUtf8("uiRamSpinBox"))
         self.gridLayout_2.addWidget(self.uiRamSpinBox, 2, 1, 1, 1)
@@ -105,8 +106,9 @@ class Ui_iouDeviceConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiNvramSpinBox.sizePolicy().hasHeightForWidth())
         self.uiNvramSpinBox.setSizePolicy(sizePolicy)
-        self.uiNvramSpinBox.setMaximum(4096)
-        self.uiNvramSpinBox.setSingleStep(4)
+        self.uiNvramSpinBox.setMinimum(32)
+        self.uiNvramSpinBox.setMaximum(65535)
+        self.uiNvramSpinBox.setSingleStep(32)
         self.uiNvramSpinBox.setProperty("value", 128)
         self.uiNvramSpinBox.setObjectName(_fromUtf8("uiNvramSpinBox"))
         self.gridLayout_2.addWidget(self.uiNvramSpinBox, 3, 1, 1, 1)
@@ -165,5 +167,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiNvramSpinBox.setSuffix(_translate("iouDeviceConfigPageWidget", " KB", None))
         self.groupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Adapters", None))
         self.uiEthernetAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Ethernet adapters:", None))
+        self.uiEthernetAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter egals 4 Ethernet interfaces", None))
         self.uiSerialAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Serial adapters:", None))
+        self.uiSerialAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter egals 4 serial interfaces", None))
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Wed Jul  2 19:40:37 2014
+# Created: Fri Jul  4 12:42:30 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -109,8 +109,9 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiChassisComboBox.setObjectName(_fromUtf8("uiChassisComboBox"))
         self.gridLayout_2.addWidget(self.uiChassisComboBox, 4, 1, 1, 2)
         self.uiRAMSpinBox = QtGui.QSpinBox(self.groupBox)
-        self.uiRAMSpinBox.setMinimum(16)
+        self.uiRAMSpinBox.setMinimum(32)
         self.uiRAMSpinBox.setMaximum(65535)
+        self.uiRAMSpinBox.setSingleStep(32)
         self.uiRAMSpinBox.setProperty("value", 128)
         self.uiRAMSpinBox.setObjectName(_fromUtf8("uiRAMSpinBox"))
         self.gridLayout_2.addWidget(self.uiRAMSpinBox, 6, 1, 1, 2)

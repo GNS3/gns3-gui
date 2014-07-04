@@ -136,10 +136,13 @@
              <string> MB</string>
             </property>
             <property name="minimum">
-             <number>16</number>
+             <number>32</number>
             </property>
             <property name="maximum">
              <number>65535</number>
+            </property>
+            <property name="singleStep">
+             <number>32</number>
             </property>
             <property name="value">
              <number>256</number>
@@ -168,10 +171,13 @@
              <string> KB</string>
             </property>
             <property name="minimum">
-             <number>16</number>
+             <number>32</number>
             </property>
             <property name="maximum">
              <number>65535</number>
+            </property>
+            <property name="singleStep">
+             <number>32</number>
             </property>
             <property name="value">
              <number>128</number>

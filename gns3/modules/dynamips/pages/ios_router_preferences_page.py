@@ -24,6 +24,9 @@ import sys
 import re
 import pkg_resources
 import shutil
+import math
+import zipfile
+
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
@@ -137,6 +140,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         chassis = self.uiChassisComboBox.currentText()
         idlepc = self.uiIdlePCLineEdit.text()
         ram = self.uiRAMSpinBox.value()
+
+        minimum_required_ram = self._getMinimumRequiredRAM(path)
+        if minimum_required_ram > ram:
+            QtGui.QMessageBox.warning(self, "IOS image", "There is not sufficient RAM allocated to this IOS image, recommended RAM is {} MB".format(minimum_required_ram))
 
         # basename doesn't work on Unix with Windows paths
         if not sys.platform.startswith('win') and len(path) > 2 and path[1] == ":":
@@ -311,7 +318,36 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         if index != -1:
             self.uiChassisComboBox.setCurrentIndex(index)
 
-        self.uiRAMSpinBox.setValue(PLATFORMS_DEFAULT_RAM[detected_platform])
+        minimum_required_ram = self._getMinimumRequiredRAM(path)
+        if minimum_required_ram > PLATFORMS_DEFAULT_RAM[detected_platform]:
+            self.uiRAMSpinBox.setValue(minimum_required_ram)
+        else:
+            self.uiRAMSpinBox.setValue(PLATFORMS_DEFAULT_RAM[detected_platform])
+
+    def _getMinimumRequiredRAM(self, path):
+        """
+        Returns the minimum RAM required to run an IOS image.
+
+        :param path: path to the IOS image
+
+        :returns: minimum RAM in MB or 0 if there is an error
+        """
+
+        try:
+            if isIOSCompressed(path):
+                zip_file = zipfile.ZipFile(path, "r")
+                uncompressed_size = 0
+                for zip_info in zip_file.infolist():
+                    uncompressed_size += zip_info.file_size
+            else:
+                uncompressed_size = os.path.getsize(path)
+        except OSError:
+            return 0
+
+        # get the size in MB
+        uncompressed_size = (uncompressed_size / (1000 * 1000)) + 1
+        # round up to the closest multiple of 32 (step of the RAM SpinBox)
+        return math.ceil(uncompressed_size / 32) * 32
 
     def _startupConfigBrowserSlot(self):
         """

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/router_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/router_configuration_page.ui'
 #
-# Created: Fri Mar 28 15:40:04 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Jul  4 12:42:30 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -145,8 +145,9 @@ class Ui_routerConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiRamSpinBox.sizePolicy().hasHeightForWidth())
         self.uiRamSpinBox.setSizePolicy(sizePolicy)
-        self.uiRamSpinBox.setMaximum(4096)
-        self.uiRamSpinBox.setSingleStep(4)
+        self.uiRamSpinBox.setMinimum(32)
+        self.uiRamSpinBox.setMaximum(65535)
+        self.uiRamSpinBox.setSingleStep(32)
         self.uiRamSpinBox.setProperty("value", 128)
         self.uiRamSpinBox.setObjectName(_fromUtf8("uiRamSpinBox"))
         self.gridLayout_5.addWidget(self.uiRamSpinBox, 0, 1, 1, 1)
@@ -159,8 +160,9 @@ class Ui_routerConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiNvramSpinBox.sizePolicy().hasHeightForWidth())
         self.uiNvramSpinBox.setSizePolicy(sizePolicy)
-        self.uiNvramSpinBox.setMaximum(4096)
-        self.uiNvramSpinBox.setSingleStep(4)
+        self.uiNvramSpinBox.setMinimum(32)
+        self.uiNvramSpinBox.setMaximum(65535)
+        self.uiNvramSpinBox.setSingleStep(32)
         self.uiNvramSpinBox.setProperty("value", 128)
         self.uiNvramSpinBox.setObjectName(_fromUtf8("uiNvramSpinBox"))
         self.gridLayout_5.addWidget(self.uiNvramSpinBox, 1, 1, 1, 1)
