@@ -43,6 +43,10 @@ class NoteItem(QtGui.QGraphicsTextItem):
         Deletes this note.
         """
 
+        if not self.scene():
+            # object already deleted by its parent
+            return
+
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeNote(self)
