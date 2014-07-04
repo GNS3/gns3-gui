@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Wed Jul  2 22:04:17 2014
+# Created: Thu Jul  3 17:38:00 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -298,11 +298,11 @@ class Ui_MainWindow(object):
         icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/new-project.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiNewProjectAction.setIcon(icon15)
         self.uiNewProjectAction.setObjectName(_fromUtf8("uiNewProjectAction"))
-        self.uiImportExportStartupConfigsAction = QtGui.QAction(MainWindow)
+        self.uiImportExportConfigsAction = QtGui.QAction(MainWindow)
         icon16 = QtGui.QIcon()
         icon16.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/import_export_configs.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.uiImportExportStartupConfigsAction.setIcon(icon16)
-        self.uiImportExportStartupConfigsAction.setObjectName(_fromUtf8("uiImportExportStartupConfigsAction"))
+        self.uiImportExportConfigsAction.setIcon(icon16)
+        self.uiImportExportConfigsAction.setObjectName(_fromUtf8("uiImportExportConfigsAction"))
         self.uiInsertImageAction = QtGui.QAction(MainWindow)
         self.uiInsertImageAction.setCheckable(False)
         icon17 = QtGui.QIcon()
@@ -418,7 +418,7 @@ class Ui_MainWindow(object):
         self.uiFileMenu.addAction(self.uiSaveProjectAction)
         self.uiFileMenu.addAction(self.uiSaveProjectAsAction)
         self.uiFileMenu.addSeparator()
-        self.uiFileMenu.addAction(self.uiImportExportStartupConfigsAction)
+        self.uiFileMenu.addAction(self.uiImportExportConfigsAction)
         self.uiFileMenu.addAction(self.uiScreenshotAction)
         self.uiFileMenu.addAction(self.uiSnapshotAction)
         self.uiFileMenu.addSeparator()
@@ -586,9 +586,9 @@ class Ui_MainWindow(object):
         self.uiNewProjectAction.setToolTip(_translate("MainWindow", "New blank project", None))
         self.uiNewProjectAction.setStatusTip(_translate("MainWindow", "New blank project", None))
         self.uiNewProjectAction.setShortcut(_translate("MainWindow", "Ctrl+N", None))
-        self.uiImportExportStartupConfigsAction.setText(_translate("MainWindow", "&Import/Export IOS Startup Configs", None))
-        self.uiImportExportStartupConfigsAction.setToolTip(_translate("MainWindow", "Import/Export IOS Startup Configs", None))
-        self.uiImportExportStartupConfigsAction.setStatusTip(_translate("MainWindow", "Import/Export IOS Startup Configs", None))
+        self.uiImportExportConfigsAction.setText(_translate("MainWindow", "&Import/Export device configs", None))
+        self.uiImportExportConfigsAction.setToolTip(_translate("MainWindow", "Import/Export device configs", None))
+        self.uiImportExportConfigsAction.setStatusTip(_translate("MainWindow", "Import/Export device configs", None))
         self.uiInsertImageAction.setText(_translate("MainWindow", "Insert picture", None))
         self.uiInsertImageAction.setToolTip(_translate("MainWindow", "Insert a picture", None))
         self.uiInsertImageAction.setStatusTip(_translate("MainWindow", "Insert a picture", None))

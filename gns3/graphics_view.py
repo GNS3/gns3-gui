@@ -1018,7 +1018,7 @@ class GraphicsView(QtGui.QGraphicsView):
                                                  "Connecting to server {} on port {}...".format(server.host, server.port),
                                                  "Cancel", busy=True, parent=self)
                 progress_dialog.show()
-                if progress_dialog.exec_() == False:
+                if progress_dialog.exec_() is False:
                     return
 
             node = node_module.createNode(node_class, server)

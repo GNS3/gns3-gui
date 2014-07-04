@@ -430,6 +430,28 @@ class IOU(Module):
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
 
+    def exportConfigs(self, directory):
+        """
+        Exports all configs for all nodes to a directory.
+
+        :param directory: destination directory path
+        """
+
+        for node in self._nodes:
+            if hasattr(node, "exportConfig") and node.initialized():
+                node.exportConfig(directory)
+
+    def importConfigs(self, directory):
+        """
+        Imports configs to all nodes from a directory.
+
+        :param directory: source directory path
+        """
+
+        for node in self._nodes:
+            if hasattr(node, "importConfig") and node.initialized():
+                node.importConfig(directory)
+
     @staticmethod
     def getNodeClass(name):
         """

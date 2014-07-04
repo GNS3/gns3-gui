@@ -25,6 +25,7 @@ from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
+from gns3.utils.normalize_filename import normalize_filename
 
 import logging
 log = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ class IOUDevice(Node):
         self._inital_settings = None
         self._loading = False
         self._module = module
+        self._export_directory = None
         self._ports = []
         self._settings = {"name": "",
                           "path": "",
@@ -659,6 +661,58 @@ class IOUDevice(Node):
         self._module.addNode(self)
         self._inital_settings = None
         self._loading = False
+
+    def exportConfig(self, directory):
+        """
+        Exports the initial-config to a directory.
+
+        :param directory: destination directory path
+        """
+
+        self._export_directory = directory
+        self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigCallback)
+
+    def _exportConfigCallback(self, result, error=False):
+        """
+        Callback for exportConfigs.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+
+            if "initial_config_base64" in result:
+                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_initial-config.cfg"
+                config = base64.decodebytes(result["initial_config_base64"].encode("utf-8"))
+                try:
+                    with open(config_path, "wb") as f:
+                        log.info("saving {} initial-config to {}".format(self.name(), config_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(config_path, e))
+
+            self._export_directory = None
+
+    def importConfig(self, directory):
+        """
+        Imports an initial-config from a directory.
+
+        :param directory: source directory path
+        """
+
+        contents = os.listdir(directory)
+        initial_config = normalize_filename(self.name()) + "_initial-config.cfg"
+        new_settings = {}
+        if initial_config in contents:
+            new_settings["initial_config"] = os.path.join(directory, initial_config)
+        else:
+            self.warning_signal.emit(self.id(), "no initial-config file could be found, expected file name: {}".format(initial_config))
+        if new_settings:
+            self.update(new_settings)
 
     def name(self):
         """

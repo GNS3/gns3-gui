@@ -87,7 +87,7 @@ background-none;
     <addaction name="uiSaveProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
     <addaction name="separator"/>
-    <addaction name="uiImportExportStartupConfigsAction"/>
+    <addaction name="uiImportExportConfigsAction"/>
     <addaction name="uiScreenshotAction"/>
     <addaction name="uiSnapshotAction"/>
     <addaction name="separator"/>
@@ -785,19 +785,19 @@ background-none;
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="uiImportExportStartupConfigsAction">
+  <action name="uiImportExportConfigsAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/import_export_configs.svg</normaloff>:/icons/import_export_configs.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Import/Export IOS Startup Configs</string>
+    <string>&amp;Import/Export device configs</string>
    </property>
    <property name="toolTip">
-    <string>Import/Export IOS Startup Configs</string>
+    <string>Import/Export device configs</string>
    </property>
    <property name="statusTip">
-    <string>Import/Export IOS Startup Configs</string>
+    <string>Import/Export device configs</string>
    </property>
   </action>
   <action name="uiInsertImageAction">

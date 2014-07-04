@@ -24,6 +24,7 @@ import os
 import base64
 from gns3.node import Node
 from gns3.ports.port import Port
+from gns3.utils.normalize_filename import normalize_filename
 
 from ..settings import PLATFORMS_DEFAULT_RAM
 from ..adapters import ADAPTER_MATRIX
@@ -54,6 +55,7 @@ class Router(Node):
         self._idlepcs = []
         self._module = module
         self._loading = False
+        self._export_directory = None
         self._settings = {"name": "",
                           "platform": platform,
                           "image": "",
@@ -973,6 +975,73 @@ class Router(Node):
         self._module.addNode(self)
         self._inital_settings = None
         self._loading = False
+
+    def exportConfigs(self, directory):
+        """
+        Exports the startup-config and private-config to a directory.
+
+        :param directory: destination directory path
+        """
+
+        self._export_directory = directory
+        self._server.send_message("dynamips.vm.export_config", {"id": self._router_id}, self._exportConfigsCallback)
+
+    def _exportConfigsCallback(self, result, error=False):
+        """
+        Callback for exportConfigs.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+
+            if "startup_config_base64" in result:
+                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_startup-config.cfg"
+                config = base64.decodebytes(result["startup_config_base64"].encode("utf-8"))
+                try:
+                    with open(config_path, "wb") as f:
+                        log.info("saving {} startup-config to {}".format(self.name(), config_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(config_path, e))
+
+            if "private_config_base64" in result:
+                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_private-config.cfg"
+                config = base64.decodebytes(result["private_config_base64"].encode("utf-8"))
+                try:
+                    with open(config_path, "wb") as f:
+                        log.info("saving {} private-config to {}".format(self.name(), config_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export private-config to {}: {}".format(config_path, e))
+
+            self._export_directory = None
+
+    def importConfigs(self, directory):
+        """
+        Imports a startup-config and a private-config from a directory.
+
+        :param directory: source directory path
+        """
+
+        contents = os.listdir(directory)
+        startup_config = normalize_filename(self.name()) + "_startup-config.cfg"
+        private_config = normalize_filename(self.name()) + "_private-config.cfg"
+        new_settings = {}
+        if startup_config in contents:
+            new_settings["startup_config"] = os.path.join(directory, startup_config)
+        else:
+            self.warning_signal.emit(self.id(), "no startup-config file could be found, expected file name: {}".format(startup_config))
+        if private_config in contents:
+            new_settings["private_config"] = os.path.join(directory, private_config)
+        else:
+            self.warning_signal.emit(self.id(), "no private-config file could be found, expected file name: {}".format(private_config))
+        if new_settings:
+            self.update(new_settings)
 
     def name(self):
         """

@@ -466,6 +466,28 @@ class Dynamips(Module):
                         if hasattr(node, "stop"):
                             node.stop()
 
+    def exportConfigs(self, directory):
+        """
+        Exports all configs for all nodes to a directory.
+
+        :param directory: destination directory path
+        """
+
+        for node in self._nodes:
+            if hasattr(node, "exportConfigs") and node.initialized():
+                node.exportConfigs(directory)
+
+    def importConfigs(self, directory):
+        """
+        Imports configs to all nodes from a directory.
+
+        :param directory: source directory path
+        """
+
+        for node in self._nodes:
+            if hasattr(node, "importConfigs") and node.initialized():
+                node.importConfigs(directory)
+
     @staticmethod
     def getNodeClass(name):
         """

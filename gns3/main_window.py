@@ -27,6 +27,7 @@ import json
 import glob
 import logging
 
+from .modules import MODULES
 from .qt import QtGui, QtCore
 from .servers import Servers
 from .node import Node
@@ -215,7 +216,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiOpenProjectAction.triggered.connect(self._openProjectActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
-        self.uiImportExportStartupConfigsAction.triggered.connect(self._importExportStartupConfigsActionSlot)
+        self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
 
@@ -375,14 +376,43 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._saveProjectAs()
 
-    def _importExportStartupConfigsActionSlot(self):
+    def _importExportConfigsActionSlot(self):
         """
-        Slot called when importing and exporting startup-configs
+        Slot called when importing and exporting configs
         for the entire topology.
         """
 
-        #TODO: mass import/export of startup-configs
-        pass
+        options = ["Export configs to a directory", "Import configs from a directory"]
+        selection, ok = QtGui.QInputDialog.getItem(self, "Import/Export configs", "Please choose an option:", options, 0, False)
+        if ok:
+            if selection == options[0]:
+                self._exportConfigs()
+            else:
+                self._importConfigs()
+
+    def _exportConfigs(self):
+        """
+        Exports all configs to a directory.
+        """
+
+        path = QtGui.QFileDialog.getExistingDirectory(self, "Export directory", ".", QtGui.QFileDialog.ShowDirsOnly)
+        if path:
+            for module in MODULES:
+                instance = module.instance()
+                if hasattr(instance, "exportConfigs"):
+                    instance.exportConfigs(path)
+
+    def _importConfigs(self):
+        """
+        Imports all configs from a directory.
+        """
+
+        path = QtGui.QFileDialog.getExistingDirectory(self, "Import directory", ".", QtGui.QFileDialog.ShowDirsOnly)
+        if path:
+            for module in MODULES:
+                instance = module.instance()
+                if hasattr(instance, "importConfigs"):
+                    instance.importConfigs(path)
 
     def _createScreenshot(self, path):
         """

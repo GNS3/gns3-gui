@@ -24,6 +24,7 @@ import base64
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
+from gns3.utils.normalize_filename import normalize_filename
 
 import logging
 log = logging.getLogger(__name__)
@@ -44,6 +45,7 @@ class VPCSDevice(Node):
         self._vpcs_id = None
         self._defaults = {}
         self._inital_settings = None
+        self._export_directory = None
         self._loading = False
         self._module = module
         self._ports = []
@@ -502,6 +504,58 @@ class VPCSDevice(Node):
         self._module.addNode(self)
         self._inital_settings = None
         self._loading = False
+
+    def exportConfig(self, directory):
+        """
+        Exports the script-file to a directory.
+
+        :param directory: destination directory path
+        """
+
+        self._export_directory = directory
+        self._server.send_message("vpcs.export_config", {"id": self._vpcs_id}, self._exportConfigCallback)
+
+    def _exportConfigCallback(self, result, error=False):
+        """
+        Callback for exportConfigs.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+
+            if "script_file_base64" in result:
+                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_startup.vpc"
+                config = base64.decodebytes(result["script_file_base64"].encode("utf-8"))
+                try:
+                    with open(config_path, "wb") as f:
+                        log.info("saving {} script file to {}".format(self.name(), config_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(config_path, e))
+
+            self._export_directory = None
+
+    def importConfig(self, directory):
+        """
+        Imports an initial-config from a directory.
+
+        :param directory: source directory path
+        """
+
+        contents = os.listdir(directory)
+        script_file = normalize_filename(self.name()) + "_startup.vpc"
+        new_settings = {}
+        if script_file in contents:
+            new_settings["script_file"] = os.path.join(directory, script_file)
+        else:
+            self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(script_file))
+        if new_settings:
+            self.update(new_settings)
 
     def name(self):
         """
