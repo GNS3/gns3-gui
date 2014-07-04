@@ -270,11 +270,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
         if ok:
             if selection in ports:
                 node, port, dlt = ports[selection]
-                capture_file_name = "{}_{}_to_{}_{}.pcap".format(node.name(),
-                                                                 port.name().replace('/', '-'),
-                                                                 port.destinationNode().name(),
-                                                                 port.destinationPort().name().replace('/', '-'))
-                node.startPacketCapture(port, capture_file_name, dlt)
+                node.startPacketCapture(port, port.captureFileName(node.name()), dlt)
 
     def _stopCaptureActionSlot(self):
         """

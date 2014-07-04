@@ -487,6 +487,21 @@ class Port(object):
                 command = shlex.split(command)
             self._capture_reader_process = subprocess.Popen(command)
 
+    def captureFileName(self, source_node_name):
+        """
+        Returns a capture file name.
+
+        :param source_node_name: source node name
+
+        :return: capture file name
+        """
+
+        capture_file_name = "{}_{}_to_{}_{}.pcap".format(source_node_name,
+                                                         self.name().replace('/', '-'),
+                                                         self.destinationNode().name(),
+                                                         self.destinationPort().name().replace('/', '-'))
+        return capture_file_name
+
     def dump(self):
         """
         Returns a representation of this port.
