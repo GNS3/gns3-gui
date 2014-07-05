@@ -4,9 +4,7 @@ from gns3.cloud.exceptions import Unauthorized, ApiError, KeyPairExists
 from gns3.cloud.exceptions import ItemNotFound
 import json
 import unittest
-import sys
 from unittest import mock
-from PyQt4.QtGui import QApplication
 
 RACKSPACE_VALID_CREDENTIALS_RESPONSE = {
     "access": {
@@ -322,8 +320,40 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
                           'size', 'image', self.key_pair)
 
     def test_list_images(self):
+        self.ctrl.tenant_id = '1234567890'
         self.ctrl._get_shared_images = mock.MagicMock()
-        self.ctrl._get_shared_images.return_value = '[{"image_name": "foo", "schema": "/v2/schemas/member", "status": "pending", "image_id": "1c6ba38d-5960-4cc1-a3db-bab521e99afa", "member_id": "user_foo", "created_at": "2014-06-25T13:49:56Z", "updated_at": "2014-06-25T13:49:56Z"}, {"image_name": "foo2", "schema": "/v2/schemas/member", "status": "pending", "image_id": "a44a6c31-a437-498e-b4e4-3a6cb9d1d733", "member_id": "user_foo", "created_at": "2014-06-25T13:49:59Z", "updated_at": "2014-06-25T13:49:59Z"}, {"image_name": "foo3", "member_id": "user_foo", "image_id": "64c3b6e5-05c1-4407-82b9-5690cdfaa887", "status": "ALREADYREQUESTED"}, {"image_name": "foo4", "member_id": "user_foo", "image_id": "a6893756-b108-4667-9bf3-7a02d076b3e2", "status": "ALREADYREQUESTED"}]'
+        self.ctrl._get_shared_images.return_value = [
+            {
+                "image_name": "foo",
+                "schema": "/v2/schemas/member",
+                "status": "pending",
+                "image_id": "1c6ba38d-5960-4cc1-a3db-bab521e99afa",
+                "member_id": "user_foo",
+                "created_at": "2014-06-25T13:49:56Z",
+                "updated_at": "2014-06-25T13:49:56Z"
+            },
+            {
+                "image_name": "foo2",
+                "schema": "/v2/schemas/member",
+                "status": "pending",
+                "image_id": "a44a6c31-a437-498e-b4e4-3a6cb9d1d733",
+                "member_id": "user_foo",
+                "created_at": "2014-06-25T13:49:59Z",
+                "updated_at": "2014-06-25T13:49:59Z"
+            },
+            {
+                "image_name": "foo3",
+                "member_id": "user_foo",
+                "image_id": "64c3b6e5-05c1-4407-82b9-5690cdfaa887",
+                "status": "ALREADYREQUESTED"
+            },
+            {
+                "image_name": "foo4",
+                "member_id": "user_foo",
+                "image_id": "a6893756-b108-4667-9bf3-7a02d076b3e2",
+                "status": "ALREADYREQUESTED"
+            }
+        ]
         images = self.ctrl.list_images()
         self.assertEqual({'foo', 'foo2', 'foo3', 'foo4'}, set(images.values()))
 
