@@ -42,6 +42,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
 
         QtGui.QGraphicsPathItem.__init__(self)
+        self.setAcceptsHoverEvents(True)
         self.setZValue(-1)
         self._link = None
 
@@ -68,6 +69,9 @@ class LinkItem(QtGui.QGraphicsPathItem):
         self._destination_item = destination_item
         self._source_port = source_port
         self._destination_port = destination_port
+
+        # indicates if the link is being hovered
+        self._hovered = False
 
         if not self._adding_flag:
             # there is a destination
@@ -191,6 +195,39 @@ class LinkItem(QtGui.QGraphicsPathItem):
 
         cls._draw_port_labels = state
 
+    def populateLinkContextualMenu(self, menu):
+        """
+        Adds device actions to the link contextual menu.
+
+        :param menu: QMenu instance
+        """
+
+        if not self._source_port.capturing() or not self._destination_port.capturing():
+            # start capture
+            start_capture_action = QtGui.QAction("Start capture", menu)
+            start_capture_action.setIcon(QtGui.QIcon(':/icons/capture-start.svg'))
+            start_capture_action.triggered.connect(self._startCaptureActionSlot)
+            menu.addAction(start_capture_action)
+
+        if self._source_port.capturing() or self._destination_port.capturing():
+            # stop capture
+            stop_capture_action = QtGui.QAction("Stop capture", menu)
+            stop_capture_action.setIcon(QtGui.QIcon(':/icons/capture-stop.svg'))
+            stop_capture_action.triggered.connect(self._stopCaptureActionSlot)
+            menu.addAction(stop_capture_action)
+
+            # start wireshark
+            start_wireshark_action = QtGui.QAction("Start Wireshark", menu)
+            start_wireshark_action.setIcon(QtGui.QIcon(":/icons/wireshark.png"))
+            start_wireshark_action.triggered.connect(self._startWiresharkActionSlot)
+            menu.addAction(start_wireshark_action)
+
+        # delete
+        delete_action = QtGui.QAction("Delete", menu)
+        delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
+        delete_action.triggered.connect(self._deleteActionSlot)
+        menu.addAction(delete_action)
+
     def mousePressEvent(self, event):
         """
         Called when the link is clicked and shows a contextual menu.
@@ -207,35 +244,13 @@ class LinkItem(QtGui.QGraphicsPathItem):
                 return
 
             # create the contextual menu
+            self.setAcceptsHoverEvents(False)
             menu = QtGui.QMenu()
-
-            if not self._source_port.capturing() or not self._destination_port.capturing():
-                # start capture
-                start_capture_action = QtGui.QAction("Start capture", menu)
-                start_capture_action.setIcon(QtGui.QIcon(':/icons/capture-start.svg'))
-                start_capture_action.triggered.connect(self._startCaptureActionSlot)
-                menu.addAction(start_capture_action)
-
-            if self._source_port.capturing() or self._destination_port.capturing():
-                # stop capture
-                stop_capture_action = QtGui.QAction("Stop capture", menu)
-                stop_capture_action.setIcon(QtGui.QIcon(':/icons/capture-stop.svg'))
-                stop_capture_action.triggered.connect(self._stopCaptureActionSlot)
-                menu.addAction(stop_capture_action)
-
-                # start wireshark
-                start_wireshark_action = QtGui.QAction("Start Wireshark", menu)
-                start_wireshark_action.setIcon(QtGui.QIcon(":/icons/wireshark.png"))
-                start_wireshark_action.triggered.connect(self._startWiresharkActionSlot)
-                menu.addAction(start_wireshark_action)
-
-            # delete
-            delete_action = QtGui.QAction("Delete", menu)
-            delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
-            delete_action.triggered.connect(self._deleteActionSlot)
-            menu.addAction(delete_action)
-
+            self.populateLinkContextualMenu(menu)
             menu.exec_(QtGui.QCursor.pos())
+            self.setAcceptsHoverEvents(True)
+            self._hovered = False
+            self.adjust()
 
     def _deleteActionSlot(self):
         """
@@ -316,6 +331,37 @@ class LinkItem(QtGui.QGraphicsPathItem):
                 self._destination_port.startPacketCaptureReader()
         except OSError as e:
             QtGui.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
+
+    def setHovered(self, value):
+        """
+        Sets the link as hovered or not.
+
+        :param value: boolean
+        """
+
+        if value:
+            self._hovered = True
+        else:
+            self._hovered = False
+        self.adjust()
+
+    def hoverEnterEvent(self, event):
+        """
+        Handles all hover enter events for this item.
+
+        :param event: QGraphicsSceneHoverEvent instance
+        """
+
+        self.setHovered(True)
+
+    def hoverLeaveEvent(self, event):
+        """
+        Handles all hover leave events for this item.
+
+        :param event: QGraphicsSceneHoverEvent instance
+        """
+
+        self.setHovered(False)
 
     def adjust(self):
         """

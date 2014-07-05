@@ -41,7 +41,6 @@ class EthernetLinkItem(LinkItem):
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
 
         LinkItem.__init__(self, source_item, source_port, destination_item, destination_port, link, adding_flag, multilink)
-        self.setPen(QtGui.QPen(QtCore.Qt.black, self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
         self._source_collision_offset = 0.0
         self._destination_collision_offset = 0.0
 
@@ -52,10 +51,15 @@ class EthernetLinkItem(LinkItem):
 
         LinkItem.adjust(self)
 
+        if self._hovered:
+            self.setPen(QtGui.QPen(QtCore.Qt.darkRed, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+        else:
+            self.setPen(QtGui.QPen(QtCore.Qt.black, self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+
         # draw a line between nodes
-        self.path = QtGui.QPainterPath(self.source)
-        self.path.lineTo(self.destination)
-        self.setPath(self.path)
+        path = QtGui.QPainterPath(self.source)
+        path.lineTo(self.destination)
+        self.setPath(path)
 
         # offset on the line for status points
         if self.length == 0:
@@ -102,7 +106,6 @@ class EthernetLinkItem(LinkItem):
         """
 
         QtGui.QGraphicsPathItem.paint(self, painter, option, widget)
-
         if not self._adding_flag and self._settings["draw_link_status_points"]:
 
             # points disappears if nodes are too close to each others.

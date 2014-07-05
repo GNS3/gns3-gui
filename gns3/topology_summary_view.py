@@ -22,6 +22,8 @@ Topology summary view that list all the nodes, their status and connections.
 from .qt import QtGui, QtCore
 from .node import Node
 from .topology import Topology
+from .items.node_item import NodeItem
+from .items.link_item import LinkItem
 
 import logging
 log = logging.getLogger(__name__)
@@ -72,6 +74,15 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
         self.refresh()
 
+    def node(self):
+        """
+        Returns the node.
+
+        :return: Node instance
+        """
+
+        return self._node
+
     def refresh(self):
         """
         Updates the widget item with the current node name and list all the connections
@@ -90,6 +101,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
             if not port.isFree():
                 item = QtGui.QTreeWidgetItem()
                 item.setText(0, "{} {}".format(port.name(), port.description()))
+                item.setData(0, QtCore.Qt.UserRole, port)
                 if port.capturing():
                     item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
                 self.addChild(item)
@@ -116,6 +128,7 @@ class TopologySummaryView(QtGui.QTreeWidget):
 
         QtGui.QTreeWidget.__init__(self, parent)
         self._topology = Topology.instance()
+        self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
 
     def addNode(self, node):
         """
@@ -164,6 +177,27 @@ class TopologySummaryView(QtGui.QTreeWidget):
 
         TopologyNodeItem(self, node)
 
+    def _itemSelectionChangedSlot(self):
+        """
+        Slot called when an item is selected in the TreeWidget.
+        """
+
+        current_item = self.currentItem()
+        if current_item:
+            from .main_window import MainWindow
+            view = MainWindow.instance().uiGraphicsView
+            for item in view.scene().items():
+                if isinstance(item, NodeItem):
+                    item.setSelected(False)
+                    if isinstance(current_item, TopologyNodeItem) and item.node().id() == current_item.node().id():
+                        item.setSelected(True)
+                if isinstance(item, LinkItem):
+                    item.setHovered(False)
+                    if not isinstance(current_item, TopologyNodeItem):
+                        port = current_item.data(0, QtCore.Qt.UserRole)
+                        if item.sourcePort() == port or item.destinationPort() == port:
+                            item.setHovered(True)
+
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
@@ -190,6 +224,21 @@ class TopologySummaryView(QtGui.QTreeWidget):
         self.connect(collapse_all, QtCore.SIGNAL('triggered()'), self._collapseAllSlot)
         menu.addAction(expand_all)
         menu.addAction(collapse_all)
+
+        current_item = self.currentItem()
+        from .main_window import MainWindow
+        view = MainWindow.instance().uiGraphicsView
+        if current_item:
+            menu.addSeparator()
+            if isinstance(current_item, TopologyNodeItem):
+                view.populateDeviceContextualMenu(menu)
+            else:
+                port = current_item.data(0, QtCore.Qt.UserRole)
+                for item in view.scene().items():
+                    if isinstance(item, LinkItem) and (item.sourcePort() == port or item.destinationPort() == port):
+                        item.populateLinkContextualMenu(menu)
+                        break
+
         menu.exec_(QtGui.QCursor.pos())
 
     def _expandAllSlot(self):

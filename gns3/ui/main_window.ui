@@ -425,7 +425,7 @@ background-none;
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Expand device to view connections. Select link and Right-click for menu.</string>
+        <string>Expand device to view connections. Select any item and right-click for menu.</string>
        </property>
        <attribute name="headerVisible">
         <bool>false</bool>

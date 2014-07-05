@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Thu Jul  3 17:38:00 2014
+# Created: Fri Jul  4 19:12:06 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -519,7 +519,7 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidget.setWindowTitle(_translate("MainWindow", "Console", None))
         self.uiAnnotationToolBar.setWindowTitle(_translate("MainWindow", "Drawing", None))
         self.uiTopologySummaryDockWidget.setWindowTitle(_translate("MainWindow", "Topology Summary", None))
-        self.uiTopologySummaryTreeWidget.setToolTip(_translate("MainWindow", "Expand device to view connections. Select link and Right-click for menu.", None))
+        self.uiTopologySummaryTreeWidget.setToolTip(_translate("MainWindow", "Expand device to view connections. Select any item and right-click for menu.", None))
         self.uiTopologySummaryTreeWidget.headerItem().setText(0, _translate("MainWindow", "1", None))
         self.uiCloudInspectorDockWidget.setWindowTitle(_translate("MainWindow", "Cloud Inspector", None))
         self.uiAboutAction.setText(_translate("MainWindow", "&About", None))

@@ -437,6 +437,10 @@ class GraphicsView(QtGui.QGraphicsView):
         item = self.itemAt(event.pos())
         if item and isinstance(item, LinkItem):
             is_not_link = False
+        else:
+            for it in self.scene().items():
+                if isinstance(it, LinkItem):
+                    it.setHovered(False)
 
         if (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) or event.buttons() == QtCore.Qt.MidButton:
             # checks to see if either the middle mouse is pressed
@@ -608,13 +612,19 @@ class GraphicsView(QtGui.QGraphicsView):
         item = self.itemAt(event.pos())
         if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
             item.setSelected(True)
-            #TODO: start the console when the user double-click on the device
-#             if (isinstance(item, IOSRouter) or isinstance(item, AnyEmuDevice)) and item.isStarted():
-#                 self.slotConsole()
-#             elif isinstance(item, AnyVBoxEmuDevice) and (item.isStarted() or item.isSuspended()) and not globals.addingLinkFlag:
-#                 self.slotDisplayWindowFocus()
-#             else:
-            self.configureSlot()
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
+                node = item.node()
+                if node.status() == Node.started:
+                    name = node.name()
+                    console_port = node.console()
+                    console_host = node.server().host
+                    try:
+                        from .telnet_console import telnetConsole
+                        telnetConsole(name, console_host, console_port)
+                    except (OSError, ValueError) as e:
+                        QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+                else:
+                    self.configureSlot()
         else:
             QtGui.QGraphicsView.mouseDoubleClickEvent(self, event)
 
@@ -673,15 +683,6 @@ class GraphicsView(QtGui.QGraphicsView):
             event.acceptProposedAction()
         else:
             event.ignore()
-
-#     def contextMenuEvent(self, event):
-#         """
-#         Handles all context menu events.
-# 
-#         :param event: QContextMenuEvent instance
-#         """
-# 
-#         self._showContextualMenu(event.globalPos())
 
     def _showDeviceContextualMenu(self, pos):
         """
@@ -849,7 +850,7 @@ class GraphicsView(QtGui.QGraphicsView):
                 try:
                     telnetConsole(name, console_host, console_port)
                 except (OSError, ValueError) as e:
-                    QtGui.QMessageBox.critical(self, "Console", 'Cannot start console application: {}'.format(e))
+                    QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
                     break
 
     def captureActionSlot(self):
