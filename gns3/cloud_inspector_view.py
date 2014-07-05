@@ -12,22 +12,10 @@ from PyQt4.Qt import Qt
 from .settings import CLOUD_PROVIDERS
 from .utils import import_from_string
 
-import random
-
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
 from libcloud.compute.types import NodeState
-from libcloud.compute.drivers.dummy import DummyNodeDriver
-
-
-def gen_fake_nodes(how_many):
-    """
-    Generate a number of fake nodes, temporary hack
-    """
-    driver = DummyNodeDriver(0)
-    for i in range(how_many):
-        yield driver.create_node()
 
 
 class InstanceTableModel(QAbstractTableModel):
@@ -72,7 +60,8 @@ class InstanceTableModel(QAbstractTableModel):
                 return instance.name
             elif col == 2:
                 # size
-                return instance.size.ram
+                if instance.size:
+                    return instance.size.ram
             elif col == 3:
                 # devices
                 return 0
@@ -161,7 +150,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             return
 
         if not region:
-            region = self._provider.list_regions()[0]
+            region = self._provider.list_regions().values()[0]
 
         if self._provider.set_region(region):
             for i in self._provider.list_instances():
@@ -171,11 +160,6 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         else:
             self._provider = None
             return
-
-        # TODO remove this block
-        for i in gen_fake_nodes(5):
-            self._model.addInstance(i)
-        # end TODO
 
     def _contextMenu(self, pos):
         # create actions
@@ -216,9 +200,4 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             return
 
         for i in self._provider.list_instances():
-            self._model.update_instance_status(i)
-
-        # FIXME remove the following to stop mocking
-        for i in self._model._instances:
-            i.state = random.choice([NodeState.RUNNING, NodeState.REBOOTING, NodeState.STOPPED])
             self._model.update_instance_status(i)

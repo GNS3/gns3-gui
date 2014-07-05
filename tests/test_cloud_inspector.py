@@ -120,8 +120,7 @@ class TestCloudInspectorView(GUIBaseTest):
 
             self.view.load(settings)
 
-            # FIXME should be 2 as soon as we remove fake instances
-            self.assertEqual(self.view._model.rowCount(), 7)
+            self.assertEqual(self.view._model.rowCount(), 2)
 
             provider.authenticate.return_value = False
             self.view.load(settings)
@@ -159,7 +158,4 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view._model = mock.MagicMock()
 
         self.view._update_model()
-        # FIXME method contains mocks, this ensure right calls are performed *beside* mock calls
         self.view._model.update_instance_status.assert_has_calls([mock.call(x) for x in nodes])
-        # FIXME once removed mocks, we can test right calls are *solely* performed with:
-        # self.view._model.update_instance_status.assert_called_with(*nodes)

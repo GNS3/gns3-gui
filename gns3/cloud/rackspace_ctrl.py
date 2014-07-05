@@ -25,7 +25,6 @@ from libcloud.compute.providers import get_driver
 from libcloud.compute.types import Provider
 
 from .exceptions import ItemNotFound, ApiError
-from ..main_window import MainWindow
 from ..version import __version__
 
 import logging
@@ -58,6 +57,7 @@ class RackspaceCtrl(BaseCloudCtrl):
 
         self.regions = []
         self.token = None
+        self.tenant_id = None
 
     def authenticate(self):
         """
@@ -101,6 +101,7 @@ class RackspaceCtrl(BaseCloudCtrl):
                 self.authenticated = True
                 user_regions = self._parse_endpoints(api_data)
                 self.regions = self._make_region_list(user_regions)
+                self.tenant_id = self._parse_tenant_id(api_data)
 
         else:
             self.regions = []
@@ -144,6 +145,17 @@ class RackspaceCtrl(BaseCloudCtrl):
             return None
 
         return token
+
+    def _parse_tenant_id(self, api_data):
+        """  """
+        try:
+            roles = api_data['access']['user']['roles']
+            for role in roles:
+                if 'tenantId' in role and role['name'] == 'compute:default':
+                    return role['tenantId']
+            return None
+        except KeyError:
+            return None
 
     def _make_region_list(self, region_codes):
         """
@@ -193,7 +205,7 @@ class RackspaceCtrl(BaseCloudCtrl):
         endpoint = GNS3IAS_URL+"/images/grant_access"
         params = {
             "user_id": username,
-            "user_region": region,
+            "user_region": region.upper(),
             "gns3_version": gns3_version,
         }
         response = requests.get(endpoint, params=params)
@@ -210,17 +222,17 @@ class RackspaceCtrl(BaseCloudCtrl):
         Return a dictionary containing RackSpace server images
         retrieved from gns3-ias server
         """
-        if not (self.username and self.region):
-            return []
+        if not (self.tenant_id and self.region):
+            return {}
 
         try:
-            response = self._get_shared_images(self.username, self.region, __version__)
-            shared_images = json.loads(response)
+            shared_images = self._get_shared_images(self.tenant_id, self.region, __version__)
             images = {}
             for i in shared_images:
                 images[i['image_id']] = i['image_name']
             return images
         except ItemNotFound:
-            return []
+            return {}
         except ApiError as e:
             log.error('Error while retrieving image list: %s' % e)
+            return {}
