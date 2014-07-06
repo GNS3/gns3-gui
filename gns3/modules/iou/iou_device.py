@@ -589,30 +589,34 @@ class IOUDevice(Node):
         :returns: representation of the node (dictionary)
         """
 
-        router = {"id": self.id(),
-                  "iou_id": self._iou_id,
-                  "type": self.__class__.__name__,
-                  "description": str(self),
-                  "properties": {},
-                  "server_id": self._server.id()}
+        iou = {"id": self.id(),
+               "iou_id": self._iou_id,
+               "type": self.__class__.__name__,
+               "description": str(self),
+               "properties": {},
+               "server_id": self._server.id()}
 
         # add the properties
         for name, value in self._settings.items():
             if name in self._defaults and self._defaults[name] != value:
-                router["properties"][name] = value
+                iou["properties"][name] = value
 
         # add the ports
         if self._ports:
-            ports = router["ports"] = []
+            ports = iou["ports"] = []
             for port in self._ports:
                 ports.append(port.dump())
 
-        image_path = router["properties"]["path"]
-        if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
-            # save only the image name if it is stored the images directory
-            router["properties"]["path"] = os.path.basename(image_path)
+        # make the IOU path relative
+        image_path = iou["properties"]["path"]
+        if self.server().isLocal():
+            if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
+                # save only the image name if it is stored the images directory
+                iou["properties"]["path"] = os.path.basename(image_path)
+        else:
+            iou["properties"]["path"] = os.path.basename(image_path)
 
-        return router
+        return iou
 
     def load(self, node_info):
         """
@@ -627,10 +631,15 @@ class IOUDevice(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
-        # check and update the path to use the image in the images directory
-        updated_path = os.path.join(self._module.imageFilesDir(), path)
-        if os.path.isfile(updated_path):
-            path = updated_path
+
+        if self.server().isLocal():
+            # check and update the path to use the image in the images directory
+            updated_path = os.path.join(self._module.imageFilesDir(), path)
+            if os.path.isfile(updated_path):
+                path = updated_path
+            elif not os.path.isfile(path):
+                path = self._module.findAlternativeIOUImage(path)
+
         console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done

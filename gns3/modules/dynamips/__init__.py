@@ -57,6 +57,7 @@ class Dynamips(Module):
         self._nodes = []
         self._working_dir = ""
         self._images_dir = ""
+        self._ios_images_cache = {}
 
         # load the settings and IOS images.
         self._loadSettings()
@@ -487,6 +488,53 @@ class Dynamips(Module):
         for node in self._nodes:
             if hasattr(node, "importConfigs") and node.initialized():
                 node.importConfigs(directory)
+
+    def findAlternativeIOSImage(self, image, node):
+        """
+        Tries to find an alternative IOS image.
+
+        :param image: image name
+        :param node: requesting Node instance
+
+        :return: IOS image (dictionary)
+        """
+
+        if image in self._ios_images_cache:
+            return self._ios_images_cache[image]
+
+        from gns3.main_window import MainWindow
+        mainwindow = MainWindow.instance()
+        ios_images = self.iosImages()
+        candidate_ios_images = {}
+        alternative_image = {"path": image,
+                             "ram": None,
+                             "idlepc": None}
+
+        # find all images with the same platform and local server
+        for ios_image in ios_images.values():
+            if ios_image["platform"] == node.settings()["platform"] and ios_image["server"] == "local":
+                candidate_ios_images[ios_image["image"]] = ios_image
+
+        if candidate_ios_images:
+            selection, ok = QtGui.QInputDialog.getItem(mainwindow,
+                                                       "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
+                                                       list(candidate_ios_images.keys()), 0, False)
+            if ok:
+                ios_image = candidate_ios_images[selection]
+                alternative_image["path"] = ios_image["path"]
+                alternative_image["ram"] = ios_image["ram"]
+                alternative_image["idlepc"] = ios_image["idlepc"]
+                self._ios_images_cache[image] = alternative_image
+                return alternative_image
+
+        # no registered IOS image is used, let's just ask for an IOS image path
+        QtGui.QMessageBox.critical(mainwindow, "IOS image", "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image))
+        from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
+        path = IOSRouterPreferencesPage.getIOSImage(mainwindow)
+        if path:
+            alternative_image["path"] = path
+            self._ios_images_cache[image] = alternative_image
+        return alternative_image
 
     @staticmethod
     def getNodeClass(name):

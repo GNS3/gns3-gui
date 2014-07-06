@@ -162,13 +162,17 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             del self._iou_images[key]
             self.uiIOUImagesTreeWidget.takeTopLevelItem(self.uiIOUImagesTreeWidget.indexOfTopLevelItem(item))
 
-    def _iouImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select an IOU image.
+    @staticmethod
+    def getIOUImage(parent):
         """
 
-        destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOU")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+        :param parent: parent widget
+
+        :return: path to the IOU image or None
+        """
+
+        destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "IOU")
+        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
                                                              "Select an IOU image",
                                                              destination_directory,
                                                              "All files (*.*);;IOU image (*.bin *.image)",
@@ -178,7 +182,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "IOU image", "Cannot read {}".format(path))
+            QtGui.QMessageBox.critical(parent, "IOU image", "Cannot read {}".format(path))
             return
 
         try:
@@ -186,17 +190,17 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 # read the first 7 bytes of the file.
                 elf_header_start = f.read(7)
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "IOU image", "Cannot read ELF magic number: {}".format(e))
+            QtGui.QMessageBox.critical(parent, "IOU image", "Cannot read ELF magic number: {}".format(e))
             return
 
         # file must start with the ELF magic number, be 32-bit, little endian and have an ELF version of 1
         # normal IOS image are big endian!
         if elf_header_start != b'\x7fELF\x01\x01\x01':
-            QtGui.QMessageBox.critical(self, "IOU image", "Sorry, this is not a valid IOU image!")
+            QtGui.QMessageBox.critical(parent, "IOU image", "Sorry, this is not a valid IOU image!")
             return
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "IOU image", "{} is not executable".format(path))
+            QtGui.QMessageBox.critical(parent, "IOU image", "{} is not executable".format(path))
             return
 
         try:
@@ -204,7 +208,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, str(e)))
+            QtGui.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, str(e)))
             return
 
         if os.path.dirname(path) != destination_directory:
@@ -222,7 +226,16 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                     path = new_destination_path
                 except OSError:
                     pass
+        return path
 
+    def _iouImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select an IOU image.
+        """
+
+        path = self.getIOUImage(self)
+        if not path:
+            return
         self.uiIOUPathLineEdit.clear()
         self.uiIOUPathLineEdit.setText(path)
 

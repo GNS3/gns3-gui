@@ -174,7 +174,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item.setText(1, platform)
             item.setText(2, server)
         elif key in self._ios_images:
-            print("Image already added")
+            QtGui.QMessageBox.warning(self, "IOS image", "IOS image already registered on server {}".format(server))
             return
         else:
             # add a new entry in the tree widget
@@ -210,13 +210,17 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             del self._ios_images[key]
             self.uiIOSImagesTreeWidget.takeTopLevelItem(self.uiIOSImagesTreeWidget.indexOfTopLevelItem(item))
 
-    def _iosImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select an IOS image.
+    @staticmethod
+    def getIOSImage(parent):
         """
 
-        destination_directory = os.path.join(self._main_window.settings()["images_path"], "IOS")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+        :param parent: parent widget
+
+        :return: path to the IOS image or None
+        """
+
+        destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "IOS")
+        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
                                                              "Select an IOS image",
                                                              destination_directory,
                                                              "All files (*.*);;IOS image (*.bin *.image)",
@@ -225,7 +229,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "IOS image", "Cannot read {}".format(path))
+            QtGui.QMessageBox.critical(parent, "IOS image", "Cannot read {}".format(path))
             return
 
         if sys.platform.startswith('win'):
@@ -233,19 +237,19 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             try:
                 path.encode('ascii')
             except UnicodeEncodeError:
-                QtGui.QMessageBox.warning(self, "IOS image", "The IOS image filename should contains only ascii (English) characters.")
+                QtGui.QMessageBox.warning(parent, "IOS image", "The IOS image filename should contains only ascii (English) characters.")
 
         try:
             with open(path, "rb") as f:
                 # read the first 7 bytes of the file.
                 elf_header_start = f.read(7)
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "IOS image", "Cannot read ELF magic number: {}".format(e))
+            QtGui.QMessageBox.critical(parent, "IOS image", "Cannot read ELF magic number: {}".format(e))
             return
 
         # file must start with the ELF magic number, be 32-bit, big endian and have an ELF version of 1
         if elf_header_start != b'\x7fELF\x01\x02\x01':
-            QtGui.QMessageBox.critical(self, "IOS image", "Sorry, this is not a valid IOS image!")
+            QtGui.QMessageBox.critical(parent, "IOS image", "Sorry, this is not a valid IOS image!")
             return
 
         try:
@@ -253,19 +257,19 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, str(e)))
+            QtGui.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, str(e)))
             return
 
         if isIOSCompressed(path):
-            reply = QtGui.QMessageBox.question(self, "IOS image", "Would you like to uncompress this IOS image?",
+            reply = QtGui.QMessageBox.question(parent, "IOS image", "Would you like to uncompress this IOS image?",
                                                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes:
                 uncompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
                 thread = UncompressIOSThread(path, uncompressed_image_path)
                 progress_dialog = ProgressDialog(thread,
                                                  "IOS image",
-                                                 "Uncompressing IOS image {}...".format(path),
-                                                 "Cancel", busy=True, parent=self)
+                                                 "Uncompressing IOS image {}...".format(os.path.basename(path)),
+                                                 "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
                 if progress_dialog.exec_() is not False:
                     path = uncompressed_image_path
@@ -286,6 +290,17 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     path = new_destination_path
                 except OSError:
                     pass
+
+        return path
+
+    def _iosImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select an IOS image.
+        """
+
+        path = self.getIOSImage(self)
+        if not path:
+            return
 
         self.uiIOSPathLineEdit.clear()
         self.uiIOSPathLineEdit.setText(path)
@@ -324,7 +339,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         else:
             self.uiRAMSpinBox.setValue(PLATFORMS_DEFAULT_RAM[detected_platform])
 
-    def _getMinimumRequiredRAM(self, path):
+    @staticmethod
+    def _getMinimumRequiredRAM(path):
         """
         Returns the minimum RAM required to run an IOS image.
 

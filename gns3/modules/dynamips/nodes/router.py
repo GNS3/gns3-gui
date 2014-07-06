@@ -921,9 +921,13 @@ class Router(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
+        # make the IOU path relative
         image_path = router["properties"]["image"]
-        if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
-            # save only the image name if it is stored the images directory
+        if self.server().isLocal():
+            if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
+                # save only the image name if it is stored the images directory
+                router["properties"]["image"] = os.path.basename(image_path)
+        else:
             router["properties"]["image"] = os.path.basename(image_path)
 
         return router
@@ -940,12 +944,22 @@ class Router(Node):
         router_id = node_info.get("router_id")
         settings = node_info["properties"]
         name = settings.pop("name")
-        image = settings.pop("image")
-        # check and update the path to use the image in the images directory
-        updated_image_path = os.path.join(self._module.imageFilesDir(), image)
-        if os.path.isfile(updated_image_path):
-            image = updated_image_path
         ram = settings.get("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
+        image = settings.pop("image")
+
+        if self.server().isLocal():
+            # check and update the path to use the image in the images directory
+            updated_image_path = os.path.join(self._module.imageFilesDir(), image)
+            if os.path.isfile(updated_image_path):
+                image = updated_image_path
+            elif not os.path.isfile(image):
+                alternative_image = self._module.findAlternativeIOSImage(image, self)
+                image = alternative_image["path"]
+                if alternative_image["ram"]:
+                    ram = alternative_image["ram"]
+                if alternative_image["idlepc"]:
+                    settings["idlepc"] = alternative_image["idlepc"]
+
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True

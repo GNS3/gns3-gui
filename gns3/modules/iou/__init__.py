@@ -46,6 +46,7 @@ class IOU(Module):
         self._servers = []
         self._working_dir = ""
         self._images_dir = ""
+        self._iou_images_cache = {}
 
         # load the settings
         self._loadSettings()
@@ -451,6 +452,48 @@ class IOU(Module):
         for node in self._nodes:
             if hasattr(node, "importConfig") and node.initialized():
                 node.importConfig(directory)
+
+    def findAlternativeIOUImage(self, image):
+        """
+        Tries to find an alternative IOU image
+
+        :param image: path to IOU
+
+        :return: IOU image path
+        """
+
+        if image in self._iou_images_cache:
+            return self._iou_images_cache[image]
+
+        from gns3.main_window import MainWindow
+        mainwindow = MainWindow.instance()
+        iou_images = self.iouImages()
+        candidate_iou_images = {}
+
+        alternative_image = image
+
+        # find all images with the same platform and local server
+        for iou_image in iou_images.values():
+            if iou_image["server"] == "local":
+                candidate_iou_images[iou_image["image"]] = iou_image["path"]
+
+        if candidate_iou_images:
+            selection, ok = QtGui.QInputDialog.getItem(mainwindow,
+                                                       "IOU image", "IOU image {} could not be found\nPlease select an alternative from your existing images:".format(image),
+                                                       list(candidate_iou_images.keys()), 0, False)
+            if ok:
+                iou_image = candidate_iou_images[selection]
+                self._iou_images_cache[image] = iou_image
+                return iou_image
+
+        # no registered IOU image is used, let's just ask for an IOU image path
+        QtGui.QMessageBox.critical(mainwindow, "IOU image", "Could not find the {} IOU image \nPlease select a similar IOU image!".format(image))
+        from .pages.iou_device_preferences_page import IOUDevicePreferencesPage
+        path = IOUDevicePreferencesPage.getIOUImage(mainwindow)
+        if path:
+            alternative_image = path
+            self._iou_images_cache[image] = alternative_image
+        return alternative_image
 
     @staticmethod
     def getNodeClass(name):

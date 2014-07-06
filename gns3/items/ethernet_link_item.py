@@ -52,7 +52,7 @@ class EthernetLinkItem(LinkItem):
         LinkItem.adjust(self)
 
         if self._hovered:
-            self.setPen(QtGui.QPen(QtCore.Qt.darkRed, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+            self.setPen(QtGui.QPen(QtCore.Qt.red, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
         else:
             self.setPen(QtGui.QPen(QtCore.Qt.black, self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 
