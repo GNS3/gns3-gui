@@ -27,6 +27,8 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         self.region_index_id = []
         # map provider ids to combobox indexes
         self.provider_index_id = []
+        # map image ids to combobox indexes
+        self.image_index_id = []
 
         # insert Terms&Condition link inside the checkbox
         self.uiTermsLabel.setText('Accept <a href="{}">Terms and Conditions</a>'.format('#'))
@@ -43,6 +45,12 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
     def _get_region_index(self, region_id):
         try:
             return self.region_index_id.index(region_id)
+        except ValueError:
+            return -1
+
+    def _get_image_index(self, image_name):
+        try:
+            return self.image_index_id.index(image_name)
         except ValueError:
             return -1
 
@@ -97,11 +105,13 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         apikey = self.settings['cloud_api_key']
         provider_id = self.settings['cloud_provider']
         region = self.settings['cloud_region']
+        default_image = self.settings['default_image']
 
         # instance a provider controller and try to use it
         try:
             provider = self.provider_controllers[provider_id](username, apikey)
             if provider.authenticate():
+                provider.set_region(region)
                 # fill region combo box
                 self.region_index_id = [""]
                 self.uiRegionComboBox.addItem("Select region...")
@@ -110,6 +120,12 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                     api_libcloud_names = list(r.values())
                     self.uiRegionComboBox.addItem(api_region_names[0])
                     self.region_index_id.append(api_libcloud_names[0])
+                # fill image template list
+                self.image_index_id = [""]
+                self.uiImageTemplateComboBox.addItem("Select default template...")
+                for image_id, image_name in provider.list_images().items():
+                    self.uiImageTemplateComboBox.addItem(image_name)
+                    self.image_index_id.append(image_id)
         except KeyError:
             # username/apikey/provider are not set
             pass
@@ -128,6 +144,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiMemPerNewInstanceSpinBox.setValue(self.settings['memory_per_new_instance'])
         self.uiTermsCheckBox.setChecked(self.settings['accepted_terms'])
         self.uiTimeoutSpinBox.setValue(self.settings['instance_timeout'])
+        self.uiImageTemplateComboBox.setCurrentIndex(self._get_image_index(default_image))
 
     def savePreferences(self):
         """
@@ -148,6 +165,9 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
             self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
             self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
             self.settings['instance_timeout'] = self.uiTimeoutSpinBox.value()
+            if self.uiImageTemplateComboBox.currentIndex() >= 0:
+                self.settings['default_image'] = \
+                    self.image_index_id[self.uiImageTemplateComboBox.currentIndex()]
 
             if not self.settings['cloud_store_api_key_chosen']:
                 # user made a choice at this point

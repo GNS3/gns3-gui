@@ -231,6 +231,7 @@ CLOUD_SETTINGS = {
     "memory_per_new_instance": 1,
     "accepted_terms": False,
     "instance_timeout": 30,
+    "default_image": "",
 }
 
 CLOUD_SETTINGS_TYPES = {
@@ -245,16 +246,10 @@ CLOUD_SETTINGS_TYPES = {
     "memory_per_new_instance": int,
     "accepted_terms": bool,
     "instance_timeout": int,
+    "default_image": str,
 }
 
 # TODO proof of concept, needs review
 CLOUD_PROVIDERS = {
     "rackspace": ("Rackspace", 'gns3.cloud.rackspace_ctrl.RackspaceCtrl'),
 }
-
-
-# TODO following should be retrieved from the cloud API
-CLOUD_REGIONS = {
-    "us": "United States"
-}
-
