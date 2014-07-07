@@ -232,8 +232,13 @@ class RackspaceCtrl(BaseCloudCtrl):
             "user_region": region.upper(),
             "gns3_version": gns3_version,
         }
-        response = requests.get(endpoint, params=params)
+        try:
+            response = requests.get(endpoint, params=params)
+        except requests.exceptions.ConnectionError:
+            raise ApiError("Unable to connect to IAS")
+
         status = response.status_code
+
         if status == 200:
             return response.json()
         elif status == 404:
