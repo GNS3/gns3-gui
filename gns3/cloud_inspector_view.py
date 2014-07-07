@@ -64,8 +64,7 @@ class InstanceTableModel(QAbstractTableModel):
                 return instance.name
             elif col == 2:
                 # size
-                if instance.size:
-                    return instance.size.ram
+                return instance.extra['flavorId']
             elif col == 3:
                 # devices
                 return 0
@@ -239,5 +238,6 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def _populate_model(self, instances):
         for i in instances:
+            i.extra['flavorId'] = self._provider.list_flavors().get(i.extra['flavorId']) or 'Unknown'
             self._model.addInstance(i)
         self.uiInstancesTableView.resizeColumnsToContents()
