@@ -64,7 +64,15 @@ class InstanceTableModel(QAbstractTableModel):
                 return instance.name
             elif col == 2:
                 # size
-                return instance.extra['flavorId']
+                try:
+                    # Rackspace case
+                    return instance.extra['flavorId']
+                except KeyError:
+                    # fallback to libcloud size property
+                    if instance.size:
+                        return instance.size.ram
+                    # giveup on showing size
+                    return ''
             elif col == 3:
                 # devices
                 return 0
@@ -238,6 +246,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def _populate_model(self, instances):
         for i in instances:
-            i.extra['flavorId'] = self._provider.list_flavors().get(i.extra['flavorId']) or 'Unknown'
+            try:
+                # for Rackspace instances, update flavor id with a verbose description
+                i.extra['flavorId'] = self._provider.list_flavors().get(i.extra['flavorId']) or 'Unknown'
+            except KeyError:
+                pass
             self._model.addInstance(i)
         self.uiInstancesTableView.resizeColumnsToContents()

@@ -27,6 +27,8 @@ from libcloud.compute.types import Provider
 from .exceptions import ItemNotFound, ApiError
 from ..version import __version__
 
+from collections import OrderedDict
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -59,24 +61,24 @@ class RackspaceCtrl(BaseCloudCtrl):
         self.token = None
         self.tenant_id = None
         self.flavor_ep = "https://dfw.servers.api.rackspacecloud.com/v2/{username}/flavors"
-        self._flavors = {
-            '2': '512MB, 1 VCPU',
-            '3': '1GB, 1 VCPU',
-            '4': '2GB, 2 VCPUs',
-            '5': '4GB, 2 VCPUs',
-            '6': '8GB, 4 VCPUs',
-            '7': '15GB, 6 VCPUs',
-            '8': '30GB, 8 VCPUs',
-            'performance1-1': '1GB Performance, 1 VCPU',
-            'performance1-2': '2GB Performance, 2 VCPUs',
-            'performance1-4': '4GB Performance, 4 VCPUs',
-            'performance1-8': '8GB Performance, 8 VCPUs',
-            'performance2-120': '120GB Performance, 32 VCPUs',
-            'performance2-15': '15GB Performance, 4 VCPUs',
-            'performance2-30': '30GB Performance, 8 VCPUs',
-            'performance2-60': '60GB Performance, 16 VCPUs',
-            'performance2-90': '90GB Performance, 24 VCPUs',
-        }
+        self._flavors = OrderedDict([
+            ('2', '512MB, 1 VCPU'),
+            ('3', '1GB, 1 VCPU'),
+            ('4', '2GB, 2 VCPUs'),
+            ('5', '4GB, 2 VCPUs'),
+            ('6', '8GB, 4 VCPUs'),
+            ('7', '15GB, 6 VCPUs'),
+            ('8', '30GB, 8 VCPUs'),
+            ('performance1-1', '1GB Performance, 1 VCPU'),
+            ('performance1-2', '2GB Performance, 2 VCPUs'),
+            ('performance1-4', '4GB Performance, 4 VCPUs'),
+            ('performance1-8', '8GB Performance, 8 VCPUs'),
+            ('performance2-15', '15GB Performance, 4 VCPUs'),
+            ('performance2-30', '30GB Performance, 8 VCPUs'),
+            ('performance2-60', '60GB Performance, 16 VCPUs'),
+            ('performance2-90', '90GB Performance, 24 VCPUs'),
+            ('performance2-120', '120GB Performance, 32 VCPUs',)
+        ])
 
     def authenticate(self):
         """
