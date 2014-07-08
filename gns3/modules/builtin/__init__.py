@@ -20,7 +20,7 @@ Built-in module implementation.
 """
 
 import os
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtGui
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
@@ -199,6 +199,26 @@ class Builtin(Module):
         """
 
         self._servers.clear()
+
+    @staticmethod
+    def findAlternativeInterface(node, missing_interface):
+
+        from gns3.main_window import MainWindow
+        mainwindow = MainWindow.instance()
+
+        available_interfaces = []
+        for interface in node.settings()["interfaces"]:
+            available_interfaces.append(interface["name"])
+
+        if available_interfaces:
+            selection, ok = QtGui.QInputDialog.getItem(mainwindow,
+                                                       "Cloud interfaces", "Interface {} could not be found\nPlease select an alternative from your existing interfaces:".format(missing_interface),
+                                                       available_interfaces, 0, False)
+            if ok:
+                return selection
+        else:
+            QtGui.QMessageBox.critical(mainwindow, "Cloud interface", "Could not find interface {} on this host".format(missing_interface))
+            return missing_interface
 
     @staticmethod
     def getNodeClass(name):

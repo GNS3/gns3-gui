@@ -665,7 +665,7 @@ class IOUDevice(Node):
 
         # now we can set the node has initialized and trigger the signal
         self.setInitialized(True)
-        log.info("router {} has been loaded".format(self.name()))
+        log.info("IOU device {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
         self._inital_settings = None

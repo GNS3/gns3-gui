@@ -612,19 +612,18 @@ class GraphicsView(QtGui.QGraphicsView):
         item = self.itemAt(event.pos())
         if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
             item.setSelected(True)
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                 node = item.node()
-                if node.status() == Node.started:
-                    name = node.name()
-                    console_port = node.console()
-                    console_host = node.server().host
-                    try:
-                        from .telnet_console import telnetConsole
-                        telnetConsole(name, console_host, console_port)
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
-                else:
-                    self.configureSlot()
+                name = node.name()
+                console_port = node.console()
+                console_host = node.server().host
+                try:
+                    from .telnet_console import telnetConsole
+                    telnetConsole(name, console_host, console_port)
+                except (OSError, ValueError) as e:
+                    QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+            else:
+                self.configureSlot()
         else:
             QtGui.QGraphicsView.mouseDoubleClickEvent(self, event)
 

@@ -104,7 +104,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
 
         interface = self.uiGenericEthernetLineEdit.text()
         if interface:
-            nio = "nio_gen_eth:{interface}".format(interface=interface.lower())
+            nio = "nio_gen_eth:{interface}".format(interface=interface)
             if not nio in self._nios:
                 self.uiGenericEthernetListWidget.addItem(nio)
                 self._nios.append(nio)
@@ -153,7 +153,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
 
         interface = self.uiLinuxEthernetLineEdit.text()
         if interface:
-            nio = "nio_gen_linux:{interface}".format(interface=interface.lower())
+            nio = "nio_gen_linux:{interface}".format(interface=interface)
             if not nio in self._nios:
                 self.uiLinuxEthernetListWidget.addItem(nio)
                 self._nios.append(nio)
@@ -475,7 +475,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         index = 0
         for interface in settings["interfaces"]:
             self.uiGenericEthernetComboBox.addItem(interface["name"])
-            self.uiGenericEthernetComboBox.setItemData(index, interface["description"], QtCore.Qt.ToolTipRole)
+            self.uiGenericEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
             index += 1
         self.uiGenericEthernetComboBox.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
 
@@ -485,7 +485,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         for interface in settings["interfaces"]:
             if not interface["name"].startswith(r"\Device\NPF_"):
                 self.uiLinuxEthernetComboBox.addItem(interface["name"])
-                self.uiLinuxEthernetComboBox.setItemData(index, interface["description"], QtCore.Qt.ToolTipRole)
+                self.uiLinuxEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
                 index += 1
         self.uiLinuxEthernetComboBox.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
 

@@ -221,7 +221,10 @@ class WebSocketClient(WebSocketBaseClient):
             result = reply.get("result")
             if request_id in self.callbacks:
                 self.callbacks[request_id](result)
-                del self.callbacks[request_id]
+                if request_id in self.callbacks:  #FIXME: strange bug with cloud device setup callback, the request is received twice, bug in Qt?
+                    del self.callbacks[request_id]
+                else:
+                    log.warning("JSON-RPC reply received twice: {}".format(reply))
             else:
                 log.warning("unknown JSON-RPC request ID received {}".format(request_id))
 

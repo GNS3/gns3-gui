@@ -58,6 +58,7 @@ class Cloud(Node):
         self._defaults = {}
         self._ports = []
         self._module = module
+        self._initial_settings = None
         self._settings = {"nios": [],
                           "interfaces": {},
                           "name": name}
@@ -80,9 +81,9 @@ class Cloud(Node):
 
         if name:
             self._settings["name"] = name
-        if "nios" in initial_settings:
-            initial_settings["interfaces"] = {}
-            self.update(initial_settings)
+
+        if initial_settings:
+            self._initial_settings = initial_settings
         self._server.send_message("builtin.interfaces", None, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
@@ -100,9 +101,13 @@ class Cloud(Node):
         else:
             self._settings["interfaces"] = result.copy()
 
-        log.info("cloud {} has been created".format(self.name()))
-        self.setInitialized(True)
-        self.created_signal.emit(self.id())
+        if self._initial_settings and "nios" in self._initial_settings and self._initial_settings["nios"]:
+            self._initial_settings["interfaces"] = {}
+            self.update(self._initial_settings)
+        else:
+            log.info("cloud {} has been created".format(self.name()))
+            self.setInitialized(True)
+            self.created_signal.emit(self.id())
 
     def _createNIOUDP(self, nio):
         """
@@ -334,6 +339,7 @@ This is a pseudo-device for external connections
         Updates port settings when loading a topology.
         """
 
+        self.updated_signal.disconnect(self._updatePortSettings)
         # update the port with the correct IDs
         if "ports" in self.node_info:
             ports = self.node_info["ports"]
@@ -341,6 +347,25 @@ This is a pseudo-device for external connections
                 for port in self._ports:
                     if topology_port["name"] == port.name():
                         port.setId(topology_port["id"])
+                        if topology_port["name"].startswith("nio_gen_eth") or topology_port["name"].startswith("nio_linux_eth"):
+                            # lookup if the interface exists
+                            available_interface = False
+                            topology_port_name = topology_port["name"].split(':', 1)[1]
+                            for interface in self._settings["interfaces"]:
+                                if interface["name"] == topology_port_name:
+                                    available_interface = True
+                                    break
+                            if not available_interface:
+                                alternative_interface = self._module.findAlternativeInterface(self, topology_port_name)
+                                if topology_port["name"] in self._settings["nios"]:
+                                    self._settings["nios"].remove(topology_port["name"])
+                                topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
+                                port.setName(topology_port["name"])
+                                self._settings["nios"].append(topology_port["name"])
+
+        log.info("cloud {} has been created".format(self.name()))
+        self.setInitialized(True)
+        self.created_signal.emit(self.id())
 
     def name(self):
         """
