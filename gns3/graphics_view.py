@@ -35,6 +35,7 @@ from .topology import Topology
 from .ports.port import Port
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
+from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .utils.progress_dialog import ProgressDialog
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 
@@ -712,6 +713,13 @@ class GraphicsView(QtGui.QGraphicsView):
             configure_action.triggered.connect(self.configureActionSlot)
             menu.addAction(configure_action)
 
+            # Action: Change symbol
+            change_symbol_action = QtGui.QAction("Change symbol", menu)
+            change_symbol_action.setIcon(QtGui.QIcon(':/icons/node_conception.svg'))
+            self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self.changeSymbolActionSlot)
+            menu.addAction(change_symbol_action)
+
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
             console_action = QtGui.QAction("Console", menu)
             console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
@@ -830,6 +838,21 @@ class GraphicsView(QtGui.QGraphicsView):
 
         if items:
             self.configureSlot(items)
+
+    def changeSymbolActionSlot(self):
+        """
+        Slot to receive events from the change symbol action in the
+        contextual menu.
+        """
+
+        items = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and item.node().initialized():
+                items.append(item)
+        if items:
+            dialog = SymbolSelectionDialog(self, items)
+            dialog.show()
+            dialog.exec_()
 
     def consoleActionSlot(self):
         """

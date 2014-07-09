@@ -79,6 +79,43 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # from the server.
         self._last_error = None
 
+    def defaultRenderer(self):
+        """
+        Returns the default QSvgRenderer.
+
+        :return: QSvgRenderer instance
+        """
+
+        return self._default_renderer
+
+    def setDefaultRenderer(self, default_renderer):
+        """
+        Sets new default QSvgRenderer.
+
+        :param default_renderer: QSvgRenderer instance
+        """
+
+        self._default_renderer = default_renderer
+        self.setSharedRenderer(self._default_renderer)
+
+    def hoverRenderer(self):
+        """
+        Returns the hover QSvgRenderer.
+
+        :return: QSvgRenderer instance
+        """
+
+        return self._hover_renderer
+
+    def setHoverRenderer(self, hover_renderer):
+        """
+        Sets new hover QSvgRenderer.
+
+        :param hover_renderer: QSvgRenderer instance
+        """
+
+        self._hover_renderer = hover_renderer
+
     def setUnsavedState(self):
         """
         Indicates the project is in a unsaved state.
