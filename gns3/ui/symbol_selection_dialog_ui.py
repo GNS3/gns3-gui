@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/symbol_selection_dialog.ui'
 #
-# Created: Tue Jul  8 15:01:21 2014
+# Created: Wed Jul  9 17:07:19 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SymbolSelectionDialog(object):
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName(_fromUtf8("SymbolSelectionDialog"))
-        SymbolSelectionDialog.resize(293, 359)
+        SymbolSelectionDialog.resize(293, 396)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SymbolSelectionDialog.setWindowIcon(icon)
@@ -47,8 +47,6 @@ class Ui_SymbolSelectionDialog(object):
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 2, 0, 1, 1)
 
         self.retranslateUi(SymbolSelectionDialog)
         QtCore.QObject.connect(self.uiButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), SymbolSelectionDialog.accept)

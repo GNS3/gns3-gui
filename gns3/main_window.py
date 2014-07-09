@@ -97,6 +97,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 
+        #FIXME: for alpha 8 release
+        self.uiCloudInspectorDockWidget.hide()
+
         # set the images directory
         self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
@@ -928,8 +931,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._newsActionSlot()
 
-        # TODO check if this is the right place
-        self.CloudInspectorView.load(self.cloudSettings())
+        #TODO check if this is the right place
+        #FIXME: for alpha 8 release
+        #self.CloudInspectorView.load(self.cloudSettings())
 
         # connect to the local server
         servers = Servers.instance()
