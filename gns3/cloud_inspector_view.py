@@ -10,7 +10,6 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtCore import QThread
 from PyQt4.Qt import Qt
 
-from .settings import CLOUD_PROVIDERS
 from .cloud.rackspace_ctrl import RackspaceCtrl
 
 # this widget was promoted on Creator, must use absolute imports
@@ -172,6 +171,15 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._pollingTimer = QTimer(self)
         self._pollingTimer.timeout.connect(self._polling_slot)
 
+        # map flavor ids to combobox indexes
+        self.flavor_index_id = []
+
+    def _get_flavor_index(self, flavor_id):
+        try:
+            return self.flavor_index_id.index(flavor_id)
+        except ValueError:
+            return -1
+
     def load(self, cloud_settings):
         """
         Fill the model data layer with instances retrieved through libcloud
@@ -184,6 +192,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
+        new_instance_flavor = cloud_settings["new_instance_flavor"]
+
         self._provider = RackspaceCtrl(username, apikey)
 
         if not self._provider.authenticate():
@@ -198,6 +208,12 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             update_thread.instancesReady.connect(self._populate_model)
             update_thread.start()
             self._pollingTimer.start(POLLING_TIMER)
+            # fill sizes comboboxes
+            for id, name in self._provider.list_flavors().items():
+                self.uiCreateInstanceComboBox.addItem(name)
+                self.flavor_index_id.append(id)
+            # select default flavor
+            self.uiCreateInstanceComboBox.setCurrentIndex(self._get_flavor_index(new_instance_flavor))
         else:
             self._provider = None
             return
