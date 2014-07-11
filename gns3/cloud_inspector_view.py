@@ -11,7 +11,7 @@ from PyQt4.QtCore import QThread
 from PyQt4.Qt import Qt
 
 from .settings import CLOUD_PROVIDERS
-from .utils import import_from_string
+from .cloud.rackspace_ctrl import RackspaceCtrl
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
@@ -180,8 +180,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
-        provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
-        self._provider = provider_controller_class(username, apikey)
+        self._provider = RackspaceCtrl(username, apikey)
 
         if not self._provider.authenticate():
             self._provider = None
