@@ -19,5 +19,6 @@ from gns3.modules.builtin import Builtin
 from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
 from gns3.modules.vpcs import VPCS
+from gns3.modules.virtualbox import VirtualBox
 
-MODULES = [Builtin, Dynamips, IOU, VPCS]
+MODULES = [Builtin, Dynamips, IOU, VPCS, VirtualBox]
