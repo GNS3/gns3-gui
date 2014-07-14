@@ -3,6 +3,8 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QInputDialog
+from PyQt4.QtGui import QLineEdit
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
@@ -159,6 +161,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.setupUi(self)
 
         self._provider = None
+        self._settings = None
+
         self._model = InstanceTableModel()  # shortcut for self.uiInstancesTableView.model()
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
@@ -167,6 +171,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # connections
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
+        self.uiCreateInstanceButton.clicked.connect(self._create_new_instance)
 
         self._pollingTimer = QTimer(self)
         self._pollingTimer.timeout.connect(self._polling_slot)
@@ -192,9 +197,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
-        new_instance_flavor = cloud_settings["new_instance_flavor"]
+        new_instance_flavor = cloud_settings['new_instance_flavor']
 
         self._provider = RackspaceCtrl(username, apikey)
+        self._settings = cloud_settings
 
         if not self._provider.authenticate():
             self._provider = None
@@ -272,3 +278,17 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
                 pass
             self._model.addInstance(i)
         self.uiInstancesTableView.resizeColumnsToContents()
+
+    def _create_new_instance(self):
+        idx = self.uiCreateInstanceComboBox.currentIndex()
+        flavor_id = self.flavor_index_id[idx]
+        image = self._settings['default_image']
+        keypair = ''
+
+        name, ok = QInputDialog.getText(self.parent(),
+                                        "New instance",
+                                        "Choose a name for the instance")
+
+        if ok:
+            #self._provider.create_instance(name, flavor_id, image, keypair)
+            print(name, flavor_id, image, keypair)
