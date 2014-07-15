@@ -158,6 +158,12 @@ class MockLibCloudDriver(object):
 
         return True
 
+    def list_images(self, *args, **kwargs):
+        return []
+
+    def ex_get_size(self, *args, **kwargs):
+        return ''
+
 
 class TestRackspaceCtrl(unittest.TestCase):
 
@@ -272,6 +278,8 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
         self.ctrl.driver_cls = MockLibCloudDriver
         self.ctrl.authenticate()
         self.ctrl.set_region('iad')
+        self.ctrl.get_image = mock.MagicMock()
+        self.ctrl.get_image.return_value = ''
         self.key_pair = TestRackspaceCtrlDriver.StubObject(public_key='keystr')
 
     def test_create_instance_over_limit(self):

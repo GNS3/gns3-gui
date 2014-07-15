@@ -87,12 +87,12 @@ class TestInstanceModel(BaseTest):
 
         node = self.model.getInstance(0)
         node.state = NodeState.STOPPED
-        self.model.update_instance_status(node)
+        self.model.updateInstanceFields(node, ['state'])
         node = self.model.getInstance(0)
         self.assertEqual(node.state, NodeState.STOPPED)
 
         node = self.model.getInstance(1)
-        self.model.update_instance_status(node)  # instance didn't change
+        self.model.updateInstanceFields(node, ['state'])  # instance didn't change
         node = self.model.getInstance(1)
         self.assertEqual(node.state, NodeState.RUNNING)
 
@@ -158,4 +158,4 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view._model = mock.MagicMock()
 
         self.view._update_model(nodes)
-        self.view._model.update_instance_status.assert_has_calls([mock.call(x) for x in nodes])
+        self.view._model.updateInstanceFields.assert_has_calls([mock.call(x, ['state']) for x in nodes])
