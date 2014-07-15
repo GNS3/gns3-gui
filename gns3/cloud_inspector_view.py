@@ -267,7 +267,13 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             index = sel[0].row()
             instance = self._model.getInstance(index)
             if self._provider.delete_instance(instance):
-                self._model.removeInstance(instance)
+                instance.name = 'Deleting...'
+                self._model.updateInstanceFields(instance, ['name',])
+                QMessageBox.information(
+                    self,
+                    "Deleting instance",
+                    "Deleting instances could take a while, wait for completion"
+                )
 
     def _rowChanged(self, current, previous):
         """
