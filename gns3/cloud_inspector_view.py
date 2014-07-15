@@ -4,7 +4,7 @@ from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QInputDialog
-from PyQt4.QtGui import QLineEdit
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
@@ -32,6 +32,11 @@ class InstanceTableModel(QAbstractTableModel):
         self._width = len(self._header_data)
         self._instances = {}
         self._ids = []
+        self.flavors = {}
+
+    @property
+    def instanceIds(self):
+        return self._ids
 
     def _get_status_icon_path(self, state):
         """
@@ -66,14 +71,14 @@ class InstanceTableModel(QAbstractTableModel):
             elif col == 2:
                 # size
                 try:
-                    # Rackspace case
-                    return instance.extra['flavorId']
+                    # for Rackspace instances, update flavor id with a verbose description
+                    return self.flavors.get(instance.extra['flavorId'])
                 except KeyError:
                     # fallback to libcloud size property
                     if instance.size:
                         return instance.size.ram
                     # giveup on showing size
-                    return ''
+                    return 'Unknown'
             elif col == 3:
                 # devices
                 return 0
