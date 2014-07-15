@@ -111,23 +111,27 @@ class InstanceTableModel(QAbstractTableModel):
             return None
 
     def removeInstance(self, instance):
+        self.removeInstanceById(instance.id)
+
+    def removeInstanceById(self, instance_id):
         try:
-            index = self._ids.index(instance.id)
+            index = self._ids.index(instance_id)
             self.beginRemoveRows(QModelIndex(), index, index)
-            del self._instances[instance.id]
+            del self._instances[instance_id]
             del self._ids[index]
             self.endRemoveRows()
         except ValueError:
             pass
 
-    def update_instance_status(self, instance):
+    def updateInstanceFields(self, instance, field_names):
         """
         Update model data and notify connected views
         """
         if instance.id in self._ids:
             index = self._ids.index(instance.id)
             current = self._instances[instance.id]
-            current.state = instance.state
+            for field in field_names:
+                setattr(current, field, getattr(instance, field))
             first_index = self.createIndex(index, 0)
             last_index = self.createIndex(index, self.columnCount()-1)
             self.dataChanged.emit(first_index, last_index)
@@ -286,29 +290,34 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         update_thread.start()
 
     def _update_model(self, instances):
+        if not instances:
+            return
+
         for i in instances:
-            self._model.update_instance_status(i)
+            self._model.updateInstanceFields(i, ['state',])
+
+        # cleanup removed instances
+        real = set(i.id for i in instances)
+        current = set(self._model.instanceIds)
+        for i in current.difference(real):
+            self._model.removeInstanceById(i)
 
     def _populate_model(self, instances):
+        self._model.flavors = self._provider.list_flavors()
         for i in instances:
-            try:
-                # for Rackspace instances, update flavor id with a verbose description
-                i.extra['flavorId'] = self._provider.list_flavors().get(i.extra['flavorId']) or 'Unknown'
-            except KeyError:
-                pass
             self._model.addInstance(i)
         self.uiInstancesTableView.resizeColumnsToContents()
 
     def _create_new_instance(self):
         idx = self.uiCreateInstanceComboBox.currentIndex()
         flavor_id = self.flavor_index_id[idx]
-        image = self._settings['default_image']
-        keypair = ''
+        image_id = self._settings['default_image']
 
-        name, ok = QInputDialog.getText(self.parent(),
+        name, ok = QInputDialog.getText(self,
                                         "New instance",
-                                        "Choose a name for the instance")
+                                        "Choose a name for the instance and press Ok,\n"
+                                        "then wait for the instance to appear in the inspector.")
 
         if ok:
-            #self._provider.create_instance(name, flavor_id, image, keypair)
-            print(name, flavor_id, image, keypair)
+            create_thread = CreateInstanceThread(self, self._provider, name, flavor_id, image_id)
+            create_thread.start()
