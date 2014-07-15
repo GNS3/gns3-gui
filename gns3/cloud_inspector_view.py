@@ -307,6 +307,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         current = set(self._model.instanceIds)
         for i in current.difference(real):
             self._model.removeInstanceById(i)
+        self.uiInstancesTableView.resizeColumnsToContents()
 
     def _populate_model(self, instances):
         self._model.flavors = self._provider.list_flavors()
