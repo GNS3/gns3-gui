@@ -151,6 +151,21 @@ class ListInstancesThread(QThread):
         self.instancesReady.emit(instances)
 
 
+class CreateInstanceThread(QThread):
+    """
+
+    """
+    def __init__(self, parent, provider, name, flavor_id, image_id):
+        super(QThread, self).__init__(parent)
+        self._provider = provider
+        self._name = name
+        self._flavor_id = flavor_id
+        self._image_id = image_id
+
+    def run(self):
+        self._provider.create_instance(self._name, self._flavor_id, self._image_id)
+
+
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
     Table view showing data coming from InstanceTableModel
