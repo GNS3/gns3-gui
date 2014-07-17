@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/jseutterlst/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
 #
-# Created: Tue Jul  8 13:04:41 2014
+# Created: Thu Jul 17 14:17:33 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,9 +59,6 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiInstanceFlavorComboBox = QtGui.QComboBox(CloudPreferencesPageWidget)
         self.uiInstanceFlavorComboBox.setObjectName(_fromUtf8("uiInstanceFlavorComboBox"))
         self.uiStartNewProjectLayout.addWidget(self.uiInstanceFlavorComboBox)
-        self.uiHourlyPriceLabel = QtGui.QLabel(CloudPreferencesPageWidget)
-        self.uiHourlyPriceLabel.setObjectName(_fromUtf8("uiHourlyPriceLabel"))
-        self.uiStartNewProjectLayout.addWidget(self.uiHourlyPriceLabel)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.uiStartNewProjectLayout.addItem(spacerItem)
         self.gridLayout.addLayout(self.uiStartNewProjectLayout, 7, 0, 1, 3)
@@ -142,7 +139,6 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiNewInstancesLabel.setText(_translate("CloudPreferencesPageWidget", "New instances are:", None))
         self.uiCreateAccountLabel.setText(_translate("CloudPreferencesPageWidget", "No API Key? <a href=\"#\">Create Cloud Account.</a>", None))
         self.uiNumOfInstancesLabel.setText(_translate("CloudPreferencesPageWidget", "instance(s) with", None))
-        self.uiHourlyPriceLabel.setText(_translate("CloudPreferencesPageWidget", "($0.00 per hour per instance)", None))
         self.uiTimeoutLabel.setText(_translate("CloudPreferencesPageWidget", "Instances are deleted after", None))
         self.uiTermsLabel.setText(_translate("CloudPreferencesPageWidget", "Accept Terms and Conditions", None))
         self.uiUserNameLabel.setText(_translate("CloudPreferencesPageWidget", "User Name:", None))

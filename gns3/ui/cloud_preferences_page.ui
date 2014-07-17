@@ -63,13 +63,6 @@
       <widget class="QComboBox" name="uiInstanceFlavorComboBox"/>
      </item>
      <item>
-      <widget class="QLabel" name="uiHourlyPriceLabel">
-       <property name="text">
-        <string>($0.00 per hour per instance)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
