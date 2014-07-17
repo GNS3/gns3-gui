@@ -14,6 +14,7 @@ from gns3.settings import CLOUD_SETTINGS
 from gns3.main_window import MainWindow
 from gns3.main_window import CLOUD_SETTINGS_GROUP
 from gns3.dialogs.preferences_dialog import PreferencesDialog
+from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 
 import pytest
 
@@ -64,11 +65,13 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings.__setitem__.side_effect = make_setitem(settings_copy)
         self._init_page()
         # RackspaceCtrl mock
+        ctrl = RackspaceCtrl('foo', 'bar')
         self.ctrl_mock = mock.MagicMock()
         self.ctrl_mock.return_value = self.ctrl_mock
         self.ctrl_mock.authenticate.return_value = True
         self.ctrl_mock.list_regions.return_value = [{'ORD': 'ord'}, {'SYD': 'syd'}, {'DFW': 'dfw'},
                                                     {'HKG': 'hkg'}, {'IAD': 'iad'}]
+        self.ctrl_mock.list_flavors.return_value = ctrl._flavors
 
     def tearDown(self):
         # Explicitly deallocate QApplication instance to avoid crashes
@@ -96,8 +99,8 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(valid)
         self.assertEqual(self.page.uiCloudProviderComboBox.currentIndex(), 0)
         self.assertEqual(self.page.uiRegionComboBox.currentIndex(), -1)  # not set
-        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 1)
-        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 1)
+        self.assertEqual(self.page.uiInstanceFlavorComboBox.count(), 0)
+        self.assertEqual(self.page.uiNewInstanceFlavorComboBox.count(), 0)
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 0)
         self.assertFalse(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 30)
@@ -137,8 +140,8 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings['cloud_region'] = 'ord'
         self.page.settings['accepted_terms'] = True
         self.page.settings['instances_per_project'] = 3
-        self.page.settings['memory_per_instance'] = 2
-        self.page.settings['memory_per_new_instance'] = 6
+        self.page.settings['default_flavor'] = '2'
+        self.page.settings['new_instance_flavor'] = 'performance1-1'
         self.page.settings['instance_timeout'] = 120
 
         self.page.loadPreferences()
@@ -151,8 +154,8 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.uiRegionComboBox.currentText(), "ORD")
         self.assertTrue(self.page.uiTermsCheckBox.isChecked())
         self.assertEqual(self.page.uiNumOfInstancesSpinBox.value(), 3)
-        self.assertEqual(self.page.uiMemPerInstanceSpinBox.value(), 2)
-        self.assertEqual(self.page.uiMemPerNewInstanceSpinBox.value(), 6)
+        self.assertEqual(self.page.uiInstanceFlavorComboBox.currentIndex(), 0)
+        self.assertEqual(self.page.uiNewInstanceFlavorComboBox.currentIndex(), 7)
         self.assertEqual(self.page.uiTimeoutSpinBox.value(), 120)
 
     def test_save_preferences(self, mock_1):
@@ -171,8 +174,8 @@ class TestCloudPreferencesPage(TestCase):
         self.page.uiRegionComboBox.setCurrentIndex(1)
         self.page.uiTermsCheckBox.setChecked(True)
         self.page.uiNumOfInstancesSpinBox.setValue(8)
-        self.page.uiMemPerInstanceSpinBox.setValue(16)
-        self.page.uiMemPerNewInstanceSpinBox.setValue(32)
+        self.page.uiInstanceFlavorComboBox.setCurrentIndex(0)
+        self.page.uiNewInstanceFlavorComboBox.setCurrentIndex(7)
         self.page.uiTimeoutSpinBox.setValue(5)
 
         self.page.savePreferences()
@@ -182,8 +185,8 @@ class TestCloudPreferencesPage(TestCase):
         self.assertEqual(self.page.settings['cloud_region'], 'ord')
         self.assertTrue(self.page.settings['accepted_terms'])
         self.assertEqual(self.page.settings['instances_per_project'], 8)
-        self.assertEqual(self.page.settings['memory_per_instance'], 16)
-        self.assertEqual(self.page.settings['memory_per_new_instance'], 32)
+        self.assertEqual(self.page.settings['default_flavor'], '2')
+        self.assertEqual(self.page.settings['new_instance_flavor'], 'performance1-1')
         self.assertEqual(self.page.settings['instance_timeout'], 5)
 
     def test_clear_settings_on_user_request(self, *args, **kwargs):

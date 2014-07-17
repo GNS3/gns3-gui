@@ -227,8 +227,9 @@ CLOUD_SETTINGS = {
     "cloud_provider": "rackspace",
     "cloud_region": "",
     "instances_per_project": 0,
-    "memory_per_instance": 1,
-    "memory_per_new_instance": 1,
+    "default_flavor": "",
+    "new_instance_flavor": "",
+    "memory_per_new_instance": 1,  # TODO remove
     "accepted_terms": False,
     "instance_timeout": 30,
     "default_image": "",
@@ -242,8 +243,9 @@ CLOUD_SETTINGS_TYPES = {
     "cloud_provider": str,
     "cloud_region": str,
     "instances_per_project": int,
-    "memory_per_instance": int,
-    "memory_per_new_instance": int,
+    "default_flavor": str,
+    "new_instance_flavor": str,
+    "memory_per_new_instance": int,  # TODO remove
     "accepted_terms": bool,
     "instance_timeout": int,
     "default_image": str,

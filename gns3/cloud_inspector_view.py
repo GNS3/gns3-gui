@@ -11,7 +11,7 @@ from PyQt4.QtCore import QThread
 from PyQt4.Qt import Qt
 
 from .settings import CLOUD_PROVIDERS
-from .utils import import_from_string
+from .cloud.rackspace_ctrl import RackspaceCtrl
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
@@ -64,8 +64,15 @@ class InstanceTableModel(QAbstractTableModel):
                 return instance.name
             elif col == 2:
                 # size
-                if instance.size:
-                    return instance.size.ram
+                try:
+                    # Rackspace case
+                    return instance.extra['flavorId']
+                except KeyError:
+                    # fallback to libcloud size property
+                    if instance.size:
+                        return instance.size.ram
+                    # giveup on showing size
+                    return ''
             elif col == 3:
                 # devices
                 return 0
@@ -177,8 +184,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
-        provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
-        self._provider = provider_controller_class(username, apikey)
+        self._provider = RackspaceCtrl(username, apikey)
 
         if not self._provider.authenticate():
             self._provider = None
@@ -243,5 +249,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def _populate_model(self, instances):
         for i in instances:
+            try:
+                # for Rackspace instances, update flavor id with a verbose description
+                i.extra['flavorId'] = self._provider.list_flavors().get(i.extra['flavorId']) or 'Unknown'
+            except KeyError:
+                pass
             self._model.addInstance(i)
         self.uiInstancesTableView.resizeColumnsToContents()

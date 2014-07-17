@@ -107,11 +107,10 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view = CloudInspectorView(None)
 
     def test_load(self):
-        with mock.patch('gns3.cloud_inspector_view.import_from_string') as imp_:
+        with mock.patch('gns3.cloud_inspector_view.RackspaceCtrl') as provider_class:
             provider = mock.MagicMock()
-            provider.return_value = provider
+            provider_class.return_value = provider
             provider.list_instances.return_value = list(gen_fake_nodes(2))
-            imp_.return_value = provider
 
             settings = mock.MagicMock()
             settings_copy = MainWindow.instance().cloudSettings().copy()
