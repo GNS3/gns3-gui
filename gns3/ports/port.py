@@ -464,7 +464,7 @@ class Port(object):
             self._capture_reader_process = None
 
         command = self._settings["packet_capture_reader_command"]
-        command = command.replace("%c", self._capture_file_path)
+        command = command.replace("%c", '"' + self._capture_file_path + '"')
 
         if "|" in command:
             # live traffic capture (using tail)
