@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/jseutterlst/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
 #
-# Created: Thu Jun 26 11:28:19 2014
+# Created: Thu Jul 17 14:17:33 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,12 +56,9 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiNumOfInstancesLabel = QtGui.QLabel(CloudPreferencesPageWidget)
         self.uiNumOfInstancesLabel.setObjectName(_fromUtf8("uiNumOfInstancesLabel"))
         self.uiStartNewProjectLayout.addWidget(self.uiNumOfInstancesLabel)
-        self.uiMemLabel = QtGui.QLabel(CloudPreferencesPageWidget)
-        self.uiMemLabel.setObjectName(_fromUtf8("uiMemLabel"))
-        self.uiStartNewProjectLayout.addWidget(self.uiMemLabel)
-        self.uiHourlyPriceLabel = QtGui.QLabel(CloudPreferencesPageWidget)
-        self.uiHourlyPriceLabel.setObjectName(_fromUtf8("uiHourlyPriceLabel"))
-        self.uiStartNewProjectLayout.addWidget(self.uiHourlyPriceLabel)
+        self.uiInstanceFlavorComboBox = QtGui.QComboBox(CloudPreferencesPageWidget)
+        self.uiInstanceFlavorComboBox.setObjectName(_fromUtf8("uiInstanceFlavorComboBox"))
+        self.uiStartNewProjectLayout.addWidget(self.uiInstanceFlavorComboBox)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.uiStartNewProjectLayout.addItem(spacerItem)
         self.gridLayout.addLayout(self.uiStartNewProjectLayout, 7, 0, 1, 3)
@@ -71,9 +68,9 @@ class Ui_CloudPreferencesPageWidget(object):
         self.gridLayout.addWidget(self.uiTimeoutLabel, 12, 0, 1, 2)
         self.uiNewInstancesLayout = QtGui.QHBoxLayout()
         self.uiNewInstancesLayout.setObjectName(_fromUtf8("uiNewInstancesLayout"))
-        self.uiMemNewLabel = QtGui.QLabel(CloudPreferencesPageWidget)
-        self.uiMemNewLabel.setObjectName(_fromUtf8("uiMemNewLabel"))
-        self.uiNewInstancesLayout.addWidget(self.uiMemNewLabel)
+        self.uiNewInstanceFlavorComboBox = QtGui.QComboBox(CloudPreferencesPageWidget)
+        self.uiNewInstanceFlavorComboBox.setObjectName(_fromUtf8("uiNewInstanceFlavorComboBox"))
+        self.uiNewInstancesLayout.addWidget(self.uiNewInstanceFlavorComboBox)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.uiNewInstancesLayout.addItem(spacerItem1)
         self.uiTermsCheckBox = QtGui.QCheckBox(CloudPreferencesPageWidget)
@@ -142,10 +139,7 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiNewInstancesLabel.setText(_translate("CloudPreferencesPageWidget", "New instances are:", None))
         self.uiCreateAccountLabel.setText(_translate("CloudPreferencesPageWidget", "No API Key? <a href=\"#\">Create Cloud Account.</a>", None))
         self.uiNumOfInstancesLabel.setText(_translate("CloudPreferencesPageWidget", "instance(s) with", None))
-        self.uiMemLabel.setText(_translate("CloudPreferencesPageWidget", "Gb RAM", None))
-        self.uiHourlyPriceLabel.setText(_translate("CloudPreferencesPageWidget", "($0.00 per hour per instance)", None))
         self.uiTimeoutLabel.setText(_translate("CloudPreferencesPageWidget", "Instances are deleted after", None))
-        self.uiMemNewLabel.setText(_translate("CloudPreferencesPageWidget", "Gb RAM", None))
         self.uiTermsLabel.setText(_translate("CloudPreferencesPageWidget", "Accept Terms and Conditions", None))
         self.uiUserNameLabel.setText(_translate("CloudPreferencesPageWidget", "User Name:", None))
         self.uiAPIKeyLabel.setText(_translate("CloudPreferencesPageWidget", "API Key", None))

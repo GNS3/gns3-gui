@@ -5,6 +5,7 @@ from . import make_setitem
 from . import make_getitem
 
 from PyQt4.Qt import Qt
+from PyQt4 import QtGui
 from PyQt4.QtGui import QIcon
 from PyQt4.QtCore import QPoint
 
@@ -106,11 +107,10 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view = CloudInspectorView(None)
 
     def test_load(self):
-        with mock.patch('gns3.cloud_inspector_view.import_from_string') as imp_:
+        with mock.patch('gns3.cloud_inspector_view.RackspaceCtrl') as provider_class:
             provider = mock.MagicMock()
-            provider.return_value = provider
+            provider_class.return_value = provider
             provider.list_instances.return_value = list(gen_fake_nodes(2))
-            imp_.return_value = provider
 
             settings = mock.MagicMock()
             settings_copy = MainWindow.instance().cloudSettings().copy()
@@ -119,7 +119,7 @@ class TestCloudInspectorView(GUIBaseTest):
             settings.__setitem__.side_effect = make_setitem(settings_copy)
 
             self.view.load(settings)
-
+            self.app.processEvents()  # let the thread loading instances post its events
             self.assertEqual(self.view._model.rowCount(), 2)
 
             provider.authenticate.return_value = False
@@ -157,5 +157,5 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view._provider.list_instances.return_value = nodes
         self.view._model = mock.MagicMock()
 
-        self.view._update_model()
+        self.view._update_model(nodes)
         self.view._model.update_instance_status.assert_has_calls([mock.call(x) for x in nodes])

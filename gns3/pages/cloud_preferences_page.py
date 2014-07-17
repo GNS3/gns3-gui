@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..settings import CLOUD_PROVIDERS
-from ..utils.choices_spinbox import ChoicesSpinBox
 from ..utils import import_from_string
 
 from PyQt4 import QtGui
 from PyQt4 import Qt
-
-
-# TODO move this to provider ctrl?
-RACKSPACE_RAM_CHOICES = [1, 2, 4, 8, 15, 30, 60, 90, 120]
 
 
 class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
@@ -29,15 +24,11 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         self.provider_index_id = []
         # map image ids to combobox indexes
         self.image_index_id = []
+        # map flavor ids to combobox indexes
+        self.flavor_index_id = []
 
         # insert Terms&Condition link inside the checkbox
         self.uiTermsLabel.setText('Accept <a href="{}">Terms and Conditions</a>'.format('#'))
-
-        # custom spinboxes
-        self.uiMemPerInstanceSpinBox = ChoicesSpinBox(choices=RACKSPACE_RAM_CHOICES, parent=self)
-        self.uiStartNewProjectLayout.insertWidget(2, self.uiMemPerInstanceSpinBox)
-        self.uiMemPerNewInstanceSpinBox = ChoicesSpinBox(choices=RACKSPACE_RAM_CHOICES, parent=self)
-        self.uiNewInstancesLayout.insertWidget(0, self.uiMemPerNewInstanceSpinBox)
 
         from ..main_window import MainWindow
         self.settings = MainWindow.instance().cloudSettings()
@@ -51,6 +42,12 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
     def _get_image_index(self, image_name):
         try:
             return self.image_index_id.index(image_name)
+        except ValueError:
+            return -1
+
+    def _get_flavor_index(self, flavor_id):
+        try:
+            return self.flavor_index_id.index(flavor_id)
         except ValueError:
             return -1
 
@@ -106,6 +103,8 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         provider_id = self.settings['cloud_provider']
         region = self.settings['cloud_region']
         default_image = self.settings['default_image']
+        default_flavor = self.settings['default_flavor']
+        new_instance_flavor = self.settings['new_instance_flavor']
 
         # instance a provider controller and try to use it
         try:
@@ -126,6 +125,11 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 for image_id, image_name in provider.list_images().items():
                     self.uiImageTemplateComboBox.addItem(image_name)
                     self.image_index_id.append(image_id)
+                # fill flavor comboboxes
+                for id, name in provider.list_flavors().items():
+                    self.uiInstanceFlavorComboBox.addItem(name)
+                    self.uiNewInstanceFlavorComboBox.addItem(name)
+                    self.flavor_index_id.append(id)
         except KeyError:
             # username/apikey/provider are not set
             pass
@@ -140,11 +144,19 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         else:
             self.uiForgetAPIKeyRadioButton.setChecked(True)
         self.uiNumOfInstancesSpinBox.setValue(self.settings['instances_per_project'])
-        self.uiMemPerInstanceSpinBox.setValue(self.settings['memory_per_instance'])
-        self.uiMemPerNewInstanceSpinBox.setValue(self.settings['memory_per_new_instance'])
         self.uiTermsCheckBox.setChecked(self.settings['accepted_terms'])
         self.uiTimeoutSpinBox.setValue(self.settings['instance_timeout'])
         self.uiImageTemplateComboBox.setCurrentIndex(self._get_image_index(default_image))
+
+        idx = self._get_flavor_index(default_flavor)
+        if idx < 0:
+            idx = 0
+        self.uiInstanceFlavorComboBox.setCurrentIndex(idx)
+
+        idx = self._get_flavor_index(new_instance_flavor)
+        if idx < 0:
+            idx = 0
+        self.uiNewInstanceFlavorComboBox.setCurrentIndex(idx)
 
     def savePreferences(self):
         """
@@ -161,8 +173,9 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                 self.settings['cloud_region'] = \
                     self.region_index_id[self.uiRegionComboBox.currentIndex()]
             self.settings['instances_per_project'] = self.uiNumOfInstancesSpinBox.value()
-            self.settings['memory_per_instance'] = self.uiMemPerInstanceSpinBox.value()
-            self.settings['memory_per_new_instance'] = self.uiMemPerNewInstanceSpinBox.value()
+            if len(self.flavor_index_id):
+                self.settings['default_flavor'] = self.flavor_index_id[self.uiInstanceFlavorComboBox.currentIndex()]
+                self.settings['new_instance_flavor'] = self.flavor_index_id[self.uiNewInstanceFlavorComboBox.currentIndex()]
             self.settings['accepted_terms'] = self.uiTermsCheckBox.isChecked()
             self.settings['instance_timeout'] = self.uiTimeoutSpinBox.value()
             if self.uiImageTemplateComboBox.currentIndex() >= 0:

@@ -7,15 +7,18 @@ from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import QThread
 from PyQt4.Qt import Qt
 
 from .settings import CLOUD_PROVIDERS
-from .utils import import_from_string
+from .cloud.rackspace_ctrl import RackspaceCtrl
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
 from libcloud.compute.types import NodeState
+
+POLLING_TIMER = 5000  # in milliseconds
 
 
 class InstanceTableModel(QAbstractTableModel):
@@ -26,7 +29,8 @@ class InstanceTableModel(QAbstractTableModel):
         super(InstanceTableModel, self).__init__(*args, **kwargs)
         self._header_data = ['Instance', '', 'Size', 'Devices']  # status has an empty header label
         self._width = len(self._header_data)
-        self._instances = []
+        self._instances = {}
+        self._ids = []
 
     def _get_status_icon_path(self, state):
         """
@@ -46,7 +50,7 @@ class InstanceTableModel(QAbstractTableModel):
         return self._width if len(self._instances) else 0
 
     def data(self, index, role=None):
-        instance = self._instances[index.row()]
+        instance = self._instances.get(self._ids[index.row()])
         col = index.column()
 
         if role == Qt.DecorationRole:
@@ -60,8 +64,15 @@ class InstanceTableModel(QAbstractTableModel):
                 return instance.name
             elif col == 2:
                 # size
-                if instance.size:
-                    return instance.size.ram
+                try:
+                    # Rackspace case
+                    return instance.extra['flavorId']
+                except KeyError:
+                    # fallback to libcloud size property
+                    if instance.size:
+                        return instance.size.ram
+                    # giveup on showing size
+                    return ''
             elif col == 3:
                 # devices
                 return 0
@@ -80,7 +91,8 @@ class InstanceTableModel(QAbstractTableModel):
         if not len(self._instances):
             self.beginInsertColumns(QModelIndex(), 0, self._width-1)
             self.endInsertColumns()
-        self._instances.append(instance)
+        self._ids.append(instance.id)
+        self._instances[instance.id] = instance
         self.endInsertRows()
 
     def getInstance(self, index):
@@ -88,23 +100,49 @@ class InstanceTableModel(QAbstractTableModel):
         Retrieve the i-th instance if index is in range
         """
         try:
-            return self._instances[index]
+            return self._instances.get(self._ids[index])
         except IndexError:
             return None
+
+    def removeInstance(self, instance):
+        try:
+            index = self._ids.index(instance.id)
+            self.beginRemoveRows(QModelIndex(), index, index)
+            del self._instances[instance.id]
+            del self._ids[index]
+            self.endRemoveRows()
+        except ValueError:
+            pass
 
     def update_instance_status(self, instance):
         """
         Update model data and notify connected views
         """
-        try:
-            i = self._instances.index(instance)
-            current = self._instances[i]
+        if instance.id in self._ids:
+            index = self._ids.index(instance.id)
+            current = self._instances[instance.id]
             current.state = instance.state
-            first_index = self.createIndex(i, 0)
-            last_index = self.createIndex(i, self.columnCount()-1)
+            first_index = self.createIndex(index, 0)
+            last_index = self.createIndex(index, self.columnCount()-1)
             self.dataChanged.emit(first_index, last_index)
-        except ValueError:
-            pass
+        else:
+            self.addInstance(instance)
+
+
+class ListInstancesThread(QThread):
+    """
+    Helper class to retrieve data from the provider in a separate thread,
+    avoid freezing the gui
+    """
+    instancesReady = pyqtSignal(object)
+
+    def __init__(self, parent, provider):
+        super(QThread, self).__init__(parent)
+        self._provider = provider
+
+    def run(self):
+        instances = self._provider.list_instances()
+        self.instancesReady.emit(instances)
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
@@ -132,7 +170,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
 
         self._pollingTimer = QTimer(self)
-        self._pollingTimer.timeout.connect(self._update_model)
+        self._pollingTimer.timeout.connect(self._polling_slot)
 
     def load(self, cloud_settings):
         """
@@ -146,8 +184,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
-        provider_controller_class = import_from_string(CLOUD_PROVIDERS[provider_id][1])
-        self._provider = provider_controller_class(username, apikey)
+        self._provider = RackspaceCtrl(username, apikey)
 
         if not self._provider.authenticate():
             self._provider = None
@@ -157,10 +194,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             region = self._provider.list_regions().values()[0]
 
         if self._provider.set_region(region):
-            for i in self._provider.list_instances():
-                self._model.addInstance(i)
-            self.uiInstancesTableView.resizeColumnsToContents()
-            self._pollingTimer.start(5000)
+            update_thread = ListInstancesThread(self, self._provider)
+            update_thread.instancesReady.connect(self._populate_model)
+            update_thread.start()
+            self._pollingTimer.start(POLLING_TIMER)
         else:
             self._provider = None
             return
@@ -183,9 +220,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if len(sel) and self._provider is not None:
             index = sel[0].row()
             instance = self._model.getInstance(index)
-            self._provider.delete_instance(instance)
-            # FIXME remove this message
-            print("delete {}".format(instance.name))
+            if self._provider.delete_instance(instance):
+                self._model.removeInstance(instance)
 
     def _rowChanged(self, current, previous):
         """
@@ -196,12 +232,27 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance = self._model.getInstance(current.row())
             self.instanceSelected.emit(instance.id)
 
-    def _update_model(self):
+    def _polling_slot(self):
         """
         Sync model data with instances status
         """
         if self._provider is None:
             return
 
-        for i in self._provider.list_instances():
+        update_thread = ListInstancesThread(self, self._provider)
+        update_thread.instancesReady.connect(self._update_model)
+        update_thread.start()
+
+    def _update_model(self, instances):
+        for i in instances:
             self._model.update_instance_status(i)
+
+    def _populate_model(self, instances):
+        for i in instances:
+            try:
+                # for Rackspace instances, update flavor id with a verbose description
+                i.extra['flavorId'] = self._provider.list_flavors().get(i.extra['flavorId']) or 'Unknown'
+            except KeyError:
+                pass
+            self._model.addInstance(i)
+        self.uiInstancesTableView.resizeColumnsToContents()
