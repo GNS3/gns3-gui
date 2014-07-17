@@ -89,6 +89,11 @@ class BaseCloudCtrl(object):
 
         return self.driver.list_sizes()
 
+    def list_flavors(self):
+        """ Return an iterable of flavors """
+
+        raise NotImplementedError
+
     def create_instance(self, name, size, image, keypair):
         """
         Create a new instance with the supplied attributes.
