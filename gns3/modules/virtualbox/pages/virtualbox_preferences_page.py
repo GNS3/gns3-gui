@@ -42,6 +42,9 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVboxWrapperPathToolButton.clicked.connect(self._vboxPathBrowserSlot)
 
+        #FIXME: temporally hide test button
+        self.uiTestSettingsPushButton.hide()
+
     def _vboxPathBrowserSlot(self):
         """
         Slot to open a file browser and select VirtualBox wrapper.

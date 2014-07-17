@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>355</width>
-    <height>461</height>
+    <width>415</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,6 +27,37 @@
        <string>VirtualBox VMs</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="QTreeWidget" name="uiVirtualBoxVMsTreeWidget">
+         <column>
+          <property name="text">
+           <string>VM</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Server</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiVMListLabel">
+         <property name="text">
+          <string>VM name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="uiVMListComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
        <item row="2" column="0">
         <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
@@ -44,39 +75,42 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiEnableConsoleSupportCheckBox">
+       <item row="3" column="0">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Enable console support</string>
+          <string>Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="uiAdapterTypesComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+         <property name="text">
+          <string>Start VM in headless mode</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>Name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QTreeWidget" name="uiVirtualBoxVMsTreeWidget">
-         <column>
-          <property name="text">
-           <string>VM</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Server</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="uiRefreshPushButton">
+           <property name="text">
+            <string>Refresh VM list</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="uiSaveVirtualBoxVMPushButton">
            <property name="text">
@@ -96,33 +130,7 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiEnableConsoleServerCheckBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Enable console server</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
-         <property name="text">
-          <string>Start VM in headless mode</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
+       <item row="6" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
