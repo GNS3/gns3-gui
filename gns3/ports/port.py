@@ -468,6 +468,7 @@ class Port(object):
 
         if "|" in command:
             # live traffic capture (using tail)
+            env = None
             command1, command2 = command.split("|", 1)
             info = None
             if sys.platform.startswith("win"):
@@ -475,11 +476,13 @@ class Port(object):
                 info = subprocess.STARTUPINFO()
                 info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                 info.wShowWindow = subprocess.SW_HIDE
+                if hasattr(sys, "frozen"):
+                    env = {"PATH": os.path.dirname(os.path.abspath(sys.executable))}  # for Popen to find tail.exe
             else:
                 command1 = shlex.split(command1)
                 command2 = shlex.split(command2)
 
-            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
+            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE, env=env)
             self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout)
         else:
             # normal traffic capture
