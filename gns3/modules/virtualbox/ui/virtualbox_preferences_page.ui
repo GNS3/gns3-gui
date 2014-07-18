@@ -43,7 +43,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="uiVboxWrapperPathLabel">
          <property name="text">
-          <string>Path to the VirtualBox wrapper:</string>
+          <string>Path to the VirtualBox wrapper (Linux/UNIX only):</string>
          </property>
         </widget>
        </item>
