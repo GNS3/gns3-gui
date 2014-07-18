@@ -303,4 +303,5 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Saves the IOU image & device preferences.
         """
 
+        self._iouImageSaveSlot()
         IOU.instance().setIOUImages(self._iou_images)
