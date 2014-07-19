@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created: Sat Jul 12 11:54:12 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Jul 18 18:25:41 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -140,7 +140,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
 
     def retranslateUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxPreferencesPageWidget", "VirtualBox", None))
-        self.uiVboxWrapperPathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to the VirtualBox wrapper:", None))
+        self.uiVboxWrapperPathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to the VirtualBox wrapper (Linux/UNIX only):", None))
         self.uiTestSettingsPushButton.setText(_translate("VirtualBoxPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("VirtualBoxPreferencesPageWidget", "Restore defaults", None))
         self.uiVboxWrapperPathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "...", None))

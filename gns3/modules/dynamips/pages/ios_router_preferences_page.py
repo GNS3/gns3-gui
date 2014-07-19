@@ -471,5 +471,5 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Saves the IOS image & router preferences.
         """
 
-        self._iosImageSaveSlot()
+        #self._iosImageSaveSlot()
         Dynamips.instance().setIOSImages(self._ios_images)

@@ -326,7 +326,7 @@ class VirtualBox(Module):
         :param node: Node instance
         """
 
-        log.info("configuring node {}".format(node))
+        log.info("configuring node {} with id {}".format(node, node.id()))
 
         selected_vms = []
         for vm, info in self._virtualbox_vms.items():
@@ -349,9 +349,9 @@ class VirtualBox(Module):
         else:
             vm = selected_vms[0]
 
-        for node in self._nodes:
-            if node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
-                    (self._virtualbox_vms[vm]["server"] == "local" and node.server().isLocal() or self._virtualbox_vms[vm]["server"] == node.server().host):
+        for other_node in self._nodes:
+            if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
+                    (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
                 raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
 
         settings = {"adapters": self._virtualbox_vms[vm]["adapters"],

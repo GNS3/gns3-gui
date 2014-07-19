@@ -214,5 +214,5 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         Saves the VirtualBox VM preferences.
         """
 
-        self._vboxVMSaveSlot()
+        #self._vboxVMSaveSlot()
         VirtualBox.instance().setVirtualBoxVMs(self._virtualbox_vms)
