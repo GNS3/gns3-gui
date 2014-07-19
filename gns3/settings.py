@@ -147,13 +147,7 @@ else:
 WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
-    # Windows 64-bit
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files (x86)\Wireshark\wireshark.exe %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files (x86)\Wireshark\wireshark.exe" -k -i -'}
-
-elif sys.platform.startswith("win"):
-    # Windows 32-bit
+if sys.platform.startswith("win"):
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files\Wireshark\wireshark.exe %c",
                                                     WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files\Wireshark\wireshark.exe" -k -i -'}
 
