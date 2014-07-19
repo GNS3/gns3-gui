@@ -478,12 +478,15 @@ class Port(object):
                 info.wShowWindow = subprocess.SW_HIDE
                 if hasattr(sys, "frozen"):
                     env = {"PATH": os.path.dirname(os.path.abspath(sys.executable))}  # for Popen to find tail.exe
+                command1 = command1.strip()
+                command2 = command2.strip()
             else:
                 command1 = shlex.split(command1)
                 command2 = shlex.split(command2)
 
             self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE, env=env)
-            self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout)
+            self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout, stdout=subprocess.PIPE)
+            self._tail_process.stdout.close()
         else:
             # normal traffic capture
             if not sys.platform.startswith("win"):
