@@ -21,6 +21,7 @@ Handles the saving and loading of a topology.
 """
 
 import os
+from collections import namedtuple
 
 from .qt import QtCore, QtGui, QtSvg
 from .items.node_item import NodeItem
@@ -39,6 +40,8 @@ from pkg_resources import parse_version
 import logging
 log = logging.getLogger(__name__)
 
+TopologyInstance = namedtuple("TopologyInstance", ["name", "size_id", "image_id"], verbose=False)
+
 
 class Topology(object):
     """
@@ -56,6 +59,7 @@ class Topology(object):
         self._topology = None
         self._initialized_nodes = []
         self._resources_type = "local"
+        self._instances = []
 
     def addNode(self, node):
         """
@@ -197,6 +201,26 @@ class Topology(object):
         if image in self._images:
             self._images.remove(image)
 
+    def addInstance(self, name, size_id, image_id):
+        """
+        Add an instance to this cloud topology
+        """
+
+        i = TopologyInstance(name=name, size_id=size_id, image_id=image_id)
+        self._instances.append(i)
+
+    def removeInstance(self, name):
+        """
+        Removes an instance from this cloud topology
+
+        :param name: the name of the instance
+        """
+
+        for instance in self._instances:
+            if instance.name == name:
+                self._instances.remove(instance)
+                break
+
     def nodes(self):
         """
         Returns all the nodes in this topology.
@@ -239,6 +263,13 @@ class Topology(object):
 
         return self._images
 
+    def instances(self):
+        """
+        Returns the list of instances for this cloud topology
+        """
+
+        return self._instances
+
     def reset(self):
         """
         Resets this topology.
@@ -253,6 +284,7 @@ class Topology(object):
         self._images.clear()
         self._initialized_nodes.clear()
         self._resources_type = "local"
+        self._instances = []
         log.info("topology has been reset")
 
     def _dump_gui_settings(self, topology):
@@ -367,6 +399,16 @@ class Topology(object):
                 log.info("saving server {}:{}".format(server.host, server.port))
                 topology_servers.append(server.dump())
 
+        # instances
+        if self._resources_type == "cloud":
+            topology_instances = topology["topology"]["instances"] = []
+            for i in self._instances:
+                log.info("saving cloud instance {}".format(i.name))
+                topology_instances.append({
+                    "name": i.name,
+                    "size_id": i.size_id,
+                    "image_id": i.image_id
+                })
         if include_gui_data:
             self._dump_gui_settings(topology)
 
@@ -559,6 +601,12 @@ class Topology(object):
                 image_item.load(topology_image)
                 view.scene().addItem(image_item)
                 self.addImage(image_item)
+
+        # instances
+        if "instances" in topology["topology"]:
+            instances = topology["topology"]["instances"]
+            for instance in instances:
+                self.addInstance(instance["name"], instance["size_id"], instance["image_id"])
 
         if topology_file_errors:
             errors = "\n".join(topology_file_errors)
