@@ -65,6 +65,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     reboot_signal = QtCore.Signal()
     exit_code_reboot = -123456789
 
+    # signal to tell a cloud project was closed
+    project_about_to_close_signal = QtCore.pyqtSignal(str)
+
     def __init__(self, parent=None):
 
         super(MainWindow, self).__init__(parent)
@@ -275,6 +278,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
 
+        # project
+        self.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
+
     def telnetConsoleCommand(self):
         """
         Returns the Telnet console command line.
@@ -311,6 +317,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_dialog = NewProjectDialog(self)
             project_dialog.show()
             create_new_project = project_dialog.exec_()
+
+            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+
             if create_new_project:
                 self.uiGraphicsView.reset()
                 new_project_settings = project_dialog.getNewProjectSettings()
@@ -343,6 +352,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "All files (*.*);;GNS3 project files (*.gns3)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
+            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
             self.loadProject(path)
 
     def _openRecentFileSlot(self):
@@ -357,6 +367,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
             if self.checkForUnsavedChanges():
+                self.project_about_to_close_signal.emit(self._project_settings["project_path"])
                 self.loadProject(path)
 
     def _saveProjectActionSlot(self):
@@ -870,6 +881,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self.checkForUnsavedChanges():
+            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
 
             # save the geometry and state of the main window.
             settings = QtCore.QSettings()
@@ -1314,3 +1326,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not hasattr(MainWindow, "_instance"):
             MainWindow._instance = MainWindow()
         return MainWindow._instance
+
+    def shutdown_cloud_instances(self, project):
+        """
+        This slot is invoked before a project is closed, when:
+         * a new project is created
+         * a project from the recent menu is opened
+         * a project is opened from file
+         * program exits
+
+        :param project: path to gns3 project file
+        """
+
+        if self._temporary_project:
+            # do nothing if previous project was temporary
+            return
+
+        with open(project) as f:
+            old_json_topology = json.load(f)
+
+            if old_json_topology["resource_type"] != 'cloud':
+                # do nothing in case of local projects
+                return
+
+            for instance in old_json_topology["topology"]["instances"]:
+                #TODO shutdown the instance
+                print(instance)
