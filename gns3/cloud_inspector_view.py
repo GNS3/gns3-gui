@@ -160,6 +160,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
         self._provider = None
         self._settings = None
+        self._project_instances_id = []
 
         self._model = InstanceTableModel()  # shortcut for self.uiInstancesTableView.model()
         self.uiInstancesTableView.setModel(self._model)
@@ -183,12 +184,14 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         except ValueError:
             return -1
 
-    def load(self, provider, cloud_settings):
+    def load(self, provider, cloud_settings, instances):
         """
         Fill the model data layer with instances retrieved through libcloud
         """
         self._provider = provider
         self._settings = cloud_settings
+        for i in instances:
+            self._project_instances_id.append(i["id"])
 
         update_thread = ListInstancesThread(self, self._provider)
         update_thread.instancesReady.connect(self._populate_model)
@@ -208,6 +211,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         """
         self._model.clear()
         self._pollingTimer.stop()
+        self._project_instances_id = []
 
     def _contextMenu(self, pos):
         # create actions
@@ -260,11 +264,13 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if not instances:
             return
 
-        for i in instances:
-            self._model.updateInstanceFields(i, ['state',])
+        # filter instances for current project
+        project_instances = [i for i in instances if i.id in self._project_instances_id]
+        for i in project_instances:
+            self._model.updateInstanceFields(i, ['state'])
 
         # cleanup removed instances
-        real = set(i.id for i in instances)
+        real = set(i.id for i in project_instances)
         current = set(self._model.instanceIds)
         for i in current.difference(real):
             self._model.removeInstanceById(i)
@@ -272,7 +278,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def _populate_model(self, instances):
         self._model.flavors = self._provider.list_flavors()
-        for i in instances:
+        # filter instances for current project
+        project_instances = [i for i in instances if i.id in self._project_instances_id]
+        for i in project_instances:
             self._model.addInstance(i)
         self.uiInstancesTableView.resizeColumnsToContents()
 

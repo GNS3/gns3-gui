@@ -1395,8 +1395,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def project_created(self, project):
         """
+        This slot is invoked when a project is created or opened
 
-        :param project: path to gns3 project file
+        :param project: path to gns3 project file currently opened
         """
         if self._temporary_project:
             # do nothing if project is temporary
@@ -1411,4 +1412,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # do nothing in case of local projects
                 return
 
-            self.CloudInspectorView.load(self.cloudProvider, self.cloudSettings())
+            project_instances = json_topology["topology"]["instances"]
+            self.CloudInspectorView.load(self.cloudProvider,
+                                         self.cloudSettings(),
+                                         project_instances)
