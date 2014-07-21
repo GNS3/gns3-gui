@@ -38,6 +38,11 @@ class InstanceTableModel(QAbstractTableModel):
     def instanceIds(self):
         return self._ids
 
+    def clear(self):
+        self._instances = {}
+        self._ids = []
+        self.reset()
+
     def _get_status_icon_path(self, state):
         """
         Return a string pointing to the graphic resource
@@ -247,6 +252,13 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         else:
             self._provider = None
             return
+
+    def clear(self):
+        """
+        Clear contents and stop polling timer
+        """
+        self._model.clear()
+        self._pollingTimer.stop()
 
     def _contextMenu(self, pos):
         # create actions
