@@ -1352,7 +1352,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         with open(project) as f:
             old_json_topology = json.load(f)
 
-            if old_json_topology["resource_type"] != 'cloud':
+            if old_json_topology["resources_type"] != 'cloud':
                 # do nothing in case of local projects
                 return
 
@@ -1372,7 +1372,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         with open(project) as f:
             json_topology = json.load(f)
 
-            if json_topology["resource_type"] != 'cloud':
+            if json_topology["resources_type"] != 'cloud':
                 # do nothing in case of local projects
                 return
 
