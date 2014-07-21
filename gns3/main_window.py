@@ -65,8 +65,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     reboot_signal = QtCore.Signal()
     exit_code_reboot = -123456789
 
-    # signal to tell a cloud project was closed
+    # signal to tell a project was closed
     project_about_to_close_signal = QtCore.pyqtSignal(str)
+    # signal to tell a new project was created
+    project_new_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, parent=None):
 
@@ -280,6 +282,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # project
         self.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
+        self.project_new_signal.connect(self.project_created)
 
     def telnetConsoleCommand(self):
         """
@@ -940,9 +943,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._newsActionSlot()
 
-        #TODO check if this is the right place
-        self.CloudInspectorView.load(self.cloudSettings())
-
         # connect to the local server
         servers = Servers.instance()
         server = servers.localServer()
@@ -1352,3 +1352,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             for instance in old_json_topology["topology"]["instances"]:
                 #TODO shutdown the instance
                 print(instance)
+
+    def project_created(self, project):
+        """
+
+        :param project: path to gns3 project file
+        """
+        if self._temporary_project:
+            # do nothing if project is temporary
+            return
+
+        with open(project) as f:
+            json_topology = json.load(f)
+
+            if json_topology["resource_type"] != 'cloud':
+                # do nothing in case of local projects
+                return
+
+            # TODO create an instance for this project
+            self.CloudInspectorView.load(self.cloudSettings())
