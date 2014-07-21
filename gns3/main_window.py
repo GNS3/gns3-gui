@@ -44,7 +44,8 @@ from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
-from .topology import Topology
+from .topology import Topology, TopologyInstance
+from .cloud.utils import get_provider
 
 log = logging.getLogger(__name__)
 
@@ -116,8 +117,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._recent_file_actions_separator.setVisible(False)
         self._updateRecentFileActions()
 
+        self._cloud_provider = None
+
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
+
+    @property
+    def cloudProvider(self):
+        if self._cloud_provider is None:
+            self._cloud_provider = get_provider(self.cloudSettings())
+        return self._cloud_provider
 
     def _loadSettings(self):
         """
