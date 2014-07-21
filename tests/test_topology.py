@@ -53,7 +53,7 @@ class TestTopology(TestCase):
 
     def test_instances(self):
         self.assertEqual(self.t._instances, [])
-        self.t.addInstance(name="My instance", size_id="123", image_id="1234567890")
+        self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890")
         self.assertEqual(len(self.t._instances), 1)
         self.t.removeInstance("My fake instance")
         self.assertEqual(len(self.t._instances), 1)
@@ -63,7 +63,7 @@ class TestTopology(TestCase):
     def test_instances_dumped(self):
         test_settings = {'project_type': 'cloud'}
         MainWindow.instance() ._project_settings.update(test_settings)
-        self.t.addInstance(name="My instance", size_id="123", image_id="1234567890")
+        self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890")
         topology = self.t.dump()
         self.assertIn('instances', topology["topology"])
         instances = topology["topology"]["instances"]
@@ -79,11 +79,13 @@ class TestTopology(TestCase):
                 'instances': [
                     {
                         'name': 'Foo Instance',
+                        'id': 'xyz',
                         'size_id': 'id1',
                         'image_id': 'id2',
                     },
                     {
                         'name': 'Another Foo Instance',
+                        'id': 'xyz',
                         'size_id': 'id123',
                         'image_id': 'id234',
                     }
