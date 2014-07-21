@@ -339,8 +339,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # let all modules know about the new project files directory
                 self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
-                if self._saveProject(new_project_settings["project_path"]):
-                    self._project_settings.update(new_project_settings)
+                self._project_settings.update(new_project_settings)
+                self._saveProject(new_project_settings["project_path"])
+
             else:
                 self._createTemporaryProject()
 
