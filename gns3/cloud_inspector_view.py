@@ -9,10 +9,10 @@ from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtCore import QThread
 from PyQt4.Qt import Qt
 
 from .cloud.rackspace_ctrl import RackspaceCtrl
+from .cloud.utils import ListInstancesThread, CreateInstanceThread
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
@@ -142,37 +142,6 @@ class InstanceTableModel(QAbstractTableModel):
             self.dataChanged.emit(first_index, last_index)
         else:
             self.addInstance(instance)
-
-
-class ListInstancesThread(QThread):
-    """
-    Helper class to retrieve data from the provider in a separate thread,
-    avoid freezing the gui
-    """
-    instancesReady = pyqtSignal(object)
-
-    def __init__(self, parent, provider):
-        super(QThread, self).__init__(parent)
-        self._provider = provider
-
-    def run(self):
-        instances = self._provider.list_instances()
-        self.instancesReady.emit(instances)
-
-
-class CreateInstanceThread(QThread):
-    """
-
-    """
-    def __init__(self, parent, provider, name, flavor_id, image_id):
-        super(QThread, self).__init__(parent)
-        self._provider = provider
-        self._name = name
-        self._flavor_id = flavor_id
-        self._image_id = image_id
-
-    def run(self):
-        self._provider.create_instance(self._name, self._flavor_id, self._image_id)
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
