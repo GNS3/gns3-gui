@@ -348,6 +348,23 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # let all modules know about the new project files directory
                 self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
+                if new_project_settings["project_type"] == "cloud":
+                    provider = self.cloudProvider
+                    if provider is None:
+                        log.error("Unable to get a cloud provider")
+                        return
+
+                    # create an instance for this project
+                    default_flavor = self.cloudSettings()['default_flavor']
+                    default_image_id = self.cloudSettings()['default_image']
+                    instance = provider.create_instance(new_project_settings["project_name"],
+                                                        default_flavor,
+                                                        default_image_id)
+
+                    topology = Topology.instance()
+                    topology.addInstance(new_project_settings["project_name"], instance.id,
+                                         default_flavor, default_image_id)
+
                 self._project_settings.update(new_project_settings)
                 self._saveProject(new_project_settings["project_path"])
 
@@ -1365,9 +1382,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # do nothing in case of local projects
                 return
 
+            provider = self.cloudProvider
+            if provider is None:
+                log.error("Unable to get a cloud provider")
+                return
+
             for instance in old_json_topology["topology"]["instances"]:
-                #TODO shutdown the instance
-                print(instance)
+                # shutdown the instance, we can pass to libcloud our namedtuple instead of a Node
+                # object because only instance.id is actually accessed
+                ti = TopologyInstance(**instance)
+                self.cloudProvider.delete_instance(ti)
 
     def project_created(self, project):
         """
