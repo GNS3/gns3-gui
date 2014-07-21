@@ -552,7 +552,7 @@ class Topology(object):
                 self.addNode(node)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)
 
-        self._resources_type = topology.get("project_type")
+        self._resources_type = topology.get("resources_type")
 
         # notes
         if "notes" in topology["topology"]:

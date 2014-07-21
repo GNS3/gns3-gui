@@ -29,7 +29,7 @@ class TestTopology(TestCase):
     def test_resources_type_load(self):
         self.assertEqual(self.t.resourcesType, 'local')  # default value
         topology = {
-            'project_type': 'cloud',
+            'resources_type': 'cloud',
             'type': 'topology',
             'topology': {},
             'version': '3.0',
