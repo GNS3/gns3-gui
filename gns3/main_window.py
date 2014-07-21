@@ -344,6 +344,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             else:
                 self._createTemporaryProject()
 
+            self.project_new_signal.emit(self._project_settings["project_path"])
+
     def _openProjectActionSlot(self):
         """
         Slot called to open a project.
@@ -356,7 +358,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
             self.project_about_to_close_signal.emit(self._project_settings["project_path"])
-            self.loadProject(path)
+            if self.loadProject(path):
+                self.project_new_signal.emit(path)
 
     def _openRecentFileSlot(self):
         """
@@ -371,7 +374,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
             if self.checkForUnsavedChanges():
                 self.project_about_to_close_signal.emit(self._project_settings["project_path"])
-                self.loadProject(path)
+                if self.loadProject(path):
+                    self.project_new_signal.emit(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -1169,6 +1173,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project_settings["project_path"] = path
         self._setCurrentFile(path)
         self._labInstructionsActionSlot(silent=True)
+
+        return True
 
     def _deleteTemporaryProject(self):
         """
