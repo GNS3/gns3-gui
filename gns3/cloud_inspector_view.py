@@ -183,44 +183,24 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         except ValueError:
             return -1
 
-    def load(self, cloud_settings):
+    def load(self, provider, cloud_settings):
         """
         Fill the model data layer with instances retrieved through libcloud
         """
-
-        provider_id = cloud_settings['cloud_provider']
-        if not provider_id:
-            #FIXME: temporary fix: exception when cloud_provider exist but is empty in the settings file
-            provider_id = "rackspace"  # default provider is rackspace
-        username = cloud_settings['cloud_user_name']
-        apikey = cloud_settings['cloud_api_key']
-        region = cloud_settings['cloud_region']
-        new_instance_flavor = cloud_settings['new_instance_flavor']
-
-        self._provider = RackspaceCtrl(username, apikey)
+        self._provider = provider
         self._settings = cloud_settings
 
-        if not self._provider.authenticate():
-            self._provider = None
-            return
-
-        if not region:
-            region = self._provider.list_regions().values()[0]
-
-        if self._provider.set_region(region):
-            update_thread = ListInstancesThread(self, self._provider)
-            update_thread.instancesReady.connect(self._populate_model)
-            update_thread.start()
-            self._pollingTimer.start(POLLING_TIMER)
-            # fill sizes comboboxes
-            for id, name in self._provider.list_flavors().items():
-                self.uiCreateInstanceComboBox.addItem(name)
-                self.flavor_index_id.append(id)
-            # select default flavor
-            self.uiCreateInstanceComboBox.setCurrentIndex(self._get_flavor_index(new_instance_flavor))
-        else:
-            self._provider = None
-            return
+        update_thread = ListInstancesThread(self, self._provider)
+        update_thread.instancesReady.connect(self._populate_model)
+        update_thread.start()
+        self._pollingTimer.start(POLLING_TIMER)
+        # fill sizes comboboxes
+        for id, name in self._provider.list_flavors().items():
+            self.uiCreateInstanceComboBox.addItem(name)
+            self.flavor_index_id.append(id)
+        # select default flavor
+        new_instance_flavor = cloud_settings["new_instance_flavor"]
+        self.uiCreateInstanceComboBox.setCurrentIndex(self._get_flavor_index(new_instance_flavor))
 
     def clear(self):
         """

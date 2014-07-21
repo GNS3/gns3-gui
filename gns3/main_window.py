@@ -1411,4 +1411,4 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # do nothing in case of local projects
                 return
 
-            self.CloudInspectorView.load(self.cloudSettings())
+            self.CloudInspectorView.load(self.cloudProvider, self.cloudSettings())
