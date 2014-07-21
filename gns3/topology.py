@@ -40,7 +40,9 @@ from pkg_resources import parse_version
 import logging
 log = logging.getLogger(__name__)
 
-TopologyInstance = namedtuple("TopologyInstance", ["name", "size_id", "image_id"], verbose=False)
+TopologyInstance = namedtuple("TopologyInstance",
+                              ["name", "id", "size_id", "image_id"],
+                              verbose=False)
 
 
 class Topology(object):
@@ -201,12 +203,12 @@ class Topology(object):
         if image in self._images:
             self._images.remove(image)
 
-    def addInstance(self, name, size_id, image_id):
+    def addInstance(self, name, id, size_id, image_id):
         """
         Add an instance to this cloud topology
         """
 
-        i = TopologyInstance(name=name, size_id=size_id, image_id=image_id)
+        i = TopologyInstance(name=name, id=id, size_id=size_id, image_id=image_id)
         self._instances.append(i)
 
     def removeInstance(self, name):
@@ -406,6 +408,7 @@ class Topology(object):
                 log.info("saving cloud instance {}".format(i.name))
                 topology_instances.append({
                     "name": i.name,
+                    "id": i.id,
                     "size_id": i.size_id,
                     "image_id": i.image_id
                 })
@@ -606,7 +609,8 @@ class Topology(object):
         if "instances" in topology["topology"]:
             instances = topology["topology"]["instances"]
             for instance in instances:
-                self.addInstance(instance["name"], instance["size_id"], instance["image_id"])
+                self.addInstance(instance["name"], instance["id"], instance["size_id"],
+                                 instance["image_id"])
 
         if topology_file_errors:
             errors = "\n".join(topology_file_errors)
