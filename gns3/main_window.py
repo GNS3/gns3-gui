@@ -1381,9 +1381,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         with open(project) as f:
             json_topology = json.load(f)
 
+            self.CloudInspectorView.clear()
+
             if json_topology["resources_type"] != 'cloud':
                 # do nothing in case of local projects
                 return
 
-            # TODO create an instance for this project
             self.CloudInspectorView.load(self.cloudSettings())
