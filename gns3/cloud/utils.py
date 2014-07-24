@@ -57,8 +57,10 @@ class ListInstancesThread(QThread):
 
 class CreateInstanceThread(QThread):
     """
-
+    Helper class to create instances in a separate thread
     """
+    instanceCreated = pyqtSignal(object)
+
     def __init__(self, parent, provider, name, flavor_id, image_id):
         super(QThread, self).__init__(parent)
         self._provider = provider
@@ -67,4 +69,5 @@ class CreateInstanceThread(QThread):
         self._image_id = image_id
 
     def run(self):
-        self._provider.create_instance(self._name, self._flavor_id, self._image_id)
+        i = self._provider.create_instance(self._name, self._flavor_id, self._image_id)
+        self.instanceCreated.emit(i)
