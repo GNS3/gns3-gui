@@ -71,3 +71,19 @@ class CreateInstanceThread(QThread):
     def run(self):
         i = self._provider.create_instance(self._name, self._flavor_id, self._image_id)
         self.instanceCreated.emit(i)
+
+
+class DeleteInstanceThread(QThread):
+    """
+    Helper class to remove an instance in a separate thread
+    """
+    instanceDeleted = pyqtSignal(object)
+
+    def __init__(self, parent, provider, instance):
+        super(QThread, self).__init__(parent)
+        self._provider = provider
+        self._instance = instance
+
+    def run(self):
+        if self._provider.delete_instance(self._instance):
+            self.instanceDeleted.emit(self._instance)
