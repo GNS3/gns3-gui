@@ -55,9 +55,9 @@ class TestTopology(TestCase):
         self.assertEqual(self.t._instances, [])
         self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890")
         self.assertEqual(len(self.t._instances), 1)
-        self.t.removeInstance("My fake instance")
+        self.t.removeInstance("wrong id")
         self.assertEqual(len(self.t._instances), 1)
-        self.t.removeInstance("My instance")
+        self.t.removeInstance("xyz")
         self.assertEqual(self.t._instances, [])
 
     def test_instances_dumped(self):

@@ -108,23 +108,39 @@ class TestCloudInspectorView(GUIBaseTest):
 
     def test_load(self):
         with mock.patch('gns3.cloud_inspector_view.RackspaceCtrl') as provider_class:
+            instances = list(gen_fake_nodes(2))
+
+            mw = mock.MagicMock()
+
             provider = mock.MagicMock()
             provider_class.return_value = provider
-            provider.list_instances.return_value = list(gen_fake_nodes(2))
+            provider.list_instances.return_value = instances
+            mw.cloudProvider = provider
 
             settings = mock.MagicMock()
             settings_copy = MainWindow.instance().cloudSettings().copy()
             settings_copy['cloud_provider'] = 'rackspace'
             settings.__getitem__.side_effect = make_getitem(settings_copy)
             settings.__setitem__.side_effect = make_setitem(settings_copy)
+            mw.cloudSettings.return_value = settings
 
-            self.view.load(settings)
+            instances_dicts = [
+                {
+                    "id": instances[0].id,
+                    "image_id": "xyz",
+                    "name": "foo",
+                    "size_id": "2"
+                },
+                {
+                    "id": instances[1].id,
+                    "image_id": "xyz",
+                    "name": "bar",
+                    "size_id": "2"
+                }
+            ]
+            self.view.load(mw, instances_dicts)
             self.app.processEvents()  # let the thread loading instances post its events
             self.assertEqual(self.view._model.rowCount(), 2)
-
-            provider.authenticate.return_value = False
-            self.view.load(settings)
-            self.assertIsNone(self.view._provider)
 
     def test_contextMenu(self):
         with mock.patch('gns3.cloud_inspector_view.QMenu') as qmenu:
@@ -142,20 +158,22 @@ class TestCloudInspectorView(GUIBaseTest):
 
     def test_delete_instance(self):
         self.view._provider = mock.MagicMock()
+        self.view._main_window = mock.MagicMock()
         self.view.uiInstancesTableView = mock.MagicMock()
         self.view._model = mock.MagicMock()
         instance = mock.MagicMock()
         self.view._model.getInstance.return_value = instance
         self.view.uiInstancesTableView.selectedIndexes.return_value = [mock.MagicMock()]
         self.view._deleteSelectedInstance()
-
-        self.view._provider.delete_instance.assert_called_with(instance)
+        self.app.processEvents()  # let the thread deleting instances post its events
+        self.view._main_window.remove_instance_from_project.assert_called_with(instance)
 
     def test_update_model(self):
         nodes = list(gen_fake_nodes(2))
         self.view._provider = mock.MagicMock()
         self.view._provider.list_instances.return_value = nodes
         self.view._model = mock.MagicMock()
+        self.view._project_instances_id = [node.id for node in nodes]
 
         self.view._update_model(nodes)
         self.view._model.updateInstanceFields.assert_has_calls([mock.call(x, ['state']) for x in nodes])
