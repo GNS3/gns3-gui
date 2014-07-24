@@ -12,7 +12,7 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import Qt
 
 from .cloud.rackspace_ctrl import RackspaceCtrl
-from .cloud.utils import ListInstancesThread, CreateInstanceThread
+from .cloud.utils import ListInstancesThread, CreateInstanceThread, DeleteInstanceThread
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
@@ -240,14 +240,12 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if len(sel) and self._provider is not None:
             index = sel[0].row()
             instance = self._model.getInstance(index)
-            if self._provider.delete_instance(instance):
-                instance.name = 'Deleting...'
-                self._model.updateInstanceFields(instance, ['name',])
-                QMessageBox.information(
-                    self,
-                    "Deleting instance",
-                    "Deleting instances could take a while, wait for completion"
-                )
+            delete_thread = DeleteInstanceThread(self, self._provider, instance)
+            delete_thread.instanceDeleted.connect(self._main_window.remove_instance_from_project)
+            delete_thread.start()
+
+            instance.name = 'Deleting...'
+            self._model.updateInstanceFields(instance, ['name',])
 
     def _rowChanged(self, current, previous):
         """

@@ -1445,9 +1445,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def add_instance_to_project(self, instance):
         """
+        Add an instance to the current project
 
-        :param instance: libcloud instance
-        :return:
+        :param instance: libcloud Node object
         """
         if instance is None:
             log.error("Failed creating a new instance for current project")
@@ -1460,5 +1460,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                              default_image_id)
         self.CloudInspectorView.addInstance(instance)
 
+        # persist infos saving current project
+        self._saveProject(self._project_settings["project_path"])
+
+    def remove_instance_from_project(self, instance):
+        """
+        Remove an instance from the current project
+
+        :param instance: libcloud Node object
+        """
+        topology = Topology.instance()
+        topology.removeInstance(instance.id)
         # persist infos saving current project
         self._saveProject(self._project_settings["project_path"])
