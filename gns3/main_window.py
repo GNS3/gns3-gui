@@ -1208,7 +1208,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # we need to save the updates
                     need_to_save = True
                 else:
-                    self._project_settings["project_type"] = "cloud"
+                    self._project_settings["project_type"] = "local"
 
                 topology.load(json_topology)
 
@@ -1441,6 +1441,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
             project_instances = json_topology["topology"]["instances"]
-            self.CloudInspectorView.load(self.cloudProvider,
-                                         self.cloudSettings(),
-                                         project_instances)
+            self.CloudInspectorView.load(self, project_instances)
+
+    def add_instance_to_project(self, instance):
+        """
+
+        :param instance: libcloud instance
+        :return:
+        """
+        if instance is None:
+            log.error("Failed creating a new instance for current project")
+            return
+
+        default_image_id = self.cloudSettings()['default_image']
+
+        topology = Topology.instance()
+        topology.addInstance(instance.name, instance.id, instance.extra['flavorId'],
+                             default_image_id)
+        self.CloudInspectorView.addInstance(instance)
+
+        # persist infos saving current project
+        self._saveProject(self._project_settings["project_path"])

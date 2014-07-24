@@ -161,6 +161,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._provider = None
         self._settings = None
         self._project_instances_id = []
+        self._main_window = None
 
         self._model = InstanceTableModel()  # shortcut for self.uiInstancesTableView.model()
         self.uiInstancesTableView.setModel(self._model)
@@ -184,12 +185,14 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         except ValueError:
             return -1
 
-    def load(self, provider, cloud_settings, instances):
+    def load(self, main_win, instances):
         """
         Fill the model data layer with instances retrieved through libcloud
         """
-        self._provider = provider
-        self._settings = cloud_settings
+        self._main_window = main_win
+        self._provider = main_win.cloudProvider
+        self._settings = main_win.cloudSettings()
+
         for i in instances:
             self._project_instances_id.append(i["id"])
 
@@ -202,8 +205,14 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             self.uiCreateInstanceComboBox.addItem(name)
             self.flavor_index_id.append(id)
         # select default flavor
-        new_instance_flavor = cloud_settings["new_instance_flavor"]
+        new_instance_flavor = self._settings["new_instance_flavor"]
         self.uiCreateInstanceComboBox.setCurrentIndex(self._get_flavor_index(new_instance_flavor))
+
+    def addInstance(self, instance):
+        """
+        Add a new instance to the inspector
+        """
+        self._project_instances_id.append(instance.id)
 
     def clear(self):
         """
@@ -296,4 +305,5 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
         if ok:
             create_thread = CreateInstanceThread(self, self._provider, name, flavor_id, image_id)
+            create_thread.instanceCreated.connect(self._main_window.add_instance_to_project)
             create_thread.start()
