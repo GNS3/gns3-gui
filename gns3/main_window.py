@@ -1180,12 +1180,40 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         try:
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             with open(path, "r") as f:
+                need_to_save = False
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
                 if not os.path.isdir(self._project_settings["project_files_dir"]):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+
+                # if we're opening a cloud project, fire up instances
+                if json_topology["resources_type"] == "cloud":
+                    self._project_settings["project_type"] = "cloud"
+                    provider = self.cloudProvider
+                    new_instances = []
+                    for instance in json_topology["topology"]["instances"]:
+                        name = instance["name"]
+                        flavor = instance["size_id"]
+                        image = instance["image_id"]
+                        i = provider.create_instance(name, flavor, image)
+                        new_instances.append({
+                            "name": i.name,
+                            "id": i.id,
+                            "size_id": flavor,
+                            "image_id": image,
+                        })
+                    # update topology with new image data
+                    json_topology["topology"]["instances"] = new_instances
+                    # we need to save the updates
+                    need_to_save = True
+                else:
+                    self._project_settings["project_type"] = "cloud"
+
                 topology.load(json_topology)
+
+                if need_to_save:
+                    self._saveProject(path)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
