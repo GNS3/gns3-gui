@@ -211,7 +211,7 @@ class Topology(object):
         i = TopologyInstance(name=name, id=id, size_id=size_id, image_id=image_id)
         self._instances.append(i)
 
-    def removeInstance(self, name):
+    def removeInstance(self, id):
         """
         Removes an instance from this cloud topology
 
@@ -219,7 +219,7 @@ class Topology(object):
         """
 
         for instance in self._instances:
-            if instance.name == name:
+            if instance.id == id:
                 self._instances.remove(instance)
                 break
 
