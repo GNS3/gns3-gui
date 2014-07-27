@@ -59,7 +59,7 @@ class CreateInstanceThread(QThread):
     """
     Helper class to create instances in a separate thread
     """
-    instanceCreated = pyqtSignal(object)
+    instanceCreated = pyqtSignal(object, object)
 
     def __init__(self, parent, provider, name, flavor_id, image_id):
         super(QThread, self).__init__(parent)
@@ -70,7 +70,8 @@ class CreateInstanceThread(QThread):
 
     def run(self):
         i = self._provider.create_instance(self._name, self._flavor_id, self._image_id)
-        self.instanceCreated.emit(i)
+        k = self._provider.create_key_pair(self._name)
+        self.instanceCreated.emit(i, k)
 
 
 class DeleteInstanceThread(QThread):
