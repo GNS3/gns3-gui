@@ -357,13 +357,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # create an instance for this project
                     default_flavor = self.cloudSettings()['default_flavor']
                     default_image_id = self.cloudSettings()['default_image']
-                    instance = self._create_instance(new_project_settings["project_name"],
-                                                     default_flavor,
-                                                     default_image_id)
+                    instance, keypair = self._create_instance(new_project_settings["project_name"],
+                                                              default_flavor,
+                                                              default_image_id)
 
                     topology = Topology.instance()
                     topology.addInstance(new_project_settings["project_name"], instance.id,
-                                         default_flavor, default_image_id)
+                                         default_flavor, default_image_id,
+                                         keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
                 self._saveProject(new_project_settings["project_path"])
@@ -1196,12 +1197,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                         name = instance["name"]
                         flavor = instance["size_id"]
                         image = instance["image_id"]
-                        i = self._create_instance(name, flavor, image)
+                        i, k = self._create_instance(name, flavor, image)
                         new_instances.append({
                             "name": i.name,
                             "id": i.id,
                             "size_id": flavor,
                             "image_id": image,
+                            "private_key": k.private_key,
+                            "public_key": k.public_key
                         })
                     # update topology with new image data
                     json_topology["topology"]["instances"] = new_instances
@@ -1420,6 +1423,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # object because only instance.id is actually accessed
                 ti = TopologyInstance(**instance)
                 self.cloudProvider.delete_instance(ti)
+                # delete keypairs, we can pass to libcloud our namedtuble instead of a KeyPair
+                # object because only ti.name will be accessed and keypairs have the same name as
+                # instances
+                self.cloudProvider.delete_key_pair(ti)
 
     def project_created(self, project):
         """
@@ -1443,7 +1450,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_instances = json_topology["topology"]["instances"]
             self.CloudInspectorView.load(self, project_instances)
 
-    def add_instance_to_project(self, instance):
+    def add_instance_to_project(self, instance, keypair):
         """
         Add an instance to the current project
 
@@ -1457,7 +1464,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         topology = Topology.instance()
         topology.addInstance(instance.name, instance.id, instance.extra['flavorId'],
-                             default_image_id)
+                             default_image_id, keypair.private_key, keypair.public_key)
         self.CloudInspectorView.addInstance(instance)
 
         # persist infos saving current project
@@ -1479,4 +1486,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Wrapper method to handle SSH keypairs creation before actually creating
         an instance
         """
-        return self.cloudProvider.create_instance(name, flavor, image_id)
+        keypair = self.cloudProvider.create_key_pair(name)
+        instance = self.cloudProvider.create_instance(name, flavor, image_id)
+        return instance, keypair
