@@ -357,9 +357,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # create an instance for this project
                     default_flavor = self.cloudSettings()['default_flavor']
                     default_image_id = self.cloudSettings()['default_image']
-                    instance = provider.create_instance(new_project_settings["project_name"],
-                                                        default_flavor,
-                                                        default_image_id)
+                    instance = self._create_instance(new_project_settings["project_name"],
+                                                     default_flavor,
+                                                     default_image_id)
 
                     topology = Topology.instance()
                     topology.addInstance(new_project_settings["project_name"], instance.id,
@@ -1196,7 +1196,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                         name = instance["name"]
                         flavor = instance["size_id"]
                         image = instance["image_id"]
-                        i = provider.create_instance(name, flavor, image)
+                        i = self._create_instance(name, flavor, image)
                         new_instances.append({
                             "name": i.name,
                             "id": i.id,
@@ -1473,3 +1473,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology.removeInstance(instance.id)
         # persist infos saving current project
         self._saveProject(self._project_settings["project_path"])
+
+    def _create_instance(self, name, flavor, image_id):
+        """
+        Wrapper method to handle SSH keypairs creation before actually creating
+        an instance
+        """
+        return self.cloudProvider.create_instance(name, flavor, image_id)
