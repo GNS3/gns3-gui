@@ -44,7 +44,8 @@ from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
-from .topology import Topology
+from .topology import Topology, TopologyInstance
+from .cloud.utils import get_provider
 
 log = logging.getLogger(__name__)
 
@@ -64,6 +65,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     # for application reboot
     reboot_signal = QtCore.Signal()
     exit_code_reboot = -123456789
+
+    # signal to tell a project was closed
+    project_about_to_close_signal = QtCore.pyqtSignal(str)
+    # signal to tell a new project was created
+    project_new_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, parent=None):
 
@@ -111,8 +117,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._recent_file_actions_separator.setVisible(False)
         self._updateRecentFileActions()
 
+        self._cloud_provider = None
+
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
+
+    @property
+    def cloudProvider(self):
+        if self._cloud_provider is None:
+            self._cloud_provider = get_provider(self.cloudSettings())
+        return self._cloud_provider
 
     def _loadSettings(self):
         """
@@ -275,6 +289,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
 
+        # project
+        self.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
+        self.project_new_signal.connect(self.project_created)
+
     def telnetConsoleCommand(self):
         """
         Returns the Telnet console command line.
@@ -311,6 +329,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_dialog = NewProjectDialog(self)
             project_dialog.show()
             create_new_project = project_dialog.exec_()
+
+            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+
             if create_new_project:
                 self.uiGraphicsView.reset()
                 new_project_settings = project_dialog.getNewProjectSettings()
@@ -327,10 +348,30 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # let all modules know about the new project files directory
                 self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
-                if self._saveProject(new_project_settings["project_path"]):
-                    self._project_settings.update(new_project_settings)
+                if new_project_settings["project_type"] == "cloud":
+                    provider = self.cloudProvider
+                    if provider is None:
+                        log.error("Unable to get a cloud provider")
+                        return
+
+                    # create an instance for this project
+                    default_flavor = self.cloudSettings()['default_flavor']
+                    default_image_id = self.cloudSettings()['default_image']
+                    instance = provider.create_instance(new_project_settings["project_name"],
+                                                        default_flavor,
+                                                        default_image_id)
+
+                    topology = Topology.instance()
+                    topology.addInstance(new_project_settings["project_name"], instance.id,
+                                         default_flavor, default_image_id)
+
+                self._project_settings.update(new_project_settings)
+                self._saveProject(new_project_settings["project_path"])
+
             else:
                 self._createTemporaryProject()
+
+            self.project_new_signal.emit(self._project_settings["project_path"])
 
     def _openProjectActionSlot(self):
         """
@@ -343,7 +384,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "All files (*.*);;GNS3 project files (*.gns3)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
-            self.loadProject(path)
+            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+            if self.loadProject(path):
+                self.project_new_signal.emit(path)
 
     def _openRecentFileSlot(self):
         """
@@ -357,7 +400,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
             if self.checkForUnsavedChanges():
-                self.loadProject(path)
+                self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+                if self.loadProject(path):
+                    self.project_new_signal.emit(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -870,6 +915,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self.checkForUnsavedChanges():
+            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
 
             # save the geometry and state of the main window.
             settings = QtCore.QSettings()
@@ -927,9 +973,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             dialog.exec_()
 
         self._newsActionSlot()
-
-        #TODO check if this is the right place
-        self.CloudInspectorView.load(self.cloudSettings())
 
         # connect to the local server
         servers = Servers.instance()
@@ -1137,12 +1180,40 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         try:
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             with open(path, "r") as f:
+                need_to_save = False
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
                 if not os.path.isdir(self._project_settings["project_files_dir"]):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+
+                # if we're opening a cloud project, fire up instances
+                if json_topology["resources_type"] == "cloud":
+                    self._project_settings["project_type"] = "cloud"
+                    provider = self.cloudProvider
+                    new_instances = []
+                    for instance in json_topology["topology"]["instances"]:
+                        name = instance["name"]
+                        flavor = instance["size_id"]
+                        image = instance["image_id"]
+                        i = provider.create_instance(name, flavor, image)
+                        new_instances.append({
+                            "name": i.name,
+                            "id": i.id,
+                            "size_id": flavor,
+                            "image_id": image,
+                        })
+                    # update topology with new image data
+                    json_topology["topology"]["instances"] = new_instances
+                    # we need to save the updates
+                    need_to_save = True
+                else:
+                    self._project_settings["project_type"] = "local"
+
                 topology.load(json_topology)
+
+                if need_to_save:
+                    self._saveProject(path)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1157,6 +1228,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project_settings["project_path"] = path
         self._setCurrentFile(path)
         self._labInstructionsActionSlot(silent=True)
+
+        return True
 
     def _deleteTemporaryProject(self):
         """
@@ -1314,3 +1387,89 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not hasattr(MainWindow, "_instance"):
             MainWindow._instance = MainWindow()
         return MainWindow._instance
+
+    def shutdown_cloud_instances(self, project):
+        """
+        This slot is invoked before a project is closed, when:
+         * a new project is created
+         * a project from the recent menu is opened
+         * a project is opened from file
+         * program exits
+
+        :param project: path to gns3 project file
+        """
+
+        if self._temporary_project:
+            # do nothing if previous project was temporary
+            return
+
+        with open(project) as f:
+            old_json_topology = json.load(f)
+
+            if old_json_topology["resources_type"] != 'cloud':
+                # do nothing in case of local projects
+                return
+
+            provider = self.cloudProvider
+            if provider is None:
+                log.error("Unable to get a cloud provider")
+                return
+
+            for instance in old_json_topology["topology"]["instances"]:
+                # shutdown the instance, we can pass to libcloud our namedtuple instead of a Node
+                # object because only instance.id is actually accessed
+                ti = TopologyInstance(**instance)
+                self.cloudProvider.delete_instance(ti)
+
+    def project_created(self, project):
+        """
+        This slot is invoked when a project is created or opened
+
+        :param project: path to gns3 project file currently opened
+        """
+        if self._temporary_project:
+            # do nothing if project is temporary
+            return
+
+        with open(project) as f:
+            json_topology = json.load(f)
+
+            self.CloudInspectorView.clear()
+
+            if json_topology["resources_type"] != 'cloud':
+                # do nothing in case of local projects
+                return
+
+            project_instances = json_topology["topology"]["instances"]
+            self.CloudInspectorView.load(self, project_instances)
+
+    def add_instance_to_project(self, instance):
+        """
+        Add an instance to the current project
+
+        :param instance: libcloud Node object
+        """
+        if instance is None:
+            log.error("Failed creating a new instance for current project")
+            return
+
+        default_image_id = self.cloudSettings()['default_image']
+
+        topology = Topology.instance()
+        topology.addInstance(instance.name, instance.id, instance.extra['flavorId'],
+                             default_image_id)
+        self.CloudInspectorView.addInstance(instance)
+
+        # persist infos saving current project
+        self._saveProject(self._project_settings["project_path"])
+
+    def remove_instance_from_project(self, instance):
+        """
+        Remove an instance from the current project
+
+        :param instance: libcloud Node object
+        """
+        topology = Topology.instance()
+        topology.removeInstance(instance.id)
+        # persist infos saving current project
+        self._saveProject(self._project_settings["project_path"])

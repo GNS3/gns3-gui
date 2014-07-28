@@ -35,7 +35,7 @@ log = logging.getLogger(__name__)
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
 
-GNS3IAS_URL = 'http://localhost:8888'  # TODO find a place for this value
+GNS3IAS_URL = 'http://ias.gns3.net:8888'  # TODO find a place for this value
 
 
 class RackspaceCtrl(BaseCloudCtrl):
@@ -267,3 +267,9 @@ class RackspaceCtrl(BaseCloudCtrl):
         except ApiError as e:
             log.error('Error while retrieving image list: %s' % e)
             return {}
+
+    def get_image(self, image_id):
+        for i in self.driver.list_images(self.region):
+            if i.id == image_id:
+                return i
+        return None
