@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/dynamips/ui/ethernet_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ethernet_switch_configuration_page.ui'
 #
-# Created: Sun Mar 16 11:16:57 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Thu Jul 17 16:13:17 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -72,7 +72,7 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPortSpinBox.sizePolicy().hasHeightForWidth())
         self.uiPortSpinBox.setSizePolicy(sizePolicy)
-        self.uiPortSpinBox.setMinimum(0)
+        self.uiPortSpinBox.setMinimum(1)
         self.uiPortSpinBox.setMaximum(65535)
         self.uiPortSpinBox.setProperty("value", 1)
         self.uiPortSpinBox.setObjectName(_fromUtf8("uiPortSpinBox"))
@@ -86,7 +86,7 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiVlanSpinBox.sizePolicy().hasHeightForWidth())
         self.uiVlanSpinBox.setSizePolicy(sizePolicy)
-        self.uiVlanSpinBox.setMinimum(0)
+        self.uiVlanSpinBox.setMinimum(1)
         self.uiVlanSpinBox.setMaximum(65535)
         self.uiVlanSpinBox.setProperty("value", 1)
         self.uiVlanSpinBox.setObjectName(_fromUtf8("uiVlanSpinBox"))

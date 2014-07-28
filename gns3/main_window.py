@@ -33,7 +33,6 @@ from .servers import Servers
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .dialogs.about_dialog import AboutDialog
-from .dialogs.early_release_dialog import EarlyReleaseDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
@@ -964,14 +963,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._createTemporaryProject()
-
-        config_filename = QtCore.QSettings().fileName()
-        if not os.access(config_filename, os.F_OK):
-            # no config file detected, first time we start this application
-            dialog = EarlyReleaseDialog(self)
-            dialog.show()
-            dialog.exec_()
-
         self._newsActionSlot()
 
         # connect to the local server

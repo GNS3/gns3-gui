@@ -449,6 +449,7 @@ class Dynamips(Module):
 
         for node in self._nodes:
             node.reset()
+        self._nodes.clear()
 
     def notification(self, destination, params):
         """

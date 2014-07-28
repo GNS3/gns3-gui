@@ -276,6 +276,7 @@ class VPCS(Module):
             if server.connected():
                 server.send_notification("vpcs.reset")
         self._servers.clear()
+        self._nodes.clear()
 
     def notification(self, destination, params):
         """

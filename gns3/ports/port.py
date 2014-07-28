@@ -464,10 +464,11 @@ class Port(object):
             self._capture_reader_process = None
 
         command = self._settings["packet_capture_reader_command"]
-        command = command.replace("%c", self._capture_file_path)
+        command = command.replace("%c", '"' + self._capture_file_path + '"')
 
         if "|" in command:
             # live traffic capture (using tail)
+            env = None
             command1, command2 = command.split("|", 1)
             info = None
             if sys.platform.startswith("win"):
@@ -475,12 +476,17 @@ class Port(object):
                 info = subprocess.STARTUPINFO()
                 info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                 info.wShowWindow = subprocess.SW_HIDE
+                if hasattr(sys, "frozen"):
+                    env = {"PATH": os.path.dirname(os.path.abspath(sys.executable))}  # for Popen to find tail.exe
+                command1 = command1.strip()
+                command2 = command2.strip()
             else:
                 command1 = shlex.split(command1)
                 command2 = shlex.split(command2)
 
-            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
-            self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout)
+            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE, env=env)
+            self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout, stdout=subprocess.PIPE)
+            self._tail_process.stdout.close()
         else:
             # normal traffic capture
             if not sys.platform.startswith("win"):

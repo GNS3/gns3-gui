@@ -47,18 +47,33 @@ class VirtualBoxVM(Node):
         self._module = module
         self._ports = []
         self._settings = {"name": "",
-                          "console": None}
+                          "vmname": "",
+                          "console": None,
+                          "adapters": 2,
+                          "adapter_type": "Automatic",
+                          "headless": False}
 
-        port_name = EthernetPort.longNameType() + str(0)
-        port = EthernetPort(port_name)
-        port.setPortNumber(0)
-        self._ports.append(port)
-        log.debug("port {} has been added".format(port_name))
+        self._addAdapters(2)
 
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def setup(self, name=None, console=None, vbox_id=None, initial_settings={}):
+    def _addAdapters(self, adapters):
+        """
+        Adds adapters.
+
+        :param adapters: number of adapters
+        """
+
+        for port_number in range(0, adapters):
+            port_name = EthernetPort.longNameType() + str(port_number)
+            new_port = EthernetPort(port_name)
+            new_port.setPortNumber(port_number)
+            new_port.setPacketCaptureSupported(True)
+            self._ports.append(new_port)
+            log.debug("port {} has been added".format(port_name))
+
+    def setup(self, vmname, name=None, console=None, vbox_id=None, initial_settings={}):
         """
         Setups this VirtualBox VM.
 
@@ -67,13 +82,16 @@ class VirtualBoxVM(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName("VBOX")
+            name = vmname
+            self.setName(name)
+            #name = self.allocateName("VBOX")
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this VirtualBox VM")
             return
 
-        params = {"name": name}
+        params = {"name": name,
+                  "vmname": vmname}
         if console:
             params["console"] = self._settings["console"] = console
 
@@ -183,6 +201,7 @@ class VirtualBoxVM(Node):
             return
 
         updated = False
+        nb_adapters_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
@@ -190,7 +209,15 @@ class VirtualBoxVM(Node):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
+                if name == "adapters":
+                    nb_adapters_changed = True
                 self._settings[name] = value
+
+        if nb_adapters_changed:
+            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+            #TODO: dynamically add/remove adapters
+            self._ports.clear()
+            self._addAdapters(self._settings["adapters"])
 
         if self._inital_settings and not self._loading:
             self.setInitialized(True)
@@ -263,6 +290,37 @@ class VirtualBoxVM(Node):
                 # set ports as stopped
                 port.setStatus(Port.stopped)
             self.stopped_signal.emit()
+
+    def suspend(self):
+        """
+        Suspends this VirtualBox VM instance.
+        """
+
+        if self.status() == Node.suspended:
+            log.debug("{} is already suspended".format(self.name()))
+            return
+
+        log.debug("{} is being suspended".format(self.name()))
+        self._server.send_message("virtualbox.suspend", {"id": self._vbox_id}, self._suspendCallback)
+
+    def _suspendCallback(self, result, error=False):
+        """
+        Callback for suspend.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+            log.info("{} has suspended".format(self.name()))
+            self.setStatus(Node.suspended)
+            for port in self._ports:
+                # set ports as suspended
+                port.setStatus(Port.suspended)
+            self.suspended_signal.emit()
 
     def reload(self):
         """
@@ -372,6 +430,78 @@ class VirtualBoxVM(Node):
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
 
+    def startPacketCapture(self, port, capture_file_name, data_link_type):
+        """
+        Starts a packet capture.
+
+        :param port: Port instance
+        :param capture_file_name: PCAP capture file path
+        :param data_link_type: PCAP data link type (unused)
+        """
+
+        params = {"id": self._vbox_id,
+                  "port_id": port.id(),
+                  "port": port.portNumber(),
+                  "capture_file_name": capture_file_name}
+
+        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
+        self._server.send_message("virtualbox.start_capture", params, self._startPacketCaptureCallback)
+
+    def _startPacketCaptureCallback(self, result, error=False):
+        """
+        Callback for starting a packet capture.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+            for port in self._ports:
+                if port.id() == result["port_id"]:
+                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
+                    try:
+                        port.startPacketCapture(result["capture_file_path"])
+                    except OSError as e:
+                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}".format(e))
+                    self.updated_signal.emit()
+                    break
+
+    def stopPacketCapture(self, port):
+        """
+        Stops a packet capture.
+
+        :param port: Port instance
+        """
+
+        params = {"id": self._vbox_id,
+                  "port_id": port.id(),
+                  "port": port.portNumber()}
+
+        log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
+        self._server.send_message("virtualbox.stop_capture", params, self._stopPacketCaptureCallback)
+
+    def _stopPacketCaptureCallback(self, result, error=False):
+        """
+        Callback for stopping a packet capture.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+            for port in self._ports:
+                if port.id() == result["port_id"]:
+                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
+                    port.stopPacketCapture()
+                    self.updated_signal.emit()
+                    break
+
     def info(self):
         """
         Returns information about this VirtualBox VM instance.
@@ -443,13 +573,14 @@ class VirtualBoxVM(Node):
         vbox_id = node_info.get("vbox_id")
         settings = node_info["properties"]
         name = settings.pop("name")
+        vmname = settings.pop("vmname")
         console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VirtualBox VM {} is loading".format(name))
         self.setName(name)
-        self.setup(name, console, vbox_id, settings)
+        self.setup(vmname, name, console, vbox_id, settings)
 
     def _updatePortSettings(self):
         """
@@ -517,8 +648,8 @@ class VirtualBoxVM(Node):
         :returns: QWidget object
         """
 
-        from .pages.virtualbox_device_configuration_page import VirtualBoxDeviceConfigurationPage
-        return VirtualBoxDeviceConfigurationPage
+        from .pages.virtualbox_vm_configuration_page import virtualBoxVMConfigurationPage
+        return virtualBoxVMConfigurationPage
 
     @staticmethod
     def defaultSymbol():

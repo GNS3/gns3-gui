@@ -131,23 +131,23 @@ elif sys.platform.startswith("darwin"):
     DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Terminal + socat"]
 
 else:
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\' > /dev/null 2>&1 &',
-                                             'Konsole + socat': 'konsole --new-tab -p tabtitle=%d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\' >/dev/null 2>&1 &'}
+    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
+                                             'Gnome Terminal + socat': 'gnome-terminal -t %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
+                                             'Konsole + socat': 'konsole --new-tab -p tabtitle=%d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\''}
 
     # default serial console command on other systems
     DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Xterm + socat"]
+
+    if sys.platform.startswith("linux"):
+        distro = platform.linux_distribution()[0]
+        if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
+            DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Gnome Terminal + socat"]
 
 # Pre-configured packet capture reader commands on various OSes
 WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
-    # Windows 64-bit
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files (x86)\Wireshark\wireshark.exe %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files (x86)\Wireshark\wireshark.exe" -k -i -'}
-
-elif sys.platform.startswith("win"):
-    # Windows 32-bit
+if sys.platform.startswith("win"):
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files\Wireshark\wireshark.exe %c",
                                                     WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files\Wireshark\wireshark.exe" -k -i -'}
 
