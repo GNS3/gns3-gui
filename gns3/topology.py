@@ -224,6 +224,18 @@ class Topology(object):
                 self._instances.remove(instance)
                 break
 
+    def getInstance(self, id):
+        """
+        Return the instance if present
+
+        :param id: the instance id
+        :return: a TopologyInstance object
+        """
+
+        for instance in self._instances:
+            if instance.id == id:
+                return instance
+
     def nodes(self):
         """
         Returns all the nodes in this topology.
