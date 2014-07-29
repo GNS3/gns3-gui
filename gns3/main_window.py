@@ -46,6 +46,7 @@ from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .topology import Topology, TopologyInstance
 from .cloud.utils import get_provider
+from .cloud.exceptions import KeyPairExists
 
 log = logging.getLogger(__name__)
 
@@ -1423,10 +1424,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # object because only instance.id is actually accessed
                 ti = TopologyInstance(**instance)
                 self.cloudProvider.delete_instance(ti)
-                # delete keypairs, we can pass to libcloud our namedtuble instead of a KeyPair
-                # object because only ti.name will be accessed and keypairs have the same name as
-                # instances
-                self.cloudProvider.delete_key_pair(ti)
+                # delete keypairs
+                self.cloudProvider.delete_key_pair_by_name(instance["name"])
 
     def project_created(self, project):
         """
@@ -1486,6 +1485,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Wrapper method to handle SSH keypairs creation before actually creating
         an instance
         """
-        keypair = self.cloudProvider.create_key_pair(name)
-        instance = self.cloudProvider.create_instance(name, flavor, image_id)
+        try:
+            keypair = self.cloudProvider.create_key_pair(name)
+        except KeyPairExists:
+            # delete keypairs if already exist
+            self.cloudProvider.delete_key_pair_by_name(name)
+            keypair = self.cloudProvider.create_key_pair(name)
+
+        instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
         return instance, keypair
