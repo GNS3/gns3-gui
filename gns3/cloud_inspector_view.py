@@ -12,12 +12,11 @@ from PyQt4.Qt import Qt
 
 from .cloud.utils import (ListInstancesThread, CreateInstanceThread, DeleteInstanceThread,
                           SSHClientThread)
+from .cloud.base_cloud_ctrl import InstanceState
+from .topology import Topology
 
-from gns3.topology import Topology
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
-
-from libcloud.compute.types import NodeState
 
 POLLING_TIMER = 5000  # in milliseconds
 
@@ -47,9 +46,9 @@ class InstanceTableModel(QAbstractTableModel):
         """
         Return a string pointing to the graphic resource
         """
-        if state == NodeState.RUNNING:
+        if state in (InstanceState.RUNNING, InstanceState.FULLY_OPERATIONAL):
             return ':/icons/led_green.svg'
-        elif state in (NodeState.REBOOTING, NodeState.PENDING, NodeState.UNKNOWN):
+        elif state in (InstanceState.REBOOTING, InstanceState.PENDING, InstanceState.UNKNOWN):
             return ':/icons/led_yellow.svg'
         else:
             return ':/icons/led_red.svg'
@@ -286,7 +285,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # ssh into the instance to start gns3-server
         topology = Topology.instance()
         for i in project_instances:
-            if i.state != NodeState.RUNNING:
+            if i.state != InstanceState.RUNNING:
                 continue
 
             topology_instance = topology.getInstance(i.id)
