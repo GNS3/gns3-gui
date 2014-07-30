@@ -87,18 +87,16 @@ class VirtualBox(Module):
         for index in range(0, size):
             settings.setArrayIndex(index)
 
-            name = settings.value("name", "")
+            vmname = settings.value("vmname", "")
             adapters = settings.value("adapters", 1, type=int)
-            console_support = settings.value("console_support", True, type=bool)
-            console_server = settings.value("console_server", False, type=bool)
+            adapter_type = settings.value("adapter_type", "Automatic")
             headless = settings.value("headless", False, type=bool)
             server = settings.value("server", "local")
 
-            key = "{server}:{name}".format(server=server, name=name)
-            self._virtualbox_vms[key] = {"name": name,
+            key = "{server}:{vmname}".format(server=server, vmname=vmname)
+            self._virtualbox_vms[key] = {"vmname": vmname,
                                          "adapters": adapters,
-                                         "console_support": console_support,
-                                         "console_server": console_server,
+                                         "adapter_type": adapter_type,
                                          "headless": headless,
                                          "server": server}
 
@@ -328,10 +326,40 @@ class VirtualBox(Module):
         :param node: Node instance
         """
 
-        log.info("configuring node {}".format(node))
-        settings = {}
+        log.info("configuring node {} with id {}".format(node, node.id()))
 
-        node.setup(None, initial_settings=settings)
+        selected_vms = []
+        for vm, info in self._virtualbox_vms.items():
+            if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                selected_vms.append(vm)
+
+        if not selected_vms:
+            raise ModuleError("No VirtualBox VM this node and server {}".format(node.server().host))
+        elif len(selected_vms) > 1:
+
+            from gns3.main_window import MainWindow
+            mainwindow = MainWindow.instance()
+
+            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
+            if ok:
+                vm = selection
+            else:
+                raise ModuleError("Please select a VirtualBox VM")
+
+        else:
+            vm = selected_vms[0]
+
+        for other_node in self._nodes:
+            if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
+                    (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
+                raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
+
+        settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
+                    "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
+                    "headless": self._virtualbox_vms[vm]["headless"]}
+
+        vmname = self._virtualbox_vms[vm]["vmname"]
+        node.setup(vmname, initial_settings=settings)
 
     def reset(self):
         """
@@ -343,6 +371,7 @@ class VirtualBox(Module):
             if server.connected():
                 server.send_notification("virtualbox.reset")
         self._servers.clear()
+        self._nodes.clear()
 
     def notification(self, destination, params):
         """
@@ -358,6 +387,24 @@ class VirtualBox(Module):
                     message = "node {}: {}".format(node.name(), params["message"])
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
+
+    def get_vm_list(self, server, callback):
+        """
+        Gets the VirtualBox VM list from a server.
+
+        :param server: server to send the request to
+        :param callback: callback for the server response
+        """
+        if not server.connected():
+            try:
+                log.info("reconnecting to server {}:{}".format(server.host, server.port))
+                server.reconnect()
+            except OSError as e:
+                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
+                                                                                 server.port,
+                                                                                 e))
+
+        server.send_message("virtualbox.vm_list", None, callback)
 
     @staticmethod
     def getNodeClass(name):
