@@ -114,3 +114,19 @@ class DeleteInstanceThread(QThread):
     def run(self):
         if self._provider.delete_instance(self._instance):
             self.instanceDeleted.emit(self._instance)
+
+
+class SSHClientThread(QThread):
+    """
+
+    """
+    def __init__(self, parent, host, private_key_string):
+        super(QThread, self).__init__(parent)
+        self._host = host
+        self._private_key_string = private_key_string
+
+    def run(self):
+        with ssh_client(self._host, self._private_key_string) as client:
+            if client is not None:
+                stdin, stdout, stderr = client.exec_command("ls /var")
+                log.info("ssh response: {}".format(stdout.read()))
