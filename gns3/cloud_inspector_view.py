@@ -4,16 +4,16 @@ from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QInputDialog
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QAbstractTableModel
 from PyQt4.QtCore import QModelIndex
 from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import Qt
 
-from .cloud.rackspace_ctrl import RackspaceCtrl
-from .cloud.utils import ListInstancesThread, CreateInstanceThread, DeleteInstanceThread
+from .cloud.utils import (ListInstancesThread, CreateInstanceThread, DeleteInstanceThread,
+                          SSHClientThread)
 
+from gns3.topology import Topology
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
@@ -282,6 +282,19 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         for i in current.difference(real):
             self._model.removeInstanceById(i)
         self.uiInstancesTableView.resizeColumnsToContents()
+
+        # ssh into the instance to start gns3-server
+        topology = Topology.instance()
+        for i in project_instances:
+            if i.state != NodeState.RUNNING:
+                continue
+
+            topology_instance = topology.getInstance(i.id)
+            if topology_instance is None:
+                continue
+
+            ssh_thread = SSHClientThread(self, i.public_ips[1], topology_instance.private_key)
+            ssh_thread.start()
 
     def _populate_model(self, instances):
         self._model.flavors = self._provider.list_flavors()
