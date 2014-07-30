@@ -3,8 +3,34 @@ from PyQt4.QtCore import pyqtSignal
 
 from .rackspace_ctrl import RackspaceCtrl
 
+import paramiko
+
+from contextlib import contextmanager
+import io
+from socket import error as socket_error
 import logging
 log = logging.getLogger(__name__)
+
+
+@contextmanager
+def ssh_client(host, key_string):
+    """
+
+
+    :return:
+    """
+    client = paramiko.SSHClient()
+    try:
+        f_key = io.StringIO(key_string)
+        key = paramiko.RSAKey.from_private_key(f_key)
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname=host, username="root", pkey=key)
+        yield client
+    except socket_error as e:
+        log.error("SSH connection error: {}".format(e))
+        yield None
+    finally:
+        client.close()
 
 
 def get_provider(cloud_settings):
