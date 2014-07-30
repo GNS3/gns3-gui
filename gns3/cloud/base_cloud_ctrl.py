@@ -122,6 +122,7 @@ class BaseCloudCtrl(object):
             if keypair is not None:
                 auth_key = NodeAuthSSHKey(keypair.public_key)
                 args["auth"] = auth_key
+                args["ex_keyname"] = name
 
             return self.driver.create_node(**args)
 
