@@ -127,7 +127,7 @@ class MockLibCloudDriver(object):
     def __init__(self, username, api_key, region):
         pass
 
-    def create_node(self, name, size, image, auth):
+    def create_node(self, name, size, image, auth, *args, **kwargs):
 
         if name == 'bad_request':
             raise Exception("400 Bad request")
