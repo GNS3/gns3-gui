@@ -22,6 +22,8 @@ Base class for interacting with Cloud APIs to create and manage cloud
 instances.
 
 """
+import logging
+log = logging.getLogger(__name__)
 
 from libcloud.compute.base import NodeAuthSSHKey
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
@@ -94,23 +96,31 @@ class BaseCloudCtrl(object):
 
         raise NotImplementedError
 
-    def create_instance(self, name, size, image, keypair):
+    def create_instance(self, name, size_id, image_id, keypair=None):
         """
         Create a new instance with the supplied attributes.
 
         Return a Node object.
 
         """
-
-        auth_key = NodeAuthSSHKey(keypair.public_key)
-
         try:
-            return self.driver.create_node(
-                name=name,
-                size=size,
-                image=image,
-                auth=auth_key
-            )
+            image = self.get_image(image_id)
+            if image is None:
+                raise ItemNotFound("Image not found")
+
+            size = self.driver.ex_get_size(size_id)
+
+            args = {
+                "name": name,
+                "size": size,
+                "image": image,
+            }
+
+            if keypair is not None:
+                auth_key = NodeAuthSSHKey(keypair.public_key)
+                args["auth"] = auth_key
+
+            return self.driver.create_node(**args)
 
         except Exception as e:
             status, error_text = parse_exception(e)
@@ -118,7 +128,7 @@ class BaseCloudCtrl(object):
             if status:
                 self._handle_exception(status, error_text)
             else:
-                raise e
+                log.error("create_instance method raised an exception: {}".format(e))
 
     def delete_instance(self, instance):
         """ Delete the specified instance.  Returns True or False. """
@@ -147,7 +157,11 @@ class BaseCloudCtrl(object):
     def list_instances(self):
         """ Return a list of instances in the current region. """
 
-        return self.driver.list_nodes()
+        try:
+            return self.driver.list_nodes()
+        except Exception as e:
+            log.error("list_instances returned an error: {}".format(e))
+
 
     def create_key_pair(self, name):
         """ Create and return a new Key Pair. """
