@@ -323,6 +323,7 @@ class Node(QtCore.QObject):
             nio_info["remote_file"] = nio.remoteFile()
 
             log.debug("creating {} for {} with local file '{}' and remote file '{}'".format(nio,
+                                                                                            self.name(),
                                                                                             nio.localFile(),
                                                                                             nio.remoteFile()))
             return nio_info
@@ -334,6 +335,7 @@ class Node(QtCore.QObject):
             nio_info["local_file"] = nio.localFile()
 
             log.debug("creating {} for {} with control file '{}' and local file '{}'".format(nio,
+                                                                                             self.name(),
                                                                                              nio.controlFile(),
                                                                                              nio.localFile()))
             return nio_info
