@@ -42,7 +42,7 @@ class TestRackspaceCtrl(unittest.TestCase):
         # prefix to identify created objects
         self.object_prefix = "int_test_"
         self.prefix_length = len(self.object_prefix)
-        self.ctrl = RackspaceCtrl(self.username, self.api_key)
+        self.ctrl = RackspaceCtrl(self.username, self.api_key, 'http://foo.bar:8888')
         self.ctrl.authenticate()
         self.ctrl.set_region('ord')
         self.gns3_image = None
@@ -70,7 +70,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_valid_user(self):
         """ Test authentication with a valid user and api key. """
 
-        ctrl = RackspaceCtrl(self.username, self.api_key)
+        ctrl = RackspaceCtrl(self.username, self.api_key, 'http://foo.bar:8888')
 
         auth_result = ctrl.authenticate()
         self.assertEqual(auth_result, True)
@@ -79,7 +79,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_empty_user(self):
         """ Ensure authentication with empty string as username fails. """
 
-        ctrl = RackspaceCtrl('', self.api_key)
+        ctrl = RackspaceCtrl('', self.api_key, 'http://foo.bar:8888')
 
         auth_result = ctrl.authenticate()
         self.assertEqual(auth_result, False)
@@ -88,7 +88,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_empty_apikey(self):
         """ Ensure authentication with empty string as api_key fails. """
 
-        ctrl = RackspaceCtrl(self.username, '')
+        ctrl = RackspaceCtrl(self.username, '', 'http://foo.bar:8888')
 
         auth_result = ctrl.authenticate()
         self.assertEqual(auth_result, False)
@@ -97,7 +97,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_invalid_user(self):
         """  Ensure authentication with invalid user credentials fails. """
 
-        ctrl = RackspaceCtrl('invalid_user', 'invalid_api_key')
+        ctrl = RackspaceCtrl('invalid_user', 'invalid_api_key', 'http://foo.bar:8888')
 
         auth_result = ctrl.authenticate()
         self.assertEqual(auth_result, False)
@@ -106,7 +106,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_set_region(self):
         """ Ensure that set_region sets 'region' and 'driver'. """
 
-        ctrl = RackspaceCtrl(self.username, self.api_key)
+        ctrl = RackspaceCtrl(self.username, self.api_key, 'http://foo.bar:8888')
         ctrl.authenticate()
 
         result = ctrl.set_region('iad')
@@ -118,7 +118,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_set_invalid_region(self):
         """ Ensure that calling 'set_region' with an invalid param fails. """
 
-        ctrl = RackspaceCtrl(self.username, self.api_key)
+        ctrl = RackspaceCtrl(self.username, self.api_key, 'http://foo.bar:8888')
         ctrl.authenticate()
 
         result = self.ctrl.set_region('invalid')

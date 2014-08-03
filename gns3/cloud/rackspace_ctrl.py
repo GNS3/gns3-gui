@@ -35,15 +35,15 @@ log = logging.getLogger(__name__)
 RACKSPACE_REGIONS = [{ENDPOINT_ARGS_MAP[k]['region']: k} for k in
                      ENDPOINT_ARGS_MAP]
 
-GNS3IAS_URL = 'http://ias.gns3.net:8888'  # TODO find a place for this value
-
 
 class RackspaceCtrl(BaseCloudCtrl):
 
     """ Controller class for interacting with Rackspace API. """
 
-    def __init__(self, username, api_key):
+    def __init__(self, username, api_key, gns3_ias_url):
         super(RackspaceCtrl, self).__init__(username, api_key)
+
+        self.gns3_ias_url = gns3_ias_url
 
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post
@@ -228,7 +228,7 @@ class RackspaceCtrl(BaseCloudCtrl):
             or, if access was already asked
             [{"image_id": "", "member_id": "", "status": "ALREADYREQUESTED"},]
         """
-        endpoint = GNS3IAS_URL+"/images/grant_access"
+        endpoint = self.gns3_ias_url+"/images/grant_access"
         params = {
             "user_id": username,
             "user_region": region.upper(),
