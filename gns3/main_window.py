@@ -1476,6 +1476,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Wrapper method to handle SSH keypairs creation before actually creating
         an instance
         """
+        # add -gns3 suffix to image names to minimize clashes on Rackspace accounts
+        name += "-gns3"
+
         try:
             keypair = self.cloudProvider.create_key_pair(name)
         except KeyPairExists:
