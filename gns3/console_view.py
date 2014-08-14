@@ -123,9 +123,9 @@ class ConsoleView(PyCutExt, ConsoleCmd):
                 self.line = newLine
                 self.point = len(newLine)
             # Else, display possible values
-            else:
+            elif self.completion_matches:
                 self.write("\n")
-                self.columnize(self.completion_matches)
+                print(" ".join(self.completion_matches))
 
         # In any case, reprint prompt + line
         self.write("\n" + sys.ps1 + str(self.line))
