@@ -58,7 +58,7 @@ setup(
     package_data={"gns3": ["configs/*.txt"]},
     platforms="any",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: X11 Applications :: Qt",
         "Intended Audience :: Information Technology",
         "Topic :: System :: Networking",

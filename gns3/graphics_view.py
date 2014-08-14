@@ -780,10 +780,11 @@ class GraphicsView(QtGui.QGraphicsView):
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
-        delete_action = QtGui.QAction("Delete", menu)
-        delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
-        delete_action.triggered.connect(self.deleteActionSlot)
-        menu.addAction(delete_action)
+        if True in list(map(lambda item: item.parentItem() is None, items)):
+            delete_action = QtGui.QAction("Delete", menu)
+            delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
+            delete_action.triggered.connect(self.deleteActionSlot)
+            menu.addAction(delete_action)
 
     def startActionSlot(self):
         """
