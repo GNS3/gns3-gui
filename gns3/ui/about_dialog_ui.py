@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/about_dialog.ui'
 #
-# Created: Sun Aug 17 18:05:14 2014
+# Created: Mon Aug 18 11:44:59 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName(_fromUtf8("AboutDialog"))
         AboutDialog.setWindowModality(QtCore.Qt.WindowModal)
-        AboutDialog.resize(422, 343)
+        AboutDialog.resize(378, 234)
         self.gridLayout_2 = QtGui.QGridLayout(AboutDialog)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.tabWidget = QtGui.QTabWidget(AboutDialog)
@@ -55,10 +55,11 @@ class Ui_AboutDialog(object):
         self.tab_4.setObjectName(_fromUtf8("tab_4"))
         self.verticalLayout = QtGui.QVBoxLayout(self.tab_4)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.uiTeamPlainTextEdit = QtGui.QPlainTextEdit(self.tab_4)
-        self.uiTeamPlainTextEdit.setReadOnly(True)
-        self.uiTeamPlainTextEdit.setObjectName(_fromUtf8("uiTeamPlainTextEdit"))
-        self.verticalLayout.addWidget(self.uiTeamPlainTextEdit)
+        self.uiTeamTextEdit = QtGui.QTextEdit(self.tab_4)
+        self.uiTeamTextEdit.setReadOnly(True)
+        self.uiTeamTextEdit.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+        self.uiTeamTextEdit.setObjectName(_fromUtf8("uiTeamTextEdit"))
+        self.verticalLayout.addWidget(self.uiTeamTextEdit)
         self.tabWidget.addTab(self.tab_4, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
@@ -103,8 +104,25 @@ class Ui_AboutDialog(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans Serif\'; font-size:10pt; font-weight:600;\">Under GPL v3 license</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans Serif\'; font-size:9pt; font-weight:600;\"><br /></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("AboutDialog", "&About", None))
-        self.uiTeamPlainTextEdit.setPlainText(_translate("AboutDialog", "\n"
-"", None))
+        self.uiTeamTextEdit.setHtml(_translate("AboutDialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Developers</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Jeremy Grossmann</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Contributors</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">James E. Carpenter (IOU support)</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Daniel Lintott (NET file import)</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Marc Weisel (Mac OS X packaging)</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Alexey Eromenko (VirtualBox support)</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Contractors</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://github.com/planctechnologies\"><span style=\" text-decoration: underline; color:#0000ff;\">Plan C Technologies</span></a></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;\"><br /></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("AboutDialog", "&Team", None))
         self.uiThanksPlainTextEdit.setPlainText(_translate("AboutDialog", "James Borden\n"
 "Tenzin Rigdol Oshoe\n"
