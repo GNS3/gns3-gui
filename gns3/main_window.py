@@ -118,6 +118,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._cloud_provider = None
 
+        # set the window icon
+        self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
+
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
 
@@ -1017,7 +1020,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                          "Connecting to server {} on port {}...".format(server.host, server.port),
                                                          "Cancel", busy=True, parent=self)
                         progress_dialog.show()
-                        if progress_dialog.exec_() == False:
+                        if progress_dialog.exec_() is False:
                             return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))

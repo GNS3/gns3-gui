@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/style_editor_dialog.ui'
 #
-# Created: Fri Jun 20 03:57:42 2014
+# Created: Sun Aug 17 18:05:14 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,6 @@ class Ui_StyleEditorDialog(object):
     def setupUi(self, StyleEditorDialog):
         StyleEditorDialog.setObjectName(_fromUtf8("StyleEditorDialog"))
         StyleEditorDialog.resize(328, 252)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        StyleEditorDialog.setWindowIcon(icon)
         StyleEditorDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(StyleEditorDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))

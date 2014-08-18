@@ -16,10 +16,6 @@
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../../resources/resources.qrc">
-    <normaloff>:/images/logo_icon.png</normaloff>:/images/logo_icon.png</iconset>
-  </property>
   <property name="styleSheet">
    <string notr="true">#toolBar_Devices QToolButton {
 width: 50px;
