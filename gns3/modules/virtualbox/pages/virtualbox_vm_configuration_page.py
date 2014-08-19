@@ -73,7 +73,14 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         """
 
         if not group:
-            self.uiNameLineEdit.setText(settings["name"])
+
+            # set the device name
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtGui.QMessageBox.critical(self, "Name", "VirtualBox name cannot be empty!")
+            else:
+                settings["name"] = name
+
             self.uiConsolePortSpinBox.setValue(settings["console"])
 
             # load the available IOU images

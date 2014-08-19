@@ -94,7 +94,14 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
         # these settings cannot be shared by nodes and updated
         # in the node configurator.
         if not group:
-            settings["name"] = self.uiNameLineEdit.text()
+
+            # set the device name
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtGui.QMessageBox.critical(self, "Name", "VPCS device name cannot be empty!")
+            else:
+                settings["name"] = name
+
             settings["console"] = self.uiConsolePortSpinBox.value()
 
             script_file = self.uiScriptFileLineEdit.text()
