@@ -676,13 +676,13 @@ background-none;
   </action>
   <action name="uiZoomResetAction">
    <property name="text">
-    <string>Zoom 1:1</string>
+    <string>Zoom reset</string>
    </property>
    <property name="statusTip">
-    <string>Zoom Reset (1:1)</string>
+    <string>Zoom reset</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+/</string>
+    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="uiSelectAllAction">

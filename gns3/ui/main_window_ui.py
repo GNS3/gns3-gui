@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Sun Aug 17 18:05:14 2014
+# Created: Tue Aug 19 12:06:08 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -559,9 +559,9 @@ class Ui_MainWindow(object):
         self.uiZoomOutAction.setToolTip(_translate("MainWindow", "Zoom out", None))
         self.uiZoomOutAction.setStatusTip(_translate("MainWindow", "Zoom out", None))
         self.uiZoomOutAction.setShortcut(_translate("MainWindow", "Ctrl+-", None))
-        self.uiZoomResetAction.setText(_translate("MainWindow", "Zoom 1:1", None))
-        self.uiZoomResetAction.setStatusTip(_translate("MainWindow", "Zoom Reset (1:1)", None))
-        self.uiZoomResetAction.setShortcut(_translate("MainWindow", "Ctrl+/", None))
+        self.uiZoomResetAction.setText(_translate("MainWindow", "Zoom reset", None))
+        self.uiZoomResetAction.setStatusTip(_translate("MainWindow", "Zoom reset", None))
+        self.uiZoomResetAction.setShortcut(_translate("MainWindow", "Ctrl+0", None))
         self.uiSelectAllAction.setText(_translate("MainWindow", "Select &all", None))
         self.uiSelectAllAction.setStatusTip(_translate("MainWindow", "Select All", None))
         self.uiSelectAllAction.setShortcut(_translate("MainWindow", "Ctrl+A", None))

@@ -525,18 +525,18 @@ class GraphicsView(QtGui.QGraphicsView):
                 item.setSelected(True)
             QtGui.QGraphicsView.mouseReleaseEvent(self, event)
 
-#     def wheelEvent(self, event):
-#         """
-#         Zoom or scroll using the mouse wheel
-#         """
-# 
-#         if globals.GApp.workspace.action_DisableMouseWheel.isChecked() == False and \
-#         (globals.GApp.workspace.action_ZoomUsingMouseWheel.isChecked() or event.modifiers() == QtCore.Qt.ControlModifier) and \
-#         event.orientation() == QtCore.Qt.Vertical:
-#             self.scaleView(pow(2.0, event.delta() / 240.0))
-# 
-#         elif globals.GApp.workspace.action_DisableMouseWheel.isChecked() == False:
-#             QtGui.QGraphicsView.wheelEvent(self, event)
+    def wheelEvent(self, event):
+        """
+        Handles zoom in or out using the mouse wheel.
+
+        :param: QWheelEvent instance
+        """
+
+        if event.modifiers() == QtCore.Qt.ControlModifier and event.orientation() == QtCore.Qt.Vertical:
+            # CTRL is pressed then use the mouse wheel to zoom in or out.
+            self.scaleView(pow(2.0, event.delta() / 240.0))
+        else:
+            QtGui.QGraphicsView.wheelEvent(self, event)
 
     def scaleView(self, scale_factor):
         """
@@ -555,15 +555,7 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QKeyEvent
         """
 
-        if event.matches(QtGui.QKeySequence.ZoomIn):
-            # zoom in
-            factor_in = pow(2.0, 120 / 240.0)
-            self.scaleView(factor_in)
-        elif event.matches(QtGui.QKeySequence.ZoomOut):
-            # zoom out
-            factor_out = pow(2.0, -120 / 240.0)
-            self.scaleView(factor_out)
-        elif event.key() == QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key_Delete:
             # check if we are editing an NoteItem instance, then send the delete key event to it
             for item in self.scene().selectedItems():
                 if isinstance(item, NoteItem) and item.hasFocus():
