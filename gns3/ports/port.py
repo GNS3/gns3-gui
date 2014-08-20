@@ -24,6 +24,8 @@ import sys
 import subprocess
 import shlex
 
+from gns3.utils.normalize_filename import normalize_filename
+
 from ..qt import QtCore
 from ..nios.nio_udp import NIOUDP
 from ..settings import PACKET_CAPTURE_SETTINGS, PACKET_CAPTURE_SETTING_TYPES
@@ -502,11 +504,12 @@ class Port(object):
         :return: capture file name
         """
 
-        capture_file_name = "{}_{}_to_{}_{}.pcap".format(source_node_name,
-                                                         self.name().replace('/', '-'),
-                                                         self.destinationNode().name(),
-                                                         self.destinationPort().name().replace('/', '-'))
-        return capture_file_name
+        capture_file_name = "{}_{}_to_{}_{}".format(source_node_name,
+                                                    self.name().replace('/', '-'),
+                                                    self.destinationNode().name(),
+                                                    self.destinationPort().name().replace('/', '-'))
+
+        return normalize_filename(capture_file_name) + ".pcap"
 
     def dump(self):
         """

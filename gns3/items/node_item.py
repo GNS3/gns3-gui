@@ -330,7 +330,13 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         port_names = {}
         for port in ports:
             port_names[port.name()] = port
-        ports = sorted(port_names.keys())
+
+        try:
+            # try a numeric sort first
+            ports = sorted(port_names.keys(), key=int)
+        except ValueError:
+            # fall back to a classic sort
+            ports = sorted(port_names.keys())
 
         # show a contextual menu for the user to choose a port
         for port in ports:
