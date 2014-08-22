@@ -53,7 +53,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                                               "Intel PRO/1000 MT Server (82545EM)",
                                               "Paravirtualized Network (virtio-net)"])
 
-        self._vboxRefreshSlot()
+        self._vboxRefreshSlot(ignore_errors=True)
 
     def _vboxVMClickedSlot(self, item, column):
         """
@@ -150,9 +150,11 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             del self._virtualbox_vms[key]
             self.uiVirtualBoxVMsTreeWidget.takeTopLevelItem(self.uiVirtualBoxVMsTreeWidget.indexOfTopLevelItem(item))
 
-    def _vboxRefreshSlot(self):
+    def _vboxRefreshSlot(self, ignore_errors=False):
         """
         Gets/refreshes the VM list for all servers.
+
+        :param ignore_errors: either errors should be ignored or not
         """
 
         self.uiVMListComboBox.clear()
@@ -163,13 +165,15 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             try:
                 vbox_module.get_vm_list(servers.localServer(), self._VMListCallback)
             except ModuleError as e:
-                QtGui.QMessageBox.critical(self, "VM list", "{}".format(e))
+                if not ignore_errors:
+                    QtGui.QMessageBox.critical(self, "VM list", "{}".format(e))
         else:
             for server in servers.remoteServers().values():
                 try:
                     vbox_module.get_vm_list(server, self._VMListCallback)
                 except ModuleError as e:
-                    print("{}".format(e))
+                    if not ignore_errors:
+                        print("{}".format(e))
                     continue
 
     def _VMListCallback(self, result, error=False):
