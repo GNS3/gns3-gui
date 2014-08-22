@@ -53,7 +53,15 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                                               "Intel PRO/1000 MT Server (82545EM)",
                                               "Paravirtualized Network (virtio-net)"])
 
-        self._vboxRefreshSlot(ignore_errors=True)
+    def showEvent(self, event):
+        """
+        Loads the VM list when the page is shown.
+
+        :param event: QShowEvent instance
+        """
+
+        self._vboxRefreshSlot()
+        QtGui.QWidget.showEvent(self, event)
 
     def _vboxVMClickedSlot(self, item, column):
         """
@@ -150,7 +158,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             del self._virtualbox_vms[key]
             self.uiVirtualBoxVMsTreeWidget.takeTopLevelItem(self.uiVirtualBoxVMsTreeWidget.indexOfTopLevelItem(item))
 
-    def _vboxRefreshSlot(self, ignore_errors=False):
+    def _vboxRefreshSlot(self):
         """
         Gets/refreshes the VM list for all servers.
 
@@ -165,15 +173,13 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             try:
                 vbox_module.get_vm_list(servers.localServer(), self._VMListCallback)
             except ModuleError as e:
-                if not ignore_errors:
-                    QtGui.QMessageBox.critical(self, "VM list", "{}".format(e))
+                QtGui.QMessageBox.critical(self, "VM list", "{}".format(e))
         else:
             for server in servers.remoteServers().values():
                 try:
                     vbox_module.get_vm_list(server, self._VMListCallback)
                 except ModuleError as e:
-                    if not ignore_errors:
-                        print("{}".format(e))
+                    print("{}".format(e))
                     continue
 
     def _VMListCallback(self, result, error=False):
@@ -185,7 +191,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         """
 
         if error:
-            QtGui.QMessageBox.critical(self, "VM list", "Could not get the VM list from the server: {}".format(result["message"]))
+            QtGui.QMessageBox.critical(self, "VM list", "Could not get the VM list: {}".format(result["message"]))
         else:
             for vmname in result["vms"]:
                 if VirtualBox.instance().settings()["use_local_server"]:

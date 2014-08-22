@@ -339,7 +339,7 @@ class VirtualBoxVM(Node):
         """
 
         if error:
-            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            log.error("error while reloading {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))

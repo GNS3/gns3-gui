@@ -143,7 +143,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         configuration_file_path = settings.fileName()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtGui.QFileDialog.getSaveFileName(self, "Import configuration file", directory, "Configuration file (*.conf);;All files (*.*)")
+        path = QtGui.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.conf);;All files (*.*)")
         if not path:
             return
 
