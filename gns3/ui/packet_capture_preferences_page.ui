@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
-    <height>254</height>
+    <width>409</width>
+    <height>249</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Packet capture</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="2">
     <widget class="QGroupBox" name="uiSettingsGroupBox">
      <property name="title">
       <string>Settings</string>
@@ -77,6 +77,26 @@
     </widget>
    </item>
    <item row="1" column="0">
+    <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
+     <property name="text">
+      <string>Restore defaults</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>253</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="2">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

@@ -54,12 +54,12 @@ def isIOSCompressed(ios_image):
     return False
 
 
-def uncompressIOS(ios_image, destination_file):
+def decompressIOS(ios_image, destination_file):
     """
-    Uncompress an IOS image.
+    Decompress an IOS image.
 
     :param ios_image: IOS image path
-    :param destination_file: destination path for the uncompressed IOS image
+    :param destination_file: destination path for the decompressed IOS image
     """
 
     # we don't touch the original image
@@ -75,7 +75,7 @@ def uncompressIOS(ios_image, destination_file):
         # this make a clean zipped file
         tmp_fd.truncate()
 
-    # uncompress the IOS image
+    # decompress the IOS image
     is_zipfile = zipfile.is_zipfile(tmp_fd.name)
     if is_zipfile:
         zip_file = zipfile.ZipFile(tmp_fd.name, "r")
@@ -98,5 +98,5 @@ if __name__ == '__main__':
     image = "/home/grossmj/Documents/IOS/c3725-adventerprisek9-mz.124-15.T14.bin"
     extracted_image = "/tmp/c3725.image"
     print(isIOSCompressed(image))
-    uncompressIOS(image, extracted_image)
+    decompressIOS(image, extracted_image)
     print(isIOSCompressed(extracted_image))

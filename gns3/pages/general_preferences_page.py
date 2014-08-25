@@ -23,7 +23,7 @@ import os
 import shutil
 from gns3.qt import QtGui, QtCore
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
-from ..settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS
+from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS
 
 
 class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
@@ -52,6 +52,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiTemporaryFilesPathToolButton.clicked.connect(self._temporaryFilesPathSlot)
         self.uiImportConfigurationFilePushButton.clicked.connect(self._importConfigurationFileSlot)
         self.uiExportConfigurationFilePushButton.clicked.connect(self._exportConfigurationFileSlot)
+        self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTelnetConsolePreconfiguredCommandPushButton.clicked.connect(self._telnetConsolePreconfiguredCommandSlot)
         self.uiSerialConsolePreconfiguredCommandPushButton.clicked.connect(self._serialConsolePreconfiguredCommandSlot)
 
@@ -87,6 +88,14 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         if path:
             self.uiTemporaryFilesPathLineEdit.setText(path)
             self.uiTemporaryFilesPathLineEdit.setCursorPosition(0)
+
+    def _restoreDefaultsSlot(self):
+        """
+        Slot to restore default settings
+        """
+
+        self._populateGeneralSettingWidgets(GENERAL_SETTINGS)
+        self._populateGraphicsViewSettingWidgets(GRAPHICS_VIEW_SETTINGS)
 
     def _telnetConsolePreconfiguredCommandSlot(self):
         """

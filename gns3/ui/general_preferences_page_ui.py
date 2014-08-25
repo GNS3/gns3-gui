@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Wed Jul  2 17:26:09 2014
+# Created: Mon Aug 25 14:02:22 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,15 +26,15 @@ except AttributeError:
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName(_fromUtf8("GeneralPreferencesPageWidget"))
-        GeneralPreferencesPageWidget.resize(502, 557)
+        GeneralPreferencesPageWidget.resize(502, 555)
         self.verticalLayout = QtGui.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(GeneralPreferencesPageWidget)
         self.uiTabWidget.setObjectName(_fromUtf8("uiTabWidget"))
         self.uiGeneralTab = QtGui.QWidget()
         self.uiGeneralTab.setObjectName(_fromUtf8("uiGeneralTab"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.uiGeneralTab)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.gridLayout_8 = QtGui.QGridLayout(self.uiGeneralTab)
+        self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
         self.uiLocalPathsGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiLocalPathsGroupBox.setObjectName(_fromUtf8("uiLocalPathsGroupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.uiLocalPathsGroupBox)
@@ -78,7 +78,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiTemporaryFilesPathToolButton.setObjectName(_fromUtf8("uiTemporaryFilesPathToolButton"))
         self.horizontalLayout_3.addWidget(self.uiTemporaryFilesPathToolButton)
         self.gridLayout_3.addLayout(self.horizontalLayout_3, 5, 0, 1, 1)
-        self.verticalLayout_2.addWidget(self.uiLocalPathsGroupBox)
+        self.gridLayout_8.addWidget(self.uiLocalPathsGroupBox, 0, 0, 1, 2)
         self.uiConfigurationFileGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiConfigurationFileGroupBox.setObjectName(_fromUtf8("uiConfigurationFileGroupBox"))
         self.gridLayout = QtGui.QGridLayout(self.uiConfigurationFileGroupBox)
@@ -97,7 +97,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.gridLayout.addWidget(self.uiConfigurationFileLabel, 0, 0, 1, 1)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
-        self.verticalLayout_2.addWidget(self.uiConfigurationFileGroupBox)
+        self.gridLayout_8.addWidget(self.uiConfigurationFileGroupBox, 1, 0, 1, 2)
         self.uiGeneralMiscGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiGeneralMiscGroupBox.setObjectName(_fromUtf8("uiGeneralMiscGroupBox"))
         self.gridLayout_2 = QtGui.QGridLayout(self.uiGeneralMiscGroupBox)
@@ -117,9 +117,14 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLinkManualModeCheckBox.setChecked(True)
         self.uiLinkManualModeCheckBox.setObjectName(_fromUtf8("uiLinkManualModeCheckBox"))
         self.gridLayout_2.addWidget(self.uiLinkManualModeCheckBox, 2, 0, 1, 1)
-        self.verticalLayout_2.addWidget(self.uiGeneralMiscGroupBox)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem1)
+        self.gridLayout_8.addWidget(self.uiGeneralMiscGroupBox, 2, 0, 1, 2)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiGeneralTab)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.gridLayout_8.addWidget(self.uiRestoreDefaultsPushButton, 3, 0, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(324, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_8.addItem(spacerItem1, 3, 1, 1, 1)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_8.addItem(spacerItem2, 4, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralTab, _fromUtf8(""))
         self.uiConsoleTab = QtGui.QWidget()
         self.uiConsoleTab.setObjectName(_fromUtf8("uiConsoleTab"))
@@ -196,8 +201,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowConsoleAllDoubleSpinBox.setObjectName(_fromUtf8("uiSlowConsoleAllDoubleSpinBox"))
         self.gridLayout_7.addWidget(self.uiSlowConsoleAllDoubleSpinBox, 3, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.uiConsoleMiscGroupBox)
-        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem2)
+        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem3)
         self.uiTabWidget.addTab(self.uiConsoleTab, _fromUtf8(""))
         self.uiSceneTab = QtGui.QWidget()
         self.uiSceneTab.setObjectName(_fromUtf8("uiSceneTab"))
@@ -224,8 +229,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiRectangleSelectedItemCheckBox.setChecked(True)
         self.uiRectangleSelectedItemCheckBox.setObjectName(_fromUtf8("uiRectangleSelectedItemCheckBox"))
         self.gridLayout_6.addWidget(self.uiRectangleSelectedItemCheckBox, 4, 0, 1, 1)
-        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem3, 6, 0, 1, 1)
+        spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem4, 6, 0, 1, 1)
         self.uiSceneWidthSpinBox = QtGui.QSpinBox(self.uiSceneTab)
         self.uiSceneWidthSpinBox.setMinimum(500)
         self.uiSceneWidthSpinBox.setMaximum(1000000)
@@ -261,6 +266,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each device start when starting all devices:", None))
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
         self.uiLinkManualModeCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Always use manual mode when adding links", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralTab), _translate("GeneralPreferencesPageWidget", "General", None))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings for Telnet connections", None))
         self.uiTelnetConsolePreconfiguredCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Preconfigured commands:", None))

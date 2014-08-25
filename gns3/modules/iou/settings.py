@@ -40,9 +40,9 @@ IOU_SETTINGS = {
     "iourc": "",
     "iouyap": DEFAULT_IOUYAP_PATH,
     "console_start_port_range": 4001,
-    "console_end_port_range": 4512,
+    "console_end_port_range": 4500,
     "udp_start_port_range": 30001,
-    "udp_end_port_range": 40000,
+    "udp_end_port_range": 35000,
     "use_local_server": True,
 }
 

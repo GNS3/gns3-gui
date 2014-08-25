@@ -31,8 +31,8 @@ from gns3.qt import QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
 from gns3.utils.progress_dialog import ProgressDialog
-from ..utils.uncompress_ios import isIOSCompressed
-from ..utils.uncompress_ios_thread import UncompressIOSThread
+from ..utils.decompress_ios import isIOSCompressed
+from ..utils.decompress_ios_thread import DecompressIOSThread
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
@@ -59,7 +59,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
-        self.uiUncompressIOSPushButton.clicked.connect(self._uncompressIOSSlot)
+        self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
         #FIXME: temporally hide test button
@@ -261,18 +261,18 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             return
 
         if isIOSCompressed(path):
-            reply = QtGui.QMessageBox.question(parent, "IOS image", "Would you like to uncompress this IOS image?",
+            reply = QtGui.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?",
                                                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes:
-                uncompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
-                thread = UncompressIOSThread(path, uncompressed_image_path)
+                decompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
+                thread = DecompressIOSThread(path, decompressed_image_path)
                 progress_dialog = ProgressDialog(thread,
                                                  "IOS image",
-                                                 "Uncompressing IOS image {}...".format(os.path.basename(path)),
+                                                 "Decompressing IOS image {}...".format(os.path.basename(path)),
                                                  "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
                 if progress_dialog.exec_() is not False:
-                    path = uncompressed_image_path
+                    path = decompressed_image_path
                 thread.wait()
 
         if os.path.dirname(path) != destination_directory:
@@ -352,18 +352,18 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         try:
             if isIOSCompressed(path):
                 zip_file = zipfile.ZipFile(path, "r")
-                uncompressed_size = 0
+                decompressed_size = 0
                 for zip_info in zip_file.infolist():
-                    uncompressed_size += zip_info.file_size
+                    decompressed_size += zip_info.file_size
             else:
-                uncompressed_size = os.path.getsize(path)
+                decompressed_size = os.path.getsize(path)
         except OSError:
             return 0
 
         # get the size in MB
-        uncompressed_size = (uncompressed_size / (1000 * 1000)) + 1
+        decompressed_size = (decompressed_size / (1000 * 1000)) + 1
         # round up to the closest multiple of 32 (step of the RAM SpinBox)
-        return math.ceil(uncompressed_size / 32) * 32
+        return math.ceil(decompressed_size / 32) * 32
 
     def _startupConfigBrowserSlot(self):
         """
@@ -405,9 +405,9 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiPrivateConfigLineEdit.clear()
         self.uiPrivateConfigLineEdit.setText(path)
 
-    def _uncompressIOSSlot(self):
+    def _decompressIOSSlot(self):
         """
-        Slot to uncompress an IOS image.
+        Slot to decompress an IOS image.
         """
 
         item = self.uiIOSImagesTreeWidget.currentItem()
@@ -424,19 +424,19 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
                 return
 
-            uncompressed_image_path = os.path.splitext(path)[0] + ".image"
-            if os.path.isfile(uncompressed_image_path):
-                QtGui.QMessageBox.critical(self, "IOS image", "Uncompressed IOS image {} already exist".format(os.path.basename(uncompressed_image_path)))
+            decompressed_image_path = os.path.splitext(path)[0] + ".image"
+            if os.path.isfile(decompressed_image_path):
+                QtGui.QMessageBox.critical(self, "IOS image", "Decompressed IOS image {} already exist".format(os.path.basename(decompressed_image_path)))
                 return
 
-            thread = UncompressIOSThread(path, uncompressed_image_path)
+            thread = DecompressIOSThread(path, decompressed_image_path)
             progress_dialog = ProgressDialog(thread,
                                              "IOS image",
-                                             "Uncompressing IOS image {}...".format(path),
+                                             "Decompressing IOS image {}...".format(path),
                                              "Cancel", busy=True, parent=self)
             progress_dialog.show()
             if progress_dialog.exec_() is not False:
-                self.uiIOSPathLineEdit.setText(uncompressed_image_path)
+                self.uiIOSPathLineEdit.setText(decompressed_image_path)
                 self._iosImageSaveSlot()
             thread.wait()
 

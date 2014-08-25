@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Sun Jun 22 02:41:12 2014
+# Created: Mon Aug 25 14:02:21 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_PacketCapturePreferencesPageWidget(object):
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName(_fromUtf8("PacketCapturePreferencesPageWidget"))
-        PacketCapturePreferencesPageWidget.resize(440, 254)
+        PacketCapturePreferencesPageWidget.resize(409, 249)
         self.gridLayout = QtGui.QGridLayout(PacketCapturePreferencesPageWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.uiSettingsGroupBox = QtGui.QGroupBox(PacketCapturePreferencesPageWidget)
@@ -59,9 +59,14 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiPreconfiguredCaptureReaderCommandComboBox = QtGui.QComboBox(self.uiSettingsGroupBox)
         self.uiPreconfiguredCaptureReaderCommandComboBox.setObjectName(_fromUtf8("uiPreconfiguredCaptureReaderCommandComboBox"))
         self.gridlayout.addWidget(self.uiPreconfiguredCaptureReaderCommandComboBox, 1, 0, 1, 1)
-        self.gridLayout.addWidget(self.uiSettingsGroupBox, 0, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 101, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiSettingsGroupBox, 0, 0, 1, 2)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(PacketCapturePreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.gridLayout.addWidget(self.uiRestoreDefaultsPushButton, 1, 0, 1, 1)
+        spacerItem = QtGui.QSpacerItem(253, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(20, 101, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem1, 2, 0, 1, 2)
 
         self.retranslateUi(PacketCapturePreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(PacketCapturePreferencesPageWidget)
@@ -74,4 +79,5 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiAutoStartCheckBox.setText(_translate("PacketCapturePreferencesPageWidget", "Automatically start the packet capture application", None))
         self.uiPreconfiguredCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Preconfigured commands:", None))
         self.uiPreconfiguredCaptureReaderCommandPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "&Set", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "Restore defaults", None))
 

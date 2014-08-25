@@ -21,7 +21,7 @@ Configuration page for packet capture preferences.
 
 from gns3.qt import QtCore, QtGui
 from ..ui.packet_capture_preferences_page_ui import Ui_PacketCapturePreferencesPageWidget
-from ..settings import PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
+from ..settings import PACKET_CAPTURE_SETTINGS, PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
 from ..ports.port import Port
 
 
@@ -39,7 +39,15 @@ class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPag
         for name, cmd in sorted(PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS.items()):
             self.uiPreconfiguredCaptureReaderCommandComboBox.addItem(name, cmd)
 
+        self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiPreconfiguredCaptureReaderCommandPushButton.clicked.connect(self._preconfiguredCaptureReaderCommandSlot)
+
+    def _restoreDefaultsSlot(self):
+        """
+        Slot to restore default settings
+        """
+
+        self._populatePacketCaptureSettingWiddgets(PACKET_CAPTURE_SETTINGS)
 
     def _preconfiguredCaptureReaderCommandSlot(self):
         """
