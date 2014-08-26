@@ -336,16 +336,24 @@ class Link(QtCore.QObject):
 
         if not self._stub:
             if self._source_node.id() != node_id:
-                # the destination node has canceled its NIO allocation
-                self._destination_node.nio_signal.disconnect(self.newNIOSlot)
+                try:
+                    # the destination node has canceled its NIO allocation
+                    self._destination_node.nio_signal.disconnect(self.newNIOSlot)
+                except TypeError:
+                    # ignore TypeError: 'method' object is not connected
+                    pass
 
                 self._source_node.deleteNIO(self._source_port)
                 self._source_port.setFree()
                 self._source_node.updated_signal.emit()
 
             elif self._destination_node.id() != node_id:
-                # the source node has canceled its NIO allocation
-                self._source_node.nio_signal.disconnect(self.newNIOSlot)
+                try:
+                    # the source node has canceled its NIO allocation
+                    self._source_node.nio_signal.disconnect(self.newNIOSlot)
+                except TypeError:
+                    # ignore TypeError: 'method' object is not connected
+                    pass
 
                 self._destination_node.deleteNIO(self._destination_port)
                 self._destination_port.setFree()

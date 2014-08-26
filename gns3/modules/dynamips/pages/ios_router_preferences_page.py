@@ -134,6 +134,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         path = self.uiIOSPathLineEdit.text()
+        if not path:
+            QtGui.QMessageBox.critical(self, "IOS image", "The path cannot be empty!")
+            return
+
         startup_config = self.uiStartupConfigLineEdit.text()
         private_config = self.uiPrivateConfigLineEdit.text()
         platform = self.uiPlatformComboBox.currentText()
