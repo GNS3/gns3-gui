@@ -50,8 +50,10 @@ class VirtualBoxVM(Node):
                           "vmname": "",
                           "console": None,
                           "adapters": 2,
+                          "adapter_start_index": 0,
                           "adapter_type": "Automatic",
-                          "headless": False}
+                          "headless": False,
+                          "enable_console": True}
 
         self._addAdapters(2)
 
@@ -65,7 +67,9 @@ class VirtualBoxVM(Node):
         :param adapters: number of adapters
         """
 
-        for port_number in range(0, adapters):
+        for port_number in range(0, self._settings["adapter_start_index"] + adapters):
+            if port_number < self._settings["adapter_start_index"]:
+                continue
             port_name = EthernetPort.longNameType() + str(port_number)
             new_port = EthernetPort(port_name)
             new_port.setPortNumber(port_number)
@@ -209,7 +213,7 @@ class VirtualBoxVM(Node):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
-                if name == "adapters":
+                if name == "adapters" or name == "adapter_start_index":
                     nb_adapters_changed = True
                 self._settings[name] = value
 

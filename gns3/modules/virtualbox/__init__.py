@@ -89,15 +89,19 @@ class VirtualBox(Module):
 
             vmname = settings.value("vmname", "")
             adapters = settings.value("adapters", 1, type=int)
+            adapter_start_index = settings.value("adapter_start_index", 0, type=int)
             adapter_type = settings.value("adapter_type", "Automatic")
             headless = settings.value("headless", False, type=bool)
+            enable_console = settings.value("enable_console", True, type=bool)
             server = settings.value("server", "local")
 
             key = "{server}:{vmname}".format(server=server, vmname=vmname)
             self._virtualbox_vms[key] = {"vmname": vmname,
                                          "adapters": adapters,
+                                         "adapter_start_index": adapter_start_index,
                                          "adapter_type": adapter_type,
                                          "headless": headless,
+                                         "enable_console": enable_console,
                                          "server": server}
 
         settings.endArray()
@@ -355,8 +359,10 @@ class VirtualBox(Module):
                 raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
 
         settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
+                    "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
                     "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
-                    "headless": self._virtualbox_vms[vm]["headless"]}
+                    "headless": self._virtualbox_vms[vm]["headless"],
+                    "enable_console": self._virtualbox_vms[vm]["enable_console"]}
 
         vmname = self._virtualbox_vms[vm]["vmname"]
         node.setup(vmname, initial_settings=settings)
