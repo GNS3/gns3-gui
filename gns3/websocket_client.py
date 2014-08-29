@@ -57,6 +57,7 @@ class WebSocketClient(WebSocketBaseClient):
         self._local = False
         self._version = ""
         self._fd_notifier = None
+        self._heartbeat_timer = None
 
         # create an unique ID
         self._id = WebSocketClient._instance_count
@@ -117,6 +118,9 @@ class WebSocketClient(WebSocketBaseClient):
 
         log.info("connected to {}:{}".format(self.host, self.port))
         self._connected = True
+        self._heartbeat_timer = QtCore.QTimer()
+        self._heartbeat_timer.timeout.connect(self._heartbeat)
+        self._heartbeat_timer.start(5000)
 
     def connect(self):
         """
@@ -195,6 +199,7 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         log.info("connection closed down: {} (code {})".format(reason, code))
+        self._heartbeat_timer.stop()
         self._connected = False
 
     def received_message(self, message):
@@ -320,3 +325,6 @@ class WebSocketClient(WebSocketBaseClient):
                 "host": self.host,
                 "port": self.port,
                 "local": self._local}
+
+    def _heartbeat(self):
+        self.send_notification("deadman.heartbeat")
