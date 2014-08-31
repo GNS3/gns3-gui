@@ -199,6 +199,8 @@ GRAPHICS_VIEW_SETTINGS = {
     "scene_height": 1000,
     "draw_rectangle_selected_item": False,
     "draw_link_status_points": True,
+    "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+    "default_label_color": "#000000",
 }
 
 GRAPHICS_VIEW_SETTING_TYPES = {
@@ -206,6 +208,8 @@ GRAPHICS_VIEW_SETTING_TYPES = {
     "scene_height": int,
     "draw_rectangle_selected_item": bool,
     "draw_link_status_points": bool,
+    "default_label_font": str,
+    "default_label_color": str,
 }
 
 PACKET_CAPTURE_SETTINGS = {

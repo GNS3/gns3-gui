@@ -55,6 +55,9 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTelnetConsolePreconfiguredCommandPushButton.clicked.connect(self._telnetConsolePreconfiguredCommandSlot)
         self.uiSerialConsolePreconfiguredCommandPushButton.clicked.connect(self._serialConsolePreconfiguredCommandSlot)
+        self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
+        self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
+        self._default_label_color = QtGui.QColor(QtCore.Qt.black)
 
     def _projectsPathSlot(self):
         """
@@ -162,6 +165,26 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
             QtGui.QMessageBox.critical(self, "Export configuration file", "Cannot export configuration file: {}".format(e))
             return
 
+    def _setDefaultLabelFontSlot(self):
+        """
+        Slot to select the default label font.
+        """
+
+        selected_font, ok = QtGui.QFontDialog.getFont(self.uiDefaultLabelStylePlainTextEdit.font())
+        if ok:
+            self.uiDefaultLabelStylePlainTextEdit.setFont(selected_font)
+
+
+    def _setDefaultLabelColorSlot(self):
+        """
+        Slot to select the default label color.
+        """
+
+        color = QtGui.QColorDialog.getColor(self._default_label_color)
+        if color.isValid():
+            self._default_label_color = color
+            self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
+
     def _populateGeneralSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -201,6 +224,14 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiRectangleSelectedItemCheckBox.setChecked(settings["draw_rectangle_selected_item"])
         self.uiDrawLinkStatusPointsCheckBox.setChecked(settings["draw_link_status_points"])
 
+        qt_font = QtGui.QFont()
+        if qt_font.fromString(settings["default_label_font"]):
+            self.uiDefaultLabelStylePlainTextEdit.setFont(qt_font)
+        qt_color = QtGui.QColor(settings["default_label_color"])
+        if qt_color.isValid():
+            self._default_label_color = qt_color
+            self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(qt_color.name()))
+
     def loadPreferences(self):
         """
         Loads the general preferences.
@@ -239,4 +270,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         new_settings["scene_height"] = self.uiSceneHeightSpinBox.value()
         new_settings["draw_rectangle_selected_item"] = self.uiRectangleSelectedItemCheckBox.isChecked()
         new_settings["draw_link_status_points"] = self.uiDrawLinkStatusPointsCheckBox.isChecked()
+        new_settings["default_label_font"] = self.uiDefaultLabelStylePlainTextEdit.font().toString()
+        new_settings["default_label_color"] = self._default_label_color.name()
         MainWindow.instance().uiGraphicsView.setSettings(new_settings)

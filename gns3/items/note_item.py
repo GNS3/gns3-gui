@@ -34,7 +34,14 @@ class NoteItem(QtGui.QGraphicsTextItem):
     def __init__(self, parent=None):
 
         QtGui.QGraphicsTextItem.__init__(self, parent)
-        self.setFont(QtGui.QFont("TypeWriter", 10, QtGui.QFont.Bold))
+
+        from ..main_window import MainWindow
+        main_window = MainWindow.instance()
+        view_settings = main_window.uiGraphicsView.settings()
+        qt_font = QtGui.QFont()
+        qt_font.fromString(view_settings["default_label_font"])
+        self.setDefaultTextColor(QtGui.QColor(view_settings["default_label_color"]))
+        self.setFont(qt_font)
         self.setFlag(self.ItemIsMovable)
         self.setFlag(self.ItemIsSelectable)
         self.setZValue(2)
@@ -189,10 +196,8 @@ class NoteItem(QtGui.QGraphicsTextItem):
                      "x": self.x(),
                      "y": self.y()}
 
-        if self.font() != QtGui.QFont("TypeWriter", 10, QtGui.QFont.Bold):
-            note_info["font"] = self.font().toString()
-        if self.defaultTextColor() != QtCore.Qt.black:
-            note_info["color"] = self.defaultTextColor().name()
+        note_info["font"] = self.font().toString()
+        note_info["color"] = self.defaultTextColor().name()
         if self.rotation() != 0:
             note_info["rotation"] = self.rotation()
         if self.zValue() != 2:
