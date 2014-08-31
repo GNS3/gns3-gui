@@ -46,10 +46,17 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
         from ..topology import Topology
         Topology.instance().removeRectangle(self)
 
-    # def paint(self, painter, option, widget=None):
-    #
-    #     QtGui.QGraphicsRectItem.paint(self, painter, option, widget)
-    #     self.drawLayerInfo(painter)
+    def paint(self, painter, option, widget=None):
+        """
+        Paints the contents of an item in local coordinates.
+
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance
+        """
+
+        QtGui.QGraphicsRectItem.paint(self, painter, option, widget)
+        self.drawLayerInfo(painter)
 
     def duplicate(self):
         """

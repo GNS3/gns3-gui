@@ -525,6 +525,17 @@ class Topology(object):
                 node_item = NodeItem(node)
                 node_item.setPos(topology_node["x"], topology_node["y"])
 
+                # create the node label if present
+                label_info = topology_node.get("label")
+                if label_info:
+                    node_label = NoteItem(node_item)
+                    node_label.setEditable(False)
+                    node_label.load(label_info)
+                    node_item.setLabel(node_label)
+
+                if "z" in topology_node:
+                    node_item.setZValue(topology_node["z"])
+
                 if "default_symbol" in topology_node:
                     path = topology_node["default_symbol"]
                     default_renderer = QtSvg.QSvgRenderer(path)
@@ -539,14 +550,6 @@ class Topology(object):
                         # default renderer must be valid too
                         hover_renderer.setObjectName(path)
                         node_item.setHoverRenderer(hover_renderer)
-
-                # create the node label if present
-                label_info = topology_node.get("label")
-                if label_info:
-                    node_label = NoteItem(node_item)
-                    node_label.setEditable(False)
-                    node_label.load(label_info)
-                    node_item.setLabel(node_label)
 
                 view.scene().addItem(node_item)
                 self.addNode(node)

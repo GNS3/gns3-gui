@@ -75,37 +75,11 @@ class LinkItem(QtGui.QGraphicsPathItem):
 
         if not self._adding_flag:
             # there is a destination
-
             self._link = link
-
-            # links must always be below node items on the scene
-            min_zvalue = min([source_item.zValue(), destination_item.zValue()])
-            self.setZValue(min_zvalue - 1)
             self.setFlag(self.ItemIsFocusable)
-
             source_item.addLink(self)
             destination_item.addLink(self)
-
-            #TODO: capture support
-
-#             source_item.node.nio_signal.connect(self.newNIOSlot)
-#             destination_item.node.nio_signal.connect(self.newNIOSlot)
-#             self._source_item.setCustomToolTip()
-#             self._destination_item.setCustomToolTip()
-#             self.capturing = False
-#             self.capfile = None
-#             self.captureInfo = None
-#             self.tailProcess = None
-#             self.capturePipeThread = None
-#             # Set default tooltip
-
-#             self.encapsulationTransform = { 'ETH': 'EN10MB',
-#                                             'FR': 'FRELAY',
-#                                             'HDLC': 'C_HDLC',
-#                                             'PPP': 'PPP_SERIAL'}
-
             self.setCustomToolTip()
-
         else:
             source_rect = self._source_item.boundingRect()
             self.source = self.mapFromItem(self._source_item, source_rect.width() / 2.0, source_rect.height() / 2.0)
@@ -368,6 +342,11 @@ class LinkItem(QtGui.QGraphicsPathItem):
         Computes the source point and destination point.
         Must be overloaded.
         """
+
+        # links must always be below node items on the scene
+        if not self._adding_flag:
+            min_zvalue = min([self._source_item.zValue(), self._destination_item.zValue()])
+            self.setZValue(min_zvalue - 1)
 
         self.prepareGeometryChange()
         source_rect = self._source_item.boundingRect()

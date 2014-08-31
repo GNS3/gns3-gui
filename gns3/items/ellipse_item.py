@@ -46,10 +46,17 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
         from ..topology import Topology
         Topology.instance().removeEllipse(self)
 
-    # def paint(self, painter, option, widget=None):
-    #
-    #     QtGui.QGraphicsEllipseItem.paint(self, painter, option, widget)
-    #     self.drawLayerInfo(painter)
+    def paint(self, painter, option, widget=None):
+        """
+        Paints the contents of an item in local coordinates.
+
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance
+        """
+
+        QtGui.QGraphicsEllipseItem.paint(self, painter, option, widget)
+        self.drawLayerInfo(painter)
 
     def duplicate(self):
         """

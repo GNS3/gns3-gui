@@ -43,6 +43,9 @@ from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
+from .items.shape_item import ShapeItem
+from .items.image_item import ImageItem
+from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
 from .cloud.utils import get_provider
 
@@ -566,8 +569,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to show the layer positions on the scene.
         """
 
-        #TODO: show layers
-        pass
+        NodeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ImageItem.show_layer = self.uiShowLayersAction.isChecked()
+        NoteItem.show_layer = self.uiShowLayersAction.isChecked()
+        for item in self.uiGraphicsView.items():
+            item.update()
 
     def _resetPortLabelsActionSlot(self):
         """

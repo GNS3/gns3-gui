@@ -772,7 +772,19 @@ class GraphicsView(QtGui.QGraphicsView):
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
+        # item must have no parent
         if True in list(map(lambda item: item.parentItem() is None, items)):
+
+            raise_layer_action = QtGui.QAction("Raise one layer", menu)
+            raise_layer_action.setIcon(QtGui.QIcon(':/icons/raise_z_value.svg'))
+            raise_layer_action.triggered.connect(self.raiseLayerActionSlot)
+            menu.addAction(raise_layer_action)
+
+            lower_layer_action = QtGui.QAction("Lower one layer", menu)
+            lower_layer_action.setIcon(QtGui.QIcon(':/icons/lower_z_value.svg'))
+            lower_layer_action.triggered.connect(self.lowerLayerActionSlot)
+            menu.addAction(lower_layer_action)
+
             delete_action = QtGui.QAction("Delete", menu)
             delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
             delete_action.triggered.connect(self.deleteActionSlot)
@@ -1011,6 +1023,30 @@ class GraphicsView(QtGui.QGraphicsView):
             text_edit_dialog.show()
             text_edit_dialog.exec_()
 
+    def raiseLayerActionSlot(self):
+        """
+        Slot to receive events from the raise one layer action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if item.parentItem() is None:
+                current_zvalue = item.zValue()
+                item.setZValue(current_zvalue + 1)
+                item.update()
+
+    def lowerLayerActionSlot(self):
+        """
+        Slot to receive events from the lower one layer action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if item.parentItem() is None:
+                current_zvalue = item.zValue()
+                item.setZValue(current_zvalue - 1)
+                item.update()
+
     def deleteActionSlot(self):
         """
         Slot to receive events from the delete action in the
@@ -1034,7 +1070,7 @@ class GraphicsView(QtGui.QGraphicsView):
             if isinstance(item, NodeItem):
                 item.node().delete()
                 self._topology.removeNode(item.node())
-            else:
+            elif item.parentItem() is None:
                 item.delete()
 
     def createNode(self, node_class, pos):

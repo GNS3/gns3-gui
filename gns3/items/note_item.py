@@ -29,6 +29,8 @@ class NoteItem(QtGui.QGraphicsTextItem):
     :param parent: optional parent
     """
 
+    show_layer = False
+
     def __init__(self, parent=None):
 
         QtGui.QGraphicsTextItem.__init__(self, parent)
@@ -134,32 +136,47 @@ class NoteItem(QtGui.QGraphicsTextItem):
             return
         return QtGui.QGraphicsTextItem.focusOutEvent(self, event)
 
-    #TODO: show layer position
-    # def paint(self, painter, option, widget=None):
-    #
-    #     QtGui.QGraphicsTextItem.paint(self, painter, option, widget)
-    #
-    #     # Don't draw if not activated
-    #     if globals.GApp.workspace.flg_showLayerPos == False:
-    #         return
-    #
-    #     # Show layer level of this node
-    #     brect = self.boundingRect()
-    #
-    #     # Don't draw if the object is too small ...
-    #     if brect.width() < 20 or brect.height() < 20:
-    #         return
-    #
-    #     center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-    #
-    #     painter.setBrush(QtCore.Qt.red)
-    #     painter.setPen(QtCore.Qt.red)
-    #     painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
-    #
-    #     painter.setPen(QtCore.Qt.black)
-    #     painter.setFont(QtGui.QFont("TypeWriter", 14, QtGui.QFont.Bold))
-    #     zval = str(int(self.zValue()))
-    #     painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+    def paint(self, painter, option, widget=None):
+        """
+        Paints the contents of an item in local coordinates.
+
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance
+        """
+
+        QtGui.QGraphicsTextItem.paint(self, painter, option, widget)
+
+        if self.show_layer is False or self.parentItem():
+            return
+
+        brect = self.boundingRect()
+        # don't draw anything if the object is too small
+        if brect.width() < 20 or brect.height() < 20:
+            return
+
+        center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
+        painter.setBrush(QtCore.Qt.red)
+        painter.setPen(QtCore.Qt.red)
+        painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+        painter.setPen(QtCore.Qt.black)
+        zval = str(int(self.zValue()))
+        painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+
+    def setZValue(self, value):
+        """
+        Sets a new Z value.
+
+        :param value: Z value
+        """
+
+        QtGui.QGraphicsTextItem.setZValue(self, value)
+        if self.zValue() < 0:
+            self.setFlag(self.ItemIsSelectable, False)
+            self.setFlag(self.ItemIsMovable, False)
+        else:
+            self.setFlag(self.ItemIsSelectable, True)
+            self.setFlag(self.ItemIsMovable, True)
 
     def dump(self):
         """
