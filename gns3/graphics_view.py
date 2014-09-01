@@ -655,8 +655,6 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QDropEvent instance
         """
 
-        # TODO: multi-drop
-
         # check if what has been dropped is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-node"):
             data = event.mimeData().data("application/x-gns3-node")
@@ -664,7 +662,22 @@ class GraphicsView(QtGui.QGraphicsView):
             node_class = pickle.loads(data)
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
-            self.createNode(node_class, event.pos())
+            QtGui.QApplication.processEvents(QtCore.QEventLoop.AllEvents, 1000)
+            if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+                max_nodes_per_line = 10  # max number of nodes on a single line
+                offset = 100  # spacing between elements
+                integer, ok = QtGui.QInputDialog.getInteger(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
+                if ok:
+                    for node_number in range(integer):
+                        node_item = self.createNode(node_class, event.pos())
+                        if node_item is None:
+                            # stop if there is any error
+                            break
+                        x = node_item.pos().x() - (node_item.boundingRect().width() / 2) + (node_number % max_nodes_per_line) * offset
+                        y = node_item.pos().y() - (node_item.boundingRect().height() / 2) + (node_number // max_nodes_per_line) * offset
+                        node_item.setPos(x, y)
+            else:
+                self.createNode(node_class, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             if len(event.mimeData().urls()) > 1:
                 QtGui.QMessageBox.critical(self, "Project files", "Please drop only one file")
@@ -1079,6 +1092,8 @@ class GraphicsView(QtGui.QGraphicsView):
 
         :param node_class: node class to be instanciated
         :param pos: position of the drop event
+
+        :returns: NodeItem instance
         """
 
         try:
@@ -1119,3 +1134,4 @@ class GraphicsView(QtGui.QGraphicsView):
         node_item.setPos(x, y)
         self._topology.addNode(node)
         self._main_window.uiTopologySummaryTreeWidget.addNode(node)
+        return node_item
