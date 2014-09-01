@@ -70,7 +70,7 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         Slot to select the filling color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._color)
+        color = QtGui.QColorDialog.getColor(self._color, self, "Select Color", QtGui.QColorDialog.ShowAlphaChannel)
         if color.isValid():
             self._color = color
             self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))
@@ -80,7 +80,7 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         Slot to select the border color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._border_color)
+        color = QtGui.QColorDialog.getColor(self._border_color, self, "Select Color", QtGui.QColorDialog.ShowAlphaChannel)
         if color.isValid():
             self._border_color = color
             self.uiBorderColorPushButton.setStyleSheet("background-color: {}".format(self._border_color.name()))

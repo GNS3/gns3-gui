@@ -662,7 +662,6 @@ class GraphicsView(QtGui.QGraphicsView):
             node_class = pickle.loads(data)
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
-            QtGui.QApplication.processEvents(QtCore.QEventLoop.AllEvents, 1000)
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
                 max_nodes_per_line = 10  # max number of nodes on a single line
                 offset = 100  # spacing between elements

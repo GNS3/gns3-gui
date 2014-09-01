@@ -170,7 +170,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to select the default label font.
         """
 
-        selected_font, ok = QtGui.QFontDialog.getFont(self.uiDefaultLabelStylePlainTextEdit.font())
+        selected_font, ok = QtGui.QFontDialog.getFont(self.uiDefaultLabelStylePlainTextEdit.font(), self)
         if ok:
             self.uiDefaultLabelStylePlainTextEdit.setFont(selected_font)
 
@@ -180,7 +180,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to select the default label color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._default_label_color)
+        color = QtGui.QColorDialog.getColor(self._default_label_color, self)
         if color.isValid():
             self._default_label_color = color
             self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
