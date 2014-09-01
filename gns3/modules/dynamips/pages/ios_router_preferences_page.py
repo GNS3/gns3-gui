@@ -138,11 +138,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             QtGui.QMessageBox.critical(self, "IOS image", "The path cannot be empty!")
             return
 
-        startup_config = self.uiStartupConfigLineEdit.text()
-        private_config = self.uiPrivateConfigLineEdit.text()
         platform = self.uiPlatformComboBox.currentText()
-        chassis = self.uiChassisComboBox.currentText()
-        idlepc = self.uiIdlePCLineEdit.text()
         ram = self.uiRAMSpinBox.value()
 
         minimum_required_ram = self._getMinimumRequiredRAM(path)
@@ -187,6 +183,23 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item.setText(1, platform)
             item.setText(2, server)
             self.uiIOSImagesTreeWidget.setCurrentItem(item)
+
+            if platform == "c3745":
+                reply = QtGui.QMessageBox.question(self, "EtherSwitch", "Do you want to use this IOS image for the EtherSwitch router?",
+                                                   QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    # set the default EtherSwitch startup-config
+                    resource_name = "configs/ios_etherswitch_startup-config.txt"
+                    if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+                        self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name ))
+                    elif pkg_resources.resource_exists("gns3", resource_name):
+                        ios_etherswitch_config_path = pkg_resources.resource_filename("gns3", resource_name)
+                        self.uiStartupConfigLineEdit.setText(os.path.normpath(ios_etherswitch_config_path))
+
+        chassis = self.uiChassisComboBox.currentText()
+        idlepc = self.uiIdlePCLineEdit.text()
+        startup_config = self.uiStartupConfigLineEdit.text()
+        private_config = self.uiPrivateConfigLineEdit.text()
 
         self._ios_images[key] = {"path": path,
                                  "image": image,
