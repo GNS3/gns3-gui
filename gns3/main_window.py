@@ -1169,14 +1169,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.reset()
-
-        project_files_dir = path
-        if path.endswith(".gns3"):
-            project_files_dir = path[:-5]
-        elif path.endswith(".net"):
-            project_files_dir = path[:-4]
-        self._project_settings["project_files_dir"] = project_files_dir + "-files"
-
         topology = Topology.instance()
         try:
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
@@ -1184,6 +1176,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 need_to_save = False
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
+
+                project_files_dir = path
+                if path.endswith(".gns3"):
+                    project_files_dir = path[:-5]
+                elif path.endswith(".net"):
+                    project_files_dir = path[:-4]
+                self._project_settings["project_files_dir"] = project_files_dir + "-files"
+
                 if not os.path.isdir(self._project_settings["project_files_dir"]):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
