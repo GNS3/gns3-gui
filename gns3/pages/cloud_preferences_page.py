@@ -105,10 +105,11 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         default_image = self.settings['default_image']
         default_flavor = self.settings['default_flavor']
         new_instance_flavor = self.settings['new_instance_flavor']
+        gns3_ias_url = self.settings['gns3_ias_url']
 
         # instance a provider controller and try to use it
         try:
-            provider = self.provider_controllers[provider_id](username, apikey)
+            provider = self.provider_controllers[provider_id](username, apikey, gns3_ias_url)
             if provider.authenticate():
                 provider.set_region(region)
                 # fill region combo box

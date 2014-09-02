@@ -127,7 +127,7 @@ class MockLibCloudDriver(object):
     def __init__(self, username, api_key, region):
         pass
 
-    def create_node(self, name, size, image, auth):
+    def create_node(self, name, size, image, auth, *args, **kwargs):
 
         if name == 'bad_request':
             raise Exception("400 Bad request")
@@ -170,7 +170,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def setUp(self):
         """ Set up the objects used by most of the tests. """
 
-        self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
+        self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key', 'http://foo.bar:8888')
         self.ctrl.post_fn = stub_rackspace_identity_post
         self.driver_cls = MockLibCloudDriver
 
@@ -184,7 +184,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_empty_user(self):
         """ Ensure authentication with empty string as username fails. """
 
-        ctrl = RackspaceCtrl('', 'valid_api_key')
+        ctrl = RackspaceCtrl('', 'valid_api_key', 'http://foo.bar:8888')
         ctrl.post_fn = stub_rackspace_identity_post
 
         auth_result = ctrl.authenticate()
@@ -194,7 +194,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_empty_apikey(self):
         """ Ensure authentication with empty string as api_key fails. """
 
-        ctrl = RackspaceCtrl('valid_user', '')
+        ctrl = RackspaceCtrl('valid_user', '', 'http://foo.bar:8888')
         ctrl.post_fn = stub_rackspace_identity_post
 
         auth_result = ctrl.authenticate()
@@ -204,7 +204,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_authenticate_invalid_user(self):
         """  Ensure authentication with invalid user credentials fails. """
 
-        ctrl = RackspaceCtrl('invalid_user', 'invalid_api_key')
+        ctrl = RackspaceCtrl('invalid_user', 'invalid_api_key', 'http://foo.bar:8888')
         ctrl.post_fn = stub_rackspace_identity_post
 
         auth_result = ctrl.authenticate()
@@ -251,7 +251,7 @@ class TestRackspaceCtrl(unittest.TestCase):
     def test_token_parsed(self):
         """ Ensure that the token is set. """
 
-        ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
+        ctrl = RackspaceCtrl('valid_user', 'valid_api_key', 'http://foo.bar:8888')
         ctrl.post_fn = stub_rackspace_identity_post
 
         ctrl.authenticate()
@@ -273,7 +273,7 @@ class TestRackspaceCtrlDriver(unittest.TestCase):
     def setUp(self):
         """ Set up the objects used by most of the tests. """
 
-        self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key')
+        self.ctrl = RackspaceCtrl('valid_user', 'valid_api_key', 'http://foo.bar:8888')
         self.ctrl.post_fn = stub_rackspace_identity_post
         self.ctrl.driver_cls = MockLibCloudDriver
         self.ctrl.authenticate()

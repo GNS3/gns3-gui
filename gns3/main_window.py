@@ -45,6 +45,7 @@ from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .topology import Topology, TopologyInstance
 from .cloud.utils import get_provider
+from .cloud.exceptions import KeyPairExists
 
 log = logging.getLogger(__name__)
 
@@ -356,13 +357,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # create an instance for this project
                     default_flavor = self.cloudSettings()['default_flavor']
                     default_image_id = self.cloudSettings()['default_image']
-                    instance = provider.create_instance(new_project_settings["project_name"],
-                                                        default_flavor,
-                                                        default_image_id)
+                    instance, keypair = self._create_instance(new_project_settings["project_name"],
+                                                              default_flavor,
+                                                              default_image_id)
 
                     topology = Topology.instance()
                     topology.addInstance(new_project_settings["project_name"], instance.id,
-                                         default_flavor, default_image_id)
+                                         default_flavor, default_image_id,
+                                         keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
                 self._saveProject(new_project_settings["project_path"])
@@ -1187,12 +1189,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                         name = instance["name"]
                         flavor = instance["size_id"]
                         image = instance["image_id"]
-                        i = provider.create_instance(name, flavor, image)
+                        i, k = self._create_instance(name, flavor, image)
                         new_instances.append({
                             "name": i.name,
                             "id": i.id,
                             "size_id": flavor,
                             "image_id": image,
+                            "private_key": k.private_key,
+                            "public_key": k.public_key
                         })
                     # update topology with new image data
                     json_topology["topology"]["instances"] = new_instances
@@ -1411,6 +1415,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # object because only instance.id is actually accessed
                 ti = TopologyInstance(**instance)
                 self.cloudProvider.delete_instance(ti)
+                # delete keypairs
+                self.cloudProvider.delete_key_pair_by_name(instance["name"])
 
     def project_created(self, project):
         """
@@ -1434,7 +1440,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_instances = json_topology["topology"]["instances"]
             self.CloudInspectorView.load(self, project_instances)
 
-    def add_instance_to_project(self, instance):
+    def add_instance_to_project(self, instance, keypair):
         """
         Add an instance to the current project
 
@@ -1448,7 +1454,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         topology = Topology.instance()
         topology.addInstance(instance.name, instance.id, instance.extra['flavorId'],
-                             default_image_id)
+                             default_image_id, keypair.private_key, keypair.public_key)
         self.CloudInspectorView.addInstance(instance)
 
         # persist infos saving current project
@@ -1464,3 +1470,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology.removeInstance(instance.id)
         # persist infos saving current project
         self._saveProject(self._project_settings["project_path"])
+
+    def _create_instance(self, name, flavor, image_id):
+        """
+        Wrapper method to handle SSH keypairs creation before actually creating
+        an instance
+        """
+        # add -gns3 suffix to image names to minimize clashes on Rackspace accounts
+        name += "-gns3"
+
+        try:
+            keypair = self.cloudProvider.create_key_pair(name)
+        except KeyPairExists:
+            # delete keypairs if already exist
+            self.cloudProvider.delete_key_pair_by_name(name)
+            keypair = self.cloudProvider.create_key_pair(name)
+
+        instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
+        return instance, keypair

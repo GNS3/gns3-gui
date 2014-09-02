@@ -53,7 +53,8 @@ class TestTopology(TestCase):
 
     def test_instances(self):
         self.assertEqual(self.t._instances, [])
-        self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890")
+        self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890",
+                           private_key="private key", public_key="public string")
         self.assertEqual(len(self.t._instances), 1)
         self.t.removeInstance("wrong id")
         self.assertEqual(len(self.t._instances), 1)
@@ -63,14 +64,15 @@ class TestTopology(TestCase):
     def test_instances_dumped(self):
         test_settings = {'project_type': 'cloud'}
         MainWindow.instance() ._project_settings.update(test_settings)
-        self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890")
+        self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890",
+                           private_key="private key", public_key="public string")
         topology = self.t.dump()
         self.assertIn('instances', topology["topology"])
         instances = topology["topology"]["instances"]
         self.assertEqual(len(instances), 1)
         self.assertEqual(instances.pop()["name"], "My instance")
 
-    def test_instaces_load(self):
+    def test_instances_load(self):
         topology = {
             'project_type': 'cloud',
             'type': 'topology',
@@ -82,12 +84,16 @@ class TestTopology(TestCase):
                         'id': 'xyz',
                         'size_id': 'id1',
                         'image_id': 'id2',
+                        'private_key': 'secret',
+                        'public_key': 'public'
                     },
                     {
                         'name': 'Another Foo Instance',
                         'id': 'xyz',
                         'size_id': 'id123',
                         'image_id': 'id234',
+                        'private_key': 'a secret',
+                        'public_key': 'this is public'
                     }
                 ]
             }

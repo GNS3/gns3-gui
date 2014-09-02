@@ -65,7 +65,7 @@ class TestCloudPreferencesPage(TestCase):
         self.page.settings.__setitem__.side_effect = make_setitem(settings_copy)
         self._init_page()
         # RackspaceCtrl mock
-        ctrl = RackspaceCtrl('foo', 'bar')
+        ctrl = RackspaceCtrl('foo', 'bar', 'http://foo.bar:8888')
         self.ctrl_mock = mock.MagicMock()
         self.ctrl_mock.return_value = self.ctrl_mock
         self.ctrl_mock.authenticate.return_value = True

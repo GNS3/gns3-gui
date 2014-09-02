@@ -3,8 +3,34 @@ from PyQt4.QtCore import pyqtSignal
 
 from .rackspace_ctrl import RackspaceCtrl
 
+import paramiko
+
+from contextlib import contextmanager
+import io
+from socket import error as socket_error
 import logging
 log = logging.getLogger(__name__)
+
+
+@contextmanager
+def ssh_client(host, key_string):
+    """
+
+
+    :return:
+    """
+    client = paramiko.SSHClient()
+    try:
+        f_key = io.StringIO(key_string)
+        key = paramiko.RSAKey.from_private_key(f_key)
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname=host, username="root", pkey=key)
+        yield client
+    except socket_error as e:
+        log.error("SSH connection error: {}".format(e))
+        yield None
+    finally:
+        client.close()
 
 
 def get_provider(cloud_settings):
@@ -19,11 +45,12 @@ def get_provider(cloud_settings):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
+        ias_url = cloud_settings['gns3_ias_url']
     except KeyError as e:
         log.error("Unable to create cloud provider: {}".format(e))
         return
 
-    provider = RackspaceCtrl(username, apikey)
+    provider = RackspaceCtrl(username, apikey, ias_url)
 
     if not provider.authenticate():
         log.error("Authentication failed for cloud provider")
@@ -59,7 +86,7 @@ class CreateInstanceThread(QThread):
     """
     Helper class to create instances in a separate thread
     """
-    instanceCreated = pyqtSignal(object)
+    instanceCreated = pyqtSignal(object, object)
 
     def __init__(self, parent, provider, name, flavor_id, image_id):
         super(QThread, self).__init__(parent)
@@ -70,7 +97,8 @@ class CreateInstanceThread(QThread):
 
     def run(self):
         i = self._provider.create_instance(self._name, self._flavor_id, self._image_id)
-        self.instanceCreated.emit(i)
+        k = self._provider.create_key_pair(self._name)
+        self.instanceCreated.emit(i, k)
 
 
 class DeleteInstanceThread(QThread):
@@ -87,3 +115,19 @@ class DeleteInstanceThread(QThread):
     def run(self):
         if self._provider.delete_instance(self._instance):
             self.instanceDeleted.emit(self._instance)
+
+
+class SSHClientThread(QThread):
+    """
+
+    """
+    def __init__(self, parent, host, private_key_string):
+        super(QThread, self).__init__(parent)
+        self._host = host
+        self._private_key_string = private_key_string
+
+    def run(self):
+        with ssh_client(self._host, self._private_key_string) as client:
+            if client is not None:
+                stdin, stdout, stderr = client.exec_command("ls /var")
+                log.info("ssh response: {}".format(stdout.read()))
