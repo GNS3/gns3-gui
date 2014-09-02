@@ -255,3 +255,6 @@ CLOUD_SETTINGS_TYPES = {
 CLOUD_PROVIDERS = {
     "rackspace": ("Rackspace", 'gns3.cloud.rackspace_ctrl.RackspaceCtrl'),
 }
+
+# heartbeat_freq is in milliseconds
+DEFAULT_HEARTBEAT_FREQ = 60000

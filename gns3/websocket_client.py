@@ -42,8 +42,8 @@ class WebSocketClient(WebSocketBaseClient):
 
     _instance_count = 1
 
-    def __init__(self, url, protocols=None, extensions=None, heartbeat_freq=None,
-                 ssl_options=None, headers=None):
+    def __init__(self, url, protocols=None, extensions=None, 
+                 heartbeat_freq=None, ssl_options=None, headers=None):
 
         WebSocketBaseClient.__init__(self, url,
                                      protocols,
@@ -118,9 +118,6 @@ class WebSocketClient(WebSocketBaseClient):
 
         log.info("connected to {}:{}".format(self.host, self.port))
         self._connected = True
-        self._heartbeat_timer = QtCore.QTimer()
-        self._heartbeat_timer.timeout.connect(self._heartbeat)
-        self._heartbeat_timer.start(5000)
 
     def connect(self):
         """
@@ -199,7 +196,8 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         log.info("connection closed down: {} (code {})".format(reason, code))
-        self._heartbeat_timer.stop()
+        if self._heartbeat_timer is not None:
+            self._heartbeat_timer.stop()
         self._connected = False
 
     def received_message(self, message):
@@ -328,3 +326,10 @@ class WebSocketClient(WebSocketBaseClient):
 
     def _heartbeat(self):
         self.send_notification("deadman.heartbeat")
+
+    def enableHeartbeatsAt(self, interval):
+        # Send an initial heartbeat right away
+        self._heartbeat()
+        self._heartbeat_timer = QtCore.QTimer()
+        self._heartbeat_timer.timeout.connect(self._heartbeat)
+        self._heartbeat_timer.start(interval)
