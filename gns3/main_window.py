@@ -124,6 +124,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
+        #FIXME: hide the cloud dock for beta release
+        self.uiCloudInspectorDockWidget.hide()
+
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
 
