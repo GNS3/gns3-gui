@@ -328,8 +328,6 @@ class WebSocketClient(WebSocketBaseClient):
         self.send_notification("deadman.heartbeat")
 
     def enableHeartbeatsAt(self, interval):
-        # Send an initial heartbeat right away
-        self._heartbeat()
         self._heartbeat_timer = QtCore.QTimer()
         self._heartbeat_timer.timeout.connect(self._heartbeat)
         self._heartbeat_timer.start(interval)
