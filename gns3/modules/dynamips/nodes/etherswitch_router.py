@@ -19,6 +19,9 @@
 EtherSwitch router implementation (based on Dynamips c3745).
 """
 
+import sys
+import os
+import pkg_resources
 from .router import Router
 from gns3.node import Node
 
@@ -61,7 +64,15 @@ class EtherSwitchRouter(Router):
         if not name:
             name = self.allocateName("ESW")
 
-        initial_settings.update({"slot1": "NM-16ESW"})  # add the EtherSwitch module
+        resource_name = "configs/ios_etherswitch_startup-config.txt"
+        if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+            startup_config = os.path.normpath(resource_name)
+        elif pkg_resources.resource_exists("gns3", resource_name):
+            ios_etherswitch_config_path = pkg_resources.resource_filename("gns3", resource_name)
+            startup_config = os.path.normpath(ios_etherswitch_config_path)
+
+        initial_settings.update({"slot1": "NM-16ESW",  # add the EtherSwitch module
+                                 "startup_config": startup_config})  # add the EtherSwitch startup-config
         Router.setup(self, image, ram, name, router_id, initial_settings)
 
     @staticmethod
