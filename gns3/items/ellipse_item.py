@@ -34,6 +34,8 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
         ShapeItem.__init__(self)
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.DashLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.setPen(pen)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
+        self.setBrush(brush)
         if pos:
             self.setPos(pos)
 

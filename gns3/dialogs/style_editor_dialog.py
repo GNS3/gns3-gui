@@ -52,13 +52,16 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         first_item = items[0]
         pen = first_item.pen()
         brush = first_item.brush()
-        if brush.style() == QtCore.Qt.NoBrush:
-            self._color = QtCore.Qt.transparent
-        else:
-            self._color = brush.color()
-            self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))
+        self._color = brush.color()
+        self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
+                                                                                              self._color.green(),
+                                                                                              self._color.blue(),
+                                                                                              self._color.alpha()))
         self._border_color = pen.color()
-        self.uiBorderColorPushButton.setStyleSheet("background-color: {}".format(self._border_color.name()))
+        self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
+                                                                                                    self._border_color.green(),
+                                                                                                    self._border_color.blue(),
+                                                                                                    self._border_color.alpha()))
         self.uiRotationSpinBox.setValue(first_item.rotation())
         self.uiBorderWidthSpinBox.setValue(pen.width())
         index = self.uiBorderStyleComboBox.findData(pen.style())
@@ -73,7 +76,10 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         color = QtGui.QColorDialog.getColor(self._color, self, "Select Color", QtGui.QColorDialog.ShowAlphaChannel)
         if color.isValid():
             self._color = color
-            self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))
+            self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
+                                                                                                  self._color.green(),
+                                                                                                  self._color.blue(),
+                                                                                                  self._color.alpha()))
 
     def _setBorderColorSlot(self):
         """
@@ -83,7 +89,10 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         color = QtGui.QColorDialog.getColor(self._border_color, self, "Select Color", QtGui.QColorDialog.ShowAlphaChannel)
         if color.isValid():
             self._border_color = color
-            self.uiBorderColorPushButton.setStyleSheet("background-color: {}".format(self._border_color.name()))
+            self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
+                                                                                                        self._border_color.green(),
+                                                                                                        self._border_color.blue(),
+                                                                                                        self._border_color.alpha()))
 
     def _applyPreferencesSlot(self):
         """
@@ -92,14 +101,11 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
 
         border_style = QtCore.Qt.PenStyle(self.uiBorderStyleComboBox.itemData(self.uiBorderStyleComboBox.currentIndex()))
         pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-        brush = None
-        if self._color != QtCore.Qt.transparent:
-            brush = QtGui.QBrush(self._color)
+        brush = QtGui.QBrush(self._color)
 
         for item in self._items:
             item.setPen(pen)
-            if brush is not None:
-                item.setBrush(brush)
+            item.setBrush(brush)
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):
