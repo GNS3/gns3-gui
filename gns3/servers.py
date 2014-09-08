@@ -25,6 +25,7 @@ import shlex
 import signal
 import socket
 import subprocess
+import ssl
 from .qt import QtCore
 from .websocket_client import WebSocketClient
 from .settings import DEFAULT_LOCAL_SERVER_PATH
@@ -75,7 +76,8 @@ class Servers(QtCore.QObject):
         local_server_port = settings.value("local_server_port", DEFAULT_LOCAL_SERVER_PORT, type=int)
         local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
         local_server_auto_start = settings.value("local_server_auto_start", True, type=bool)
-        self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start)
+        local_server_ssl = settings.value("local_server_ssl", True, type=bool)
+        self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start, local_server_ssl)
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -186,7 +188,7 @@ class Servers(QtCore.QObject):
             if wait:
                 self._local_server_proccess.wait()
 
-    def setLocalServer(self, path, host, port, auto_start):
+    def setLocalServer(self, path, host, port, auto_start, use_ssl):
         """
         Sets the local server.
 
@@ -195,6 +197,8 @@ class Servers(QtCore.QObject):
         :param port: port of the server (integer)
         :param auto_start: either the local server should be
         automatically started on startup (boolean)
+        :param use_ssl: True if the connection should be ssl-encrypted, False
+        otherwise
         """
 
         self._local_server_path = path
@@ -206,8 +210,14 @@ class Servers(QtCore.QObject):
                 self._local_server.close_connection()
             log.info("local server connection {} unregistered".format(self._local_server.url))
 
-        url = "ws://{host}:{port}".format(host=host, port=port)
-        self._local_server = WebSocketClient(url)
+        self._use_ssl = use_ssl
+        if self._use_ssl:
+            url = "wss://{host}:{port}".format(host=host, port=port)
+            ssl_options = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'}
+        else:
+            url = "ws://{host}:{port}".format(host=host, port=port)
+            ssl_options = {}
+        self._local_server = WebSocketClient(url, ssl_options=ssl_options)
         self._local_server.setLocal(True)
         log.info("new local server connection {} registered".format(url))
 

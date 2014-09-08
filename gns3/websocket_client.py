@@ -122,6 +122,29 @@ class WebSocketClient(WebSocketBaseClient):
         """
         Connects to the server.
         """
+        if self.url.startswith('wss'):
+            url = "https://{host}:{port}/login".format(host=self.host, port=self.port)
+            cafile = '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'
+        else:
+            url = "http://{host}:{port}/login".format(host=self.host, port=self.port)
+            cafile = None
+        log.debug('Logging in to server at: %s' % url)
+
+        httpshandler = urllib.request.HTTPSHandler(check_hostname=False)
+        cookieprocessor = urllib.request.HTTPCookieProcessor()
+        opener = urllib.request.build_opener(httpshandler, cookieprocessor)
+        urllib.request.install_opener(opener)
+
+        # FIXME: replace static username and password
+        data = urllib.parse.urlencode({'name': 'test123', 'password': 'test456'}).encode('utf-8')
+        f = urllib.request.urlopen(url, data, cafile=cafile)
+
+        log.debug(cookieprocessor.cookiejar)
+
+#        Another approach using the requests lib
+#        cert = ('/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt', '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.key')
+#        r = requests.post(url, {'name': 'test123', 'password': 'test456'}, allow_redirects=False, verify=cert[0])
+#        log.debug(r.cookies.get('user'))
 
         try:
             WebSocketBaseClient.connect(self)
@@ -132,7 +155,10 @@ class WebSocketClient(WebSocketBaseClient):
             raise OSError("Websocket exception {}: {}".format(type(e), e))
 
         # once connected, get the GNS3 server version (over classic HTTP)
-        url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
+        if self.url.startswith('wss'):
+            url = "https://{host}:{port}/version".format(host=self.host, port=self.port)
+        else:
+            url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
         content = urllib.request.urlopen(url).read()
         try:
             json_data = json.loads(content.decode("utf-8"))
