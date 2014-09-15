@@ -232,7 +232,7 @@ class Servers(QtCore.QObject):
         """
 
         server_socket = "{host}:{port}".format(host=host, port=port)
-        url = "ws://{server_socket}".format(server_socket=server_socket)
+        url = "wss://{server_socket}".format(server_socket=server_socket)
         server = SecureWebSocketClient(url)
         self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
