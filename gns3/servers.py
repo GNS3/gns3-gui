@@ -27,7 +27,7 @@ import socket
 import subprocess
 import ssl
 from .qt import QtCore
-from .websocket_client import WebSocketClient
+from .websocket_client import WebSocketClient, SecureWebSocketClient
 from .settings import DEFAULT_LOCAL_SERVER_PATH
 from .settings import DEFAULT_LOCAL_SERVER_HOST
 from .settings import DEFAULT_LOCAL_SERVER_PORT
@@ -77,7 +77,11 @@ class Servers(QtCore.QObject):
         local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
         local_server_auto_start = settings.value("local_server_auto_start", True, type=bool)
         local_server_ssl = settings.value("local_server_ssl", True, type=bool)
-        self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start, local_server_ssl)
+        local_server_ssl_cert = settings.value("local_server_ssl_cert", None)
+        local_server_ssl_key = settings.value("local_server_ssl_key", None)
+        self.setLocalServer(local_server_path, local_server_host, 
+            local_server_port, local_server_auto_start, local_server_ssl,
+            local_server_ssl_cert, local_server_ssl_key)
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -188,7 +192,7 @@ class Servers(QtCore.QObject):
             if wait:
                 self._local_server_proccess.wait()
 
-    def setLocalServer(self, path, host, port, auto_start, use_ssl):
+    def setLocalServer(self, path, host, port, auto_start, use_ssl, ssl_cert_path, ssl_key_path):
         """
         Sets the local server.
 
@@ -213,7 +217,8 @@ class Servers(QtCore.QObject):
         self._use_ssl = use_ssl
         if self._use_ssl:
             url = "wss://{host}:{port}".format(host=host, port=port)
-            ssl_options = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'}
+            ssl_options = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': ssl_cert_path}
+            # ssl_options = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'}
         else:
             url = "ws://{host}:{port}".format(host=host, port=port)
             ssl_options = {}
@@ -242,7 +247,7 @@ class Servers(QtCore.QObject):
 
         server_socket = "{host}:{port}".format(host=host, port=port)
         url = "ws://{server_socket}".format(server_socket=server_socket)
-        server = WebSocketClient(url)
+        server = SecureWebSocketClient(url)
         self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server

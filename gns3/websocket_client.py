@@ -122,30 +122,22 @@ class WebSocketClient(WebSocketBaseClient):
         """
         Connects to the server.
         """
-        if self.url.startswith('wss'):
-            url = "https://{host}:{port}/login".format(host=self.host, port=self.port)
-            cafile = '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'
-        else:
-            url = "http://{host}:{port}/login".format(host=self.host, port=self.port)
-            cafile = None
-        log.debug('Logging in to server at: %s' % url)
+        self.use_auth = False
+        self.use_ssl = False
+        self.version_url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
+        self.websocket_url = "ws://{host}:{port}".format(host=self.host, port=self.port)
 
-        httpshandler = urllib.request.HTTPSHandler(check_hostname=False)
-        cookieprocessor = urllib.request.HTTPCookieProcessor()
-        opener = urllib.request.build_opener(httpshandler, cookieprocessor)
-        urllib.request.install_opener(opener)
+        self.https_handler = urllib.request.HTTPSHandler(check_hostname=False)
+        self.cookie_processor = urllib.request.HTTPCookieProcessor()
+        self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
 
-        # FIXME: replace static username and password
-        data = urllib.parse.urlencode({'name': 'test123', 'password': 'test456'}).encode('utf-8')
-        f = urllib.request.urlopen(url, data, cafile=cafile)
+        self.check_server_version()
+        self._connect()
 
-        log.debug(cookieprocessor.cookiejar)
-
-#        Another approach using the requests lib
-#        cert = ('/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt', '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.key')
-#        r = requests.post(url, {'name': 'test123', 'password': 'test456'}, allow_redirects=False, verify=cert[0])
-#        log.debug(r.cookies.get('user'))
-
+    def _connect(self):
+        """
+        Connect to the server.
+        """
         try:
             WebSocketBaseClient.connect(self)
         except OSError:
@@ -154,19 +146,19 @@ class WebSocketClient(WebSocketBaseClient):
             log.error("could to connect {}: {}".format(self.url, e))
             raise OSError("Websocket exception {}: {}".format(type(e), e))
 
-        # once connected, get the GNS3 server version (over classic HTTP)
-        if self.url.startswith('wss'):
-            url = "https://{host}:{port}/version".format(host=self.host, port=self.port)
-        else:
-            url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
-        content = urllib.request.urlopen(url).read()
+    def check_server_version(self):
+        """
+        Check for a version match with the GNS3 server.
+
+        This is an http (or https) request.
+        """
+        content = self.opener.open(self.version_url).read()
         try:
             json_data = json.loads(content.decode("utf-8"))
             self._version = json_data.get("version")
         except ValueError as e:
             log.error("could not get the server version: {}".format(e))
 
-        #FIXME: temporary version check
         if (self._version != __version__):
             self.close_connection()
             raise OSError("GUI version {} differs with the server version {}".format(__version__, self._version))
@@ -346,3 +338,31 @@ class WebSocketClient(WebSocketBaseClient):
                 "host": self.host,
                 "port": self.port,
                 "local": self._local}
+
+
+class SecureWebSocketClient(WebSocketClient):
+    def connect(self, ca_file=''):
+        self.use_auth = True
+        self.use_ssl = True
+
+        # self.ca_file = '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'
+        self.ca_file = ca_file
+        self.login_url = "https://{host}:{port}/login".format(host=self.host, port=self.port)
+        self.version_url = "https://{host}:{port}/version".format(host=self.host, port=self.port)
+        self.websocket_url = "wss://{host}:{port}".format(host=self.host, port=self.port)
+        self.auth_user = 'test123'
+        self.auth_password = 'test456'
+
+        self.https_handler = urllib.request.HTTPSHandler(check_hostname=False)
+        self.cookie_processor = urllib.request.HTTPCookieProcessor()
+        self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
+
+        self.check_server_version()
+
+        log.debug('Logging in to server at: %s' % self.login_url)
+        data = urllib.parse.urlencode({'name': self.auth_user, 'password': self.auth_password}).encode('utf-8')
+        urllib.request.install_opener(self.opener)
+        f = urllib.request.urlopen(self.login_url, data, cafile=self.ca_file)
+        log.debug(self.cookie_processor.cookiejar)
+
+        self._connect(self)
