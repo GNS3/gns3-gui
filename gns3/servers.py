@@ -31,6 +31,7 @@ from .websocket_client import WebSocketClient, SecureWebSocketClient
 from .settings import DEFAULT_LOCAL_SERVER_PATH
 from .settings import DEFAULT_LOCAL_SERVER_HOST
 from .settings import DEFAULT_LOCAL_SERVER_PORT
+from .settings import DEFAULT_HEARTBEAT_FREQ
 
 import logging
 log = logging.getLogger(__name__)
@@ -76,7 +77,8 @@ class Servers(QtCore.QObject):
         local_server_port = settings.value("local_server_port", DEFAULT_LOCAL_SERVER_PORT, type=int)
         local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
         local_server_auto_start = settings.value("local_server_auto_start", True, type=bool)
-        self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start)
+        heartbeat_freq = settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ, type=int)
+        self.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start, heartbeat_freq)
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -85,7 +87,7 @@ class Servers(QtCore.QObject):
             host = settings.value("host", "")
             port = settings.value("port", 0, type=int)
             if host and port:
-                self._addRemoteServer(host, port)
+                self._addRemoteServer(host, port, heartbeat_freq)
         settings.endArray()
         settings.endGroup()
 
@@ -187,7 +189,7 @@ class Servers(QtCore.QObject):
             if wait:
                 self._local_server_proccess.wait()
 
-    def setLocalServer(self, path, host, port, auto_start):
+    def setLocalServer(self, path, host, port, auto_start, heartbeat_freq):
         """
         Sets the local server.
 
@@ -196,6 +198,7 @@ class Servers(QtCore.QObject):
         :param port: port of the server (integer)
         :param auto_start: either the local server should be
         automatically started on startup (boolean)
+        :param heartbeat_freq: The interval to send heartbeats to the server
         """
 
         self._local_server_path = path
@@ -210,6 +213,7 @@ class Servers(QtCore.QObject):
         url = "ws://{host}:{port}".format(host=host, port=port)
         self._local_server = WebSocketClient(url)
         self._local_server.setLocal(True)
+        self._local_server.enableHeartbeatsAt(heartbeat_freq)
         log.info("new local server connection {} registered".format(url))
 
     def localServer(self):
@@ -221,12 +225,13 @@ class Servers(QtCore.QObject):
 
         return self._local_server
 
-    def _addRemoteServer(self, host, port):
+    def _addRemoteServer(self, host, port, heartbeat_freq):
         """
         Adds a new remote server.
 
         :param host: host or address of the server
         :param port: port of the server (integer)
+        :param heartbeat_freq: The interval to send heartbeats to the server
 
         :returns: the new remote server
         """
@@ -234,6 +239,7 @@ class Servers(QtCore.QObject):
         server_socket = "{host}:{port}".format(host=host, port=port)
         url = "wss://{server_socket}".format(server_socket=server_socket)
         server = SecureWebSocketClient(url)
+        self._local_server.enableHeartbeatsAt(heartbeat_freq)
         self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server
@@ -244,7 +250,8 @@ class Servers(QtCore.QObject):
             if server.host == host and server.port == port:
                 return server
 
-        return self._addRemoteServer(host, port)
+        heartbeat_freq = settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
+        return self._addRemoteServer(host, port, heartbeat_freq)
 
     def updateRemoteServers(self, servers):
         """

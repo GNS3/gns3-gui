@@ -42,8 +42,8 @@ class WebSocketClient(WebSocketBaseClient):
 
     _instance_count = 1
 
-    def __init__(self, url, protocols=None, extensions=None, heartbeat_freq=None,
-                 ssl_options=None, headers=None):
+    def __init__(self, url, protocols=None, extensions=None, 
+                 heartbeat_freq=None, ssl_options=None, headers=None):
 
         WebSocketBaseClient.__init__(self, url,
                                      protocols,
@@ -57,6 +57,7 @@ class WebSocketClient(WebSocketBaseClient):
         self._local = False
         self._version = ""
         self._fd_notifier = None
+        self._heartbeat_timer = None
 
         # create an unique ID
         self._id = WebSocketClient._instance_count
@@ -213,6 +214,8 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         log.info("connection closed down: {} (code {})".format(reason, code))
+        if self._heartbeat_timer is not None:
+            self._heartbeat_timer.stop()
         self._connected = False
 
     def received_message(self, message):
@@ -338,6 +341,14 @@ class WebSocketClient(WebSocketBaseClient):
                 "host": self.host,
                 "port": self.port,
                 "local": self._local}
+
+    def _heartbeat(self):
+        self.send_notification("deadman.heartbeat")
+
+    def enableHeartbeatsAt(self, interval):
+        self._heartbeat_timer = QtCore.QTimer()
+        self._heartbeat_timer.timeout.connect(self._heartbeat)
+        self._heartbeat_timer.start(interval)
 
 
 class SecureWebSocketClient(WebSocketClient):
