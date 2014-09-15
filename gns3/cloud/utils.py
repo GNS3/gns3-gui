@@ -12,18 +12,30 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class AllowAndForgetPolicy(paramiko.MissingHostKeyPolicy):
+    """
+    Custom policy for server host keys: we simply accept the key
+    the server sent to us without storing it.
+    """
+    def missing_host_key(self, *args, **kwargs):
+        """
+        According to MissingHostKeyPolicy protocol, to accept
+        the key, simply return.
+        """
+        return
+
+
 @contextmanager
 def ssh_client(host, key_string):
     """
-
-
-    :return:
+    Context manager wrapping a SSHClient instance: the client connects on
+    enter and close the connection on exit
     """
     client = paramiko.SSHClient()
     try:
         f_key = io.StringIO(key_string)
         key = paramiko.RSAKey.from_private_key(f_key)
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.set_missing_host_key_policy(AllowAndForgetPolicy())
         client.connect(hostname=host, username="root", pkey=key)
         yield client
     except socket_error as e:
@@ -119,7 +131,8 @@ class DeleteInstanceThread(QThread):
 
 class SSHClientThread(QThread):
     """
-
+    Perform SSH connections to the instances in a separate thread,
+    outside the GUI event loop
     """
     def __init__(self, parent, host, private_key_string):
         super(QThread, self).__init__(parent)
