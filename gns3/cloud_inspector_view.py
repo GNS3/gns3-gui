@@ -11,14 +11,23 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import Qt
 
 from .cloud.utils import (ListInstancesThread, CreateInstanceThread, DeleteInstanceThread,
-                          SSHClientThread)
-from .cloud.base_cloud_ctrl import InstanceState
+                          StartGNS3ServerThread, WSConnectThread)
+from libcloud.compute.types import NodeState
 from .topology import Topology
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
 POLLING_TIMER = 5000  # in milliseconds
+
+
+class RunningInstanceState():
+    """
+    GNS3 states for running instances
+    """
+    IDLE = 0
+    GNS3SERVER_STARTED = 1
+    WS_CONNECTED = 2
 
 
 class InstanceTableModel(QAbstractTableModel):
@@ -46,9 +55,9 @@ class InstanceTableModel(QAbstractTableModel):
         """
         Return a string pointing to the graphic resource
         """
-        if state in (InstanceState.RUNNING, InstanceState.FULLY_OPERATIONAL):
+        if state == NodeState.RUNNING:
             return ':/icons/led_green.svg'
-        elif state in (InstanceState.REBOOTING, InstanceState.PENDING, InstanceState.UNKNOWN):
+        elif state in (NodeState.REBOOTING, NodeState.PENDING, NodeState.UNKNOWN):
             return ':/icons/led_yellow.svg'
         else:
             return ':/icons/led_red.svg'
@@ -178,6 +187,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # map flavor ids to combobox indexes
         self.flavor_index_id = []
 
+        # internal status for running instances
+        self._running_instances = {}
+
     def _get_flavor_index(self, flavor_id):
         try:
             return self.flavor_index_id.index(flavor_id)
@@ -266,6 +278,25 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         update_thread.instancesReady.connect(self._update_model)
         update_thread.start()
 
+    def _gns3server_started_slot(self, id, output_string):
+        """
+        This slot is called when the StartGNS3ServerThread succesfully started
+        the server.
+
+        :param id: the id of the instance
+        :param output_string: the output of the script starting the server on the remote host
+        """
+        self._running_instances[id] = RunningInstanceState.GNS3SERVER_STARTED
+        # TODO: parse output_string and extract certificate, username and pass
+        # TODO: store above data and use it to start WSConnectThread
+
+    def _wss_connected_slot(self, id):
+        """
+        This slot is called when the WSConnectThread succesfully connected to
+        the websocket on the remote host
+        """
+        self._running_instances[id] = RunningInstanceState.WS_CONNECTED
+
     def _update_model(self, instances):
         if not instances:
             return
@@ -282,18 +313,30 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             self._model.removeInstanceById(i)
         self.uiInstancesTableView.resizeColumnsToContents()
 
-        # ssh into the instance to start gns3-server
+        # handle state for running instances
         topology = Topology.instance()
         for i in project_instances:
-            if i.state != InstanceState.RUNNING:
+            if i.state != NodeState.RUNNING:
+                self._running_instances = {}
                 continue
 
             topology_instance = topology.getInstance(i.id)
             if topology_instance is None:
                 continue
 
-            ssh_thread = SSHClientThread(self, i.public_ips[1], topology_instance.private_key)
-            ssh_thread.start()
+            state = self._running_instances.setdefault(i.id, RunningInstanceState.IDLE)
+
+            if state == RunningInstanceState.IDLE:
+                # start GNS3 server and deadman switch
+                ssh_thread = StartGNS3ServerThread(self, i.id, i.public_ips[1],
+                                                   topology_instance.private_key)
+                ssh_thread.gns3server_started.connect(self._gns3server_started_slot)
+                ssh_thread.start()
+            elif state == RunningInstanceState.GNS3SERVER_STARTED:
+                # start WSS connection
+                wss_thread = WSConnectThread(self, i.id)
+                wss_thread.established.connect(self._wss_connected_slot)
+                wss_thread.start()
 
     def _populate_model(self, instances):
         self._model.flavors = self._provider.list_flavors()
