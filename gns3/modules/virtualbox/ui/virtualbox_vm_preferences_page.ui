@@ -114,15 +114,15 @@
          <property name="text">
           <string>Enable console</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="6" column="0" colspan="2">
         <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
          <property name="text">
           <string>Start VM in headless mode</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
          </property>
         </widget>
        </item>

@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-VirtualBox module implementation.
+QEMU module implementation.
 """
 
 import os
@@ -24,30 +24,30 @@ from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
-from .virtualbox_vm import VirtualBoxVM
-from .settings import VBOX_SETTINGS, VBOX_SETTING_TYPES
+from .qemu_vm import QemuVM
+from .settings import QEMU_SETTINGS, QEMU_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class VirtualBox(Module):
+class Qemu(Module):
     """
-    VirtualBox module.
+    QEMU module.
     """
 
     def __init__(self):
         Module.__init__(self)
 
         self._settings = {}
-        self._virtualbox_vms = {}
+        self._qemu_vms = {}
         self._nodes = []
         self._servers = []
         self._working_dir = ""
 
         # load the settings
         self._loadSettings()
-        self._loadVirtualBoxVMs()
+        self._loadQemuVMs()
 
     def _loadSettings(self):
         """
@@ -57,8 +57,8 @@ class VirtualBox(Module):
         # load the settings
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in VBOX_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=VBOX_SETTING_TYPES[name])
+        for name, value in QEMU_SETTINGS.items():
+            self._settings[name] = settings.value(name, value, type=QEMU_SETTING_TYPES[name])
         settings.endGroup()
 
     def _saveSettings(self):
@@ -73,79 +73,81 @@ class VirtualBox(Module):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def _loadVirtualBoxVMs(self):
+    def _loadQemuVMs(self):
         """
-        Load the VirtualBox VMs from the persistent settings file.
+        Load the QEMU VMs from the persistent settings file.
         """
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("VirtualBoxVMs")
+        settings.beginGroup("QemuVMs")
 
         # load the VMs
         size = settings.beginReadArray("VM")
         for index in range(0, size):
             settings.setArrayIndex(index)
 
-            vmname = settings.value("vmname", "")
+            name = settings.value("name", "")
+            qemu_path = settings.value("qemu_path", "")
+            disk_image = settings.value("disk_image", "")
+            ram = settings.value("ram", 256, type=int)
             adapters = settings.value("adapters", 1, type=int)
-            adapter_start_index = settings.value("adapter_start_index", 0, type=int)
-            adapter_type = settings.value("adapter_type", "Automatic")
-            headless = settings.value("headless", False, type=bool)
-            enable_console = settings.value("enable_console", True, type=bool)
+            adapter_type = settings.value("adapter_type", "e1000")
+            options = settings.value("options", "")
             server = settings.value("server", "local")
 
-            key = "{server}:{vmname}".format(server=server, vmname=vmname)
-            self._virtualbox_vms[key] = {"vmname": vmname,
-                                         "adapters": adapters,
-                                         "adapter_start_index": adapter_start_index,
-                                         "adapter_type": adapter_type,
-                                         "headless": headless,
-                                         "enable_console": enable_console,
-                                         "server": server}
+            key = "{server}:{name}".format(server=server, name=name)
+            self._qemu_vms[key] = {"name": name,
+                                   "qemu_path": qemu_path,
+                                   "disk_image": disk_image,
+                                   "ram": ram,
+                                   "adapters": adapters,
+                                   "adapter_type": adapter_type,
+                                   "options": options,
+                                   "server": server}
 
         settings.endArray()
         settings.endGroup()
 
-    def _saveVirtualBoxVMs(self):
+    def _saveQemuVMs(self):
         """
-        Saves the VirtualBox VMs to the persistent settings file.
+        Saves the QEMU VMs to the persistent settings file.
         """
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("VirtualBoxVMs")
+        settings.beginGroup("QemuVMs")
         settings.remove("")
 
-        # save the VirtualBox VMs
-        settings.beginWriteArray("VM", len(self._virtualbox_vms))
+        # save the Qemu VMs
+        settings.beginWriteArray("VM", len(self._qemu_vms))
         index = 0
-        for vbox_vm in self._virtualbox_vms.values():
+        for qemu_vm in self._qemu_vms.values():
             settings.setArrayIndex(index)
-            for name, value in vbox_vm.items():
+            for name, value in qemu_vm.items():
                 settings.setValue(name, value)
             index += 1
         settings.endArray()
         settings.endGroup()
 
-    def virtualBoxVMs(self):
+    def qemuVMs(self):
         """
-        Returns VirtualBox VMs settings.
+        Returns QEMU VMs settings.
 
-        :returns: VirtualBox VMs settings (dictionary)
+        :returns: QEMU VMs settings (dictionary)
         """
 
-        return self._virtualbox_vms
+        return self._qemu_vms
 
-    def setVirtualBoxVMs(self, new_virtualbox_vms):
+    def setQemuVMs(self, new_qemu_vms):
         """
-        Sets VirtualBox VM settings.
+        Sets QEMU VM settings.
 
         :param new_iou_images: IOS images settings (dictionary)
         """
 
-        self._virtualbox_vms = new_virtualbox_vms.copy()
-        self._saveVirtualBoxVMs()
+        self._qemu_vms = new_qemu_vms.copy()
+        self._saveQemuVMs()
 
     def setProjectFilesDir(self, path):
         """
@@ -155,7 +157,7 @@ class VirtualBox(Module):
         """
 
         self._working_dir = path
-        log.info("local working directory for VirtualBox module: {}".format(self._working_dir))
+        log.info("local working directory for QEMU module: {}".format(self._working_dir))
 
         # update the server with the new working directory / project name
         for server in self._servers:
@@ -178,7 +180,7 @@ class VirtualBox(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("adding server {}:{} to VirtualBox module".format(server.host, server.port))
+        log.info("adding server {}:{} to QEMU module".format(server.host, server.port))
         self._servers.append(server)
         self._sendSettings(server)
 
@@ -189,7 +191,7 @@ class VirtualBox(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("removing server {}:{} from VirtualBox module".format(server.host, server.port))
+        log.info("removing server {}:{} from QEMU module".format(server.host, server.port))
         self._servers.remove(server)
 
     def servers(self):
@@ -251,7 +253,7 @@ class VirtualBox(Module):
                     if project_name.endswith("-files"):
                         project_name = project_name[:-6]
                     params.update({"project_name": project_name})
-                server.send_notification("virtualbox.settings", params)
+                server.send_notification("qemu.settings", params)
 
         self._settings.update(settings)
         self._saveSettings()
@@ -263,20 +265,20 @@ class VirtualBox(Module):
         :param server: WebSocketClient instance
         """
 
-        log.info("sending VirtualBox settings to server {}:{}".format(server.host, server.port))
+        log.info("sending QEMU settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
 
         # send the local working directory only if this is a local server
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            if "vboxwrapper_path" in params:
-                del params["vboxwrapper_path"]  # do not send Vboxwrapper path to remote servers
+            if "qemu_img_path" in params:
+                del params["qemu_img_path"]  # do not send QEMU img path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
             params.update({"project_name": project_name})
-        server.send_notification("virtualbox.settings", params)
+        server.send_notification("qemu.settings", params)
 
     def allocateServer(self, node_class):
         """
@@ -333,49 +335,44 @@ class VirtualBox(Module):
         log.info("configuring node {} with id {}".format(node, node.id()))
 
         selected_vms = []
-        for vm, info in self._virtualbox_vms.items():
+        for vm, info in self._qemu_vms.items():
             if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
                 selected_vms.append(vm)
 
         if not selected_vms:
-            raise ModuleError("No VirtualBox VM on server {}".format(node.server().host))
+            raise ModuleError("No QEMU VM on server {}".format(node.server().host))
         elif len(selected_vms) > 1:
 
             from gns3.main_window import MainWindow
             mainwindow = MainWindow.instance()
 
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
+            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "QEMU VM", "Please choose a VM", selected_vms, 0, False)
             if ok:
                 vm = selection
             else:
-                raise ModuleError("Please select a VirtualBox VM")
+                raise ModuleError("Please select a QEMU VM")
 
         else:
             vm = selected_vms[0]
 
-        for other_node in self._nodes:
-            if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
-                    (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
-                raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
+        settings = {"ram": self._qemu_vms[vm]["ram"],
+                    "disk_image": self._qemu_vms[vm]["disk_image"],
+                    "adapters": self._qemu_vms[vm]["adapters"],
+                    "adapter_type": self._qemu_vms[vm]["adapter_type"]}
 
-        settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
-                    "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
-                    "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
-                    "headless": self._virtualbox_vms[vm]["headless"],
-                    "enable_console": self._virtualbox_vms[vm]["enable_console"]}
-
-        vmname = self._virtualbox_vms[vm]["vmname"]
-        node.setup(vmname, initial_settings=settings)
+        qemu_path = self._qemu_vms[vm]["qemu_path"]
+        name = self._qemu_vms[vm]["name"]
+        node.setup(qemu_path, initial_settings=settings, base_name=name)
 
     def reset(self):
         """
         Resets the servers.
         """
 
-        log.info("VirtualBox module reset")
+        log.info("QEMU module reset")
         for server in self._servers:
             if server.connected():
-                server.send_notification("virtualbox.reset")
+                server.send_notification("qemu.reset")
         self._servers.clear()
         self._nodes.clear()
 
@@ -394,9 +391,9 @@ class VirtualBox(Module):
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
 
-    def get_vm_list(self, server, callback):
+    def get_qemu_list(self, server, callback):
         """
-        Gets the VirtualBox VM list from a server.
+        Gets the QEMU binaries list from a server.
 
         :param server: server to send the request to
         :param callback: callback for the server response
@@ -410,7 +407,7 @@ class VirtualBox(Module):
                                                                                  server.port,
                                                                                  e))
 
-        server.send_message("virtualbox.vm_list", None, callback)
+        server.send_message("qemu.qemu_list", None, callback)
 
     @staticmethod
     def getNodeClass(name):
@@ -432,7 +429,12 @@ class VirtualBox(Module):
         :returns: list of classes
         """
 
-        return [VirtualBoxVM]
+        return [QemuVM]
+
+        # return [{"class": QemuVM.__name__,
+        #          "symbol_name": QemuVM.symbolName(),
+        #          "default_symbol": QemuVM.defaultSymbol(),
+        #          "hover_symbol": QemuVM.hoverSymbol()}]
 
     @staticmethod
     def preferencePages():
@@ -440,18 +442,18 @@ class VirtualBox(Module):
         :returns: QWidget object list
         """
 
-        from .pages.virtualbox_preferences_page import VirtualBoxPreferencesPage
-        from .pages.virtualbox_vm_preferences_page import VirtualBoxVMPreferencesPage
-        return [VirtualBoxPreferencesPage, VirtualBoxVMPreferencesPage]
+        from .pages.qemu_preferences_page import QemuPreferencesPage
+        from .pages.qemu_vm_preferences_page import QemuVMPreferencesPage
+        return [QemuPreferencesPage, QemuVMPreferencesPage]
 
     @staticmethod
     def instance():
         """
-        Singleton to return only one instance of VirtualBox module.
+        Singleton to return only one instance of QEMU module.
 
-        :returns: instance of VirtualBox
+        :returns: instance of Qemu
         """
 
-        if not hasattr(VirtualBox, "_instance"):
-            VirtualBox._instance = VirtualBox()
-        return VirtualBox._instance
+        if not hasattr(Qemu, "_instance"):
+            Qemu._instance = Qemu()
+        return Qemu._instance

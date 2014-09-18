@@ -142,11 +142,11 @@ class WebSocketClient(WebSocketBaseClient):
 
         #FIXME: temporary version check
         if self._version != __version__:
-            self.close_connection()
             if not self._version:
                 raise OSError("Could not determine the server version")
             else:
                 raise OSError("GUI version {} differs with the server version: {}".format(__version__, self._version))
+            self.close_connection()
 
     def reconnect(self):
         """

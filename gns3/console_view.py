@@ -37,7 +37,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # Set introduction message
         bitness = struct.calcsize("P") * 8
         self.intro = "GNS3 management console. Running GNS3 Early Release (ER) version {} on {} ({}-bit).\n" \
-                     "Copyright (c) 2006-2014 GNS3 Project.".format(__version__, sys.platform, bitness)
+                     "Copyright (c) 2006-2014 GNS3 Technologies.".format(__version__, sys.platform, bitness)
 
         # Parent class initialization
         try:

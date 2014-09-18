@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_preferences_page.ui'
 #
-# Created: Tue Aug 26 13:47:33 2014
+# Created: Wed Sep  3 14:42:57 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -78,10 +78,10 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
         self.uiAdapterTypesComboBox.setObjectName(_fromUtf8("uiAdapterTypesComboBox"))
         self.gridLayout.addWidget(self.uiAdapterTypesComboBox, 4, 1, 1, 1)
         self.uiEnableConsoleCheckBox = QtGui.QCheckBox(self.uiVirtualBoxVMTabWidget)
+        self.uiEnableConsoleCheckBox.setChecked(True)
         self.uiEnableConsoleCheckBox.setObjectName(_fromUtf8("uiEnableConsoleCheckBox"))
         self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 5, 0, 1, 2)
         self.uiHeadlessModeCheckBox = QtGui.QCheckBox(self.uiVirtualBoxVMTabWidget)
-        self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName(_fromUtf8("uiHeadlessModeCheckBox"))
         self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 6, 0, 1, 2)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
