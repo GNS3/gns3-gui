@@ -24,7 +24,7 @@ import os
 
 # default path to qemu-img executable
 if sys.platform.startswith("win"):
-    DEFAULT_QEMU_PATH = r"qemu\qemu-img.exe"
+    DEFAULT_QEMU_IMG_PATH = r"qemu\qemu-img.exe"
 elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_QEMU_IMG_PATH = os.path.join(os.getcwd(), "qemu-img")
 else:

@@ -21,6 +21,8 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
+import struct
+import sys
 from ..qt import QtCore, QtGui
 
 
@@ -196,6 +198,13 @@ class LinkItem(QtGui.QGraphicsPathItem):
             start_wireshark_action.triggered.connect(self._startWiresharkActionSlot)
             menu.addAction(start_wireshark_action)
 
+            if sys.platform.startswith("win") and struct.calcsize("P") * 8 == 64:
+                # Windows 64-bit only (Solarwinds RTV limitation).
+                analyze_action = QtGui.QAction("Analyze capture", menu)
+                analyze_action.setIcon(QtGui.QIcon(':/icons/rtv.png'))
+                analyze_action.triggered.connect(self._analyzeCaptureActionSlot)
+                menu.addAction(analyze_action)
+
         # delete
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
@@ -299,12 +308,35 @@ class LinkItem(QtGui.QGraphicsPathItem):
                         self._source_port.startPacketCaptureReader()
                     else:
                         self._destination_port.startPacketCaptureReader()
-            if self._source_port.capturing():
+            elif self._source_port.capturing():
                 self._source_port.startPacketCaptureReader()
             elif self._destination_port.capturing():
                 self._destination_port.startPacketCaptureReader()
         except OSError as e:
             QtGui.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
+
+    def _analyzeCaptureActionSlot(self):
+        """
+        Slot to receive events from the analyze capture action in the
+        contextual menu.
+        """
+
+        try:
+            if self._source_port.capturing() and self._destination_port.capturing():
+                ports = ["{} port {}".format(self._source_item.node().name(), self._source_port.name()),
+                         "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())]
+                selection, ok = QtGui.QInputDialog.getItem(self._main_window, "Capture analyzer", "Please select a port:", ports, 0, False)
+                if ok:
+                    if selection.endswith(self._source_port.name()):
+                        self._source_port.startPacketCaptureAnalyzer()
+                    else:
+                        self._destination_port.startPacketCaptureAnalyzer()
+            elif self._source_port.capturing():
+                self._source_port.startPacketCaptureAnalyzer()
+            elif self._destination_port.capturing():
+                self._destination_port.startPacketCaptureAnalyzer()
+        except OSError as e:
+            QtGui.QMessageBox.critical(self._main_window, "Capture analyzer", "Cannot start the packet capture analyzer program: {}".format(e))
 
     def setHovered(self, value):
         """

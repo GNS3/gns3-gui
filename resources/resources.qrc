@@ -122,6 +122,7 @@
         <file>icons/startup_config.svg</file>
         <file>icons/wireshark.png</file>
         <file>icons/virtualbox.png</file>
+        <file>icons/rtv.png</file>
         <file>icons/image.svg</file>
         <file>icons/package.svg</file>
         <file>icons/node_conception.svg</file>
