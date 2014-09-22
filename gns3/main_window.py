@@ -230,6 +230,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiOpenProjectAction.triggered.connect(self._openProjectActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
+        self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -1489,3 +1490,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
         return instance, keypair
+
+    def _exportProjectActionSlot(self):
+        pass

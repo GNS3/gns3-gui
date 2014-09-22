@@ -42,7 +42,16 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -66,7 +75,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>980</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -86,6 +95,7 @@ background-none;
     <addaction name="uiOpenProjectAction"/>
     <addaction name="uiSaveProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
+    <addaction name="uiExportProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiImportExportConfigsAction"/>
     <addaction name="uiScreenshotAction"/>
@@ -226,7 +236,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -346,7 +365,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -410,7 +438,16 @@ background-none;
    </attribute>
    <widget class="QWidget" name="uiTopologySummaryDockWidgetContents">
     <layout class="QGridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -446,7 +483,16 @@ background-none;
    </attribute>
    <widget class="QWidget" name="uiCloudInspectorDockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -1115,6 +1161,11 @@ background-none;
   <action name="uiFitInViewAction">
    <property name="text">
     <string>Fit in view</string>
+   </property>
+  </action>
+  <action name="uiExportProjectAction">
+   <property name="text">
+    <string>Export project</string>
    </property>
   </action>
  </widget>
