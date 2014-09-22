@@ -1,12 +1,13 @@
 import os
 import sys
 import time
-import tunnel_poc
+
+import tunnel
 
 my_key = open('/home/michaelgale/.ssh/id_rsa', 'r')
 print("SSH Key: %s" % (my_key))
 
-t = tunnel_poc.Tunnel('192.168.1.3', 22, username='michael', client_key=my_key)
+t = tunnel.Tunnel('192.168.1.3', 22, username='michael', client_key=my_key)
 t1 = t.add_endpoint('127.0.0.1',25)
 time.sleep(1)
 t2 = t.add_endpoint('127.0.0.1',80)

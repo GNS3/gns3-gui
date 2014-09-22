@@ -1,12 +1,8 @@
-import os
-import sys
-import paramiko
 import socket
 import select
 import socketserver
 import threading
 import logging
-from io import StringIO
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +50,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                     (self.remote_address))
             return
 
-        log.info('Connected!  Tunnel open %r -> %r -> %r' % (self.request.getpeername(),
+        log.debug('Connected!  Tunnel open %r -> %r -> %r' % (self.request.getpeername(),
             chan.getpeername(), self.remote_address))
 
         while True:
@@ -73,7 +69,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         peername = self.request.getpeername()
         chan.close()
         self.request.close()
-        log.info('Tunnel closed from %r' % (peername,))
+        log.debug('Tunnel closed from %r' % (peername,))
 
 
 class EndPoint(object):
@@ -144,108 +140,3 @@ class EndPoint(object):
             self.server.shutdown()
         else:
             self.log_msg("No server thread running to stop")
-
-class Tunnel(object):
-
-    def __init__(self, hostname, port, username=None, password=None, client_key=None, server_key=None):
-        """
-        Sets up the ssl connection for tunnel support.
-
-        params:
-        client_key : String containing the rsa private key data
-        server_key : String containing the rsa private key data
-        """
-        self.server = (hostname, int(port))
-
-        self.auth_data={}
-        self.auth_data['username'] = username
-        self.auth_data['password'] = password
-
-        if client_key:
-            self.auth_data['pkey'] = self._make_key_file(client_key)
-
-        if server_key:
-            self.auth_data['hostkey'] = self._make_key_file(server_key)
-
-        self.transport = paramiko.Transport(self.server)
-        self.transport.set_keepalive(30)
-
-        self.end_points = {}
-        self.connected = False
-
-        self._connect()
-
-    def _connect(self):
-        """
-        Makes the SSH connection to the remote server
-        """
-
-        log.info("Connecting to server: %s:%s" %(self.server))
-        self.transport.connect(**self.auth_data)
-        self.is_connected()
-
-    def _make_key_file(self, data):
-        if hasattr(data, 'readlines'):
-            key_file = data
-        else:
-            key_file = StringIO.StringIO()
-            key_file.write(data)
-            key_file.flush()
-            key_file.seek(0)
-
-        my_pkey = paramiko.RSAKey.from_private_key(
-            key_file
-        )
-
-        return my_pkey
-
-    def _find_unused_local_port(self):
-        s = socket.socket()
-        s.bind(('127.0.0.1', 0))
-        return s.getsockname()
-
-    def is_connected(self):
-        """
-        Verifies the SSH connection is up and authenticated
-        """
-
-        if self.transport.is_active() == False:
-            log.critical("Connection is down: %s" %(self.server[0]))
-            self.connected = False
-            return self.connected
-
-        if self.transport.is_authenticated() == False:
-            log.critical("Authentication failed: %s" %(self.server[0]))
-            self.connected = False
-        else:
-            log.info("Connection is up: %s" %(self.server[0]))
-            self.connected = True
-
-        return self.connected
-
-
-    def disconnect(self):
-        for name, end_point in self.end_points.items():
-            self.remove_endpoint(name)
-        self.transport.close()
-
-    def add_endpoint(self, remote_ip, remote_port):
-        remote_address = (remote_ip, int(remote_port))
-        local_address = self._find_unused_local_port()
-
-        new_endpoint = EndPoint(local_address, remote_address, self.transport)
-        new_endpoint.enable()
-        self.end_points[new_endpoint.getId()] = new_endpoint
-
-        return new_endpoint.getId()
-
-    def remove_endpoint(self, name):
-        if name in self.end_points:
-            self.end_points[name].disable()
-
-    def list_endpoints(self):
-        remotes = {}
-        for name, end_point in self.end_points.items():
-            remotes[name] = end_point.get()
-
-        return remotes
