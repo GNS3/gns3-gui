@@ -26,6 +26,7 @@ import shutil
 import json
 import glob
 import logging
+import zipfile
 
 from .modules import MODULES
 from .qt import QtGui, QtCore
@@ -1492,4 +1493,26 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         return instance, keypair
 
     def _exportProjectActionSlot(self):
-        pass
+        if self._temporary_project:
+            # do nothing if project is temporary
+            QtGui.QMessageBox.critical(
+                self, "Export project server",
+                "Cannot export temporary projects, please save current project first.")
+            return
+
+        project_name = os.path.basename(self._project_settings["project_path"])
+        output_filename = os.path.join('/tmp', project_name + ".zip")
+        project_dir = os.path.dirname(self._project_settings["project_path"])
+        relroot = os.path.abspath(os.path.join(project_dir, os.pardir))
+        with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
+            for root, dirs, files in os.walk(project_dir):
+                # add directory (needed for empty dirs)
+                zip.write(root, os.path.relpath(root, relroot))
+                for file in files:
+                    filename = os.path.join(root, file)
+                    if os.path.isfile(filename):  # regular files only
+                        arcname = os.path.join(os.path.relpath(root, relroot), file)
+                        zip.write(filename, arcname)
+
+        # save to cloud
+        # TODO
