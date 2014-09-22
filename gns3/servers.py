@@ -190,7 +190,7 @@ class Servers(QtCore.QObject):
             if wait:
                 self._local_server_proccess.wait()
 
-    def setLocalServer(self, path, host, port, auto_start, heartbeat_freq):
+    def setLocalServer(self, path, host, port, auto_start, heartbeat_freq=DEFAULT_HEARTBEAT_FREQ):
         """
         Sets the local server.
 
@@ -246,7 +246,7 @@ class Servers(QtCore.QObject):
         log.info("new remote server connection {} registered".format(url))
         return server
 
-    def getRemoteServer(self, host, port):
+    def getRemoteServer(self, host, port, ca_file):
 
         for server in self._remote_servers.values():
             if server.host == host and server.port == port:

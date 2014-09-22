@@ -360,11 +360,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     instance, keypair = self._create_instance(new_project_settings["project_name"],
                                                               default_flavor,
                                                               default_image_id)
-
-                    topology = Topology.instance()
-                    topology.addInstance(instance.name, instance.id,
-                                         default_flavor, default_image_id,
-                                         keypair.private_key, keypair.public_key)
+                    if instance:
+                        topology = Topology.instance()
+                        topology.addInstance(instance.name, instance.id,
+                                             default_flavor, default_image_id,
+                                             keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
                 self._saveProject(new_project_settings["project_path"])
@@ -1480,12 +1480,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not name.endswith("-gns3"):
             name += "-gns3"
 
+        log.error("Creating cloud keypair with name {}".format(name))
         try:
             keypair = self.cloudProvider.create_key_pair(name)
         except KeyPairExists:
-            # delete keypairs if already exist
+            log.error("Cloud keypair with name {} exists.  Recreating.".format(name))
+            # delete keypairs if they already exist
             self.cloudProvider.delete_key_pair_by_name(name)
             keypair = self.cloudProvider.create_key_pair(name)
 
+        log.error("Creating cloud server with name {}".format(name))
         instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
+        log.error("Cloud server {} created".format(name))
         return instance, keypair
