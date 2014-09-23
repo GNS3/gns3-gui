@@ -323,11 +323,12 @@ class VirtualBox(Module):
         # create an instance of the node class
         return node_class(self, server)
 
-    def setupNode(self, node):
+    def setupNode(self, node, node_name):
         """
         Setups a node.
 
         :param node: Node instance
+        :param node_name: Node name
         """
 
         log.info("configuring node {} with id {}".format(node, node.id()))
@@ -425,7 +426,7 @@ class VirtualBox(Module):
         return None
 
     @staticmethod
-    def nodes():
+    def classes():
         """
         Returns all the node classes supported by this module.
 
@@ -433,6 +434,23 @@ class VirtualBox(Module):
         """
 
         return [VirtualBoxVM]
+
+    def nodes(self):
+        """
+        Returns all the node data necessary to represent a node
+        in the nodes view and create a node on the scene.
+        """
+
+        nodes = []
+        for node_class in VirtualBox.classes():
+            nodes.append(
+                {"class": node_class.__name__,
+                 "name": node_class.symbolName(),
+                 "categories": node_class.categories(),
+                 "default_symbol": node_class.defaultSymbol(),
+                 "hover_symbol": node_class.hoverSymbol()}
+            )
+        return nodes
 
     @staticmethod
     def preferencePages():

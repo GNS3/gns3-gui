@@ -31,13 +31,16 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
     :param items: list of items
     """
 
-    def __init__(self, parent, items):
+    def __init__(self, parent, items=None):
 
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self._items = items
         self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+
+        if not self._items:
+            self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).hide()
 
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
@@ -66,6 +69,15 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
                 item.setDefaultRenderer(default_renderer)
                 item.setHoverRenderer(hover_renderer)
 
+    def getSymbols(self):
+
+        current = self.uiSymbolListWidget.currentItem()
+        if current:
+            name = current.text()
+            normal_symbol = ":/symbols/{}.normal.svg".format(name)
+            selected_symbol = ":/symbols/{}.selected.svg".format(name)
+        return normal_symbol, selected_symbol
+
     def done(self, result):
         """
         Called when the dialog is closed.
@@ -73,6 +85,6 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
         :param result: boolean (accepted or rejected)
         """
 
-        if result:
+        if result and self._items:
             self._applyPreferencesSlot()
         QtGui.QDialog.done(self, result)

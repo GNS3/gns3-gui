@@ -296,6 +296,9 @@
           <string>Aditional settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="uiQemuOptionsLabel">
             <property name="text">
@@ -303,12 +306,31 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiSymbolLabel">
+            <property name="text">
+             <string>Symbol:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="uiSymbolPushButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
+            </property>
+           </widget>
           </item>
          </layout>
          <zorder>uiQemuOptionsLineEdit</zorder>
          <zorder>uiQemuOptionsLabel</zorder>
+         <zorder>uiSymbolLabel</zorder>
+         <zorder>uiSymbolPushButton</zorder>
         </widget>
        </item>
        <item>

@@ -88,6 +88,8 @@ class Qemu(Module):
             settings.setArrayIndex(index)
 
             name = settings.value("name", "")
+            default_symbol = settings.value("default_symbol", ":/symbols/qemu_guest.normal.svg")
+            hover_symbol = settings.value("hover_symbol", ":/symbols/qemu_guest.selected.svg")
             qemu_path = settings.value("qemu_path", "")
             hda_disk_image = settings.value("hda_disk_image", "")
             hdb_disk_image = settings.value("hdb_disk_image", "")
@@ -103,6 +105,8 @@ class Qemu(Module):
 
             key = "{server}:{name}".format(server=server, name=name)
             self._qemu_vms[key] = {"name": name,
+                                   "default_symbol": default_symbol,
+                                   "hover_symbol": hover_symbol,
                                    "qemu_path": qemu_path,
                                    "hda_disk_image": hda_disk_image,
                                    "hdb_disk_image": hdb_disk_image,
@@ -332,35 +336,42 @@ class Qemu(Module):
         # create an instance of the node class
         return node_class(self, server)
 
-    def setupNode(self, node):
+    def setupNode(self, node, node_name):
         """
         Setups a node.
 
         :param node: Node instance
+        :param node_name: Node name
         """
 
         log.info("configuring node {} with id {}".format(node, node.id()))
 
-        selected_vms = []
-        for vm, info in self._qemu_vms.items():
-            if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
-                selected_vms.append(vm)
+        vm = None
+        if node_name:
+            for vm_key, info in self._qemu_vms.items():
+                if node_name == info["name"]:
+                    vm = vm_key
 
-        if not selected_vms:
-            raise ModuleError("No QEMU VM on server {}".format(node.server().host))
-        elif len(selected_vms) > 1:
+        if not vm:
+            selected_vms = []
+            for vm, info in self._qemu_vms.items():
+                if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                    selected_vms.append(vm)
 
-            from gns3.main_window import MainWindow
-            mainwindow = MainWindow.instance()
+            if not selected_vms:
+                raise ModuleError("No QEMU VM on server {}".format(node.server().host))
+            elif len(selected_vms) > 1:
 
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "QEMU VM", "Please choose a VM", selected_vms, 0, False)
-            if ok:
-                vm = selection
+                from gns3.main_window import MainWindow
+                mainwindow = MainWindow.instance()
+
+                (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "QEMU VM", "Please choose a VM", selected_vms, 0, False)
+                if ok:
+                    vm = selection
+                else:
+                    raise ModuleError("Please select a QEMU VM")
             else:
-                raise ModuleError("Please select a QEMU VM")
-
-        else:
-            vm = selected_vms[0]
+                vm = selected_vms[0]
 
         settings = {"ram": self._qemu_vms[vm]["ram"],
                     "adapters": self._qemu_vms[vm]["adapters"],
@@ -446,7 +457,7 @@ class Qemu(Module):
         return None
 
     @staticmethod
-    def nodes():
+    def classes():
         """
         Returns all the node classes supported by this module.
 
@@ -455,10 +466,31 @@ class Qemu(Module):
 
         return [QemuVM]
 
-        # return [{"class": QemuVM.__name__,
-        #          "symbol_name": QemuVM.symbolName(),
-        #          "default_symbol": QemuVM.defaultSymbol(),
-        #          "hover_symbol": QemuVM.hoverSymbol()}]
+    def nodes(self):
+        """
+        Returns all the node data necessary to represent a node
+        in the nodes view and create a node on the scene.
+        """
+
+        nodes = []
+        if not self._qemu_vms:
+            nodes.append(
+                {"class": QemuVM.__name__,
+                 "name": QemuVM.symbolName(),
+                 "categories": QemuVM.categories(),
+                 "default_symbol": QemuVM.defaultSymbol(),
+                 "hover_symbol": QemuVM.hoverSymbol()}
+                )
+        else:
+            for qemu_vm in self._qemu_vms.values():
+                nodes.append(
+                    {"class": QemuVM.__name__,
+                     "name": qemu_vm["name"],
+                     "categories": QemuVM.categories(),
+                     "default_symbol": qemu_vm["default_symbol"],
+                     "hover_symbol": qemu_vm["hover_symbol"]}
+                )
+        return nodes
 
     @staticmethod
     def preferencePages():

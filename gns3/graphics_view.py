@@ -658,8 +658,8 @@ class GraphicsView(QtGui.QGraphicsView):
         # check if what has been dropped is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-node"):
             data = event.mimeData().data("application/x-gns3-node")
-            # load the pickled node class
-            node_class = pickle.loads(data)
+            # load the pickled node data
+            node_data = pickle.loads(data)
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -668,7 +668,7 @@ class GraphicsView(QtGui.QGraphicsView):
                 integer, ok = QtGui.QInputDialog.getInteger(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
                 if ok:
                     for node_number in range(integer):
-                        node_item = self.createNode(node_class, event.pos())
+                        node_item = self.createNode(node_data, event.pos())
                         if node_item is None:
                             # stop if there is any error
                             break
@@ -676,7 +676,7 @@ class GraphicsView(QtGui.QGraphicsView):
                         y = node_item.pos().y() - (node_item.boundingRect().height() / 2) + (node_number // max_nodes_per_line) * offset
                         node_item.setPos(x, y)
             else:
-                self.createNode(node_class, event.pos())
+                self.createNode(node_data, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             if len(event.mimeData().urls()) > 1:
                 QtGui.QMessageBox.critical(self, "Project files", "Please drop only one file")
@@ -1085,11 +1085,11 @@ class GraphicsView(QtGui.QGraphicsView):
             elif item.parentItem() is None:
                 item.delete()
 
-    def createNode(self, node_class, pos):
+    def createNode(self, node_data, pos):
         """
         Creates a new node on the scene.
 
-        :param node_class: node class to be instanciated
+        :param node_data: node data to create a new node
         :param pos: position of the drop event
 
         :returns: NodeItem instance
@@ -1099,9 +1099,11 @@ class GraphicsView(QtGui.QGraphicsView):
             node_module = None
             for module in MODULES:
                 instance = module.instance()
-                if node_class in instance.nodes():
+                node_class = module.getNodeClass(node_data["class"])
+                if node_class in instance.classes():
                     node_module = instance
                     break
+
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
@@ -1121,11 +1123,12 @@ class GraphicsView(QtGui.QGraphicsView):
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
-            node_item = NodeItem(node)
-            node_module.setupNode(node)
+            node_item = NodeItem(node, node_data["default_symbol"], node_data["hover_symbol"])
+            node_module.setupNode(node, node_data["name"])
         except ModuleError as e:
             QtGui.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
+
         node_item.setPos(self.mapToScene(pos))
         self.scene().addItem(node_item)
         x = node_item.pos().x() - (node_item.boundingRect().width() / 2)

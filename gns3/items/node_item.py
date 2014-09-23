@@ -27,12 +27,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
     """
     Node for the scene.
 
-    :param node: Node instance.
+    :param node: Node instance
+    :param default_symbol: Default symbol for the node representation on the scene
+    :param hover_symbol: Hover symbol when the node is hovered on the scene
     """
 
     show_layer = False
 
-    def __init__(self, node):
+    def __init__(self, node, default_symbol=None, hover_symbol=None):
 
         QtSvg.QGraphicsSvgItem.__init__(self)
 
@@ -54,8 +56,18 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setZValue(1)
 
         # create renderers using symbols paths/resources
-        self._default_renderer = QtSvg.QSvgRenderer(node.defaultSymbol())
-        self._hover_renderer = QtSvg.QSvgRenderer(node.hoverSymbol())
+        if default_symbol:
+            self._default_renderer = QtSvg.QSvgRenderer(default_symbol)
+            if default_symbol != node.defaultSymbol():
+                self._default_renderer.setObjectName(default_symbol)
+        else:
+            self._default_renderer = QtSvg.QSvgRenderer(node.defaultSymbol())
+        if hover_symbol:
+            self._hover_renderer = QtSvg.QSvgRenderer(hover_symbol)
+            if hover_symbol != node.hoverSymbol():
+                self._hover_renderer.setObjectName(hover_symbol)
+        else:
+            self._hover_renderer = QtSvg.QSvgRenderer(node.hoverSymbol())
         self.setSharedRenderer(self._default_renderer)
 
         # connect signals to know about some events

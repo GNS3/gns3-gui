@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_preferences_page.ui'
 #
-# Created: Tue Sep 23 13:47:13 2014
+# Created: Tue Sep 23 14:35:35 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -173,12 +173,20 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
-        self.uiQemuOptionsLabel = QtGui.QLabel(self.groupBox)
-        self.uiQemuOptionsLabel.setObjectName(_fromUtf8("uiQemuOptionsLabel"))
-        self.gridLayout_3.addWidget(self.uiQemuOptionsLabel, 0, 0, 1, 1)
         self.uiQemuOptionsLineEdit = QtGui.QLineEdit(self.groupBox)
         self.uiQemuOptionsLineEdit.setObjectName(_fromUtf8("uiQemuOptionsLineEdit"))
         self.gridLayout_3.addWidget(self.uiQemuOptionsLineEdit, 0, 2, 1, 1)
+        self.uiQemuOptionsLabel = QtGui.QLabel(self.groupBox)
+        self.uiQemuOptionsLabel.setObjectName(_fromUtf8("uiQemuOptionsLabel"))
+        self.gridLayout_3.addWidget(self.uiQemuOptionsLabel, 0, 0, 1, 1)
+        self.uiSymbolLabel = QtGui.QLabel(self.groupBox)
+        self.uiSymbolLabel.setObjectName(_fromUtf8("uiSymbolLabel"))
+        self.gridLayout_3.addWidget(self.uiSymbolLabel, 1, 0, 1, 1)
+        self.uiSymbolPushButton = QtGui.QPushButton(self.groupBox)
+        self.uiSymbolPushButton.setText(_fromUtf8(""))
+        self.uiSymbolPushButton.setIconSize(QtCore.QSize(64, 64))
+        self.uiSymbolPushButton.setObjectName(_fromUtf8("uiSymbolPushButton"))
+        self.gridLayout_3.addWidget(self.uiSymbolPushButton, 1, 2, 1, 1)
         self.verticalLayout.addWidget(self.groupBox)
         spacerItem1 = QtGui.QSpacerItem(20, 237, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
@@ -248,6 +256,7 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.uiKernelImageToolButton.setText(_translate("QemuVMPreferencesPageWidget", "...", None))
         self.groupBox.setTitle(_translate("QemuVMPreferencesPageWidget", "Aditional settings", None))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMPreferencesPageWidget", "Options:", None))
+        self.uiSymbolLabel.setText(_translate("QemuVMPreferencesPageWidget", "Symbol:", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("QemuVMPreferencesPageWidget", "Advanced QEMU VM settings", None))
         self.uiRefreshPushButton.setText(_translate("QemuVMPreferencesPageWidget", "Refresh QEMU list", None))
         self.uiSaveQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "Save", None))

@@ -26,8 +26,11 @@ from gns3.qt import QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
 from gns3.modules.module_error import ModuleError
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+
 from .. import Qemu
 from ..ui.qemu_vm_preferences_page_ui import Ui_QemuVMPreferencesPageWidget
+
 
 
 class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
@@ -52,6 +55,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiApplyPreconfigurationPushButton.clicked.connect(self._applyPreconfigurationSlot)
+        self.uiSymbolPushButton.clicked.connect(self._symbolSelectionSlot)
 
         self.uiAdapterTypesComboBox.clear()
         self.uiAdapterTypesComboBox.addItems(["ne2k_pci",
@@ -69,6 +73,11 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                                                   "IDS"])
 
         self.uiAdapterTypesComboBox.setCurrentIndex(5)  # e1000 is the default
+
+        # default symbol for QEMU VMs
+        self.uiSymbolPushButton.setIcon(QtGui.QIcon(":/symbols/qemu_guest.normal.svg"))
+        self.uiSymbolPushButton.setProperty("default_symbol", ":/symbols/qemu_guest.normal.svg")
+        self.uiSymbolPushButton.setProperty("hover_symbol", ":/symbols/qemu_guest.selected.svg")
 
     def showEvent(self, event):
         """
@@ -111,6 +120,9 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiKernelImageLineEdit.setText(qemu_vm["kernel_image"])
         self.uiKernelCommandLineEdit.setText(qemu_vm["kernel_command_line"])
         self.uiQemuOptionsLineEdit.setText(qemu_vm["options"])
+        self.uiSymbolPushButton.setIcon(QtGui.QIcon(qemu_vm["default_symbol"]))
+        self.uiSymbolPushButton.setProperty("default_symbol", qemu_vm["default_symbol"])
+        self.uiSymbolPushButton.setProperty("hover_symbol", qemu_vm["hover_symbol"])
 
     def _qemuVMChangedSlot(self):
         """
@@ -147,6 +159,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         kernel_image = self.uiKernelImageLineEdit.text().strip()
         kernel_command_line = self.uiKernelCommandLineEdit.text().strip()
         options = self.uiQemuOptionsLineEdit.text().strip()
+        default_symbol = self.uiSymbolPushButton.property("default_symbol")
+        hover_symbol = self.uiSymbolPushButton.property("hover_symbol")
 
         # #TODO: mutiple remote server
         # if VirtualBox.instance().settings()["use_local_server"]:
@@ -174,6 +188,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
 
         self._qemu_vms[key] = {"name": name,
+                               "default_symbol": default_symbol,
+                               "hover_symbol": hover_symbol,
                                "qemu_path": qemu_path,
                                "hda_disk_image": hda_disk_image,
                                "hdb_disk_image": hdb_disk_image,
@@ -345,6 +361,9 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             self.uiQemuOptionsLineEdit.setText("-vga none -hdachs 980,16,32")
             self.uiKernelCommandLineEdit.setText("auto nousb ide1=noprobe bigphysarea=16384 console=ttyS0,9600n8 hda=980,16,32")
             QtGui.QMessageBox.information(self, "ASA", "QEMU VM preconfigured for ASA 8.0(2), you must now provide an initrd file and a kernel image")
+            self.uiSymbolPushButton.setIcon(QtGui.QIcon(":/symbols/asa.normal.svg"))
+            self.uiSymbolPushButton.setProperty("default_symbol", ":/symbols/asa.normal.svg")
+            self.uiSymbolPushButton.setProperty("hover_symbol", ":/symbols/asa.selected.svg")
 
         if preconfig == "ASA 8.4(2)":
             self.uiRamSpinBox.setValue(1024)
@@ -353,6 +372,9 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             self.uiQemuOptionsLineEdit.setText("-nographic -cpu coreduo -icount auto -hdachs 980,16,32")
             self.uiKernelCommandLineEdit.setText("ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt")
             QtGui.QMessageBox.information(self, "ASA", "QEMU VM preconfigured for ASA 8.4(2), you must now provide an initrd file and a kernel image")
+            self.uiSymbolPushButton.setIcon(QtGui.QIcon(":/symbols/asa.normal.svg"))
+            self.uiSymbolPushButton.setProperty("default_symbol", ":/symbols/asa.normal.svg")
+            self.uiSymbolPushButton.setProperty("hover_symbol", ":/symbols/asa.selected.svg")
 
         if preconfig == "IDS":
             self.uiRamSpinBox.setValue(1024)
@@ -360,6 +382,22 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             self.uiAdapterTypesComboBox.setCurrentIndex(self.uiAdapterTypesComboBox.findText("e1000"))
             self.uiQemuOptionsLineEdit.setText("-smbios type=1,product=IDS-4215")
             QtGui.QMessageBox.information(self, "IDS", "QEMU VM preconfigured for IDS, you must now provide 2 disk images (hda and hdb)")
+            self.uiSymbolPushButton.setIcon(QtGui.QIcon(":/symbols/ids.normal.svg"))
+            self.uiSymbolPushButton.setProperty("default_symbol", ":/symbols/ids.normal.svg")
+            self.uiSymbolPushButton.setProperty("hover_symbol", ":/symbols/ids.selected.svg")
+
+    def _symbolSelectionSlot(self):
+        """
+        Slot to select a symbol for the QEMU VM.
+        """
+
+        dialog = SymbolSelectionDialog(self)
+        dialog.show()
+        if dialog.exec_():
+            normal_symbol, selected_symbol = dialog.getSymbols()
+            self.uiSymbolPushButton.setIcon(QtGui.QIcon(normal_symbol))
+            self.uiSymbolPushButton.setProperty("default_symbol", normal_symbol)
+            self.uiSymbolPushButton.setProperty("hover_symbol", selected_symbol)
 
     def loadPreferences(self):
         """
