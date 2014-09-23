@@ -355,7 +355,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             QtGui.QMessageBox.information(self, "ASA", "QEMU VM preconfigured for ASA 8.4(2), you must now provide an initrd file and a kernel image")
 
         if preconfig == "IDS":
-            self.uiRamSpinBox.setValue(512)
+            self.uiRamSpinBox.setValue(1024)
             self.uiAdaptersSpinBox.setValue(3)
             self.uiAdapterTypesComboBox.setCurrentIndex(self.uiAdapterTypesComboBox.findText("e1000"))
             self.uiQemuOptionsLineEdit.setText("-smbios type=1,product=IDS-4215")
