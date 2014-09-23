@@ -72,7 +72,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         log.debug('Tunnel closed from %r' % (peername,))
 
 
-class EndPoint(object):
+class Endpoint(object):
     def __init__(self, local_address, remote_address, transport):
         """
         Store local and remote tunnel address information in the format:

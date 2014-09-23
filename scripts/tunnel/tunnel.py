@@ -4,7 +4,7 @@ import socket
 import paramiko
 import logging
 from io import StringIO
-from endpoint import EndPoint
+from endpoint import Endpoint
 
 log = logging.getLogger(__name__)
 
@@ -117,7 +117,7 @@ class Tunnel(object):
         remote_address = (remote_ip, int(remote_port))
         local_address = self._find_unused_local_port()
 
-        new_endpoint = EndPoint(local_address, remote_address, self.transport)
+        new_endpoint = Endpoint(local_address, remote_address, self.transport)
         new_endpoint.enable()
         self.end_points[new_endpoint.getId()] = new_endpoint
 
