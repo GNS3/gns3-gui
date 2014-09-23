@@ -6,158 +6,295 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>401</height>
+    <width>376</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>QEMU VM configuration</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="uiQemuListLabel">
-     <property name="text">
-      <string>Qemu binary:</string>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="uiQemutabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>General settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiQemuListLabel">
+         <property name="text">
+          <string>Qemu binary:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="uiQemuListComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>VM name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiConsolePortLabel">
+         <property name="text">
+          <string>Console port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiHdaDiskImageLabel">
+         <property name="text">
+          <string>Disk image (hda):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLineEdit" name="uiHdaDiskImageLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiHdaDiskImageToolButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiRamLabel">
+         <property name="text">
+          <string>RAM:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="uiRamSpinBox">
+         <property name="suffix">
+          <string> MB</string>
+         </property>
+         <property name="minimum">
+          <number>32</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>256</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiAdaptersLabel">
+         <property name="text">
+          <string>Adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="uiAdaptersSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>8</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiAdapterTypesLabel">
+         <property name="text">
+          <string>Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="uiAdapterTypesComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>263</width>
+           <height>94</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Advanced settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="uiLinuxBootGroupBox">
+         <property name="title">
+          <string>Linux boot specific settings</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="uiKernelImageLineEdit"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiKernelCommandLineLabel">
+            <property name="text">
+             <string>Kernel command line:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiInitrdLabel">
+            <property name="text">
+             <string>Initial RAM disk (initrd):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiKernelImageLabel">
+            <property name="text">
+             <string>Kernel image:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="uiKernelCommandLineEdit"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QToolButton" name="uiKernelCommandLineToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiInitrdLineEdit"/>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="uiInitrdToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="uiKernelImageToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextOnly</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Aditional settings</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiHdbDiskImageLabel">
+            <property name="text">
+             <string>Disk image (hdb):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="uiHdbDiskImageToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiQemuOptionsLabel">
+            <property name="text">
+             <string>Options:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiHdbDiskImageLineEdit"/>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
+          </item>
+         </layout>
+         <zorder>uiQemuOptionsLineEdit</zorder>
+         <zorder>uiQemuOptionsLabel</zorder>
+         <zorder>uiHdbDiskImageLabel</zorder>
+         <zorder>uiHdbDiskImageLineEdit</zorder>
+         <zorder>uiHdbDiskImageToolButton</zorder>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>90</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="uiQemuListComboBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="uiNameLabel">
-     <property name="text">
-      <string>VM name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="uiNameLineEdit"/>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="uiConsolePortLabel">
-     <property name="text">
-      <string>Console port:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QSpinBox" name="uiConsolePortSpinBox">
-     <property name="maximum">
-      <number>65535</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="uiDiskImageLabel">
-     <property name="text">
-      <string>Disk image:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QLineEdit" name="uiDiskImageLineEdit"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="uiDiskImageToolButton">
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextOnly</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="uiRamLabel">
-     <property name="text">
-      <string>RAM:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QSpinBox" name="uiRamSpinBox">
-     <property name="suffix">
-      <string> MB</string>
-     </property>
-     <property name="minimum">
-      <number>32</number>
-     </property>
-     <property name="maximum">
-      <number>65535</number>
-     </property>
-     <property name="value">
-      <number>256</number>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="uiAdaptersLabel">
-     <property name="text">
-      <string>Adapters:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QSpinBox" name="uiAdaptersSpinBox">
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>8</number>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="uiAdapterTypesLabel">
-     <property name="text">
-      <string>Type:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="uiAdapterTypesComboBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="uiQemuOptionsLabel">
-     <property name="text">
-      <string>Options:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
-   </item>
-   <item row="8" column="0" colspan="2">
-    <spacer name="spacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>263</width>
-       <height>212</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

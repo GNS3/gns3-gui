@@ -40,22 +40,6 @@ class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
         # connect signals
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiQemuImgPathToolButton.clicked.connect(self._qemuImgPathBrowserSlot)
-
-    def _qemuImgPathBrowserSlot(self):
-        """
-        Slot to open a file browser and select QEMU disk image utility.
-        """
-
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select QEMU disk image utility", ".")
-        if not path:
-            return
-
-        if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "QEMU disk image utility", "{} is not an executable".format(os.path.basename(path)))
-            return
-
-        self.uiQemuImgPathLineEdit.setText(os.path.normpath(path))
 
     def _restoreDefaultsSlot(self):
         """
@@ -81,7 +65,6 @@ class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
         :param settings: QEMU settings
         """
 
-        self.uiQemuImgPathLineEdit.setText(settings["qemu_img_path"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
@@ -122,7 +105,6 @@ class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
         """
 
         new_settings = {}
-        new_settings["qemu_img_path"] = self.uiQemuImgPathLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()

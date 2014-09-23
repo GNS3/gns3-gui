@@ -19,28 +19,7 @@
 Default QEMU settings.
 """
 
-import sys
-import os
-
-# default path to qemu-img executable
-if sys.platform.startswith("win"):
-    DEFAULT_QEMU_IMG_PATH = r"qemu\qemu-img.exe"
-elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-    DEFAULT_QEMU_IMG_PATH = os.path.join(os.getcwd(), "qemu-img")
-else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
-    # look for qemu-img in the current working directory and $PATH
-    DEFAULT_QEMU_IMG_PATH = "qemu-img"
-    for path in paths:
-        try:
-            if "qemu-img" in os.listdir(path) and os.access(os.path.join(path, "qemu-img"), os.X_OK):
-                DEFAULT_QEMU_IMG_PATH = os.path.join(path, "qemu-img")
-                break
-        except OSError:
-            continue
-
 QEMU_SETTINGS = {
-    "qemu_img_path": DEFAULT_QEMU_IMG_PATH,
     "console_start_port_range": 5001,
     "console_end_port_range": 5500,
     "udp_start_port_range": 40001,
@@ -49,7 +28,6 @@ QEMU_SETTINGS = {
 }
 
 QEMU_SETTING_TYPES = {
-    "qemu_img_path": str,
     "console_start_port_range": int,
     "console_end_port_range": int,
     "udp_start_port_range": int,

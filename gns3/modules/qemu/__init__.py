@@ -89,21 +89,30 @@ class Qemu(Module):
 
             name = settings.value("name", "")
             qemu_path = settings.value("qemu_path", "")
-            disk_image = settings.value("disk_image", "")
+            hda_disk_image = settings.value("hda_disk_image", "")
+            hdb_disk_image = settings.value("hdb_disk_image", "")
             ram = settings.value("ram", 256, type=int)
             adapters = settings.value("adapters", 1, type=int)
             adapter_type = settings.value("adapter_type", "e1000")
+            initrd = settings.value("initrd", "")
+            kernel_image = settings.value("kernel_image", "")
+            kernel_command_line = settings.value("kernel_command_line", "")
             options = settings.value("options", "")
+
             server = settings.value("server", "local")
 
             key = "{server}:{name}".format(server=server, name=name)
             self._qemu_vms[key] = {"name": name,
                                    "qemu_path": qemu_path,
-                                   "disk_image": disk_image,
+                                   "hda_disk_image": hda_disk_image,
+                                   "hdb_disk_image": hdb_disk_image,
                                    "ram": ram,
                                    "adapters": adapters,
                                    "adapter_type": adapter_type,
                                    "options": options,
+                                   "initrd": initrd,
+                                   "kernel_image": kernel_image,
+                                   "kernel_command_line": kernel_command_line,
                                    "server": server}
 
         settings.endArray()
@@ -272,8 +281,6 @@ class Qemu(Module):
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            if "qemu_img_path" in params:
-                del params["qemu_img_path"]  # do not send QEMU img path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
@@ -356,9 +363,26 @@ class Qemu(Module):
             vm = selected_vms[0]
 
         settings = {"ram": self._qemu_vms[vm]["ram"],
-                    "disk_image": self._qemu_vms[vm]["disk_image"],
                     "adapters": self._qemu_vms[vm]["adapters"],
                     "adapter_type": self._qemu_vms[vm]["adapter_type"]}
+
+        if self._qemu_vms[vm]["hda_disk_image"]:
+            settings["hda_disk_image"] = self._qemu_vms[vm]["hda_disk_image"]
+
+        if self._qemu_vms[vm]["hdb_disk_image"]:
+            settings["hdb_disk_image"] = self._qemu_vms[vm]["hdb_disk_image"]
+
+        if self._qemu_vms[vm]["initrd"]:
+            settings["initrd"] = self._qemu_vms[vm]["initrd"]
+
+        if self._qemu_vms[vm]["kernel_image"]:
+            settings["kernel_image"] = self._qemu_vms[vm]["kernel_image"]
+
+        if self._qemu_vms[vm]["kernel_command_line"]:
+            settings["kernel_command_line"] = self._qemu_vms[vm]["kernel_command_line"]
+
+        if self._qemu_vms[vm]["options"]:
+            settings["options"] = self._qemu_vms[vm]["options"]
 
         qemu_path = self._qemu_vms[vm]["qemu_path"]
         name = self._qemu_vms[vm]["name"]

@@ -96,15 +96,29 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             # set the device name
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
-            self.uiDiskImageLineEdit.setText(settings["disk_image"])
+            self.uiHdaDiskImageLineEdit.setText(settings["hda_disk_image"])
+            self.uiHdbDiskImageLineEdit.setText(settings["hdb_disk_image"])
+            self.uiInitrdLineEdit.setText(settings["initrd"])
+            self.uiKernelImageLineEdit.setText(settings["kernel_image"])
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-            self.uiDiskImageLabel.hide()
-            self.uiDiskImageLineEdit.hide()
+            self.uiHdaDiskImageLabel.hide()
+            self.uiHdaDiskImageLineEdit.hide()
+            self.uiHdaDiskImageToolButton.hide()
+            self.uiHdbDiskImageLabel.hide()
+            self.uiHdbDiskImageLineEdit.hide()
+            self.uiHdbDiskImageToolButton.hide()
+            self.uiInitrdLabel.hide()
+            self.uiInitrdLineEdit.hide()
+            self.uiInitrdToolButton.hide()
+            self.uiKernelImageLabel.hide()
+            self.uiKernelImageLineEdit.hide()
+            self.uiKernelImageToolButton.hide()
 
+        self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
@@ -133,16 +147,23 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                 settings["name"] = name
 
             settings["console"] = self.uiConsolePortSpinBox.value()
-            settings["disk_image"] = self.uiDiskImageLineEdit.text()
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text()
+            settings["initrd"] = self.uiInitrdLineEdit.text()
+            settings["kernel_image"] = self.uiKernelImageLineEdit.text()
 
         else:
             del settings["name"]
             del settings["console"]
-            del settings["disk_image"]
+            del settings["hda_disk_image"]
+            del settings["hdb_disk_image"]
+            del settings["initrd"]
+            del settings["kernel_image"]
 
         server, qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex()).split(":", 1)
         settings["qemu_path"] = qemu_path
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
+        settings["kernel_command_line"] = self.uiKernelCommandLineEdit.text()
 
         adapters = self.uiAdaptersSpinBox.value()
         if settings["adapters"] != adapters:

@@ -48,12 +48,17 @@ class QemuVM(Node):
         self._ports = []
         self._settings = {"name": "",
                           "qemu_path": "",
-                          "disk_image": "",
+                          "hda_disk_image": "",
+                          "hdb_disk_image": "",
                           "options": "",
                           "ram": 256,
                           "console": None,
                           "adapters": 1,
-                          "adapter_type": "e1000"}
+                          "adapter_type": "e1000",
+                          "initrd": "",
+                          "kernel_image": "",
+                          "kernel_command_line": "",
+                          }
 
         self._addAdapters(1)
 

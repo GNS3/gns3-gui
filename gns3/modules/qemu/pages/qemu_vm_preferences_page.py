@@ -47,7 +47,11 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiRefreshPushButton.clicked.connect(self._qemuRefreshSlot)
         self.uiQemuVMsTreeWidget.itemClicked.connect(self._qemuVMClickedSlot)
         self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
-        self.uiDiskImageToolButton.clicked.connect(self._diskImageBrowserSlot)
+        self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
+        self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
+        self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
+        self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
+        self.uiApplyPreconfigurationPushButton.clicked.connect(self._applyPreconfigurationSlot)
 
         self.uiAdapterTypesComboBox.clear()
         self.uiAdapterTypesComboBox.addItems(["ne2k_pci",
@@ -58,6 +62,11 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                                               "e1000",
                                               "pcnet",
                                               "virtio"])
+
+        self.uiPreconfigurationComboBox.clear()
+        self.uiPreconfigurationComboBox.addItems(["ASA 8.4(2)",
+                                                  "ASA 8.0(2)",
+                                                  "IDS"])
 
         self.uiAdapterTypesComboBox.setCurrentIndex(5)  # e1000 is the default
 
@@ -91,12 +100,16 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             QtGui.QMessageBox.warning(self, "QEMU VM", "Could not find the QEMU path on for this VM on server {}".format(server))
 
         self.uiNameLineEdit.setText(qemu_vm["name"])
-        self.uiDiskImageLineEdit.setText(qemu_vm["disk_image"])
+        self.uiHdaDiskImageLineEdit.setText(qemu_vm["hda_disk_image"])
+        self.uiHdbDiskImageLineEdit.setText(qemu_vm["hdb_disk_image"])
         self.uiRamSpinBox.setValue(qemu_vm["ram"])
         self.uiAdaptersSpinBox.setValue(qemu_vm["adapters"])
         index = self.uiAdapterTypesComboBox.findText(qemu_vm["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
+        self.uiInitrdLineEdit.setText(qemu_vm["initrd"])
+        self.uiKernelImageLineEdit.setText(qemu_vm["kernel_image"])
+        self.uiKernelCommandLineEdit.setText(qemu_vm["kernel_command_line"])
         self.uiQemuOptionsLineEdit.setText(qemu_vm["options"])
 
     def _qemuVMChangedSlot(self):
@@ -125,11 +138,15 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             QtGui.QMessageBox.critical(self, "QEMU VM", "The QEMU VM must have a name!")
             return
 
-        disk_image = self.uiDiskImageLineEdit.text()
+        hda_disk_image = self.uiHdaDiskImageLineEdit.text().strip()
+        hdb_disk_image = self.uiHdbDiskImageLineEdit.text().strip()
         ram = self.uiRamSpinBox.value()
         adapters = self.uiAdaptersSpinBox.value()
         adapter_type = self.uiAdapterTypesComboBox.currentText()
-        options = self.uiQemuOptionsLineEdit.text()
+        initrd = self.uiInitrdLineEdit.text().strip()
+        kernel_image = self.uiKernelImageLineEdit.text().strip()
+        kernel_command_line = self.uiKernelCommandLineEdit.text().strip()
+        options = self.uiQemuOptionsLineEdit.text().strip()
 
         # #TODO: mutiple remote server
         # if VirtualBox.instance().settings()["use_local_server"]:
@@ -158,11 +175,15 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         self._qemu_vms[key] = {"name": name,
                                "qemu_path": qemu_path,
-                               "disk_image": disk_image,
+                               "hda_disk_image": hda_disk_image,
+                               "hdb_disk_image": hdb_disk_image,
                                "ram": ram,
                                "adapters": adapters,
                                "adapter_type": adapter_type,
                                "options": options,
+                               "initrd": initrd,
+                               "kernel_image": kernel_image,
+                               "kernel_command_line": kernel_command_line,
                                "server": server}
 
         self.uiQemuVMsTreeWidget.resizeColumnToContents(0)
@@ -224,16 +245,12 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 key = "{server}:{qemu}".format(server=server, qemu=qemu["path"])
                 self.uiQemuListComboBox.addItem("{key} (v{version})".format(key=key, version=qemu["version"]), key)
 
-    def _diskImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select a QEMU disk image.
-        """
+    def _getDiskImage(self):
 
         destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "QEMU")
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Select a QEMU disk image",
-                                                             destination_directory,
-                                                             "All files (*.*)")
+                                                             destination_directory)
         if not path:
             return
 
@@ -266,8 +283,83 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 except OSError:
                     pass
 
-        self.uiDiskImageLineEdit.clear()
-        self.uiDiskImageLineEdit.setText(path)
+        return path
+
+    def _hdaDiskImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU hda disk image.
+        """
+
+        path = self._getDiskImage()
+        if path:
+            self.uiHdaDiskImageLineEdit.clear()
+            self.uiHdaDiskImageLineEdit.setText(path)
+
+    def _hdbDiskImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU hdb disk image.
+        """
+
+        path = self._getDiskImage()
+        if path:
+            self.uiHdbDiskImageLineEdit.clear()
+            self.uiHdbDiskImageLineEdit.setText(path)
+
+    def _initrdBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU initrd.
+        """
+
+        path = self._getDiskImage()
+        if path:
+            self.uiInitrdLineEdit.clear()
+            self.uiInitrdLineEdit.setText(path)
+
+    def _kernelImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU kernel image.
+        """
+
+        path = self._getDiskImage()
+        if path:
+            self.uiKernelImageLineEdit.clear()
+            self.uiKernelImageLineEdit.setText(path)
+
+    def _applyPreconfigurationSlot(self):
+        """
+        Slot to apply a selected preconfiguration.
+        """
+
+        preconfig = self.uiPreconfigurationComboBox.currentText()
+        self.uiHdaDiskImageLineEdit.clear()
+        self.uiHdbDiskImageLineEdit.clear()
+        self.uiInitrdLineEdit.clear()
+        self.uiKernelImageLineEdit.clear()
+        self.uiKernelCommandLineEdit.clear()
+        self.uiQemuOptionsLineEdit.clear()
+
+        if preconfig == "ASA 8.0(2)":
+            self.uiRamSpinBox.setValue(512)
+            self.uiAdaptersSpinBox.setValue(6)
+            self.uiAdapterTypesComboBox.setCurrentIndex(self.uiAdapterTypesComboBox.findText("e1000"))
+            self.uiQemuOptionsLineEdit.setText("-vga none -hdachs 980,16,32")
+            self.uiKernelCommandLineEdit.setText("auto nousb ide1=noprobe bigphysarea=16384 console=ttyS0,9600n8 hda=980,16,32")
+            QtGui.QMessageBox.information(self, "ASA", "QEMU VM preconfigured for ASA 8.0(2), you must now provide an initrd file and a kernel image")
+
+        if preconfig == "ASA 8.4(2)":
+            self.uiRamSpinBox.setValue(1024)
+            self.uiAdaptersSpinBox.setValue(6)
+            self.uiAdapterTypesComboBox.setCurrentIndex(self.uiAdapterTypesComboBox.findText("e1000"))
+            self.uiQemuOptionsLineEdit.setText("-nographic -cpu coreduo -icount auto -hdachs 980,16,32")
+            self.uiKernelCommandLineEdit.setText("ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt")
+            QtGui.QMessageBox.information(self, "ASA", "QEMU VM preconfigured for ASA 8.4(2), you must now provide an initrd file and a kernel image")
+
+        if preconfig == "IDS":
+            self.uiRamSpinBox.setValue(512)
+            self.uiAdaptersSpinBox.setValue(3)
+            self.uiAdapterTypesComboBox.setCurrentIndex(self.uiAdapterTypesComboBox.findText("e1000"))
+            self.uiQemuOptionsLineEdit.setText("-smbios type=1,product=IDS-4215")
+            QtGui.QMessageBox.information(self, "IDS", "QEMU VM preconfigured for IDS, you must now provide 2 disk images (hda and hdb)")
 
     def loadPreferences(self):
         """
