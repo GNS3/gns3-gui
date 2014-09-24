@@ -1,14 +1,17 @@
-from PyQt4.QtCore import QThread
-from PyQt4.QtCore import pyqtSignal
-
-from .rackspace_ctrl import RackspaceCtrl
-
-import paramiko
-
 from contextlib import contextmanager
 import io
 from socket import error as socket_error
 import logging
+import os
+import zipfile
+
+from PyQt4.QtCore import QThread
+from PyQt4.QtCore import pyqtSignal
+import paramiko
+
+from .rackspace_ctrl import RackspaceCtrl
+
+
 log = logging.getLogger(__name__)
 
 
@@ -180,3 +183,42 @@ class WSConnectThread(QThread):
 
         # emit signal on success
         self.established.emit(self._id)
+
+
+class UploadProjectThread(QThread):
+    """
+    Zip and Upload project to the cloud
+    """
+    def __init__(self, project_settings, cloud_settings):
+        super().__init__()
+        self.project_settings = project_settings
+        self.cloud_settings = cloud_settings
+
+    def run(self):
+        zipfile = self.zip_project_dir()
+
+        provider = get_provider(self.cloud_settings)
+        provider.upload_file(zipfile, 'projects')
+
+        #TODO upload device images
+
+    def zip_project_dir(self):
+        """
+        Zips project files
+        :return: path to zipped project file
+        """
+        project_name = os.path.basename(self.project_settings["project_path"])
+        output_filename = os.path.join('/tmp', project_name + ".zip")
+        project_dir = os.path.dirname(self.project_settings["project_path"])
+        relroot = os.path.abspath(os.path.join(project_dir, os.pardir))
+        with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
+            for root, dirs, files in os.walk(project_dir):
+                # add directory (needed for empty dirs)
+                zip.write(root, os.path.relpath(root, relroot))
+                for file in files:
+                    filename = os.path.join(root, file)
+                    if os.path.isfile(filename):  # regular files only
+                        arcname = os.path.join(os.path.relpath(root, relroot), file)
+                        zip.write(filename, arcname)
+
+        return output_filename
