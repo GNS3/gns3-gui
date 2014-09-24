@@ -32,7 +32,10 @@ def isIOSCompressed(ios_image):
     :returns: boolean
     """
 
-    fd = open(ios_image, "r+b")
+    try:
+        fd = open(ios_image, "r+b")
+    except OSError:
+        return False
     mapped_file = mmap.mmap(fd.fileno(), 0)
 
     # look for ZIP 'end of central directory' signature
