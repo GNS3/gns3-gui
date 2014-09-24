@@ -58,7 +58,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
             GeneralPreferencesPage,
             ServerPreferencesPage,
             PacketCapturePreferencesPage,
-            #CloudPreferencesPage, #FIXME: hide for beta3
+            CloudPreferencesPage,
         ]
 
         for page in pages:
