@@ -259,7 +259,10 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 else:
                     server = result["server"]
                 key = "{server}:{qemu}".format(server=server, qemu=qemu["path"])
-                self.uiQemuListComboBox.addItem("{key} (v{version})".format(key=key, version=qemu["version"]), key)
+                if qemu["version"]:
+                    self.uiQemuListComboBox.addItem("{key} (v{version})".format(key=key, version=qemu["version"]), key)
+                else:
+                    self.uiQemuListComboBox.addItem("{key}".format(key=key), key)
 
     def _getDiskImage(self):
 
