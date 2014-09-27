@@ -2,6 +2,7 @@ from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
 from .rackspace_ctrl import RackspaceCtrl
+from ..servers import Servers
 
 import paramiko
 
@@ -92,12 +93,12 @@ class ListInstancesThread(QThread):
     def run(self):
         try:
             instances = self._provider.list_instances()
-            log.info('Instance list:')
+            log.debug('Instance list:')
             for instance in instances:
-                log.info('  {}, {}'.format(instance.name, instance.state))
+                log.debug('  name={}, state={}'.format(instance.name, instance.state))
             self.instancesReady.emit(instances)
         except Exception as e:
-            log.error('list_instances error: {}'.format(e))
+            log.info('list_instances error: {}'.format(e))
 
 
 class CreateInstanceThread(QThread):
@@ -140,7 +141,7 @@ class StartGNS3ServerThread(QThread):
     Perform an SSH connection to the instances in a separate thread,
     outside the GUI event loop, and start GNS3 server
     """
-    gns3server_started = pyqtSignal(str, str)
+    gns3server_started = pyqtSignal(str, str, str)
 
     def __init__(self, parent, host, private_key_string, id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
@@ -151,16 +152,9 @@ class StartGNS3ServerThread(QThread):
         self._api_key = api_key
         self._region = region
         self._dead_time = dead_time
-        log.error('got here 6 {}'.format(self._host))
-        log.error('got here 6 {}'.format(self._private_key_string))
-        log.error('got here 6 {}'.format(self._id))
-        log.error('got here 6 {}'.format(self._username))
-        log.error('got here 6 {}'.format(self._api_key))
-        log.error('got here 6 {}'.format(self._region))
-        log.error('got here 6 {}'.format(self._dead_time))
-        log.error('got here 7')
 
     def run(self):
+        log.error('1Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
         with ssh_client(self._host, self._private_key_string) as client:
             if client is not None:
                 data = {
@@ -172,40 +166,38 @@ class StartGNS3ServerThread(QThread):
                 }
                 # TODO: Properly escape the data portion of the command line
                 start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}" 2>/tmp/gns3_stderr.log'.format(data)
-                log.error(start_cmd)
+                log.debug(start_cmd)
                 stdin, stdout, stderr = client.exec_command(start_cmd)
-                log.info("ssh response: {}".format(stdout.read()))
-                response = stdout.read()
-                line = response.split('\n')[0]
-                result = ast.literal_eval(line)
-                result['host'] = self._host
-                # TODO: have the server return the port it is running on
-                result['port'] = 8000
+                response = stdout.read().decode('ascii')
+                log.debug('ssh response: {}'.format(response))
 
-                # emit signal on success
-                self.gns3server_started.emit(self._id, result)
+                self.gns3server_started.emit(str(self._id), str(self._host), str(response))
 
 
 class WSConnectThread(QThread):
     """
-    Establish websocket connection with the remote gns3server
-    instance. Run outside the GUI event loop
-
-    TODO: fix constructor parameters list
+    Establish a websocket connection with the remote gns3server
+    instance. Run outside the GUI event loop.
     """
     established = pyqtSignal(str)
 
-    def __init__(self, parent, id, *args, **kwargs):
+    def __init__(self, parent, provider, id, host, port, ca_file):
         super(QThread, self).__init__(parent)
+        self._provider = provider
         self._id = id
-        self._host = kwargs.get('host')
-        self._port = kwargs.get('port')
-        self._ca_file = kwargs.get('ca_file')
+        self._host = host
+        self._port = port
+        self._ca_file = ca_file
 
     def run(self):
         """
-        TODO: connect to WSS server
+        Establish a websocket connection to gns3server on the cloud instance.
         """
-        log.info("WSConnectThread running...")
-        servers.getRemoteServer(self._host, self._port, self._ca_file)
-        self.established.emit(self._id)
+
+        log.debug('WSConnectThread.run() begin')
+        servers = Servers.instance()
+        server = servers.getRemoteServer(self._host, self._port, self._ca_file)
+        log.debug('after getRemoteServer call. {}'.format(server))
+        self.established.emit(str(self._id))
+
+        log.debug('WSConnectThread.run() enc')

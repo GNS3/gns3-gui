@@ -27,6 +27,7 @@ import argparse
 import logging
 log = logging.getLogger(__name__)
 
+
 try:
     from gns3.qt import QtCore, QtGui, DEFAULT_BINDING
 except ImportError:
@@ -82,8 +83,15 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', help="show the version", action='version', version=__version__)
-    parser.parse_args()
+    parser.add_argument('--debug', help="print out debug messages", action='store_true', default=False)
+    options = parser.parse_args()
     exception_file_path = "exception.log"
+
+    if options.debug:
+        logging.basicConfig(level=logging.DEBUG)
+
+    log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
+
 
     def exceptionHook(exception, value, tb):
 

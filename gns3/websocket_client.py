@@ -66,7 +66,7 @@ class WebSocketClient(WebSocketBaseClient):
 
         # set a default timeout of 10 seconds
         # for connecting to a server
-        socket.setdefaulttimeout(10)
+        #socket.setdefaulttimeout(10)
 
     def id(self):
         """
