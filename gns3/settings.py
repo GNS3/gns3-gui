@@ -39,7 +39,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_LOCAL_SERVER_PATH = "server/Contents/MacOS/gns3server"
 else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for gns3server in the current working directory and $PATH
     DEFAULT_LOCAL_SERVER_PATH = "gns3server"
     for path in paths:

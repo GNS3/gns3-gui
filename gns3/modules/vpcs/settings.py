@@ -28,7 +28,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_VPCS_PATH = os.path.join(os.getcwd(), "vpcs")
 else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for VPCS in the current working directory and $PATH
     DEFAULT_VPCS_PATH = "vpcs"
     for path in paths:

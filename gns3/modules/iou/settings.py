@@ -23,7 +23,7 @@ Default IOU settings.
 """
 
 if sys.platform.startswith("linux"):
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for iouyap in the current working directory and $PATH
     DEFAULT_IOUYAP_PATH = "iouyap"
     for path in paths:
