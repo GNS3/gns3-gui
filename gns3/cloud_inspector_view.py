@@ -21,7 +21,6 @@ from .topology import Topology
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 POLLING_TIMER = 10000  # in milliseconds
 

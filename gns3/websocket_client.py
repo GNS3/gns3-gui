@@ -64,10 +64,6 @@ class WebSocketClient(WebSocketBaseClient):
         self._id = WebSocketClient._instance_count
         WebSocketClient._instance_count += 1
 
-        # set a default timeout of 10 seconds
-        # for connecting to a server
-        #socket.setdefaulttimeout(10)
-
     def id(self):
         """
         Returns this WebSocket identifier.

@@ -35,7 +35,6 @@ from .settings import DEFAULT_HEARTBEAT_FREQ
 
 import logging
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
 class Servers(QtCore.QObject):
@@ -246,7 +245,6 @@ class Servers(QtCore.QObject):
         log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
         server = SecureWebSocketClient(url, ca_file)
         self._local_server.enableHeartbeatsAt(heartbeat_freq)
-        # self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server
 

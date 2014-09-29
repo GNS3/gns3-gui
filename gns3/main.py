@@ -87,12 +87,6 @@ def main():
     options = parser.parse_args()
     exception_file_path = "exception.log"
 
-    if options.debug:
-        logging.basicConfig(level=logging.DEBUG)
-
-    log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
-
-
     def exceptionHook(exception, value, tb):
 
         if exception == KeyboardInterrupt:
@@ -199,7 +193,12 @@ def main():
             except FileExistsError:
                 pass
             handler = logging.FileHandler(logfile, "w")
-            handler.setLevel(logging.INFO)
+            if options.debug:
+                handler.setLevel(logging.DEBUG)
+            else:
+                handler.setLevel(logging.INFO)
+            log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
+
             formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
                                           datefmt="%y%m%d %H:%M:%S")
             handler.setFormatter(formatter)

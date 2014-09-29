@@ -154,7 +154,6 @@ class StartGNS3ServerThread(QThread):
         self._dead_time = dead_time
 
     def run(self):
-        log.error('1Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
         with ssh_client(self._host, self._private_key_string) as client:
             if client is not None:
                 data = {
