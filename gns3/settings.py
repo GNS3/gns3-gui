@@ -240,10 +240,10 @@ CLOUD_SETTINGS = {
     "instances_per_project": 0,
     "default_flavor": "",
     "new_instance_flavor": "",
-    "memory_per_new_instance": 1,  # TODO remove
     "accepted_terms": False,
     "instance_timeout": 30,
     "default_image": "",
+    "gns3_ias_url": "http://ias.gns3.net:8888",
 }
 
 CLOUD_SETTINGS_TYPES = {
@@ -256,10 +256,10 @@ CLOUD_SETTINGS_TYPES = {
     "instances_per_project": int,
     "default_flavor": str,
     "new_instance_flavor": str,
-    "memory_per_new_instance": int,  # TODO remove
     "accepted_terms": bool,
     "instance_timeout": int,
     "default_image": str,
+    "gns3_ias_url": str,
 }
 
 # TODO proof of concept, needs review
