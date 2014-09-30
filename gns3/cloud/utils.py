@@ -45,11 +45,12 @@ def get_provider(cloud_settings):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
+        ias_url = cloud_settings['gns3_ias_url']
     except KeyError as e:
         log.error("Unable to create cloud provider: {}".format(e))
         return
 
-    provider = RackspaceCtrl(username, apikey)
+    provider = RackspaceCtrl(username, apikey, ias_url)
 
     if not provider.authenticate():
         log.error("Authentication failed for cloud provider")
