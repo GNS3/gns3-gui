@@ -129,7 +129,7 @@ class WebSocketClient(WebSocketBaseClient):
         self.cookie_processor = urllib.request.HTTPCookieProcessor()
         self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
 
-        self.check_server_version()
+        #self.check_server_version()
         self._connect()
 
     def _connect(self):
