@@ -10,6 +10,7 @@ from PyQt4.QtCore import pyqtSignal
 import paramiko
 
 from .rackspace_ctrl import RackspaceCtrl
+from ..topology import Topology
 
 
 log = logging.getLogger(__name__)
@@ -195,12 +196,16 @@ class UploadProjectThread(QThread):
         self.cloud_settings = cloud_settings
 
     def run(self):
-        zipfile = self.zip_project_dir()
+        zipped_project_file = self.zip_project_dir()
 
         provider = get_provider(self.cloud_settings)
-        provider.upload_file(zipfile, 'projects')
+        provider.upload_file(zipped_project_file, 'projects')
 
-        #TODO upload device images
+        topology = Topology.instance()
+        images = set([node.settings()["image"] for node in topology.nodes()])
+
+        for image in images:
+            provider.upload_file(image, 'images', overwrite_existing=False)
 
     def zip_project_dir(self):
         """

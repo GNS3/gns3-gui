@@ -212,9 +212,9 @@ class BaseCloudCtrl(object):
 
         return self.driver.list_key_pairs()
 
-    def upload_file(self, file_path, folder):
+    def upload_file(self, file_path, folder, overwrite_existing=True):
         """
-        Uploads project to cloud storage
+        Uploads file to cloud storage
         :param file_path: path to file to upload
         :param folder: folder in cloud storage to save file in
         :return:
@@ -225,8 +225,11 @@ class BaseCloudCtrl(object):
             gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
 
         try:
-            self.storage_driver.upload_object(file_path, gns3_container,
-                                              folder + '/' + os.path.basename(file_path))
+            name = folder + '/' + os.path.basename(file_path)
+            objects = [obj.name for obj in gns3_container.list_objects()]
+
+            if name not in objects or overwrite_existing:
+                self.storage_driver.upload_object(file_path, gns3_container, name)
         except Exception as e:
             #TODO handle error uploading project
             raise e
