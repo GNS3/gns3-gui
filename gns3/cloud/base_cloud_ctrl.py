@@ -27,31 +27,12 @@ import logging
 log = logging.getLogger(__name__)
 
 from libcloud.compute.base import NodeAuthSSHKey
-from libcloud.compute.types import NodeState
 
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
 from .exceptions import OverLimit, BadRequest, ServiceUnavailable
 from .exceptions import Unauthorized, ApiError
 
 KeyPair = namedtuple("KeyPair", ['name'], verbose=False)
-
-
-class InstanceState(NodeState):
-    """
-    GNS3 states for an instance, deriving from libcloud.NodeState
-
-    :cvar FULLY_OPERATIONAL: Node is running and gns3-server is up
-
-    Inherited:
-    :cvar RUNNING: Node is running.
-    :cvar REBOOTING: Node is rebooting.
-    :cvar TERMINATED: Node is terminated. This node can't be started later on.
-    :cvar STOPPED: Node is stopped. This node can be started later on.
-    :cvar PENDING: Node is pending.
-    :cvar UNKNOWN: Node state is unknown.
-
-    """
-    FULLY_OPERATIONAL = 6
 
 
 def parse_exception(exception):
@@ -153,6 +134,7 @@ class BaseCloudCtrl(object):
                 self._handle_exception(status, error_text)
             else:
                 log.error("create_instance method raised an exception: {}".format(e))
+                log.error('image id {}'.format(image))
 
     def delete_instance(self, instance):
         """ Delete the specified instance.  Returns True or False. """
