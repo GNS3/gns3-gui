@@ -47,13 +47,12 @@ class NodesView(QtGui.QTreeWidget):
         """
 
         for module in MODULES:
-            for node in module.nodes():
-                if category != None and category not in node.categories():
+            for node in module.instance().nodes():
+                if category is not None and category not in node["categories"]:
                     continue
                 item = QtGui.QTreeWidgetItem(self)
-                item.setIcon(0, QtGui.QIcon(node.defaultSymbol()))
-                item.setText(0, node.symbolName())
-                # add the node class in the item data
+                item.setIcon(0, QtGui.QIcon(node["default_symbol"]))
+                item.setText(0, node["name"])
                 item.setData(0, QtCore.Qt.UserRole, node)
 
     def mouseMoveEvent(self, event):

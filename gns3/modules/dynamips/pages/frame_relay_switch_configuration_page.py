@@ -163,7 +163,12 @@ class FrameRelaySwitchConfigurationPage(QtGui.QWidget, Ui_frameRelaySwitchConfig
         """
 
         if not group:
-            settings["name"] = self.uiNameLineEdit.text()
+            # set the device name
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtGui.QMessageBox.critical(self, "Name", "Frame relay switch name cannot be empty!")
+            else:
+                settings["name"] = name
         else:
             del settings["name"]
 

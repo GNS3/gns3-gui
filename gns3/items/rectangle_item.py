@@ -34,6 +34,8 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
         ShapeItem.__init__(self)
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.setPen(pen)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
+        self.setBrush(brush)
         if pos:
             self.setPos(pos)
 
@@ -46,10 +48,17 @@ class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
         from ..topology import Topology
         Topology.instance().removeRectangle(self)
 
-    # def paint(self, painter, option, widget=None):
-    #
-    #     QtGui.QGraphicsRectItem.paint(self, painter, option, widget)
-    #     self.drawLayerInfo(painter)
+    def paint(self, painter, option, widget=None):
+        """
+        Paints the contents of an item in local coordinates.
+
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance
+        """
+
+        QtGui.QGraphicsRectItem.paint(self, painter, option, widget)
+        self.drawLayerInfo(painter)
 
     def duplicate(self):
         """

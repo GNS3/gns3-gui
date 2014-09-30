@@ -16,19 +16,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Thread to wait for an IOS image to be uncompressed.
+Thread to wait for an IOS image to be decompressed.
 """
 
 from gns3.qt import QtCore
-from .uncompress_ios import uncompressIOS
+from .decompress_ios import decompressIOS
 
 
-class UncompressIOSThread(QtCore.QThread):
+class DecompressIOSThread(QtCore.QThread):
     """
-    Thread to uncompress an IOS image.
+    Thread to decompress an IOS image.
 
     :param ios_image: IOS image path
-    :param destination_file: destination path for the uncompressed IOS image
+    :param destination_file: destination path for the decompressed IOS image
     """
 
     # signals to update the progress dialog.
@@ -50,12 +50,12 @@ class UncompressIOSThread(QtCore.QThread):
 
         self._is_running = True
         try:
-            uncompressIOS(self._ios_image, self._destination_file)
+            decompressIOS(self._ios_image, self._destination_file)
         except OSError as e:
-            self.error.emit("Could not uncompress {}: {}".format(self._ios_image, e), True)
+            self.error.emit("Could not decompress {}: {}".format(self._ios_image, e), True)
             return
 
-        # IOS image has successfully been uncompressed
+        # IOS image has successfully been decompressed
         self.completed.emit()
 
     def stop(self):

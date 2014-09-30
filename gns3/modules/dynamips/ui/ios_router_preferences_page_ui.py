@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Fri Jul  4 12:42:30 2014
+# Created: Mon Aug 25 14:28:35 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,9 +121,9 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiIOSImageTestSettingsPushButton = QtGui.QPushButton(self.uiIOSImagesTabWidget)
         self.uiIOSImageTestSettingsPushButton.setObjectName(_fromUtf8("uiIOSImageTestSettingsPushButton"))
         self.horizontalLayout_5.addWidget(self.uiIOSImageTestSettingsPushButton)
-        self.uiUncompressIOSPushButton = QtGui.QPushButton(self.uiIOSImagesTabWidget)
-        self.uiUncompressIOSPushButton.setObjectName(_fromUtf8("uiUncompressIOSPushButton"))
-        self.horizontalLayout_5.addWidget(self.uiUncompressIOSPushButton)
+        self.uiDecompressIOSPushButton = QtGui.QPushButton(self.uiIOSImagesTabWidget)
+        self.uiDecompressIOSPushButton.setObjectName(_fromUtf8("uiDecompressIOSPushButton"))
+        self.horizontalLayout_5.addWidget(self.uiDecompressIOSPushButton)
         self.uiSaveIOSImagePushButton = QtGui.QPushButton(self.uiIOSImagesTabWidget)
         self.uiSaveIOSImagePushButton.setObjectName(_fromUtf8("uiSaveIOSImagePushButton"))
         self.horizontalLayout_5.addWidget(self.uiSaveIOSImagePushButton)
@@ -181,7 +181,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiRAMLabel.setText(_translate("IOSRouterPreferencesPageWidget", "RAM:", None))
         self.uiRAMSpinBox.setSuffix(_translate("IOSRouterPreferencesPageWidget", " MB", None))
         self.uiIOSImageTestSettingsPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Test settings", None))
-        self.uiUncompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Uncompress", None))
+        self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Decompress", None))
         self.uiSaveIOSImagePushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Save", None))
         self.uiDeleteIOSImagePushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Delete", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiIOSImagesTabWidget), _translate("IOSRouterPreferencesPageWidget", "IOS images", None))

@@ -27,6 +27,8 @@ class ShapeItem:
     Base class to draw shapes on the scene.
     """
 
+    show_layer = False
+
     def __init__(self):
 
         self.setFlags(QtGui.QGraphicsItem.ItemIsMovable | QtGui.QGraphicsItem.ItemIsFocusable | QtGui.QGraphicsItem.ItemIsSelectable)
@@ -175,29 +177,43 @@ class ShapeItem:
         if self.zValue() >= 0:
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
-    #TODO: show layer position
-    # def drawLayerInfo(self, painter):
-    #
-    #     # Don't draw if not activated
-    #     if globals.GApp.workspace.flg_showLayerPos == False:
-    #         return
-    #
-    #     # Show layer level of this node
-    #     brect = self.boundingRect()
-    #
-    #     # Don't draw if the object is too small ...
-    #     if brect.width() < 20 or brect.height() < 20:
-    #         return
-    #
-    #     center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-    #
-    #     painter.setBrush(QtCore.Qt.red)
-    #     painter.setPen(QtCore.Qt.red)
-    #     painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
-    #     painter.setPen(QtCore.Qt.black)
-    #     painter.setFont(QtGui.QFont("TypeWriter", 14, QtGui.QFont.Bold))
-    #     zval = str(int(self.zValue()))
-    #     painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+    def drawLayerInfo(self, painter):
+        """
+        Draws the layer position.
+
+        :param painter: QPainter instance
+        """
+
+        if self.show_layer is False:
+            return
+
+        brect = self.boundingRect()
+        # don't draw anything if the object is too small
+        if brect.width() < 20 or brect.height() < 20:
+            return
+
+        center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
+        painter.setBrush(QtCore.Qt.red)
+        painter.setPen(QtCore.Qt.red)
+        painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+        painter.setPen(QtCore.Qt.black)
+        zval = str(int(self.zValue()))
+        painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+
+    def setZValue(self, value):
+        """
+        Sets a new Z value.
+
+        :param value: Z value
+        """
+
+        QtGui.QGraphicsItem.setZValue(self, value)
+        if self.zValue() < 0:
+            self.setFlag(self.ItemIsSelectable, False)
+            self.setFlag(self.ItemIsMovable, False)
+        else:
+            self.setFlag(self.ItemIsSelectable, True)
+            self.setFlag(self.ItemIsMovable, True)
 
     def dump(self):
         """
@@ -212,12 +228,16 @@ class ShapeItem:
                       "y": self.y()}
 
         brush = self.brush()
-        if brush.style() != QtCore.Qt.NoBrush and brush.color() != QtCore.Qt.transparent:
+        if brush.color() != QtCore.Qt.white:
             shape_info["color"] = brush.color().name()
+        if brush.color().alpha() != 255:
+            shape_info["transparency"] = brush.color().alpha()
 
         pen = self.pen()
         if pen.color() != QtCore.Qt.black:
             shape_info["border_color"] = pen.color().name()
+        if pen.color().alpha() != 255:
+            shape_info["border_transparency"] = pen.color().alpha()
         if pen.width() != 2:
             shape_info["border_width"] = pen.width()
         if pen.style() != QtCore.Qt.SolidLine:
@@ -225,7 +245,6 @@ class ShapeItem:
 
         if self.rotation() != 0:
             shape_info["rotation"] = self.rotation()
-
         if self.zValue() != 0:
             shape_info["z"] = self.zValue()
 
@@ -250,23 +269,35 @@ class ShapeItem:
         # load optional properties
         z = shape_info.get("z")
         color = shape_info.get("color")
+        transparency = shape_info.get("transparency")
         border_color = shape_info.get("border_color")
+        border_transparency = shape_info.get("border_transparency")
         border_width = shape_info.get("border_width")
         border_style = shape_info.get("border_style")
         rotation = shape_info.get("rotation")
 
         if color:
-            brush = QtGui.QBrush(QtGui.QColor(color))
-            self.setBrush(brush)
+            color = QtGui.QColor(color)
+        else:
+            color = QtGui.QColor(255, 255, 255)
+        if transparency:
+            color.setAlpha(transparency)
+        self.setBrush(QtGui.QBrush(color))
 
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         if border_color:
-            pen.setColor(QtGui.QColor(border_color))
+            border_color = QtGui.QColor(border_color)
+        else:
+            border_color = pen.color()
+        if border_transparency:
+            border_color.setAlpha(border_transparency)
+        pen.setColor(border_color)
         if border_width is not None:
             pen.setWidth(border_width)
         if border_style:
             pen.setStyle(QtCore.Qt.PenStyle(border_style))
         self.setPen(pen)
+
         if rotation is not None:
             self.setRotation(rotation)
         if z is not None:

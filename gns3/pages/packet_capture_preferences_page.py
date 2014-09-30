@@ -19,9 +19,12 @@
 Configuration page for packet capture preferences.
 """
 
+import sys
+import struct
+
 from gns3.qt import QtCore, QtGui
 from ..ui.packet_capture_preferences_page_ui import Ui_PacketCapturePreferencesPageWidget
-from ..settings import PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
+from ..settings import PACKET_CAPTURE_SETTINGS, PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
 from ..ports.port import Port
 
 
@@ -39,7 +42,20 @@ class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPag
         for name, cmd in sorted(PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS.items()):
             self.uiPreconfiguredCaptureReaderCommandComboBox.addItem(name, cmd)
 
+        self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiPreconfiguredCaptureReaderCommandPushButton.clicked.connect(self._preconfiguredCaptureReaderCommandSlot)
+
+        if not sys.platform.startswith("win") and not struct.calcsize("P") * 8 == 64:
+            # packet analyzer not support on other platform than Windows 64-bit
+            self.uiCaptureAnalyzerCommandLabel.hide()
+            self.uiCaptureAnalyzerCommandLineEdit.hide()
+
+    def _restoreDefaultsSlot(self):
+        """
+        Slot to restore default settings
+        """
+
+        self._populatePacketCaptureSettingWiddgets(PACKET_CAPTURE_SETTINGS)
 
     def _preconfiguredCaptureReaderCommandSlot(self):
         """
@@ -64,6 +80,8 @@ class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPag
         if index != -1:
             self.uiPreconfiguredCaptureReaderCommandComboBox.setCurrentIndex(index)
         self.uiAutoStartCheckBox.setChecked(settings["command_auto_start"])
+        self.uiCaptureAnalyzerCommandLineEdit.setText(settings["packet_capture_analyzer_command"])
+        self.uiCaptureAnalyzerCommandLineEdit.setCursorPosition(0)
 
     def loadPreferences(self):
         """
@@ -79,5 +97,6 @@ class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPag
         """
 
         new_settings = {"packet_capture_reader_command": self.uiCaptureReaderCommandLineEdit.text(),
-                        "command_auto_start": self.uiAutoStartCheckBox.isChecked()}
+                        "command_auto_start": self.uiAutoStartCheckBox.isChecked(),
+                        "packet_capture_analyzer_command": self.uiCaptureAnalyzerCommandLineEdit.text()}
         Port.setPacketCaptureSettings(new_settings)

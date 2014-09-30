@@ -16,10 +16,6 @@
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../../resources/resources.qrc">
-    <normaloff>:/images/logo_icon.png</normaloff>:/images/logo_icon.png</iconset>
-  </property>
   <property name="styleSheet">
    <string notr="true">#toolBar_Devices QToolButton {
 width: 50px;
@@ -680,13 +676,13 @@ background-none;
   </action>
   <action name="uiZoomResetAction">
    <property name="text">
-    <string>Zoom 1:1</string>
+    <string>Zoom reset</string>
    </property>
    <property name="statusTip">
-    <string>Zoom Reset (1:1)</string>
+    <string>Zoom reset</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+/</string>
+    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="uiSelectAllAction">

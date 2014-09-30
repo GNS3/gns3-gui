@@ -26,7 +26,7 @@ import os
 if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_VBOXWRAPPER_PATH = os.path.join(os.getcwd(), "vboxwrapper")
 else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for VirtualBox wrapper in the current working directory and $PATH
     DEFAULT_VBOXWRAPPER_PATH = "vboxwrapper"
     for path in paths:

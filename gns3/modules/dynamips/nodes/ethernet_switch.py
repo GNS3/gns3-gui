@@ -179,6 +179,15 @@ class EthernetSwitch(Node):
             params["name"] = new_settings["name"]
             updated = True
 
+        # delete ports that are not configured
+        for port_number in self._settings["ports"].keys():
+            if port_number not in new_settings["ports"]:
+                for port in self._ports.copy():
+                    if port.portNumber() == port_number:
+                        self._ports.remove(port)
+                        log.debug("port {} has been removed".format(port.name()))
+                        break
+
         self._settings["ports"] = new_settings["ports"].copy()
         if updated:
             log.debug("{} is being updated: {}".format(self.name(), params))

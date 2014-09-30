@@ -27,10 +27,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
     """
     Node for the scene.
 
-    :param node: Node instance.
+    :param node: Node instance
+    :param default_symbol: Default symbol for the node representation on the scene
+    :param hover_symbol: Hover symbol when the node is hovered on the scene
     """
 
-    def __init__(self, node):
+    show_layer = False
+
+    def __init__(self, node, default_symbol=None, hover_symbol=None):
 
         QtSvg.QGraphicsSvgItem.__init__(self)
 
@@ -39,6 +43,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # node label
         self._node_label = None
+
+        # link items connected to this node item.
+        self._links = []
 
         # set graphical settings for this node
         self.setFlag(QtSvg.QGraphicsSvgItem.ItemIsMovable)
@@ -49,8 +56,18 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setZValue(1)
 
         # create renderers using symbols paths/resources
-        self._default_renderer = QtSvg.QSvgRenderer(node.defaultSymbol())
-        self._hover_renderer = QtSvg.QSvgRenderer(node.hoverSymbol())
+        if default_symbol:
+            self._default_renderer = QtSvg.QSvgRenderer(default_symbol)
+            if default_symbol != node.defaultSymbol():
+                self._default_renderer.setObjectName(default_symbol)
+        else:
+            self._default_renderer = QtSvg.QSvgRenderer(node.defaultSymbol())
+        if hover_symbol:
+            self._hover_renderer = QtSvg.QSvgRenderer(hover_symbol)
+            if hover_symbol != node.hoverSymbol():
+                self._hover_renderer.setObjectName(hover_symbol)
+        else:
+            self._hover_renderer = QtSvg.QSvgRenderer(node.hoverSymbol())
         self.setSharedRenderer(self._default_renderer)
 
         # connect signals to know about some events
@@ -64,9 +81,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         node.delete_links_signal.connect(self.deleteLinksSlot)
         node.error_signal.connect(self.errorSlot)
         node.server_error_signal.connect(self.serverErrorSlot)
-
-        # link items connected to this node item.
-        self._links = []
 
         # used when a port has been selected from the contextual menu
         self._selected_port = None
@@ -330,7 +344,13 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         port_names = {}
         for port in ports:
             port_names[port.name()] = port
-        ports = sorted(port_names.keys())
+
+        try:
+            # try a numeric sort first
+            ports = sorted(port_names.keys(), key=int)
+        except ValueError:
+            # fall back to a classic sort
+            ports = sorted(port_names.keys())
 
         # show a contextual menu for the user to choose a port
         for port in ports:
@@ -391,33 +411,52 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Paints the contents of an item in local coordinates.
 
-        :param painter: QPainter instance.
-        :param option: QStyleOptionGraphicsItem instance.
-        :param widget: QWidget instance.
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance
         """
 
         # don't show the selection rectangle
         option.state = QtGui.QStyle.State_None
         QtSvg.QGraphicsSvgItem.paint(self, painter, option, widget)
 
-#TODO: show layer position on the node
-#         # Don't draw if not activated
-#         if globals.GApp.workspace.flg_showLayerPos == False:
-#             return
-
-        if not self._initialized:
-            # Show layer level of this node
+        if not self._initialized or self.show_layer:
             brect = self.boundingRect()
-            # center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-
+            center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
             painter.setBrush(QtCore.Qt.red)
             painter.setPen(QtCore.Qt.red)
             painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+            painter.setPen(QtCore.Qt.black)
+            if self.show_layer:
+                text = str(int(self.zValue()))  # Z value
+            elif self._last_error:
+                text = "E"  # error
+            else:
+                text = "S"  # initialization
+            painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), text)
 
-            #painter.setPen(QtCore.Qt.black)
-            #painter.setFont(QtGui.QFont("TypeWriter", 14, QtGui.QFont.Bold))
-            #zval = str(int(self.zValue()))
-            #painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+    def setZValue(self, value):
+        """
+        Sets a new Z value.
+
+        :param value: Z value
+        """
+
+        QtSvg.QGraphicsSvgItem.setZValue(self, value)
+        if self.zValue() < 0:
+            self.setFlag(self.ItemIsSelectable, False)
+            self.setFlag(self.ItemIsMovable, False)
+            if self._node_label:
+                self._node_label.setFlag(self.ItemIsSelectable, False)
+                self._node_label.setFlag(self.ItemIsMovable, False)
+        else:
+            self.setFlag(self.ItemIsSelectable, True)
+            self.setFlag(self.ItemIsMovable, True)
+            if self._node_label:
+                self._node_label.setFlag(self.ItemIsSelectable, True)
+                self._node_label.setFlag(self.ItemIsMovable, True)
+        for link in self._links:
+            link.adjust()
 
     def hoverEnterEvent(self, event):
         """

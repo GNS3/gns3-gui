@@ -23,7 +23,7 @@ Default IOU settings.
 """
 
 if sys.platform.startswith("linux"):
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for iouyap in the current working directory and $PATH
     DEFAULT_IOUYAP_PATH = "iouyap"
     for path in paths:
@@ -40,9 +40,9 @@ IOU_SETTINGS = {
     "iourc": "",
     "iouyap": DEFAULT_IOUYAP_PATH,
     "console_start_port_range": 4001,
-    "console_end_port_range": 4512,
+    "console_end_port_range": 4500,
     "udp_start_port_range": 30001,
-    "udp_end_port_range": 40000,
+    "udp_end_port_range": 35000,
     "use_local_server": True,
 }
 

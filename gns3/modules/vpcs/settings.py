@@ -28,7 +28,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_VPCS_PATH = os.path.join(os.getcwd(), "vpcs")
 else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for VPCS in the current working directory and $PATH
     DEFAULT_VPCS_PATH = "vpcs"
     for path in paths:
@@ -41,10 +41,10 @@ else:
 
 VPCS_SETTINGS = {
     "path": DEFAULT_VPCS_PATH,
-    "console_start_port_range": 4512,
+    "console_start_port_range": 4501,
     "console_end_port_range": 5000,
-    "udp_start_port_range": 20001,
-    "udp_end_port_range": 20512,
+    "udp_start_port_range": 20501,
+    "udp_end_port_range": 21000,
     "use_local_server": True,
     "base_script_file": "",
 }

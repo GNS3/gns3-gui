@@ -17,6 +17,8 @@
 
 
 import sys
+import struct
+import inspect
 from .topology import Topology
 from .version import __version__
 from .console_cmd import ConsoleCmd
@@ -26,33 +28,6 @@ from .modules import MODULES
 
 class ConsoleView(PyCutExt, ConsoleCmd):
 
-    # list of keywords to color
-    keywords = set(["aux",
-                    "capture",
-                    "clear",
-                    "console",
-                    "export",
-                    "filter",
-                    "help",
-                    "hist",
-                    "idlepc",
-                    "import",
-                    "list",
-                    "no",
-                    "push",
-                    "reload",
-                    "resume",
-                    "save",
-                    "send",
-                    "show",
-                    "start",
-                    "stop",
-                    "suspend",
-                    "telnet",
-                    "vboxexec",
-                    "qmonitor",
-                    "ver"])
-
     def __init__(self, parent):
 
         # Set the prompt PyCutExt
@@ -60,20 +35,34 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         sys.ps1 = '=> '
 
         # Set introduction message
-        self.intro = "GNS3 management console. Running GNS3 Early Release (ER) version {} on {}.\nCopyright (c) 2006-2014 GNS3 Project.".format(__version__, sys.platform)
+        bitness = struct.calcsize("P") * 8
+        self.intro = "GNS3 management console. Running GNS3 Early Release (ER) version {} on {} ({}-bit).\n" \
+                     "Copyright (c) 2006-2014 GNS3 Technologies.".format(__version__, sys.platform, bitness)
 
         # Parent class initialization
         try:
             PyCutExt.__init__(self, None, self.intro, parent=parent)
+
+            # dynamically get all the available commands so we can color them
+            methods = inspect.getmembers(self, predicate=inspect.ismethod)
+            commands = []
+            for method in methods:
+                method_name = method[0]
+                if method_name.startswith("do_"):
+                    commands.append(method_name[3:])
+
             # put our own keywords list
-            self.colorizer.keywords = self.keywords
-            #self._Dynagen_Console_init()
+            self.colorizer.keywords = commands
         except Exception as e:
             sys.stderr.write(e)
 
         for module in MODULES:
             instance = module.instance()
             instance.notification_signal.connect(self.writeNotification)
+
+        # required for Cmd module (do_help etc.)
+        self.stdout = sys.stdout
+        self._topology = Topology.instance()
 
     def isatty(self):
         """
@@ -123,9 +112,9 @@ class ConsoleView(PyCutExt, ConsoleCmd):
                 self.line = newLine
                 self.point = len(newLine)
             # Else, display possible values
-            else:
+            elif self.completion_matches:
                 self.write("\n")
-                self.columnize(self.completion_matches)
+                print(" ".join(self.completion_matches))
 
         # In any case, reprint prompt + line
         self.write("\n" + sys.ps1 + str(self.line))
@@ -219,8 +208,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
             source = "\n".join(self.lines)
             self.more = self.onecmd(source)
         except Exception as e:
-            print("Unknown command")
-            #print(str(e))
+            print("Unknown error: {}".format(e))
 
         self.write(self.prompt)
         self.lines = []

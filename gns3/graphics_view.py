@@ -525,18 +525,18 @@ class GraphicsView(QtGui.QGraphicsView):
                 item.setSelected(True)
             QtGui.QGraphicsView.mouseReleaseEvent(self, event)
 
-#     def wheelEvent(self, event):
-#         """
-#         Zoom or scroll using the mouse wheel
-#         """
-# 
-#         if globals.GApp.workspace.action_DisableMouseWheel.isChecked() == False and \
-#         (globals.GApp.workspace.action_ZoomUsingMouseWheel.isChecked() or event.modifiers() == QtCore.Qt.ControlModifier) and \
-#         event.orientation() == QtCore.Qt.Vertical:
-#             self.scaleView(pow(2.0, event.delta() / 240.0))
-# 
-#         elif globals.GApp.workspace.action_DisableMouseWheel.isChecked() == False:
-#             QtGui.QGraphicsView.wheelEvent(self, event)
+    def wheelEvent(self, event):
+        """
+        Handles zoom in or out using the mouse wheel.
+
+        :param: QWheelEvent instance
+        """
+
+        if event.modifiers() == QtCore.Qt.ControlModifier and event.orientation() == QtCore.Qt.Vertical:
+            # CTRL is pressed then use the mouse wheel to zoom in or out.
+            self.scaleView(pow(2.0, event.delta() / 240.0))
+        else:
+            QtGui.QGraphicsView.wheelEvent(self, event)
 
     def scaleView(self, scale_factor):
         """
@@ -555,15 +555,7 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QKeyEvent
         """
 
-        if event.matches(QtGui.QKeySequence.ZoomIn):
-            # zoom in
-            factor_in = pow(2.0, 120 / 240.0)
-            self.scaleView(factor_in)
-        elif event.matches(QtGui.QKeySequence.ZoomOut):
-            # zoom out
-            factor_out = pow(2.0, -120 / 240.0)
-            self.scaleView(factor_out)
-        elif event.key() == QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key_Delete:
             # check if we are editing an NoteItem instance, then send the delete key event to it
             for item in self.scene().selectedItems():
                 if isinstance(item, NoteItem) and item.hasFocus():
@@ -663,16 +655,28 @@ class GraphicsView(QtGui.QGraphicsView):
         :param event: QDropEvent instance
         """
 
-        # TODO: multi-drop
-
         # check if what has been dropped is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-node"):
             data = event.mimeData().data("application/x-gns3-node")
-            # load the pickled node class
-            node_class = pickle.loads(data)
+            # load the pickled node data
+            node_data = pickle.loads(data)
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
-            self.createNode(node_class, event.pos())
+            if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+                max_nodes_per_line = 10  # max number of nodes on a single line
+                offset = 100  # spacing between elements
+                integer, ok = QtGui.QInputDialog.getInteger(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
+                if ok:
+                    for node_number in range(integer):
+                        node_item = self.createNode(node_data, event.pos())
+                        if node_item is None:
+                            # stop if there is any error
+                            break
+                        x = node_item.pos().x() - (node_item.boundingRect().width() / 2) + (node_number % max_nodes_per_line) * offset
+                        y = node_item.pos().y() - (node_item.boundingRect().height() / 2) + (node_number // max_nodes_per_line) * offset
+                        node_item.setPos(x, y)
+            else:
+                self.createNode(node_data, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             if len(event.mimeData().urls()) > 1:
                 QtGui.QMessageBox.critical(self, "Project files", "Please drop only one file")
@@ -780,10 +784,23 @@ class GraphicsView(QtGui.QGraphicsView):
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
-        delete_action = QtGui.QAction("Delete", menu)
-        delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
-        delete_action.triggered.connect(self.deleteActionSlot)
-        menu.addAction(delete_action)
+        # item must have no parent
+        if True in list(map(lambda item: item.parentItem() is None, items)):
+
+            raise_layer_action = QtGui.QAction("Raise one layer", menu)
+            raise_layer_action.setIcon(QtGui.QIcon(':/icons/raise_z_value.svg'))
+            raise_layer_action.triggered.connect(self.raiseLayerActionSlot)
+            menu.addAction(raise_layer_action)
+
+            lower_layer_action = QtGui.QAction("Lower one layer", menu)
+            lower_layer_action.setIcon(QtGui.QIcon(':/icons/lower_z_value.svg'))
+            lower_layer_action.triggered.connect(self.lowerLayerActionSlot)
+            menu.addAction(lower_layer_action)
+
+            delete_action = QtGui.QAction("Delete", menu)
+            delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
+            delete_action.triggered.connect(self.deleteActionSlot)
+            menu.addAction(delete_action)
 
     def startActionSlot(self):
         """
@@ -1018,6 +1035,30 @@ class GraphicsView(QtGui.QGraphicsView):
             text_edit_dialog.show()
             text_edit_dialog.exec_()
 
+    def raiseLayerActionSlot(self):
+        """
+        Slot to receive events from the raise one layer action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if item.parentItem() is None:
+                current_zvalue = item.zValue()
+                item.setZValue(current_zvalue + 1)
+                item.update()
+
+    def lowerLayerActionSlot(self):
+        """
+        Slot to receive events from the lower one layer action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if item.parentItem() is None:
+                current_zvalue = item.zValue()
+                item.setZValue(current_zvalue - 1)
+                item.update()
+
     def deleteActionSlot(self):
         """
         Slot to receive events from the delete action in the
@@ -1041,24 +1082,28 @@ class GraphicsView(QtGui.QGraphicsView):
             if isinstance(item, NodeItem):
                 item.node().delete()
                 self._topology.removeNode(item.node())
-            else:
+            elif item.parentItem() is None:
                 item.delete()
 
-    def createNode(self, node_class, pos):
+    def createNode(self, node_data, pos):
         """
         Creates a new node on the scene.
 
-        :param node_class: node class to be instanciated
+        :param node_data: node data to create a new node
         :param pos: position of the drop event
+
+        :returns: NodeItem instance
         """
 
         try:
             node_module = None
             for module in MODULES:
                 instance = module.instance()
-                if node_class in instance.nodes():
+                node_class = module.getNodeClass(node_data["class"])
+                if node_class in instance.classes():
                     node_module = instance
                     break
+
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
@@ -1078,11 +1123,12 @@ class GraphicsView(QtGui.QGraphicsView):
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
-            node_item = NodeItem(node)
-            node_module.setupNode(node)
+            node_item = NodeItem(node, node_data["default_symbol"], node_data["hover_symbol"])
+            node_module.setupNode(node, node_data["name"])
         except ModuleError as e:
             QtGui.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
+
         node_item.setPos(self.mapToScene(pos))
         self.scene().addItem(node_item)
         x = node_item.pos().x() - (node_item.boundingRect().width() / 2)
@@ -1090,3 +1136,4 @@ class GraphicsView(QtGui.QGraphicsView):
         node_item.setPos(x, y)
         self._topology.addNode(node)
         self._main_window.uiTopologySummaryTreeWidget.addNode(node)
+        return node_item

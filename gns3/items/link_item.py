@@ -21,6 +21,8 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
+import struct
+import sys
 from ..qt import QtCore, QtGui
 
 
@@ -75,37 +77,11 @@ class LinkItem(QtGui.QGraphicsPathItem):
 
         if not self._adding_flag:
             # there is a destination
-
             self._link = link
-
-            # links must always be below node items on the scene
-            min_zvalue = min([source_item.zValue(), destination_item.zValue()])
-            self.setZValue(min_zvalue - 1)
             self.setFlag(self.ItemIsFocusable)
-
             source_item.addLink(self)
             destination_item.addLink(self)
-
-            #TODO: capture support
-
-#             source_item.node.nio_signal.connect(self.newNIOSlot)
-#             destination_item.node.nio_signal.connect(self.newNIOSlot)
-#             self._source_item.setCustomToolTip()
-#             self._destination_item.setCustomToolTip()
-#             self.capturing = False
-#             self.capfile = None
-#             self.captureInfo = None
-#             self.tailProcess = None
-#             self.capturePipeThread = None
-#             # Set default tooltip
-
-#             self.encapsulationTransform = { 'ETH': 'EN10MB',
-#                                             'FR': 'FRELAY',
-#                                             'HDLC': 'C_HDLC',
-#                                             'PPP': 'PPP_SERIAL'}
-
             self.setCustomToolTip()
-
         else:
             source_rect = self._source_item.boundingRect()
             self.source = self.mapFromItem(self._source_item, source_rect.width() / 2.0, source_rect.height() / 2.0)
@@ -222,6 +198,13 @@ class LinkItem(QtGui.QGraphicsPathItem):
             start_wireshark_action.triggered.connect(self._startWiresharkActionSlot)
             menu.addAction(start_wireshark_action)
 
+            if sys.platform.startswith("win") and struct.calcsize("P") * 8 == 64:
+                # Windows 64-bit only (Solarwinds RTV limitation).
+                analyze_action = QtGui.QAction("Analyze capture", menu)
+                analyze_action.setIcon(QtGui.QIcon(':/icons/rtv.png'))
+                analyze_action.triggered.connect(self._analyzeCaptureActionSlot)
+                menu.addAction(analyze_action)
+
         # delete
         delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
@@ -325,12 +308,35 @@ class LinkItem(QtGui.QGraphicsPathItem):
                         self._source_port.startPacketCaptureReader()
                     else:
                         self._destination_port.startPacketCaptureReader()
-            if self._source_port.capturing():
+            elif self._source_port.capturing():
                 self._source_port.startPacketCaptureReader()
             elif self._destination_port.capturing():
                 self._destination_port.startPacketCaptureReader()
         except OSError as e:
             QtGui.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
+
+    def _analyzeCaptureActionSlot(self):
+        """
+        Slot to receive events from the analyze capture action in the
+        contextual menu.
+        """
+
+        try:
+            if self._source_port.capturing() and self._destination_port.capturing():
+                ports = ["{} port {}".format(self._source_item.node().name(), self._source_port.name()),
+                         "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())]
+                selection, ok = QtGui.QInputDialog.getItem(self._main_window, "Capture analyzer", "Please select a port:", ports, 0, False)
+                if ok:
+                    if selection.endswith(self._source_port.name()):
+                        self._source_port.startPacketCaptureAnalyzer()
+                    else:
+                        self._destination_port.startPacketCaptureAnalyzer()
+            elif self._source_port.capturing():
+                self._source_port.startPacketCaptureAnalyzer()
+            elif self._destination_port.capturing():
+                self._destination_port.startPacketCaptureAnalyzer()
+        except OSError as e:
+            QtGui.QMessageBox.critical(self._main_window, "Capture analyzer", "Cannot start the packet capture analyzer program: {}".format(e))
 
     def setHovered(self, value):
         """
@@ -368,6 +374,11 @@ class LinkItem(QtGui.QGraphicsPathItem):
         Computes the source point and destination point.
         Must be overloaded.
         """
+
+        # links must always be below node items on the scene
+        if not self._adding_flag:
+            min_zvalue = min([self._source_item.zValue(), self._destination_item.zValue()])
+            self.setZValue(min_zvalue - 1)
 
         self.prepareGeometryChange()
         source_rect = self._source_item.boundingRect()

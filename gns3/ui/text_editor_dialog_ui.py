@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/text_editor_dialog.ui'
 #
-# Created: Fri Jun 20 08:12:13 2014
+# Created: Sun Aug 17 18:05:15 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,6 @@ class Ui_TextEditorDialog(object):
     def setupUi(self, TextEditorDialog):
         TextEditorDialog.setObjectName(_fromUtf8("TextEditorDialog"))
         TextEditorDialog.resize(457, 333)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        TextEditorDialog.setWindowIcon(icon)
         TextEditorDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(TextEditorDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))

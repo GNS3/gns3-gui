@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/symbol_selection_dialog.ui'
 #
-# Created: Wed Jul  9 17:07:19 2014
+# Created: Sun Aug 17 18:05:14 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,6 @@ class Ui_SymbolSelectionDialog(object):
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName(_fromUtf8("SymbolSelectionDialog"))
         SymbolSelectionDialog.resize(293, 396)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        SymbolSelectionDialog.setWindowIcon(icon)
         SymbolSelectionDialog.setModal(True)
         self.gridLayout = QtGui.QGridLayout(SymbolSelectionDialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))

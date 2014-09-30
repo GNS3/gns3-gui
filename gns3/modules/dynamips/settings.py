@@ -28,7 +28,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwd(), "dynamips")
 else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for dynamips in the current working directory and $PATH
     DEFAULT_DYNAMIPS_PATH = "dynamips"
     for path in paths:

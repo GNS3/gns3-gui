@@ -43,6 +43,9 @@ from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
+from .items.shape_item import ShapeItem
+from .items.image_item import ImageItem
+from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
 from .cloud.utils import get_provider
 from .cloud.exceptions import KeyPairExists
@@ -118,6 +121,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._updateRecentFileActions()
 
         self._cloud_provider = None
+
+        # set the window icon
+        self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
+
+        #FIXME: hide the cloud dock for beta release
+        #self.uiCloudInspectorDockWidget.hide()
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -565,8 +574,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to show the layer positions on the scene.
         """
 
-        #TODO: show layers
-        pass
+        NodeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ImageItem.show_layer = self.uiShowLayersAction.isChecked()
+        NoteItem.show_layer = self.uiShowLayersAction.isChecked()
+        for item in self.uiGraphicsView.items():
+            item.update()
 
     def _resetPortLabelsActionSlot(self):
         """
@@ -1019,7 +1032,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                          "Connecting to server {} on port {}...".format(server.host, server.port),
                                                          "Cancel", busy=True, parent=self)
                         progress_dialog.show()
-                        if progress_dialog.exec_() == False:
+                        if progress_dialog.exec_() is False:
                             return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
@@ -1161,14 +1174,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.reset()
-
-        project_files_dir = path
-        if path.endswith(".gns3"):
-            project_files_dir = path[:-5]
-        elif path.endswith(".net"):
-            project_files_dir = path[:-4]
-        self._project_settings["project_files_dir"] = project_files_dir + "-files"
-
         topology = Topology.instance()
         try:
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
@@ -1176,6 +1181,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 need_to_save = False
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
+
+                project_files_dir = path
+                if path.endswith(".gns3"):
+                    project_files_dir = path[:-5]
+                elif path.endswith(".net"):
+                    project_files_dir = path[:-4]
+                self._project_settings["project_files_dir"] = project_files_dir + "-files"
+
                 if not os.path.isdir(self._project_settings["project_files_dir"]):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
