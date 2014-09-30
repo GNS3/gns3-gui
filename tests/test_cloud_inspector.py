@@ -107,40 +107,38 @@ class TestCloudInspectorView(GUIBaseTest):
         self.view = CloudInspectorView(None)
 
     def test_load(self):
-        with mock.patch('gns3.cloud_inspector_view.RackspaceCtrl') as provider_class:
-            instances = list(gen_fake_nodes(2))
+        instances = list(gen_fake_nodes(2))
 
-            mw = mock.MagicMock()
+        mw = mock.MagicMock()
 
-            provider = mock.MagicMock()
-            provider_class.return_value = provider
-            provider.list_instances.return_value = instances
-            mw.cloudProvider = provider
+        provider = mock.MagicMock()
+        provider.list_instances.return_value = instances
+        mw.cloudProvider = provider
 
-            settings = mock.MagicMock()
-            settings_copy = MainWindow.instance().cloudSettings().copy()
-            settings_copy['cloud_provider'] = 'rackspace'
-            settings.__getitem__.side_effect = make_getitem(settings_copy)
-            settings.__setitem__.side_effect = make_setitem(settings_copy)
-            mw.cloudSettings.return_value = settings
+        settings = mock.MagicMock()
+        settings_copy = MainWindow.instance().cloudSettings().copy()
+        settings_copy['cloud_provider'] = 'rackspace'
+        settings.__getitem__.side_effect = make_getitem(settings_copy)
+        settings.__setitem__.side_effect = make_setitem(settings_copy)
+        mw.cloudSettings.return_value = settings
 
-            instances_dicts = [
-                {
-                    "id": instances[0].id,
-                    "image_id": "xyz",
-                    "name": "foo",
-                    "size_id": "2"
-                },
-                {
-                    "id": instances[1].id,
-                    "image_id": "xyz",
-                    "name": "bar",
-                    "size_id": "2"
-                }
-            ]
-            self.view.load(mw, instances_dicts)
-            self.app.processEvents()  # let the thread loading instances post its events
-            self.assertEqual(self.view._model.rowCount(), 2)
+        instances_dicts = [
+            {
+                "id": instances[0].id,
+                "image_id": "xyz",
+                "name": "foo",
+                "size_id": "2"
+            },
+            {
+                "id": instances[1].id,
+                "image_id": "xyz",
+                "name": "bar",
+                "size_id": "2"
+            }
+        ]
+        self.view.load(mw, instances_dicts)
+        self.app.processEvents()  # let the thread loading instances post its events
+        self.assertEqual(self.view._model.rowCount(), 2)
 
     def test_contextMenu(self):
         with mock.patch('gns3.cloud_inspector_view.QMenu') as qmenu:

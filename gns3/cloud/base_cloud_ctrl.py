@@ -22,13 +22,36 @@ Base class for interacting with Cloud APIs to create and manage cloud
 instances.
 
 """
+from collections import namedtuple
 import logging
 log = logging.getLogger(__name__)
 
 from libcloud.compute.base import NodeAuthSSHKey
+from libcloud.compute.types import NodeState
+
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
 from .exceptions import OverLimit, BadRequest, ServiceUnavailable
 from .exceptions import Unauthorized, ApiError
+
+KeyPair = namedtuple("KeyPair", ['name'], verbose=False)
+
+
+class InstanceState(NodeState):
+    """
+    GNS3 states for an instance, deriving from libcloud.NodeState
+
+    :cvar FULLY_OPERATIONAL: Node is running and gns3-server is up
+
+    Inherited:
+    :cvar RUNNING: Node is running.
+    :cvar REBOOTING: Node is rebooting.
+    :cvar TERMINATED: Node is terminated. This node can't be started later on.
+    :cvar STOPPED: Node is stopped. This node can be started later on.
+    :cvar PENDING: Node is pending.
+    :cvar UNKNOWN: Node state is unknown.
+
+    """
+    FULLY_OPERATIONAL = 6
 
 
 def parse_exception(exception):
@@ -96,7 +119,7 @@ class BaseCloudCtrl(object):
 
         raise NotImplementedError
 
-    def create_instance(self, name, size_id, image_id, keypair=None):
+    def create_instance(self, name, size_id, image_id, keypair):
         """
         Create a new instance with the supplied attributes.
 
@@ -119,6 +142,7 @@ class BaseCloudCtrl(object):
             if keypair is not None:
                 auth_key = NodeAuthSSHKey(keypair.public_key)
                 args["auth"] = auth_key
+                args["ex_keyname"] = name
 
             return self.driver.create_node(**args)
 
@@ -191,6 +215,12 @@ class BaseCloudCtrl(object):
                 self._handle_exception(status, error_text)
             else:
                 raise e
+
+    def delete_key_pair_by_name(self, keypair_name):
+        """ Utility method to incapsulate boilerplate code """
+
+        kp = KeyPair(name=keypair_name)
+        return self.delete_key_pair(kp)
 
     def list_key_pairs(self):
         """ Return a list of Key Pairs. """

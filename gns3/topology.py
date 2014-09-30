@@ -41,7 +41,7 @@ import logging
 log = logging.getLogger(__name__)
 
 TopologyInstance = namedtuple("TopologyInstance",
-                              ["name", "id", "size_id", "image_id"],
+                              ["name", "id", "size_id", "image_id", "private_key", "public_key"],
                               verbose=False)
 
 
@@ -203,12 +203,13 @@ class Topology(object):
         if image in self._images:
             self._images.remove(image)
 
-    def addInstance(self, name, id, size_id, image_id):
+    def addInstance(self, name, id, size_id, image_id, private_key, public_key):
         """
         Add an instance to this cloud topology
         """
 
-        i = TopologyInstance(name=name, id=id, size_id=size_id, image_id=image_id)
+        i = TopologyInstance(name=name, id=id, size_id=size_id, image_id=image_id,
+                             private_key=private_key, public_key=public_key)
         self._instances.append(i)
 
     def removeInstance(self, id):
@@ -222,6 +223,18 @@ class Topology(object):
             if instance.id == id:
                 self._instances.remove(instance)
                 break
+
+    def getInstance(self, id):
+        """
+        Return the instance if present
+
+        :param id: the instance id
+        :return: a TopologyInstance object
+        """
+
+        for instance in self._instances:
+            if instance.id == id:
+                return instance
 
     def nodes(self):
         """
@@ -410,7 +423,9 @@ class Topology(object):
                     "name": i.name,
                     "id": i.id,
                     "size_id": i.size_id,
-                    "image_id": i.image_id
+                    "image_id": i.image_id,
+                    "private_key": i.private_key,
+                    "public_key": i.public_key
                 })
         if include_gui_data:
             self._dump_gui_settings(topology)
@@ -613,7 +628,8 @@ class Topology(object):
             instances = topology["topology"]["instances"]
             for instance in instances:
                 self.addInstance(instance["name"], instance["id"], instance["size_id"],
-                                 instance["image_id"])
+                                 instance["image_id"],
+                                 instance["private_key"], instance["public_key"])
 
         if topology_file_errors:
             errors = "\n".join(topology_file_errors)
