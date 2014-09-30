@@ -27,6 +27,7 @@ import urllib.request
 from .version import __version__
 from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
+from ws4py import WS_VERSION
 from .qt import QtCore
 
 import logging
@@ -123,7 +124,22 @@ class WebSocketClient(WebSocketBaseClient):
         """
         Connects to the server.
         """
+        self.use_auth = False
+        self.use_ssl = False
+        self.version_url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
+        self.websocket_url = "ws://{host}:{port}".format(host=self.host, port=self.port)
 
+        self.https_handler = urllib.request.HTTPSHandler(check_hostname=False)
+        self.cookie_processor = urllib.request.HTTPCookieProcessor()
+        self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
+
+        self.check_server_version()
+        self._connect()
+
+    def _connect(self):
+        """
+        Connect to the server.
+        """
         try:
             WebSocketBaseClient.connect(self)
         except OSError:
@@ -132,9 +148,13 @@ class WebSocketClient(WebSocketBaseClient):
             log.error("could to connect {}: {}".format(self.url, e))
             raise OSError("Websocket exception {}: {}".format(type(e), e))
 
-        # once connected, get the GNS3 server version (over classic HTTP)
-        url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
-        content = urllib.request.urlopen(url).read()
+    def check_server_version(self):
+        """
+        Check for a version match with the GNS3 server.
+
+        This is an http (or https) request.
+        """
+        content = self.opener.open(self.version_url).read()
         try:
             json_data = json.loads(content.decode("utf-8"))
             self._version = json_data.get("version")
@@ -334,3 +354,60 @@ class WebSocketClient(WebSocketBaseClient):
         self._heartbeat_timer = QtCore.QTimer()
         self._heartbeat_timer.timeout.connect(self._heartbeat)
         self._heartbeat_timer.start(interval)
+
+
+class SecureWebSocketClient(WebSocketClient):
+    def connect(self, ca_file=''):
+        self.use_auth = True
+        self.use_ssl = True
+
+        self.ca_file = ca_file
+        self.login_url = "https://{host}:{port}/login".format(host=self.host, port=self.port)
+        self.version_url = "https://{host}:{port}/version".format(host=self.host, port=self.port)
+        self.websocket_url = "wss://{host}:{port}".format(host=self.host, port=self.port)
+        self.auth_user = 'test123'
+        self.auth_password = 'test456'
+
+        self.ssl_options = {'ca_certs': self.ca_file}
+        self.https_handler = urllib.request.HTTPSHandler(check_hostname=False)
+        self.cookie_processor = urllib.request.HTTPCookieProcessor()
+        self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
+
+        self.check_server_version()
+
+        data = urllib.parse.urlencode({'name': self.auth_user, 'password': self.auth_password}).encode('utf-8')
+        urllib.request.install_opener(self.opener)
+        f = urllib.request.urlopen(self.login_url, data, cafile=self.ca_file)
+        log.debug(self.cookie_processor.cookiejar)
+
+        self._connect()
+        log.debug(self.sock)
+
+    @property
+    def handshake_headers(self):
+        """
+        List of headers appropriate for the upgrade
+        handshake.
+
+        This code is copied from the ws4py library, then modified to include a
+        cookie in the request.
+        """
+        cookies = self.cookie_processor.cookiejar._cookies[self.host]['/']
+        user = cookies['user']
+        headers = [
+            ('Host', self.host),
+            ('Cookie', '{}={}'.format(user.name, user.value)),
+            ('Connection', 'Upgrade'),
+            ('Upgrade', 'websocket'),
+            ('Sec-WebSocket-Key', self.key.decode('utf-8')),
+            ('Origin', self.url),
+            ('Sec-WebSocket-Version', str(max(WS_VERSION)))
+            ]
+
+        if self.protocols:
+            headers.append(('Sec-WebSocket-Protocol', ','.join(self.protocols)))
+
+        if self.extra_headers:
+            headers.extend(self.extra_headers)
+
+        return headers

@@ -371,7 +371,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                               default_image_id)
 
                     topology = Topology.instance()
-                    topology.addInstance(new_project_settings["project_name"], instance.id,
+                    topology.addInstance(instance.name, instance.id,
                                          default_flavor, default_image_id,
                                          keypair.private_key, keypair.public_key)
 
@@ -1490,7 +1490,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         an instance
         """
         # add -gns3 suffix to image names to minimize clashes on Rackspace accounts
-        name += "-gns3"
+        if not name.endswith("-gns3"):
+            name += "-gns3"
 
         try:
             keypair = self.cloudProvider.create_key_pair(name)
