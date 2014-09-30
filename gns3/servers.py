@@ -53,7 +53,7 @@ class Servers(QtCore.QObject):
         self._local_server_path = ""
         self._local_server_auto_start = True
         self._local_server_proccess = None
-        self._loadSettings()
+        self._settings = self._loadSettings()
         self._remote_server_iter_pos = 0
 
     def _loadSettings(self):
@@ -91,6 +91,7 @@ class Servers(QtCore.QObject):
                 self._addRemoteServer(host, port, ca_file, heartbeat_freq)
         settings.endArray()
         settings.endGroup()
+        return settings
 
     def _saveSettings(self):
         """
@@ -190,7 +191,7 @@ class Servers(QtCore.QObject):
             if wait:
                 self._local_server_proccess.wait()
 
-    def setLocalServer(self, path, host, port, auto_start, heartbeat_freq):
+    def setLocalServer(self, path, host, port, auto_start, heartbeat_freq=DEFAULT_HEARTBEAT_FREQ):
         """
         Sets the local server.
 
@@ -240,21 +241,20 @@ class Servers(QtCore.QObject):
 
         url = "wss://{host}:{port}".format(host=host, port=port)
         # ca_file = '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'
+        log.debug('Starting SecureWebSocketClient url={}'.format(url))
+        log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
         server = SecureWebSocketClient(url, ca_file)
         self._local_server.enableHeartbeatsAt(heartbeat_freq)
-        self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server
 
-    def getRemoteServer(self, host, port):
+    def getRemoteServer(self, host, port, ca_file):
 
         for server in self._remote_servers.values():
             if server.host == host and server.port == port:
                 return server
 
-        heartbeat_freq = settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
-        # Fixme: Sort out who should store the path to the ca_file..
-        log.warning("Fixme: The ca_file path is not yet set!")
+        heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
         return self._addRemoteServer(host, port, ca_file, heartbeat_freq)
 
     def updateRemoteServers(self, servers):
