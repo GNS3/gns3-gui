@@ -2,6 +2,7 @@ from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
 from .rackspace_ctrl import RackspaceCtrl
+from ..servers import Servers
 
 import paramiko
 
@@ -39,7 +40,7 @@ def ssh_client(host, key_string):
         client.connect(hostname=host, username="root", pkey=key)
         yield client
     except socket_error as e:
-        log.error("SSH connection error: {}".format(e))
+        log.error("SSH connection error to {}: {}".format(host, e))
         yield None
     finally:
         client.close()
@@ -90,8 +91,14 @@ class ListInstancesThread(QThread):
         self._provider = provider
 
     def run(self):
-        instances = self._provider.list_instances()
-        self.instancesReady.emit(instances)
+        try:
+            instances = self._provider.list_instances()
+            log.debug('Instance list:')
+            for instance in instances:
+                log.debug('  name={}, state={}'.format(instance.name, instance.state))
+            self.instancesReady.emit(instances)
+        except Exception as e:
+            log.info('list_instances error: {}'.format(e))
 
 
 class CreateInstanceThread(QThread):
@@ -108,8 +115,8 @@ class CreateInstanceThread(QThread):
         self._image_id = image_id
 
     def run(self):
-        i = self._provider.create_instance(self._name, self._flavor_id, self._image_id)
         k = self._provider.create_key_pair(self._name)
+        i = self._provider.create_instance(self._name, self._flavor_id, self._image_id, k)
         self.instanceCreated.emit(i, k)
 
 
@@ -134,49 +141,62 @@ class StartGNS3ServerThread(QThread):
     Perform an SSH connection to the instances in a separate thread,
     outside the GUI event loop, and start GNS3 server
     """
-    gns3server_started = pyqtSignal(str, str)
+    gns3server_started = pyqtSignal(str, str, str)
 
-    def __init__(self, parent, id, host, private_key_string):
+    def __init__(self, parent, host, private_key_string, id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
-        self._id = id
         self._host = host
         self._private_key_string = private_key_string
+        self._id = id
+        self._username = username
+        self._api_key = api_key
+        self._region = region
+        self._dead_time = dead_time
 
     def run(self):
         with ssh_client(self._host, self._private_key_string) as client:
             if client is not None:
-                # TODO: issue server start script instead of foo_cmd
-                foo_cmd = "ls /var"
-                stdin, stdout, stderr = client.exec_command(foo_cmd)
-                log.info("ssh response: {}".format(stdout.read()))
-                # emit the signal on success
-                self.gns3server_started.emit(self._id, str(stdout.read()))
+                data = {
+                    'instance_id': self._id,
+                    'cloud_user_name': self._username,
+                    'cloud_api_key': self._api_key,
+                    'region': self._region,
+                    'dead_time': self._dead_time,
+                }
+                # TODO: Properly escape the data portion of the command line
+                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}" 2>/tmp/gns3_stderr.log'.format(data)
+                log.debug(start_cmd)
+                stdin, stdout, stderr = client.exec_command(start_cmd)
+                response = stdout.read().decode('ascii')
+                log.debug('ssh response: {}'.format(response))
+
+                self.gns3server_started.emit(str(self._id), str(self._host), str(response))
 
 
 class WSConnectThread(QThread):
     """
-    Establish websocket connection with the remote gns3server
-    instance. Run outside the GUI event loop
-
-    TODO: fix constructor parameters list
+    Establish a websocket connection with the remote gns3server
+    instance. Run outside the GUI event loop.
     """
     established = pyqtSignal(str)
 
-    def __init__(self, parent, id, *args, **kwargs):
+    def __init__(self, parent, provider, id, host, port, ca_file):
         super(QThread, self).__init__(parent)
+        self._provider = provider
         self._id = id
-        self._host = kwargs.get('host')
-        self._port = kwargs.get('port')
-        self._ca_file = kwargs.get('ca_file')
-        self._heartbeat_freq = kwargs.get('heartbeat_freq')
+        self._host = host
+        self._port = port
+        self._ca_file = ca_file
 
     def run(self):
         """
-        TODO: connect to WSS server
+        Establish a websocket connection to gns3server on the cloud instance.
         """
-        log.info("WSConnectThread running...")
 
-        # TODO: perform connection here
+        log.debug('WSConnectThread.run() begin')
+        servers = Servers.instance()
+        server = servers.getRemoteServer(self._host, self._port, self._ca_file)
+        log.debug('after getRemoteServer call. {}'.format(server))
+        self.established.emit(str(self._id))
 
-        # emit signal on success
-        self.established.emit(self._id)
+        log.debug('WSConnectThread.run() enc')
