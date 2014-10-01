@@ -40,13 +40,13 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.uiListWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
+        self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
         self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferences)
         self._items = []
         self._loadPreferencePages()
 
         # select the first available page
-        self._items[0].setSelected(True)
+        self.uiTreeWidget.setCurrentItem(self._items[0])
 
     def _loadPreferencePages(self):
         """
@@ -65,21 +65,27 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
             preferences_page = page()
             preferences_page.loadPreferences()
             name = preferences_page.windowTitle()
-            item = QtGui.QListWidgetItem(name, self.uiListWidget)
-            item.setData(QtCore.Qt.UserRole, preferences_page)
+            item = QtGui.QTreeWidgetItem(self.uiTreeWidget)
+            item.setText(0, name)
+            item.setData(0, QtCore.Qt.UserRole, preferences_page)
             self.uiStackedWidget.addWidget(preferences_page)
             self._items.append(item)
 
         # load module preference pages
         for module in MODULES:
-            for cls in module.preferencePages():
+            preference_pages = module.preferencePages()
+            parent = self.uiTreeWidget
+            for cls in preference_pages:
                 preferences_page = cls()
                 preferences_page.loadPreferences()
                 name = preferences_page.windowTitle()
-                item = QtGui.QListWidgetItem(name, self.uiListWidget)
-                item.setData(QtCore.Qt.UserRole, preferences_page)
+                item = QtGui.QTreeWidgetItem(parent)
+                item.setText(0, name)
+                item.setData(0, QtCore.Qt.UserRole, preferences_page)
                 self.uiStackedWidget.addWidget(preferences_page)
                 self._items.append(item)
+                if cls is preference_pages[0]:
+                    parent = item
 
     def _showPreferencesPageSlot(self, current, previous):
         """
@@ -89,10 +95,10 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         :param previous: ignored
         """
 
-        if current == None:
+        if current is None:
             current = previous
 
-        preferences_page = current.data(QtCore.Qt.UserRole)
+        preferences_page = current.data(0, QtCore.Qt.UserRole)
         name = preferences_page.windowTitle()
         self.uiTitleLabel.setText("{} preferences".format(name))
         index = self.uiStackedWidget.indexOf(preferences_page)

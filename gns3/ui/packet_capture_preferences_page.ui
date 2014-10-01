@@ -87,13 +87,6 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
-     <property name="text">
-      <string>Restore defaults</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -105,6 +98,13 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
+     <property name="text">
+      <string>Restore defaults</string>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0" colspan="2">
     <spacer name="spacer">

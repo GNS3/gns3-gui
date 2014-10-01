@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Sun Aug 31 14:07:13 2014
+# Created: Tue Sep 30 18:58:59 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName(_fromUtf8("GeneralPreferencesPageWidget"))
-        GeneralPreferencesPageWidget.resize(502, 555)
+        GeneralPreferencesPageWidget.resize(502, 621)
         self.verticalLayout = QtGui.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(GeneralPreferencesPageWidget)
@@ -118,13 +118,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLinkManualModeCheckBox.setObjectName(_fromUtf8("uiLinkManualModeCheckBox"))
         self.gridLayout_2.addWidget(self.uiLinkManualModeCheckBox, 2, 0, 1, 1)
         self.gridLayout_8.addWidget(self.uiGeneralMiscGroupBox, 2, 0, 1, 2)
-        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiGeneralTab)
-        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
-        self.gridLayout_8.addWidget(self.uiRestoreDefaultsPushButton, 3, 0, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(324, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_8.addItem(spacerItem1, 3, 1, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_8.addItem(spacerItem2, 4, 0, 1, 2)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_8.addItem(spacerItem1, 4, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralTab, _fromUtf8(""))
         self.uiConsoleTab = QtGui.QWidget()
         self.uiConsoleTab.setObjectName(_fromUtf8("uiConsoleTab"))
@@ -201,8 +196,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowConsoleAllDoubleSpinBox.setObjectName(_fromUtf8("uiSlowConsoleAllDoubleSpinBox"))
         self.gridLayout_7.addWidget(self.uiSlowConsoleAllDoubleSpinBox, 3, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.uiConsoleMiscGroupBox)
-        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem3)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem2)
         self.uiTabWidget.addTab(self.uiConsoleTab, _fromUtf8(""))
         self.uiSceneTab = QtGui.QWidget()
         self.uiSceneTab.setObjectName(_fromUtf8("uiSceneTab"))
@@ -252,13 +247,21 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultLabelColorPushButton = QtGui.QPushButton(self.uiSceneTab)
         self.uiDefaultLabelColorPushButton.setObjectName(_fromUtf8("uiDefaultLabelColorPushButton"))
         self.horizontalLayout_5.addWidget(self.uiDefaultLabelColorPushButton)
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem4)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
-        spacerItem5 = QtGui.QSpacerItem(20, 201, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem5)
+        spacerItem4 = QtGui.QSpacerItem(20, 201, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem4)
         self.uiTabWidget.addTab(self.uiSceneTab, _fromUtf8(""))
         self.verticalLayout.addWidget(self.uiTabWidget)
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        spacerItem5 = QtGui.QSpacerItem(324, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem5)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(GeneralPreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.horizontalLayout_6.addWidget(self.uiRestoreDefaultsPushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
 
         self.retranslateUi(GeneralPreferencesPageWidget)
         self.uiTabWidget.setCurrentIndex(0)
@@ -285,7 +288,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each device start when starting all devices:", None))
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
         self.uiLinkManualModeCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Always use manual mode when adding links", None))
-        self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralTab), _translate("GeneralPreferencesPageWidget", "General", None))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings for Telnet connections", None))
         self.uiTelnetConsolePreconfiguredCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Preconfigured commands:", None))
@@ -315,4 +317,5 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultLabelFontPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default font", None))
         self.uiDefaultLabelColorPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default color", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults", None))
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Sat Jun 21 12:24:29 2014
+# Created: Tue Sep 30 18:58:59 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,19 +57,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerPortLabel = QtGui.QLabel(self.uiLocalTabWidget)
         self.uiLocalServerPortLabel.setObjectName(_fromUtf8("uiLocalServerPortLabel"))
         self.gridLayout.addWidget(self.uiLocalServerPortLabel, 4, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 7, 1, 1, 1)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.uiTestSettingsPushButton = QtGui.QPushButton(self.uiLocalTabWidget)
-        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
-        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiLocalTabWidget)
-        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 7, 0, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 8, 0, 1, 2)
+        spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 8, 0, 1, 2)
         self.uiLocalServerPortSpinBox = QtGui.QSpinBox(self.uiLocalTabWidget)
         self.uiLocalServerPortSpinBox.setSuffix(_fromUtf8(" TCP"))
         self.uiLocalServerPortSpinBox.setMaximum(65535)
@@ -107,10 +96,10 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setObjectName(_fromUtf8("uiDeleteRemoteServerPushButton"))
         self.horizontalLayout_3.addWidget(self.uiDeleteRemoteServerPushButton)
         self.gridLayout_2.addLayout(self.horizontalLayout_3, 5, 0, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(206, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem2, 5, 1, 1, 1)
-        spacerItem3 = QtGui.QSpacerItem(390, 12, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem3, 6, 0, 1, 2)
+        spacerItem1 = QtGui.QSpacerItem(206, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_2.addItem(spacerItem1, 5, 1, 1, 1)
+        spacerItem2 = QtGui.QSpacerItem(390, 12, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem2, 6, 0, 1, 2)
         self.uiRemoteServerPortSpinBox = QtGui.QSpinBox(self.uiRemoteTabWidget)
         self.uiRemoteServerPortSpinBox.setSuffix(_fromUtf8(" TCP"))
         self.uiRemoteServerPortSpinBox.setMaximum(65535)
@@ -119,6 +108,17 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_2.addWidget(self.uiRemoteServerPortSpinBox, 4, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiRemoteTabWidget, _fromUtf8(""))
         self.vboxlayout.addWidget(self.uiTabWidget)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        spacerItem3 = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem3)
+        self.uiTestSettingsPushButton = QtGui.QPushButton(ServerPreferencesPageWidget)
+        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(ServerPreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
+        self.vboxlayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(ServerPreferencesPageWidget)
         self.uiTabWidget.setCurrentIndex(0)
@@ -133,8 +133,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "...", None))
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:", None))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
-        self.uiTestSettingsPushButton.setText(_translate("ServerPreferencesPageWidget", "Test settings", None))
-        self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults", None))
         self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Automatically start the server on startup", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("ServerPreferencesPageWidget", "Host", None))
@@ -145,4 +143,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiAddRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Add", None))
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Delete", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers", None))
+        self.uiTestSettingsPushButton.setText(_translate("ServerPreferencesPageWidget", "Test settings", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults", None))
 

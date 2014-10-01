@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
 #
-# Created: Mon Sep 22 20:59:01 2014
+# Created: Tue Sep 30 19:03:23 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,8 +27,8 @@ class Ui_QemuPreferencesPageWidget(object):
     def setupUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setObjectName(_fromUtf8("QemuPreferencesPageWidget"))
         QemuPreferencesPageWidget.resize(432, 586)
-        self.verticalLayout_2 = QtGui.QVBoxLayout(QemuPreferencesPageWidget)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.verticalLayout = QtGui.QVBoxLayout(QemuPreferencesPageWidget)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(QemuPreferencesPageWidget)
         self.uiTabWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.uiTabWidget.setObjectName(_fromUtf8("uiTabWidget"))
@@ -102,15 +102,18 @@ class Ui_QemuPreferencesPageWidget(object):
         spacerItem1 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
         self.gridLayout_2.addWidget(self.uiUDPPortRangeGroupBox, 1, 0, 1, 2)
-        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiAdvancedSettingsTabWidget)
-        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
-        self.gridLayout_2.addWidget(self.uiRestoreDefaultsPushButton, 2, 0, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(254, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem2, 2, 1, 1, 1)
-        spacerItem3 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem3, 3, 0, 1, 1)
+        spacerItem2 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem2, 3, 0, 1, 1)
         self.uiTabWidget.addTab(self.uiAdvancedSettingsTabWidget, _fromUtf8(""))
-        self.verticalLayout_2.addWidget(self.uiTabWidget)
+        self.verticalLayout.addWidget(self.uiTabWidget)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        spacerItem3 = QtGui.QSpacerItem(254, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem3)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(QemuPreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(QemuPreferencesPageWidget)
         self.uiTabWidget.setCurrentIndex(0)
@@ -127,6 +130,6 @@ class Ui_QemuPreferencesPageWidget(object):
         self.uiConsolePortRangeLabel.setText(_translate("QemuPreferencesPageWidget", "to", None))
         self.uiUDPPortRangeGroupBox.setTitle(_translate("QemuPreferencesPageWidget", "UDP tunneling port range", None))
         self.uiUDPPortRangeLabel.setText(_translate("QemuPreferencesPageWidget", "to", None))
-        self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("QemuPreferencesPageWidget", "Advanced settings", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults", None))
 
