@@ -196,13 +196,14 @@ class UploadProjectThread(QThread):
         self.cloud_settings = cloud_settings
 
     def run(self):
+        log.info("Exporting project to cloud")
         zipped_project_file = self.zip_project_dir()
 
         provider = get_provider(self.cloud_settings)
         provider.upload_file(zipped_project_file, 'projects')
 
         topology = Topology.instance()
-        images = set([node.settings()["image"] for node in topology.nodes()])
+        images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
 
         for image in images:
             provider.upload_file(image, 'images', overwrite_existing=False)

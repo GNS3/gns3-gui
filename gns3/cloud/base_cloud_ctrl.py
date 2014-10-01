@@ -231,5 +231,6 @@ class BaseCloudCtrl(object):
             if name not in objects or overwrite_existing:
                 self.storage_driver.upload_object(file_path, gns3_container, name)
         except Exception as e:
+            log.exception("Error uploading file {}".format(file_path))
             #TODO handle error uploading project
             raise e
