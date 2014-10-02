@@ -96,7 +96,24 @@ elif sys.platform.startswith("darwin"):
                     " -e 'delay 1'"
                     " -e 'end repeat'"
                     " -e 'end tell'",
-        'iTerm': "/usr/bin/osascript -e 'tell app \"iTerm\"' -e 'activate' -e 'set myterm to the first terminal' -e 'tell myterm' -e 'set mysession to (make new session at the end of sessions)' -e 'tell mysession' -e 'exec command \"telnet %h %p\"' -e 'set name to \"%d\"' -e 'end tell' -e 'end tell' -e 'end tell'",
+        'iTerm': "osascript -e 'tell application \"iTerm\"'"
+                 " -e 'activate'"
+                 " -e 'if (count of terminals) = 0 then'"
+                 " -e '  set t to (make new terminal)'"
+                 " -e 'else'"
+                 " -e '  set t to current terminal'"
+                 " -e 'end if'"
+                 " -e 'tell t'"
+                 " -e '  set s to (make new session at the end of sessions)'"
+                 " -e '  tell s'"
+                 " -e '    exec command (\"telnet %h %p\")'"
+                 " -e '    delay 1'"
+                 " -e '    repeat while s exists'"
+                 " -e '      delay 1'"
+                 " -e '    end repeat'"
+                 " -e '  end tell'"
+                 " -e 'end tell'"
+                 " -e 'end tell'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /ARG %d /T /TELNET %h %p'
     }
 
