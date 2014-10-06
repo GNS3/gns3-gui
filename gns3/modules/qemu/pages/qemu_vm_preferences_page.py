@@ -265,7 +265,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
-        self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
+        if self._items:
+            self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
 
     def savePreferences(self):
         """
