@@ -21,6 +21,8 @@ Default Dynamips settings.
 
 import sys
 import os
+from collections import OrderedDict
+
 
 # default path to Dynamips executable
 if sys.platform.startswith("win"):
@@ -92,3 +94,6 @@ PLATFORMS_DEFAULT_RAM = {"c1700": 64,
 CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),
            "c2600": ("2610", "2611", "2620", "2621", "2610XM", "2611XM", "2620XM", "2621XM", "2650XM", "2651XM"),
            "c3600": ("3620", "3640", "3660")}
+
+STATIC_SERVER_TYPES = OrderedDict((("local", "local"),
+                                   ("cloud", "cloud")))
