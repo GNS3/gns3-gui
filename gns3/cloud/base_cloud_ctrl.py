@@ -23,10 +23,12 @@ instances.
 
 """
 from collections import namedtuple
+import os
 import logging
 log = logging.getLogger(__name__)
 
 from libcloud.compute.base import NodeAuthSSHKey
+from libcloud.storage.types import ContainerAlreadyExistsError
 
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
 from .exceptions import OverLimit, BadRequest, ServiceUnavailable
@@ -72,6 +74,8 @@ class BaseCloudCtrl(object):
         500: ApiError,
         503: ServiceUnavailable
     }
+
+    GNS3_CONTAINER_NAME = 'GNS3'
 
     def __init__(self, username, api_key):
         self.username = username
@@ -208,3 +212,26 @@ class BaseCloudCtrl(object):
         """ Return a list of Key Pairs. """
 
         return self.driver.list_key_pairs()
+
+    def upload_file(self, file_path, folder, overwrite_existing=True):
+        """
+        Uploads file to cloud storage
+        :param file_path: path to file to upload
+        :param folder: folder in cloud storage to save file in
+        :return:
+        """
+        try:
+            gns3_container = self.storage_driver.create_container(self.GNS3_CONTAINER_NAME)
+        except ContainerAlreadyExistsError:
+            gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+
+        try:
+            name = folder + '/' + os.path.basename(file_path)
+            objects = [obj.name for obj in gns3_container.list_objects()]
+
+            if name not in objects or overwrite_existing:
+                self.storage_driver.upload_object(file_path, gns3_container, name)
+        except Exception as e:
+            log.exception("Error uploading file {}".format(file_path))
+            #TODO handle error uploading project
+            raise e
