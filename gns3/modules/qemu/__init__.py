@@ -44,6 +44,7 @@ class Qemu(Module):
         self._nodes = []
         self._servers = []
         self._working_dir = ""
+        self._qemu_binaries = {}
 
         # load the settings
         self._loadSettings()
@@ -399,6 +400,14 @@ class Qemu(Module):
         name = self._qemu_vms[vm]["name"]
         node.setup(qemu_path, initial_settings=settings, base_name=name)
 
+        # refresh the Qemu binaries list
+        if node.server().isLocal():
+            server = "local"
+        else:
+            server = node.server().host
+        if not self._qemu_binaries or server not in self._qemu_binaries:
+            self.refreshQemuBinaries(node.server())
+
     def reset(self):
         """
         Resets the servers.
@@ -426,13 +435,13 @@ class Qemu(Module):
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
 
-    def get_qemu_list(self, server, callback):
+    def refreshQemuBinaries(self, server):
         """
         Gets the QEMU binaries list from a server.
 
         :param server: server to send the request to
-        :param callback: callback for the server response
         """
+
         if not server.connected():
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
@@ -442,7 +451,32 @@ class Qemu(Module):
                                                                                  server.port,
                                                                                  e))
 
-        server.send_message("qemu.qemu_list", None, callback)
+        server.send_message("qemu.qemu_list", None, self._refreshQemuBinariesCallback)
+
+    def _refreshQemuBinariesCallback(self, result, error=False):
+        """
+        Callback to get the QEMU binaries list.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("could not get the QEMU binaries list: {}".format(result["message"]))
+        else:
+            if self.settings()["use_local_server"]:
+                server = "local"
+            else:
+                server = result["server"]
+            self._qemu_binaries[server] = result
+
+    def getQemuBinariesList(self):
+        """
+        Returns the list of
+        :return:
+        """
+
+        return self._qemu_binaries
 
     @staticmethod
     def getNodeClass(name):
