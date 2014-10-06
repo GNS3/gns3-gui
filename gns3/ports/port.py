@@ -21,8 +21,12 @@ Base class for port objects.
 
 import os
 import sys
+import tempfile
+import shutil
 import subprocess
 import shlex
+
+from gns3.utils.normalize_filename import normalize_filename
 
 from ..qt import QtCore
 from ..nios.nio_udp import NIOUDP
@@ -68,6 +72,7 @@ class Port(object):
         self._capturing = False
         self._tail_process = None
         self._capture_reader_process = None
+        self._capture_analyzer_process = None
 
         if default_nio is None:
             self._default_nio = NIOUDP
@@ -493,6 +498,29 @@ class Port(object):
                 command = shlex.split(command)
             self._capture_reader_process = subprocess.Popen(command)
 
+    def startPacketCaptureAnalyzer(self):
+        """
+        Starts the packet capture analyzer.
+        """
+
+        if not os.path.isfile(self._capture_file_path):
+            raise FileNotFoundError("the {} capture file does not exist on this host".format(self._capture_file_path))
+
+        if self._capture_analyzer_process and self._capture_analyzer_process.poll() is None:
+            self._capture_analyzer_process.kill()
+            self._capture_analyzer_process = None
+
+        command = self._settings["packet_capture_analyzer_command"]
+        temp_capture_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(self._capture_file_path))
+
+        try:
+            shutil.copy(self._capture_file_path, temp_capture_file_path)
+        except OSError:
+            raise
+
+        command = command.replace("%c", '"' + temp_capture_file_path + '"')
+        self._capture_analyzer_process = subprocess.Popen(command)
+
     def captureFileName(self, source_node_name):
         """
         Returns a capture file name.
@@ -502,11 +530,12 @@ class Port(object):
         :return: capture file name
         """
 
-        capture_file_name = "{}_{}_to_{}_{}.pcap".format(source_node_name,
-                                                         self.name().replace('/', '-'),
-                                                         self.destinationNode().name(),
-                                                         self.destinationPort().name().replace('/', '-'))
-        return capture_file_name
+        capture_file_name = "{}_{}_to_{}_{}".format(source_node_name,
+                                                    self.name().replace('/', '-'),
+                                                    self.destinationNode().name(),
+                                                    self.destinationPort().name().replace('/', '-'))
+
+        return normalize_filename(capture_file_name) + ".pcap"
 
     def dump(self):
         """

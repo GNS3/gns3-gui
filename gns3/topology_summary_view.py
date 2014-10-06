@@ -97,6 +97,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
         ports = self._node.ports()
         self.takeChildren()
 
+        capturing = False
         for port in ports:
             if not port.isFree():
                 item = QtGui.QTreeWidgetItem()
@@ -104,7 +105,13 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
                 item.setData(0, QtCore.Qt.UserRole, port)
                 if port.capturing():
                     item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
+                    capturing = True
                 self.addChild(item)
+
+        if self._parent.show_only_devices_with_capture and capturing is False:
+            self.setHidden(True)
+        else:
+            self.setHidden(False)
 
         self.sortChildren(0, QtCore.Qt.AscendingOrder)
 
@@ -129,6 +136,7 @@ class TopologySummaryView(QtGui.QTreeWidget):
         QtGui.QTreeWidget.__init__(self, parent)
         self._topology = Topology.instance()
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
+        self.show_only_devices_with_capture = False
 
     def addNode(self, node):
         """
@@ -219,16 +227,33 @@ class TopologySummaryView(QtGui.QTreeWidget):
         expand_all = QtGui.QAction("Expand all", menu)
         expand_all.setIcon(QtGui.QIcon(":/icons/plus.svg"))
         self.connect(expand_all, QtCore.SIGNAL('triggered()'), self._expandAllSlot)
+        menu.addAction(expand_all)
+
         collapse_all = QtGui.QAction("Collapse all", menu)
         collapse_all.setIcon(QtGui.QIcon(":/icons/minus.svg"))
         self.connect(collapse_all, QtCore.SIGNAL('triggered()'), self._collapseAllSlot)
-        menu.addAction(expand_all)
         menu.addAction(collapse_all)
+
+        if self.show_only_devices_with_capture is False:
+            devices_with_capture = QtGui.QAction("Show devices with capture(s)", menu)
+            devices_with_capture.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
+            self.connect(devices_with_capture, QtCore.SIGNAL('triggered()'), self._devicesWithCaptureSlot)
+            menu.addAction(devices_with_capture)
+        else:
+            show_all_devices = QtGui.QAction("Show all devices", menu)
+            #show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
+            self.connect(show_all_devices, QtCore.SIGNAL('triggered()'), self._showAllDevicesSlot)
+            menu.addAction(show_all_devices)
+
+        stop_all_captures = QtGui.QAction("Stop all captures", menu)
+        stop_all_captures.setIcon(QtGui.QIcon(":/icons/capture-stop.svg"))
+        self.connect(stop_all_captures, QtCore.SIGNAL('triggered()'), self._stopAllCapturesSlot)
+        menu.addAction(stop_all_captures)
 
         current_item = self.currentItem()
         from .main_window import MainWindow
         view = MainWindow.instance().uiGraphicsView
-        if current_item:
+        if current_item and not current_item.isHidden():
             menu.addSeparator()
             if isinstance(current_item, TopologyNodeItem):
                 view.populateDeviceContextualMenu(menu)
@@ -254,3 +279,30 @@ class TopologySummaryView(QtGui.QTreeWidget):
         """
 
         self.collapseAll()
+
+    def _devicesWithCaptureSlot(self):
+        """
+        Show only devices with captures.
+        """
+
+        self.show_only_devices_with_capture = True
+        self.refreshAll()
+
+    def _showAllDevicesSlot(self):
+        """
+        Show all devices items.
+        """
+
+        self.show_only_devices_with_capture = False
+        self.refreshAll()
+
+    def _stopAllCapturesSlot(self):
+        """
+        Stop all packet captures.
+        """
+
+        for node in self._topology.nodes():
+            if hasattr(node, "stopPacketCapture"):
+                for port in node.ports():
+                    if port.capturing():
+                        node.stopPacketCapture(port)

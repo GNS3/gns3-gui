@@ -20,5 +20,6 @@ from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
 from gns3.modules.vpcs import VPCS
 from gns3.modules.virtualbox import VirtualBox
+from gns3.modules.qemu import Qemu
 
-MODULES = [Builtin, Dynamips, IOU, VPCS, VirtualBox]
+MODULES = [Builtin, Dynamips, IOU, VPCS, VirtualBox, Qemu]

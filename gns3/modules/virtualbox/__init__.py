@@ -89,15 +89,19 @@ class VirtualBox(Module):
 
             vmname = settings.value("vmname", "")
             adapters = settings.value("adapters", 1, type=int)
+            adapter_start_index = settings.value("adapter_start_index", 0, type=int)
             adapter_type = settings.value("adapter_type", "Automatic")
             headless = settings.value("headless", False, type=bool)
+            enable_console = settings.value("enable_console", True, type=bool)
             server = settings.value("server", "local")
 
             key = "{server}:{vmname}".format(server=server, vmname=vmname)
             self._virtualbox_vms[key] = {"vmname": vmname,
                                          "adapters": adapters,
+                                         "adapter_start_index": adapter_start_index,
                                          "adapter_type": adapter_type,
                                          "headless": headless,
+                                         "enable_console": enable_console,
                                          "server": server}
 
         settings.endArray()
@@ -113,7 +117,7 @@ class VirtualBox(Module):
         settings.beginGroup("VirtualBoxVMs")
         settings.remove("")
 
-        # save the IOU images
+        # save the VirtualBox VMs
         settings.beginWriteArray("VM", len(self._virtualbox_vms))
         index = 0
         for vbox_vm in self._virtualbox_vms.values():
@@ -135,7 +139,7 @@ class VirtualBox(Module):
 
     def setVirtualBoxVMs(self, new_virtualbox_vms):
         """
-        Sets IOS images settings.
+        Sets VirtualBox VM settings.
 
         :param new_iou_images: IOS images settings (dictionary)
         """
@@ -267,7 +271,7 @@ class VirtualBox(Module):
             params.update({"working_dir": self._working_dir})
         else:
             if "vboxwrapper_path" in params:
-                del params["vboxwrapper_path"]  # do not send VPCS path to remote servers
+                del params["vboxwrapper_path"]  # do not send Vboxwrapper path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
@@ -319,11 +323,12 @@ class VirtualBox(Module):
         # create an instance of the node class
         return node_class(self, server)
 
-    def setupNode(self, node):
+    def setupNode(self, node, node_name):
         """
         Setups a node.
 
         :param node: Node instance
+        :param node_name: Node name
         """
 
         log.info("configuring node {} with id {}".format(node, node.id()))
@@ -334,7 +339,7 @@ class VirtualBox(Module):
                 selected_vms.append(vm)
 
         if not selected_vms:
-            raise ModuleError("No VirtualBox VM this node and server {}".format(node.server().host))
+            raise ModuleError("No VirtualBox VM on server {}".format(node.server().host))
         elif len(selected_vms) > 1:
 
             from gns3.main_window import MainWindow
@@ -355,8 +360,10 @@ class VirtualBox(Module):
                 raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
 
         settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
+                    "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
                     "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
-                    "headless": self._virtualbox_vms[vm]["headless"]}
+                    "headless": self._virtualbox_vms[vm]["headless"],
+                    "enable_console": self._virtualbox_vms[vm]["enable_console"]}
 
         vmname = self._virtualbox_vms[vm]["vmname"]
         node.setup(vmname, initial_settings=settings)
@@ -419,7 +426,7 @@ class VirtualBox(Module):
         return None
 
     @staticmethod
-    def nodes():
+    def classes():
         """
         Returns all the node classes supported by this module.
 
@@ -427,6 +434,23 @@ class VirtualBox(Module):
         """
 
         return [VirtualBoxVM]
+
+    def nodes(self):
+        """
+        Returns all the node data necessary to represent a node
+        in the nodes view and create a node on the scene.
+        """
+
+        nodes = []
+        for node_class in VirtualBox.classes():
+            nodes.append(
+                {"class": node_class.__name__,
+                 "name": node_class.symbolName(),
+                 "categories": node_class.categories(),
+                 "default_symbol": node_class.defaultSymbol(),
+                 "hover_symbol": node_class.hoverSymbol()}
+            )
+        return nodes
 
     @staticmethod
     def preferencePages():
@@ -441,7 +465,7 @@ class VirtualBox(Module):
     @staticmethod
     def instance():
         """
-        Singleton to return only on instance of VirtualBox module.
+        Singleton to return only one instance of VirtualBox module.
 
         :returns: instance of VirtualBox
         """

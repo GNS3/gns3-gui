@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/ui/preferences_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created: Sun Jan 26 13:44:53 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Sun Aug 17 18:05:14 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -32,9 +32,6 @@ class Ui_PreferencesDialog(object):
         sizePolicy.setVerticalStretch(2)
         sizePolicy.setHeightForWidth(PreferencesDialog.sizePolicy().hasHeightForWidth())
         PreferencesDialog.setSizePolicy(sizePolicy)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        PreferencesDialog.setWindowIcon(icon)
         PreferencesDialog.setModal(True)
         self.gridlayout = QtGui.QGridLayout(PreferencesDialog)
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))

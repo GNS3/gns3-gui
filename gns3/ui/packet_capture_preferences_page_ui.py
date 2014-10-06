@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Sun Jun 22 02:41:12 2014
+# Created: Mon Sep 22 14:32:22 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,13 +26,16 @@ except AttributeError:
 class Ui_PacketCapturePreferencesPageWidget(object):
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName(_fromUtf8("PacketCapturePreferencesPageWidget"))
-        PacketCapturePreferencesPageWidget.resize(440, 254)
+        PacketCapturePreferencesPageWidget.resize(409, 290)
         self.gridLayout = QtGui.QGridLayout(PacketCapturePreferencesPageWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.uiSettingsGroupBox = QtGui.QGroupBox(PacketCapturePreferencesPageWidget)
         self.uiSettingsGroupBox.setObjectName(_fromUtf8("uiSettingsGroupBox"))
         self.gridlayout = QtGui.QGridLayout(self.uiSettingsGroupBox)
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
+        self.uiCaptureAnalyzerCommandLabel = QtGui.QLabel(self.uiSettingsGroupBox)
+        self.uiCaptureAnalyzerCommandLabel.setObjectName(_fromUtf8("uiCaptureAnalyzerCommandLabel"))
+        self.gridlayout.addWidget(self.uiCaptureAnalyzerCommandLabel, 5, 0, 1, 1)
         self.uiCaptureReaderCommandLabel = QtGui.QLabel(self.uiSettingsGroupBox)
         self.uiCaptureReaderCommandLabel.setEnabled(True)
         self.uiCaptureReaderCommandLabel.setObjectName(_fromUtf8("uiCaptureReaderCommandLabel"))
@@ -59,9 +62,17 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiPreconfiguredCaptureReaderCommandComboBox = QtGui.QComboBox(self.uiSettingsGroupBox)
         self.uiPreconfiguredCaptureReaderCommandComboBox.setObjectName(_fromUtf8("uiPreconfiguredCaptureReaderCommandComboBox"))
         self.gridlayout.addWidget(self.uiPreconfiguredCaptureReaderCommandComboBox, 1, 0, 1, 1)
-        self.gridLayout.addWidget(self.uiSettingsGroupBox, 0, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 101, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
+        self.uiCaptureAnalyzerCommandLineEdit = QtGui.QLineEdit(self.uiSettingsGroupBox)
+        self.uiCaptureAnalyzerCommandLineEdit.setObjectName(_fromUtf8("uiCaptureAnalyzerCommandLineEdit"))
+        self.gridlayout.addWidget(self.uiCaptureAnalyzerCommandLineEdit, 6, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiSettingsGroupBox, 0, 0, 1, 2)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(PacketCapturePreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.gridLayout.addWidget(self.uiRestoreDefaultsPushButton, 1, 0, 1, 1)
+        spacerItem = QtGui.QSpacerItem(253, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(20, 101, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem1, 2, 0, 1, 2)
 
         self.retranslateUi(PacketCapturePreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(PacketCapturePreferencesPageWidget)
@@ -69,9 +80,11 @@ class Ui_PacketCapturePreferencesPageWidget(object):
     def retranslateUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setWindowTitle(_translate("PacketCapturePreferencesPageWidget", "Packet capture", None))
         self.uiSettingsGroupBox.setTitle(_translate("PacketCapturePreferencesPageWidget", "Settings", None))
-        self.uiCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Packet capture reader application command:", None))
+        self.uiCaptureAnalyzerCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Packet capture analyzer command:", None))
+        self.uiCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Packet capture reader command:", None))
         self.uiCaptureReaderCommandLineEdit.setToolTip(_translate("PacketCapturePreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%c = capture file (PCAP format)</p></body></html>", None))
         self.uiAutoStartCheckBox.setText(_translate("PacketCapturePreferencesPageWidget", "Automatically start the packet capture application", None))
-        self.uiPreconfiguredCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Preconfigured commands:", None))
+        self.uiPreconfiguredCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Preconfigured packet capture reader commands:", None))
         self.uiPreconfiguredCaptureReaderCommandPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "&Set", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "Restore defaults", None))
 

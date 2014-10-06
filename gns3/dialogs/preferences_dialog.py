@@ -120,7 +120,6 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         Closes this dialog.
         """
 
-        #TODO: refresh the devices list when closing the window
         QtGui.QDialog.reject(self)
 
     def accept(self):
@@ -128,7 +127,10 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         Saves the preferences and closes this dialog.
         """
 
-        #TODO: refresh the devices list when closing the window
-        #globals.GApp.mainWindow.nodesDock.populateNodeDock(globals.GApp.workspace.dockWidget_NodeTypes.windowTitle())
+        # close the nodes dock to refresh the node list
+        main_window = self.parentWidget()
+        main_window.uiNodesDockWidget.setVisible(False)
+        main_window.uiNodesDockWidget.setWindowTitle("")
+
         if self._applyPreferences():
             QtGui.QDialog.accept(self)

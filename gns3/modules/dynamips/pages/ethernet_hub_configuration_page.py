@@ -62,7 +62,12 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         """
 
         if not group:
-            settings["name"] = self.uiNameLineEdit.text()
+            # set the device name
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtGui.QMessageBox.critical(self, "Name", "Ethernet hub name cannot be empty!")
+            else:
+                settings["name"] = name
         else:
             del settings["name"]
 

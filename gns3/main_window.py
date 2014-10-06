@@ -43,6 +43,9 @@ from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
+from .items.shape_item import ShapeItem
+from .items.image_item import ImageItem
+from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
 from .cloud.utils import get_provider, UploadProjectThread
 from .cloud.exceptions import KeyPairExists
@@ -118,6 +121,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._updateRecentFileActions()
 
         self._cloud_provider = None
+
+        # set the window icon
+        self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
+
+        #FIXME: hide the cloud dock for beta release
+        #self.uiCloudInspectorDockWidget.hide()
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -361,11 +370,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     instance, keypair = self._create_instance(new_project_settings["project_name"],
                                                               default_flavor,
                                                               default_image_id)
-
-                    topology = Topology.instance()
-                    topology.addInstance(instance.name, instance.id,
-                                         default_flavor, default_image_id,
-                                         keypair.private_key, keypair.public_key)
+                    if instance:
+                        topology = Topology.instance()
+                        topology.addInstance(instance.name, instance.id,
+                                             default_flavor, default_image_id,
+                                             keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
                 self._saveProject(new_project_settings["project_path"])
@@ -566,8 +575,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to show the layer positions on the scene.
         """
 
-        #TODO: show layers
-        pass
+        NodeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ImageItem.show_layer = self.uiShowLayersAction.isChecked()
+        NoteItem.show_layer = self.uiShowLayersAction.isChecked()
+        for item in self.uiGraphicsView.items():
+            item.update()
 
     def _resetPortLabelsActionSlot(self):
         """
@@ -1020,7 +1033,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                          "Connecting to server {} on port {}...".format(server.host, server.port),
                                                          "Cancel", busy=True, parent=self)
                         progress_dialog.show()
-                        if progress_dialog.exec_() == False:
+                        if progress_dialog.exec_() is False:
                             return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
@@ -1162,14 +1175,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.reset()
-
-        project_files_dir = path
-        if path.endswith(".gns3"):
-            project_files_dir = path[:-5]
-        elif path.endswith(".net"):
-            project_files_dir = path[:-4]
-        self._project_settings["project_files_dir"] = project_files_dir + "-files"
-
         topology = Topology.instance()
         try:
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
@@ -1177,6 +1182,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 need_to_save = False
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
+
+                project_files_dir = path
+                if path.endswith(".gns3"):
+                    project_files_dir = path[:-5]
+                elif path.endswith(".net"):
+                    project_files_dir = path[:-4]
+                self._project_settings["project_files_dir"] = project_files_dir + "-files"
+
                 if not os.path.isdir(self._project_settings["project_files_dir"]):
                     os.makedirs(self._project_settings["project_files_dir"])
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
@@ -1481,14 +1494,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not name.endswith("-gns3"):
             name += "-gns3"
 
+        log.debug("Creating cloud keypair with name {}".format(name))
         try:
             keypair = self.cloudProvider.create_key_pair(name)
         except KeyPairExists:
-            # delete keypairs if already exist
+            log.debug("Cloud keypair with name {} exists.  Recreating.".format(name))
+            # delete keypairs if they already exist
             self.cloudProvider.delete_key_pair_by_name(name)
             keypair = self.cloudProvider.create_key_pair(name)
 
+        log.debug("Creating cloud server with name {}".format(name))
         instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
+        log.debug("Cloud server {} created".format(name))
         return instance, keypair
 
     def _exportProjectActionSlot(self):

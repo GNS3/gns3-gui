@@ -9,16 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>534</width>
-    <height>280</height>
+    <width>378</width>
+    <height>234</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>About</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../../resources/resources.qrc">
-    <normaloff>:/images/logo_icon.png</normaloff>:/images/logo_icon.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -39,7 +35,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../../resources/resources.qrc">:/images/logo_gns3_small.png</pixmap>
+            <pixmap resource="../../resources/resources.qrc">:/images/gns3_logo.png</pixmap>
            </property>
           </widget>
          </item>
@@ -62,16 +58,11 @@
             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:14pt; font-weight:600;&quot;&gt;GNS3 ER %VERSION%&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Under GPL v3 license&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:12pt; font-weight:600;&quot;&gt;GNS3 Early release&lt;/span&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.gns3.net&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;Visit our website&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/donate/index.php?group_id=198152&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;Make a donation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.gns3.net/contact&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;Contact us&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:14pt; font-weight:600;&quot;&gt;GNS3 %VERSION%&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Under GPL v3 license&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:9pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="openExternalLinks">
             <bool>true</bool>
@@ -79,6 +70,44 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>&amp;Team</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTextEdit" name="uiTeamTextEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Developers&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Jeremy Grossmann&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Contributors&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;James E. Carpenter (IOU support)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Daniel Lintott (NET file import)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Marc Weisel (Mac OS X packaging)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alexey Eromenko (VirtualBox support)&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Contractors&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/planctechnologies&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Plan C Technologies&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextBrowserInteraction</set>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -2452,7 +2481,1177 @@ MCyagli
 Scott Maderitz
 Eugeniu Babin
 William M Zambrano
-Elton Hubner</string>
+Elton Hubner
+Marek Macovsky
+Luccas Aguiar
+Keith Nowosielski
+Dr Bankim Jani
+JS
+Tuxufologo
+kishiro
+Eric Gamess
+Nguyen Thai Nguyen
+Dmitry Pavlov
+AS97
+Axel Sioland
+Louis Bartay
+yokota shinichi
+medtemo
+Fekadu Berhane
+Dmitriy E. Koshkin
+amrinder kamboj
+Muyeen Parveez
+Peter Tavenier
+kalpana
+DlteC do Brasil
+Tim Wilkes
+Dave Malner
+Ali Fadhl Hussein
+elgrecos
+Brandon Fields
+Richard Jenniss
+mikemick
+Hitesh Panchal
+W3FTM
+TxetxuMC
+Rotero82
+JD Keith
+MichaelDHays
+yeyo
+Mohamed Mohamud
+Tarik houmaiza
+Alessandro Piva
+Arabi
+Victor Salas
+Santosh Nair
+Shashank Bhargava
+Andrew Tagliani
+Shamal Weerakoon
+Matt &quot;The Beard&quot; Powell
+Douglas Edward Luce
+John the PawWow
+Dave Persuhn
+Peter Daniel Bartyik
+Richard P. Mauer
+Juan C. Guerrero
+Randall Nieland
+Carlos Cabrera
+Jason Giles
+Robert Pribanic
+Renato Pinheiro de Souza
+Antonio J Remedios
+Adam Reblitz
+Jose Rodriguez
+Glenn Eberhard
+EricWibowo
+Peter M Nikodem
+Sergio Ryan La Torre
+Tommie James
+Sabine Reis
+Skyler Hayes
+Yoruba
+Jens Stark
+Dean Lewis
+Recundis
+Yazeed Fataar
+IOLARIU
+Kurt &amp; Ethan Steed
+Paul Slater
+Malick FALL
+eduinho
+Shev
+v0ha
+Bezmalinovic
+Les Bowditch
+Rick Sattler
+PGX
+Abhinandan Juyal
+Ernest Edwards
+Paul Woodhouse
+Ian Benoit
+Sasha Dee Robbins
+Ferrel
+Marc Snelgrove
+Nicolás A. Escudero
+Marcus Auman
+sides14
+albokillers
+Juan C. Espinoza
+Filipe Torres
+J.C. Cederboom BICT
+Jovanni
+Matthew C Hickey
+Michael Anthony Cummisky
+Dmitry Figol
+Brian Wusu
+ZEULEO
+SeongJaeYang
+Jesus Alirio Diaz Castro
+C Dennis Ferguson
+Viktor Pakin
+Shelbie_Fann
+Jay Canfield
+Andrei Bolanu
+Juan Felipe Palacios
+Igor Boyko
+hadinhphu
+Esvi Molina G.
+Shawn McHenry
+korjjj
+Abdul Jawad Shakoor
+Edmarc Vitz Oliveros
+Mike Melo
+Walter Haeffner
+TKH
+Matthew Weber
+H4K3R
+Shawn Hanff
+Ateeb Ahmed
+Jerry Kanoholani
+Anton Björkstrand
+Ryan Corcoran
+Eric Persch
+Dane Straub
+Syed Hashmi
+Muhammad Furqan Butt
+Jima
+Bill Scheirer
+Mikael H.
+Internetworkerz
+Mike Ferguson
+Matthew Mason
+Sujith TK
+TheSource
+Eduardo Romero Peña
+Andrei Niamtu
+Shafaq Ali
+Harold H Hall III
+Dion Rupert
+Iavarone
+Eric Geib
+Prakash
+Tom S Pedersen
+bash550
+Mukendi Zamba
+Daniel Gheorghe Luca
+Phillip B. deChantal III
+Aatif Nawaz
+Yuri (aka itAvgur) Melnikov
+iKaruS
+Jon Christopher Matthews
+Stuart Fordham
+olga1126
+Ashwani Patel
+Ronald White
+Rob VanHooren
+Ifti Hussain
+Jan Král
+pramod mangatha
+Franklin Davis
+Kendrick Som
+Joseph Amen
+Michael Lee Mosher
+Abel G. Aberra
+jbrake
+joso
+Renzo Tovar Ledesma
+Rodrigo Lube
+Emad Abid
+Joshua St.Clair
+Gabor Keri
+Chris Ortiz
+Michael P Goodwins
+Adrian Oden
+Paul Eugene Smth
+Sahil Pujani
+manokum6
+Ruslan Foutorianski
+Sinan Sulaiman
+Philip Weekly
+hernan.cruz.iii
+Torgny Holmlund
+A.Autricque
+LeeJBurton
+Daniel Elkins
+Ahmed Shetta
+Mihai Mirita
+AsdfghjkL
+Anton Zinchenko
+Anders Låstad
+Asimios Kiropoulos
+cdljel
+Meeralebbe Mohamed Rezard
+Chris Weber
+Shawn Nay
+Gabe Rivas
+Andrea Dainese
+Eric SAUGNAC
+vahid rezaabadi
+Don Kanicki
+Joe Mendola
+Stanislav_CCIE_NextGen
+Steven Coutts
+Ahmad Amran Ahmad
+ChewableFritter
+Torgny Tonna Holmlund
+Taiwo Awoyinfa
+Aju Jose
+Cory Light
+Daniel de Morais Gurgel
+pkillur
+Alex D
+Felipe Solis
+Vijayendra Shetty
+Frédéric &quot;Strall&quot; C.
+JP Scholten
+Olugbenga Adara
+José Ignacio Jorquera G.
+RICHMAC
+Timi Shoyele
+Andrew Roderos
+Sathursan Kantharajah
+Edj1963
+Lasse Haugen
+Thiago Bastos (TBastos)
+Diogo Mendes
+Eric Villeneuve
+ARNOLD KWAME MARKSON
+Tomek Szulczynski
+Achiraf
+Brent O'Keeffe - University of Chicago
+Trenton John Skoog
+Mark Hicks
+A Davis
+VASANT
+Dat Nguyen Thanh
+Robert W Goguen
+Noel Sergio
+Peter Clemenko III
+Happy Hanna
+Alexander Atanasow
+Nkosinathi Mntambo
+Jeff Oliver
+Sean Wauchop
+Simon Priest
+oliverdiese
+Simon Macpherson
+Dennis Weijenberg
+Jonathan Worth
+Pauly Comtois
+Dynamic Network Security Ltd
+siggjen
+TimmyK
+Hernan &quot;IP&quot; Marquez
+Ryan Young
+Abdiweli Haji
+Thomas Kager
+ElaineJoyDelaCruz
+Jeff Smith
+Lionel PONCELET
+Frode Figenschou
+EvelynBowman
+Dr Barra Touray
+Irvin Leo Villanueva
+Steven Bowman
+GurcharanSingh
+Shane Bradley
+Alex Kruch
+Andrew Quinton
+Jeremiah Sholes
+David E. Cohen
+Michael Ciacco
+Ziggy
+Abrhim
+Des Kharisma
+yusyd
+Tomasz Grzelak
+mosipd
+J.D. Wegner
+Fred O Asante
+George C. Dean
+Jose Ricardo Feliz de Oliveira
+Muhammad Nouman
+Hamid Reza Farahani Farid
+Kaizad Anklesaria
+Lonie Packer
+aelso.silva
+Erik de Wildt
+thepcdoctor
+Ben Murray (Cache22)
+kuji
+Bobbie Edwards
+AugurJ
+Rodrigo de Paula Cordeiro
+Edson Siqueira, RJ - Brazil
+JMB^3
+cgbfish
+zdenotim
+Jose Barrantes
+Gordon Howard Hannan
+Aboubacar Ballo
+Matt 'Jacktooth' Allen
+Gabe
+Junaid Khan
+Markus Schaufler
+Terry Rawleigh
+Abdulla Solutions.net
+Luis Carlos Salazar
+Charles Boston
+Tyrone Penn
+Paul Denning
+GSingh14
+preston
+Stephen Wilson
+JamesBernardVallespin
+Mircea Ion Nedelea
+Sung Jae Park
+Khaled Alghazi
+Ewart Duncan
+Nov Alpha Kilo
+Billy J Bryant &quot;Diomenas&quot;
+Tom_Evan_Alexa_Tif_Tippen
+abcdefgh1234
+Florian Ohnemüller
+gnos
+ankur singh
+Donna Murphy
+Joey Lamb
+Satyajit Mandal
+Jean Guandalini
+Mohammed Elqazzaz
+NWN Dan Hellwig
+Raghav Gurung
+Jon Halar
+Daniel G Tootell
+Graham Shaw
+Lando Thomas
+Joe Sanchez
+Chris Corbin
+Samuel E. Brown
+Dmitri
+Omar Fawaz Thoaib Al-Sammarraie
+nyasha muzwidziwa
+snuthall
+Craig Coffey
+Ramgopal Reddy M
+Guilherme Montoanelli
+l3y3t
+Tony.Davis
+Pipeiden
+Thomas Tablada
+Matthew Piechotta
+David Michael Alan Daniel Gross
+Robert Bezerra
+Sergey Polski
+Ivan Haralamov
+Harley Hopkins
+Dave Kretzmer
+Timur Mezentsev
+David Bianchi-Pastori
+Przemyslaw 'UWillC' Snowacki
+Samuel Oppong
+Joshua Riesenweber
+Vlad Ivanovic
+bryanamv
+Tomasz Łęgowiak
+M. Dustin Brimberry
+Monthon Thunboonma
+Parambir Singh Bhullar
+Fahad
+Thomas Wing
+Devan Hardwick
+Bahman Arbab
+Jared M.
+Philip Wong
+Paulo Galluzzi
+Gregory L. Johnson, Jr.
+Mario Mariscal
+KYLE LYNCH
+Ross Anderson
+John Littler
+Kingsley Tambe-Ebot
+Muhammed Ali Bulut
+Sanjay Kumar Patel
+MUJTABA HAIDARY
+juliox
+Robert Morris
+Nick Duff
+Andrew Krist
+GNS41292
+Vishnu Nagepally
+Prithvi
+Jomar Vincent Miller
+Gildas Pambo
+Michalis Polyadis
+A.W. van Bart
+Erwyn Tadong
+Robert Laidlaw
+Lance Heckerman
+Tzu-Che HUANG
+S.Gerry
+Kevin R. Owens II
+Ahmed Alayyoubi
+GNS40116
+KeshavS
+Panagiotis Dasouras
+Francesc Lumbierres
+Brandon Benchley
+Rusu Mihai
+Imran Yousaf
+bsdam
+Curtis Bunch
+Diego Antonio Quintana Solano
+Kendell-Lee
+Scott Pickles
+Ahmed AlGherbawi
+Unzagi
+Tim Sedlmeyer
+Ethan Tan YW
+Bad Mother Fucker
+Gurpreet Grewal
+veers
+Ehsan Hzare
+Dennis Pham
+Edsil Welch
+yarrrr
+Alexey Eromenko &quot;Technologov&quot;
+Junior J George
+Q Ozzman
+Jakso Ozi Laszlo
+Origosis
+Dave Martin
+Matthew A. Kurowski
+FosNA
+Md.Rafiqul Islam
+Wuggles
+Jason Marley
+Adnan Kolakovic
+Thomas A York
+mikedesanto
+Ramadevu Ramkumar
+Joe Audet
+Barz Dove
+BremerH0
+Karwan
+Mark McGrady
+Herbie
+Adefisayo Adegoke
+Luke Dominy
+Gareth Rhys Williams
+Harley Thomas Jones
+Elvis Lunga
+elinathan
+Chris Dent
+Omeata Ifeanyi
+Sanyi Wakgari
+gizmo
+routenull0
+Simon Wilkinson
+Andy Britten 59 Commando RE
+THEIS
+F Graham
+Graham MacGregor
+wgamper
+Mark Buono
+John Li
+Daniel David
+Ahmed Thabet
+Prithvi Das
+Mike Mcleod Jr.
+Michael Higgins
+Praveen Kumar
+Rick Mills
+Miguel Sama
+Jim Aurouze
+Pramod Mangatha
+Ghiyas Haider
+frank hopkins
+Bizkitcan
+John Rockwell
+Patrick Joseph A Evangelista
+Tom Deamer
+TiagoWR
+Iman Ebrahimi Tajadod
+Somone77 was here
+mckrsta@hotmail.com
+Joseph Munyongi
+Chris Palmer
+Himanshu Bhatt
+Phil Henson
+Rfernandes
+Eze
+Ezenwa
+DaRyan Horn
+Waisudin Farzam
+Vyacheslav Sobchenko
+Robert Gorbul
+MrBultitude
+Dave Massam
+Khumi
+Francisco &quot;TuKoX&quot; Briano
+Aijaz
+rittam
+Seweryn Obieglo
+Tessius
+Hans Lossman
+Libi Pappachen
+TSAV
+Deskha
+Mohammad Al Amaireh
+Megajove
+Nico Heijnen
+Jeff Nagel
+Travis Baker
+Bryan Tabb
+MNL1960
+LsTRA
+GarethHall
+Vanquish1986
+JAMES SNEW
+Muhammad Bhatti
+Tiago Marques
+Jason Pietrzak
+Ping Petchged
+Herman
+Nikul Patel
+Alfred Eric Jones III
+Josh Barenthin
+Kanuj Behl KjB
+philbeau
+YALEW TAKELE
+phletchmattic
+Jayir Mansuclal
+Phil Beaudoin
+Steve Minnick
+Eugenio de la TorreGNS30928
+Eugenio de la Torre
+Aelso.silva
+Jodoval Luiz dos Santos Junior
+Zack Manriquez
+WOS
+Chris Good
+ALI QASSEM ALMHDI
+Clifton Bissick
+Edward Cohen
+Driton B
+Brian Keifer
+Henry Dsouza
+Garrett Haynie
+Bob Lyons
+David E Soto JR
+Rob Jeff
+Cicero Avila
+fulopa7
+Arnaud Helin
+Dan Alongi
+JamesDanielMorris
+Vladimir Novakovic
+Daniel Baeza
+Manolo164
+Mike Simkins
+Craig Ellegood
+Angel Serrano
+Jude Lymn
+Robert Jordan
+Karl Struss
+Curt Kellum
+Paul Gunter Bravo Ch.
+Guy Verdegem
+Walter Johnstone-Breen
+Maged Atef
+Morgan Chea
+Microland Limited
+Saed Zahedi
+Reynaldo Bilan
+Josh Lumahan
+Nima Javidi
+CraftedPacket
+Mike McPhee
+Christopher Beyer (CT)
+lishanmirando
+Christian Chavez
+Shawn H4K3R Hanff
+Marcin Markowski
+Ibrahim El-Ali
+Muhammad Agung Nugroho
+Don Taylor II
+Ian Davidson
+Henry Trombley II
+Nestor Rubio
+Fritters
+Korish
+Humaiun
+Bilal Issa
+Francisco Alfaro Espinoza
+Travis Kreikemeier
+Chee Vooi Lew
+Ovidiu Constantinescu
+Sergio Martinez Leon
+saran
+SPUCKETT
+Krishna Kumaran GK
+StefanoLaguardia
+Patrick McGirr
+Anderson vakaoBR Leite
+Felippe Dias
+Vladimír Vladys Jančich
+Johnboy3
+Shane Froebel
+Cushgod
+Craig Zambra
+tsk700
+Erik Pettersson
+Daniel Leece
+Tim Ingalls
+Matti Huotari
+Duminda Wehalle
+MACE529
+Mohamed Furqan Firdous
+Dinesh Rupan
+Chad Stambaugh
+Thomas Marchsteiner
+Luis Gustavo Fernandes
+Aouachria Nassim
+Gerardo Estrada Gutierrez
+Erik A Bodholt
+Ali Khuram
+SysWiz
+Guilherme Ladvocat
+Ezy
+Chris Bell
+Paul Heck
+Bjørn Petter Kysnes
+Andre Jonker
+BARY
+Grillmon
+Hisham Jaghloul
+Straube
+Ian Patterson
+Andrew J. Thompson
+Damian Barlow
+Marcus
+Kevindenton
+KoolFadil
+Fadil Kadrat
+Jacob McCoy
+Penny Yeung
+SOE NAING OO
+Victor Reyes II
+Ronnie van Eecke
+Derek Fries
+ZAIM Lotfi
+Larry Peterson
+Stephen Arogbonlo
+Cristian Silva Guerra
+Bill Miller
+jaberzadeh
+Peyton Quast
+Ola
+D O'Raghallaigh
+Shaik Mahamood
+ZardozTrampoline
+Jason Zimmerman
+ALI Q ALMHDI
+Maxim Klimanov
+DBQ1969
+Drew Gough
+Aamir Ismail
+Ejdayid
+Charles Maze
+GunnarHakonarson
+Mark Wyss
+nicku
+Adam Norman
+Ahmad Rateb
+Kingsley Tako
+Saminder Sandhu
+Ahmed (Sigey)
+Rémy POUPPEVILLE
+JeroenPeeters
+d3vild0g
+Stefan Stoyanov
+Anthony Hopkins
+Paul Jeffrey
+Tommy Faucher
+Gessesse Eshetu
+Christopher Pratt
+Jani Laakkonen
+Marios Nicou Louca
+Aaron Schmierer
+Chris Luke
+Preston Taylor
+Chris &quot;Sasquatch&quot; Saxton
+Brian Dalhover
+Aaron Mayfield
+Engjell R. Pllana
+KalSarai
+Mike Nathan
+Le Viet Thanh
+Stumper
+Brian Ladd
+Brian Binion
+Marcos Umino
+Alex Martins
+Petrollese
+Marion Bogdanov
+Tom Jehn
+Kevin &quot;MadDOG&quot; Livingston
+Mike Profitt
+Sean Treschen Pillay
+adunselman
+Andre Dunselman
+Don McDonald
+Jeff Cummings
+Carlos M Cabrera Vargas
+Dilip Ratna
+Viet Nguyen
+Nelson Lee
+John Anthony Jones
+Jack and Mia
+JamesANDDanielMorris
+Giuliano Barros
+Ingo Bothe
+Malik Lolonga
+NAIF - ALthubaiti
+Faisal Rehman
+Juergen Morgenstern
+Adli Hajarat
+SONIDA
+Dan Morgan - VisuMAX
+Joe Sarah Vivien Brantley
+Joe Sarah Vivien Sam Brantley
+Alex Kiwerski
+Christian Hansen
+Digital Design Networks, LLC
+TorentZachary
+RobinM
+Michael Amador
+claytondf
+James W.A. Albert
+Mike Carty , Alliance
+Damian Zaremba
+Sol Birnbaum
+Mark Butler
+Sam Alletto
+Ron Cannella
+RIP Benjamin Gibbs
+Joshua Settle
+rotimi gbadamosi
+rivmont
+CCIE28826
+Miltiades Hadjioannou
+Psyche607
+Yohan
+Denilson Dejesus
+Allan Que
+Rudy R Guerra
+Palle Christoffersen
+Kishor
+Vinicius, O Caixeta
+Mohamed Rezard Meeralebbe
+EmreR
+Alex Hubery
+Sol Huebner
+alepo
+Andrés oRtA eLiZalde
+Frank Garrison
+Vincent van der Sluijs
+NelsonNetworks
+Marc Weisel
+wobe
+Kev Ward,UK
+Mitch Vaughan
+Mujtaba Mir
+Arni Birgisson
+Abel Aberra
+Jeff Nierman
+godZilla
+gingerpower121
+cyrinojuca
+Peter Joseph
+Davisteraz
+Eduardo Cardoso dos Santos
+MARK &quot;BIG MAC&quot; MCGRADY
+chekoceron
+GuillermoJimenez
+Alvin Phillip
+jerrysimila
+Patrick den Hoed
+Ciro Centro Strico Salerno
+Emilio Morla
+Mike Shafer
+agho
+Fernando Requena
+Dovydas Stepanavicius
+Joseph W. Anderson
+Nathan Chisholm
+Yahngel
+rolf1974
+Joe Polak
+Stephen Moore
+Van Michael
+Ondrej Köver
+Brian Adelson
+Vasco Ferraz
+CHONG YU NAM
+Jody L. Whitlock
+Kanangu
+Godwin Nsubuga
+John Hennessy
+Michael A. Little
+stibibby
+Shane K Hunt
+Adroit Tutoring
+JamesBernardBenjaminVallespin
+Ken B.
+Asib Yussuf
+Miguel Edison Santos - CAF
+Robson Luis Sgai
+Leon Deguenon
+Gabriel Urra
+Rob Coote
+Wickedkuul_Beehotsch
+Robert Mikołajczyk
+Yasser A. Alluhaidan
+Gessesse ESHETU
+Joe Kukis
+rgb943
+Joe Wills
+Robert Rittenhouse
+Reinaldo Benitez
+vrhvenkatesh
+Nirav Bhatt
+David Perry
+Carsten Ellermann
+Rufus Methu Igoro
+Jeff Pooley
+Andrew B. Shipton
+YeowKee YK@TECHNICALES.COM
+naveed4k143
+Nathan Ash #12148057
+Robert Marmo
+George Vanburgh
+Tudor Davies
+Jeremy Bowen
+Andrew Fox
+Junior Taitt
+Tropizm
+Potcholo &quot;Nick&quot; Nicolas
+Brandon Bennett
+ntwrks
+Hjalti Pálmason
+Zachary Hill
+Ian Verno
+Jean-Christophe Baptiste
+chandima Ediriweera
+GunnarH
+Kenrick Wong
+David Afro Lezama Castro
+Asad Munir
+mohammed hashim
+José Luis Berlanga Villlarreal
+aaden
+Martin Schumacher
+Ðrizz
+Daniel Lintott
+tekdork
+Sergio Pereira
+James Wamburi
+Mark Wecker
+umar.hanafi86@gmail.com
+Edson Tadeu Almeida da Silveira
+Christopher Kilger
+Alex Beal
+Johnny Uribe
+Kevin P Sheahan
+Alex C. Rodich
+Joao Teixeira
+Caio Vianna Mello
+fierceg37s
+Doug Lardo
+Conrad Jedynak
+Andy Kelsall Jr.
+Marco Basurco
+Julio Delgado Jr
+Ken Hallstrom-Meade
+Nathan Loop
+daxm
+Kevin Pryce
+Skipdog
+Jean D Ulysse
+Richard Kwame Peasah
+Peter Musolino
+Eric Andrews
+Essam M Mahmod Ahmed
+Mir Ali
+JesurajAP
+David Darryl Pitre
+Vladimir Zalles
+C_S_Ginn
+Gustaf Hyllested Serve
+Matt Blackwell
+Skilldibop
+Paul &quot;Skilldibop&quot; Jerome
+Gera74
+AAronC
+Rob Wilkes
+steve brokenshire
+Mardie Kartosoewito
+Ryan Bagley
+Mario Seoane
+James Vickery
+Peter Scheele
+pdxDavid
+Pedro Sobral
+Bryan E. Pratt Jr.
+Eddy Loffeld
+Joshua Guillory
+ClarenceCaldwell
+Afrim Kwarteng
+Chika
+Marco Caruso
+Abubakr A Binafif
+chuck russell
+Jake Vallejo
+Kostia
+Biswajit
+Marcelo da Silva Conterato
+Ellert Hardarson
+Rowan Lee
+Mossyrik78
+Mikhail Shpak
+Gianremo Smisek
+xtify21
+Travis Newton
+Stephen Turnbull
+James Grace
+Eric &quot;Frenchie&quot; Villeneuve
+Rick Brady
+Bodizzle
+rbailey-NTAI
+Asamoto
+Allen Taylor
+NetJimB
+kyoungyong lee
+Damian Marcrum
+Nicolas Bautista
+Brad Allatt
+Salman Ahmad
+Gerardo Guzman
+Kovan Azeez
+Alkhamisy Adel Hamad
+RajJyothi
+Leonardo S Jeronimo
+Xcratburma
+Bjørn-Inge Haga
+Tristian Howard
+Robert Wilson
+BattyTheJedi
+Kosala
+Nazmus Sakib
+Alfred Eric Jones
+J Grant Bellchamber
+Lekan Aje
+Jacob Winkle
+Maybe translate to Norwegian?
+Anthony R Junk
+Amplex Electric, Inc.
+Sue Chatterjee
+Glen Stadig
+Christian Menz
+Billy Nix
+JoeyL.
+Alessandro.Veras
+Steven Vlahakis
+Kevin Bowen
+NG11geek
+Matvey Gubanov
+frano-dalmatinac
+OrceDimitrovski
+boogsalmighty
+Maky Robert
+Stuart Walker
+Vipin Kumar
+N.Sivatharzan
+Dannie Norman
+Sylvester Metieh
+Tyler Pruess
+DanielMB
+Ryan Douglass Milton
+Ahmad Amran - Webcore
+Benjamin Feld
+GWSchweickert
+Dirk Fettke
+AJ NOURI
+Stefan_Basson_Sydney_AUS
+Tang Choong Whye
+Ofer Ben Zvi
+5UCC355
+Rikard Borginger
+Robert K. Saydee Sr.
+D.Coty
+Michael G. Taylor Sr.
+Erich Schommarz
+Cassius Thomas
+Dominic Metzger
+Mike Manning
+José M. Castro Jr.
+Justin Bridgman
+Francis Enmanuel Baez Metz
+Ievgen Morskyi
+itAvgur-Irkutsk-Russia
+Padraic D. Hallinan
+Thomas Deamer
+Marco Paulo Ferreira
+Nicolas Pagano
+JR Garcia
+SIAGHY
+Naj Qazi
+reynaldo bilan
+Matt Egan
+Chris Beach
+Fco. Jose Santos
+Johnny Miller
+Muhammad Tahir Munir
+BJoslin
+Nick Fouts
+Pete Kowalsky
+developer
+Tyler Conrad
+Michael Weaver Johnson
+s2mfh
+Scotty2mfh
+Nicolas Dangeon
+Michial Cantrell
+Sébastien Larivière
+Primmus
+Wonder Jones
+Weston L Myers
+Steve Brosseau
+Ryan Mortier
+Steve Snavely
+Kirk J Iles
+Tiago Sousa
+Jesuraj Amaladas
+Mark C Bernier
+Jonathan David Rees
+David Bigerstaff
+Widmo
+Karl Billington
+naner2k
+Jose Daniel
+Mark.Foutch
+Bootcamp20
+Peter Hansen
+Dharnesh
+EnglishRob
+Jyotirmoy Lahkar
+Guggilam Guru Vasudeva
+Chris Higgins
+Blas Díaz (Colombia)
+Ahmed Albadree
+Jens Holtmann
+TJ Kwentus
+Jacob Smith
+Damian Baran
+phocean
+Mark &quot;BigMac&quot; McGrady
+teav-sovandara
+Dinesh Galani
+Raman Thapa
+RechieCebreros
+Jade Rampulla
+Fred Quan
+Martin Wall
+Louis Duzant
+SebasNati
+Erik Fairbanks
+Simon Boadi
+Darren Smurphin Murphy
+Stephanos Christou
+Rob Hinst
+Carlos A Salas
+Snehal Patel
+S. O'Reilly
+John Volter
+dkmahajan
+mansoor
+Charles Crosland
+Thiha Soe
+Ram K Bista
+toyosiolabs
+Shardul Ingle
+KhurramArif
+AaronMcKenna
+FaustoSampaio
+Justin Lemme
+Jquest
+Michael Brister
+Nicholas Donathan
+Slawomir Babicz
+Bradley Grein
+Roy
+RoyD
+Adam Bailey
+Daniel Neculai
+Kevin Vogt
+ALFREDO PASIGAN SALIPOT
+Giovanni Lojica
+Nicolas A. Escudero
+The Big Dirty
+Arun Joshi
+John Michael Santiago - boogs
+Gian-Luca Casella
+Geron Craig
+Christopher Young
+John Buelk
+Julio Moraes
+Aaron Meade
+Paulo Guerreiro (Portugal)
+CR Thompson
+Timár Zsolt
+Leobis
+Alan Matson
+Eric Park
+Pavel Tishkov
+L@mine S@lhi
+Per-Erik Brask
+Matt Williams
+Favre was here.
+Sergey Zheleznyak
+Alongi Daniel
+Lee Jeong Goo
+Chris Swinney
+Ayyappan Ramanan
+GSEC4959
+Cesar Honores
+Ravinderpal Singh
+Lee Haynes
+Jose Luis Bosquez Echevers
+Yevgeniy Orman
+Ankur Singh
+Marcos de Jesus Magagalhaes
+Dave Heinz
+Emberly
+Chris Gauthier
+Blair&amp;BenedictRepuyan
+Alex Recupero
+Victor Knell
+Travis Yates
+John Yates III
+Ian_C
+Jesse Jensen
+Drew Ludwick
+Chris Barlow
+Alessandro Veras
+Alan Matos
+Harold Alden A. Sanchez
+Munir B. Abdullahi
+FARTXaler
+DEWTEK
+DewTech
+Daniel Darby
+Tishkov Pavel [64]</string>
          </property>
         </widget>
        </item>

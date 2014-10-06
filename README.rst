@@ -1,7 +1,7 @@
 GNS3-gui
 ========
 
-New GNS3 GUI repository (alpha stage).
+New GNS3 GUI repository (beta stage).
 
 Warning: this is not the repository for the stable version of GNS3 (0.8.6), please go to the gns3-legacy repository for it.
 

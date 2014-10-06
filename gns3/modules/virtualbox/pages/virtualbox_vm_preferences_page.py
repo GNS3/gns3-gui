@@ -53,7 +53,15 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                                               "Intel PRO/1000 MT Server (82545EM)",
                                               "Paravirtualized Network (virtio-net)"])
 
+    def showEvent(self, event):
+        """
+        Loads the VM list when the page is shown.
+
+        :param event: QShowEvent instance
+        """
+
         self._vboxRefreshSlot()
+        QtGui.QWidget.showEvent(self, event)
 
     def _vboxVMClickedSlot(self, item, column):
         """
@@ -72,10 +80,12 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         if index != -1:
             self.uiVMListComboBox.setCurrentIndex(index)
         self.uiAdaptersSpinBox.setValue(vbox_vm["adapters"])
+        self.uiAdapterStartIndexSpinBox.setValue(vbox_vm["adapter_start_index"])
         index = self.uiAdapterTypesComboBox.findText(vbox_vm["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiHeadlessModeCheckBox.setChecked(vbox_vm["headless"])
+        self.uiEnableConsoleCheckBox.setChecked(vbox_vm["enable_console"])
 
     def _vboxVMChangedSlot(self):
         """
@@ -100,8 +110,10 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
         server, vmname = vm.split(":", 1)
         adapters = self.uiAdaptersSpinBox.value()
+        adapter_start_index = self.uiAdapterStartIndexSpinBox.value()
         adapter_type = self.uiAdapterTypesComboBox.currentText()
         headless = self.uiHeadlessModeCheckBox.isChecked()
+        enable_console = self.uiEnableConsoleCheckBox.isChecked()
 
         # #TODO: mutiple remote server
         # if VirtualBox.instance().settings()["use_local_server"]:
@@ -130,8 +142,10 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
         self._virtualbox_vms[key] = {"vmname": vmname,
                                      "adapters": adapters,
+                                     "adapter_start_index": adapter_start_index,
                                      "adapter_type": adapter_type,
                                      "headless": headless,
+                                     "enable_console": enable_console,
                                      "server": server}
 
         self.uiVirtualBoxVMsTreeWidget.resizeColumnToContents(0)
@@ -153,6 +167,8 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
     def _vboxRefreshSlot(self):
         """
         Gets/refreshes the VM list for all servers.
+
+        :param ignore_errors: either errors should be ignored or not
         """
 
         self.uiVMListComboBox.clear()
@@ -181,7 +197,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         """
 
         if error:
-            QtGui.QMessageBox.critical(self, "VM list", "Could not get the VM list from the server: {}".format(result["message"]))
+            QtGui.QMessageBox.critical(self, "VM list", "Could not get the VM list: {}".format(result["message"]))
         else:
             for vmname in result["vms"]:
                 if VirtualBox.instance().settings()["use_local_server"]:

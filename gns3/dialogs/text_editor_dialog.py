@@ -58,7 +58,7 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
         Slot to select the font.
         """
 
-        selected_font, ok = QtGui.QFontDialog.getFont(self.uiPlainTextEdit.font())
+        selected_font, ok = QtGui.QFontDialog.getFont(self.uiPlainTextEdit.font(), self)
         if ok:
             self.uiPlainTextEdit.setFont(selected_font)
 
@@ -67,7 +67,7 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
         Slot to select the color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._color)
+        color = QtGui.QColorDialog.getColor(self._color, self)
         if color.isValid():
             self._color = color
             self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))

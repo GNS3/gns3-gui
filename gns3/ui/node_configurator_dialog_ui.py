@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/node_configurator_dialog.ui'
 #
-# Created: Fri Jun 20 14:27:39 2014
+# Created: Sun Aug 17 18:05:14 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,6 @@ class Ui_NodeConfiguratorDialog(object):
     def setupUi(self, NodeConfiguratorDialog):
         NodeConfiguratorDialog.setObjectName(_fromUtf8("NodeConfiguratorDialog"))
         NodeConfiguratorDialog.resize(689, 454)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/logo_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        NodeConfiguratorDialog.setWindowIcon(icon)
         self.gridlayout = QtGui.QGridLayout(NodeConfiguratorDialog)
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
         self.splitter = QtGui.QSplitter(NodeConfiguratorDialog)

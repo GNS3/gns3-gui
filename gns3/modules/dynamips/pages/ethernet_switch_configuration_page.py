@@ -20,6 +20,7 @@ Configuration page for Dynamips Ethernet switches.
 """
 
 from gns3.qt import QtCore, QtGui
+from ..utils.tree_widget_item import TreeWidgetItem
 from ..ui.ethernet_switch_configuration_page_ui import Ui_ethernetSwitchConfigPageWidget
 
 
@@ -48,7 +49,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         """
         Loads a selected port from the tree widget.
 
-        :param item: selected QTreeWidgetItem instance
+        :param item: selected TreeWidgetItem instance
         :param column: ignored
         """
 
@@ -89,7 +90,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
 
         else:
             # add a new entry in the tree widget
-            item = QtGui.QTreeWidgetItem(self.uiPortsTreeWidget)
+            item = TreeWidgetItem(self.uiPortsTreeWidget)
             item.setText(0, str(port))
             item.setText(1, str(vlan))
             item.setText(2, port_type)
@@ -141,7 +142,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         self._node = node
 
         for port, info in settings["ports"].items():
-            item = QtGui.QTreeWidgetItem(self.uiPortsTreeWidget)
+            item = TreeWidgetItem(self.uiPortsTreeWidget)
             item.setText(0, str(port))
             item.setText(1, str(info["vlan"]))
             item.setText(2, info["type"])
@@ -163,7 +164,12 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
         """
 
         if not group:
-            settings["name"] = self.uiNameLineEdit.text()
+            # set the device name
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtGui.QMessageBox.critical(self, "Name", "Ethernet switch name cannot be empty!")
+            else:
+                settings["name"] = name
         else:
             del settings["name"]
 

@@ -73,6 +73,8 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         """
 
         if not group:
+
+            # set the device name
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
 
@@ -96,10 +98,12 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
             self.uiVMListComboBox.hide()
 
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
+        self.uiAdapterStartIndexSpinBox.setValue(settings["adapter_start_index"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
+        self.uiEnableConsoleCheckBox.setChecked(settings["enable_console"])
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -113,8 +117,15 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         # these settings cannot be shared by nodes and updated
         # in the node configurator.
         if not group:
-            settings["name"] = self.uiNameLineEdit.text()
+
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtGui.QMessageBox.critical(self, "Name", "VirtualBox name cannot be empty!")
+            else:
+                settings["name"] = name
+
             settings["console"] = self.uiConsolePortSpinBox.value()
+            settings["enable_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
             # initial_config = self.uiInitialConfigLineEdit.text()
             # if initial_config != settings["initial_config"]:
@@ -130,12 +141,16 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         else:
             del settings["name"]
             del settings["console"]
+            del settings["enable_console"]
+
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()
-        if settings["adapters"] != adapters:
+        adapter_start_index = self.uiAdapterStartIndexSpinBox.value()
+
+        if settings["adapters"] != adapters or settings["adapter_start_index"] != adapter_start_index:
             # check if the adapters settings have changed
             node_ports = node.ports()
             for node_port in node_ports:
@@ -143,4 +158,5 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
                     QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                     raise ConfigurationError()
 
+        settings["adapter_start_index"] = self.uiAdapterStartIndexSpinBox.value()
         settings["adapters"] = adapters

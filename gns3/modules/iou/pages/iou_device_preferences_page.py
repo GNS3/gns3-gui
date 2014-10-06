@@ -101,6 +101,10 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         path = self.uiIOUPathLineEdit.text()
+        if not path:
+            QtGui.QMessageBox.critical(self, "IOU image", "The path cannot be empty!")
+            return
+
         initial_config = self.uiInitialConfigLineEdit.text()
         use_default_iou_values = self.uiDefaultValuesCheckBox.isChecked()
         nvram = self.uiNVRAMSpinBox.value()

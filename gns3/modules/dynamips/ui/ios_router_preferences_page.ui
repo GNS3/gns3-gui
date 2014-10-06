@@ -207,9 +207,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="uiUncompressIOSPushButton">
+          <widget class="QPushButton" name="uiDecompressIOSPushButton">
            <property name="text">
-            <string>Uncompress</string>
+            <string>Decompress</string>
            </property>
           </widget>
          </item>

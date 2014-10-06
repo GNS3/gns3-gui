@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import ast
+import logging
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QMenu
@@ -18,7 +20,9 @@ from .topology import Topology
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
 
-POLLING_TIMER = 5000  # in milliseconds
+log = logging.getLogger(__name__)
+
+POLLING_TIMER = 10000  # in milliseconds
 
 
 class RunningInstanceState():
@@ -151,6 +155,9 @@ class InstanceTableModel(QAbstractTableModel):
         else:
             self.addInstance(instance)
 
+    def getInstanceById(self, instance_id):
+        return self._instances[instance_id]
+
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     """
@@ -203,6 +210,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._main_window = main_win
         self._provider = main_win.cloudProvider
         self._settings = main_win.cloudSettings()
+        log.info('CloudInspectorView.load')
+        # TODO: If a network error occurs in the first ListInstances call,
+        # the instance will *never* appear in the cloud inspector and will
+        # not get cleaned up when the gui exits.  Fix this bug.
 
         for i in instances:
             self._project_instances_id.append(i["id"])
@@ -278,17 +289,33 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         update_thread.instancesReady.connect(self._update_model)
         update_thread.start()
 
-    def _gns3server_started_slot(self, id, output_string):
+    def _gns3server_started_slot(self, id, host_ip, start_response):
         """
         This slot is called when the StartGNS3ServerThread succesfully started
         the server.
 
         :param id: the id of the instance
-        :param output_string: the output of the script starting the server on the remote host
+        :param host_ip: the host ip of the instance
+        :param start_response: the output of the server start script on the remote host
         """
         self._running_instances[id] = RunningInstanceState.GNS3SERVER_STARTED
-        # TODO: parse output_string and extract certificate, username and pass
-        # TODO: store above data and use it to start WSConnectThread
+        data = ast.literal_eval(start_response)
+
+        # TODO: have the server return the port it is running on
+        port = 8000
+
+        username = data['WEB_USERNAME']
+        password = data['WEB_PASSWORD']
+
+        ssl_cert = ''.join(data['SSL_CRT'])
+        # TODO: Store the cert file in an appropriate spot
+        ca_file = '/tmp/cloud_server_{}.crt'.format(host_ip)
+        open(ca_file, 'w').write(ssl_cert)
+
+        log.debug('Cloud server gns3server started.')
+        wss_thread = WSConnectThread(self, self._provider, id, host_ip, port, ca_file)
+        wss_thread.established.connect(self._wss_connected_slot)
+        wss_thread.start()
 
     def _wss_connected_slot(self, id):
         """
@@ -296,6 +323,19 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         the websocket on the remote host
         """
         self._running_instances[id] = RunningInstanceState.WS_CONNECTED
+
+    def _get_public_ip(self, ip_list):
+        """
+        Pick the ipv4 address from the list of ip addresses that the instance
+        has.
+        """
+        for ip in ip_list:
+            log.debug('Cloud server ip {}'.format(ip))
+            # Don't use the ipv6 address
+            if ':' not in ip:
+                log.debug('Chose {} as public ip'.format(ip))
+                return ip
+        return None
 
     def _update_model(self, instances):
         if not instances:
@@ -327,18 +367,24 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             state = self._running_instances.setdefault(i.id, RunningInstanceState.IDLE)
 
             if state == RunningInstanceState.IDLE:
+                public_ip = self._get_public_ip(i.public_ips)
                 # start GNS3 server and deadman switch
-                ssh_thread = StartGNS3ServerThread(self, i.id, i.public_ips[1],
-                                                   topology_instance.private_key)
+                ssh_thread = StartGNS3ServerThread(
+                    self, public_ip, topology_instance.private_key, i.id,
+                    self._provider.username, self._provider.api_key, self._provider.region,
+                    1800)
                 ssh_thread.gns3server_started.connect(self._gns3server_started_slot)
                 ssh_thread.start()
             elif state == RunningInstanceState.GNS3SERVER_STARTED:
                 # start WSS connection
-                wss_thread = WSConnectThread(self, i.id)
-                wss_thread.established.connect(self._wss_connected_slot)
-                wss_thread.start()
+                # TODO: Don't think this is used, remove.
+                # wss_thread = WSConnectThread(self, i.id)
+                # wss_thread.established.connect(self._wss_connected_slot)
+                # wss_thread.start()
+                pass
 
     def _populate_model(self, instances):
+        log.info('CloudInspectorView._populate_model')
         self._model.flavors = self._provider.list_flavors()
         # filter instances for current project
         project_instances = [i for i in instances if i.id in self._project_instances_id]

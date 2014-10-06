@@ -122,6 +122,7 @@
         <file>icons/startup_config.svg</file>
         <file>icons/wireshark.png</file>
         <file>icons/virtualbox.png</file>
+        <file>icons/rtv.png</file>
         <file>icons/image.svg</file>
         <file>icons/package.svg</file>
         <file>icons/node_conception.svg</file>
@@ -160,9 +161,9 @@
         <file>icons/browse-all-icons-hover.png</file>
         <file>icons/camera-photo.svg</file>
         <file>icons/camera-photo-hover.svg</file>
-        <file>images/logo_gns3_small.png</file>
-        <file>images/logo_icon.png</file>
-        <file>images/logo_gns3_splash.png</file>
-        <file>images/project-support.jpg</file>
+        <file>images/gns3_logo.png</file>
+        <file>images/gns3_icon_128x128.png</file>
+        <file>images/gns3_icon_256x256.png</file>
+        <file>images/gns3.ico</file>
     </qresource>
 </RCC>

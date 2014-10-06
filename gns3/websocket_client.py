@@ -64,10 +64,6 @@ class WebSocketClient(WebSocketBaseClient):
         self._id = WebSocketClient._instance_count
         WebSocketClient._instance_count += 1
 
-        # set a default timeout of 10 seconds
-        # for connecting to a server
-        socket.setdefaulttimeout(10)
-
     def id(self):
         """
         Returns this WebSocket identifier.
@@ -133,8 +129,8 @@ class WebSocketClient(WebSocketBaseClient):
         self.cookie_processor = urllib.request.HTTPCookieProcessor()
         self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
 
-        self.check_server_version()
         self._connect()
+        self.check_server_version()
 
     def _connect(self):
         """
@@ -161,9 +157,13 @@ class WebSocketClient(WebSocketBaseClient):
         except ValueError as e:
             log.error("could not get the server version: {}".format(e))
 
-        if (self._version != __version__):
+        #FIXME: temporary version check
+        if self._version != __version__:
+            if not self._version:
+                raise OSError("Could not determine the server version")
+            else:
+                raise OSError("GUI version {} differs with the server version: {}".format(__version__, self._version))
             self.close_connection()
-            raise OSError("GUI version {} differs with the server version {}".format(__version__, self._version))
 
     def reconnect(self):
         """

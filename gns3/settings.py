@@ -39,7 +39,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
     DEFAULT_LOCAL_SERVER_PATH = "server/Contents/MacOS/gns3server"
 else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(":")
+    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for gns3server in the current working directory and $PATH
     DEFAULT_LOCAL_SERVER_PATH = "gns3server"
     for path in paths:
@@ -166,6 +166,11 @@ else:
 
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
+DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
+if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
+    # Windows 64-bit
+    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"C:\Program Files (x86)\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'
+
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,
     "images_path": DEFAULT_IMAGES_PATH,
@@ -199,6 +204,8 @@ GRAPHICS_VIEW_SETTINGS = {
     "scene_height": 1000,
     "draw_rectangle_selected_item": False,
     "draw_link_status_points": True,
+    "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+    "default_label_color": "#000000",
 }
 
 GRAPHICS_VIEW_SETTING_TYPES = {
@@ -206,16 +213,20 @@ GRAPHICS_VIEW_SETTING_TYPES = {
     "scene_height": int,
     "draw_rectangle_selected_item": bool,
     "draw_link_status_points": bool,
+    "default_label_font": str,
+    "default_label_color": str,
 }
 
 PACKET_CAPTURE_SETTINGS = {
     "packet_capture_reader_command": DEFAULT_PACKET_CAPTURE_READER_COMMAND,
     "command_auto_start": True,
+    "packet_capture_analyzer_command": DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND,
 }
 
 PACKET_CAPTURE_SETTING_TYPES = {
     "packet_capture_reader_command": str,
     "command_auto_start": bool,
+    "packet_capture_analyzer_command": str,
 }
 
 CLOUD_SETTINGS = {

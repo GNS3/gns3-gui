@@ -33,6 +33,7 @@ from .nodes.c3600 import C3600
 from .nodes.c3725 import C3725
 from .nodes.c3745 import C3745
 from .nodes.c7200 import C7200
+from .nodes.etherswitch_router import EtherSwitchRouter
 from .nodes.ethernet_switch import EthernetSwitch
 from .nodes.ethernet_hub import EthernetHub
 from .nodes.frame_relay_switch import FrameRelaySwitch
@@ -394,11 +395,12 @@ class Dynamips(Module):
         else:
             return self._ios_images[selected_images[0]]
 
-    def setupNode(self, node):
+    def setupNode(self, node, node_name):
         """
         Setups a node.
 
         :param node: Node instance
+        :param node_name: Node name
         """
 
         log.info("configuring node {}".format(node))
@@ -550,14 +552,31 @@ class Dynamips(Module):
         return None
 
     @staticmethod
-    def nodes():
+    def classes():
         """
         Returns all the node classes supported by this module.
 
         :returns: list of classes
         """
 
-        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]
+        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]
+
+    def nodes(self):
+        """
+        Returns all the node data necessary to represent a node
+        in the nodes view and create a node on the scene.
+        """
+
+        nodes = []
+        for node_class in Dynamips.classes():
+            nodes.append(
+                {"class": node_class.__name__,
+                 "name": node_class.symbolName(),
+                 "categories": node_class.categories(),
+                 "default_symbol": node_class.defaultSymbol(),
+                 "hover_symbol": node_class.hoverSymbol()}
+            )
+        return nodes
 
     @staticmethod
     def preferencePages():

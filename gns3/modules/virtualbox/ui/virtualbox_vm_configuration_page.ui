@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>448</height>
+    <width>375</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,17 +23,24 @@
       <string>General</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="5" column="0" colspan="3">
-       <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+      <item row="0" column="0">
+       <widget class="QLabel" name="uiNameLabel">
         <property name="text">
-         <string>Start VM in headless mode</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
+         <string>Name:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiNameLineEdit"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="uiVMListLabel">
+        <property name="text">
+         <string>VM name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
        <widget class="QComboBox" name="uiVMListComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -43,62 +50,91 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QSpinBox" name="uiConsolePortSpinBox">
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
+      <item row="2" column="0">
        <widget class="QLabel" name="uiConsolePortLabel">
         <property name="text">
          <string>Console port:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QLineEdit" name="uiNameLineEdit"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiVMListLabel">
-        <property name="text">
-         <string>VM name:</string>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="uiConsolePortSpinBox">
+        <property name="maximum">
+         <number>65535</number>
         </property>
        </widget>
       </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="uiEnableConsoleCheckBox">
+        <property name="text">
+         <string>Enable console</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+        <property name="text">
+         <string>Start VM in headless mode</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Networking</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="uiNameLabel">
-        <property name="text">
-         <string>Name:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Type:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
        <widget class="QLabel" name="uiAdaptersLabel">
         <property name="text">
          <string>Adapters:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
+      <item row="0" column="1">
        <widget class="QSpinBox" name="uiAdaptersSpinBox">
         <property name="minimum">
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>32</number>
+         <number>36</number>
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
+      <item row="1" column="0">
+       <widget class="QLabel" name="uiAdapterStartIndexLabel">
+        <property name="text">
+         <string>Start at:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="uiAdapterStartIndexSpinBox">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>35</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
        <widget class="QComboBox" name="uiAdapterTypesComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">

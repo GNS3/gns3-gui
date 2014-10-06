@@ -275,7 +275,4 @@ class RackspaceCtrl(BaseCloudCtrl):
             return {}
 
     def get_image(self, image_id):
-        for i in self.driver.list_images(self.region):
-            if i.id == image_id:
-                return i
-        return None
+        return self.driver.get_image(image_id)

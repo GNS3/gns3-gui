@@ -28,6 +28,9 @@ from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_connection_thread import WaitForConnectionThread
+from ..settings import DEFAULT_LOCAL_SERVER_PATH
+from ..settings import DEFAULT_LOCAL_SERVER_HOST
+from ..settings import DEFAULT_LOCAL_SERVER_PORT
 
 
 class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
@@ -48,6 +51,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
+        self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
 
         #FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
@@ -69,6 +73,18 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
     def _testSettingsSlot(self):
 
         QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
+
+    def _restoreDefaultsSlot(self):
+        """
+        Slot to restore default settings
+        """
+
+        index = self.uiLocalServerHostComboBox.findData(DEFAULT_LOCAL_SERVER_HOST)
+        if index != -1:
+            self.uiLocalServerHostComboBox.setCurrentIndex(index)
+        self.uiLocalServerPortSpinBox.setValue(DEFAULT_LOCAL_SERVER_PORT)
+        self.uiLocalServerPathLineEdit.setText(DEFAULT_LOCAL_SERVER_PATH)
+        self.uiLocalServerAutoStartCheckBox.setChecked(True)
 
     def _localServerBrowserSlot(self):
         """
