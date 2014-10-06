@@ -47,7 +47,7 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
-from .cloud.utils import get_provider
+from .cloud.utils import get_provider, UploadProjectThread
 from .cloud.exceptions import KeyPairExists
 
 log = logging.getLogger(__name__)
@@ -239,6 +239,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiOpenProjectAction.triggered.connect(self._openProjectActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
+        self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -1506,3 +1507,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
         log.debug("Cloud server {} created".format(name))
         return instance, keypair
+
+    def _exportProjectActionSlot(self):
+        if self._temporary_project:
+            # do nothing if project is temporary
+            QtGui.QMessageBox.critical(
+                self, "Export project server",
+                "Cannot export temporary projects, please save current project first.")
+            return
+
+        upload_thread = UploadProjectThread(self._project_settings, self.cloudSettings())
+        upload_thread.start()
+
+        #TODO show uploading dialog
+        upload_thread.wait()
