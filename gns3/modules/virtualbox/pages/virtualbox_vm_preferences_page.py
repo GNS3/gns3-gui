@@ -19,12 +19,19 @@
 Configuration page for VirtualBox VM preferences.
 """
 
-from gns3.qt import QtGui
+import copy
+
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
 from gns3.modules.module_error import ModuleError
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.dialogs.configuration_dialog import ConfigurationDialog
+
 from .. import VirtualBox
 from ..ui.virtualbox_vm_preferences_page_ui import Ui_VirtualBoxVMPreferencesPageWidget
+from ..pages.virtualbox_vm_configuration_page import virtualBoxVMConfigurationPage
+from ..dialogs.virtualbox_vm_wizard import VirtualBoxVMWizard
 
 
 class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageWidget):
@@ -38,20 +45,13 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
         self._main_window = MainWindow.instance()
         self._virtualbox_vms = {}
-        self.uiSaveVirtualBoxVMPushButton.clicked.connect(self._vboxVMSaveSlot)
-        self.uiDeleteVirtualBoxVMPushButton.clicked.connect(self._vboxVMDeleteSlot)
-        self.uiRefreshPushButton.clicked.connect(self._vboxRefreshSlot)
-        self.uiVirtualBoxVMsTreeWidget.itemClicked.connect(self._vboxVMClickedSlot)
-        self.uiVirtualBoxVMsTreeWidget.itemSelectionChanged.connect(self._vboxVMChangedSlot)
+        self._items = []
 
-        self.uiAdapterTypesComboBox.clear()
-        self.uiAdapterTypesComboBox.addItems(["Automatic",
-                                              "PCnet-PCI II (Am79C970A)",
-                                              "PCNet-FAST III (Am79C973)",
-                                              "Intel PRO/1000 MT Desktop (82540EM)",
-                                              "Intel PRO/1000 T Server (82543GC)",
-                                              "Intel PRO/1000 MT Server (82545EM)",
-                                              "Paravirtualized Network (virtio-net)"])
+        self.uiNewVirtualBoxVMPushButton.clicked.connect(self._vboxVMNewSlot)
+        self.uiEditVirtualBoxVMPushButton.clicked.connect(self._vboxVMEditSlot)
+        self.uiDeleteVirtualBoxVMPushButton.clicked.connect(self._vboxVMDeleteSlot)
+        self.uiVirtualBoxVMsTreeWidget.currentItemChanged.connect(self._vboxVMChangedSlot)
+        self.uiVirtualBoxVMsTreeWidget.itemPressed.connect(self._vboxVMPressedSlot)
 
     def showEvent(self, event):
         """
@@ -63,93 +63,120 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         self._vboxRefreshSlot()
         QtGui.QWidget.showEvent(self, event)
 
-    def _vboxVMClickedSlot(self, item, column):
+    def _vboxRefreshSlot(self):
+        """
+        Gets/refreshes the VM list for all servers.
+        """
+
+        vbox_module = VirtualBox.instance()
+        servers = Servers.instance()
+
+        if vbox_module.settings()["use_local_server"]:
+            try:
+                vbox_module.refreshVirtualBoxVMs(servers.localServer())
+            except ModuleError as e:
+                QtGui.QMessageBox.critical(self, "VirtualBox VM list", "{}".format(e))
+        else:
+            for server in servers.remoteServers().values():
+                try:
+                    vbox_module.refreshVirtualBoxVMs(server)
+                except ModuleError as e:
+                    print("{}".format(e))
+                    continue
+
+    def _vboxVMChangedSlot(self, current, previous):
         """
         Loads a selected VirtualBox VM from the tree widget.
 
-        :param item: selected QTreeWidgetItem instance
-        :param column: ignored
+        :param current: current QTreeWidgetItem instance
+        :param previous: ignored
         """
 
-        vmname = item.text(0)
-        server = item.text(1)
-        key = "{server}:{vmname}".format(server=server, vmname=vmname)
+        self.uiEditVirtualBoxVMPushButton.setEnabled(True)
+        self.uiDeleteVirtualBoxVMPushButton.setEnabled(True)
+        key = current.data(0, QtCore.Qt.UserRole)
         vbox_vm = self._virtualbox_vms[key]
+        self._refreshInfo(vbox_vm)
 
-        index = self.uiVMListComboBox.findText("{server}:{vmname}".format(server=vbox_vm["server"], vmname=vbox_vm["vmname"]))
-        if index != -1:
-            self.uiVMListComboBox.setCurrentIndex(index)
-        self.uiAdaptersSpinBox.setValue(vbox_vm["adapters"])
-        self.uiAdapterStartIndexSpinBox.setValue(vbox_vm["adapter_start_index"])
-        index = self.uiAdapterTypesComboBox.findText(vbox_vm["adapter_type"])
-        if index != -1:
-            self.uiAdapterTypesComboBox.setCurrentIndex(index)
-        self.uiHeadlessModeCheckBox.setChecked(vbox_vm["headless"])
-        self.uiEnableConsoleCheckBox.setChecked(vbox_vm["enable_console"])
+    def _createSectionItem(self, name):
 
-    def _vboxVMChangedSlot(self):
+        section_item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMInfoTreeWidget)
+        section_item.setText(0, name)
+        font = section_item.font(0)
+        font.setBold(True)
+        section_item.setFont(0, font)
+        return section_item
+
+    def _refreshInfo(self, vbox_vm):
+
+        self.uiVirtualBoxVMInfoTreeWidget.clear()
+
+        # fill out the General section
+        section_item = self._createSectionItem("General")
+        QtGui.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
+        QtGui.QTreeWidgetItem(section_item, ["Console enabled:", "{}".format(vbox_vm["enable_console"])])
+        QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
+
+        # fill out the General section
+        section_item = self._createSectionItem("Network")
+        QtGui.QTreeWidgetItem(section_item, ["Adapters:", str(vbox_vm["adapters"])])
+        QtGui.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
+
+        self.uiVirtualBoxVMInfoTreeWidget.expandAll()
+        self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(0)
+        self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(1)
+
+    def _vboxVMNewSlot(self):
         """
-        Enables the use of the delete button.
+        Creates a new VirtualBox VM.
+        """
+
+        wizard = VirtualBoxVMWizard(self._virtualbox_vms, parent=self)
+        wizard.show()
+        if wizard.exec_():
+
+            new_vm_settings = wizard.getSettings()
+            print(new_vm_settings)
+
+            key = "{server}:{vmname}".format(server=new_vm_settings["server"], vmname=new_vm_settings["vmname"])
+
+            self._virtualbox_vms[key] = {"vmname": "",
+                                         "default_symbol": ":/symbols/vbox_guest.normal.svg",
+                                         "hover_symbol": ":/symbols/vbox_guest.selected.svg",
+                                         "adapters": 1,
+                                         "adapter_start_index": 0,
+                                         "adapter_type": "Automatic",
+                                         "headless": False,
+                                         "enable_console": True,
+                                         "server": "local"}
+
+            self._virtualbox_vms[key].update(new_vm_settings)
+            item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
+            item.setText(0, self._virtualbox_vms[key]["vmname"])
+            item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
+            self.uiVirtualBoxVMsTreeWidget.setCurrentItem(item)
+
+    def _vboxVMEditSlot(self):
+        """
+        Edits a VirtualBox VM.
         """
 
         item = self.uiVirtualBoxVMsTreeWidget.currentItem()
         if item:
-            self.uiDeleteVirtualBoxVMPushButton.setEnabled(True)
-        else:
-            self.uiDeleteVirtualBoxVMPushButton.setEnabled(False)
-
-    def _vboxVMSaveSlot(self):
-        """
-        Adds/Saves an VirtualBox VM.
-        """
-
-        vm = self.uiVMListComboBox.currentText()
-        if not vm:
-            QtGui.QMessageBox.critical(self, "VirtualBox VM", "Please select a VirtualBox VM")
-            return
-
-        server, vmname = vm.split(":", 1)
-        adapters = self.uiAdaptersSpinBox.value()
-        adapter_start_index = self.uiAdapterStartIndexSpinBox.value()
-        adapter_type = self.uiAdapterTypesComboBox.currentText()
-        headless = self.uiHeadlessModeCheckBox.isChecked()
-        enable_console = self.uiEnableConsoleCheckBox.isChecked()
-
-        # #TODO: mutiple remote server
-        # if VirtualBox.instance().settings()["use_local_server"]:
-        #     server = "local"
-        # else:
-        #     server = next(iter(Servers.instance()))
-        #     if not server:
-        #         QtGui.QMessageBox.critical(self, "VirtualBox VM", "No remote server available!")
-        #         return
-        #     server = server.host
-
-        key = "{server}:{vmname}".format(server=server, vmname=vmname)
-        item = self.uiVirtualBoxVMsTreeWidget.currentItem()
-
-        if key in self._virtualbox_vms and item and item.text(0) == vmname:
-            item.setText(0, vmname)
-            item.setText(1, server)
-        elif key in self._virtualbox_vms:
-            return
-        else:
-            # add a new entry in the tree widget
-            item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
-            item.setText(0, vmname)
-            item.setText(1, server)
-            self.uiVirtualBoxVMsTreeWidget.setCurrentItem(item)
-
-        self._virtualbox_vms[key] = {"vmname": vmname,
-                                     "adapters": adapters,
-                                     "adapter_start_index": adapter_start_index,
-                                     "adapter_type": adapter_type,
-                                     "headless": headless,
-                                     "enable_console": enable_console,
-                                     "server": server}
-
-        self.uiVirtualBoxVMsTreeWidget.resizeColumnToContents(0)
-        self.uiVirtualBoxVMsTreeWidget.resizeColumnToContents(1)
+            key = item.data(0, QtCore.Qt.UserRole)
+            vbox_vm = self._virtualbox_vms[key]
+            dialog = ConfigurationDialog(vbox_vm["vmname"], vbox_vm, virtualBoxVMConfigurationPage(), parent=self)
+            dialog.show()
+            if dialog.exec_():
+                if vbox_vm["vmname"] != item.text(0):
+                    if "{}:{}".format(vbox_vm["server"], vbox_vm["vmname"]) in self._virtualbox_vms:
+                        # FIXME: bug when changing name
+                        QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(vbox_vm["vmname"]))
+                        vbox_vm["vmname"] = item.text(0)
+                    item.setText(0, vbox_vm["vmname"])
+                self._refreshInfo(vbox_vm)
 
     def _vboxVMDeleteSlot(self):
         """
@@ -158,72 +185,68 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
         item = self.uiVirtualBoxVMsTreeWidget.currentItem()
         if item:
-            vmname = item.text(0)
-            server = item.text(1)
-            key = "{server}:{vmname}".format(server=server, vmname=vmname)
+            key = item.data(0, QtCore.Qt.UserRole)
             del self._virtualbox_vms[key]
             self.uiVirtualBoxVMsTreeWidget.takeTopLevelItem(self.uiVirtualBoxVMsTreeWidget.indexOfTopLevelItem(item))
 
-    def _vboxRefreshSlot(self):
+    def _vboxVMPressedSlot(self, item, column):
         """
-        Gets/refreshes the VM list for all servers.
+        Slot for item pressed.
 
-        :param ignore_errors: either errors should be ignored or not
-        """
-
-        self.uiVMListComboBox.clear()
-        vbox_module = VirtualBox.instance()
-        servers = Servers.instance()
-
-        if vbox_module.settings()["use_local_server"]:
-            try:
-                vbox_module.get_vm_list(servers.localServer(), self._VMListCallback)
-            except ModuleError as e:
-                QtGui.QMessageBox.critical(self, "VM list", "{}".format(e))
-        else:
-            for server in servers.remoteServers().values():
-                try:
-                    vbox_module.get_vm_list(server, self._VMListCallback)
-                except ModuleError as e:
-                    print("{}".format(e))
-                    continue
-
-    def _VMListCallback(self, result, error=False):
-        """
-        Callback to get the VM list.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
+        :param item: ignored
+        :param column: ignored
         """
 
-        if error:
-            QtGui.QMessageBox.critical(self, "VM list", "Could not get the VM list: {}".format(result["message"]))
-        else:
-            for vmname in result["vms"]:
-                if VirtualBox.instance().settings()["use_local_server"]:
-                    server = "local"
-                else:
-                    server = result["server"]
-                self.uiVMListComboBox.addItem("{server}:{vmname}".format(server=server, vmname=vmname))
+        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+            self._showContextualMenu()
+
+    def _showContextualMenu(self):
+        """
+        Contextual menu.
+        """
+
+        menu = QtGui.QMenu()
+        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
+        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
+        menu.addAction(change_symbol_action)
+        menu.exec_(QtGui.QCursor.pos())
+
+    def _changeSymbolSlot(self):
+        """
+        Change a symbol for a VirtualBox VM.
+        """
+
+        dialog = SymbolSelectionDialog(self)
+        dialog.show()
+        if dialog.exec_():
+            normal_symbol, selected_symbol = dialog.getSymbols()
+            item = self.uiVirtualBoxVMsTreeWidget.currentItem()
+            if item:
+                item.setIcon(0, QtGui.QIcon(normal_symbol))
+                key = item.data(0, QtCore.Qt.UserRole)
+                vbox_vm = self._virtualbox_vms[key]
+                vbox_vm["default_symbol"] = normal_symbol
+                vbox_vm["hover_symbol"] = selected_symbol
 
     def loadPreferences(self):
         """
         Loads the VirtualBox VM preferences.
         """
 
-        self._virtualbox_vms.clear()
-        self.uiVirtualBoxVMsTreeWidget.clear()
-
         vbox_module = VirtualBox.instance()
-        vbox_vms = vbox_module.virtualBoxVMs()
-        for vbox_vm in vbox_vms.values():
+        self._virtualbox_vms = copy.deepcopy(vbox_module.virtualBoxVMs())
+        self._items.clear()
+
+        for key, vbox_vm in self._virtualbox_vms.items():
             item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["vmname"])
-            item.setText(1, vbox_vm["server"])
+            item.setIcon(0, QtGui.QIcon(vbox_vm["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
 
-        self.uiVirtualBoxVMsTreeWidget.resizeColumnToContents(0)
-        self.uiVirtualBoxVMsTreeWidget.resizeColumnToContents(1)
-        self._virtualbox_vms.update(vbox_vms)
+        if self._items:
+            self.uiVirtualBoxVMsTreeWidget.setCurrentItem(self._items[0])
 
     def savePreferences(self):
         """

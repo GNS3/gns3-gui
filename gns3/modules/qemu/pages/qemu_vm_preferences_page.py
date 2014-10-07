@@ -104,9 +104,12 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
 
         # fill out the Hard disks section
-        section_item = self._createSectionItem("Hard disks")
-        QtGui.QTreeWidgetItem(section_item, ["Disk image (hda):", qemu_vm["hda_disk_image"]])
-        QtGui.QTreeWidgetItem(section_item, ["Disk image (hda):", qemu_vm["hdb_disk_image"]])
+        if qemu_vm["hda_disk_image"] or qemu_vm["hdb_disk_image"]:
+            section_item = self._createSectionItem("Hard disks")
+            if qemu_vm["hda_disk_image"]:
+                QtGui.QTreeWidgetItem(section_item, ["Disk image (hda):", qemu_vm["hda_disk_image"]])
+            if qemu_vm["hdb_disk_image"]:
+                QtGui.QTreeWidgetItem(section_item, ["Disk image (hdb):", qemu_vm["hdb_disk_image"]])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
@@ -114,14 +117,19 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtGui.QTreeWidgetItem(section_item, ["Type:", qemu_vm["adapter_type"]])
 
         # fill out the Linux boot section
-        section_item = self._createSectionItem("Linux boot")
-        QtGui.QTreeWidgetItem(section_item, ["Initial RAM disk (initrd):", qemu_vm["initrd"]])
-        QtGui.QTreeWidgetItem(section_item, ["Kernel image:", qemu_vm["kernel_image"]])
-        QtGui.QTreeWidgetItem(section_item, ["Kernel command line:", qemu_vm["kernel_command_line"]])
+        if qemu_vm["initrd"] or qemu_vm["kernel_image"] or qemu_vm["kernel_command_line"]:
+            section_item = self._createSectionItem("Linux boot")
+            if qemu_vm["initrd"]:
+                QtGui.QTreeWidgetItem(section_item, ["Initial RAM disk:", qemu_vm["initrd"]])
+            if qemu_vm["kernel_image"]:
+                QtGui.QTreeWidgetItem(section_item, ["Kernel image:", qemu_vm["kernel_image"]])
+            if qemu_vm["kernel_command_line"]:
+                QtGui.QTreeWidgetItem(section_item, ["Kernel command line:", qemu_vm["kernel_command_line"]])
 
         # fill out the Additional options section
-        section_item = self._createSectionItem("Additional options")
-        QtGui.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
+        if qemu_vm["options"]:
+            section_item = self._createSectionItem("Additional options")
+            QtGui.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
 
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)
@@ -199,7 +207,6 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                         qemu_vm["name"] = item.text(0)
                     item.setText(0, qemu_vm["name"])
                 self._refreshInfo(qemu_vm)
-
 
     def _qemuVMDeleteSlot(self):
         """

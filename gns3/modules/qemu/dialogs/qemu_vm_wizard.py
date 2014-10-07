@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for QEMU VMs.
+Wizard for QEMU VMs.
 """
 
 import os
@@ -171,7 +171,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             "name": self.uiNameLineEdit.text(),
             "ram": self.uiRamSpinBox.value(),
             "qemu_path": qemu_path,
-            "server": "local",
+            "server": server,
         }
 
         if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":

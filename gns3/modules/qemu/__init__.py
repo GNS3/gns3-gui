@@ -472,8 +472,9 @@ class Qemu(Module):
 
     def getQemuBinariesList(self):
         """
-        Returns the list of
-        :return:
+        Returns the list of Qemu binaries
+
+        :return: dict
         """
 
         return self._qemu_binaries

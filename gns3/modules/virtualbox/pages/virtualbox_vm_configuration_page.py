@@ -48,22 +48,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         self.uiVMListLabel.hide()
         self.uiVMListComboBox.hide()
 
-        #self.uiIOUImageComboBox.currentIndexChanged.connect(self._IOUImageSelectedSlot)
-        #self._current_iou_image = ""
-
-    # def _IOUImageSelectedSlot(self, index):
-    #     """
-    #     Warn about changing the IOU image of a device.
-    #
-    #     :param index: ignored
-    #     """
-    #
-    #     #TODO: finish IOU image switch tests
-    #     if self._current_iou_image and self._current_iou_image != self.uiIOUImageComboBox.currentText():
-    #         QtGui.QMessageBox.warning(self, "IOU image", "The IOU image has been changed, your device may not boot correctly if you apply the new settings")
-    #         self._current_iou_image = ""
-
-    def loadSettings(self, settings, node, group=False):
+    def loadSettings(self, settings, node=None, group=False):
         """
         Loads the VirtualBox VM settings.
 
@@ -75,19 +60,17 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         if not group:
 
             # set the device name
-            self.uiNameLineEdit.setText(settings["name"])
-            self.uiConsolePortSpinBox.setValue(settings["console"])
+            if "name" in settings:
+                self.uiNameLineEdit.setText(settings["name"])
+            else:
+                self.uiNameLabel.hide()
+                self.uiNameLineEdit.hide()
 
-            # load the available IOU images
-            #iou_images = IOU.instance().iouImages()
-            #for iou_image in iou_images.values():
-            #    if iou_image["server"] == "local" and node.server().isLocal() or iou_image["server"] == node.server().host:
-            #        self.uiIOUImageComboBox.addItem(iou_image["image"], iou_image["path"])
-
-            #index = self.uiIOUImageComboBox.findText(os.path.basename(settings["path"]))
-            #if index != -1:
-            #    self.uiIOUImageComboBox.setCurrentIndex(index)
-            #    self._current_iou_image = iou_image["image"]
+            if "console" in settings:
+                self.uiConsolePortSpinBox.setValue(settings["console"])
+            else:
+                self.uiConsolePortLabel.hide()
+                self.uiConsolePortSpinBox.hide()
 
         else:
             self.uiNameLabel.hide()
@@ -105,7 +88,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiEnableConsoleCheckBox.setChecked(settings["enable_console"])
 
-    def saveSettings(self, settings, node, group=False):
+    def saveSettings(self, settings, node=None, group=False):
         """
         Saves the VirtualBox VM settings.
 
@@ -127,17 +110,6 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
             settings["console"] = self.uiConsolePortSpinBox.value()
             settings["enable_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
-            # initial_config = self.uiInitialConfigLineEdit.text()
-            # if initial_config != settings["initial_config"]:
-            #     if os.access(initial_config, os.R_OK):
-            #         settings["initial_config"] = initial_config
-            #     else:
-            #         QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
-            #
-            # # save the IOU image path
-            # index = self.uiIOUImageComboBox.currentIndex()
-            # ios_path = self.uiIOUImageComboBox.itemData(index)
-            # settings["path"] = ios_path
         else:
             del settings["name"]
             del settings["console"]
@@ -150,7 +122,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         adapters = self.uiAdaptersSpinBox.value()
         adapter_start_index = self.uiAdapterStartIndexSpinBox.value()
 
-        if settings["adapters"] != adapters or settings["adapter_start_index"] != adapter_start_index:
+        if node and settings["adapters"] != adapters or settings["adapter_start_index"] != adapter_start_index:
             # check if the adapters settings have changed
             node_ports = node.ports()
             for node_port in node_ports:
