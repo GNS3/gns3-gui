@@ -1,15 +1,19 @@
-from PyQt4.QtCore import QThread
-from PyQt4.QtCore import pyqtSignal
-
-from .rackspace_ctrl import RackspaceCtrl
-from ..servers import Servers
-
-import paramiko
-
 from contextlib import contextmanager
 import io
 from socket import error as socket_error
 import logging
+import os
+import zipfile
+
+from PyQt4.QtCore import QThread
+from PyQt4.QtCore import pyqtSignal
+import paramiko
+
+from .rackspace_ctrl import RackspaceCtrl
+from ..topology import Topology
+from ..servers import Servers
+
+
 log = logging.getLogger(__name__)
 
 
@@ -143,11 +147,11 @@ class StartGNS3ServerThread(QThread):
     """
     gns3server_started = pyqtSignal(str, str, str)
 
-    def __init__(self, parent, host, private_key_string, id, username, api_key, region, dead_time):
+    def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
         self._host = host
         self._private_key_string = private_key_string
-        self._id = id
+        self._server_id = server_id
         self._username = username
         self._api_key = api_key
         self._region = region
@@ -157,7 +161,7 @@ class StartGNS3ServerThread(QThread):
         with ssh_client(self._host, self._private_key_string) as client:
             if client is not None:
                 data = {
-                    'instance_id': self._id,
+                    'instance_id': self._server_id,
                     'cloud_user_name': self._username,
                     'cloud_api_key': self._api_key,
                     'region': self._region,
@@ -170,7 +174,7 @@ class StartGNS3ServerThread(QThread):
                 response = stdout.read().decode('ascii')
                 log.debug('ssh response: {}'.format(response))
 
-                self.gns3server_started.emit(str(self._id), str(self._host), str(response))
+                self.gns3server_started.emit(str(self._server_id), str(self._host), str(response))
 
 
 class WSConnectThread(QThread):
@@ -180,10 +184,10 @@ class WSConnectThread(QThread):
     """
     established = pyqtSignal(str)
 
-    def __init__(self, parent, provider, id, host, port, ca_file):
+    def __init__(self, parent, provider, server_id, host, port, ca_file):
         super(QThread, self).__init__(parent)
         self._provider = provider
-        self._id = id
+        self._server_id = server_id
         self._host = host
         self._port = port
         self._ca_file = ca_file
@@ -197,6 +201,52 @@ class WSConnectThread(QThread):
         servers = Servers.instance()
         server = servers.getRemoteServer(self._host, self._port, self._ca_file)
         log.debug('after getRemoteServer call. {}'.format(server))
-        self.established.emit(str(self._id))
+        self.established.emit(str(self._server_id))
 
-        log.debug('WSConnectThread.run() enc')
+        log.debug('WSConnectThread.run() end')
+        # emit signal on success
+        self.established.emit(self._server_id)
+
+
+class UploadProjectThread(QThread):
+    """
+    Zip and Upload project to the cloud
+    """
+    def __init__(self, project_settings, cloud_settings):
+        super().__init__()
+        self.project_settings = project_settings
+        self.cloud_settings = cloud_settings
+
+    def run(self):
+        log.info("Exporting project to cloud")
+        zipped_project_file = self.zip_project_dir()
+
+        provider = get_provider(self.cloud_settings)
+        provider.upload_file(zipped_project_file, 'projects')
+
+        topology = Topology.instance()
+        images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
+
+        for image in images:
+            provider.upload_file(image, 'images', overwrite_existing=False)
+
+    def zip_project_dir(self):
+        """
+        Zips project files
+        :return: path to zipped project file
+        """
+        project_name = os.path.basename(self.project_settings["project_path"])
+        output_filename = os.path.join('/tmp', project_name + ".zip")
+        project_dir = os.path.dirname(self.project_settings["project_path"])
+        relroot = os.path.abspath(os.path.join(project_dir, os.pardir))
+        with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip_file:
+            for root, dirs, files in os.walk(project_dir):
+                # add directory (needed for empty dirs)
+                zip_file.write(root, os.path.relpath(root, relroot))
+                for file in files:
+                    filename = os.path.join(root, file)
+                    if os.path.isfile(filename):  # regular files only
+                        arcname = os.path.join(os.path.relpath(root, relroot), file)
+                        zip_file.write(filename, arcname)
+
+        return output_filename

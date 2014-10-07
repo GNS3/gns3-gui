@@ -23,6 +23,8 @@ import requests
 from libcloud.compute.drivers.rackspace import ENDPOINT_ARGS_MAP
 from libcloud.compute.providers import get_driver
 from libcloud.compute.types import Provider
+from libcloud.storage.providers import get_driver as get_storage_driver
+from libcloud.storage.types import Provider as StorageProvider
 
 from .exceptions import ItemNotFound, ApiError
 from ..version import __version__
@@ -48,8 +50,10 @@ class RackspaceCtrl(BaseCloudCtrl):
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post
         self.driver_cls = get_driver(Provider.RACKSPACE)
+        self.storage_driver_cls = get_storage_driver(StorageProvider.CLOUDFILES)
 
         self.driver = None
+        self.storage_driver = None
         self.region = None
         self.instances = {}
 
@@ -212,6 +216,8 @@ class RackspaceCtrl(BaseCloudCtrl):
         try:
             self.driver = self.driver_cls(self.username, self.api_key,
                                           region=region)
+            self.storage_driver = self.storage_driver_cls(self.username, self.api_key,
+                                                          region=region)
 
         except ValueError:
             return False
