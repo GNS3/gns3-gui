@@ -33,7 +33,7 @@ from gns3.main_window import MainWindow
 from gns3.utils.progress_dialog import ProgressDialog
 from ..utils.decompress_ios import isIOSCompressed
 from ..utils.decompress_ios_thread import DecompressIOSThread
-from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS
+from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, STATIC_SERVER_TYPES
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
 
@@ -62,7 +62,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
         self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
-        #FIXME: temporally hide test button
+        #FIXME: temporarily hide test button
         self.uiIOSImageTestSettingsPushButton.hide()
 
         # set the default base startup-config
@@ -80,6 +80,9 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         elif pkg_resources.resource_exists("gns3", resource_name):
             ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
             self.uiPrivateConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
+
+        self.uiServerTypeComboBox.addItems(list(STATIC_SERVER_TYPES.keys()))
+
 
     def _platformChangedSlot(self, platform):
         """
@@ -116,6 +119,9 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             self.uiChassisComboBox.setCurrentIndex(index)
         self.uiIdlePCLineEdit.setText(ios_image["idlepc"])
         self.uiRAMSpinBox.setValue(ios_image["ram"])
+        index = self.uiServerTypeComboBox.findText(ios_image["server"])
+        if index != -1:
+            self.uiServerTypeComboBox.setCurrentIndex(index)
 
     def _iosImageChangedSlot(self):
         """
@@ -155,20 +161,24 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         if image.startswith("c7200p"):
             QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
 
-        #TODO: mutiple remote server
-        if Dynamips.instance().settings()["use_local_server"]:
-            server = "local"
-        else:
-            server = next(iter(Servers.instance()))
-            if not server:
-                QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
-                return
-            server = server.host
+        #TODO: multiple remote server
+        # if Dynamips.instance().settings()["use_local_server"]:
+        #     server = "local"
+        # else:
+        #     server = next(iter(Servers.instance()))
+        #     if not server:
+        #         QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
+        #         return
+        #     server = server.host
+        server = self.uiServerTypeComboBox.currentText()
 
         #ios_images = Dynamips.instance().iosImages()
         key = "{server}:{image}".format(server=server, image=image)
         item = self.uiIOSImagesTreeWidget.currentItem()
 
+        import logging
+        log = logging.getLogger("gns3")
+        log.debug('image name: {}'.format(image))
         if key in self._ios_images and item and item.text(0) == image:
             item.setText(0, image)
             item.setText(1, platform)
