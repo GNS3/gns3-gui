@@ -122,13 +122,14 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         adapters = self.uiAdaptersSpinBox.value()
         adapter_start_index = self.uiAdapterStartIndexSpinBox.value()
 
-        if node and settings["adapters"] != adapters or settings["adapter_start_index"] != adapter_start_index:
-            # check if the adapters settings have changed
-            node_ports = node.ports()
-            for node_port in node_ports:
-                if not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-                    raise ConfigurationError()
+        if node:
+            if settings["adapters"] != adapters or settings["adapter_start_index"] != adapter_start_index:
+                # check if the adapters settings have changed
+                node_ports = node.ports()
+                for node_port in node_ports:
+                    if not node_port.isFree():
+                        QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                        raise ConfigurationError()
 
         settings["adapter_start_index"] = self.uiAdapterStartIndexSpinBox.value()
         settings["adapters"] = adapters

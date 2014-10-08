@@ -42,7 +42,7 @@ class IOU(Module):
 
         self._settings = {}
         self._nodes = []
-        self._iou_images = {}
+        self._iou_devices = {}
         self._servers = []
         self._working_dir = ""
         self._images_dir = ""
@@ -50,7 +50,7 @@ class IOU(Module):
 
         # load the settings
         self._loadSettings()
-        self._loadIOUImages()
+        self._loadIOUDevices()
 
     def _loadSettings(self):
         """
@@ -76,9 +76,9 @@ class IOU(Module):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def _loadIOUImages(self):
+    def _loadIOUDevices(self):
         """
-        Load the IOU images from the persistent settings file.
+        Load the IOU devices from the persistent settings file.
         """
 
         # load the settings
@@ -89,26 +89,36 @@ class IOU(Module):
         size = settings.beginReadArray("iou_image")
         for index in range(0, size):
             settings.setArrayIndex(index)
+            name = settings.value("name", "IOU{}".format(index + 1))
+            default_symbol = settings.value("default_symbol", ":/symbols/multilayer_switch.normal.svg")
+            hover_symbol = settings.value("hover_symbol", ":/symbols/multilayer_switch.selected.svg")
             path = settings.value("path", "")
             image = settings.value("image", "")
             initial_config = settings.value("initial_config", "")
             use_default_iou_values = settings.value("use_default_iou_values", True, type=bool)
             ram = settings.value("ram", 256, type=int)
             nvram = settings.value("nvram", 128, type=int)
+            ethernet_adapters = settings.value("ethernet_adapters", 2, type=int)
+            serial_adapters = settings.value("serial_adapters", 2, type=int)
             server = settings.value("server", "local")
-            key = "{server}:{image}".format(server=server, image=image)
-            self._iou_images[key] = {"path": path,
-                                     "image": image,
-                                     "initial_config": initial_config,
-                                     "use_default_iou_values": use_default_iou_values,
-                                     "ram": ram,
-                                     "nvram": nvram,
-                                     "server": server}
+            key = "{server}:{name}".format(server=server, name=name)
+            self._iou_devices[key] = {"name": name,
+                                      "path": path,
+                                      "default_symbol": default_symbol,
+                                      "hover_symbol": hover_symbol,
+                                      "image": image,
+                                      "initial_config": initial_config,
+                                      "use_default_iou_values": use_default_iou_values,
+                                      "ram": ram,
+                                      "nvram": nvram,
+                                      "ethernet_adapters": ethernet_adapters,
+                                      "serial_adapters": serial_adapters,
+                                      "server": server}
 
         settings.endArray()
         settings.endGroup()
 
-    def _saveIOUImages(self):
+    def _saveIOUDevices(self):
         """
         Saves the IOU images to the persistent settings file.
         """
@@ -119,9 +129,9 @@ class IOU(Module):
         settings.remove("")
 
         # save the IOU images
-        settings.beginWriteArray("iou_image", len(self._iou_images))
+        settings.beginWriteArray("iou_image", len(self._iou_devices))
         index = 0
-        for ios_image in self._iou_images.values():
+        for ios_image in self._iou_devices.values():
             settings.setArrayIndex(index)
             for name, value in ios_image.items():
                 settings.setValue(name, value)
@@ -211,24 +221,24 @@ class IOU(Module):
         if node in self._nodes:
             self._nodes.remove(node)
 
-    def iouImages(self):
+    def iouDevices(self):
         """
-        Returns IOU images settings.
+        Returns IOU devices settings.
 
-        :returns: IOU images settings (dictionary)
-        """
-
-        return self._iou_images
-
-    def setIOUImages(self, new_iou_images):
-        """
-        Sets IOS images settings.
-
-        :param new_iou_images: IOS images settings (dictionary)
+        :returns: IOU devices settings (dictionary)
         """
 
-        self._iou_images = new_iou_images.copy()
-        self._saveIOUImages()
+        return self._iou_devices
+
+    def setIOUDevices(self, new_iou_devices):
+        """
+        Sets IOS devices settings.
+
+        :param new_iou_devices: IOU images settings (dictionary)
+        """
+
+        self._iou_devices = new_iou_devices.copy()
+        self._saveIOUDevices()
 
     def settings(self):
         """
@@ -373,38 +383,48 @@ class IOU(Module):
 
         log.info("configuring node {}".format(node))
 
-        selected_images = []
-        for image, info in self._iou_images.items():
-            if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
-                selected_images.append(image)
+        iouimage = None
+        if node_name:
+            for iou_key, info in self._iou_devices.items():
+                if node_name == info["name"]:
+                    iouimage = iou_key
 
-        if not selected_images:
-            raise ModuleError("No IOU image found for this device")
-        elif len(selected_images) > 1:
+        if not iouimage:
+            selected_images = []
+            for image, info in self._iou_devices.items():
+                if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                    selected_images.append(image)
 
-            from gns3.main_window import MainWindow
-            mainwindow = MainWindow.instance()
+            if not selected_images:
+                raise ModuleError("No IOU image found for this device")
+            elif len(selected_images) > 1:
 
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "IOU image", "Please choose an image", selected_images, 0, False)
-            if ok:
-                iouimage = selection
+                from gns3.main_window import MainWindow
+                mainwindow = MainWindow.instance()
+
+                (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "IOU image", "Please choose an image", selected_images, 0, False)
+                if ok:
+                    iouimage = selection
+                else:
+                    raise ModuleError("Please select an IOU image")
+
             else:
-                raise ModuleError("Please select an IOU image")
+                iouimage = selected_images[0]
 
-        else:
-            iouimage = selected_images[0]
-
-        initial_config = self._iou_images[iouimage]["initial_config"]
-        iou_path = self._iou_images[iouimage]["path"]
-        use_default_iou_values = self._iou_images[iouimage]["use_default_iou_values"]
+        name = self._iou_devices[iouimage]["name"]
+        initial_config = self._iou_devices[iouimage]["initial_config"]
+        iou_path = self._iou_devices[iouimage]["path"]
+        use_default_iou_values = self._iou_devices[iouimage]["use_default_iou_values"]
         settings = {}
         if initial_config:
             settings["initial_config"] = initial_config
         settings["use_default_iou_values"] = use_default_iou_values
         if not use_default_iou_values:
-            settings["ram"] = self._iou_images[iouimage]["ram"]
-            settings["nvram"] = self._iou_images[iouimage]["nvram"]
-        node.setup(iou_path, initial_settings=settings)
+            settings["ram"] = self._iou_devices[iouimage]["ram"]
+            settings["nvram"] = self._iou_devices[iouimage]["nvram"]
+        settings["ethernet_adapters"] = self._iou_devices[iouimage]["ethernet_adapters"]
+        settings["serial_adapters"] = self._iou_devices[iouimage]["serial_adapters"]
+        node.setup(iou_path, initial_settings=settings, base_name=name)
 
     def reset(self):
         """
@@ -469,15 +489,15 @@ class IOU(Module):
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
-        iou_images = self.iouImages()
+        iou_devices = self.iouDevices()
         candidate_iou_images = {}
 
         alternative_image = image
 
         # find all images with the same platform and local server
-        for iou_image in iou_images.values():
-            if iou_image["server"] == "local":
-                candidate_iou_images[iou_image["image"]] = iou_image["path"]
+        for iou_device in iou_devices.values():
+            if iou_device["server"] == "local":
+                candidate_iou_images[iou_device["image"]] = iou_device["path"]
 
         if candidate_iou_images:
             selection, ok = QtGui.QInputDialog.getItem(mainwindow,
@@ -526,14 +546,24 @@ class IOU(Module):
         """
 
         nodes = []
-        for node_class in IOU.classes():
-            nodes.append(
-                {"class": node_class.__name__,
-                 "name": node_class.symbolName(),
-                 "categories": node_class.categories(),
-                 "default_symbol": node_class.defaultSymbol(),
-                 "hover_symbol": node_class.hoverSymbol()}
-            )
+        if not self._iou_devices:
+            for node_class in IOU.classes():
+                nodes.append(
+                    {"class": node_class.__name__,
+                     "name": node_class.symbolName(),
+                     "categories": node_class.categories(),
+                     "default_symbol": node_class.defaultSymbol(),
+                     "hover_symbol": node_class.hoverSymbol()}
+                )
+        else:
+            for iou_device in self._iou_devices.values():
+                nodes.append(
+                    {"class": IOUDevice.__name__,
+                     "name": iou_device["name"],
+                     "categories": IOUDevice.categories(),
+                     "default_symbol": iou_device["default_symbol"],
+                     "hover_symbol": iou_device["hover_symbol"]}
+                )
         return nodes
 
     @staticmethod

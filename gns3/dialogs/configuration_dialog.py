@@ -21,7 +21,7 @@ Dialog to configure and update node settings using widget pages.
 
 from ..qt import QtGui
 from ..ui.configuration_dialog_ui import Ui_configurationDialog
-
+from .node_configurator_dialog import ConfigurationError
 
 class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
     """
@@ -56,6 +56,9 @@ class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
         if button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Cancel):
             QtGui.QDialog.reject(self)
         else:
-            self._configuration_page.saveSettings(self._settings)
+            try:
+                self._configuration_page.saveSettings(self._settings)
+            except ConfigurationError:
+                return
             QtGui.QDialog.accept(self)
 

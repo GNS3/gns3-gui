@@ -46,6 +46,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
+        self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
         # Available types
         self.uiTypeComboBox.addItems(["Default", "ASA 8.4(2)", "IDS"])
@@ -77,6 +78,20 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
         if index != -1:
             self.uiQemuListComboBox.setCurrentIndex(index)
+
+    def _typeChangedSlot(self, vm_type):
+        """
+        When the type of QEMU VM is changed.
+
+        :param vm_type: type of VM
+        """
+
+        if vm_type == "ASA 8.4(2)":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
+        elif vm_type == "IDS":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.normal.svg"))
+        else:
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
 
     def _getDiskImage(self):
 

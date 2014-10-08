@@ -19,15 +19,22 @@
 Configuration page for IOU image & device preferences.
 """
 
+import copy
 import os
 import sys
 import pkg_resources
 import shutil
-from gns3.qt import QtGui
+
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.dialogs.configuration_dialog import ConfigurationDialog
+
 from .. import IOU
 from ..ui.iou_device_preferences_page_ui import Ui_IOUDevicePreferencesPageWidget
+from ..pages.iou_device_configuration_page import iouDeviceConfigurationPage
+from ..dialogs.iou_device_wizard import IOUDeviceWizard
 
 
 class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget):
@@ -40,60 +47,35 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.setupUi(self)
 
         self._main_window = MainWindow.instance()
-        self._iou_images = {}
-        self.uiSaveIOUImagePushButton.clicked.connect(self._iouImageSaveSlot)
-        self.uiDeleteIOUImagePushButton.clicked.connect(self._iouImageDeleteSlot)
-        self.uiIOUImagesTreeWidget.itemClicked.connect(self._iouImageClickedSlot)
-        self.uiIOUImagesTreeWidget.itemSelectionChanged.connect(self._iouImageChangedSlot)
-        self.uiIOUPathToolButton.clicked.connect(self._iouImageBrowserSlot)
-        self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
-        self.uiIOUImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
-        self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
+        self._iou_devices = {}
+        self._items = []
 
-        #FIXME: temporally hide test button
-        self.uiIOUImageTestSettingsPushButton.hide()
+        self.uiNewIOUDevicePushButton.clicked.connect(self._iouDeviceNewSlot)
+        self.uiEditIOUDevicePushButton.clicked.connect(self._iouDeviceEditSlot)
+        self.uiDeleteIOUDevicePushButton.clicked.connect(self._iouDeviceDeleteSlot)
+        self.uiIOUDevicesTreeWidget.currentItemChanged.connect(self._iouDeviceChangedSlot)
+        self.uiIOUDevicesTreeWidget.itemPressed.connect(self._iouDevicePressedSlot)
 
-    def _useDefaultValuesSlot(self, state):
+        # self.uiIOUPathToolButton.clicked.connect(self._iouImageBrowserSlot)
+        # self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
+
+    def _iouDeviceChangedSlot(self, current, previous):
         """
-        Slot to enable or not the RAM and NVRAM spin boxes.
-        """
+        Loads a selected an IOU device from the tree widget.
 
-        if state:
-            self.uiRAMSpinBox.setEnabled(False)
-            self.uiNVRAMSpinBox.setEnabled(False)
-        else:
-            self.uiRAMSpinBox.setEnabled(True)
-            self.uiNVRAMSpinBox.setEnabled(True)
-
-    def _iouImageClickedSlot(self, item, column):
-        """
-        Loads a selected IOU image from the tree widget.
-
-        :param item: selected QTreeWidgetItem instance
-        :param column: ignored
+        :param current: current QTreeWidgetItem instance
+        :param previous: ignored
         """
 
-        image = item.text(0)
-        server = item.text(1)
-        key = "{server}:{image}".format(server=server, image=image)
-        iou_image = self._iou_images[key]
+        if not current:
+            self.uiIOUDeviceInfoTreeWidget.clear()
+            return
 
-        self.uiIOUPathLineEdit.setText(iou_image["path"])
-        self.uiInitialConfigLineEdit.setText(iou_image["initial_config"])
-        self.uiDefaultValuesCheckBox.setChecked(iou_image["use_default_iou_values"])
-        self.uiRAMSpinBox.setValue(iou_image["ram"])
-        self.uiNVRAMSpinBox.setValue(iou_image["nvram"])
-
-    def _iouImageChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiIOUImagesTreeWidget.currentItem()
-        if item:
-            self.uiDeleteIOUImagePushButton.setEnabled(True)
-        else:
-            self.uiDeleteIOUImagePushButton.setEnabled(False)
+        self.uiEditIOUDevicePushButton.setEnabled(True)
+        self.uiDeleteIOUDevicePushButton.setEnabled(True)
+        key = current.data(0, QtCore.Qt.UserRole)
+        iou_device = self._iou_devices[key]
+        self._refreshInfo(iou_device)
 
     def _iouImageSaveSlot(self):
         """
@@ -153,18 +135,106 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
         self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
 
-    def _iouImageDeleteSlot(self):
+    def _iouDeviceNewSlot(self):
         """
-        Deletes an IOU image.
+        Creates a new IOU device.
         """
 
-        item = self.uiIOUImagesTreeWidget.currentItem()
+        wizard = IOUDeviceWizard(parent=self)
+        wizard.show()
+        if wizard.exec_():
+
+            new_vm_settings = wizard.getSettings()
+
+            key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
+            self._iou_devices[key] = {"name": new_vm_settings["name"],
+                                      "path": new_vm_settings["path"],
+                                      "default_symbol": new_vm_settings["default_symbol"],
+                                      "hover_symbol": new_vm_settings["hover_symbol"],
+                                      "image": os.path.basename(new_vm_settings["path"]),
+                                      "initial_config": new_vm_settings["initial_config"],
+                                      "use_default_iou_values": True,
+                                      "ram": 256,
+                                      "nvram": 128,
+                                      "ethernet_adapters": 2,
+                                      "serial_adapters": 2,
+                                      "server": new_vm_settings["server"]}
+
+            self._iou_devices[key].update(new_vm_settings)
+            item = QtGui.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
+            item.setText(0, self._iou_devices[key]["name"])
+            item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
+            self.uiIOUDevicesTreeWidget.setCurrentItem(item)
+
+    def _iouDeviceEditSlot(self):
+        """
+        Edits an IOU device.
+        """
+
+        item = self.uiIOUDevicesTreeWidget.currentItem()
         if item:
-            image = item.text(0)
-            server = item.text(1)
-            key = "{server}:{image}".format(server=server, image=image)
-            del self._iou_images[key]
-            self.uiIOUImagesTreeWidget.takeTopLevelItem(self.uiIOUImagesTreeWidget.indexOfTopLevelItem(item))
+            key = item.data(0, QtCore.Qt.UserRole)
+            iou_device = self._iou_devices[key]
+            dialog = ConfigurationDialog(iou_device["name"], iou_device, iouDeviceConfigurationPage(), parent=self)
+            dialog.show()
+            if dialog.exec_():
+                if iou_device["name"] != item.text(0):
+                    if "{}:{}".format(iou_device["server"], iou_device["name"]) in self._iou_devices:
+                        # FIXME: bug when changing name
+                        QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(iou_device["name"]))
+                        iou_device["name"] = item.text(0)
+                    item.setText(0, iou_device["name"])
+                self._refreshInfo(iou_device)
+
+    def _iouDeviceDeleteSlot(self):
+        """
+        Deletes an IOU device.
+        """
+
+        item = self.uiIOUDevicesTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            del self._iou_devices[key]
+            self.uiIOUDevicesTreeWidget.takeTopLevelItem(self.uiIOUDevicesTreeWidget.indexOfTopLevelItem(item))
+
+    def _createSectionItem(self, name):
+
+        section_item = QtGui.QTreeWidgetItem(self.uiIOUDeviceInfoTreeWidget)
+        section_item.setText(0, name)
+        font = section_item.font(0)
+        font.setBold(True)
+        section_item.setFont(0, font)
+        return section_item
+
+    def _refreshInfo(self, iou_device):
+
+        self.uiIOUDeviceInfoTreeWidget.clear()
+
+        # fill out the General section
+        section_item = self._createSectionItem("General")
+        QtGui.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
+        QtGui.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
+        QtGui.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
+
+        if iou_device["use_default_iou_values"]:
+            QtGui.QTreeWidgetItem(section_item, ["RAM:", "default"])
+            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "default"])
+        else:
+            QtGui.QTreeWidgetItem(section_item, ["RAM:", iou_device["ram"]])
+            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", iou_device["nvram"]])
+
+        # fill out the Network section
+        section_item = self._createSectionItem("Network")
+        QtGui.QTreeWidgetItem(section_item, ["Ethernet adapters:", "{} ({} interfaces)".format(iou_device["ethernet_adapters"],
+                                                                                               iou_device["ethernet_adapters"] * 4)])
+        QtGui.QTreeWidgetItem(section_item, ["Serial adapters:", "{} ({} interfaces)".format(iou_device["serial_adapters"],
+                                                                                             iou_device["serial_adapters"] * 4)])
+
+        self.uiIOUDeviceInfoTreeWidget.expandAll()
+        self.uiIOUDeviceInfoTreeWidget.resizeColumnToContents(0)
+        self.uiIOUDeviceInfoTreeWidget.resizeColumnToContents(1)
 
     @staticmethod
     def getIOUImage(parent):
@@ -280,32 +350,70 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiInitialConfigLineEdit.clear()
         self.uiInitialConfigLineEdit.setText(path)
 
-    def _testSettingsSlot(self):
+    def _iouDevicePressedSlot(self, item, column):
+        """
+        Slot for item pressed.
 
-        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
+        :param item: ignored
+        :param column: ignored
+        """
+
+        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+            self._showContextualMenu()
+
+    def _showContextualMenu(self):
+        """
+        Contextual menu.
+        """
+
+        menu = QtGui.QMenu()
+        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
+        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
+        menu.addAction(change_symbol_action)
+        menu.exec_(QtGui.QCursor.pos())
+
+    def _changeSymbolSlot(self):
+        """
+        Change a symbol for an IOU device.
+        """
+
+        dialog = SymbolSelectionDialog(self)
+        dialog.show()
+        if dialog.exec_():
+            normal_symbol, selected_symbol = dialog.getSymbols()
+            item = self.uiIOUDevicesTreeWidget.currentItem()
+            if item:
+                item.setIcon(0, QtGui.QIcon(normal_symbol))
+                key = item.data(0, QtCore.Qt.UserRole)
+                iou_device = self._iou_devices[key]
+                iou_device["default_symbol"] = normal_symbol
+                iou_device["hover_symbol"] = selected_symbol
 
     def loadPreferences(self):
         """
-        Loads the IOU image & device preferences.
+        Loads the IOU devices preferences.
         """
 
-        self._iou_images.clear()
-        self.uiIOUImagesTreeWidget.clear()
+        iou_module = IOU.instance()
+        self._iou_devices = copy.deepcopy(iou_module.iouDevices())
+        self._items.clear()
 
-        iou_images = IOU.instance().iouImages()
-        for iou_image in iou_images.values():
-            item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
-            item.setText(0, iou_image["image"])
-            item.setText(1, iou_image["server"])
+        for key, iou_device in self._iou_devices.items():
+            item = QtGui.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
+            item.setText(0, iou_device["name"])
+            item.setIcon(0, QtGui.QIcon(iou_device["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
 
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
-        self._iou_images.update(iou_images)
+        if self._items:
+            self.uiIOUDevicesTreeWidget.setCurrentItem(self._items[0])
+
 
     def savePreferences(self):
         """
-        Saves the IOU image & device preferences.
+        Saves the IOU devices preferences.
         """
 
         #self._iouImageSaveSlot()
-        IOU.instance().setIOUImages(self._iou_images)
+        IOU.instance().setIOUDevices(self._iou_devices)

@@ -143,6 +143,10 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         :param previous: ignored
         """
 
+        if not current:
+            self.uiQemuVMInfoTreeWidget.clear()
+            return
+
         self.uiEditQemuVMPushButton.setEnabled(True)
         self.uiDeleteQemuVMPushButton.setEnabled(True)
         key = current.data(0, QtCore.Qt.UserRole)

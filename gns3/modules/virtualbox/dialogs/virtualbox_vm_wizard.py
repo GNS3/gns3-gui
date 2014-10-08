@@ -55,6 +55,9 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         :return: settings dict
         """
 
+        if not self.uiVMListComboBox.count():
+            return {}
+
         server, vmname = self.uiVMListComboBox.itemText(self.uiVMListComboBox.currentIndex()).split(":", 1)
 
         settings = {

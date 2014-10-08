@@ -23,10 +23,9 @@ import os
 import re
 import sys
 import pkg_resources
+
 from gns3.qt import QtGui
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
-
-from .. import IOU
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
 
@@ -40,8 +39,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
+        self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
-        self.uiIOUImageComboBox.currentIndexChanged.connect(self._IOUImageSelectedSlot)
         self._current_iou_image = ""
 
     def _useDefaultValuesSlot(self, state):
@@ -55,6 +54,18 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         else:
             self.uiRamSpinBox.setEnabled(True)
             self.uiNvramSpinBox.setEnabled(True)
+
+    def _iouImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select an IOU image.
+        """
+
+        from .iou_device_preferences_page import IOUDevicePreferencesPage
+        path = IOUDevicePreferencesPage.getIOUImage(self)
+        if not path:
+            return
+        self.uiIOUImageLineEdit.clear()
+        self.uiIOUImageLineEdit.setText(path)
 
     def _initialConfigBrowserSlot(self):
         """
@@ -76,19 +87,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         self.uiInitialConfigLineEdit.clear()
         self.uiInitialConfigLineEdit.setText(path)
 
-    def _IOUImageSelectedSlot(self, index):
-        """
-        Warn about changing the IOU image of a device.
-
-        :param index: ignored
-        """
-
-        #TODO: finish IOU image switch tests
-        if self._current_iou_image and self._current_iou_image != self.uiIOUImageComboBox.currentText():
-            QtGui.QMessageBox.warning(self, "IOU image", "The IOU image has been changed, your device may not boot correctly if you apply the new settings")
-            self._current_iou_image = ""
-
-    def loadSettings(self, settings, node, group=False):
+    def loadSettings(self, settings, node=None, group=False):
         """
         Loads the IOU device settings.
 
@@ -99,27 +98,27 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
-            self.uiConsolePortSpinBox.setValue(settings["console"])
+
+            if "console" in settings:
+                self.uiConsolePortSpinBox.setValue(settings["console"])
+            else:
+                self.uiConsolePortLabel.hide()
+                self.uiConsolePortSpinBox.hide()
 
             # load the initial-config
             self.uiInitialConfigLineEdit.setText(settings["initial_config"])
 
-            # load the available IOU images
-            iou_images = IOU.instance().iouImages()
-            for iou_image in iou_images.values():
-                if iou_image["server"] == "local" and node.server().isLocal() or iou_image["server"] == node.server().host:
-                    self.uiIOUImageComboBox.addItem(iou_image["image"], iou_image["path"])
-
-            index = self.uiIOUImageComboBox.findText(os.path.basename(settings["path"]))
-            if index != -1:
-                self.uiIOUImageComboBox.setCurrentIndex(index)
-                self._current_iou_image = iou_image["image"]
+            # load the IOU image path
+            self.uiIOUImageLineEdit.setText(settings["path"])
 
         else:
             self.uiGeneralgroupBox.hide()
 
         # load advanced settings
-        self.uiL1KeepalivesCheckBox.setChecked(settings["l1_keepalives"])
+        if "l1_keepalives" in settings:
+            self.uiL1KeepalivesCheckBox.setChecked(settings["l1_keepalives"])
+        else:
+            self.uiL1KeepalivesCheckBox.hide()
         self.uiDefaultValuesCheckBox.setChecked(settings["use_default_iou_values"])
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiNvramSpinBox.setValue(settings["nvram"])
@@ -128,7 +127,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
         self.uiSerialAdaptersSpinBox.setValue(settings["serial_adapters"])
 
-    def saveSettings(self, settings, node, group=False):
+    def saveSettings(self, settings, node=None, group=False):
         """
         Saves the IOU device settings.
 
@@ -163,9 +162,9 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
                     QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
 
             # save the IOU image path
-            index = self.uiIOUImageComboBox.currentIndex()
-            ios_path = self.uiIOUImageComboBox.itemData(index)
-            settings["path"] = ios_path
+            ios_path = self.uiIOUImageLineEdit.text().strip()
+            if ios_path:
+                settings["path"] = ios_path
         else:
             del settings["name"]
             del settings["console"]
@@ -179,16 +178,17 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         ethernet_adapters = self.uiEthernetAdaptersSpinBox.value()
         serial_adapters = self.uiSerialAdaptersSpinBox.value()
         if ethernet_adapters + serial_adapters > 16:
-            QtGui.QMessageBox.warning(self, node.name(), "The total number of adapters cannot exceed 16")
+            QtGui.QMessageBox.warning(self, settings["name"], "The total number of adapters cannot exceed 16")
             raise ConfigurationError()
 
-        if settings["ethernet_adapters"] != ethernet_adapters or settings["serial_adapters"] != serial_adapters:
-            # check if the adapters settings have changed
-            node_ports = node.ports()
-            for node_port in node_ports:
-                if not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-                    raise ConfigurationError()
+        if node:
+            if settings["ethernet_adapters"] != ethernet_adapters or settings["serial_adapters"] != serial_adapters:
+                # check if the adapters settings have changed
+                node_ports = node.ports()
+                for node_port in node_ports:
+                    if not node_port.isFree():
+                        QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                        raise ConfigurationError()
 
         settings["ethernet_adapters"] = ethernet_adapters
         settings["serial_adapters"] = serial_adapters

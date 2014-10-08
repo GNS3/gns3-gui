@@ -92,6 +92,10 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         :param previous: ignored
         """
 
+        if not current:
+            self.uiVirtualBoxVMInfoTreeWidget.clear()
+            return
+
         self.uiEditVirtualBoxVMPushButton.setEnabled(True)
         self.uiDeleteVirtualBoxVMPushButton.setEnabled(True)
         key = current.data(0, QtCore.Qt.UserRole)
@@ -117,7 +121,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         QtGui.QTreeWidgetItem(section_item, ["Console enabled:", "{}".format(vbox_vm["enable_console"])])
         QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
 
-        # fill out the General section
+        # fill out the Network section
         section_item = self._createSectionItem("Network")
         QtGui.QTreeWidgetItem(section_item, ["Adapters:", str(vbox_vm["adapters"])])
         QtGui.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
@@ -136,10 +140,10 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            print(new_vm_settings)
+            if not new_vm_settings:
+                return
 
             key = "{server}:{vmname}".format(server=new_vm_settings["server"], vmname=new_vm_settings["vmname"])
-
             self._virtualbox_vms[key] = {"vmname": "",
                                          "default_symbol": ":/symbols/vbox_guest.normal.svg",
                                          "hover_symbol": ":/symbols/vbox_guest.selected.svg",
@@ -173,7 +177,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                 if vbox_vm["vmname"] != item.text(0):
                     if "{}:{}".format(vbox_vm["server"], vbox_vm["vmname"]) in self._virtualbox_vms:
                         # FIXME: bug when changing name
-                        QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(vbox_vm["vmname"]))
+                        QtGui.QMessageBox.critical(self, "New VirtualBox VM", "VM name {} already exists".format(vbox_vm["vmname"]))
                         vbox_vm["vmname"] = item.text(0)
                     item.setText(0, vbox_vm["vmname"])
                 self._refreshInfo(vbox_vm)
