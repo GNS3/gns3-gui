@@ -4,6 +4,7 @@ from socket import error as socket_error
 import logging
 import os
 import zipfile
+import tempfile
 
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
@@ -236,7 +237,7 @@ class UploadProjectThread(QThread):
         :return: path to zipped project file
         """
         project_name = os.path.basename(self.project_settings["project_path"])
-        output_filename = os.path.join('/tmp', project_name + ".zip")  # TODO change this to be platform independent
+        output_filename = os.path.join(tempfile.gettempdir(), project_name + ".zip")
         project_dir = os.path.dirname(self.project_settings["project_path"])
         relroot = os.path.abspath(os.path.join(project_dir, os.pardir))
         with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip_file:
