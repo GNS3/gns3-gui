@@ -228,7 +228,7 @@ class UploadProjectThread(QThread):
         images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
 
         for image in images:
-            provider.upload_file(image, 'images', overwrite_existing=False)
+            provider.upload_file(image, 'images')
 
     def zip_project_dir(self):
         """
@@ -236,7 +236,7 @@ class UploadProjectThread(QThread):
         :return: path to zipped project file
         """
         project_name = os.path.basename(self.project_settings["project_path"])
-        output_filename = os.path.join('/tmp', project_name + ".zip")
+        output_filename = os.path.join('/tmp', project_name + ".zip")  # TODO change this to be platform independent
         project_dir = os.path.dirname(self.project_settings["project_path"])
         relroot = os.path.abspath(os.path.join(project_dir, os.pardir))
         with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip_file:
