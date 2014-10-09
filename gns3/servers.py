@@ -50,6 +50,7 @@ class Servers(QtCore.QObject):
         super(Servers, self).__init__()
         self._local_server = None
         self._remote_servers = {}
+        self._cloud_servers = {}
         self._local_server_path = ""
         self._local_server_auto_start = True
         self._local_server_proccess = None
@@ -292,6 +293,44 @@ class Servers(QtCore.QObject):
         """
 
         return self._remote_servers
+
+    def getCloudServer(self, host, port, ca_file):
+        """
+        Return a websocket connection to the cloud server, creating one if none exists.
+
+        :param host: host ip address of the cloud server
+        :param port: port the gns3server process is listening on
+        :param ca_file: Path to the SSL cert that the server must present
+        :returns: a websocket connection to the cloud server
+        """
+
+        for server in self._remote_servers.values():
+            if server.host == host and server.port == port:
+                return server
+
+        heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
+        return self._addCloudServer(host, port, ca_file, heartbeat_freq)
+
+    def _addCloudServer(self, host, port, ca_file, heartbeat_freq):
+        """
+        Create a websocket connection to the specified cloud server
+
+        :param host: host ip address of the server
+        :param port: port the gns3server process is listening on
+        :param ca_file: Path to the SSL cert that the server must present
+        :param heartbeat_freq: The interval to send heartbeats to the server
+
+        :returns: a websocket connection to the cloud server
+        """
+
+        url = "wss://{host}:{port}".format(host=host, port=port)
+        log.debug('Starting SecureWebSocketClient url={}'.format(url))
+        log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
+        server = SecureWebSocketClient(url, ca_file)
+        server.enableHeartbeatsAt(heartbeat_freq)
+        self._cloud_servers[host] = server
+        log.info("new remote server connection {} registered".format(url))
+        return server
 
     def __iter__(self):
         """
