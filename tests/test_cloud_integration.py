@@ -16,12 +16,22 @@ Usage:
     nor the env vars are set, this testsuite will be skipped.
 
 """
-from gns3.cloud.rackspace_ctrl import RackspaceCtrl
-from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
-from libcloud.compute.base import Node, NodeSize, KeyPair
-import pytest
+
 import unittest
 import time
+import hashlib
+import tempfile
+import os
+
+from libcloud.compute.base import Node, NodeSize, KeyPair
+import pytest
+
+from gns3.cloud.rackspace_ctrl import RackspaceCtrl
+from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
+
+
+
+
 
 # custom flag to skip tests if rackspace credentials was not provided
 rackspace_authentication = pytest.mark.rackspace_authentication
@@ -314,3 +324,34 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(r_images2[0]['status'], 'ALREADYREQUESTED')
         self.assertEqual(r_images2[1]['status'], 'ALREADYREQUESTED')
         print("Done.")
+
+    def test_upload_file(self):
+        self.ctrl.GNS3_CONTAINER_NAME = 'TEST_GNS3'
+
+        test_data = 'abcdefg'
+        test_file = tempfile.NamedTemporaryFile(mode='w')
+        with test_file.file as f:
+            f.write(test_data)
+
+        return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
+
+        container = self.ctrl.storage_driver.get_container(self.ctrl.GNS3_CONTAINER_NAME)
+        file_object = container.get_object('test_folder/' + os.path.basename(test_file.name))
+        hash_object = container.get_object('test_folder/' + os.path.basename(test_file.name) + '.md5')
+
+        cloud_file_hash = ''
+        for chunk in hash_object.as_stream():
+            cloud_file_hash += chunk.decode('utf8')
+
+        cloud_file_contents = ''
+        for chunk in file_object.as_stream():
+            cloud_file_contents += chunk.decode('utf8')
+
+        self.assertEqual(cloud_file_hash, hashlib.md5(test_data.encode('utf8')).hexdigest())
+        self.assertEqual(cloud_file_contents, test_data)
+        self.assertEqual(return_value, True)
+
+        for o in container.iterate_objects():
+            o.delete()
+
+        container.delete()
