@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IOUDeviceWizard</class>
+ <widget class="QWizard" name="IOUDeviceWizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>366</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New IOU device</string>
+  </property>
+  <widget class="QWizardPage" name="uiNameImageWizardPage">
+   <property name="title">
+    <string>Name and image</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a descriptive name for the new IOU device and add an IOU image.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiNameLabel">
+      <property name="text">
+       <string>Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="uiNameLineEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiIOUImageLabel">
+      <property name="text">
+       <string>IOU image:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiIOUImageToolButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiTypeLabel">
+      <property name="text">
+       <string>Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="uiTypeComboBox"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>uiNameLineEdit</tabstop>
+  <tabstop>uiTypeComboBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

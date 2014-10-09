@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Mon May 19 10:48:32 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Sep 30 18:45:42 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_VPCSPreferencesPageWidget(object):
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName(_fromUtf8("VPCSPreferencesPageWidget"))
-        VPCSPreferencesPageWidget.resize(432, 508)
+        VPCSPreferencesPageWidget.resize(430, 545)
         self.verticalLayout_2 = QtGui.QVBoxLayout(VPCSPreferencesPageWidget)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.uiTabWidget = QtGui.QTabWidget(VPCSPreferencesPageWidget)
@@ -36,23 +36,14 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiGeneralSettingsTabWidget.setObjectName(_fromUtf8("uiGeneralSettingsTabWidget"))
         self.gridLayout = QtGui.QGridLayout(self.uiGeneralSettingsTabWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 6, 1, 1, 1)
+        spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 7, 0, 1, 2)
         self.uiScriptFileLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiScriptFileLabel.setObjectName(_fromUtf8("uiScriptFileLabel"))
         self.gridLayout.addWidget(self.uiScriptFileLabel, 4, 0, 1, 1)
         self.uiVPCSPathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiVPCSPathLabel.setObjectName(_fromUtf8("uiVPCSPathLabel"))
         self.gridLayout.addWidget(self.uiVPCSPathLabel, 2, 0, 1, 1)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.uiTestSettingsPushButton = QtGui.QPushButton(self.uiGeneralSettingsTabWidget)
-        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
-        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiGeneralSettingsTabWidget)
-        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 6, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.uiVPCSPathLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
@@ -73,8 +64,6 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiScriptFileToolButton.setObjectName(_fromUtf8("uiScriptFileToolButton"))
         self.horizontalLayout_51.addWidget(self.uiScriptFileToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_51, 5, 0, 1, 2)
-        spacerItem1 = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 7, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, _fromUtf8(""))
         self.uiServerSettingsTabWidget = QtGui.QWidget()
         self.uiServerSettingsTabWidget.setObjectName(_fromUtf8("uiServerSettingsTabWidget"))
@@ -117,8 +106,8 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiConsoleEndPortSpinBox.setProperty("value", 5000)
         self.uiConsoleEndPortSpinBox.setObjectName(_fromUtf8("uiConsoleEndPortSpinBox"))
         self.horizontalLayout.addWidget(self.uiConsoleEndPortSpinBox)
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem2)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addWidget(self.uiConsolePortRangeGroupBox)
         self.uiUDPPortRangeGroupBox = QtGui.QGroupBox(self.uiAdvancedSettingsTabWidget)
         self.uiUDPPortRangeGroupBox.setObjectName(_fromUtf8("uiUDPPortRangeGroupBox"))
@@ -139,13 +128,24 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiUDPEndPortSpinBox.setProperty("value", 20512)
         self.uiUDPEndPortSpinBox.setObjectName(_fromUtf8("uiUDPEndPortSpinBox"))
         self.horizontalLayout_4.addWidget(self.uiUDPEndPortSpinBox)
-        spacerItem3 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem3)
+        spacerItem2 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem2)
         self.verticalLayout.addWidget(self.uiUDPPortRangeGroupBox)
-        spacerItem4 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem4)
+        spacerItem3 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem3)
         self.uiTabWidget.addTab(self.uiAdvancedSettingsTabWidget, _fromUtf8(""))
         self.verticalLayout_2.addWidget(self.uiTabWidget)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        spacerItem4 = QtGui.QSpacerItem(138, 17, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem4)
+        self.uiTestSettingsPushButton = QtGui.QPushButton(VPCSPreferencesPageWidget)
+        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(VPCSPreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(VPCSPreferencesPageWidget)
         self.uiTabWidget.setCurrentIndex(0)
@@ -155,8 +155,6 @@ class Ui_VPCSPreferencesPageWidget(object):
         VPCSPreferencesPageWidget.setWindowTitle(_translate("VPCSPreferencesPageWidget", "VPCS", None))
         self.uiScriptFileLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS base script file:", None))
         self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS:", None))
-        self.uiTestSettingsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Test settings", None))
-        self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults", None))
         self.uiVPCSPathToolButton.setText(_translate("VPCSPreferencesPageWidget", "...", None))
         self.uiScriptFileToolButton.setText(_translate("VPCSPreferencesPageWidget", "...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "General settings", None))
@@ -170,4 +168,6 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiUDPPortRangeGroupBox.setTitle(_translate("VPCSPreferencesPageWidget", "UDP tunneling port range", None))
         self.uiUDPPortRangeLabel.setText(_translate("VPCSPreferencesPageWidget", "to", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "Advanced settings", None))
+        self.uiTestSettingsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Test settings", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults", None))
 
