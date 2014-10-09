@@ -199,8 +199,8 @@ class WSConnectThread(QThread):
 
         log.debug('WSConnectThread.run() begin')
         servers = Servers.instance()
-        server = servers.getRemoteServer(self._host, self._port, self._ca_file)
-        log.debug('after getRemoteServer call. {}'.format(server))
+        server = servers.getCloudServer(self._host, self._port, self._ca_file)
+        log.debug('after getCloudServer call. {}'.format(server))
         self.established.emit(str(self._server_id))
 
         log.debug('WSConnectThread.run() end')
