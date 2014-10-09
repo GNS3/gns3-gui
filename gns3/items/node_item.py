@@ -469,6 +469,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # dynamically change the renderer when this node item is hovered.
         if not self.isSelected():
             self.setSharedRenderer(self._hover_renderer)
+            #effect = QtGui.QGraphicsColorizeEffect()
+            #effect.setColor(QtGui.QColor("black"))
+            #effect.setStrength(0.8)
+            #self.setGraphicsEffect(effect)
 
     def hoverLeaveEvent(self, event):
         """
@@ -480,3 +484,4 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # dynamically change the renderer back to the default when this node item is not hovered anymore.
         if not self.isSelected():
             self.setSharedRenderer(self._default_renderer)
+            #self.graphicsEffect().setEnabled(False)

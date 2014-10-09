@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>508</height>
+    <width>430</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,15 +27,15 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="6" column="1">
-        <spacer name="horizontalSpacer">
+       <item row="7" column="0" colspan="2">
+        <spacer name="spacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>164</width>
-           <height>20</height>
+           <width>390</width>
+           <height>193</height>
           </size>
          </property>
         </spacer>
@@ -53,24 +53,6 @@
           <string>Path to VPCS:</string>
          </property>
         </widget>
-       </item>
-       <item row="6" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QPushButton" name="uiTestSettingsPushButton">
-           <property name="text">
-            <string>Test settings</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
-           <property name="text">
-            <string>Restore defaults</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item row="3" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -105,19 +87,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <spacer name="spacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>390</width>
-           <height>193</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -295,6 +264,37 @@
       </layout>
      </widget>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>138</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="uiTestSettingsPushButton">
+       <property name="text">
+        <string>Test settings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
+       <property name="text">
+        <string>Restore defaults</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

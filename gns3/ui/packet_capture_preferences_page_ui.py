@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Mon Sep 22 14:32:22 2014
+# Created: Tue Sep 30 18:58:59 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -66,11 +66,11 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiCaptureAnalyzerCommandLineEdit.setObjectName(_fromUtf8("uiCaptureAnalyzerCommandLineEdit"))
         self.gridlayout.addWidget(self.uiCaptureAnalyzerCommandLineEdit, 6, 0, 1, 2)
         self.gridLayout.addWidget(self.uiSettingsGroupBox, 0, 0, 1, 2)
+        spacerItem = QtGui.QSpacerItem(253, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
         self.uiRestoreDefaultsPushButton = QtGui.QPushButton(PacketCapturePreferencesPageWidget)
         self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
-        self.gridLayout.addWidget(self.uiRestoreDefaultsPushButton, 1, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(253, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiRestoreDefaultsPushButton, 1, 1, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(20, 101, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem1, 2, 0, 1, 2)
 
