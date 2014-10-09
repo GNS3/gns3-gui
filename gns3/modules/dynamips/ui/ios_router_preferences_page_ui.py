@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/jseutter/projects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Mon Aug 25 14:28:35 2014
+# Created: Mon Oct  6 05:18:00 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_IOSRouterPreferencesPageWidget(object):
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName(_fromUtf8("IOSRouterPreferencesPageWidget"))
-        IOSRouterPreferencesPageWidget.resize(434, 530)
+        IOSRouterPreferencesPageWidget.resize(434, 583)
         self.vboxlayout = QtGui.QVBoxLayout(IOSRouterPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(IOSRouterPreferencesPageWidget)
@@ -85,9 +85,15 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiPlatformLabel = QtGui.QLabel(self.groupBox)
         self.uiPlatformLabel.setObjectName(_fromUtf8("uiPlatformLabel"))
         self.gridLayout_2.addWidget(self.uiPlatformLabel, 3, 0, 1, 1)
+        self.uiPlatformComboBox = QtGui.QComboBox(self.groupBox)
+        self.uiPlatformComboBox.setObjectName(_fromUtf8("uiPlatformComboBox"))
+        self.gridLayout_2.addWidget(self.uiPlatformComboBox, 3, 1, 1, 1)
         self.uiChassisLabel = QtGui.QLabel(self.groupBox)
         self.uiChassisLabel.setObjectName(_fromUtf8("uiChassisLabel"))
         self.gridLayout_2.addWidget(self.uiChassisLabel, 4, 0, 1, 1)
+        self.uiChassisComboBox = QtGui.QComboBox(self.groupBox)
+        self.uiChassisComboBox.setObjectName(_fromUtf8("uiChassisComboBox"))
+        self.gridLayout_2.addWidget(self.uiChassisComboBox, 4, 1, 1, 1)
         self.uiIdlePCLabel = QtGui.QLabel(self.groupBox)
         self.uiIdlePCLabel.setObjectName(_fromUtf8("uiIdlePCLabel"))
         self.gridLayout_2.addWidget(self.uiIdlePCLabel, 5, 0, 1, 1)
@@ -102,19 +108,19 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiRAMLabel = QtGui.QLabel(self.groupBox)
         self.uiRAMLabel.setObjectName(_fromUtf8("uiRAMLabel"))
         self.gridLayout_2.addWidget(self.uiRAMLabel, 6, 0, 1, 1)
-        self.uiPlatformComboBox = QtGui.QComboBox(self.groupBox)
-        self.uiPlatformComboBox.setObjectName(_fromUtf8("uiPlatformComboBox"))
-        self.gridLayout_2.addWidget(self.uiPlatformComboBox, 3, 1, 1, 2)
-        self.uiChassisComboBox = QtGui.QComboBox(self.groupBox)
-        self.uiChassisComboBox.setObjectName(_fromUtf8("uiChassisComboBox"))
-        self.gridLayout_2.addWidget(self.uiChassisComboBox, 4, 1, 1, 2)
         self.uiRAMSpinBox = QtGui.QSpinBox(self.groupBox)
         self.uiRAMSpinBox.setMinimum(32)
         self.uiRAMSpinBox.setMaximum(65535)
         self.uiRAMSpinBox.setSingleStep(32)
         self.uiRAMSpinBox.setProperty("value", 128)
         self.uiRAMSpinBox.setObjectName(_fromUtf8("uiRAMSpinBox"))
-        self.gridLayout_2.addWidget(self.uiRAMSpinBox, 6, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.uiRAMSpinBox, 6, 1, 2, 1)
+        self.uiServerTypeLabel = QtGui.QLabel(self.groupBox)
+        self.uiServerTypeLabel.setObjectName(_fromUtf8("uiServerTypeLabel"))
+        self.gridLayout_2.addWidget(self.uiServerTypeLabel, 7, 0, 2, 1)
+        self.uiServerTypeComboBox = QtGui.QComboBox(self.groupBox)
+        self.uiServerTypeComboBox.setObjectName(_fromUtf8("uiServerTypeComboBox"))
+        self.gridLayout_2.addWidget(self.uiServerTypeComboBox, 8, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.groupBox)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
@@ -180,6 +186,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Idle-PC finder", None))
         self.uiRAMLabel.setText(_translate("IOSRouterPreferencesPageWidget", "RAM:", None))
         self.uiRAMSpinBox.setSuffix(_translate("IOSRouterPreferencesPageWidget", " MB", None))
+        self.uiServerTypeLabel.setText(_translate("IOSRouterPreferencesPageWidget", "Server destination:", None))
         self.uiIOSImageTestSettingsPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Test settings", None))
         self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Decompress", None))
         self.uiSaveIOSImagePushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Save", None))

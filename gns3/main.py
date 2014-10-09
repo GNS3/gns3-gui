@@ -186,14 +186,16 @@ def main():
         # save client logging info to a file
         logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")
         try:
-            logger = logging.getLogger("gns3")
             try:
                 os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))
             except FileExistsError:
                 pass
             handler = logging.FileHandler(logfile, "w")
             if options.debug:
-                handler.setLevel(logging.DEBUG)
+                root_logger = logging.getLogger()
+                root_logger.setLevel(logging.DEBUG)
+                root_handler = root_logger.handlers[0]
+                root_handler.setLevel(logging.DEBUG)
             else:
                 handler.setLevel(logging.INFO)
             log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
@@ -201,7 +203,7 @@ def main():
             formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
                                           datefmt="%y%m%d %H:%M:%S")
             handler.setFormatter(formatter)
-            logger.addHandler(handler)
+            log.addHandler(handler)
         except OSError as e:
             log.warn("could not log to {}: {}".format(logfile, e))
 

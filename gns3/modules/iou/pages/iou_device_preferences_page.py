@@ -99,7 +99,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         else:
             image = os.path.basename(path)
 
-        #TODO: mutiple remote server
+        #TODO: multiple remote server
         if IOU.instance().settings()["use_local_server"]:
             server = "local"
         else:
