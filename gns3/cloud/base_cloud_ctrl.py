@@ -228,30 +228,25 @@ class BaseCloudCtrl(object):
         except ContainerAlreadyExistsError:
             gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
 
-        try:
-            with open(file_path, 'rb') as file:
-                local_file_hash = hashlib.md5(file.read()).hexdigest()
+        with open(file_path, 'rb') as file:
+            local_file_hash = hashlib.md5(file.read()).hexdigest()
 
-                cloud_object_name = folder + '/' + os.path.basename(file_path)
-                cloud_hash_name = cloud_object_name + '.md5'
-                cloud_objects = [obj.name for obj in gns3_container.list_objects()]
+            cloud_object_name = folder + '/' + os.path.basename(file_path)
+            cloud_hash_name = cloud_object_name + '.md5'
+            cloud_objects = [obj.name for obj in gns3_container.list_objects()]
 
-                # if the file and its hash are in object storage, and the local and storage file hashes match
-                # do not upload the file, otherwise upload it
-                if cloud_object_name in cloud_objects and cloud_hash_name in cloud_objects:
-                    hash_object = gns3_container.get_object(cloud_hash_name)
-                    cloud_object_hash = ''
-                    for chunk in hash_object.as_stream():
-                        cloud_object_hash += chunk.decode('utf8')
+            # if the file and its hash are in object storage, and the local and storage file hashes match
+            # do not upload the file, otherwise upload it
+            if cloud_object_name in cloud_objects and cloud_hash_name in cloud_objects:
+                hash_object = gns3_container.get_object(cloud_hash_name)
+                cloud_object_hash = ''
+                for chunk in hash_object.as_stream():
+                    cloud_object_hash += chunk.decode('utf8')
 
-                    if cloud_object_hash == local_file_hash:
-                        return False
+                if cloud_object_hash == local_file_hash:
+                    return False
 
-                file.seek(0)
-                self.storage_driver.upload_object_via_stream(file, gns3_container, cloud_object_name)
-                self.storage_driver.upload_object_via_stream(StringIO(local_file_hash), gns3_container, cloud_hash_name)
-                return True
-        except Exception as e:
-            log.exception("Error uploading file {}".format(file_path))
-            #TODO handle error uploading project
-            raise e
+            file.seek(0)
+            self.storage_driver.upload_object_via_stream(file, gns3_container, cloud_object_name)
+            self.storage_driver.upload_object_via_stream(StringIO(local_file_hash), gns3_container, cloud_hash_name)
+            return True
