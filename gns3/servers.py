@@ -87,9 +87,8 @@ class Servers(QtCore.QObject):
             settings.setArrayIndex(index)
             host = settings.value("host", "")
             port = settings.value("port", 0, type=int)
-            ca_file = settings.value("ca_file", "")
             if host and port:
-                self._addRemoteServer(host, port, ca_file, heartbeat_freq)
+                self._addRemoteServer(host, port)
         settings.endArray()
         settings.endGroup()
         return settings
@@ -228,35 +227,33 @@ class Servers(QtCore.QObject):
 
         return self._local_server
 
-    def _addRemoteServer(self, host, port, ca_file, heartbeat_freq):
+
+    def _addRemoteServer(self, host, port, heartbeat_freq=DEFAULT_HEARTBEAT_FREQ):
         """
         Adds a new remote server.
 
         :param host: host or address of the server
         :param port: port of the server (integer)
-        :param ca_file: path of the server ssl cert (string)
         :param heartbeat_freq: The interval to send heartbeats to the server
 
         :returns: the new remote server
         """
 
-        url = "wss://{host}:{port}".format(host=host, port=port)
-        # ca_file = '/home/jseutterlst/.conf/GNS3Certs/gns3server.localdomain.com.crt'
-        log.debug('Starting SecureWebSocketClient url={}'.format(url))
-        log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
-        server = SecureWebSocketClient(url, ca_file)
-        self._local_server.enableHeartbeatsAt(heartbeat_freq)
+        server_socket = "{host}:{port}".format(host=host, port=port)
+        url = "ws://{server_socket}".format(server_socket=server_socket)
+        server = WebSocketClient(url)
+        server.enableHeartbeatsAt(heartbeat_freq)
+        self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server
 
-    def getRemoteServer(self, host, port, ca_file):
+    def getRemoteServer(self, host, port):
 
         for server in self._remote_servers.values():
             if server.host == host and server.port == port:
                 return server
 
-        heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
-        return self._addRemoteServer(host, port, ca_file, heartbeat_freq)
+        return self._addRemoteServer(host, port)
 
     def updateRemoteServers(self, servers):
         """
