@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created: Tue Oct  7 20:36:31 2014
+# Created: Fri Oct 10 10:43:47 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -68,6 +68,6 @@ class Ui_IOUDeviceWizard(object):
         self.uiNameImageWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a descriptive name for the new IOU device and add an IOU image.", None))
         self.uiNameLabel.setText(_translate("IOUDeviceWizard", "Name:", None))
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:", None))
-        self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "Browse...", None))
+        self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse...", None))
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:", None))
 

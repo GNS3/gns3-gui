@@ -153,17 +153,17 @@ class Dynamips(Module):
                                      "disk1": disk1,
                                      "confreg": confreg,
                                      "system_id": system_id,
-                                     "slot0": settings.value("slot0", ""),
-                                     "slot1": settings.value("slot1", ""),
-                                     "slot2": settings.value("slot2", ""),
-                                     "slot3": settings.value("slot3", ""),
-                                     "slot4": settings.value("slot4", ""),
-                                     "slot5": settings.value("slot5", ""),
-                                     "slot6": settings.value("slot6", ""),
-                                     "wic0": settings.value("wic0", ""),
-                                     "wic1": settings.value("wic1", ""),
-                                     "wic2": settings.value("wic2", ""),
                                      "server": server}
+
+            for slot_id in range(0, 7):
+                slot = "slot{}".format(slot_id)
+                if settings.contains(slot):
+                    self._ios_routers[key][slot] = settings.value(slot, "")
+
+            for wic_id in range(0, 3):
+                wic = "wic{}".format(wic_id)
+                if settings.contains(wic):
+                    self._ios_routers[key][wic] = settings.value(wic, "")
 
             if platform == "c7200":
                 self._ios_routers[key]["midplane"] = settings.value("midplane", "vxr")

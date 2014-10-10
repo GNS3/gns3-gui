@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Fri Oct  3 14:51:40 2014
+# Created: Fri Oct 10 10:43:48 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -199,9 +199,9 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiRamSpinBox.setSuffix(_translate("QemuVMConfigPageWidget", " MB", None))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab), _translate("QemuVMConfigPageWidget", "General settings", None))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hda):", None))
-        self.uiHdaDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "Browse...", None))
+        self.uiHdaDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse...", None))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hdb):", None))
-        self.uiHdbDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "Browse...", None))
+        self.uiHdbDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse...", None))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_3), _translate("QemuVMConfigPageWidget", "HDD", None))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:", None))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:", None))
@@ -210,8 +210,8 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiKernelCommandLineLabel.setText(_translate("QemuVMConfigPageWidget", "Kernel command line:", None))
         self.uiInitrdLabel.setText(_translate("QemuVMConfigPageWidget", "Initial RAM disk (initrd):", None))
         self.uiKernelImageLabel.setText(_translate("QemuVMConfigPageWidget", "Kernel image:", None))
-        self.uiInitrdToolButton.setText(_translate("QemuVMConfigPageWidget", "Browse...", None))
-        self.uiKernelImageToolButton.setText(_translate("QemuVMConfigPageWidget", "Browse...", None))
+        self.uiInitrdToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse...", None))
+        self.uiKernelImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse...", None))
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings", None))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:", None))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings", None))

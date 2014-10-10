@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Thu Oct  9 21:23:09 2014
+# Created: Fri Oct 10 10:43:48 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -228,7 +228,7 @@ class Ui_IOSRouterWizard(object):
         self.uiNameImageWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a descriptive name for the new IOS router and add an IOS image.", None))
         self.uiNameLabel.setText(_translate("IOSRouterWizard", "Name:", None))
         self.uiIOSImageLabel.setText(_translate("IOSRouterWizard", "IOS image:", None))
-        self.uiIOSImageToolButton.setText(_translate("IOSRouterWizard", "Browse...", None))
+        self.uiIOSImageToolButton.setText(_translate("IOSRouterWizard", "&Browse...", None))
         self.uiTypeLabel.setText(_translate("IOSRouterWizard", "Platform:", None))
         self.uiChassisLabel.setText(_translate("IOSRouterWizard", "Chassis:", None))
         self.uiMemoryWizardPage.setTitle(_translate("IOSRouterWizard", "Memory", None))

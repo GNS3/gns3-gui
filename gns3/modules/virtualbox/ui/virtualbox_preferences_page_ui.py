@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created: Tue Sep 30 19:03:23 2014
+# Created: Fri Oct 10 10:46:44 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -141,7 +141,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
     def retranslateUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxPreferencesPageWidget", "VirtualBox", None))
         self.uiVboxWrapperPathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to the VirtualBox wrapper (Linux/UNIX only):", None))
-        self.uiVboxWrapperPathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "...", None))
+        self.uiVboxWrapperPathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxPreferencesPageWidget", "Remote servers", None))

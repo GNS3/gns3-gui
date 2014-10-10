@@ -46,7 +46,7 @@
       <item>
        <widget class="QToolButton" name="uiIOSImageToolButton">
         <property name="text">
-         <string>Browse...</string>
+         <string>&amp;Browse...</string>
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextOnly</enum>

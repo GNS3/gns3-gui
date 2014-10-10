@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Fri Oct  3 17:02:35 2014
+# Created: Fri Oct 10 10:43:48 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -161,17 +161,17 @@ class Ui_QemuVMWizard(object):
         self.uiRamSpinBox.setSuffix(_translate("QemuVMWizard", " MB", None))
         self.uiDiskWizardPage.setTitle(_translate("QemuVMWizard", "Disk image", None))
         self.uiDiskWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a base disk image for your virtual machine.", None))
-        self.uiHdaDiskImageToolButton.setText(_translate("QemuVMWizard", "Browse...", None))
+        self.uiHdaDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hda):", None))
         self.uiASAWizardPage.setTitle(_translate("QemuVMWizard", "ASA VM", None))
         self.uiASAWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a initrd and a kernel image.", None))
         self.uiLinuxBootGroupBox.setTitle(_translate("QemuVMWizard", "Linux boot specific settings", None))
         self.uiInitrdLabel.setText(_translate("QemuVMWizard", "Initial RAM disk (initrd):", None))
         self.uiKernelImageLabel.setText(_translate("QemuVMWizard", "Kernel image:", None))
-        self.uiInitrdToolButton.setText(_translate("QemuVMWizard", "Browse...", None))
-        self.uiKernelImageToolButton.setText(_translate("QemuVMWizard", "Browse...", None))
+        self.uiInitrdToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
+        self.uiKernelImageToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
         self.uiDiskImageHdbWizardPage.setTitle(_translate("QemuVMWizard", "Additional disk image", None))
         self.uiDiskImageHdbWizardPage.setSubTitle(_translate("QemuVMWizard", "Please add an additional disk image for IDS.", None))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):", None))
-        self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "Browse...", None))
+        self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
 

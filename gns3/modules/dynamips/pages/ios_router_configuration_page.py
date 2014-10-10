@@ -228,12 +228,13 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             else:
                 self.uiBaseMACLineEdit.clear()
 
-            self.uiIOSImageLineEdit.setText(settings["path"])
+            self.uiIOSImageLineEdit.setText(settings["image"])
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
             self.uiIOSImageLabel.hide()
-            self.uiIOSImageComboBox.hide()
+            self.uiIOSImageLineEdit.hide()
+            self.uiIOSImageToolButton.hide()
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
@@ -457,8 +458,8 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
 
             # save the IOS image path
             path = self.uiIOSImageLineEdit.text()
-            settings["path"] = path
-            settings["image"] = os.path.basename(path)
+            #settings["path"] = path
+            settings["image"] = path#os.path.basename(path)
 
         else:
             del settings["name"]

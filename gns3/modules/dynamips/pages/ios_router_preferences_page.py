@@ -140,7 +140,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
             for wic_id in range(0, 3):
                 wic = "wic{}".format(wic_id)
-                if slot in ios_settings:
+                if wic in ios_settings:
                     self._ios_routers[key][wic] = ios_settings[wic]
 
             self._ios_routers[key].update(ios_settings)

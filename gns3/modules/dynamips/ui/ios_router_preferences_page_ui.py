@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Thu Oct  9 20:54:12 2014
+# Created: Fri Oct 10 10:43:48 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,7 +80,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(0, _translate("IOSRouterPreferencesPageWidget", "1", None))
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(1, _translate("IOSRouterPreferencesPageWidget", "2", None))
         self.uiNewIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&New", None))
-        self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Decompress", None))
+        self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Decompress", None))
         self.uiEditIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Edit", None))
         self.uiDeleteIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Delete", None))
 

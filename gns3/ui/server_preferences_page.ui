@@ -39,7 +39,7 @@
          <item>
           <widget class="QToolButton" name="uiLocalServerToolButton">
            <property name="text">
-            <string>...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -148,7 +148,7 @@
          <item>
           <widget class="QPushButton" name="uiAddRemoteServerPushButton">
            <property name="text">
-            <string>Add</string>
+            <string>&amp;Add</string>
            </property>
           </widget>
          </item>
@@ -158,7 +158,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Delete</string>
+            <string>&amp;Delete</string>
            </property>
           </widget>
          </item>

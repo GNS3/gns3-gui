@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Thu Oct  9 20:51:46 2014
+# Created: Fri Oct 10 10:43:48 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -567,11 +567,11 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiPlatformLabel.setText(_translate("iosRouterConfigPageWidget", "Platform:", None))
         self.uiChassisLabel.setText(_translate("iosRouterConfigPageWidget", "Chassis:", None))
         self.uiIOSImageLabel.setText(_translate("iosRouterConfigPageWidget", "IOS image:", None))
-        self.uiIOSImageToolButton.setText(_translate("iosRouterConfigPageWidget", "Browse...", None))
+        self.uiIOSImageToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse...", None))
         self.uiStartupConfigLabel.setText(_translate("iosRouterConfigPageWidget", "Startup-config:", None))
-        self.uiStartupConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "Browse...", None))
+        self.uiStartupConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse...", None))
         self.uiPrivateConfigLabel.setText(_translate("iosRouterConfigPageWidget", "Private-config:", None))
-        self.uiPrivateConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "Browse...", None))
+        self.uiPrivateConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse...", None))
         self.uiConsolePortLabel.setText(_translate("iosRouterConfigPageWidget", "Console port:", None))
         self.uiAuxPortLabel.setText(_translate("iosRouterConfigPageWidget", "Aux port:", None))
         self.uiMidplaneLabel.setText(_translate("iosRouterConfigPageWidget", "Midplane:", None))
