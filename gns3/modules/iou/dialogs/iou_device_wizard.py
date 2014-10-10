@@ -20,6 +20,7 @@ Wizard for IOU devices.
 """
 
 import os
+import re
 import sys
 import pkg_resources
 
@@ -84,6 +85,21 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             #  L3 image
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
 
+    def validateCurrentPage(self):
+        """
+        Validates the IOU name.
+        """
+
+        # if self.currentPage() == self.uiNameImageWizardPage:
+        #     name = self.uiNameLineEdit.text()
+        #     if not re.search(r"""^[\-\w]+$""", name):
+        #         # IOS names must start with a letter, end with a letter or digit, and
+        #         # have as interior characters only letters, digits, and hyphens.
+        #         # They must be 63 characters or fewer.
+        #         QtGui.QMessageBox.critical(self, "Name", "Invalid name detected: {}".format(name))
+        #         return False
+        return True
+
     def getSettings(self):
         """
         Returns the settings set in this Wizard.
@@ -93,7 +109,7 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
 
         path = self.uiIOUImageLineEdit.text()
 
-        if "l2" in path:
+        if self.uiTypeComboBox.currentText() == "L2 image":
             # set the default L2 base initial-config
             resource_name = "configs/iou_l2_base_initial-config.txt"
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):

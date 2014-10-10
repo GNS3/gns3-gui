@@ -107,7 +107,7 @@ class IOUDevice(Node):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, console=None, iou_id=None, initial_settings={}, base_name=None):
+    def setup(self, iou_path, name=None, console=None, iou_id=None, initial_settings={}, base_name="IOU"):
         """
         Setups this IOU device.
 

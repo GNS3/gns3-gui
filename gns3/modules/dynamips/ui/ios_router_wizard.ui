@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IOSRouterWizard</class>
+ <widget class="QWizard" name="IOSRouterWizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>397</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New IOS router</string>
+  </property>
+  <widget class="QWizardPage" name="uiNameImageWizardPage">
+   <property name="title">
+    <string>Name and image</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a descriptive name for the new IOS router and add an IOS image.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiNameLabel">
+      <property name="text">
+       <string>Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="uiNameLineEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiIOSImageLabel">
+      <property name="text">
+       <string>IOS image:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLineEdit" name="uiIOSImageLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiIOSImageToolButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiTypeLabel">
+      <property name="text">
+       <string>Platform:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="uiPlatformComboBox"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="uiChassisLabel">
+      <property name="text">
+       <string>Chassis:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="uiChassisComboBox"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiMemoryWizardPage">
+   <property name="title">
+    <string>Memory</string>
+   </property>
+   <property name="subTitle">
+    <string>Please check the amount of memory (RAM) that you allocate to IOS. Not enough RAM could prevent IOS to start.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiRamLabel">
+      <property name="text">
+       <string>RAM:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSpinBox" name="uiRamSpinBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="suffix">
+       <string> MiB</string>
+      </property>
+      <property name="minimum">
+       <number>32</number>
+      </property>
+      <property name="maximum">
+       <number>65535</number>
+      </property>
+      <property name="singleStep">
+       <number>32</number>
+      </property>
+      <property name="value">
+       <number>128</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiNetworkAdaptersWizardPage">
+   <property name="title">
+    <string>Network adapters</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose the network adapters to insert in the router.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiSlot0Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 0:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="uiSlot0comboBox"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiSlot1Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 1:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="uiSlot1comboBox"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiSlot2Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 2:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="uiSlot2comboBox"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="uiSlot3Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 3:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="uiSlot3comboBox"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="uiSlot4Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 4:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="uiSlot4comboBox"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="uiSlot5Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 5:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="uiSlot5comboBox"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="uiSlot6Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>slot 6:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="uiSlot6comboBox"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiWicWizardPage">
+   <property name="title">
+    <string>WIC modules</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose the WIC modules to insert in the router.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiWic0Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>wic 0:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="uiWic0comboBox"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiWic1Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>wic 1:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="uiWic1comboBox"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiWic2Label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>wic 2:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="uiWic2comboBox"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiIdlePCWizardPage">
+   <property name="title">
+    <string>Idle-PC</string>
+   </property>
+   <property name="subTitle">
+    <string>An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiIdlepcLabel">
+      <property name="text">
+       <string>Idle-PC:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="uiIdlepcLineEdit"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="uiIdlePCFinderPushButton">
+      <property name="text">
+       <string>Idle-PC finder</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>uiNameLineEdit</tabstop>
+  <tabstop>uiPlatformComboBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

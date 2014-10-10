@@ -480,23 +480,14 @@ class VirtualBox(Module):
         """
 
         nodes = []
-        if not self._virtualbox_vms:
+        for vbox_vm in self._virtualbox_vms.values():
             nodes.append(
                 {"class": VirtualBoxVM.__name__,
-                 "name": VirtualBoxVM.symbolName(),
+                 "name": vbox_vm["vmname"],
                  "categories": VirtualBoxVM.categories(),
-                 "default_symbol": VirtualBoxVM.defaultSymbol(),
-                 "hover_symbol": VirtualBoxVM.hoverSymbol()}
-                )
-        else:
-            for vbox_vm in self._virtualbox_vms.values():
-                nodes.append(
-                    {"class": VirtualBoxVM.__name__,
-                     "name": vbox_vm["vmname"],
-                     "categories": VirtualBoxVM.categories(),
-                     "default_symbol": vbox_vm["default_symbol"],
-                     "hover_symbol": vbox_vm["hover_symbol"]}
-                )
+                 "default_symbol": vbox_vm["default_symbol"],
+                 "hover_symbol": vbox_vm["hover_symbol"]}
+            )
         return nodes
 
     @staticmethod

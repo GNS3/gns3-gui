@@ -508,23 +508,14 @@ class Qemu(Module):
         """
 
         nodes = []
-        if not self._qemu_vms:
+        for qemu_vm in self._qemu_vms.values():
             nodes.append(
                 {"class": QemuVM.__name__,
-                 "name": QemuVM.symbolName(),
+                 "name": qemu_vm["name"],
                  "categories": QemuVM.categories(),
-                 "default_symbol": QemuVM.defaultSymbol(),
-                 "hover_symbol": QemuVM.hoverSymbol()}
-                )
-        else:
-            for qemu_vm in self._qemu_vms.values():
-                nodes.append(
-                    {"class": QemuVM.__name__,
-                     "name": qemu_vm["name"],
-                     "categories": QemuVM.categories(),
-                     "default_symbol": qemu_vm["default_symbol"],
-                     "hover_symbol": qemu_vm["hover_symbol"]}
-                )
+                 "default_symbol": qemu_vm["default_symbol"],
+                 "hover_symbol": qemu_vm["hover_symbol"]}
+        )
         return nodes
 
     @staticmethod

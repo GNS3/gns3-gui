@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>routerConfigPageWidget</class>
- <widget class="QWidget" name="routerConfigPageWidget">
+ <class>iosRouterConfigPageWidget</class>
+ <widget class="QWidget" name="iosRouterConfigPageWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,13 +31,20 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" colspan="2">
+       <item row="0" column="1">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="uiPlatformLabel">
          <property name="text">
           <string>Platform:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="uiPlatformTextLabel">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -48,12 +55,36 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="uiChassisTextLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="uiIOSImageLabel">
          <property name="text">
           <string>IOS image:</string>
          </property>
         </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLineEdit" name="uiIOSImageLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiIOSImageToolButton">
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="uiStartupConfigLabel">
@@ -62,7 +93,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2" colspan="2">
+       <item row="4" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QLineEdit" name="uiStartupConfigLineEdit"/>
@@ -70,7 +101,7 @@
          <item>
           <widget class="QToolButton" name="uiStartupConfigToolButton">
            <property name="text">
-            <string>...</string>
+            <string>Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -86,7 +117,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="2" colspan="2">
+       <item row="5" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
@@ -94,7 +125,7 @@
          <item>
           <widget class="QToolButton" name="uiPrivateConfigToolButton">
            <property name="text">
-            <string>...</string>
+            <string>Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -110,7 +141,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="2" colspan="2">
+       <item row="6" column="1">
         <widget class="QSpinBox" name="uiConsolePortSpinBox">
          <property name="maximum">
           <number>65535</number>
@@ -124,7 +155,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="2" colspan="2">
+       <item row="7" column="1">
         <widget class="QSpinBox" name="uiAuxPortSpinBox">
          <property name="maximum">
           <number>65535</number>
@@ -138,7 +169,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="2" colspan="2">
+       <item row="8" column="1">
         <widget class="QComboBox" name="uiMidplaneComboBox">
          <property name="enabled">
           <bool>true</bool>
@@ -158,7 +189,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="2" colspan="2">
+       <item row="9" column="1">
         <widget class="QComboBox" name="uiNPEComboBox">
          <property name="enabled">
           <bool>true</bool>
@@ -171,7 +202,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="2" colspan="2">
+       <item row="10" column="1">
         <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -183,23 +214,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="1" column="2" colspan="2">
-        <widget class="QLabel" name="uiPlatformTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2" colspan="2">
-        <widget class="QComboBox" name="uiIOSImageComboBox"/>
-       </item>
-       <item row="2" column="2" colspan="2">
-        <widget class="QLabel" name="uiChassisTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
