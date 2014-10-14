@@ -70,8 +70,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
         # Mandatory fields
-        self.uiNameImageWizardPage.registerField("name*", self.uiNameLineEdit)
-        self.uiNameImageWizardPage.registerField("image*", self.uiIOSImageLineEdit)
+        self.uiNamePlatformWizardPage.registerField("name*", self.uiNameLineEdit)
+        self.uiIOSImageWizardPage.registerField("image*", self.uiIOSImageLineEdit)
 
         self._widget_slots = {0: self.uiSlot0comboBox,
                               1: self.uiSlot1comboBox,
@@ -238,7 +238,11 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def initializePage(self, page_id):
 
-        if self.page(page_id) == self.uiMemoryWizardPage:
+        if self.page(page_id) == self.uiNamePlatformWizardPage:
+            self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
+            ios_image = self.uiIOSImageLineEdit.text()
+            self.setWindowTitle("New IOS router - {}".format(os.path.basename(ios_image)))
+        elif self.page(page_id) == self.uiMemoryWizardPage:
             # set the correct amount of RAM based on the platform
             from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
             platform = self.uiPlatformComboBox.currentText()

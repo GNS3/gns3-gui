@@ -121,7 +121,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                       "ram": ios_settings["ram"],
                                       "nvram": 256,
                                       "mac_addr": "",
-                                      "disk0": 16,
+                                      "disk0": 1,
                                       "disk1": 0,
                                       "confreg": "0x2102",
                                       "system_id": "FTX0945W0MY",

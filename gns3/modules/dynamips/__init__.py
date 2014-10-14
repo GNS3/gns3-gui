@@ -471,6 +471,15 @@ class Dynamips(Module):
             else:
                 settings["iomem"] = ios_router["iomem"]
 
+            if ios_router["nvram"]:
+                settings["nvram"] = ios_router["nvram"]
+
+            if ios_router["disk0"]:
+                settings["disk0"] = ios_router["disk0"]
+
+            if ios_router["disk1"]:
+                settings["disk1"] = ios_router["disk1"]
+
             for slot_id in range(0, 7):
                 slot = "slot{}".format(slot_id)
                 if slot in ios_router:
