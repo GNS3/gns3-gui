@@ -29,7 +29,7 @@ import logging
 from io import StringIO
 
 from libcloud.compute.base import NodeAuthSSHKey
-from libcloud.storage.types import ContainerAlreadyExistsError
+from libcloud.storage.types import ContainerAlreadyExistsError, ContainerDoesNotExistError
 
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
 from .exceptions import OverLimit, BadRequest, ServiceUnavailable
@@ -250,3 +250,20 @@ class BaseCloudCtrl(object):
             self.storage_driver.upload_object_via_stream(file, gns3_container, cloud_object_name)
             self.storage_driver.upload_object_via_stream(StringIO(local_file_hash), gns3_container, cloud_hash_name)
             return True
+
+    def list_projects(self):
+        """
+        Lists projects in cloud storage
+        :return: List of (project name, object name in storage)
+        """
+
+        try:
+            gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+            projects = [
+                (obj.name.replace('projects/', '').replace('.zip', ''), obj.name)
+                for obj in gns3_container.list_objects()
+                if obj.name.startswith('projects/') and obj.name[-4:] == '.zip'
+            ]
+            return projects
+        except ContainerDoesNotExistError:
+            return []

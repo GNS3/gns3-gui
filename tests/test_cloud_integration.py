@@ -28,7 +28,7 @@ import pytest
 
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
-
+from io import StringIO
 
 
 
@@ -56,6 +56,8 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.ctrl.authenticate()
         self.ctrl.set_region('ord')
         self.gns3_image = None
+
+        self.ctrl.GNS3_CONTAINER_NAME = 'TEST_GNS3'
 
     def tearDown(self):
         self._remove_instances()
@@ -326,8 +328,6 @@ class TestRackspaceCtrl(unittest.TestCase):
         print("Done.")
 
     def test_upload_file(self):
-        self.ctrl.GNS3_CONTAINER_NAME = 'TEST_GNS3'
-
         test_data = 'abcdefg'
         test_file = tempfile.NamedTemporaryFile(mode='w')
         with test_file.file as f:
@@ -350,6 +350,26 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(cloud_file_hash, hashlib.md5(test_data.encode('utf8')).hexdigest())
         self.assertEqual(cloud_file_contents, test_data)
         self.assertEqual(return_value, True)
+
+        for o in container.iterate_objects():
+            o.delete()
+
+        container.delete()
+
+    def test_list_projects(self):
+        container = self.ctrl.storage_driver.create_container(self.ctrl.GNS3_CONTAINER_NAME)
+
+        container.upload_object_via_stream(StringIO('abcd'), 'projects/project1.gns3.zip')
+        container.upload_object_via_stream(StringIO('abcd'), 'projects/project1.gns3.zip.md5')
+        container.upload_object_via_stream(StringIO('abcd'), 'projects/project2.gns3.zip')
+        container.upload_object_via_stream(StringIO('abcd'), 'some_file.txt')
+        container.upload_object_via_stream(StringIO('abcd'), 'some_file2.zip')
+
+        projects = self.ctrl.list_projects()
+
+        self.assertEqual(len(projects), 2)
+        self.assertTrue(('project1.gns3', 'projects/project1.gns3.zip') in projects)
+        self.assertTrue(('project2.gns3', 'projects/project2.gns3.zip') in projects)
 
         for o in container.iterate_objects():
             o.delete()
