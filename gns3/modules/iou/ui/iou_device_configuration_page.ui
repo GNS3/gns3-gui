@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
-    <height>448</height>
+    <width>420</width>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,250 +15,298 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="uiGeneralgroupBox">
-     <property name="styleSheet">
-      <string notr="true"/>
+    <widget class="QTabWidget" name="uiTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="title">
-      <string>General</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="uiNameLabel">
-        <property name="text">
-         <string>Name:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="uiNameLineEdit"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="uiIOUImageLabel">
-        <property name="text">
-         <string>IOU image:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="uiIOUImageComboBox"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiInitialConfigLabel">
-        <property name="text">
-         <string>Initial config:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QLineEdit" name="uiInitialConfigLineEdit"/>
-        </item>
-        <item>
-         <widget class="QToolButton" name="uiInitialConfigToolButton">
-          <property name="text">
-           <string>...</string>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextOnly</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="uiConsolePortLabel">
-        <property name="text">
-         <string>Console port:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="uiConsolePortSpinBox">
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>General settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="uiGeneralgroupBox">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="title">
+          <string>General</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiNameLabel">
+            <property name="text">
+             <string>Name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiNameLineEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiIOUImageLabel">
+            <property name="text">
+             <string>IOU image:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiIOUImageToolButton">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiInitialConfigLabel">
+            <property name="text">
+             <string>Initial config:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLineEdit" name="uiInitialConfigLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiInitialConfigToolButton">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiConsolePortLabel">
+            <property name="text">
+             <string>Console port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="uiConsolePortSpinBox">
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiOtherSettingsGroupBox">
+         <property name="title">
+          <string>Other settings</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiL1KeepalivesCheckBox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Enable layer 1 keepalive messages (testing only)</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiDefaultValuesCheckBox">
+            <property name="text">
+             <string>Use default IOU values for memories</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiRamLabel">
+            <property name="text">
+             <string>RAM size:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="uiRamSpinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> MB</string>
+            </property>
+            <property name="minimum">
+             <number>32</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="singleStep">
+             <number>32</number>
+            </property>
+            <property name="value">
+             <number>128</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiNvramLabel">
+            <property name="text">
+             <string>NVRAM size:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="uiNvramSpinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string> KB</string>
+            </property>
+            <property name="minimum">
+             <number>32</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="singleStep">
+             <number>32</number>
+            </property>
+            <property name="value">
+             <number>128</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>260</width>
+           <height>301</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Network</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Adapters</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiEthernetAdaptersLabel">
+            <property name="text">
+             <string>Ethernet adapters:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="uiEthernetAdaptersSpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>1 adapter egals 4 Ethernet interfaces</string>
+            </property>
+            <property name="maximum">
+             <number>16</number>
+            </property>
+            <property name="singleStep">
+             <number>2</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiSerialAdaptersLabel">
+            <property name="text">
+             <string>Serial adapters:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="uiSerialAdaptersSpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>1 adapter egals 4 serial interfaces</string>
+            </property>
+            <property name="maximum">
+             <number>16</number>
+            </property>
+            <property name="singleStep">
+             <number>2</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>347</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="uiAdvancedGroupBox">
-     <property name="title">
-      <string>Advanced</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0" colspan="2">
-       <widget class="QCheckBox" name="uiL1KeepalivesCheckBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Enable layer 1 keepalive messages (testing only)</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QCheckBox" name="uiDefaultValuesCheckBox">
-        <property name="text">
-         <string>Use default IOU values for memories</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiRamLabel">
-        <property name="text">
-         <string>RAM size:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="uiRamSpinBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="suffix">
-         <string> MB</string>
-        </property>
-        <property name="minimum">
-         <number>32</number>
-        </property>
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-        <property name="singleStep">
-         <number>32</number>
-        </property>
-        <property name="value">
-         <number>128</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="uiNvramLabel">
-        <property name="text">
-         <string>NVRAM size:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="uiNvramSpinBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="suffix">
-         <string> KB</string>
-        </property>
-        <property name="minimum">
-         <number>32</number>
-        </property>
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-        <property name="singleStep">
-         <number>32</number>
-        </property>
-        <property name="value">
-         <number>128</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Adapters</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="uiEthernetAdaptersLabel">
-        <property name="text">
-         <string>Ethernet adapters:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="uiEthernetAdaptersSpinBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>1 adapter egals 4 Ethernet interfaces</string>
-        </property>
-        <property name="maximum">
-         <number>16</number>
-        </property>
-        <property name="singleStep">
-         <number>2</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="uiSerialAdaptersLabel">
-        <property name="text">
-         <string>Serial adapters:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="uiSerialAdaptersSpinBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>1 adapter egals 4 serial interfaces</string>
-        </property>
-        <property name="maximum">
-         <number>16</number>
-        </property>
-        <property name="singleStep">
-         <number>2</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <spacer name="spacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>263</width>
-       <height>212</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

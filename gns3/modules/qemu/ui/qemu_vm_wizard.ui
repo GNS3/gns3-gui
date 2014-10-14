@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QemuVMWizard</class>
+ <widget class="QWizard" name="QemuVMWizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>367</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New QEMU VM</string>
+  </property>
+  <widget class="QWizardPage" name="uiNameTypeWizardPage">
+   <property name="title">
+    <string>Name and type</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a descriptive name for the new QEMU virtual machine and select the type of device.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiTypeLabel">
+      <property name="text">
+       <string>Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="uiNameLineEdit"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="uiTypeComboBox"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiNameLabel">
+      <property name="text">
+       <string>Name:</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiBinaryMemoryWizardPage">
+   <property name="title">
+    <string>QEMU binary and memory</string>
+   </property>
+   <property name="subTitle">
+    <string>Please check the Qemu binary is correctly set and the virtual machine has enough memory to work.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiRamLabel">
+      <property name="text">
+       <string>RAM:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiQemuListLabel">
+      <property name="text">
+       <string>Qemu binary:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QSpinBox" name="uiRamSpinBox">
+      <property name="suffix">
+       <string> MB</string>
+      </property>
+      <property name="minimum">
+       <number>32</number>
+      </property>
+      <property name="maximum">
+       <number>65535</number>
+      </property>
+      <property name="value">
+       <number>256</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="uiQemuListComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiDiskWizardPage">
+   <property name="title">
+    <string>Disk image</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a base disk image for your virtual machine.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_6">
+    <item row="0" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QLineEdit" name="uiHdaDiskImageLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiHdaDiskImageToolButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiHdaDiskImageLabel">
+      <property name="text">
+       <string>Disk image (hda):</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiASAWizardPage">
+   <property name="title">
+    <string>ASA VM</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a initrd and a kernel image.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="uiLinuxBootGroupBox">
+      <property name="title">
+       <string>Linux boot specific settings</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiKernelImageLineEdit"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiInitrdLabel">
+         <property name="text">
+          <string>Initial RAM disk (initrd):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiKernelImageLabel">
+         <property name="text">
+          <string>Kernel image:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiInitrdLineEdit"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QToolButton" name="uiInitrdToolButton">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextOnly</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QToolButton" name="uiKernelImageToolButton">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextOnly</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiDiskImageHdbWizardPage">
+   <property name="title">
+    <string>Additional disk image</string>
+   </property>
+   <property name="subTitle">
+    <string>Please add an additional disk image for IDS.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_7">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiHdbDiskImageLabel">
+      <property name="text">
+       <string>Disk image (hdb):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLineEdit" name="uiHdbDiskImageLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiHdbDiskImageToolButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>uiNameLineEdit</tabstop>
+  <tabstop>uiTypeComboBox</tabstop>
+  <tabstop>uiQemuListComboBox</tabstop>
+  <tabstop>uiRamSpinBox</tabstop>
+  <tabstop>uiHdaDiskImageLineEdit</tabstop>
+  <tabstop>uiHdaDiskImageToolButton</tabstop>
+  <tabstop>uiInitrdLineEdit</tabstop>
+  <tabstop>uiInitrdToolButton</tabstop>
+  <tabstop>uiKernelImageLineEdit</tabstop>
+  <tabstop>uiKernelImageToolButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -23,8 +23,21 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout">
+   <item row="2" column="1" colspan="2">
+    <widget class="QDialogButtonBox" name="uiButtonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
-    <widget class="QListWidget" name="uiListWidget">
+    <widget class="QTreeWidget" name="uiTreeWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -33,20 +46,38 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>160</width>
+       <width>140</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
+     <property name="indentation">
+      <number>10</number>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="0" colspan="3">
+    <widget class="Line" name="uiLine">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
     <layout class="QVBoxLayout">
      <property name="spacing">
       <number>3</number>
@@ -61,15 +92,14 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>16</pointsize>
+         <pointsize>14</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
          <underline>false</underline>
         </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
        </property>
       </widget>
      </item>
@@ -86,27 +116,9 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="Line" name="uiLine">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="uiButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>uiListWidget</tabstop>
   <tabstop>uiButtonBox</tabstop>
  </tabstops>
  <resources>

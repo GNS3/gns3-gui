@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VirtualBoxVMWizard</class>
+ <widget class="QWizard" name="VirtualBoxVMWizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>367</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New VirtualBox VM</string>
+  </property>
+  <widget class="QWizardPage" name="uiVirtualBoxWizardPage">
+   <property name="title">
+    <string>VirtualBox Virtual Machine</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a VirtualBox virtual machine from the list.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiVMListLabel">
+      <property name="text">
+       <string>VM list:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="uiVMListComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>uiVMListComboBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

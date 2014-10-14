@@ -82,6 +82,9 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             self.uiPrivateConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
 
         self.uiServerTypeComboBox.addItems(list(STATIC_SERVER_TYPES.keys()))
+        # Hide until cloud server support is complete
+        self.uiServerTypeLabel.hide()
+        self.uiServerTypeComboBox.hide()
 
 
     def _platformChangedSlot(self, platform):
@@ -162,14 +165,14 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
 
         #TODO: multiple remote server
-        # if Dynamips.instance().settings()["use_local_server"]:
-        #     server = "local"
-        # else:
-        #     server = next(iter(Servers.instance()))
-        #     if not server:
-        #         QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
-        #         return
-        #     server = server.host
+        if Dynamips.instance().settings()["use_local_server"]:
+            server = "local"
+        else:
+            server = next(iter(Servers.instance()))
+            if not server:
+                QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
+                return
+            server = server.host
         server = self.uiServerTypeComboBox.currentText()
 
         #ios_images = Dynamips.instance().iosImages()

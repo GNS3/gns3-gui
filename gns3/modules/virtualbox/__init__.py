@@ -44,6 +44,7 @@ class VirtualBox(Module):
         self._nodes = []
         self._servers = []
         self._working_dir = ""
+        self._virtualbox_vm_list = {}
 
         # load the settings
         self._loadSettings()
@@ -89,6 +90,8 @@ class VirtualBox(Module):
 
             vmname = settings.value("vmname", "")
             adapters = settings.value("adapters", 1, type=int)
+            default_symbol = settings.value("default_symbol", ":/symbols/vbox_guest.normal.svg")
+            hover_symbol = settings.value("hover_symbol", ":/symbols/vbox_guest.selected.svg")
             adapter_start_index = settings.value("adapter_start_index", 0, type=int)
             adapter_type = settings.value("adapter_type", "Automatic")
             headless = settings.value("headless", False, type=bool)
@@ -97,6 +100,8 @@ class VirtualBox(Module):
 
             key = "{server}:{vmname}".format(server=server, vmname=vmname)
             self._virtualbox_vms[key] = {"vmname": vmname,
+                                         "default_symbol": default_symbol,
+                                         "hover_symbol": hover_symbol,
                                          "adapters": adapters,
                                          "adapter_start_index": adapter_start_index,
                                          "adapter_type": adapter_type,
@@ -333,26 +338,33 @@ class VirtualBox(Module):
 
         log.info("configuring node {} with id {}".format(node, node.id()))
 
-        selected_vms = []
-        for vm, info in self._virtualbox_vms.items():
-            if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
-                selected_vms.append(vm)
+        vm = None
+        if node_name:
+            for vm_key, info in self._virtualbox_vms.items():
+                if node_name == info["vmname"]:
+                    vm = vm_key
 
-        if not selected_vms:
-            raise ModuleError("No VirtualBox VM on server {}".format(node.server().host))
-        elif len(selected_vms) > 1:
+        if not vm:
+            selected_vms = []
+            for vm, info in self._virtualbox_vms.items():
+                if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                    selected_vms.append(vm)
 
-            from gns3.main_window import MainWindow
-            mainwindow = MainWindow.instance()
+            if not selected_vms:
+                raise ModuleError("No VirtualBox VM on server {}".format(node.server().host))
+            elif len(selected_vms) > 1:
 
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
-            if ok:
-                vm = selection
+                from gns3.main_window import MainWindow
+                mainwindow = MainWindow.instance()
+
+                (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
+                if ok:
+                    vm = selection
+                else:
+                    raise ModuleError("Please select a VirtualBox VM")
+
             else:
-                raise ModuleError("Please select a VirtualBox VM")
-
-        else:
-            vm = selected_vms[0]
+                vm = selected_vms[0]
 
         for other_node in self._nodes:
             if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
@@ -395,13 +407,13 @@ class VirtualBox(Module):
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
 
-    def get_vm_list(self, server, callback):
+    def refreshVirtualBoxVMs(self, server):
         """
         Gets the VirtualBox VM list from a server.
 
         :param server: server to send the request to
-        :param callback: callback for the server response
         """
+
         if not server.connected():
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
@@ -411,7 +423,33 @@ class VirtualBox(Module):
                                                                                  server.port,
                                                                                  e))
 
-        server.send_message("virtualbox.vm_list", None, callback)
+        server.send_message("virtualbox.vm_list", None, self._refreshVirtualBoxVMsCallback)
+
+    def _refreshVirtualBoxVMsCallback(self, result, error=False):
+        """
+        Callback to get the VirtualBox VM list.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("could not get the VirtualBox VM list: {}".format(result["message"]))
+        else:
+            if self.settings()["use_local_server"]:
+                server = "local"
+            else:
+                server = result["server"]
+            self._virtualbox_vm_list[server] = result
+
+    def getVirtualBoxVMList(self):
+        """
+        Returns the list of VirtualBox VMs
+
+        :return: dict
+        """
+
+        return self._virtualbox_vm_list
 
     @staticmethod
     def getNodeClass(name):
@@ -442,14 +480,23 @@ class VirtualBox(Module):
         """
 
         nodes = []
-        for node_class in VirtualBox.classes():
+        if not self._virtualbox_vms:
             nodes.append(
-                {"class": node_class.__name__,
-                 "name": node_class.symbolName(),
-                 "categories": node_class.categories(),
-                 "default_symbol": node_class.defaultSymbol(),
-                 "hover_symbol": node_class.hoverSymbol()}
-            )
+                {"class": VirtualBoxVM.__name__,
+                 "name": VirtualBoxVM.symbolName(),
+                 "categories": VirtualBoxVM.categories(),
+                 "default_symbol": VirtualBoxVM.defaultSymbol(),
+                 "hover_symbol": VirtualBoxVM.hoverSymbol()}
+                )
+        else:
+            for vbox_vm in self._virtualbox_vms.values():
+                nodes.append(
+                    {"class": VirtualBoxVM.__name__,
+                     "name": vbox_vm["vmname"],
+                     "categories": VirtualBoxVM.categories(),
+                     "default_symbol": vbox_vm["default_symbol"],
+                     "hover_symbol": vbox_vm["hover_symbol"]}
+                )
         return nodes
 
     @staticmethod

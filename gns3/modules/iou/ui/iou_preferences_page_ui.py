@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/workspace/git/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Wed Apr 30 16:43:13 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Sep 30 19:03:23 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -45,25 +45,14 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIOURCPathToolButton.setObjectName(_fromUtf8("uiIOURCPathToolButton"))
         self.horizontalLayout_5.addWidget(self.uiIOURCPathToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_5, 3, 0, 1, 2)
-        spacerItem = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 6, 1, 1, 1)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.uiTestSettingsPushButton = QtGui.QPushButton(self.uiGeneralSettingsTabWidget)
-        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
-        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(self.uiGeneralSettingsTabWidget)
-        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 6, 0, 1, 1)
         self.uiIouyapPathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiIouyapPathLabel.setObjectName(_fromUtf8("uiIouyapPathLabel"))
         self.gridLayout.addWidget(self.uiIouyapPathLabel, 4, 0, 1, 1)
         self.uiIOURCPathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiIOURCPathLabel.setObjectName(_fromUtf8("uiIOURCPathLabel"))
         self.gridLayout.addWidget(self.uiIOURCPathLabel, 2, 0, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 7, 0, 1, 2)
+        spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 7, 0, 1, 2)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.uiIouyapPathLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
@@ -116,8 +105,8 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiConsoleEndPortSpinBox.setProperty("value", 4500)
         self.uiConsoleEndPortSpinBox.setObjectName(_fromUtf8("uiConsoleEndPortSpinBox"))
         self.horizontalLayout.addWidget(self.uiConsoleEndPortSpinBox)
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem2)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addWidget(self.uiConsolePortRangeGroupBox)
         self.uiUDPPortRangeGroupBox = QtGui.QGroupBox(self.tab)
         self.uiUDPPortRangeGroupBox.setObjectName(_fromUtf8("uiUDPPortRangeGroupBox"))
@@ -138,13 +127,24 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiUDPEndPortSpinBox.setProperty("value", 40000)
         self.uiUDPEndPortSpinBox.setObjectName(_fromUtf8("uiUDPEndPortSpinBox"))
         self.horizontalLayout_4.addWidget(self.uiUDPEndPortSpinBox)
-        spacerItem3 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem3)
+        spacerItem2 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem2)
         self.verticalLayout.addWidget(self.uiUDPPortRangeGroupBox)
-        spacerItem4 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem4)
+        spacerItem3 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem3)
         self.uiTabWidget.addTab(self.tab, _fromUtf8(""))
         self.vboxlayout.addWidget(self.uiTabWidget)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        spacerItem4 = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem4)
+        self.uiTestSettingsPushButton = QtGui.QPushButton(IOUPreferencesPageWidget)
+        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
+        self.uiRestoreDefaultsPushButton = QtGui.QPushButton(IOUPreferencesPageWidget)
+        self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
+        self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
+        self.vboxlayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(IOUPreferencesPageWidget)
         self.uiTabWidget.setCurrentIndex(0)
@@ -153,8 +153,6 @@ class Ui_IOUPreferencesPageWidget(object):
     def retranslateUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setWindowTitle(_translate("IOUPreferencesPageWidget", "IOS on UNIX", None))
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "...", None))
-        self.uiTestSettingsPushButton.setText(_translate("IOUPreferencesPageWidget", "Test settings", None))
-        self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults", None))
         self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap (local Linux server only):", None))
         self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC (pushed to the server):", None))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "...", None))
@@ -169,4 +167,6 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiUDPPortRangeGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "UDP tunneling port range", None))
         self.uiUDPPortRangeLabel.setText(_translate("IOUPreferencesPageWidget", "to", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("IOUPreferencesPageWidget", "Advanced settings", None))
+        self.uiTestSettingsPushButton.setText(_translate("IOUPreferencesPageWidget", "Test settings", None))
+        self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults", None))
 

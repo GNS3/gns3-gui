@@ -20,7 +20,6 @@ Main window for the GUI.
 """
 
 import os
-import tempfile
 import socket
 import shutil
 import json
@@ -84,7 +83,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
-        self._temporary_project = True
         self._max_recent_files = 5
         self._recent_file_actions = []
 
@@ -124,6 +122,23 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
+
+        # a project must be created before a user can drop devices
+        # on the drawing area
+        self.uiGraphicsView.setEnabled(False)
+
+        # let users know they cannot drop anything until
+        # they create or open a project
+        text_item = QtGui.QGraphicsTextItem("Please create or open a project")
+        font = text_item.font()
+        font.setPointSize(14)
+        font.setBold(True)
+        text_item.setFont(font)
+        text_item.setDefaultTextColor(QtGui.QColor("gray"))
+        x = text_item.pos().x() - (text_item.boundingRect().width() / 2)
+        y = text_item.pos().y() - (text_item.boundingRect().height() / 2)
+        text_item.setPos(x, y)
+        self.uiGraphicsView.scene().addItem(text_item)
 
         #FIXME: hide the cloud dock for beta release
         #self.uiCloudInspectorDockWidget.hide()
@@ -379,9 +394,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._project_settings.update(new_project_settings)
                 self._saveProject(new_project_settings["project_path"])
 
-            else:
-                self._createTemporaryProject()
-
             self.project_new_signal.emit(self._project_settings["project_path"])
 
     def _openProjectActionSlot(self):
@@ -420,10 +432,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to save a project.
         """
 
-        if self._temporary_project:
-            return self._saveProjectAs()
-        else:
-            return self._saveProject(self._project_settings["project_path"])
+        return self._saveProject(self._project_settings["project_path"])
 
     def _saveProjectAsActionSlot(self):
         """
@@ -958,19 +967,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            if self._temporary_project:
-                destination_file = "untitled.gns3"
-            else:
-                destination_file = os.path.basename(self._project_settings["project_path"])
+            destination_file = os.path.basename(self._project_settings["project_path"])
             reply = QtGui.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                               QtGui.QMessageBox.Discard | QtGui.QMessageBox.Save | QtGui.QMessageBox.Cancel)
             if reply == QtGui.QMessageBox.Save:
-                if self._temporary_project:
-                    return self._saveProjectAs()
                 return self._saveProject(self._project_settings["project_path"])
             elif reply == QtGui.QMessageBox.Cancel:
                 return False
-        self._deleteTemporaryProject()
         return True
 
     def startupLoading(self):
@@ -978,8 +981,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
-        self._createTemporaryProject()
-        self._newsActionSlot()
+        self._newProjectActionSlot()
+        #self._newsActionSlot()
 
         # connect to the local server
         servers = Servers.instance()
@@ -1064,12 +1067,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
             return
 
-        if self._temporary_project:
-            default_project_name = "untitled"
-        else:
-            default_project_name = os.path.basename(self._project_settings["project_path"])
-            if default_project_name.endswith(".gns3"):
-                default_project_name = default_project_name[:-5]
+        default_project_name = os.path.basename(self._project_settings["project_path"])
+        if default_project_name.endswith(".gns3"):
+            default_project_name = default_project_name[:-5]
 
         try:
             projects_dir_path = self.projectsDirPath()
@@ -1123,16 +1123,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # let all modules know about the new project files directory
         self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
 
-        if self._temporary_project:
-            # move files if saving from a temporary project
-            log.info("moving project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir, move=True)
-            progress_dialog = ProgressDialog(self._thread, "Project", "Moving project files...", "Cancel", parent=self)
-        else:
-            # else, just copy the files
-            log.info("copying project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir)
-            progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
+        log.info("copying project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
+        self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir)
+        progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 
@@ -1141,7 +1134,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             errors = "\n".join(errors)
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
-        self._deleteTemporaryProject()
         self._project_settings["project_files_dir"] = new_project_files_dir
         self._project_settings["project_name"] = project_name
         return self._saveProject(topology_file_path)
@@ -1240,53 +1232,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return True
 
-    def _deleteTemporaryProject(self):
-        """
-        Deletes a temporary project.
-        """
-
-        if self._temporary_project and self._project_settings["project_path"]:
-            # delete the temporary project files
-            log.info("deleting temporary project files directory: {}".format(self._project_settings["project_files_dir"]))
-            shutil.rmtree(self._project_settings["project_files_dir"], ignore_errors=True)
-            try:
-                log.info("deleting temporary topology file: {}".format(self._project_settings["project_path"]))
-                os.remove(self._project_settings["project_path"])
-            except OSError as e:
-                log.warning("could not delete temporary topology file: {}: {}".format(self._project_settings["project_path"], e))
-
-    def _createTemporaryProject(self):
-        """
-        Creates a temporary project.
-        """
-
-        self.uiGraphicsView.reset()
-        try:
-            with tempfile.NamedTemporaryFile(prefix="gns3-", delete=False) as f:
-                log.info("creating temporary topology file: {}".format(f.name))
-                project_files_dir = f.name + "-files"
-                if not os.path.isdir(project_files_dir):
-                    log.info("creating temporary project files directory: {}".format(project_files_dir))
-                    os.mkdir(project_files_dir)
-
-                self._project_settings["project_files_dir"] = project_files_dir
-                self._project_settings["project_path"] = f.name
-
-        except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
-
-        self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
-        self._setCurrentFile()
-
-    def isTemporaryProject(self):
-        """
-        Returns either this is a temporary project or not.
-
-        :returns: boolean
-        """
-
-        return self._temporary_project
-
     def _setCurrentFile(self, path=None):
         """
         Sets the current project file path.
@@ -1294,16 +1239,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param path: path to project file
         """
 
-        if not path:
-            self._temporary_project = True
-            self.setWindowFilePath("Unsaved project")
-        else:
-            self._temporary_project = False
-            self.setWindowFilePath(path)
-            self._updateRecentFileSettings(path)
-            self._updateRecentFileActions()
-
+        self.setWindowFilePath(path)
+        self._updateRecentFileSettings(path)
+        self._updateRecentFileActions()
         self.setWindowModified(False)
+        self.uiGraphicsView.setEnabled(True)
 
     def _updateRecentFileSettings(self, path):
         """
@@ -1408,8 +1348,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param project: path to gns3 project file
         """
 
-        if self._temporary_project:
-            # do nothing if previous project was temporary
+        if not project:
+            # no project has been created yet
             return
 
         with open(project) as f:
@@ -1438,8 +1378,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         :param project: path to gns3 project file currently opened
         """
-        if self._temporary_project:
-            # do nothing if project is temporary
+
+        if not project:
+            # no project has been created yet
             return
 
         with open(project) as f:
@@ -1509,12 +1450,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         return instance, keypair
 
     def _exportProjectActionSlot(self):
-        if self._temporary_project:
-            # do nothing if project is temporary
-            QtGui.QMessageBox.critical(
-                self, "Export project server",
-                "Cannot export temporary projects, please save current project first.")
-            return
 
         upload_thread = UploadProjectThread(self._project_settings, self.cloudSettings())
         progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel", parent=self)
