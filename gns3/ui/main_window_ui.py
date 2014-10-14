@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/masci/devel/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Sep 22 14:03:57 2014
+# Created: Fri Oct 10 23:10:53 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,8 +48,8 @@ class Ui_MainWindow(object):
         self.uiCentralWidget = QtGui.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName(_fromUtf8("uiCentralWidget"))
         self.gridlayout = QtGui.QGridLayout(self.uiCentralWidget)
-        self.gridlayout.setSpacing(0)
         self.gridlayout.setMargin(0)
+        self.gridlayout.setSpacing(0)
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
         self.uiGraphicsView = GraphicsView(self.uiCentralWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtGui.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 980, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 980, 25))
         self.uiMenuBar.setObjectName(_fromUtf8("uiMenuBar"))
         self.uiEditMenu = QtGui.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName(_fromUtf8("uiEditMenu"))
@@ -166,8 +166,8 @@ class Ui_MainWindow(object):
         self.uiTopologySummaryDockWidgetContents = QtGui.QWidget()
         self.uiTopologySummaryDockWidgetContents.setObjectName(_fromUtf8("uiTopologySummaryDockWidgetContents"))
         self.gridlayout1 = QtGui.QGridLayout(self.uiTopologySummaryDockWidgetContents)
-        self.gridlayout1.setSpacing(0)
         self.gridlayout1.setMargin(0)
+        self.gridlayout1.setSpacing(0)
         self.gridlayout1.setObjectName(_fromUtf8("gridlayout1"))
         self.uiTopologySummaryTreeWidget = TopologySummaryView(self.uiTopologySummaryDockWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -650,9 +650,9 @@ class Ui_MainWindow(object):
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view", None))
         self.uiExportProjectAction.setText(_translate("MainWindow", "Export project", None))
 
-from ..nodes_view import NodesView
-from ..console_view import ConsoleView
 from ..cloud_inspector_view import CloudInspectorView
+from ..console_view import ConsoleView
+from ..nodes_view import NodesView
 from ..graphics_view import GraphicsView
 from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

@@ -251,6 +251,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
         if self._items:
             self.uiVirtualBoxVMsTreeWidget.setCurrentItem(self._items[0])
+            self.uiVirtualBoxVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def savePreferences(self):
         """

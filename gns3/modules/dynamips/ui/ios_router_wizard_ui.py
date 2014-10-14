@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Fri Oct 10 10:43:48 2014
+# Created: Mon Oct 13 16:55:45 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -82,6 +82,9 @@ class Ui_IOSRouterWizard(object):
         self.uiRamSpinBox.setProperty("value", 128)
         self.uiRamSpinBox.setObjectName(_fromUtf8("uiRamSpinBox"))
         self.gridLayout_2.addWidget(self.uiRamSpinBox, 0, 1, 1, 1)
+        self.uiTestIOSImagePushButton = QtGui.QPushButton(self.uiMemoryWizardPage)
+        self.uiTestIOSImagePushButton.setObjectName(_fromUtf8("uiTestIOSImagePushButton"))
+        self.gridLayout_2.addWidget(self.uiTestIOSImagePushButton, 0, 2, 1, 1)
         IOSRouterWizard.addPage(self.uiMemoryWizardPage)
         self.uiNetworkAdaptersWizardPage = QtGui.QWizardPage()
         self.uiNetworkAdaptersWizardPage.setObjectName(_fromUtf8("uiNetworkAdaptersWizardPage"))
@@ -235,6 +238,7 @@ class Ui_IOSRouterWizard(object):
         self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Not enough RAM could prevent IOS to start.", None))
         self.uiRamLabel.setText(_translate("IOSRouterWizard", "RAM:", None))
         self.uiRamSpinBox.setSuffix(_translate("IOSRouterWizard", " MiB", None))
+        self.uiTestIOSImagePushButton.setText(_translate("IOSRouterWizard", "&Test IOS image", None))
         self.uiNetworkAdaptersWizardPage.setTitle(_translate("IOSRouterWizard", "Network adapters", None))
         self.uiNetworkAdaptersWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose the network adapters to insert in the router.", None))
         self.uiSlot0Label.setText(_translate("IOSRouterWizard", "slot 0:", None))

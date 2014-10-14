@@ -537,6 +537,8 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         # save the adapters and WICs configuration and
         # check if a module port is connected before removing or replacing.
         for slot_number, widget in self._widget_slots.items():
+            if not widget.isEnabled():
+                break
             module = widget.currentText()
             if module:
                 if settings["slot" + str(slot_number)] and settings["slot" + str(slot_number)] != module:
@@ -549,6 +551,8 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 settings["slot" + str(slot_number)] = None
 
         for wic_number, widget in self._widget_wics.items():
+            if not widget.isEnabled():
+                break
             wic_name = str(widget.currentText())
             if wic_name:
                 if settings["wic" + str(wic_number)] and settings["wic" + str(wic_number)] != wic_name:

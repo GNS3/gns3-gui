@@ -484,6 +484,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         if self._items:
             self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
+            self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def savePreferences(self):
         """

@@ -628,6 +628,16 @@ class Router(Node):
             self._idlepcs = result["idlepcs"]
             self.idlepc_signal.emit()
 
+    def computeAutoIdlepc(self, callback):
+        """
+        Automatically search for an Idle-PC value.
+
+        :param callback: Callback for the response
+        """
+
+        log.debug("{} is starting an auto idle-pc lookup".format(self.name()))
+        self._server.send_message("dynamips.vm.auto_idlepc", {"id": self._router_id}, callback)
+
     def idlepcs(self):
         """
         Returns previously computed idle-pc values.

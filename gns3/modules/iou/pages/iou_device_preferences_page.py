@@ -350,7 +350,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         if self._items:
             self.uiIOUDevicesTreeWidget.setCurrentItem(self._items[0])
-
+            self.uiIOUDevicesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def savePreferences(self):
         """

@@ -278,6 +278,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         if self._items:
             self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
+            self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def savePreferences(self):
         """
