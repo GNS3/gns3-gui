@@ -144,7 +144,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             name = self.uiNameLineEdit.text()
             if not name:
                 QtGui.QMessageBox.critical(self, "Name", "IOU device name cannot be empty!")
-            elif not re.search(r"""^[\-\w]+$""", name):
+            elif node and not re.search(r"""^[\-\w]+$""", name):
                 # IOS names must start with a letter, end with a letter or digit, and
                 # have as interior characters only letters, digits, and hyphens.
                 # They must be 63 characters or fewer.

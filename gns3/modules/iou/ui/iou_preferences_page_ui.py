@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Tue Sep 30 19:03:23 2014
+# Created: Fri Oct 10 10:43:47 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -152,10 +152,10 @@ class Ui_IOUPreferencesPageWidget(object):
 
     def retranslateUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setWindowTitle(_translate("IOUPreferencesPageWidget", "IOS on UNIX", None))
-        self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "...", None))
+        self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse...", None))
         self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap (local Linux server only):", None))
         self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC (pushed to the server):", None))
-        self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "...", None))
+        self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server (Linux only)", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Remote servers", None))

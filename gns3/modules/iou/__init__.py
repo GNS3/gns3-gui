@@ -83,10 +83,10 @@ class IOU(Module):
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOUImages")
+        settings.beginGroup("IOUDevices")
 
         # load the IOU images
-        size = settings.beginReadArray("iou_image")
+        size = settings.beginReadArray("iou_device")
         for index in range(0, size):
             settings.setArrayIndex(index)
             name = settings.value("name", "IOU{}".format(index + 1))
@@ -120,16 +120,16 @@ class IOU(Module):
 
     def _saveIOUDevices(self):
         """
-        Saves the IOU images to the persistent settings file.
+        Saves the IOU devices to the persistent settings file.
         """
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOUImages")
+        settings.beginGroup("IOUDevices")
         settings.remove("")
 
         # save the IOU images
-        settings.beginWriteArray("iou_image", len(self._iou_devices))
+        settings.beginWriteArray("iou_device", len(self._iou_devices))
         index = 0
         for ios_image in self._iou_devices.values():
             settings.setArrayIndex(index)
@@ -424,7 +424,7 @@ class IOU(Module):
             settings["nvram"] = self._iou_devices[iouimage]["nvram"]
         settings["ethernet_adapters"] = self._iou_devices[iouimage]["ethernet_adapters"]
         settings["serial_adapters"] = self._iou_devices[iouimage]["serial_adapters"]
-        node.setup(iou_path, initial_settings=settings, base_name=name)
+        node.setup(iou_path, initial_settings=settings)
 
     def reset(self):
         """
@@ -546,24 +546,14 @@ class IOU(Module):
         """
 
         nodes = []
-        if not self._iou_devices:
-            for node_class in IOU.classes():
-                nodes.append(
-                    {"class": node_class.__name__,
-                     "name": node_class.symbolName(),
-                     "categories": node_class.categories(),
-                     "default_symbol": node_class.defaultSymbol(),
-                     "hover_symbol": node_class.hoverSymbol()}
-                )
-        else:
-            for iou_device in self._iou_devices.values():
-                nodes.append(
-                    {"class": IOUDevice.__name__,
-                     "name": iou_device["name"],
-                     "categories": IOUDevice.categories(),
-                     "default_symbol": iou_device["default_symbol"],
-                     "hover_symbol": iou_device["hover_symbol"]}
-                )
+        for iou_device in self._iou_devices.values():
+            nodes.append(
+                {"class": IOUDevice.__name__,
+                 "name": iou_device["name"],
+                 "categories": IOUDevice.categories(),
+                 "default_symbol": iou_device["default_symbol"],
+                 "hover_symbol": iou_device["hover_symbol"]}
+            )
         return nodes
 
     @staticmethod

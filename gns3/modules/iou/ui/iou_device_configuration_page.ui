@@ -58,7 +58,7 @@
             <item>
              <widget class="QToolButton" name="uiIOUImageToolButton">
               <property name="text">
-               <string>Browse...</string>
+               <string>&amp;Browse...</string>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextOnly</enum>
@@ -82,7 +82,7 @@
             <item>
              <widget class="QToolButton" name="uiInitialConfigToolButton">
               <property name="text">
-               <string>Browse...</string>
+               <string>&amp;Browse...</string>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextOnly</enum>

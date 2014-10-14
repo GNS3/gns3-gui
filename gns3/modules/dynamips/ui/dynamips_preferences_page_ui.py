@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Tue Sep 30 19:03:23 2014
+# Created: Fri Oct 10 10:46:44 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_DynamipsPreferencesPageWidget(object):
     def setupUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setObjectName(_fromUtf8("DynamipsPreferencesPageWidget"))
-        DynamipsPreferencesPageWidget.resize(430, 505)
+        DynamipsPreferencesPageWidget.resize(430, 539)
         self.vboxlayout = QtGui.QVBoxLayout(DynamipsPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(DynamipsPreferencesPageWidget)
@@ -237,7 +237,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
 
     def retranslateUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setWindowTitle(_translate("DynamipsPreferencesPageWidget", "Dynamips", None))
-        self.uiDynamipsPathToolButton.setText(_translate("DynamipsPreferencesPageWidget", "...", None))
+        self.uiDynamipsPathToolButton.setText(_translate("DynamipsPreferencesPageWidget", "&Browse...", None))
         self.uiDynamipsPathLabel.setText(_translate("DynamipsPreferencesPageWidget", "Path to Dynamips:", None))
         self.uiConsolePortRangeGroupBox.setTitle(_translate("DynamipsPreferencesPageWidget", "Console port range for routers", None))
         self.uiConsolePortRangeLabel.setText(_translate("DynamipsPreferencesPageWidget", "to", None))

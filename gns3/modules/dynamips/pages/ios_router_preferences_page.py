@@ -16,31 +16,35 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for IOS image & router preferences.
+Configuration page for IOS router preferences.
 """
 
 import os
+import copy
 import sys
-import re
 import pkg_resources
 import shutil
 import math
 import zipfile
 
-from gns3.qt import QtGui
-from gns3.servers import Servers
+from gns3.qt import QtCore, QtGui
 from gns3.main_window import MainWindow
 from gns3.utils.progress_dialog import ProgressDialog
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.dialogs.configuration_dialog import ConfigurationDialog
+
 from ..utils.decompress_ios import isIOSCompressed
 from ..utils.decompress_ios_thread import DecompressIOSThread
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, STATIC_SERVER_TYPES
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
+from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
+from ..dialogs.ios_router_wizard import IOSRouterWizard
 
 
 class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget):
     """
-    QWidget preference page for IOS images and routers.
+    QWidget preference page for IOS routers.
     """
 
     def __init__(self):
@@ -48,185 +52,141 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.setupUi(self)
 
         self._main_window = MainWindow.instance()
-        self._ios_images = {}
-        self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
-        self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
-        self.uiSaveIOSImagePushButton.clicked.connect(self._iosImageSaveSlot)
-        self.uiDeleteIOSImagePushButton.clicked.connect(self._iosImageDeleteSlot)
-        self.uiIOSImagesTreeWidget.itemClicked.connect(self._iosImageClickedSlot)
-        self.uiIOSImagesTreeWidget.itemSelectionChanged.connect(self._iosImageChangedSlot)
-        self.uiIOSPathToolButton.clicked.connect(self._iosImageBrowserSlot)
-        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
-        self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
-        self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
+        self._ios_routers = {}
+        self._items = []
+
+        self.uiNewIOSRouterPushButton.clicked.connect(self._iosRouterNewSlot)
+        self.uiEditIOSRouterPushButton.clicked.connect(self._iosRouterEditSlot)
+        self.uiDeleteIOSRouterPushButton.clicked.connect(self._iosRouterDeleteSlot)
+        self.uiIOSRoutersTreeWidget.currentItemChanged.connect(self._iosRouterChangedSlot)
+        self.uiIOSRoutersTreeWidget.itemPressed.connect(self._iosRouterPressedSlot)
         self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
-        self.uiIOSImageTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
-        #FIXME: temporarily hide test button
-        self.uiIOSImageTestSettingsPushButton.hide()
+        # self.uiServerTypeComboBox.addItems(list(STATIC_SERVER_TYPES.keys()))
+        # # Hide until cloud server support is complete
+        # self.uiServerTypeLabel.hide()
+        # self.uiServerTypeComboBox.hide()
 
-        # set the default base startup-config
-        resource_name = "configs/ios_base_startup-config.txt"
-        if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-            self.uiStartupConfigLineEdit.setText(os.path.normpath(resource_name ))
-        elif pkg_resources.resource_exists("gns3", resource_name):
-            ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiStartupConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
-
-        # set the default base private-config
-        resource_name = "configs/ios_base_private-config.txt"
-        if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-            self.uiPrivateConfigLineEdit.setText(os.path.normpath(resource_name))
-        elif pkg_resources.resource_exists("gns3", resource_name):
-            ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-            self.uiPrivateConfigLineEdit.setText(os.path.normpath(ios_base_config_path))
-
-        self.uiServerTypeComboBox.addItems(list(STATIC_SERVER_TYPES.keys()))
-        # Hide until cloud server support is complete
-        self.uiServerTypeLabel.hide()
-        self.uiServerTypeComboBox.hide()
-
-
-    def _platformChangedSlot(self, platform):
+    def _iosRouterChangedSlot(self, current, previous):
         """
-        Updates the chassis comboBox based on the selected platform.
+        Loads a selected an IOS router from the tree widget.
 
-        :param platform: selected router platform
+        :param current: current QTreeWidgetItem instance
+        :param previous: ignored
         """
 
-        self.uiChassisComboBox.clear()
-        if platform in CHASSIS:
-            self.uiChassisComboBox.addItems(CHASSIS[platform])
-
-    def _iosImageClickedSlot(self, item, column):
-        """
-        Loads a selected IOS image from the tree widget.
-
-        :param item: selected QTreeWidgetItem instance
-        :param column: ignored
-        """
-
-        image = item.text(0)
-        server = item.text(2)
-        key = "{server}:{image}".format(server=server, image=image)
-        ios_image = self._ios_images[key]
-
-        self.uiIOSPathLineEdit.setText(ios_image["path"])
-        self.uiStartupConfigLineEdit.setText(ios_image["startup_config"])
-        self.uiPrivateConfigLineEdit.setText(ios_image["private_config"])
-        index = self.uiPlatformComboBox.findText(ios_image["platform"])
-        if index != -1:
-            self.uiPlatformComboBox.setCurrentIndex(index)
-        index = self.uiChassisComboBox.findText(ios_image["chassis"])
-        if index != -1:
-            self.uiChassisComboBox.setCurrentIndex(index)
-        self.uiIdlePCLineEdit.setText(ios_image["idlepc"])
-        self.uiRAMSpinBox.setValue(ios_image["ram"])
-        index = self.uiServerTypeComboBox.findText(ios_image["server"])
-        if index != -1:
-            self.uiServerTypeComboBox.setCurrentIndex(index)
-
-    def _iosImageChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiIOSImagesTreeWidget.currentItem()
-        if item:
-            self.uiDeleteIOSImagePushButton.setEnabled(True)
-        else:
-            self.uiDeleteIOSImagePushButton.setEnabled(False)
-
-    def _iosImageSaveSlot(self):
-        """
-        Adds/Saves an IOS image.
-        """
-
-        path = self.uiIOSPathLineEdit.text()
-        if not path:
-            QtGui.QMessageBox.critical(self, "IOS image", "The path cannot be empty!")
+        if not current:
+            self.uiIOSRouterInfoTreeWidget.clear()
             return
 
-        platform = self.uiPlatformComboBox.currentText()
-        ram = self.uiRAMSpinBox.value()
+        self.uiEditIOSRouterPushButton.setEnabled(True)
+        self.uiDeleteIOSRouterPushButton.setEnabled(True)
+        self.uiDecompressIOSPushButton.setEnabled(True)
+        key = current.data(0, QtCore.Qt.UserRole)
+        ios_router = self._ios_routers[key]
+        self._refreshInfo(ios_router)
 
-        minimum_required_ram = self._getMinimumRequiredRAM(path)
-        if minimum_required_ram > ram:
-            QtGui.QMessageBox.warning(self, "IOS image", "There is not sufficient RAM allocated to this IOS image, recommended RAM is {} MB".format(minimum_required_ram))
-
-        # basename doesn't work on Unix with Windows paths
-        if not sys.platform.startswith('win') and len(path) > 2 and path[1] == ":":
-            import ntpath
-            image = ntpath.basename(path)
-        else:
-            image = os.path.basename(path)
-
-        if image.startswith("c7200p"):
-            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
-
-        #TODO: multiple remote server
-        if Dynamips.instance().settings()["use_local_server"]:
-            server = "local"
-        else:
-            server = next(iter(Servers.instance()))
-            if not server:
-                QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
-                return
-            server = server.host
-        server = self.uiServerTypeComboBox.currentText()
-
-        #ios_images = Dynamips.instance().iosImages()
-        key = "{server}:{image}".format(server=server, image=image)
-        item = self.uiIOSImagesTreeWidget.currentItem()
-
-        import logging
-        log = logging.getLogger("gns3")
-        log.debug('image name: {}'.format(image))
-        if key in self._ios_images and item and item.text(0) == image:
-            item.setText(0, image)
-            item.setText(1, platform)
-            item.setText(2, server)
-        elif key in self._ios_images:
-            QtGui.QMessageBox.warning(self, "IOS image", "IOS image already registered on server {}".format(server))
-            return
-        else:
-            # add a new entry in the tree widget
-            item = QtGui.QTreeWidgetItem(self.uiIOSImagesTreeWidget)
-            item.setText(0, image)
-            item.setText(1, platform)
-            item.setText(2, server)
-            self.uiIOSImagesTreeWidget.setCurrentItem(item)
-
-        chassis = self.uiChassisComboBox.currentText()
-        idlepc = self.uiIdlePCLineEdit.text()
-        startup_config = self.uiStartupConfigLineEdit.text()
-        private_config = self.uiPrivateConfigLineEdit.text()
-
-        self._ios_images[key] = {"path": path,
-                                 "image": image,
-                                 "startup_config": startup_config,
-                                 "private_config": private_config,
-                                 "platform": platform,
-                                 "chassis": chassis,
-                                 "idlepc": idlepc,
-                                 "ram": ram,
-                                 "server": server}
-
-        self.uiIOSImagesTreeWidget.resizeColumnToContents(0)
-        self.uiIOSImagesTreeWidget.resizeColumnToContents(1)
-
-    def _iosImageDeleteSlot(self):
+    def _iosRouterNewSlot(self):
         """
-        Deletes an IOS image.
+        Creates a new IOS router.
         """
 
-        item = self.uiIOSImagesTreeWidget.currentItem()
+        wizard = IOSRouterWizard(parent=self)
+        wizard.show()
+        if wizard.exec_():
+
+            ios_settings = wizard.getSettings()
+            key = "{server}:{name}".format(server=ios_settings["server"], name=ios_settings["name"])
+
+            # set the default base startup-config
+            resource_name = "configs/ios_base_startup-config.txt"
+            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+                startup_config = os.path.normpath(resource_name)
+            elif pkg_resources.resource_exists("gns3", resource_name):
+                ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+                startup_config = os.path.normpath(ios_base_config_path)
+
+            # set the default base private-config
+            resource_name = "configs/ios_base_private-config.txt"
+            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
+                private_config = os.path.normpath(resource_name)
+            elif pkg_resources.resource_exists("gns3", resource_name):
+                ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
+                private_config = os.path.normpath(ios_base_config_path)
+
+            self._ios_routers[key] = {"name": ios_settings["name"],
+                                      "path": ios_settings["path"],
+                                      "image": ios_settings["image"],
+                                      "default_symbol": ":/symbols/router.normal.svg",
+                                      "hover_symbol": ":/symbols/router.selected.svg",
+                                      "startup_config": startup_config,
+                                      "private_config": private_config,
+                                      "platform": ios_settings["platform"],
+                                      "chassis": ios_settings["chassis"],
+                                      "idlepc": ios_settings["idlepc"],
+                                      "ram": ios_settings["ram"],
+                                      "nvram": 256,
+                                      "mac_addr": "",
+                                      "disk0": 16,
+                                      "disk1": 0,
+                                      "confreg": "0x2102",
+                                      "system_id": "FTX0945W0MY",
+                                      "server": ios_settings["server"]}
+
+            if ios_settings["platform"] == "c7200":
+                self._ios_routers[key]["midplane"] = "vxr"
+                self._ios_routers[key]["npe"] = "npe-400"
+            else:
+                self._ios_routers[key]["iomem"] = 5
+
+            for slot_id in range(0, 7):
+                slot = "slot{}".format(slot_id)
+                if slot in ios_settings:
+                    self._ios_routers[key][slot] = ios_settings[slot]
+
+            for wic_id in range(0, 3):
+                wic = "wic{}".format(wic_id)
+                if wic in ios_settings:
+                    self._ios_routers[key][wic] = ios_settings[wic]
+
+            self._ios_routers[key].update(ios_settings)
+            item = QtGui.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
+            item.setText(0, self._ios_routers[key]["name"])
+            item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
+            self.uiIOSRoutersTreeWidget.setCurrentItem(item)
+
+    def _iosRouterEditSlot(self):
+        """
+        Edits an IOS router.
+        """
+
+        item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
-            image = item.text(0)
-            server = item.text(2)
-            key = "{server}:{image}".format(server=server, image=image)
-            del self._ios_images[key]
-            self.uiIOSImagesTreeWidget.takeTopLevelItem(self.uiIOSImagesTreeWidget.indexOfTopLevelItem(item))
+            key = item.data(0, QtCore.Qt.UserRole)
+            ios_router = self._ios_routers[key]
+            dialog = ConfigurationDialog(ios_router["name"], ios_router, IOSRouterConfigurationPage(), parent=self)
+            dialog.show()
+            if dialog.exec_():
+                if ios_router["name"] != item.text(0):
+                    if "{}:{}".format(ios_router["server"], ios_router["name"]) in self._ios_routers:
+                        # FIXME: bug when changing name
+                        QtGui.QMessageBox.critical(self, "New IOS router", "IOS router name {} already exists".format(ios_router["name"]))
+                        ios_router["name"] = item.text(0)
+                    item.setText(0, ios_router["name"])
+                self._refreshInfo(ios_router)
+
+    def _iosRouterDeleteSlot(self):
+        """
+        Deletes an IOS router.
+        """
+
+        item = self.uiIOSRoutersTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            del self._ios_routers[key]
+            self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))
 
     @staticmethod
     def getIOSImage(parent):
@@ -311,54 +271,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         return path
 
-    def _iosImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select an IOS image.
-        """
-
-        path = self.getIOSImage(self)
-        if not path:
-            return
-
-        self.uiIOSPathLineEdit.clear()
-        self.uiIOSPathLineEdit.setText(path)
-
-        # try to guess the platform
-        image = os.path.basename(path)
-        match = re.match("^(c[0-9]+)\\-\w+", image)
-        if not match:
-            QtGui.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
-            return
-
-        detected_platform = match.group(1)
-        detected_chassis = ""
-        # IOS images for the 3600 platform start with the chassis name (c3620 etc.)
-        for platform, chassis in CHASSIS.items():
-            if detected_platform[1:] in chassis:
-                detected_chassis = detected_platform[1:]
-                detected_platform = platform
-                break
-
-        if detected_platform not in PLATFORMS_DEFAULT_RAM:
-            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
-            return
-
-        index = self.uiPlatformComboBox.findText(detected_platform)
-        if index != -1:
-            self.uiPlatformComboBox.setCurrentIndex(index)
-
-        index = self.uiChassisComboBox.findText(detected_chassis)
-        if index != -1:
-            self.uiChassisComboBox.setCurrentIndex(index)
-
-        minimum_required_ram = self._getMinimumRequiredRAM(path)
-        if minimum_required_ram > PLATFORMS_DEFAULT_RAM[detected_platform]:
-            self.uiRAMSpinBox.setValue(minimum_required_ram)
-        else:
-            self.uiRAMSpinBox.setValue(PLATFORMS_DEFAULT_RAM[detected_platform])
-
     @staticmethod
-    def _getMinimumRequiredRAM(path):
+    def getMinimumRequiredRAM(path):
         """
         Returns the minimum RAM required to run an IOS image.
 
@@ -428,13 +342,11 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Slot to decompress an IOS image.
         """
 
-        item = self.uiIOSImagesTreeWidget.currentItem()
+        item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
-            image = item.text(0)
-            server = item.text(2)
-            key = "{server}:{image}".format(server=server, image=image)
-            ios_image = self._ios_images[key]
-            path = ios_image["path"]
+            key = item.data(0, QtCore.Qt.UserRole)
+            ios_router = self._ios_routers[key]
+            path = ios_router["path"]
             if not os.path.isfile(path):
                 QtGui.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
                 return
@@ -454,40 +366,134 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                              "Cancel", busy=True, parent=self)
             progress_dialog.show()
             if progress_dialog.exec_() is not False:
-                self.uiIOSPathLineEdit.setText(decompressed_image_path)
-                self._iosImageSaveSlot()
+                ios_router["path"] = decompressed_image_path
+                ios_router["image"] = os.path.basename(decompressed_image_path)
+                self._refreshInfo(ios_router)
             thread.wait()
 
-    def _idlePCFinderSlot(self):
+    def _createSectionItem(self, name):
 
-        QtGui.QMessageBox.critical(self, "Idle-PC finder", "Sorry, not yet implemented!")
+        section_item = QtGui.QTreeWidgetItem(self.uiIOSRouterInfoTreeWidget)
+        section_item.setText(0, name)
+        font = section_item.font(0)
+        font.setBold(True)
+        section_item.setFont(0, font)
+        return section_item
 
-    def _testSettingsSlot(self):
+    def _refreshInfo(self, ios_router):
 
-        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
+        self.uiIOSRouterInfoTreeWidget.clear()
+
+        # fill out the General section
+        section_item = self._createSectionItem("General")
+        QtGui.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
+        QtGui.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
+        if ios_router["chassis"]:
+            QtGui.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
+        QtGui.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
+        if ios_router["idlepc"]:
+            QtGui.QTreeWidgetItem(section_item, ["Idle-PC:", ios_router["idlepc"]])
+        if ios_router["startup_config"]:
+            QtGui.QTreeWidgetItem(section_item, ["Startup-config:", ios_router["startup_config"]])
+        if ios_router["private_config"]:
+            QtGui.QTreeWidgetItem(section_item, ["Private-config:", ios_router["private_config"]])
+        if ios_router["platform"] == "c7200":
+            QtGui.QTreeWidgetItem(section_item, ["Midplane:", ios_router["midplane"]])
+            QtGui.QTreeWidgetItem(section_item, ["NPE:", ios_router["npe"]])
+
+        # fill out the Memories and disk section
+        section_item = self._createSectionItem("Memories and disks")
+        QtGui.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(ios_router["ram"])])
+        QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(ios_router["nvram"])])
+        if "iomem" in ios_router and ios_router["iomem"]:
+            QtGui.QTreeWidgetItem(section_item, ["I/O memory:", "{}%".format(ios_router["iomem"])])
+        QtGui.QTreeWidgetItem(section_item, ["PCMCIA disk0:", "{} MiB".format(ios_router["disk0"])])
+        QtGui.QTreeWidgetItem(section_item, ["PCMCIA disk1:", "{} MiB".format(ios_router["disk1"])])
+
+        # fill out the Adapters section
+        section_item = self._createSectionItem("Adapters")
+        for slot_id in range(0, 7):
+            slot = "slot{}".format(slot_id)
+            if slot in ios_router and ios_router[slot]:
+                QtGui.QTreeWidgetItem(section_item, ["Slot {}:".format(slot_id), ios_router[slot]])
+        if section_item.childCount() == 0:
+            self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
+
+        # fill out the WICs section
+        section_item = self._createSectionItem("WICs")
+        for wic_id in range(0, 3):
+            wic = "wic{}".format(wic_id)
+            if wic in ios_router and ios_router[wic]:
+                QtGui.QTreeWidgetItem(section_item, ["WIC {}:".format(wic_id), ios_router[wic]])
+        if section_item.childCount() == 0:
+            self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
+
+        self.uiIOSRouterInfoTreeWidget.expandAll()
+        self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(0)
+        self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(1)
+
+    def _iosRouterPressedSlot(self, item, column):
+        """
+        Slot for item pressed.
+
+        :param item: ignored
+        :param column: ignored
+        """
+
+        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+            self._showContextualMenu()
+
+    def _showContextualMenu(self):
+        """
+        Contextual menu.
+        """
+
+        menu = QtGui.QMenu()
+        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
+        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
+        menu.addAction(change_symbol_action)
+        menu.exec_(QtGui.QCursor.pos())
+
+    def _changeSymbolSlot(self):
+        """
+        Change a symbol for an IOS router.
+        """
+
+        dialog = SymbolSelectionDialog(self)
+        dialog.show()
+        if dialog.exec_():
+            normal_symbol, selected_symbol = dialog.getSymbols()
+            item = self.uiIOSRoutersTreeWidget.currentItem()
+            if item:
+                item.setIcon(0, QtGui.QIcon(normal_symbol))
+                key = item.data(0, QtCore.Qt.UserRole)
+                ios_router = self._ios_routers[key]
+                ios_router["default_symbol"] = normal_symbol
+                ios_router["hover_symbol"] = selected_symbol
 
     def loadPreferences(self):
         """
-        Loads the IOS image & router preferences.
+        Loads the IOS router preferences.
         """
 
-        self._ios_images.clear()
-        self.uiIOSImagesTreeWidget.clear()
-        ios_images = Dynamips.instance().iosImages()
-        for ios_image in ios_images.values():
-            item = QtGui.QTreeWidgetItem(self.uiIOSImagesTreeWidget)
-            item.setText(0, ios_image["image"])
-            item.setText(1, ios_image["platform"])
-            item.setText(2, ios_image["server"])
+        dynamips_module = Dynamips.instance()
+        self._ios_routers = copy.deepcopy(dynamips_module.iosRouters())
+        self._items.clear()
 
-        self.uiIOSImagesTreeWidget.resizeColumnToContents(0)
-        self.uiIOSImagesTreeWidget.resizeColumnToContents(1)
-        self._ios_images.update(ios_images)
+        for key, ios_router in self._ios_routers.items():
+            item = QtGui.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
+            item.setText(0, ios_router["name"])
+            item.setIcon(0, QtGui.QIcon(ios_router["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
+
+        if self._items:
+            self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
 
     def savePreferences(self):
         """
-        Saves the IOS image & router preferences.
+        Saves the IOS router preferences.
         """
 
-        #self._iosImageSaveSlot()
-        Dynamips.instance().setIOSImages(self._ios_images)
+        Dynamips.instance().setIOSRouters(self._ios_routers)

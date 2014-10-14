@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for IOU image & device preferences.
+Configuration page for IOU device preferences.
 """
 
 import copy
@@ -77,64 +77,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         iou_device = self._iou_devices[key]
         self._refreshInfo(iou_device)
 
-    def _iouImageSaveSlot(self):
-        """
-        Adds/Saves an IOU image.
-        """
-
-        path = self.uiIOUPathLineEdit.text()
-        if not path:
-            QtGui.QMessageBox.critical(self, "IOU image", "The path cannot be empty!")
-            return
-
-        initial_config = self.uiInitialConfigLineEdit.text()
-        use_default_iou_values = self.uiDefaultValuesCheckBox.isChecked()
-        nvram = self.uiNVRAMSpinBox.value()
-        ram = self.uiRAMSpinBox.value()
-
-        # basename doesn't work on Unix with Windows paths
-        if not sys.platform.startswith('win') and len(path) > 2 and path[1] == ":":
-            import ntpath
-            image = ntpath.basename(path)
-        else:
-            image = os.path.basename(path)
-
-        #TODO: multiple remote server
-        if IOU.instance().settings()["use_local_server"]:
-            server = "local"
-        else:
-            server = next(iter(Servers.instance()))
-            if not server:
-                QtGui.QMessageBox.critical(self, "IOU image", "No remote server available!")
-                return
-            server = server.host
-
-        key = "{server}:{image}".format(server=server, image=image)
-        item = self.uiIOUImagesTreeWidget.currentItem()
-
-        if key in self._iou_images and item and item.text(0) == image:
-            item.setText(0, image)
-            item.setText(1, server)
-        elif key in self._iou_images:
-            return
-        else:
-            # add a new entry in the tree widget
-            item = QtGui.QTreeWidgetItem(self.uiIOUImagesTreeWidget)
-            item.setText(0, image)
-            item.setText(1, server)
-            self.uiIOUImagesTreeWidget.setCurrentItem(item)
-
-        self._iou_images[key] = {"path": path,
-                                 "image": image,
-                                 "initial_config": initial_config,
-                                 "use_default_iou_values": use_default_iou_values,
-                                 "ram": ram,
-                                 "nvram": nvram,
-                                 "server": server}
-
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(0)
-        self.uiIOUImagesTreeWidget.resizeColumnToContents(1)
-
     def _iouDeviceNewSlot(self):
         """
         Creates a new IOU device.
@@ -183,7 +125,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 if iou_device["name"] != item.text(0):
                     if "{}:{}".format(iou_device["server"], iou_device["name"]) in self._iou_devices:
                         # FIXME: bug when changing name
-                        QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(iou_device["name"]))
+                        QtGui.QMessageBox.critical(self, "New IOU device", "IOU device name {} already exists".format(iou_device["name"]))
                         iou_device["name"] = item.text(0)
                     item.setText(0, iou_device["name"])
                 self._refreshInfo(iou_device)

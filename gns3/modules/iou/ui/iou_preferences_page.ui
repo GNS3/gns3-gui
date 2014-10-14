@@ -32,7 +32,7 @@
          <item>
           <widget class="QToolButton" name="uiIOURCPathToolButton">
            <property name="text">
-            <string>...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -76,7 +76,7 @@
          <item>
           <widget class="QToolButton" name="uiIouyapPathToolButton">
            <property name="text">
-            <string>...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>

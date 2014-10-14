@@ -95,5 +95,127 @@ CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),
            "c2600": ("2610", "2611", "2620", "2621", "2610XM", "2611XM", "2620XM", "2621XM", "2650XM", "2651XM"),
            "c3600": ("3620", "3640", "3660")}
 
+# Network modules for the c2600 platform
+C2600_NMS = (
+    "NM-1FE-TX",
+    "NM-1E",
+    "NM-4E",
+    "NM-16ESW"
+)
+
+# Network modules for the c3600 platform
+C3600_NMS = (
+    "NM-1FE-TX",
+    "NM-1E",
+    "NM-4E",
+    "NM-16ESW",
+    "NM-4T"
+)
+
+# Network modules for the c3700 platform
+C3700_NMS = (
+    "NM-1FE-TX",
+    "NM-4T",
+    "NM-16ESW",
+)
+
+# Port adapters for the c7200 platform
+C7200_PAS = (
+    "PA-A1",
+    "PA-FE-TX",
+    "PA-2FE-TX",
+    "PA-GE",
+    "PA-4T+",
+    "PA-8T",
+    "PA-4E",
+    "PA-8E",
+    "PA-POS-OC3",
+)
+
+# I/O controller for the c7200 platform
+IO_C7200 = ("C7200-IO-FE",
+            "C7200-IO-2FE",
+            "C7200-IO-GE-E"
+)
+
+"""
+Build the adapter compatibility matrix:
+
+ADAPTER_MATRIX = {
+    "c3600" : {                     # Router model
+        "3620" : {                  # Router chassis (if applicable)
+            { 0 : ("NM-1FE-TX", "NM_1E", ...)
+            }
+        }
+    }
+"""
+
+ADAPTER_MATRIX = {}
+for platform in ("c1700", "c2600", "c2691", "c3725", "c3745", "c3600", "c7200"):
+    ADAPTER_MATRIX[platform] = {}
+
+# 1700s have one interface on the MB, 2 sub-slots for WICs, an no NM slots
+for chassis in ("1720", "1721", "1750", "1751", "1760"):
+    ADAPTER_MATRIX["c1700"][chassis] = {0: "C1700-MB-1FE"}
+
+# Add a fake NM in slot 1 on 1751s and 1760s to provide two WIC slots
+for chassis in ("1751", "1760"):
+    ADAPTER_MATRIX["c1700"][chassis][1] = "C1700-MB-WIC1"
+
+# 2600s have one or more interfaces on the MB , 2 subslots for WICs, and an available NM slot 1
+for chassis in ("2620", "2610XM", "2620XM", "2650XM"):
+    ADAPTER_MATRIX["c2600"][chassis] = {0: "C2600-MB-1FE", 1: C2600_NMS}
+
+for chassis in ("2621", "2611XM", "2621XM", "2651XM"):
+    ADAPTER_MATRIX["c2600"][chassis] = {0: "C2600-MB-2FE", 1: C2600_NMS}
+
+ADAPTER_MATRIX["c2600"]["2610"] = {0: "C2600-MB-1E", 1: C2600_NMS}
+ADAPTER_MATRIX["c2600"]["2611"] = {0: "C2600-MB-2E", 1: C2600_NMS}
+
+# 2691s have two FEs on the motherboard and one NM slot
+ADAPTER_MATRIX["c2691"][""] = {0: "GT96100-FE", 1: C3700_NMS}
+
+# 3620s have two generic NM slots
+ADAPTER_MATRIX["c3600"]["3620"] = {}
+for slot in range(2):
+    ADAPTER_MATRIX["c3600"]["3620"][slot] = C3600_NMS
+
+# 3640s have four generic NM slots
+ADAPTER_MATRIX["c3600"]["3640"] = {}
+for slot in range(4):
+    ADAPTER_MATRIX["c3600"]["3640"][slot] = C3600_NMS
+
+# 3660s have 2 FEs on the motherboard and 6 generic NM slots
+ADAPTER_MATRIX["c3600"]["3660"] = {0: "Leopard-2FE"}
+for slot in range(1, 7):
+    ADAPTER_MATRIX["c3600"]["3660"][slot] = C3600_NMS
+
+# 3725s have 2 FEs on the motherboard and 2 generic NM slots
+ADAPTER_MATRIX["c3725"][""] = {0: "GT96100-FE"}
+for slot in range(1, 3):
+    ADAPTER_MATRIX["c3725"][""][slot] = C3700_NMS
+
+# 3745s have 2 FEs on the motherboard and 4 generic NM slots
+ADAPTER_MATRIX["c3745"][""] = {0: "GT96100-FE"}
+for slot in range(1, 5):
+    ADAPTER_MATRIX["c3745"][""][slot] = C3700_NMS
+
+# 7206s allow an IO controller in slot 0, and a generic PA in slots 1-6
+ADAPTER_MATRIX["c7200"][""] = {0: IO_C7200}
+for slot in range(1, 7):
+    ADAPTER_MATRIX["c7200"][""][slot] = C7200_PAS
+
+C1700_WICS = ("WIC-1T", "WIC-2T", "WIC-1ENET")
+C2600_WICS = ("WIC-1T", "WIC-2T")
+C3700_WICS = ("WIC-1T", "WIC-2T")
+
+WIC_MATRIX = {}
+
+WIC_MATRIX["c1700"] = {0: C1700_WICS, 1: C1700_WICS}
+WIC_MATRIX["c2600"] = {0: C2600_WICS, 1: C2600_WICS, 2: C2600_WICS}
+WIC_MATRIX["c2691"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
+WIC_MATRIX["c3725"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
+WIC_MATRIX["c3745"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
+
 STATIC_SERVER_TYPES = OrderedDict((("local", "local"),
                                    ("cloud", "cloud")))

@@ -23,135 +23,14 @@ import os
 import re
 import sys
 import pkg_resources
+
 from gns3.qt import QtGui
-from .. import Dynamips
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
-from ..ui.router_configuration_page_ui import Ui_routerConfigPageWidget
-
-# Network modules for the c2600 platform
-C2600_NMS = (
-    "NM-1FE-TX",
-    "NM-1E",
-    "NM-4E",
-    "NM-16ESW"
-)
-
-# Network modules for the c3600 platform
-C3600_NMS = (
-    "NM-1FE-TX",
-    "NM-1E",
-    "NM-4E",
-    "NM-16ESW",
-    "NM-4T"
-)
-
-# Network modules for the c3700 platform
-C3700_NMS = (
-    "NM-1FE-TX",
-    "NM-4T",
-    "NM-16ESW",
-)
-
-# Port adapters for the c7200 platform
-C7200_PAS = (
-    "PA-A1",
-    "PA-FE-TX",
-    "PA-2FE-TX",
-    "PA-GE",
-    "PA-4T+",
-    "PA-8T",
-    "PA-4E",
-    "PA-8E",
-    "PA-POS-OC3",
-)
-
-# I/O controller for the c7200 platform
-IO_C7200 = ("C7200-IO-FE",
-            "C7200-IO-2FE",
-            "C7200-IO-GE-E"
-)
-
-"""
-Build the adapter compatibility matrix:
-
-ADAPTER_MATRIX = {
-    "c3600" : {                     # Router model
-        "3620" : {                  # Router chassis (if applicable)
-            { 0 : ("NM-1FE-TX", "NM_1E", ...)
-            }
-        }
-    }
-"""
-
-ADAPTER_MATRIX = {}
-for platform in ("c1700", "c2600", "c2691", "c3725", "c3745", "c3600", "c7200"):
-    ADAPTER_MATRIX[platform] = {}
-
-# 1700s have one interface on the MB, 2 sub-slots for WICs, an no NM slots
-for chassis in ("1720", "1721", "1750", "1751", "1760"):
-    ADAPTER_MATRIX["c1700"][chassis] = {0: "C1700-MB-1FE"}
-
-# Add a fake NM in slot 1 on 1751s and 1760s to provide two WIC slots
-for chassis in ("1751", "1760"):
-    ADAPTER_MATRIX["c1700"][chassis][1] = "C1700_MB_WIC1"
-
-# 2600s have one or more interfaces on the MB , 2 subslots for WICs, and an available NM slot 1
-for chassis in ("2620", "2610XM", "2620XM", "2650XM"):
-    ADAPTER_MATRIX["c2600"][chassis] = {0: "C2600-MB-1FE", 1: C2600_NMS}
-
-for chassis in ("2621", "2611XM", "2621XM", "2651XM"):
-    ADAPTER_MATRIX["c2600"][chassis] = {0: "C2600-MB-2FE", 1: C2600_NMS}
-
-ADAPTER_MATRIX["c2600"]["2610"] = {0: "C2600-MB-1E", 1: C2600_NMS}
-ADAPTER_MATRIX["c2600"]["2611"] = {0: "C2600-MB-2E", 1: C2600_NMS}
-
-# 2691s have two FEs on the motherboard and one NM slot
-ADAPTER_MATRIX["c2691"][""] = {0: "GT96100-FE", 1: C3700_NMS}
-
-# 3620s have two generic NM slots
-ADAPTER_MATRIX["c3600"]["3620"] = {}
-for slot in range(2):
-    ADAPTER_MATRIX["c3600"]["3620"][slot] = C3600_NMS
-
-# 3640s have four generic NM slots
-ADAPTER_MATRIX["c3600"]["3640"] = {}
-for slot in range(4):
-    ADAPTER_MATRIX["c3600"]["3640"][slot] = C3600_NMS
-
-# 3660s have 2 FEs on the motherboard and 6 generic NM slots
-ADAPTER_MATRIX["c3600"]["3660"] = {0: "Leopard-2FE"}
-for slot in range(1, 7):
-    ADAPTER_MATRIX["c3600"]["3660"][slot] = C3600_NMS
-
-# 3725s have 2 FEs on the motherboard and 2 generic NM slots
-ADAPTER_MATRIX["c3725"][""] = {0: "GT96100-FE"}
-for slot in range(1, 3):
-    ADAPTER_MATRIX["c3725"][""][slot] = C3700_NMS
-
-# 3745s have 2 FEs on the motherboard and 4 generic NM slots
-ADAPTER_MATRIX["c3745"][""] = {0: "GT96100-FE"}
-for slot in range(1, 5):
-    ADAPTER_MATRIX["c3745"][""][slot] = C3700_NMS
-
-# 7206s allow an IO controller in slot 0, and a generic PA in slots 1-6
-ADAPTER_MATRIX["c7200"][""] = {0: IO_C7200}
-for slot in range(1, 7):
-    ADAPTER_MATRIX["c7200"][""][slot] = C7200_PAS
-
-C1700_WICS = ("WIC-1T", "WIC-2T", "WIC-1ENET")
-C2600_WICS = ("WIC-1T", "WIC-2T")
-C3700_WICS = ("WIC-1T", "WIC-2T")
-
-WIC_MATRIX = {}
-
-WIC_MATRIX["c1700"] = {0: C1700_WICS, 1: C1700_WICS}
-WIC_MATRIX["c2600"] = {0: C2600_WICS, 1: C2600_WICS, 2: C2600_WICS}
-WIC_MATRIX["c2691"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
-WIC_MATRIX["c3725"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
-WIC_MATRIX["c3745"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
+from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
+from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
 
-class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
+class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
     """
     QWidget configuration page for IOS routers.
     """
@@ -175,6 +54,44 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
 
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
+        self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
+
+    def _iosImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select an IOU image.
+        """
+
+        from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
+        path = IOSRouterPreferencesPage.getIOSImage(self)
+        if not path:
+            return
+        self.uiIOSImageLineEdit.clear()
+        self.uiIOSImageLineEdit.setText(path)
+
+        # try to guess the platform
+        image = os.path.basename(path)
+        match = re.match("^(c[0-9]+)\\-\w+", image)
+        if not match:
+            QtGui.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
+            return
+
+        detected_platform = match.group(1)
+        detected_chassis = ""
+        # IOS images for the 3600 platform start with the chassis name (c3620 etc.)
+        for platform, chassis in CHASSIS.items():
+            if detected_platform[1:] in chassis:
+                detected_chassis = detected_platform[1:]
+                detected_platform = platform
+                break
+
+        platform = self.uiPlatformTextLabel.text()
+        chassis = self.uiChassisTextLabel.text()
+
+        if detected_platform != platform:
+            QtGui.QMessageBox.warning(self, "IOS image", "Using an IOS image made for another platform will likely not work!")
+
+        if detected_chassis and chassis and detected_chassis != chassis:
+            QtGui.QMessageBox.warning(self, "IOS image", "Using an IOS image made for another chassis will likely not work!")
 
     def _startupConfigBrowserSlot(self):
         """
@@ -248,7 +165,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             # set the combox box to the correct slot adapter if configured.
             if settings["slot" + str(slot_number)]:
                 index = self._widget_slots[slot_number].findText(settings["slot" + str(slot_number)])
-                if (index != -1):
+                if index != -1:
                     self._widget_slots[slot_number].setCurrentIndex(index)
 
         # clear all the WIC combo boxes.
@@ -266,10 +183,10 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
                 # set the combox box to the correct WIC if configured.
                 if settings["wic" + str(wic_number)]:
                     index = self._widget_wics[wic_number].findText(settings["wic" + str(wic_number)])
-                    if (index != -1):
+                    if index != -1:
                         self._widget_wics[wic_number].setCurrentIndex(index)
 
-    def loadSettings(self, settings, node, group=False):
+    def loadSettings(self, settings, node=None, group=False):
         """
         Loads the router settings.
 
@@ -280,8 +197,18 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
-            self.uiConsolePortSpinBox.setValue(settings["console"])
-            self.uiAuxPortSpinBox.setValue(settings["aux"])
+
+            if "console" in settings:
+                self.uiConsolePortSpinBox.setValue(settings["console"])
+            else:
+                self.uiConsolePortLabel.hide()
+                self.uiConsolePortSpinBox.hide()
+
+            if "aux" in settings:
+                self.uiAuxPortSpinBox.setValue(settings["aux"])
+            else:
+                self.uiAuxPortLabel.hide()
+                self.uiAuxPortSpinBox.hide()
 
             # load the startup-config
             self.uiStartupConfigLineEdit.setText(settings["startup_config"])
@@ -301,21 +228,13 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             else:
                 self.uiBaseMACLineEdit.clear()
 
-            # load the available IOS images
-            ios_images = Dynamips.instance().iosImages()
-            for ios_image in ios_images.values():
-                if ios_image["platform"] == settings["platform"] and \
-                        (ios_image["server"] == "local" and node.server().isLocal() or ios_image["server"] == node.server().host):
-                    self.uiIOSImageComboBox.addItem(ios_image["image"], ios_image["path"])
-
-            index = self.uiIOSImageComboBox.findText(os.path.basename(settings["image"]))
-            if index != -1:
-                self.uiIOSImageComboBox.setCurrentIndex(index)
+            self.uiIOSImageLineEdit.setText(settings["image"])
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
             self.uiIOSImageLabel.hide()
-            self.uiIOSImageComboBox.hide()
+            self.uiIOSImageLineEdit.hide()
+            self.uiIOSImageToolButton.hide()
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
@@ -333,7 +252,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         platform = settings["platform"]
         self.uiPlatformTextLabel.setText(platform)
         chassis = ""
-        if "chassis" in settings:
+        if "chassis" in settings and settings["chassis"]:
             chassis = settings["chassis"]
             self.uiChassisTextLabel.setText(chassis)
         else:
@@ -357,21 +276,25 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
                 if index != -1:
                     self.uiNPEComboBox.setCurrentIndex(index)
 
-            # load the sensor settings
-            self.uiSensor1SpinBox.setValue(settings["sensors"][0])
-            self.uiSensor2SpinBox.setValue(settings["sensors"][1])
-            self.uiSensor3SpinBox.setValue(settings["sensors"][2])
-            self.uiSensor4SpinBox.setValue(settings["sensors"][3])
+            if "sensors" in settings:
+                # load the sensor settings
+                self.uiSensor1SpinBox.setValue(settings["sensors"][0])
+                self.uiSensor2SpinBox.setValue(settings["sensors"][1])
+                self.uiSensor3SpinBox.setValue(settings["sensors"][2])
+                self.uiSensor4SpinBox.setValue(settings["sensors"][3])
 
-            if settings["power_supplies"][0] == 1:
-                self.uiPowerSupply1ComboBox.setCurrentIndex(0)
-            else:
-                self.uiPowerSupply1ComboBox.setCurrentIndex(1)
+            if "power_supplies" in settings:
+                if settings["power_supplies"][0] == 1:
+                    self.uiPowerSupply1ComboBox.setCurrentIndex(0)
+                else:
+                    self.uiPowerSupply1ComboBox.setCurrentIndex(1)
 
-            if settings["power_supplies"][1] == 1:
-                self.uiPowerSupply2ComboBox.setCurrentIndex(0)
+                if settings["power_supplies"][1] == 1:
+                    self.uiPowerSupply2ComboBox.setCurrentIndex(0)
+                else:
+                    self.uiPowerSupply2ComboBox.setCurrentIndex(1)
             else:
-                self.uiPowerSupply2ComboBox.setCurrentIndex(1)
+               self.uiTabWidget.removeTab(4)  # environment tab
 
             # all platforms but c7200 have the iomem feature
             # let"s hide these widgets.
@@ -403,23 +326,41 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
         # load the configuration register setting
         self.uiConfregLineEdit.setText(settings["confreg"])
 
-        # load the exec area setting
-        self.uiExecAreaSpinBox.setValue(settings["exec_area"])
+        if "exec_area" in settings:
+            # load the exec area setting
+            self.uiExecAreaSpinBox.setValue(settings["exec_area"])
+        else:
+            self.uiExecAreaLabel.hide()
+            self.uiExecAreaSpinBox.hide()
 
         # load the idle-pc setting
         self.uiIdlepcLineEdit.setText(settings["idlepc"])
 
-        # load the idlemax setting
-        self.uiIdlemaxSpinBox.setValue(settings["idlemax"])
+        if "idlemax" in settings:
+            # load the idlemax setting
+            self.uiIdlemaxSpinBox.setValue(settings["idlemax"])
+        else:
+            self.uiIdlemaxLabel.hide()
+            self.uiIdlemaxSpinBox.hide()
 
-        # load the idlesleep setting
-        self.uiIdlesleepSpinBox.setValue(settings["idlesleep"])
+        if "idlesleep" in settings:
+            # load the idlesleep setting
+            self.uiIdlesleepSpinBox.setValue(settings["idlesleep"])
+        else:
+            self.uiIdlesleepLabel.hide()
+            self.uiIdlesleepSpinBox.hide()
 
         # load the mmap setting
-        self.uiMmapCheckBox.setChecked(settings["mmap"])
+        if "mmap" in settings:
+            self.uiMmapCheckBox.setChecked(settings["mmap"])
+        else:
+            self.uiMmapCheckBox.hide()
 
-        # load the sparsemem setting
-        self.uiSparseMemoryCheckBox.setChecked(settings["sparsemem"])
+        if "sparsemem" in settings:
+            # load the sparsemem setting
+            self.uiSparseMemoryCheckBox.setChecked(settings["sparsemem"])
+        else:
+            self.uiSparseMemoryCheckBox.hide()
 
     def _checkForLinkConnectedToAdapter(self, slot_number, settings, node):
         """
@@ -436,7 +377,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             if node_port.slotNumber() == slot_number and node_port.portNumber() <= 15 and not node_port.isFree():
                 adapter = settings["slot" + str(slot_number)]
                 index = self._widget_slots[slot_number].findText(adapter)
-                if (index != -1):
+                if index != -1:
                     self._widget_slots[slot_number].setCurrentIndex(index)
                 QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter {}, please remove it first".format(node_port.name(),
                                                                                                                                               adapter))
@@ -457,13 +398,13 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             if node_port.slotNumber() == wic_number and node_port.portNumber() > 15 and not node_port.isFree():
                 wic = settings["wic" + str(wic_number)]
                 index = self._widget_wics[wic_number].findText(wic)
-                if (index != -1):
+                if index != -1:
                     self._widget_wics[wic_number].setCurrentIndex(index)
                 QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on {}, please remove it first".format(node_port.name(),
                                                                                                                                     wic))
                 raise ConfigurationError()
 
-    def saveSettings(self, settings, node, group=False):
+    def saveSettings(self, settings, node=None, group=False):
         """
         Saves the router settings.
 
@@ -483,7 +424,7 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             name = self.uiNameLineEdit.text()
             if not name:
                 QtGui.QMessageBox.critical(self, "Name", "IOS router name cannot be empty!")
-            elif not re.search(r"""^[\-\w]+$""", name):
+            elif node and not re.search(r"""^[\-\w]+$""", name):
                 # IOS names must start with a letter, end with a letter or digit, and
                 # have as interior characters only letters, digits, and hyphens.
                 # They must be 63 characters or fewer.
@@ -509,16 +450,17 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
                     QtGui.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
 
             # check and save the base MAC address
-            mac = self.uiBaseMACLineEdit.text()
-            if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
-                QtGui.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
-            elif mac != "":
-                settings["mac_addr"] = mac
+            #mac = self.uiBaseMACLineEdit.text()
+            #if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
+            #    QtGui.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
+            #elif mac != "":
+            #    settings["mac_addr"] = mac
 
             # save the IOS image path
-            index = self.uiIOSImageComboBox.currentIndex()
-            ios_path = self.uiIOSImageComboBox.itemData(index)
-            settings["image"] = ios_path
+            path = self.uiIOSImageLineEdit.text()
+            #settings["path"] = path
+            settings["image"] = path#os.path.basename(path)
+
         else:
             del settings["name"]
             del settings["console"]
@@ -598,18 +540,22 @@ class RouterConfigurationPage(QtGui.QWidget, Ui_routerConfigPageWidget):
             module = widget.currentText()
             if module:
                 if settings["slot" + str(slot_number)] and settings["slot" + str(slot_number)] != module:
-                    self._checkForLinkConnectedToAdapter(slot_number, settings, node)
+                    if node:
+                        self._checkForLinkConnectedToAdapter(slot_number, settings, node)
                 settings["slot" + str(slot_number)] = module
             elif settings["slot" + str(slot_number)]:
-                self._checkForLinkConnectedToAdapter(slot_number, settings, node)
+                if node:
+                    self._checkForLinkConnectedToAdapter(slot_number, settings, node)
                 settings["slot" + str(slot_number)] = None
 
         for wic_number, widget in self._widget_wics.items():
             wic_name = str(widget.currentText())
             if wic_name:
                 if settings["wic" + str(wic_number)] and settings["wic" + str(wic_number)] != wic_name:
-                    self._checkForLinkConnectedToWIC(wic_number, settings, node)
+                    if node:
+                        self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = wic_name
             elif settings["wic" + str(wic_number)]:
-                self._checkForLinkConnectedToWIC(wic_number, settings, node)
+                if node:
+                    self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = None

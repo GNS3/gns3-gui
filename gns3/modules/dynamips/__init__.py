@@ -40,6 +40,17 @@ from .nodes.frame_relay_switch import FrameRelaySwitch
 from .nodes.atm_switch import ATMSwitch
 from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES, PLATFORMS_DEFAULT_RAM
 
+PLATFORM_TO_CLASS = {
+    "c1700": C1700,
+    "c2600": C2600,
+    "c2691": C2691,
+    "c3600": C3600,
+    "c3725": C3725,
+    "c3745": C3745,
+    "c7200": C7200
+}
+
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -53,7 +64,7 @@ class Dynamips(Module):
         Module.__init__(self)
 
         self._settings = {}
-        self._ios_images = {}
+        self._ios_routers = {}
         self._servers = []
         self._nodes = []
         self._working_dir = ""
@@ -62,7 +73,7 @@ class Dynamips(Module):
 
         # load the settings and IOS images.
         self._loadSettings()
-        self._loadIOSImages()
+        self._loadIOSRouters()
 
     def _loadSettings(self):
         """
@@ -88,59 +99,115 @@ class Dynamips(Module):
             settings.setValue(name, value)
         settings.endGroup()
 
-    def _loadIOSImages(self):
+    def _loadIOSRouters(self):
         """
-        Load the IOS images from the persistent settings file.
+        Load the IOS routers from the persistent settings file.
         """
 
         # load the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOSImages")
+        settings.beginGroup("IOSRouters")
 
+        #FIXME: this is ugly
         # load the IOS images
-        size = settings.beginReadArray("ios_image")
+        size = settings.beginReadArray("ios_router")
         for index in range(0, size):
             settings.setArrayIndex(index)
+            name = settings.value("name", "")
             path = settings.value("path", "")
             image = settings.value("image", "")
             startup_config = settings.value("startup_config", "")
             private_config = settings.value("private_config", "")
+            default_symbol = settings.value("default_symbol", ":/symbols/router.normal.svg")
+            hover_symbol = settings.value("hover_symbol", ":/symbols/router.selected.svg")
             platform = settings.value("platform", "")
             chassis = settings.value("chassis", "")
             idlepc = settings.value("idlepc", "")
+            mac_addr = settings.value("mac_addr", "")
             ram = settings.value("ram", 128, type=int)
+            nvram = settings.value("nvram", 256, type=int)
+            disk0 = settings.value("disk0", 16, type=int)
+            disk1 = settings.value("disk1", 0, type=int)
+            confreg = settings.value("confreg", "0x2102")
+            system_id = settings.value("system_id", "FTX0945W0MY")
             server = settings.value("server", "local")
 
-            key = "{server}:{image}".format(server=server, image=image)
-            self._ios_images[key] = {"path": path,
+            key = "{server}:{name}".format(server=server, name=name)
+            if key in self._ios_routers:
+                continue
+
+            self._ios_routers[key] = {"name": name,
+                                     "path": path,
                                      "image": image,
+                                     "default_symbol": default_symbol,
+                                     "hover_symbol": hover_symbol,
                                      "startup_config": startup_config,
                                      "private_config": private_config,
                                      "platform": platform,
                                      "chassis": chassis,
                                      "idlepc": idlepc,
                                      "ram": ram,
+                                     "nvram": nvram,
+                                     "mac_addr": mac_addr,
+                                     "disk0": disk0,
+                                     "disk1": disk1,
+                                     "confreg": confreg,
+                                     "system_id": system_id,
                                      "server": server}
+
+            for slot_id in range(0, 7):
+                slot = "slot{}".format(slot_id)
+                if settings.contains(slot):
+                    self._ios_routers[key][slot] = settings.value(slot, "")
+
+            for wic_id in range(0, 3):
+                wic = "wic{}".format(wic_id)
+                if settings.contains(wic):
+                    self._ios_routers[key][wic] = settings.value(wic, "")
+
+            if platform == "c7200":
+                self._ios_routers[key]["midplane"] = settings.value("midplane", "vxr")
+                self._ios_routers[key]["npe"] = settings.value("npe", "npe-400")
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C7200-IO-2FE")
+            else:
+                self._ios_routers[key]["iomem"] = 5
+
+            if platform in ("c3725", "c3725", "c2691"):
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "GT96100-FE")
+            elif platform == "c3600" and chassis == "3660":
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "Leopard-2FE")
+            elif platform == "c2600" and chassis == "2610":
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-1E")
+            elif platform == "c2600" and chassis == "2611":
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-2E")
+            elif platform == "c2600" and chassis in ("2620", "2610XM", "2620XM", "2650XM"):
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-1FE")
+            elif platform == "c2600" and chassis in ("2621", "2611XM", "2621XM", "2651XM"):
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-2FE")
+            elif platform == "c1700" and chassis in ("1720", "1721", "1750", "1751", "1760"):
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C1700-MB-1FE")
+            elif platform == "c1700" and chassis in ("1751", "1760"):
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C1700-MB-WIC1")
 
         settings.endArray()
         settings.endGroup()
 
-    def _saveIOSImages(self):
+    def _saveIOSRouters(self):
         """
-        Saves the IOS images to the persistent settings file.
+        Saves the IOS routers to the persistent settings file.
         """
 
         # save the settings
         settings = QtCore.QSettings()
-        settings.beginGroup("IOSImages")
+        settings.beginGroup("IOSRouters")
         settings.remove("")
 
         # save the IOS images
-        settings.beginWriteArray("ios_image", len(self._ios_images))
+        settings.beginWriteArray("ios_router", len(self._ios_routers))
         index = 0
-        for ios_image in self._ios_images.values():
+        for ios_router in self._ios_routers.values():
             settings.setArrayIndex(index)
-            for name, value in ios_image.items():
+            for name, value in ios_router.items():
                 settings.setValue(name, value)
             index += 1
         settings.endArray()
@@ -247,24 +314,24 @@ class Dynamips(Module):
         if node in self._nodes:
             self._nodes.remove(node)
 
-    def iosImages(self):
+    def iosRouters(self):
         """
-        Returns IOS images settings.
+        Returns IOS routers settings.
 
-        :returns: IOS images settings (dictionary)
+        :returns: IOS routers settings (dictionary)
         """
 
-        return self._ios_images
+        return self._ios_routers
 
-    def setIOSImages(self, new_ios_images):
+    def setIOSRouters(self, new_ios_routers):
         """
         Sets IOS images settings.
 
-        :param new_ios_images: IOS images settings (dictionary)
+        :param new_ios_routers: IOS images settings (dictionary)
         """
 
-        self._ios_images = new_ios_images.copy()
-        self._saveIOSImages()
+        self._ios_routers = new_ios_routers.copy()
+        self._saveIOSRouters()
 
     def settings(self):
         """
@@ -365,36 +432,6 @@ class Dynamips(Module):
         # create an instance of the node class
         return node_class(self, server)
 
-    def _allocateIOSImage(self, node):
-        """
-        Allocates an IOS image to a node
-
-        :param node: Node instance
-        """
-
-        platform = node.settings()["platform"]
-
-        selected_images = []
-        for ios_image, info in self._ios_images.items():
-            if info["platform"] == platform and (info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local")):
-                selected_images.append(ios_image)
-
-        if not selected_images:
-            return None
-        elif len(selected_images) > 1:
-
-            from gns3.main_window import MainWindow
-            mainwindow = MainWindow.instance()
-
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "IOS image", "Please choose an image", selected_images, 0, False)
-            if ok:
-                return self._ios_images[selection]
-            else:
-                raise ModuleError("Please select an IOS image")
-
-        else:
-            return self._ios_images[selected_images[0]]
-
     def setupNode(self, node, node_name):
         """
         Setups a node.
@@ -406,20 +443,44 @@ class Dynamips(Module):
         log.info("configuring node {}".format(node))
 
         if isinstance(node, Router):
-            ios_image = self._allocateIOSImage(node)
-            if not ios_image:
+
+            ios_router = None
+            if node_name:
+                for ios_key, info in self._ios_routers.items():
+                    if node_name == info["name"]:
+                        ios_router = self._ios_routers[ios_key]
+
+            if not ios_router:
                 raise ModuleError("No IOS image found for platform {}".format(node.settings()["platform"]))
+
+            name = ios_router["name"]
             settings = {}
             # set initial settings like the chassis or an idle-pc value etc.
-            if ios_image["chassis"]:
-                settings["chassis"] = ios_image["chassis"]
-            if ios_image["idlepc"]:
-                settings["idlepc"] = ios_image["idlepc"]
-            if ios_image["startup_config"]:
-                settings["startup_config"] = ios_image["startup_config"]
-            if ios_image["private_config"]:
-                settings["private_config"] = ios_image["private_config"]
-            node.setup(ios_image["path"], ios_image["ram"], initial_settings=settings)
+            if ios_router["chassis"]:
+                settings["chassis"] = ios_router["chassis"]
+            if ios_router["idlepc"]:
+                settings["idlepc"] = ios_router["idlepc"]
+            if ios_router["startup_config"]:
+                settings["startup_config"] = ios_router["startup_config"]
+            if ios_router["private_config"]:
+                settings["private_config"] = ios_router["private_config"]
+
+            if ios_router["platform"] == "c7200":
+                settings["midplane"] = ios_router["midplane"]
+                settings["npe"] = ios_router["npe"]
+            else:
+                settings["iomem"] = ios_router["iomem"]
+
+            for slot_id in range(0, 7):
+                slot = "slot{}".format(slot_id)
+                if slot in ios_router:
+                    settings[slot] = ios_router[slot]
+            for wic_id in range(0, 3):
+                wic = "wic{}".format(wic_id)
+                if wic in ios_router:
+                    settings[wic] = ios_router[wic]
+
+            node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
         else:
             node.setup()
 
@@ -431,11 +492,11 @@ class Dynamips(Module):
         :param idlepc: idle-pc value
         """
 
-        for ios_image in self._ios_images.values():
-            if ios_image["path"] == image_path:
-                if ios_image["idlepc"] != idlepc:
-                    ios_image["idlepc"] = idlepc
-                    self._saveIOSImages()
+        for ios_router in self._ios_routers.values():
+            if ios_router["path"] == image_path:
+                if ios_router["idlepc"] != idlepc:
+                    ios_router["idlepc"] = idlepc
+                    self._saveIOSRouters()
                 break
 
     def reset(self):
@@ -507,16 +568,16 @@ class Dynamips(Module):
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
-        ios_images = self.iosImages()
+        ios_routers = self.iosRouters()
         candidate_ios_images = {}
         alternative_image = {"path": image,
                              "ram": None,
                              "idlepc": None}
 
         # find all images with the same platform and local server
-        for ios_image in ios_images.values():
-            if ios_image["platform"] == node.settings()["platform"] and ios_image["server"] == "local":
-                candidate_ios_images[ios_image["image"]] = ios_image
+        for ios_router in ios_routers.values():
+            if ios_router["platform"] == node.settings()["platform"] and ios_router["server"] == "local":
+                candidate_ios_images[ios_router["image"]] = ios_router
 
         if candidate_ios_images:
             selection, ok = QtGui.QInputDialog.getItem(mainwindow,
@@ -524,9 +585,9 @@ class Dynamips(Module):
                                                        list(candidate_ios_images.keys()), 0, False)
             if ok:
                 ios_image = candidate_ios_images[selection]
-                alternative_image["path"] = ios_image["path"]
-                alternative_image["ram"] = ios_image["ram"]
-                alternative_image["idlepc"] = ios_image["idlepc"]
+                alternative_image["path"] = ios_router["path"]
+                alternative_image["ram"] = ios_router["ram"]
+                alternative_image["idlepc"] = ios_router["idlepc"]
                 self._ios_images_cache[image] = alternative_image
                 return alternative_image
 
@@ -568,7 +629,7 @@ class Dynamips(Module):
         """
 
         nodes = []
-        for node_class in Dynamips.classes():
+        for node_class in [EtherSwitchRouter, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
@@ -576,6 +637,17 @@ class Dynamips(Module):
                  "default_symbol": node_class.defaultSymbol(),
                  "hover_symbol": node_class.hoverSymbol()}
             )
+
+        for ios_router in self._ios_routers.values():
+            node_class = PLATFORM_TO_CLASS[ios_router["platform"]]
+            nodes.append(
+                {"class": node_class.__name__,
+                 "name": ios_router["name"],
+                 "categories": node_class.categories(),
+                 "default_symbol": ios_router["default_symbol"],
+                 "hover_symbol": ios_router["hover_symbol"]}
+            )
+
         return nodes
 
     @staticmethod

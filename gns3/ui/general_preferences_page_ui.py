@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Tue Sep 30 18:58:59 2014
+# Created: Fri Oct 10 10:43:47 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -272,13 +272,13 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLocalPathsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Local paths", None))
         self.uiProjectsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My projects:", None))
         self.uiProjectsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your GNS3 projects are stored", None))
-        self.uiProjectsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "...", None))
+        self.uiProjectsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse...", None))
         self.uiImagesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My binary images:", None))
         self.uiImagesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored", None))
-        self.uiImagesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "...", None))
+        self.uiImagesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse...", None))
         self.uiTemporaryFilesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "Temporary files:", None))
         self.uiTemporaryFilesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where temporary files are stored", None))
-        self.uiTemporaryFilesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "...", None))
+        self.uiTemporaryFilesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse...", None))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file", None))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import", None))
         self.uiExportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Export", None))

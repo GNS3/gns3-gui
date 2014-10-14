@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>505</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
          <item>
           <widget class="QToolButton" name="uiDynamipsPathToolButton">
            <property name="text">
-            <string>...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
