@@ -266,11 +266,19 @@ class UploadProjectThread(QThread):
                 zip_file.write(root, os.path.relpath(root, relroot))
                 for file in files:
                     filename = os.path.join(root, file)
-                    if os.path.isfile(filename):  # regular files only
+                    if os.path.isfile(filename) and not self._should_exclude(filename):  # regular files only
                         arcname = os.path.join(os.path.relpath(root, relroot), file)
                         zip_file.write(filename, arcname)
 
         return output_filename
+
+    def _should_exclude(self, filename):
+        """
+        Returns True if file should be excluded from zip of project files
+        :param filename:
+        :return: True if file should be excluded from zip, False otherwise
+        """
+        return filename.endswith('.ghost')
 
     def stop(self):
         self.quit()
