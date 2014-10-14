@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Tue Oct 14 11:57:53 2014
+# Created: Tue Oct 14 17:01:29 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,6 +26,7 @@ except AttributeError:
 class Ui_IOSRouterWizard(object):
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName(_fromUtf8("IOSRouterWizard"))
+        IOSRouterWizard.setWindowModality(QtCore.Qt.WindowModal)
         IOSRouterWizard.resize(513, 397)
         self.uiIOSImageWizardPage = QtGui.QWizardPage()
         self.uiIOSImageWizardPage.setObjectName(_fromUtf8("uiIOSImageWizardPage"))

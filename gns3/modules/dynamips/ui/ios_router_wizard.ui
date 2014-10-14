@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>IOSRouterWizard</class>
  <widget class="QWizard" name="IOSRouterWizard">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
