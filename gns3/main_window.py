@@ -20,6 +20,7 @@ Main window for the GUI.
 """
 
 import os
+import time
 import tempfile
 import socket
 import shutil
@@ -27,8 +28,11 @@ import json
 import glob
 import logging
 
+from pkg_resources import parse_version
+
 from .modules import MODULES
-from .qt import QtGui, QtCore
+from .version import __version__
+from .qt import QtGui, QtCore, QtNetwork
 from .servers import Servers
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
@@ -127,6 +131,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         #FIXME: hide the cloud dock for beta release
         # self.uiCloudInspectorDockWidget.hide()
+
+        # Network Manager (used to check for update)
+        self._network_manager = QtNetwork.QNetworkAccessManager(self)
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -761,13 +768,44 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/documentation/"))
 
-    def _checkForUpdateActionSlot(self):
+    def _checkForUpdateActionSlot(self, silent=False):
         """
         Slot to check if a newer version is available.
+
+        :param silent: do not display any message
         """
 
-        #TODO: check for update
-        QtGui.QMessageBox.critical(self, "Check For Update", "Sorry, to be implemented!")
+        request = QtNetwork.QNetworkRequest(QtCore.QUrl("http://update.gns3.net/"))
+        request.setRawHeader("User-Agent", "GNS3 Check For Update")
+        request.setAttribute(QtNetwork.QNetworkRequest.User, silent)
+        reply = self._network_manager.get(request)
+        reply.finished.connect(self._checkForUpdateReplySlot)
+
+    def _checkForUpdateReplySlot(self):
+        """
+        Process reply for check for update.
+        """
+
+        network_reply = self.sender()
+        is_silent = network_reply.request().attribute(QtNetwork.QNetworkRequest.User)
+
+        if network_reply.error() != QtNetwork.QNetworkReply.NoError and not is_silent:
+            QtGui.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
+        else:
+            latest_release = bytes(network_reply.readAll()).decode().rstrip()
+            if parse_version(__version__) < parse_version(latest_release):
+                    reply = QtGui.QMessageBox.question(self,
+                                                       "Check For Update",
+                                                       "Newer GNS3 version {} is available, do you want to visit our website to download it?".format(latest_release),
+                                                       QtGui.QMessageBox.Yes,
+                                                       QtGui.QMessageBox.No)
+                    if reply == QtGui.QMessageBox.Yes:
+                        QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
+            elif not is_silent:
+                QtGui.QMessageBox.information(self, "Check For Update", "GNS3 is up-to-date!")
+            return
+
+        network_reply.deleteLater()
 
     def _newsActionSlot(self):
         """
@@ -1045,6 +1083,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
                                                                                                                                                    error=e))
+
+        if self._settings["check_for_update"]:
+            # automatic check for update every week (604800 seconds)
+            current_epoch = int(time.mktime(time.localtime()))
+            if current_epoch - self._settings["last_check_for_update"] >= 604800:
+                # let's check for an update
+                self._checkForUpdateActionSlot(silent=True)
+                self._settings["last_check_for_update"] = current_epoch
+                self.setSettings(self._settings)
 
     def _saveProjectAs(self):
         """
