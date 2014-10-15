@@ -26,7 +26,7 @@ from collections import namedtuple
 import hashlib
 import os
 import logging
-from io import StringIO
+from io import StringIO, BytesIO
 
 from libcloud.compute.base import NodeAuthSSHKey
 from libcloud.storage.types import ContainerAlreadyExistsError, ContainerDoesNotExistError
@@ -267,3 +267,23 @@ class BaseCloudCtrl(object):
             return projects
         except ContainerDoesNotExistError:
             return []
+
+    def download_file(self, file_name, destination=None):
+        """
+        Downloads file from cloud storage
+        :param file_name: name of file in cloud storage to download
+        :param destination: local path to save file to (if None, returns file contents as a file-like object)
+        :return: A file-like object if file contents are returned, or None if file is saved to filesystem
+        """
+
+        gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+        storage_object = gns3_container.get_object(file_name)
+        if destination is not None:
+            storage_object.download(destination)
+        else:
+            contents = b''
+
+            for chunk in storage_object.as_stream():
+                contents += chunk
+
+            return BytesIO(contents)
