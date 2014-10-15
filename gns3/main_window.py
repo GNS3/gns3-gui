@@ -46,7 +46,8 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
-from .cloud.utils import get_provider, UploadProjectThread
+from .cloud.utils import UploadProjectThread
+from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 
 log = logging.getLogger(__name__)
