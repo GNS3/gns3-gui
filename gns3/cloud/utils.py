@@ -6,6 +6,7 @@ import os
 import zipfile
 import tempfile
 
+from PyQt4 import QtCore
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 import paramiko
@@ -180,23 +181,42 @@ class UploadProjectThread(QThread):
     """
     Zip and Upload project to the cloud
     """
+
+    # signals to update the progress dialog.
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
+
     def __init__(self, project_settings, cloud_settings):
         super().__init__()
         self.project_settings = project_settings
         self.cloud_settings = cloud_settings
 
     def run(self):
-        log.info("Exporting project to cloud")
-        zipped_project_file = self.zip_project_dir()
+        try:
+            log.info("Exporting project to cloud")
+            self.update.emit(0)
 
-        provider = get_provider(self.cloud_settings)
-        provider.upload_file(zipped_project_file, 'projects')
+            zipped_project_file = self.zip_project_dir()
 
-        topology = Topology.instance()
-        images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
+            self.update.emit(10)  # update progress to 10%
 
-        for image in images:
-            provider.upload_file(image, 'images')
+            provider = get_provider(self.cloud_settings)
+            provider.upload_file(zipped_project_file, 'projects')
+
+            self.update.emit(20)  # update progress to 20%
+
+            topology = Topology.instance()
+            images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
+
+            for i, image in enumerate(images):
+                provider.upload_file(image, 'images')
+                self.update.emit(20 + (float(i) / len(images) * 80))
+
+            self.completed.emit()
+        except Exception as e:
+            log.exception("Error exporting project to cloud")
+            self.error.emit("Error exporting project {}".format(str(e)), True)
 
     def zip_project_dir(self):
         """
@@ -213,8 +233,19 @@ class UploadProjectThread(QThread):
                 zip_file.write(root, os.path.relpath(root, relroot))
                 for file in files:
                     filename = os.path.join(root, file)
-                    if os.path.isfile(filename):  # regular files only
+                    if os.path.isfile(filename) and not self._should_exclude(filename):  # regular files only
                         arcname = os.path.join(os.path.relpath(root, relroot), file)
                         zip_file.write(filename, arcname)
 
         return output_filename
+
+    def _should_exclude(self, filename):
+        """
+        Returns True if file should be excluded from zip of project files
+        :param filename:
+        :return: True if file should be excluded from zip, False otherwise
+        """
+        return filename.endswith('.ghost')
+
+    def stop(self):
+        self.quit()
