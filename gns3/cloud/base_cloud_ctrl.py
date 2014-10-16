@@ -270,7 +270,8 @@ class BaseCloudCtrl(object):
 
     def download_file(self, file_name, destination=None):
         """
-        Downloads file from cloud storage
+        Downloads file from cloud storage. If a file exists at destination, and it is identical to the file in cloud
+        storage, it is not downloaded.
         :param file_name: name of file in cloud storage to download
         :param destination: local path to save file to (if None, returns file contents as a file-like object)
         :return: A file-like object if file contents are returned, or None if file is saved to filesystem
@@ -278,7 +279,22 @@ class BaseCloudCtrl(object):
 
         gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
         storage_object = gns3_container.get_object(file_name)
+
         if destination is not None:
+            if os.path.isfile(destination):
+                # if a file exists at destination and its hash matches that of the
+                # file in cloud storage, don't download it
+                with open(destination, 'rb') as f:
+                    local_file_hash = hashlib.md5(f.read()).hexdigest()
+
+                    hash_object = gns3_container.get_object(file_name + '.md5')
+                    cloud_object_hash = ''
+                    for chunk in hash_object.as_stream():
+                        cloud_object_hash += chunk.decode('utf8')
+
+                    if local_file_hash == cloud_object_hash:
+                        return
+
             storage_object.download(destination)
         else:
             contents = b''

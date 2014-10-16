@@ -170,6 +170,15 @@ class MockLibCloudDriver(object):
         return ''
 
 
+class MockStorageObject(object):
+        def __init__(self, name, data=None):
+            self.name = name
+            self.stream = [data].__iter__() if data else None
+
+        def as_stream(self):
+            return self.stream
+
+
 class TestRackspaceCtrl(unittest.TestCase):
 
     def setUp(self):
@@ -264,11 +273,10 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual('abcdefgh0123456789', ctrl.token)
 
     def test_upload_file(self):
-        ctrl = RackspaceCtrl('valid_user', 'valid_api_key', 'http://foo.bar:8888')
-        ctrl.storage_driver = mock.MagicMock()
+        self.ctrl.storage_driver = mock.MagicMock()
         mock_container = mock.MagicMock()
         mock_container.list_objects = mock.MagicMock(return_value=[])
-        ctrl.storage_driver.create_container = mock.MagicMock(return_value=mock_container)
+        self.ctrl.storage_driver.create_container = mock.MagicMock(return_value=mock_container)
         test_data = b'abcdef'
         test_data_hash = hashlib.md5(test_data).hexdigest()
 
@@ -276,10 +284,10 @@ class TestRackspaceCtrl(unittest.TestCase):
         with test_file.file as f:
             f.write(test_data)
 
-        return_value = ctrl.upload_file(test_file.name, 'test_folder')
+        return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
 
-        upload_file_args = ctrl.storage_driver.upload_object_via_stream.call_args_list[0]
-        upload_hash_args = ctrl.storage_driver.upload_object_via_stream.call_args_list[1]
+        upload_file_args = self.ctrl.storage_driver.upload_object_via_stream.call_args_list[0]
+        upload_hash_args = self.ctrl.storage_driver.upload_object_via_stream.call_args_list[1]
 
         self.assertEqual(upload_file_args[0][2], 'test_folder/' + os.path.basename(test_file.name))
         self.assertEqual(upload_hash_args[0][2], 'test_folder/' + os.path.basename(test_file.name) + '.md5')
@@ -288,14 +296,6 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.assertEqual(return_value, True)
 
     def test_upload_file__exists(self):
-        class MockObject(object):
-            def __init__(self, name, stream=None):
-                self.name = name
-                self.stream = stream
-
-            def as_stream(self):
-                return self.stream
-
         test_data = b'abcdef'
         test_data_hash = hashlib.md5(test_data).hexdigest()
 
@@ -303,22 +303,69 @@ class TestRackspaceCtrl(unittest.TestCase):
         with test_file.file as f:
             f.write(test_data)
 
-        ctrl = RackspaceCtrl('valid_user', 'valid_api_key', 'http://foo.bar:8888')
-        ctrl.storage_driver = mock.MagicMock()
+        self.ctrl.storage_driver = mock.MagicMock()
         mock_container = mock.MagicMock()
         mock_container.list_objects = mock.MagicMock(return_value=[
-            MockObject('test_folder/' + os.path.basename(test_file.name)),
-            MockObject('test_folder/' + os.path.basename(test_file.name) + '.md5')
+            MockStorageObject('test_folder/' + os.path.basename(test_file.name)),
+            MockStorageObject('test_folder/' + os.path.basename(test_file.name) + '.md5')
         ])
-        ctrl.storage_driver.create_container = mock.MagicMock(return_value=mock_container)
+        self.ctrl.storage_driver.create_container = mock.MagicMock(return_value=mock_container)
 
         mock_container.get_object = mock.MagicMock(
-            return_value=MockObject('', stream=[bytes(test_data_hash, 'utf8')].__iter__()))
+            return_value=MockStorageObject('', bytes(test_data_hash, 'utf8')))
 
-        return_value = ctrl.upload_file(test_file.name, 'test_folder')
+        return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
 
-        self.assertFalse(ctrl.storage_driver.upload_object_via_stream.called)
+        self.assertFalse(self.ctrl.storage_driver.upload_object_via_stream.called)
         self.assertEqual(return_value, False)
+
+    def test_download_file__exists__same_hash(self):
+        test_data = b'abcdefghi'
+        test_data_hash = hashlib.md5(test_data).hexdigest()
+        test_file = tempfile.NamedTemporaryFile()
+        with test_file.file as f:
+            f.write(test_data)
+
+        self.ctrl.storage_driver = mock.MagicMock()
+        mock_container = mock.MagicMock()
+        self.ctrl.storage_driver.get_container = mock.MagicMock(return_value=mock_container)
+
+        file_object = MockStorageObject('test_file.txt')
+        file_object.download = mock.MagicMock()
+        file_hash_object = MockStorageObject('test_file.txt', bytes(test_data_hash, 'utf8'))
+
+        mock_container.get_object = lambda name: {
+            'test_file.txt': file_object,
+            'test_file.txt.md5': file_hash_object
+        }[name]
+
+        self.ctrl.download_file('test_file.txt', test_file.name)
+
+        self.assertFalse(file_object.download.called)
+
+    def test_download_file__exists__different_hash(self):
+        test_data = b'abcdefghij'
+        test_data_hash = 'some_garbage_hash'
+        test_file = tempfile.NamedTemporaryFile()
+        with test_file.file as f:
+            f.write(test_data)
+
+        self.ctrl.storage_driver = mock.MagicMock()
+        mock_container = mock.MagicMock()
+        self.ctrl.storage_driver.get_container = mock.MagicMock(return_value=mock_container)
+
+        file_object = MockStorageObject('test_file.txt')
+        file_object.download = mock.MagicMock()
+        file_hash_object = MockStorageObject('test_file.txt', bytes(test_data_hash, 'utf8'))
+
+        mock_container.get_object = lambda name: {
+            'test_file.txt': file_object,
+            'test_file.txt.md5': file_hash_object
+        }[name]
+
+        self.ctrl.download_file('test_file.txt', test_file.name)
+
+        file_object.download.assert_called_once_with(test_file.name)
 
 
 class TestRackspaceCtrlDriver(unittest.TestCase):
