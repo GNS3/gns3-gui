@@ -20,6 +20,7 @@ Main window for the GUI.
 """
 
 import os
+import platform
 import time
 import tempfile
 import socket
@@ -44,6 +45,7 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
+from .utils.analytics import AnalyticsClient
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
@@ -91,6 +93,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._temporary_project = True
         self._max_recent_files = 5
         self._recent_file_actions = []
+        self._start_time = time.time()
 
         self._project_settings = {
             "project_name": "unsaved",
@@ -978,6 +981,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             servers = Servers.instance()
             servers.stopLocalServer(wait=True)
+
+            time_spent = "{:.0f}".format(time.time() - self._start_time)
+            AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
         else:
             event.ignore()
 
@@ -1092,6 +1098,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
+
+        AnalyticsClient().send_event("GNS3", "Open", "Version {} on {}".format(__version__, platform.system()))
 
     def _saveProjectAs(self):
         """
