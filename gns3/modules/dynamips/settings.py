@@ -21,6 +21,8 @@ Default Dynamips settings.
 
 import sys
 import os
+from collections import OrderedDict
+
 
 # default path to Dynamips executable
 if sys.platform.startswith("win"):
@@ -214,3 +216,6 @@ WIC_MATRIX["c2600"] = {0: C2600_WICS, 1: C2600_WICS, 2: C2600_WICS}
 WIC_MATRIX["c2691"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
 WIC_MATRIX["c3725"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
 WIC_MATRIX["c3745"] = {0: C3700_WICS, 1: C3700_WICS, 2: C3700_WICS}
+
+STATIC_SERVER_TYPES = OrderedDict((("local", "local"),
+                                   ("cloud", "cloud")))

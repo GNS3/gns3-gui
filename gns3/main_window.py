@@ -1576,7 +1576,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         upload_thread = UploadProjectThread(self._project_settings, self.cloudSettings())
-        upload_thread.start()
-
-        #TODO show uploading dialog
-        upload_thread.wait()
+        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel", parent=self)
+        progress_dialog.show()
+        progress_dialog.exec_()
