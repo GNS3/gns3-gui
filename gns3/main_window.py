@@ -293,7 +293,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
         self.uiCheckForUpdateAction.triggered.connect(self._checkForUpdateActionSlot)
-        self.uiNewsAction.triggered.connect(self._newsActionSlot)
+        self.uiGettingStartedAction.triggered.connect(self._gettingStartedActionSlot)
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
@@ -810,19 +810,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         network_reply.deleteLater()
 
-    def _newsActionSlot(self):
+    def _gettingStartedActionSlot(self, auto=False):
         """
         Slot to open the news dialog.
         """
 
         try:
-            # QtWebKit which is used by NewsDialog is not installed
+            # QtWebKit which is used by GettingStartedDialog is not installed
             # by default on FreeBSD, Solaris and possibly other systems.
-            from .dialogs.news_dialog import NewsDialog
+            from .dialogs.getting_started_dialog import GettingStartedDialog
         except ImportError:
             return
 
-        dialog = NewsDialog(self)
+        dialog = GettingStartedDialog(self)
+        dialog.showit()
+        if auto is True and not dialog.showit():
+            return
         dialog.show()
         dialog.exec_()
 
@@ -1022,9 +1025,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
+        self._gettingStartedActionSlot(auto=True)
         self._createTemporaryProject()
         self._newProjectActionSlot()
-        #self._newsActionSlot()
 
         # connect to the local server
         servers = Servers.instance()

@@ -18,6 +18,7 @@
 
 import platform
 import uuid
+
 from hashlib import md5
 from urllib.request import urlopen
 from urllib.parse import quote

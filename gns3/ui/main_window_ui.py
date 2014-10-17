@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Fri Oct 10 23:10:53 2014
+# Created: Thu Oct 16 17:45:13 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -400,8 +400,8 @@ class Ui_MainWindow(object):
         icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new-hover.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName(_fromUtf8("uiAddLinkAction"))
-        self.uiNewsAction = QtGui.QAction(MainWindow)
-        self.uiNewsAction.setObjectName(_fromUtf8("uiNewsAction"))
+        self.uiGettingStartedAction = QtGui.QAction(MainWindow)
+        self.uiGettingStartedAction.setObjectName(_fromUtf8("uiGettingStartedAction"))
         self.uiLabInstructionsAction = QtGui.QAction(MainWindow)
         self.uiLabInstructionsAction.setObjectName(_fromUtf8("uiLabInstructionsAction"))
         self.uiFitInViewAction = QtGui.QAction(MainWindow)
@@ -425,7 +425,7 @@ class Ui_MainWindow(object):
         self.uiFileMenu.addAction(self.uiQuitAction)
         self.uiHelpMenu.addAction(self.uiOnlineHelpAction)
         self.uiHelpMenu.addAction(self.uiCheckForUpdateAction)
-        self.uiHelpMenu.addAction(self.uiNewsAction)
+        self.uiHelpMenu.addAction(self.uiGettingStartedAction)
         self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
         self.uiHelpMenu.addAction(self.uiAboutAction)
@@ -644,8 +644,8 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setText(_translate("MainWindow", "Add a link", None))
         self.uiAddLinkAction.setToolTip(_translate("MainWindow", "Add a link", None))
         self.uiAddLinkAction.setStatusTip(_translate("MainWindow", "Add a link", None))
-        self.uiNewsAction.setText(_translate("MainWindow", "News", None))
-        self.uiNewsAction.setToolTip(_translate("MainWindow", "Show GNS3 news", None))
+        self.uiGettingStartedAction.setText(_translate("MainWindow", "Getting started", None))
+        self.uiGettingStartedAction.setToolTip(_translate("MainWindow", "Show GNS3 news", None))
         self.uiLabInstructionsAction.setText(_translate("MainWindow", "Lab instructions", None))
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view", None))
         self.uiExportProjectAction.setText(_translate("MainWindow", "Export project", None))
