@@ -26,7 +26,6 @@ import pkg_resources
 import shutil
 
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
