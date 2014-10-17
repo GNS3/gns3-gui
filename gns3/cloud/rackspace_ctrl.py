@@ -242,7 +242,7 @@ class RackspaceCtrl(BaseCloudCtrl):
         }
         try:
             response = requests.get(endpoint, params=params)
-        except requests.exceptions.ConnectionError:
+        except requests.ConnectionError:
             raise ApiError("Unable to connect to IAS")
 
         status = response.status_code
