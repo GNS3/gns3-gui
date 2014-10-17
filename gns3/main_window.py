@@ -1450,8 +1450,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         return instance, keypair
 
     def _exportProjectActionSlot(self):
-
-        upload_thread = UploadProjectThread(self._project_settings, self.cloudSettings())
-        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel", parent=self)
+        upload_thread = UploadProjectThread(
+            self.cloudSettings(),
+            self.projectSettings()['project_path'],
+            self.settings()['images_path']
+        )
+        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel",
+                                         parent=self)
         progress_dialog.show()
         progress_dialog.exec_()

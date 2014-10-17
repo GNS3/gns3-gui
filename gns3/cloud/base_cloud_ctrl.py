@@ -216,11 +216,11 @@ class BaseCloudCtrl(object):
 
         return self.driver.list_key_pairs()
 
-    def upload_file(self, file_path, folder):
+    def upload_file(self, file_path, cloud_object_name):
         """
         Uploads file to cloud storage (if it is not identical to a file already in cloud storage).
         :param file_path: path to file to upload
-        :param folder: folder in cloud storage to save file in
+        :param cloud_object_name: name of file saved in cloud storage
         :return: True if file was uploaded, False if it was skipped because it already existed and was identical
         """
         try:
@@ -231,7 +231,6 @@ class BaseCloudCtrl(object):
         with open(file_path, 'rb') as file:
             local_file_hash = hashlib.md5(file.read()).hexdigest()
 
-            cloud_object_name = folder + '/' + os.path.basename(file_path)
             cloud_hash_name = cloud_object_name + '.md5'
             cloud_objects = [obj.name for obj in gns3_container.list_objects()]
 
@@ -303,3 +302,25 @@ class BaseCloudCtrl(object):
                 contents += chunk
 
             return BytesIO(contents)
+
+    def find_storage_image_names(self, images_to_find):
+        """
+        Maps names of image files to their full name in cloud storage
+        :param images_to_find: list of image names to find
+        :return: A dictionary where keys are image names, and values are the corresponding names of
+        the files in cloud storage
+        """
+        gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+        images_in_storage = [obj.name for obj in gns3_container.list_objects() if obj.name.startswith('images/')]
+
+        images = {}
+        for image_name in images_to_find:
+            images_with_same_name =\
+                list(filter(lambda storage_image_name: storage_image_name.endswith(image_name), images_in_storage))
+
+            if len(images_with_same_name) == 1:
+                images[image_name] = images_with_same_name[0]
+            else:
+                raise Exception('Image does not exist in cloud storage or is duplicated')
+
+        return images

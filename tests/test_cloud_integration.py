@@ -344,11 +344,11 @@ class TestRackspaceCtrl(unittest.TestCase):
             with test_file.file as f:
                 f.write(test_data)
 
-            return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
+            return_value = self.ctrl.upload_file(test_file.name, 'test_folder/test_file.txt')
 
             container = self.ctrl.storage_driver.get_container(self.ctrl.GNS3_CONTAINER_NAME)
-            file_object = container.get_object('test_folder/' + os.path.basename(test_file.name))
-            hash_object = container.get_object('test_folder/' + os.path.basename(test_file.name) + '.md5')
+            file_object = container.get_object('test_folder/test_file.txt')
+            hash_object = container.get_object('test_folder/test_file.txt.md5')
 
             cloud_file_hash = ''
             for chunk in hash_object.as_stream():

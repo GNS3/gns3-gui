@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import io
+import json
 from socket import error as socket_error
 import logging
 import os
@@ -220,10 +221,11 @@ class UploadProjectThread(QThread):
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
-    def __init__(self, project_settings, cloud_settings):
+    def __init__(self, cloud_settings, project_path, images_path):
         super().__init__()
-        self.project_settings = project_settings
         self.cloud_settings = cloud_settings
+        self.project_path = project_path
+        self.images_path = images_path
 
     def run(self):
         try:
@@ -235,7 +237,7 @@ class UploadProjectThread(QThread):
             self.update.emit(10)  # update progress to 10%
 
             provider = get_provider(self.cloud_settings)
-            provider.upload_file(zipped_project_file, 'projects')
+            provider.upload_file(zipped_project_file, 'projects/' + os.path.basename(zipped_project_file))
 
             self.update.emit(20)  # update progress to 20%
 
@@ -243,7 +245,7 @@ class UploadProjectThread(QThread):
             images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
 
             for i, image in enumerate(images):
-                provider.upload_file(image, 'images')
+                provider.upload_file(image, 'images/' + os.path.relpath(image, self.images_path))
                 self.update.emit(20 + (float(i) / len(images) * 80))
 
             self.completed.emit()
@@ -256,9 +258,9 @@ class UploadProjectThread(QThread):
         Zips project files
         :return: path to zipped project file
         """
-        project_name = os.path.basename(self.project_settings["project_path"])
+        project_name = os.path.basename(self.project_path)
         output_filename = os.path.join(tempfile.gettempdir(), project_name + ".zip")
-        project_dir = os.path.dirname(self.project_settings["project_path"])
+        project_dir = os.path.dirname(self.project_path)
         relroot = os.path.abspath(os.path.join(project_dir, os.pardir))
         with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip_file:
             for root, dirs, files in os.walk(project_dir):
@@ -282,3 +284,42 @@ class UploadProjectThread(QThread):
 
     def stop(self):
         self.quit()
+
+
+class DownloadProjectThread(QThread):
+    """
+    Downloads project from cloud storage
+    """
+
+    def __init__(self, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
+        super().__init__()
+        self.project_name = cloud_project_file_name
+        self.project_dest_path = project_dest_path
+        self.images_dest_path = images_dest_path
+        self.cloud_settings = cloud_settings
+
+    def run(self):
+        provider = get_provider(self.cloud_settings)
+        zip_file = provider.download_file(self.project_name)
+        zip_file = zipfile.ZipFile(zip_file, mode='r')
+        zip_file.extractall(self.project_dest_path)
+        zip_file.close()
+        project_name = zip_file.namelist()[0].strip('/')
+
+        with open(os.path.join(self.project_dest_path, project_name, project_name + '.gns3'), 'r') as f:
+            project_settings = json.loads(f.read())
+
+            images = set()
+            for node in project_settings["topology"].get("nodes", []):
+                if "properties" in node and "image" in node["properties"]:
+                    images.add(node["properties"]["image"])
+
+        image_names_in_cloud = provider.find_storage_image_names(images)
+
+        for image in images:
+            dest_path = os.path.join(self.images_dest_path, *image_names_in_cloud[image].split('/')[1:])
+
+            if not os.path.exists(os.path.dirname(dest_path)):
+                os.makedirs(os.path.dirname(dest_path))
+
+            provider.download_file(image_names_in_cloud[image], dest_path)

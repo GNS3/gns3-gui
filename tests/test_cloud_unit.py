@@ -284,13 +284,13 @@ class TestRackspaceCtrl(unittest.TestCase):
         with test_file.file as f:
             f.write(test_data)
 
-        return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
+        return_value = self.ctrl.upload_file(test_file.name, 'test_folder/test.txt')
 
         upload_file_args = self.ctrl.storage_driver.upload_object_via_stream.call_args_list[0]
         upload_hash_args = self.ctrl.storage_driver.upload_object_via_stream.call_args_list[1]
 
-        self.assertEqual(upload_file_args[0][2], 'test_folder/' + os.path.basename(test_file.name))
-        self.assertEqual(upload_hash_args[0][2], 'test_folder/' + os.path.basename(test_file.name) + '.md5')
+        self.assertEqual(upload_file_args[0][2], 'test_folder/test.txt')
+        self.assertEqual(upload_hash_args[0][2], 'test_folder/test.txt.md5')
         self.assertEqual(upload_file_args[0][0].name, test_file.name)
         self.assertEqual(upload_hash_args[0][0].read(), test_data_hash)
         self.assertEqual(return_value, True)
@@ -306,15 +306,15 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.ctrl.storage_driver = mock.MagicMock()
         mock_container = mock.MagicMock()
         mock_container.list_objects = mock.MagicMock(return_value=[
-            MockStorageObject('test_folder/' + os.path.basename(test_file.name)),
-            MockStorageObject('test_folder/' + os.path.basename(test_file.name) + '.md5')
+            MockStorageObject('test_folder/test.txt'),
+            MockStorageObject('test_folder/test.txt.md5')
         ])
         self.ctrl.storage_driver.create_container = mock.MagicMock(return_value=mock_container)
 
         mock_container.get_object = mock.MagicMock(
             return_value=MockStorageObject('', bytes(test_data_hash, 'utf8')))
 
-        return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
+        return_value = self.ctrl.upload_file(test_file.name, 'test_folder/test.txt')
 
         self.assertFalse(self.ctrl.storage_driver.upload_object_via_stream.called)
         self.assertEqual(return_value, False)
@@ -366,6 +366,41 @@ class TestRackspaceCtrl(unittest.TestCase):
         self.ctrl.download_file('test_file.txt', test_file.name)
 
         file_object.download.assert_called_once_with(test_file.name)
+
+    def test_find_storage_image_names(self):
+        self.ctrl.storage_driver = mock.MagicMock()
+        mock_container = mock.MagicMock()
+        self.ctrl.storage_driver.get_container = mock.MagicMock(return_value=mock_container)
+        mock_container.list_objects = mock.MagicMock(return_value=[
+            MockStorageObject('images/IOS/test_image_1.image'),
+            MockStorageObject('images/IOS/test_image_1.image.md5'),
+            MockStorageObject('images/IOS/test_image_2.img'),
+            MockStorageObject('images/IOS/test_image_2.img.md5'),
+            MockStorageObject('images/IOS/test_image_3.img'),
+            MockStorageObject('projects/project1.zip'),
+            MockStorageObject('test_image_1.image')
+        ])
+
+        image_names = self.ctrl.find_storage_image_names(['test_image_1.image', 'test_image_2.img'])
+
+        self.assertDictEqual(image_names, {
+            'test_image_1.image': 'images/IOS/test_image_1.image',
+            'test_image_2.img': 'images/IOS/test_image_2.img'
+        })
+
+    def test_find_storage_image_names__missing(self):
+        self.ctrl.storage_driver = mock.MagicMock()
+        mock_container = mock.MagicMock()
+        self.ctrl.storage_driver.get_container = mock.MagicMock(return_value=mock_container)
+        mock_container.list_objects = mock.MagicMock(return_value=[
+            MockStorageObject('images/IOS/test_image_1.image'),
+            MockStorageObject('images/IOS/test_image_1.image.md5'),
+            MockStorageObject('images/IOS/test_image_2.img.md5'),
+            MockStorageObject('projects/project1.zip'),
+            MockStorageObject('test_image_1.image')
+        ])
+
+        self.assertRaises(Exception, self.ctrl.find_storage_image_names, ['test_image_1.image', 'test_image_2.img'])
 
 
 class TestRackspaceCtrlDriver(unittest.TestCase):
