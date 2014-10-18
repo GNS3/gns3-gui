@@ -102,7 +102,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "project_type": "local",
         }
 
-        #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
+        except ImportError:
+            pass
 
         # do not show the nodes dock widget my default
         self.uiNodesDockWidget.setVisible(False)

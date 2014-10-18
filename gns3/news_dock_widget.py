@@ -19,51 +19,41 @@ import os
 import sys
 import pkg_resources
 
-from ..qt import QtCore, QtGui, QtWebKit
-from ..ui.getting_started_dialog_ui import Ui_GettingStartedDialog
+from .qt import QtGui, QtCore, QtWebKit
+from .ui.news_dock_widget_ui import Ui_NewsDockWidget
+
+import logging
+log = logging.getLogger(__name__)
 
 
-class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
+class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
     """
-    GettingStarted dialog.
+    :param parent: parent widget
     """
 
     def __init__(self, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        QtGui.QDockWidget.__init__(self, parent)
         self.setupUi(self)
 
-        self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
-        self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
-        self.adjustSize()
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
-        self.uiCheckBox.setChecked(QtCore.QSettings().value("GUI/show_getting_started_dialog", True, type=bool))
+        self._refresh_timer = QtCore.QTimer(self)
+        self._refresh_timer.timeout.connect(self._refreshSlot)
+        self._refresh_timer.start(60000)
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self._loadFinishedSlot)
         self._timer.setSingleShot(True)
         self._timer.start(5000)
-        self.uiWebView.load(QtCore.QUrl("http://start.gns3.net"))
+        self.uiWebView.load(QtCore.QUrl("http://as.gns3.com/software/docked.html"))
 
-    def showit(self):
+    def _refreshSlot(self):
         """
-        Either this dialog should be automatically showed at startup.
-
-        :returns: boolean
+        Refeshes the page.
         """
 
-        return self.uiCheckBox.isChecked()
-
-    def done(self, result):
-        """
-        This dialog is closed.
-
-        :param result: ignored
-        """
-
-        QtCore.QSettings().setValue("GUI/show_getting_started_dialog", self.uiCheckBox.isChecked())
-        QtGui.QDialog.done(self, result)
+        self.uiWebView.reload()
 
     def _urlClickedSlot(self, url):
         """
@@ -87,10 +77,11 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         self._timer.timeout.disconnect()
         if result is False:
             # load a local resource if the page is not available
-            resource_name = os.path.join("static", "getting_started.html")
+            resource_name = os.path.join("static", "gns3_jungle.html")
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                getting_started = os.path.normpath(resource_name)
+                gns3_jungle = os.path.normpath(resource_name)
             elif pkg_resources.resource_exists("gns3", resource_name):
-                getting_started_page = pkg_resources.resource_filename("gns3", resource_name)
-                getting_started = os.path.normpath(getting_started_page)
-            self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))
+                gns3_jungle_page = pkg_resources.resource_filename("gns3", resource_name)
+                gns3_jungle = os.path.normpath(gns3_jungle_page)
+            self.uiWebView.load(QtCore.QUrl("file://{}".format(gns3_jungle)))
+            self._refresh_timer.stop()
