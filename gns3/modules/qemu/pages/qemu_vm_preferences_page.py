@@ -54,36 +54,6 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiQemuVMsTreeWidget.currentItemChanged.connect(self._qemuVMChangedSlot)
         self.uiQemuVMsTreeWidget.itemPressed.connect(self._qemuVMPressedSlot)
 
-    def showEvent(self, event):
-        """
-        Loads the QEMU binaries list when the page is shown.
-        :param event: QShowEvent instance
-        """
-
-        self._qemuRefreshSlot()
-        QtGui.QWidget.showEvent(self, event)
-
-    def _qemuRefreshSlot(self):
-        """
-        Gets/refreshes the QEMU binaries list for all servers.
-        """
-
-        qemu_module = Qemu.instance()
-        servers = Servers.instance()
-
-        if qemu_module.settings()["use_local_server"]:
-            try:
-                qemu_module.refreshQemuBinaries(servers.localServer())
-            except ModuleError as e:
-                QtGui.QMessageBox.critical(self, "QEMU list", "{}".format(e))
-        else:
-            for server in servers.remoteServers().values():
-                try:
-                    qemu_module.refreshQemuBinaries(server)
-                except ModuleError as e:
-                    print("{}".format(e))
-                    continue
-
     def _createSectionItem(self, name):
 
         section_item = QtGui.QTreeWidgetItem(self.uiQemuVMInfoTreeWidget)
@@ -100,6 +70,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
+        QtGui.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
         QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
 

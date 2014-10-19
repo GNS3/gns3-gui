@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Tue Oct 14 17:01:29 2014
+# Created: Sun Oct 19 16:55:07 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,46 @@ class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName(_fromUtf8("QemuVMWizard"))
         QemuVMWizard.setWindowModality(QtCore.Qt.WindowModal)
-        QemuVMWizard.resize(514, 367)
+        QemuVMWizard.resize(514, 366)
+        self.uiServerWizardPage = QtGui.QWizardPage()
+        self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
+        self.gridLayout_4 = QtGui.QGridLayout(self.uiServerWizardPage)
+        self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
+        self.uiServerTypeGroupBox = QtGui.QGroupBox(self.uiServerWizardPage)
+        self.uiServerTypeGroupBox.setObjectName(_fromUtf8("uiServerTypeGroupBox"))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.uiServerTypeGroupBox)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.uiRemoteRadioButton = QtGui.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiRemoteRadioButton.setChecked(True)
+        self.uiRemoteRadioButton.setObjectName(_fromUtf8("uiRemoteRadioButton"))
+        self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
+        self.uiCloudRadioButton = QtGui.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiCloudRadioButton.setObjectName(_fromUtf8("uiCloudRadioButton"))
+        self.horizontalLayout.addWidget(self.uiCloudRadioButton)
+        self.uiLocalRadioButton = QtGui.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiLocalRadioButton.setObjectName(_fromUtf8("uiLocalRadioButton"))
+        self.horizontalLayout.addWidget(self.uiLocalRadioButton)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.gridLayout_4.addWidget(self.uiServerTypeGroupBox, 0, 0, 1, 1)
+        self.uiRemoteServersGroupBox = QtGui.QGroupBox(self.uiServerWizardPage)
+        self.uiRemoteServersGroupBox.setObjectName(_fromUtf8("uiRemoteServersGroupBox"))
+        self.gridLayout_8 = QtGui.QGridLayout(self.uiRemoteServersGroupBox)
+        self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
+        self.uiRemoteServersComboBox = QtGui.QComboBox(self.uiRemoteServersGroupBox)
+        self.uiRemoteServersComboBox.setEnabled(True)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
+        self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
+        self.uiRemoteServersComboBox.setObjectName(_fromUtf8("uiRemoteServersComboBox"))
+        self.gridLayout_8.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
+        self.uiRemoteServersLabel = QtGui.QLabel(self.uiRemoteServersGroupBox)
+        self.uiRemoteServersLabel.setObjectName(_fromUtf8("uiRemoteServersLabel"))
+        self.gridLayout_8.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
+        QemuVMWizard.addPage(self.uiServerWizardPage)
         self.uiNameTypeWizardPage = QtGui.QWizardPage()
         self.uiNameTypeWizardPage.setObjectName(_fromUtf8("uiNameTypeWizardPage"))
         self.gridLayout = QtGui.QGridLayout(self.uiNameTypeWizardPage)
@@ -151,6 +190,14 @@ class Ui_QemuVMWizard(object):
 
     def retranslateUi(self, QemuVMWizard):
         QemuVMWizard.setWindowTitle(_translate("QemuVMWizard", "New QEMU VM", None))
+        self.uiServerWizardPage.setTitle(_translate("QemuVMWizard", "Server", None))
+        self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM.", None))
+        self.uiServerTypeGroupBox.setTitle(_translate("QemuVMWizard", "Server type", None))
+        self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Remote", None))
+        self.uiCloudRadioButton.setText(_translate("QemuVMWizard", "Cloud", None))
+        self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Local", None))
+        self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote servers", None))
+        self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on server:", None))
         self.uiNameTypeWizardPage.setTitle(_translate("QemuVMWizard", "Name and type", None))
         self.uiNameTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for the new QEMU virtual machine and select the type of device.", None))
         self.uiTypeLabel.setText(_translate("QemuVMWizard", "Type:", None))

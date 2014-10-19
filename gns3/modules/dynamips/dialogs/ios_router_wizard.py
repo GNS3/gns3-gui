@@ -63,6 +63,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
 
+        self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
+        self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
@@ -86,6 +88,34 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                              2: self.uiWic2comboBox}
 
         self.uiTestIOSImagePushButton.hide()  # hide it because it doesn't work
+
+        if Dynamips.instance().settings()["use_local_server"]:
+            # skip the server page if we use the local server
+            self.setStartId(1)
+
+    def _remoteServerToggledSlot(self, checked):
+        """
+        Slot for when the remote server radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersGroupBox.setEnabled(True)
+        else:
+            self.uiRemoteServersGroupBox.setEnabled(False)
+
+    def _loadBalanceToggledSlot(self, checked):
+        """
+        Slot for when the load balance checkbox is toggled.
+
+        :param checked: either the box is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersComboBox.setEnabled(False)
+        else:
+            self.uiRemoteServersComboBox.setEnabled(True)
 
     def _platformChangedSlot(self, platform):
         """
@@ -238,7 +268,12 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def initializePage(self, page_id):
 
-        if self.page(page_id) == self.uiNamePlatformWizardPage:
+        if self.page(page_id) == self.uiServerWizardPage:
+            self.uiRemoteServersComboBox.clear()
+            for server in Servers.instance().remoteServers().values():
+                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+
+        elif self.page(page_id) == self.uiNamePlatformWizardPage:
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             ios_image = self.uiIOSImageLineEdit.text()
             self.setWindowTitle("New IOS router - {}".format(os.path.basename(ios_image)))
@@ -269,6 +304,13 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
         Validates the IOS name.
         """
+
+        if self.currentPage() == self.uiServerWizardPage:
+
+            #FIXME: prevent users to use "cloud"
+            if self.uiCloudRadioButton.isChecked():
+                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+                return False
 
         # if self.currentPage() == self.uiNameImageWizardPage:
         #     name = self.uiNameLineEdit.text()
@@ -303,16 +345,16 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
 
         path = self.uiIOSImageLineEdit.text()
-
-        #TODO: mutiple remote server
-        if Dynamips.instance().settings()["use_local_server"]:
+        if Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
-        else:
+        elif self.uiLoadBalanceCheckBox.isChecked():
             server = next(iter(Servers.instance()))
             if not server:
-                QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
+                QtGui.QMessageBox.critical(self, "IOS router", "No remote server available!")
                 return
-            server = server.host
+            server = "{}:{}".format(server.host, server.port)
+        else:
+            server = self.uiRemoteServersComboBox.currentText()
 
         settings = {
             "name": self.uiNameLineEdit.text(),

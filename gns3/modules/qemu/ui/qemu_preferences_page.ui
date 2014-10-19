@@ -30,7 +30,7 @@
        <item>
         <widget class="QCheckBox" name="uiUseLocalServercheckBox">
          <property name="text">
-          <string>Use the local server</string>
+          <string>Always use the local server</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -47,6 +47,9 @@
            <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
             </property>
             <column>
              <property name="text">

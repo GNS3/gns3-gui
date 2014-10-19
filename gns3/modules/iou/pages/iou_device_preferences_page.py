@@ -156,6 +156,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
+        QtGui.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
         QtGui.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
 
@@ -163,8 +164,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             QtGui.QTreeWidgetItem(section_item, ["RAM:", "default"])
             QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "default"])
         else:
-            QtGui.QTreeWidgetItem(section_item, ["RAM:", str(iou_device["ram"])])
-            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", str(iou_device["nvram"])])
+            QtGui.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(iou_device["ram"])])
+            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(iou_device["nvram"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

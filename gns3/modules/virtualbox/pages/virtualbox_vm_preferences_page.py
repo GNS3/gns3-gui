@@ -53,37 +53,6 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         self.uiVirtualBoxVMsTreeWidget.currentItemChanged.connect(self._vboxVMChangedSlot)
         self.uiVirtualBoxVMsTreeWidget.itemPressed.connect(self._vboxVMPressedSlot)
 
-    def showEvent(self, event):
-        """
-        Loads the VM list when the page is shown.
-
-        :param event: QShowEvent instance
-        """
-
-        self._vboxRefreshSlot()
-        QtGui.QWidget.showEvent(self, event)
-
-    def _vboxRefreshSlot(self):
-        """
-        Gets/refreshes the VM list for all servers.
-        """
-
-        vbox_module = VirtualBox.instance()
-        servers = Servers.instance()
-
-        if vbox_module.settings()["use_local_server"]:
-            try:
-                vbox_module.refreshVirtualBoxVMs(servers.localServer())
-            except ModuleError as e:
-                QtGui.QMessageBox.critical(self, "VirtualBox VM list", "{}".format(e))
-        else:
-            for server in servers.remoteServers().values():
-                try:
-                    vbox_module.refreshVirtualBoxVMs(server)
-                except ModuleError as e:
-                    print("{}".format(e))
-                    continue
-
     def _vboxVMChangedSlot(self, current, previous):
         """
         Loads a selected VirtualBox VM from the tree widget.
@@ -118,6 +87,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
+        QtGui.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Console enabled:", "{}".format(vbox_vm["enable_console"])])
         QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
 

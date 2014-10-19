@@ -387,27 +387,6 @@ class Dynamips(Module):
             params.update({"project_name": project_name})
         server.send_notification("dynamips.settings", params)
 
-    def allocateServer(self, node_class):
-        """
-        Allocates a server.
-
-        :param node_class: Node object
-
-        :returns: allocated server (WebSocketClient instance)
-        """
-
-        # allocate a server for the node
-        servers = Servers.instance()
-        if self._settings["use_local_server"]:
-            # use the local server
-            server = servers.localServer()
-        else:
-            # pick up a remote server (round-robin method)
-            server = next(iter(servers))
-            if not server:
-                raise ModuleError("No remote server is configured")
-        return server
-
     def createNode(self, node_class, server):
         """
         Creates a new node.
@@ -637,11 +616,19 @@ class Dynamips(Module):
         in the nodes view and create a node on the scene.
         """
 
+        server = "local"
+        if not self._settings["use_local_server"]:
+            # pick up a remote server (round-robin method)
+            remote_server = next(iter(Servers.instance()))
+            if remote_server:
+                server = "{}:{}".format(remote_server.host, remote_server.port)
+
         nodes = []
         for node_class in [EtherSwitchRouter, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
+                 "server": server,
                  "categories": node_class.categories(),
                  "default_symbol": node_class.defaultSymbol(),
                  "hover_symbol": node_class.hoverSymbol()}
@@ -652,6 +639,7 @@ class Dynamips(Module):
             nodes.append(
                 {"class": node_class.__name__,
                  "name": ios_router["name"],
+                 "server": ios_router["server"],
                  "categories": node_class.categories(),
                  "default_symbol": ios_router["default_symbol"],
                  "hover_symbol": ios_router["hover_symbol"]}

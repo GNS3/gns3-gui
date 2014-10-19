@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/news_dock_widget.ui'
 #
-# Created: Sat Oct 18 11:48:43 2014
+# Created: Sat Oct 18 15:38:49 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!

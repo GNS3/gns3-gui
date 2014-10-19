@@ -283,27 +283,6 @@ class VirtualBox(Module):
             params.update({"project_name": project_name})
         server.send_notification("virtualbox.settings", params)
 
-    def allocateServer(self, node_class):
-        """
-        Allocates a server.
-
-        :param node_class: Node object
-
-        :returns: allocated server (WebSocketClient instance)
-        """
-
-        # allocate a server for the node
-        servers = Servers.instance()
-        if self._settings["use_local_server"]:
-            # use the local server
-            server = servers.localServer()
-        else:
-            # pick up a remote server (round-robin method)
-            server = next(iter(servers))
-            if not server:
-                raise ModuleError("No remote server is configured")
-        return server
-
     def createNode(self, node_class, server):
         """
         Creates a new node.
@@ -407,11 +386,12 @@ class VirtualBox(Module):
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
 
-    def refreshVirtualBoxVMs(self, server):
+    def getVirtualBoxVMsFromServer(self, server, callback):
         """
         Gets the VirtualBox VM list from a server.
 
         :param server: server to send the request to
+        :param callback: callback for the reply from the server
         """
 
         if not server.connected():
@@ -423,24 +403,7 @@ class VirtualBox(Module):
                                                                                  server.port,
                                                                                  e))
 
-        server.send_message("virtualbox.vm_list", None, self._refreshVirtualBoxVMsCallback)
-
-    def _refreshVirtualBoxVMsCallback(self, result, error=False):
-        """
-        Callback to get the VirtualBox VM list.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("could not get the VirtualBox VM list: {}".format(result["message"]))
-        else:
-            if self.settings()["use_local_server"]:
-                server = "local"
-            else:
-                server = result["server"]
-            self._virtualbox_vm_list[server] = result
+        server.send_message("virtualbox.vm_list", None, callback)
 
     def getVirtualBoxVMList(self):
         """
@@ -484,6 +447,7 @@ class VirtualBox(Module):
             nodes.append(
                 {"class": VirtualBoxVM.__name__,
                  "name": vbox_vm["vmname"],
+                 "server": vbox_vm["server"],
                  "categories": VirtualBoxVM.categories(),
                  "default_symbol": vbox_vm["default_symbol"],
                  "hover_symbol": vbox_vm["hover_symbol"]}
