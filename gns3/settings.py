@@ -98,6 +98,7 @@ else:
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Xterm': 'xterm -T %d -e \'telnet %h %p\'',
                                              'Putty': 'putty -telnet %h %p -title %d -sl 2500 -fg SALMON1 -bg BLACK',
                                              'Gnome Terminal': 'gnome-terminal -t %d -e \'telnet %h %p\'',
+                                             'Xfce4 Terminal': 'xfce4-terminal -T %d -e \'telnet %h %p\'',
                                              'ROXTerm': 'roxterm -n %d --tab -e telnet %h %p',
                                              'KDE Konsole': 'konsole --new-tab -p tabtitle=%d -e telnet %h %p',
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
