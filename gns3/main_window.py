@@ -40,6 +40,7 @@ from .ui.main_window_ui import Ui_MainWindow
 from .dialogs.about_dialog import AboutDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
+from .dialogs.snapshots_dialog import SnapshotsDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
@@ -391,7 +392,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                              keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
-                self._saveProject(new_project_settings["project_path"])
+                self.saveProject(new_project_settings["project_path"])
 
             else:
                 self._createTemporaryProject()
@@ -435,16 +436,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self._temporary_project:
-            return self._saveProjectAs()
+            return self.saveProjectAs()
         else:
-            return self._saveProject(self._project_settings["project_path"])
+            return self.saveProject(self._project_settings["project_path"])
 
     def _saveProjectAsActionSlot(self):
         """
         Slot called to save a project to another location/name.
         """
 
-        self._saveProjectAs()
+        self.saveProjectAs()
 
     def _importExportConfigsActionSlot(self):
         """
@@ -530,8 +531,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to open the snapshot dialog.
         """
 
-        #TODO: snapshot support.
-        pass
+        # first check if any node doesn't run locally
+        topology = Topology.instance()
+        for node in topology.nodes():
+            if node.server() != Servers.instance().localServer():
+                QtGui.QMessageBox.critical(self, "Snapshots", "Snapshot can only be created if all the nodes run locally")
+                return
+
+        dialog = SnapshotsDialog(self,
+                                 self._project_settings["project_path"],
+                                 self._project_settings["project_files_dir"])
+        dialog.show()
+        dialog.exec_()
 
     def _selectAllActionSlot(self):
         """
@@ -1017,8 +1028,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                               QtGui.QMessageBox.Discard | QtGui.QMessageBox.Save | QtGui.QMessageBox.Cancel)
             if reply == QtGui.QMessageBox.Save:
                 if self._temporary_project:
-                    return self._saveProjectAs()
-                return self._saveProject(self._project_settings["project_path"])
+                    return self.saveProjectAs()
+                return self.saveProject(self._project_settings["project_path"])
             elif reply == QtGui.QMessageBox.Cancel:
                 return False
         self._deleteTemporaryProject()
@@ -1108,7 +1119,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         AnalyticsClient().send_event("GNS3", "Open", "Version {} on {}".format(__version__, platform.system()))
 
-    def _saveProjectAs(self):
+    def saveProjectAs(self):
         """
         Saves a project to another location/name.
 
@@ -1207,9 +1218,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._deleteTemporaryProject()
         self._project_settings["project_files_dir"] = new_project_files_dir
         self._project_settings["project_name"] = project_name
-        return self._saveProject(topology_file_path)
+        return self.saveProject(topology_file_path)
 
-    def _saveProject(self, path):
+    def saveProject(self, path):
         """
         Saves a project.
 
@@ -1285,7 +1296,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 topology.load(json_topology)
 
                 if need_to_save:
-                    self._saveProject(path)
+                    self.saveProject(path)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1535,7 +1546,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.CloudInspectorView.addInstance(instance)
 
         # persist infos saving current project
-        self._saveProject(self._project_settings["project_path"])
+        self.saveProject(self._project_settings["project_path"])
 
     def remove_instance_from_project(self, instance):
         """
@@ -1546,7 +1557,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.removeInstance(instance.id)
         # persist infos saving current project
-        self._saveProject(self._project_settings["project_path"])
+        self.saveProject(self._project_settings["project_path"])
 
     def _create_instance(self, name, flavor, image_id):
         """

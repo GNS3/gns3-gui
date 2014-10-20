@@ -41,12 +41,16 @@ class ProcessFilesThread(QtCore.QThread):
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
-    def __init__(self, source_dir, destination_dir, move=False):
+    def __init__(self, source_dir, destination_dir, move=False, skip_dirs=None):
 
         QtCore.QThread.__init__(self)
+        self._is_running = False
         self._source = source_dir
         self._destination = destination_dir
         self._move = move
+        self._skip_dirs = []
+        if skip_dirs:
+            self._skip_dirs = skip_dirs
 
     def run(self):
         """
@@ -69,6 +73,7 @@ class ProcessFilesThread(QtCore.QThread):
         copied = 0
         # start copying/moving from the source directory
         for path, dirs, filenames in os.walk(self._source):
+            dirs[:] = [d for d in dirs if d not in self._skip_dirs]
             base_dir = path.replace(self._source, self._destination)
 
             # start create the destination sub-directories
@@ -125,6 +130,7 @@ class ProcessFilesThread(QtCore.QThread):
         """
 
         count = 0
-        for _, _, files in os.walk(directory):
+        for _, dirs, files in os.walk(directory):
+            dirs[:] = [d for d in dirs if d not in self._skip_dirs]
             count += len(files)
         return count
