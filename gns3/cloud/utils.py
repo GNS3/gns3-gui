@@ -3,8 +3,10 @@ import io
 from socket import error as socket_error
 import logging
 import os
-import zipfile
+import select
 import tempfile
+import time
+import zipfile
 
 from PyQt4 import QtCore
 from PyQt4.QtCore import QThread
@@ -33,7 +35,7 @@ class AllowAndForgetPolicy(paramiko.MissingHostKeyPolicy):
 
 
 @contextmanager
-def ssh_client(host, key_string):
+def ssh_client(host, key_string, retry=False):
     """
     Context manager wrapping a SSHClient instance: the client connects on
     enter and close the connection on exit
@@ -149,6 +151,34 @@ class StartGNS3ServerThread(QThread):
     """
     gns3server_started = pyqtSignal(str, str, str)
 
+#     # Note: The htop package is for troubleshooting.  It can safely be removed.
+#     commands = '''
+# echo 'hello world'
+# DEBIAN_FRONTEND=noninteractive apt-get -y update
+# DEBIAN_FRONTEND=noninteractive apt-get -y install htop
+# DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+# DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq
+# mkdir -p /opt/gns3
+# tar xzf /tmp/gns3-server.tgz -C /opt/gns3
+# cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
+# cd /opt/gns3/gns3-server; python3 ./setup.py install
+# killall gns3server gns3dms
+# '''
+
+    commands = '''
+echo 'hello world'
+DEBIAN_FRONTEND=noninteractive apt-get -y update
+DEBIAN_FRONTEND=noninteractive apt-get -y install htop
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq
+mkdir -p /opt/gns3
+cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
+cd /opt/gns3/gns3-server; git checkout dev
+cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
+cd /opt/gns3/gns3-server; python3 ./setup.py install
+killall gns3server gns3dms
+'''
+
     def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
         self._host = host
@@ -159,9 +189,54 @@ class StartGNS3ServerThread(QThread):
         self._region = region
         self._dead_time = dead_time
 
+    def exec_command(self, client, cmd, wait_time=-1):
+
+        cmd += '; exit $?'
+
+        stdout_data = b''
+        stderr_data = b''
+
+        log.debug('cmd: {}'.format(cmd))
+        # Send the command (non-blocking)
+        stdin, stdout, stderr = client.exec_command(cmd)
+
+        # Wait for the command to terminate
+        wait = int(wait_time)
+        while not stdout.channel.exit_status_ready() and wait != 0:
+            time.sleep(1)
+            wait -= 1
+
+        # stdout_data += stdout.channel.recv()
+        # stderr_data += stderr.channel.recv()
+        stdout_data = stdout.read()
+        stderr_data = stderr.read()
+        log.debug('exit status: {}'.format(stdout.channel.exit_status))
+        log.debug('stdout: {}'.format(stdout_data.decode('utf-8')))
+        log.debug('stderr: {}'.format(stderr_data.decode('utf-8')))
+        return stdout_data, stderr_data
+
+
     def run(self):
-        with ssh_client(self._host, self._private_key_string) as client:
-            if client is not None:
+        # Uncomment this at the same time as the commands above to test without having to push
+        # changes to github.
+        # os.system('rm -rf /tmp/gns3-server')
+        # os.system('cp -a /Users/jseutter/projects/gns3-server-newinstancerework /tmp/gns3-server')
+        # os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
+        # os.system('scp /tmp/gns3-server.tgz root@{}:/tmp/'.format(self._host))
+
+        # We might be attempting a connection before the instance is fully booted, so retry
+        # when the ssh connection fails.
+        ssh_connected = False
+        while not ssh_connected:
+            with ssh_client(self._host, self._private_key_string) as client:
+                if client is None:
+                    time.sleep(1)
+                    continue
+                ssh_connected = True
+
+                for cmd in [l for l in self.commands.splitlines() if l.strip()]:
+                    self.exec_command(client, cmd)
+
                 data = {
                     'instance_id': self._server_id,
                     'cloud_user_name': self._username,
@@ -170,12 +245,9 @@ class StartGNS3ServerThread(QThread):
                     'dead_time': self._dead_time,
                 }
                 # TODO: Properly escape the data portion of the command line
-                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}" 2>/tmp/gns3_stderr.log'.format(data)
-                log.debug(start_cmd)
-                stdin, stdout, stderr = client.exec_command(start_cmd)
-                response = stdout.read().decode('ascii')
-                log.debug('ssh response: {}'.format(response))
-
+                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}"'.format(data)
+                stdout, stderr = self.exec_command(client, start_cmd, wait_time=15)
+                response = stdout.decode('utf-8')
                 self.gns3server_started.emit(str(self._server_id), str(self._host), str(response))
 
 
