@@ -24,6 +24,7 @@ import shutil
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.modules.module_error import ModuleError
 from gns3.utils.connect_to_server import ConnectToServer
@@ -266,6 +267,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["options"] = "-nographic -cpu coreduo -icount auto -hdachs 980,16,32"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"
+            settings["category"] = Node.security_devices
         elif self.uiTypeComboBox.currentText() == "IDS":
             settings["adapters"] = 3
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
@@ -273,8 +275,10 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["options"] = "-smbios type=1,product=IDS-4215"
             settings["default_symbol"] = ":/symbols/ids.normal.svg"
             settings["hover_symbol"] = ":/symbols/ids.selected.svg"
+            settings["category"] = Node.security_devices
         else:
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["category"] = Node.end_devices
 
         return settings
 

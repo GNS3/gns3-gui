@@ -20,8 +20,10 @@ QEMU module implementation.
 """
 
 import os
+
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.node import Node
+
 from ..module import Module
 from ..module_error import ModuleError
 from .qemu_vm import QemuVM
@@ -91,6 +93,7 @@ class Qemu(Module):
             name = settings.value("name", "")
             default_symbol = settings.value("default_symbol", ":/symbols/qemu_guest.normal.svg")
             hover_symbol = settings.value("hover_symbol", ":/symbols/qemu_guest.selected.svg")
+            category = settings.value("category", Node.end_devices, type=int)
             qemu_path = settings.value("qemu_path", "")
             hda_disk_image = settings.value("hda_disk_image", "")
             hdb_disk_image = settings.value("hdb_disk_image", "")
@@ -108,6 +111,7 @@ class Qemu(Module):
             self._qemu_vms[key] = {"name": name,
                                    "default_symbol": default_symbol,
                                    "hover_symbol": hover_symbol,
+                                   "category": category,
                                    "qemu_path": qemu_path,
                                    "hda_disk_image": hda_disk_image,
                                    "hdb_disk_image": hdb_disk_image,
@@ -511,9 +515,10 @@ class Qemu(Module):
                 {"class": QemuVM.__name__,
                  "name": qemu_vm["name"],
                  "server": qemu_vm["server"],
-                 "categories": QemuVM.categories(),
                  "default_symbol": qemu_vm["default_symbol"],
-                 "hover_symbol": qemu_vm["hover_symbol"]}
+                 "hover_symbol": qemu_vm["hover_symbol"],
+                 "categories": [qemu_vm["category"]]
+                }
         )
         return nodes
 

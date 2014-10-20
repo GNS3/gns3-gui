@@ -21,8 +21,11 @@ Dynamips module implementation.
 
 import os
 import glob
+
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.node import Node
+
 from ..module import Module
 from ..module_error import ModuleError
 from .nodes.router import Router
@@ -120,6 +123,7 @@ class Dynamips(Module):
             private_config = settings.value("private_config", "")
             default_symbol = settings.value("default_symbol", ":/symbols/router.normal.svg")
             hover_symbol = settings.value("hover_symbol", ":/symbols/router.selected.svg")
+            category = settings.value("category", Node.routers, type=int)
             platform = settings.value("platform", "")
             chassis = settings.value("chassis", "")
             idlepc = settings.value("idlepc", "")
@@ -141,6 +145,7 @@ class Dynamips(Module):
                                      "image": image,
                                      "default_symbol": default_symbol,
                                      "hover_symbol": hover_symbol,
+                                     "category": category,
                                      "startup_config": startup_config,
                                      "private_config": private_config,
                                      "platform": platform,
@@ -640,9 +645,9 @@ class Dynamips(Module):
                 {"class": node_class.__name__,
                  "name": ios_router["name"],
                  "server": ios_router["server"],
-                 "categories": node_class.categories(),
                  "default_symbol": ios_router["default_symbol"],
-                 "hover_symbol": ios_router["hover_symbol"]}
+                 "hover_symbol": ios_router["hover_symbol"],
+                 "categories": [ios_router["category"]]}
             )
 
         return nodes
