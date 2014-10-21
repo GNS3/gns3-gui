@@ -97,7 +97,7 @@ background-none;
     </property>
     <addaction name="uiOnlineHelpAction"/>
     <addaction name="uiCheckForUpdateAction"/>
-    <addaction name="uiNewsAction"/>
+    <addaction name="uiGettingStartedAction"/>
     <addaction name="uiLabInstructionsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
@@ -1097,9 +1097,9 @@ background-none;
     <string>Add a link</string>
    </property>
   </action>
-  <action name="uiNewsAction">
+  <action name="uiGettingStartedAction">
    <property name="text">
-    <string>News</string>
+    <string>Getting started</string>
    </property>
    <property name="toolTip">
     <string>Show GNS3 news</string>

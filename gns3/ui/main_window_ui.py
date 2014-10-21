@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gns3/ui/main_window.ui'
 #
-# Created: Tue Oct 21 16:36:31 2014
+# Created: Tue Oct 21 16:51:48 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -225,17 +225,17 @@ class Ui_MainWindow(object):
         self.uiStartAllAction = QtGui.QAction(MainWindow)
         self.uiStartAllAction.setEnabled(True)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/play2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/play2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/play7-test.svg")), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/play2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/play2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/play7-test.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiStartAllAction.setIcon(icon5)
         self.uiStartAllAction.setObjectName(_fromUtf8("uiStartAllAction"))
         self.uiStopAllAction = QtGui.QAction(MainWindow)
         self.uiStopAllAction.setEnabled(True)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/stop2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/stop2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/stop2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/stop3-test.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiStopAllAction.setIcon(icon6)
         self.uiStopAllAction.setObjectName(_fromUtf8("uiStopAllAction"))
@@ -279,8 +279,8 @@ class Ui_MainWindow(object):
         self.uiPreferencesAction.setObjectName(_fromUtf8("uiPreferencesAction"))
         self.uiSuspendAllAction = QtGui.QAction(MainWindow)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/pause2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/pause2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/pause2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/pause3-test.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiSuspendAllAction.setIcon(icon12)
         self.uiSuspendAllAction.setObjectName(_fromUtf8("uiSuspendAllAction"))
@@ -309,16 +309,16 @@ class Ui_MainWindow(object):
         self.uiDrawRectangleAction = QtGui.QAction(MainWindow)
         self.uiDrawRectangleAction.setCheckable(True)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/rectangle2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/rectangle2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/rectangle2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/rectangle3-test.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiDrawRectangleAction.setIcon(icon17)
         self.uiDrawRectangleAction.setObjectName(_fromUtf8("uiDrawRectangleAction"))
         self.uiDrawEllipseAction = QtGui.QAction(MainWindow)
         self.uiDrawEllipseAction.setCheckable(True)
         icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/ellipse2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon18.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/ellipse2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon18.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/ellipse2-test.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon18.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/ellipse3-test.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiDrawEllipseAction.setIcon(icon18)
         self.uiDrawEllipseAction.setObjectName(_fromUtf8("uiDrawEllipseAction"))
@@ -400,8 +400,8 @@ class Ui_MainWindow(object):
         icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName(_fromUtf8("uiAddLinkAction"))
-        self.uiNewsAction = QtGui.QAction(MainWindow)
-        self.uiNewsAction.setObjectName(_fromUtf8("uiNewsAction"))
+        self.uiGettingStartedAction = QtGui.QAction(MainWindow)
+        self.uiGettingStartedAction.setObjectName(_fromUtf8("uiGettingStartedAction"))
         self.uiLabInstructionsAction = QtGui.QAction(MainWindow)
         self.uiLabInstructionsAction.setObjectName(_fromUtf8("uiLabInstructionsAction"))
         self.uiFitInViewAction = QtGui.QAction(MainWindow)
@@ -428,7 +428,7 @@ class Ui_MainWindow(object):
         self.uiFileMenu.addAction(self.uiQuitAction)
         self.uiHelpMenu.addAction(self.uiOnlineHelpAction)
         self.uiHelpMenu.addAction(self.uiCheckForUpdateAction)
-        self.uiHelpMenu.addAction(self.uiNewsAction)
+        self.uiHelpMenu.addAction(self.uiGettingStartedAction)
         self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
         self.uiHelpMenu.addAction(self.uiAboutAction)
@@ -647,16 +647,16 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setText(_translate("MainWindow", "Add a link", None))
         self.uiAddLinkAction.setToolTip(_translate("MainWindow", "Add a link", None))
         self.uiAddLinkAction.setStatusTip(_translate("MainWindow", "Add a link", None))
-        self.uiNewsAction.setText(_translate("MainWindow", "News", None))
-        self.uiNewsAction.setToolTip(_translate("MainWindow", "Show GNS3 news", None))
+        self.uiGettingStartedAction.setText(_translate("MainWindow", "Getting started", None))
+        self.uiGettingStartedAction.setToolTip(_translate("MainWindow", "Show GNS3 news", None))
         self.uiLabInstructionsAction.setText(_translate("MainWindow", "Lab instructions", None))
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view", None))
         self.uiExportProjectAction.setText(_translate("MainWindow", "Export project", None))
         self.uiImportProjectAction.setText(_translate("MainWindow", "Import project", None))
 
 from ..console_view import ConsoleView
-from ..graphics_view import GraphicsView
 from ..cloud_inspector_view import CloudInspectorView
+from ..graphics_view import GraphicsView
 from ..topology_summary_view import TopologySummaryView
 from ..nodes_view import NodesView
 from . import resources_rc

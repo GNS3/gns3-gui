@@ -35,7 +35,6 @@ from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
 from ..utils.decompress_ios import isIOSCompressed
 from ..utils.decompress_ios_thread import DecompressIOSThread
-from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, STATIC_SERVER_TYPES
 from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
 from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
@@ -61,11 +60,6 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiIOSRoutersTreeWidget.currentItemChanged.connect(self._iosRouterChangedSlot)
         self.uiIOSRoutersTreeWidget.itemPressed.connect(self._iosRouterPressedSlot)
         self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
-
-        # self.uiServerTypeComboBox.addItems(list(STATIC_SERVER_TYPES.keys()))
-        # # Hide until cloud server support is complete
-        # self.uiServerTypeLabel.hide()
-        # self.uiServerTypeComboBox.hide()
 
     def _iosRouterChangedSlot(self, current, previous):
         """
@@ -127,7 +121,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                       "ram": ios_settings["ram"],
                                       "nvram": 256,
                                       "mac_addr": "",
-                                      "disk0": 16,
+                                      "disk0": 1,
                                       "disk1": 0,
                                       "confreg": "0x2102",
                                       "system_id": "FTX0945W0MY",
@@ -387,6 +381,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
+        QtGui.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
         if ios_router["chassis"]:
             QtGui.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
@@ -490,6 +485,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         if self._items:
             self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
+            self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def savePreferences(self):
         """

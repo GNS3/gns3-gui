@@ -129,10 +129,6 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         Adds a new remote server.
         """
 
-        if len(self._remote_servers) == 1:
-            QtGui.QMessageBox.critical(self, "Remote server", "Sorry we do not support multiple remote servers yet!")
-            return
-
         host = self.uiRemoteServerPortLineEdit.text()
         port = self.uiRemoteServerPortSpinBox.value()
 

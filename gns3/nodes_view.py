@@ -55,6 +55,8 @@ class NodesView(QtGui.QTreeWidget):
                 item.setText(0, node["name"])
                 item.setData(0, QtCore.Qt.UserRole, node)
 
+        self.sortByColumn(0, QtCore.Qt.AscendingOrder)
+
     def mouseMoveEvent(self, event):
         """
         Handles all mouse move events.

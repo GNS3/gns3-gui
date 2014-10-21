@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Fri Oct 10 10:43:47 2014
+# Created: Sun Oct 19 11:35:53 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -78,6 +78,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.uiRemoteServersTreeWidget = QtGui.QTreeWidget(self.uiRemoteServersGroupBox)
         self.uiRemoteServersTreeWidget.setEnabled(False)
+        self.uiRemoteServersTreeWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.uiRemoteServersTreeWidget.setObjectName(_fromUtf8("uiRemoteServersTreeWidget"))
         self.horizontalLayout_3.addWidget(self.uiRemoteServersTreeWidget)
         self.gridLayout_2.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
@@ -157,7 +158,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC (pushed to the server):", None))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings", None))
-        self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server (Linux only)", None))
+        self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Always use the local server (Linux only)", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Remote servers", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("IOUPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("IOUPreferencesPageWidget", "Port", None))

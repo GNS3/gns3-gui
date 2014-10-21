@@ -20,25 +20,33 @@ Main window for the GUI.
 """
 
 import os
+import platform
+import time
+import tempfile
 import socket
 import shutil
 import json
 import glob
 import logging
 
+from pkg_resources import parse_version
+
 from .modules import MODULES
-from .qt import QtGui, QtCore
+from .version import __version__
+from .qt import QtGui, QtCore, QtNetwork
 from .servers import Servers
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .dialogs.about_dialog import AboutDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
+from .dialogs.snapshots_dialog import SnapshotsDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
 from .utils.message_box import MessageBox
+from .utils.analytics import AnalyticsClient
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
@@ -83,8 +91,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
+        self._temporary_project = True
         self._max_recent_files = 5
         self._recent_file_actions = []
+        self._start_time = time.time()
 
         self._project_settings = {
             "project_name": "unsaved",
@@ -93,7 +103,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "project_type": "local",
         }
 
-        #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
+        except ImportError:
+            pass
 
         # do not show the nodes dock widget my default
         self.uiNodesDockWidget.setVisible(False)
@@ -123,25 +137,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
-        # a project must be created before a user can drop devices
-        # on the drawing area
-        self.uiGraphicsView.setEnabled(False)
-
-        # let users know they cannot drop anything until
-        # they create or open a project
-        text_item = QtGui.QGraphicsTextItem("Please create or open a project")
-        font = text_item.font()
-        font.setPointSize(14)
-        font.setBold(True)
-        text_item.setFont(font)
-        text_item.setDefaultTextColor(QtGui.QColor("gray"))
-        x = text_item.pos().x() - (text_item.boundingRect().width() / 2)
-        y = text_item.pos().y() - (text_item.boundingRect().height() / 2)
-        text_item.setPos(x, y)
-        self.uiGraphicsView.scene().addItem(text_item)
-
         #FIXME: hide the cloud dock for beta release
-        #self.uiCloudInspectorDockWidget.hide()
+        # self.uiCloudInspectorDockWidget.hide()
+
+        # Network Manager (used to check for update)
+        self._network_manager = QtNetwork.QNetworkAccessManager(self)
 
         # load initial stuff once the event loop isn't busy
         QtCore.QTimer.singleShot(0, self.startupLoading)
@@ -299,7 +299,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
         self.uiCheckForUpdateAction.triggered.connect(self._checkForUpdateActionSlot)
-        self.uiNewsAction.triggered.connect(self._newsActionSlot)
+        self.uiGettingStartedAction.triggered.connect(self._gettingStartedActionSlot)
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
@@ -393,7 +393,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                              keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
-                self._saveProject(new_project_settings["project_path"])
+                self.saveProject(new_project_settings["project_path"])
+
+            else:
+                self._createTemporaryProject()
 
             self.project_new_signal.emit(self._project_settings["project_path"])
 
@@ -433,14 +436,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to save a project.
         """
 
-        return self._saveProject(self._project_settings["project_path"])
+        if self._temporary_project:
+            return self.saveProjectAs()
+        else:
+            return self.saveProject(self._project_settings["project_path"])
 
     def _saveProjectAsActionSlot(self):
         """
         Slot called to save a project to another location/name.
         """
 
-        self._saveProjectAs()
+        self.saveProjectAs()
 
     def _importExportConfigsActionSlot(self):
         """
@@ -526,8 +532,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to open the snapshot dialog.
         """
 
-        #TODO: snapshot support.
-        pass
+        # first check if any node doesn't run locally
+        topology = Topology.instance()
+        for node in topology.nodes():
+            if node.server() != Servers.instance().localServer():
+                QtGui.QMessageBox.critical(self, "Snapshots", "Snapshot can only be created if all the nodes run locally")
+                return
+
+        dialog = SnapshotsDialog(self,
+                                 self._project_settings["project_path"],
+                                 self._project_settings["project_files_dir"])
+        dialog.show()
+        dialog.exec_()
 
     def _selectAllActionSlot(self):
         """
@@ -771,27 +787,61 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/documentation/"))
 
-    def _checkForUpdateActionSlot(self):
+    def _checkForUpdateActionSlot(self, silent=False):
         """
         Slot to check if a newer version is available.
+
+        :param silent: do not display any message
         """
 
-        #TODO: check for update
-        QtGui.QMessageBox.critical(self, "Check For Update", "Sorry, to be implemented!")
+        request = QtNetwork.QNetworkRequest(QtCore.QUrl("http://update.gns3.net/"))
+        request.setRawHeader("User-Agent", "GNS3 Check For Update")
+        request.setAttribute(QtNetwork.QNetworkRequest.User, silent)
+        reply = self._network_manager.get(request)
+        reply.finished.connect(self._checkForUpdateReplySlot)
 
-    def _newsActionSlot(self):
+    def _checkForUpdateReplySlot(self):
+        """
+        Process reply for check for update.
+        """
+
+        network_reply = self.sender()
+        is_silent = network_reply.request().attribute(QtNetwork.QNetworkRequest.User)
+
+        if network_reply.error() != QtNetwork.QNetworkReply.NoError and not is_silent:
+            QtGui.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
+        else:
+            latest_release = bytes(network_reply.readAll()).decode().rstrip()
+            if parse_version(__version__) < parse_version(latest_release):
+                    reply = QtGui.QMessageBox.question(self,
+                                                       "Check For Update",
+                                                       "Newer GNS3 version {} is available, do you want to visit our website to download it?".format(latest_release),
+                                                       QtGui.QMessageBox.Yes,
+                                                       QtGui.QMessageBox.No)
+                    if reply == QtGui.QMessageBox.Yes:
+                        QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
+            elif not is_silent:
+                QtGui.QMessageBox.information(self, "Check For Update", "GNS3 is up-to-date!")
+            return
+
+        network_reply.deleteLater()
+
+    def _gettingStartedActionSlot(self, auto=False):
         """
         Slot to open the news dialog.
         """
 
         try:
-            # QtWebKit which is used by NewsDialog is not installed
+            # QtWebKit which is used by GettingStartedDialog is not installed
             # by default on FreeBSD, Solaris and possibly other systems.
-            from .dialogs.news_dialog import NewsDialog
+            from .dialogs.getting_started_dialog import GettingStartedDialog
         except ImportError:
             return
 
-        dialog = NewsDialog(self)
+        dialog = GettingStartedDialog(self)
+        dialog.showit()
+        if auto is True and not dialog.showit():
+            return
         dialog.show()
         dialog.exec_()
 
@@ -950,6 +1000,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             servers = Servers.instance()
             servers.stopLocalServer(wait=True)
+
+            time_spent = "{:.0f}".format(time.time() - self._start_time)
+            AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
         else:
             event.ignore()
 
@@ -968,13 +1021,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            destination_file = os.path.basename(self._project_settings["project_path"])
+            if self._temporary_project:
+                destination_file = "untitled.gns3"
+            else:
+                destination_file = os.path.basename(self._project_settings["project_path"])
             reply = QtGui.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                               QtGui.QMessageBox.Discard | QtGui.QMessageBox.Save | QtGui.QMessageBox.Cancel)
             if reply == QtGui.QMessageBox.Save:
-                return self._saveProject(self._project_settings["project_path"])
+                if self._temporary_project:
+                    return self.saveProjectAs()
+                return self.saveProject(self._project_settings["project_path"])
             elif reply == QtGui.QMessageBox.Cancel:
                 return False
+        self._deleteTemporaryProject()
         return True
 
     def startupLoading(self):
@@ -982,8 +1041,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
+        self._gettingStartedActionSlot(auto=True)
+        self._createTemporaryProject()
         self._newProjectActionSlot()
-        #self._newsActionSlot()
 
         # connect to the local server
         servers = Servers.instance()
@@ -1037,7 +1097,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                          "Connecting to server {} on port {}...".format(server.host, server.port),
                                                          "Cancel", busy=True, parent=self)
                         progress_dialog.show()
-                        if progress_dialog.exec_() is False:
+                        if not progress_dialog.exec_():
                             return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
@@ -1049,7 +1109,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                                                                                                                    port=server.port,
                                                                                                                                                    error=e))
 
-    def _saveProjectAs(self):
+        if self._settings["check_for_update"]:
+            # automatic check for update every week (604800 seconds)
+            current_epoch = int(time.mktime(time.localtime()))
+            if current_epoch - self._settings["last_check_for_update"] >= 604800:
+                # let's check for an update
+                self._checkForUpdateActionSlot(silent=True)
+                self._settings["last_check_for_update"] = current_epoch
+                self.setSettings(self._settings)
+
+        AnalyticsClient().send_event("GNS3", "Open", "Version {} on {}".format(__version__, platform.system()))
+
+    def saveProjectAs(self):
         """
         Saves a project to another location/name.
 
@@ -1068,9 +1139,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
             return
 
-        default_project_name = os.path.basename(self._project_settings["project_path"])
-        if default_project_name.endswith(".gns3"):
-            default_project_name = default_project_name[:-5]
+        if self._temporary_project:
+            default_project_name = "untitled"
+        else:
+            default_project_name = os.path.basename(self._project_settings["project_path"])
+            if default_project_name.endswith(".gns3"):
+                default_project_name = default_project_name[:-5]
 
         try:
             projects_dir_path = self.projectsDirPath()
@@ -1124,9 +1198,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # let all modules know about the new project files directory
         self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
 
-        log.info("copying project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
-        self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir)
-        progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
+        if self._temporary_project:
+            # move files if saving from a temporary project
+            log.info("moving project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
+            self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir, move=True)
+            progress_dialog = ProgressDialog(self._thread, "Project", "Moving project files...", "Cancel", parent=self)
+        else:
+            # else, just copy the files
+            log.info("copying project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
+            self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir)
+            progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 
@@ -1135,11 +1216,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             errors = "\n".join(errors)
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
+        self._deleteTemporaryProject()
         self._project_settings["project_files_dir"] = new_project_files_dir
         self._project_settings["project_name"] = project_name
-        return self._saveProject(topology_file_path)
+        return self.saveProject(topology_file_path)
 
-    def _saveProject(self, path):
+    def saveProject(self, path):
         """
         Saves a project.
 
@@ -1215,7 +1297,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 topology.load(json_topology)
 
                 if need_to_save:
-                    self._saveProject(path)
+                    self.saveProject(path)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1233,6 +1315,53 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return True
 
+    def _deleteTemporaryProject(self):
+        """
+        Deletes a temporary project.
+        """
+
+        if self._temporary_project and self._project_settings["project_path"]:
+            # delete the temporary project files
+            log.info("deleting temporary project files directory: {}".format(self._project_settings["project_files_dir"]))
+            shutil.rmtree(self._project_settings["project_files_dir"], ignore_errors=True)
+            try:
+                log.info("deleting temporary topology file: {}".format(self._project_settings["project_path"]))
+                os.remove(self._project_settings["project_path"])
+            except OSError as e:
+                log.warning("could not delete temporary topology file: {}: {}".format(self._project_settings["project_path"], e))
+
+    def _createTemporaryProject(self):
+        """
+        Creates a temporary project.
+        """
+
+        self.uiGraphicsView.reset()
+        try:
+            with tempfile.NamedTemporaryFile(prefix="gns3-", delete=False) as f:
+                log.info("creating temporary topology file: {}".format(f.name))
+                project_files_dir = f.name + "-files"
+                if not os.path.isdir(project_files_dir):
+                    log.info("creating temporary project files directory: {}".format(project_files_dir))
+                    os.mkdir(project_files_dir)
+
+                self._project_settings["project_files_dir"] = project_files_dir
+                self._project_settings["project_path"] = f.name
+
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
+
+        self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+        self._setCurrentFile()
+
+    def isTemporaryProject(self):
+        """
+        Returns either this is a temporary project or not.
+
+        :returns: boolean
+        """
+
+        return self._temporary_project
+
     def _setCurrentFile(self, path=None):
         """
         Sets the current project file path.
@@ -1240,11 +1369,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param path: path to project file
         """
 
-        self.setWindowFilePath(path)
-        self._updateRecentFileSettings(path)
-        self._updateRecentFileActions()
+        if not path:
+            self._temporary_project = True
+            self.setWindowFilePath("Unsaved project")
+        else:
+            self._temporary_project = False
+            self.setWindowFilePath(path)
+            self._updateRecentFileSettings(path)
+            self._updateRecentFileActions()
+
         self.setWindowModified(False)
-        self.uiGraphicsView.setEnabled(True)
 
     def _updateRecentFileSettings(self, path):
         """
@@ -1349,8 +1483,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param project: path to gns3 project file
         """
 
-        if not project:
-            # no project has been created yet
+        if self._temporary_project:
+            # do nothing if previous project was temporary
             return
 
         with open(project) as f:
@@ -1379,9 +1513,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         :param project: path to gns3 project file currently opened
         """
-
-        if not project:
-            # no project has been created yet
+        if self._temporary_project:
+            # do nothing if project is temporary
             return
 
         with open(project) as f:
@@ -1414,7 +1547,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.CloudInspectorView.addInstance(instance)
 
         # persist infos saving current project
-        self._saveProject(self._project_settings["project_path"])
+        self.saveProject(self._project_settings["project_path"])
 
     def remove_instance_from_project(self, instance):
         """
@@ -1425,7 +1558,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.removeInstance(instance.id)
         # persist infos saving current project
-        self._saveProject(self._project_settings["project_path"])
+        self.saveProject(self._project_settings["project_path"])
 
     def _create_instance(self, name, flavor, image_id):
         """
@@ -1451,6 +1584,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         return instance, keypair
 
     def _exportProjectActionSlot(self):
+        if self._temporary_project:
+            # do nothing if project is temporary
+            QtGui.QMessageBox.critical(
+                self, "Export project server",
+                "Cannot export temporary projects, please save current project first.")
+            return
+
         upload_thread = UploadProjectThread(
             self._cloud_settings,
             self._project_settings['project_path'],
