@@ -255,6 +255,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
+        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -1451,11 +1452,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def _exportProjectActionSlot(self):
         upload_thread = UploadProjectThread(
-            self.cloudSettings(),
-            self.projectSettings()['project_path'],
-            self.settings()['images_path']
+            self._cloud_settings,
+            self._project_settings['project_path'],
+            self._settings['images_path']
         )
         progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel",
                                          parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def _importProjectActionSlot(self):
+        print('import project action')
