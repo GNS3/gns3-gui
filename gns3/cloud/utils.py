@@ -11,27 +11,12 @@ import zipfile
 from PyQt4 import QtCore
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
-import paramiko
 
 from .rackspace_ctrl import RackspaceCtrl
 from ..topology import Topology
 from ..servers import Servers
 
-
 log = logging.getLogger(__name__)
-
-
-class AllowAndForgetPolicy(paramiko.MissingHostKeyPolicy):
-    """
-    Custom policy for server host keys: we simply accept the key
-    the server sent to us without storing it.
-    """
-    def missing_host_key(self, *args, **kwargs):
-        """
-        According to MissingHostKeyPolicy protocol, to accept
-        the key, simply return.
-        """
-        return
 
 
 @contextmanager
@@ -40,6 +25,20 @@ def ssh_client(host, key_string, retry=False):
     Context manager wrapping a SSHClient instance: the client connects on
     enter and close the connection on exit
     """
+
+    import paramiko
+    class AllowAndForgetPolicy(paramiko.MissingHostKeyPolicy):
+        """
+        Custom policy for server host keys: we simply accept the key
+        the server sent to us without storing it.
+        """
+        def missing_host_key(self, *args, **kwargs):
+            """
+            According to MissingHostKeyPolicy protocol, to accept
+            the key, simply return.
+            """
+            return
+
     client = paramiko.SSHClient()
     try:
         f_key = io.StringIO(key_string)

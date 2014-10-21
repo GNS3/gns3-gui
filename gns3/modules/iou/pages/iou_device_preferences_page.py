@@ -26,7 +26,6 @@ import pkg_resources
 import shutil
 
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -157,6 +156,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
+        QtGui.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
         QtGui.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
 
@@ -164,8 +164,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             QtGui.QTreeWidgetItem(section_item, ["RAM:", "default"])
             QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "default"])
         else:
-            QtGui.QTreeWidgetItem(section_item, ["RAM:", iou_device["ram"]])
-            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", iou_device["nvram"]])
+            QtGui.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(iou_device["ram"])])
+            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(iou_device["nvram"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
@@ -191,7 +191,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
                                                              "Select an IOU image",
                                                              destination_directory,
-                                                             "All files (*.*);;IOU image (*.bin *.image)",
+                                                             "All files (*)",
                                                              "IOU image (*.bin *.image)")
 
         if not path:
@@ -350,7 +350,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         if self._items:
             self.uiIOUDevicesTreeWidget.setCurrentItem(self._items[0])
-
+            self.uiIOUDevicesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def savePreferences(self):
         """

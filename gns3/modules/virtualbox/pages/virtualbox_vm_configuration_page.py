@@ -101,11 +101,12 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         # in the node configurator.
         if not group:
 
-            name = self.uiNameLineEdit.text()
-            if not name:
-                QtGui.QMessageBox.critical(self, "Name", "VirtualBox name cannot be empty!")
-            else:
-                settings["name"] = name
+            if "name" in settings:
+                name = self.uiNameLineEdit.text()
+                if not name:
+                    QtGui.QMessageBox.critical(self, "Name", "VirtualBox name cannot be empty!")
+                else:
+                    settings["name"] = name
 
             settings["console"] = self.uiConsolePortSpinBox.value()
             settings["enable_console"] = self.uiEnableConsoleCheckBox.isChecked()

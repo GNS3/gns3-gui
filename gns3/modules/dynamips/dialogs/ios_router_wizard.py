@@ -22,12 +22,31 @@ Wizard for IOS routers.
 import os
 import re
 
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.utils.message_box import MessageBox
+from gns3.dialogs.exec_command_dialog import ExecCommandDialog
 
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 from .. import Dynamips
+from ..nodes.c1700 import C1700
+from ..nodes.c2600 import C2600
+from ..nodes.c2691 import C2691
+from ..nodes.c3600 import C3600
+from ..nodes.c3725 import C3725
+from ..nodes.c3745 import C3745
+from ..nodes.c7200 import C7200
+
+PLATFORM_TO_CLASS = {
+    "c1700": C1700,
+    "c2600": C2600,
+    "c2691": C2691,
+    "c3600": C3600,
+    "c3725": C3725,
+    "c3745": C3745,
+    "c7200": C7200
+}
 
 
 class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
@@ -44,14 +63,17 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
 
+        self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
+        self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
+        self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
         # Mandatory fields
-        self.uiNameImageWizardPage.registerField("name*", self.uiNameLineEdit)
-        self.uiNameImageWizardPage.registerField("image*", self.uiIOSImageLineEdit)
+        self.uiNamePlatformWizardPage.registerField("name*", self.uiNameLineEdit)
+        self.uiIOSImageWizardPage.registerField("image*", self.uiIOSImageLineEdit)
 
         self._widget_slots = {0: self.uiSlot0comboBox,
                               1: self.uiSlot1comboBox,
@@ -65,6 +87,36 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                              1: self.uiWic1comboBox,
                              2: self.uiWic2comboBox}
 
+        self.uiTestIOSImagePushButton.hide()  # hide it because it doesn't work
+
+        if Dynamips.instance().settings()["use_local_server"]:
+            # skip the server page if we use the local server
+            self.setStartId(1)
+
+    def _remoteServerToggledSlot(self, checked):
+        """
+        Slot for when the remote server radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersGroupBox.setEnabled(True)
+        else:
+            self.uiRemoteServersGroupBox.setEnabled(False)
+
+    def _loadBalanceToggledSlot(self, checked):
+        """
+        Slot for when the load balance checkbox is toggled.
+
+        :param checked: either the box is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersComboBox.setEnabled(False)
+        else:
+            self.uiRemoteServersComboBox.setEnabled(True)
+
     def _platformChangedSlot(self, platform):
         """
         Updates the chassis comboBox based on the selected platform.
@@ -76,9 +128,66 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         if platform in CHASSIS:
             self.uiChassisComboBox.addItems(CHASSIS[platform])
 
-    def _idlePCFinderSlot(self):
+    def _testIOSImageSlot(self):
 
-        QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry, this hasn't been implemented yet")
+        platform = self.uiPlatformComboBox.currentText()
+        ram = self.uiRamSpinBox.value()
+        ios_image = self.uiIOSImageLineEdit.text()
+        params = ["-P", platform[1:], "-r", str(ram), ios_image]
+        dialog = ExecCommandDialog(self, "/usr/bin/dynamips", params)
+        dialog.show()
+        dialog.exec_()
+
+    def _idlePCFinderSlot(self):
+        """
+        Slot for the idle-PC finder.
+        """
+
+        server = Servers.instance().localServer()
+        module = Dynamips.instance()
+        platform = self.uiPlatformComboBox.currentText()
+        ios_image = self.uiIOSImageLineEdit.text()
+        ram = self.uiRamSpinBox.value()
+        router_class = PLATFORM_TO_CLASS[platform]
+        self._router = router_class(module, server)
+        self._router.setup(ios_image, ram, name="AUTOIDLEPC")
+        self._router.created_signal.connect(self.createdSlot)
+        self.uiIdlePCFinderPushButton.setEnabled(False)
+
+    def createdSlot(self, node_id):
+        """
+        The node for the auto idle-pc has been created.
+
+        :param node_id: not used
+        """
+
+        self._router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
+        self._auto_idlepc_progress_dialog = QtGui.QProgressDialog("Searching for an idle-pc value...", "Cancel", 0, 0, parent=self)
+        self._auto_idlepc_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+        self._auto_idlepc_progress_dialog.setWindowTitle("Idle-PC finder")
+        self._auto_idlepc_progress_dialog.show()
+
+    def _computeAutoIdlepcCallback(self, result, error=False):
+        """
+        Callback for computeAutoIdlepc.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        self._router.delete()
+        if self._auto_idlepc_progress_dialog.wasCanceled():
+            return
+        self._auto_idlepc_progress_dialog.accept()
+
+        if error:
+            QtGui.QMessageBox.critical(self, "Idle-PC finder", "Error: ".format(result["message"]))
+        else:
+            if result["idlepc"] and result["idlepc"] != "0x0":
+                self.uiIdlepcLineEdit.setText(result["idlepc"])
+            else:
+                logs = "\n".join(result["logs"])
+                MessageBox(self, "Idle-PC finder", "Could not find an idle-pc value", details=logs)
 
     def _iosImageBrowserSlot(self):
         """
@@ -159,7 +268,16 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def initializePage(self, page_id):
 
-        if self.page(page_id) == self.uiMemoryWizardPage:
+        if self.page(page_id) == self.uiServerWizardPage:
+            self.uiRemoteServersComboBox.clear()
+            for server in Servers.instance().remoteServers().values():
+                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+
+        elif self.page(page_id) == self.uiNamePlatformWizardPage:
+            self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
+            ios_image = self.uiIOSImageLineEdit.text()
+            self.setWindowTitle("New IOS router - {}".format(os.path.basename(ios_image)))
+        elif self.page(page_id) == self.uiMemoryWizardPage:
             # set the correct amount of RAM based on the platform
             from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
             platform = self.uiPlatformComboBox.currentText()
@@ -186,6 +304,13 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
         Validates the IOS name.
         """
+
+        if self.currentPage() == self.uiServerWizardPage:
+
+            #FIXME: prevent users to use "cloud"
+            if self.uiCloudRadioButton.isChecked():
+                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+                return False
 
         # if self.currentPage() == self.uiNameImageWizardPage:
         #     name = self.uiNameLineEdit.text()
@@ -220,16 +345,16 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
 
         path = self.uiIOSImageLineEdit.text()
-
-        #TODO: mutiple remote server
-        if Dynamips.instance().settings()["use_local_server"]:
+        if Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
-        else:
+        elif self.uiLoadBalanceCheckBox.isChecked():
             server = next(iter(Servers.instance()))
             if not server:
-                QtGui.QMessageBox.critical(self, "IOS image", "No remote server available!")
+                QtGui.QMessageBox.critical(self, "IOS router", "No remote server available!")
                 return
-            server = server.host
+            server = "{}:{}".format(server.host, server.port)
+        else:
+            server = self.uiRemoteServersComboBox.currentText()
 
         settings = {
             "name": self.uiNameLineEdit.text(),

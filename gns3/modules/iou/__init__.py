@@ -325,27 +325,6 @@ class IOU(Module):
             params.update({"project_name": project_name})
         server.send_notification("iou.settings", params)
 
-    def allocateServer(self, node_class):
-        """
-        Allocates a server.
-
-        :param node_class: Node object
-
-        :returns: allocated server (WebSocketClient instance)
-        """
-
-        # allocate a server for the node
-        servers = Servers.instance()
-        if self._settings["use_local_server"]:
-            # use the local server
-            server = servers.localServer()
-        else:
-            # pick up a remote server (round-robin method)
-            server = next(iter(servers))
-            if not server:
-                raise ModuleError("No remote server is configured")
-        return server
-
     def createNode(self, node_class, server):
         """
         Creates a new node.
@@ -550,6 +529,7 @@ class IOU(Module):
             nodes.append(
                 {"class": IOUDevice.__name__,
                  "name": iou_device["name"],
+                 "server": iou_device["server"],
                  "categories": IOUDevice.categories(),
                  "default_symbol": iou_device["default_symbol"],
                  "hover_symbol": iou_device["hover_symbol"]}
