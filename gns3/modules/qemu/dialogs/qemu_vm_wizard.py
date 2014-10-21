@@ -23,7 +23,10 @@ import os
 import shutil
 
 from gns3.qt import QtCore, QtGui
+from gns3.servers import Servers
 from gns3.main_window import MainWindow
+from gns3.modules.module_error import ModuleError
+from gns3.utils.connect_to_server import ConnectToServer
 
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from .. import Qemu
@@ -42,6 +45,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.setupUi(self)
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
+
+        self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
         self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
@@ -58,26 +63,24 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiASAWizardPage.registerField("initrd*", self.uiInitrdLineEdit)
         self.uiASAWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
 
-        # Wizard pages to IDs
-        self._ids = {self.uiNameTypeWizardPage: 0,
-                     self.uiBinaryMemoryWizardPage: 1,
-                     self.uiDiskWizardPage: 2,
-                     self.uiASAWizardPage: 3,
-                     self.uiDiskImageHdbWizardPage: 4}
+        if Qemu.instance().settings()["use_local_server"]:
+            # skip the server page if we use the local server
+            self.setStartId(1)
 
-        self.setStartId(self._ids[self.uiNameTypeWizardPage])
-        qemu_binaries = Qemu.instance().getQemuBinariesList()
+        # By default we use the local server
+        self._server = Servers.instance().localServer()
 
-        for server in qemu_binaries:
-            qemus = qemu_binaries[server]["qemus"]
-            for qemu in qemus:
-                key = "{server}:{qemu}".format(server=server, qemu=qemu["path"])
-                self.uiQemuListComboBox.addItem("{key} (v{version})".format(key=key, version=qemu["version"]), key)
+    def _remoteServerToggledSlot(self, checked):
+        """
+        Slot for when the remote server radio button is toggled.
 
-        # default is qemu-system-x86_64
-        index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
-        if index != -1:
-            self.uiQemuListComboBox.setCurrentIndex(index)
+        :param checked: either the button is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersGroupBox.setEnabled(True)
+        else:
+            self.uiRemoteServersGroupBox.setEnabled(False)
 
     def _typeChangedSlot(self, vm_type):
         """
@@ -173,6 +176,68 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
 
+    def validateCurrentPage(self):
+        """
+        Validates the server.
+        """
+
+        if self.currentPage() == self.uiServerWizardPage:
+
+            #FIXME: prevent users to use "cloud"
+            if self.uiCloudRadioButton.isChecked():
+                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+                return False
+
+            if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                server = Servers.instance().localServer()
+            else:
+                server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
+            if not server.connected() and ConnectToServer(self, server) is False:
+                return False
+            self._server = server
+        return True
+
+    def initializePage(self, page_id):
+
+        if self.page(page_id) == self.uiServerWizardPage:
+            self.uiRemoteServersComboBox.clear()
+            for server in Servers.instance().remoteServers().values():
+                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+        if self.page(page_id) == self.uiBinaryMemoryWizardPage:
+            self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
+            self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+            self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
+            self._qemu_binaries_progress_dialog.show()
+            try:
+                Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
+            except ModuleError as e:
+                self._qemu_binaries_progress_dialog.reject()
+                QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+
+    def _getQemuBinariesFromServerCallback(self, result, error=False):
+        """
+        Callback for getQemuBinariesFromServer.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if self._qemu_binaries_progress_dialog.wasCanceled():
+            return
+        self._qemu_binaries_progress_dialog.accept()
+
+        if error:
+            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
+        else:
+            self.uiQemuListComboBox.clear()
+            for qemu in result["qemus"]:
+                self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+
+            # default is qemu-system-x86_64
+            index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
+            if index != -1:
+                self.uiQemuListComboBox.setCurrentIndex(index)
+
     def getSettings(self):
         """
         Returns the settings set in this Wizard.
@@ -180,8 +245,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         :return: settings dict
         """
 
-        server, qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex()).split(":", 1)
+        if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+            server = "local"
+        else:
+            server = self.uiRemoteServersComboBox.currentText()
 
+        qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
         settings = {
             "name": self.uiNameLineEdit.text(),
             "ram": self.uiRamSpinBox.value(),
@@ -219,18 +288,19 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
             if self.uiTypeComboBox.currentText() != "Default":
                 self.uiRamSpinBox.setValue(1024)
-            return self._ids[self.uiBinaryMemoryWizardPage]
 
         elif self.page(current_id) == self.uiBinaryMemoryWizardPage:
 
             if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
-                return self._ids[self.uiASAWizardPage]
-            return self._ids[self.uiDiskWizardPage]
+                return self.uiBinaryMemoryWizardPage.nextId() + 1
 
         elif self.page(current_id) == self.uiDiskWizardPage:
 
             if self.uiTypeComboBox.currentText() == "IDS":
-                return self._ids[self.uiDiskImageHdbWizardPage]
+                return self.uiDiskWizardPage.nextId() + 1
             return -1
-        else:
+
+        elif self.page(current_id) == self.uiASAWizardPage:
             return -1
+
+        return QtGui.QWizard.nextId(self)

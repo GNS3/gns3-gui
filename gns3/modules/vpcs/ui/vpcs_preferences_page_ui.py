@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Fri Oct 10 10:43:48 2014
+# Created: Sun Oct 19 16:18:52 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -79,6 +79,7 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.uiRemoteServersTreeWidget = QtGui.QTreeWidget(self.uiRemoteServersGroupBox)
         self.uiRemoteServersTreeWidget.setEnabled(False)
+        self.uiRemoteServersTreeWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.uiRemoteServersTreeWidget.setObjectName(_fromUtf8("uiRemoteServersTreeWidget"))
         self.horizontalLayout_11.addWidget(self.uiRemoteServersTreeWidget)
         self.verticalLayout_3.addWidget(self.uiRemoteServersGroupBox)
@@ -158,7 +159,7 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiVPCSPathToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse...", None))
         self.uiScriptFileToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "General settings", None))
-        self.uiUseLocalServercheckBox.setText(_translate("VPCSPreferencesPageWidget", "Use the local server (Linux only)", None))
+        self.uiUseLocalServercheckBox.setText(_translate("VPCSPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("VPCSPreferencesPageWidget", "Remote servers", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("VPCSPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("VPCSPreferencesPageWidget", "Port", None))

@@ -197,6 +197,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # internal status for running instances
         self._running_instances = {}
 
+        # TODO: Delete me
+        self._running = {}
+
     def _get_flavor_index(self, flavor_id):
         try:
             return self.flavor_index_id.index(flavor_id)
@@ -341,7 +344,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if not instances:
             return
 
-        # filter instances for current project
+        # filter instances to only those in the current project
         project_instances = [i for i in instances if i.id in self._project_instances_id]
         for i in project_instances:
             self._model.updateInstanceFields(i, ['state'])
@@ -367,6 +370,11 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             state = self._running_instances.setdefault(i.id, RunningInstanceState.IDLE)
 
             if state == RunningInstanceState.IDLE:
+                # TODO: Try to avoid re-entering this code multiple times simultaneously.
+                if self._running.get(i.id):
+                    return
+                self._running[i.id] = True
+
                 public_ip = self._get_public_ip(i.public_ips)
                 # start GNS3 server and deadman switch
                 ssh_thread = StartGNS3ServerThread(

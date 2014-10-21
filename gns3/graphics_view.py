@@ -23,6 +23,7 @@ import os
 import pickle
 
 from .qt import QtCore, QtGui, QtNetwork
+from .servers import Servers
 from .items.node_item import NodeItem
 from .dialogs.node_configurator_dialog import NodeConfiguratorDialog
 from .link import Link
@@ -36,9 +37,7 @@ from .ports.port import Port
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
-from .utils.progress_dialog import ProgressDialog
-from .utils.wait_for_connection_thread import WaitForConnectionThread
-
+from .utils.connect_to_server import ConnectToServer
 
 # link items
 from .items.link_item import LinkItem
@@ -1107,17 +1106,13 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            server = node_module.allocateServer(node_class)
-            if not server.connected():
-                # connect to server in a non-blocking way.
-                self._thread = WaitForConnectionThread(server.host, server.port)
-                progress_dialog = ProgressDialog(self._thread,
-                                                 "Server",
-                                                 "Connecting to server {} on port {}...".format(server.host, server.port),
-                                                 "Cancel", busy=True, parent=self)
-                progress_dialog.show()
-                if progress_dialog.exec_() is False:
-                    return
+            if node_data["server"] == "local":
+                server = Servers.instance().localServer()
+            else:
+                host, port = node_data["server"].rsplit(":", 1)
+                server = Servers.instance().getRemoteServer(host, port)
+            if not server.connected() and ConnectToServer(self, server) is False:
+                return
 
             node = node_module.createNode(node_class, server)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)

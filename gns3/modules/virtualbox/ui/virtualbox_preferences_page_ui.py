@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created: Fri Oct 10 10:46:44 2014
+# Created: Sun Oct 19 11:35:54 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -66,6 +66,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.uiRemoteServersTreeWidget = QtGui.QTreeWidget(self.uiRemoteServersGroupBox)
         self.uiRemoteServersTreeWidget.setEnabled(False)
+        self.uiRemoteServersTreeWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.uiRemoteServersTreeWidget.setObjectName(_fromUtf8("uiRemoteServersTreeWidget"))
         self.horizontalLayout_11.addWidget(self.uiRemoteServersTreeWidget)
         self.verticalLayout_3.addWidget(self.uiRemoteServersGroupBox)
@@ -143,7 +144,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.uiVboxWrapperPathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to the VirtualBox wrapper (Linux/UNIX only):", None))
         self.uiVboxWrapperPathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "General settings", None))
-        self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Use the local server", None))
+        self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxPreferencesPageWidget", "Remote servers", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("VirtualBoxPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("VirtualBoxPreferencesPageWidget", "Port", None))
