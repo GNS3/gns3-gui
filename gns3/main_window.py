@@ -1273,29 +1273,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # if we're opening a cloud project, fire up instances
                 if json_topology["resources_type"] == "cloud":
                     self._project_settings["project_type"] = "cloud"
-                    provider = self.cloudProvider
-                    new_instances = []
-                    for instance in json_topology["topology"]["instances"]:
-                        name = instance["name"]
-                        flavor = instance["size_id"]
-                        image = instance["image_id"]
-                        i, k = self._create_instance(name, flavor, image)
-                        new_instances.append({
-                            "name": i.name,
-                            "id": i.id,
-                            "size_id": flavor,
-                            "image_id": image,
-                            "private_key": k.private_key,
-                            "public_key": k.public_key
-                        })
-                    # update topology with new image data
-                    json_topology["topology"]["instances"] = new_instances
-                    # we need to save the updates
-                    need_to_save = True
+                    # new_instances = []
+                    # for instance in json_topology["topology"]["instances"]:
+                    #     name = instance["name"]
+                    #     flavor = instance["size_id"]
+                    #     image = instance["image_id"]
+                    #     i, k = self._create_instance(name, flavor, image)
+                    #     new_instances.append({
+                    #         "name": i.name,
+                    #         "id": i.id,
+                    #         "size_id": flavor,
+                    #         "image_id": image,
+                    #         "private_key": k.private_key,
+                    #         "public_key": k.public_key
+                    #     })
+                    # # update topology with new image data
+                    # json_topology["topology"]["instances"] = new_instances
+                    # # we need to save the updates
+                    # need_to_save = True
                 else:
                     self._project_settings["project_type"] = "local"
 
                 topology.load(json_topology)
+                self._loadCloudInstances()
 
                 if need_to_save:
                     self.saveProject(path)

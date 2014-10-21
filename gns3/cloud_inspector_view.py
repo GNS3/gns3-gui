@@ -198,7 +198,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._running_instances = {}
 
         # TODO: Delete me
-        self._running = False
+        self._running = {}
 
     def _get_flavor_index(self, flavor_id):
         try:
@@ -371,9 +371,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
             if state == RunningInstanceState.IDLE:
                 # TODO: Try to avoid re-entering this code multiple times simultaneously.
-                if self._running:
+                if self._running.get(i.id):
                     return
-                self._running = True
+                self._running[i.id] = True
 
                 public_ip = self._get_public_ip(i.public_ips)
                 # start GNS3 server and deadman switch
