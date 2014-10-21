@@ -166,6 +166,7 @@ class StartGNS3ServerThread(QThread):
 
     commands = '''
 echo 'hello world'
+DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get -y install htop
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade

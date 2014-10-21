@@ -373,23 +373,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # let all modules know about the new project files directory
                 self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
-                if new_project_settings["project_type"] == "cloud":
-                    provider = self.cloudProvider
-                    if provider is None:
-                        log.error("Unable to get a cloud provider")
-                        return
+                self._loadCloudInstances()
 
-                    # create an instance for this project
-                    default_flavor = self.cloudSettings()['default_flavor']
-                    default_image_id = self.cloudSettings()['default_image']
-                    instance, keypair = self._create_instance(new_project_settings["project_name"],
-                                                              default_flavor,
-                                                              default_image_id)
-                    if instance:
-                        topology = Topology.instance()
-                        topology.addInstance(instance.name, instance.id,
-                                             default_flavor, default_image_id,
-                                             keypair.private_key, keypair.public_key)
+                # if new_project_settings["project_type"] == "cloud":
+                #     provider = self.cloudProvider
+                #     if provider is None:
+                #         log.error("Unable to get a cloud provider")
+                #         return
+
+                #     # create an instance for this project
+                #     default_flavor = self.cloudSettings()['default_flavor']
+                #     default_image_id = self.cloudSettings()['default_image']
+                #     instance, keypair = self._create_instance(new_project_settings["project_name"],
+                #                                               default_flavor,
+                #                                               default_image_id)
+                #     if instance:
+                #         topology = Topology.instance()
+                #         topology.addInstance(instance.name, instance.id,
+                #                              default_flavor, default_image_id,
+                #                              keypair.private_key, keypair.public_key)
 
                 self._project_settings.update(new_project_settings)
                 self.saveProject(new_project_settings["project_path"])
@@ -1486,25 +1488,27 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # do nothing if previous project was temporary
             return
 
-        with open(project) as f:
-            old_json_topology = json.load(f)
+        self._saveCloudInstances()
 
-            if old_json_topology["resources_type"] != 'cloud':
-                # do nothing in case of local projects
-                return
+        # with open(project) as f:
+        #     old_json_topology = json.load(f)
 
-            provider = self.cloudProvider
-            if provider is None:
-                log.error("Unable to get a cloud provider")
-                return
+        #     if old_json_topology["resources_type"] != 'cloud':
+        #         # do nothing in case of local projects
+        #         return
 
-            for instance in old_json_topology["topology"]["instances"]:
-                # shutdown the instance, we can pass to libcloud our namedtuple instead of a Node
-                # object because only instance.id is actually accessed
-                ti = TopologyInstance(**instance)
-                self.cloudProvider.delete_instance(ti)
-                # delete keypairs
-                self.cloudProvider.delete_key_pair_by_name(instance["name"])
+        #     provider = self.cloudProvider
+        #     if provider is None:
+        #         log.error("Unable to get a cloud provider")
+        #         return
+
+        #     for instance in old_json_topology["topology"]["instances"]:
+        #         # shutdown the instance, we can pass to libcloud our namedtuple instead of a Node
+        #         # object because only instance.id is actually accessed
+        #         ti = TopologyInstance(**instance)
+        #         self.cloudProvider.delete_instance(ti)
+        #         # delete keypairs
+        #         self.cloudProvider.delete_key_pair_by_name(instance["name"])
 
     def project_created(self, project):
         """
@@ -1594,3 +1598,47 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def _saveCloudInstances(self):
+        """
+        Save the list of cloud instances to the config file
+        """
+        log.debug('Saving cloud instances')
+        # save the settings
+        settings = QtCore.QSettings()
+        settings.beginGroup("CloudInstances")
+        settings.remove("")
+
+        # save the cloud instances
+        topology = Topology.instance()
+        instances = topology.instances()
+        settings.beginWriteArray("cloud_instance", len(instances))
+        index = 0
+        for instance in instances:
+            settings.setArrayIndex(index)
+            for name in instance._fields:
+                log.debug('{}={}'.format(name, getattr(instance, name)))
+                settings.setValue(name, getattr(instance, name))
+            index += 1
+        settings.endArray()
+        settings.endGroup()
+
+    def _loadCloudInstances(self):
+        """
+        Load instance info from the config file to the topology
+        """
+        log.debug('Loading cloud instances')
+        settings = QtCore.QSettings()
+        settings.beginGroup("CloudInstances")
+        topology = Topology.instance()
+
+        # Load the instances
+        size = settings.beginReadArray("cloud_instance")
+        for index in range(0, size):
+            settings.setArrayIndex(index)
+            info = {}
+            for name in TopologyInstance._fields:
+                log.debug('{}={}'.format(name, settings.value(name, "")))
+                info[name] = settings.value(name, "")
+            topology.addInstance(**info)
+
