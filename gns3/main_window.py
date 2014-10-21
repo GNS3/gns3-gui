@@ -137,8 +137,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
-        #FIXME: hide the cloud dock for beta release
-        # self.uiCloudInspectorDockWidget.hide()
+        #FIXME: hide the cloud dock for release
+        self.uiCloudInspectorDockWidget.hide()
 
         # Network Manager (used to check for update)
         self._network_manager = QtNetwork.QNetworkAccessManager(self)
@@ -839,7 +839,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         dialog = GettingStartedDialog(self)
         dialog.showit()
-        if auto is True and not dialog.showit():
+        if auto is True and dialog.showit():
             return
         dialog.show()
         dialog.exec_()

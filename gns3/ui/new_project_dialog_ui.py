@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/new_project_dialog.ui'
 #
-# Created: Thu Oct 16 22:18:42 2014
+# Created: Mon Oct 20 16:31:02 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,10 @@ class Ui_NewProjectDialog(object):
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName(_fromUtf8("NewProjectDialog"))
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewProjectDialog.resize(622, 202)
+        NewProjectDialog.resize(472, 175)
         NewProjectDialog.setModal(True)
         self.gridLayout_2 = QtGui.QGridLayout(NewProjectDialog)
+        self.gridLayout_2.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.uiButtonBox = QtGui.QDialogButtonBox(NewProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)

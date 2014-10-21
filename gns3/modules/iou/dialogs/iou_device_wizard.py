@@ -167,7 +167,7 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             hover_symbol = ":/symbols/router.selected.svg"
             category = Node.routers
 
-        if IOU.instance().settings()["use_local_server"] or self.uiLoadBalanceCheckBox.isChecked():
+        if IOU.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiLoadBalanceCheckBox.isChecked():
             server = next(iter(Servers.instance()))

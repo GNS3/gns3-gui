@@ -19,6 +19,7 @@
 Wizard for QEMU VMs.
 """
 
+import sys
 import os
 import shutil
 
@@ -232,10 +233,18 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         else:
             self.uiQemuListComboBox.clear()
             for qemu in result["qemus"]:
-                self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+                if qemu["version"]:
+                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+                else:
+                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
 
-            # default is qemu-system-x86_64
-            index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
+            #FIXME: use findData instead
+            if sys.platform.startswith("win"):
+                # default is qemu-system-x86_64w on Windows
+                index = self.uiQemuListComboBox.findText("x86_64w", QtCore.Qt.MatchContains)
+            else:
+                # default is qemu-system-x86_64 on other platforms
+                index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
             if index != -1:
                 self.uiQemuListComboBox.setCurrentIndex(index)
 
