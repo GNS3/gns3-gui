@@ -251,7 +251,7 @@ class UploadProjectThread(QThread):
             self.completed.emit()
         except Exception as e:
             log.exception("Error exporting project to cloud")
-            self.error.emit("Error exporting project {}".format(str(e)), True)
+            self.error.emit("Error exporting project: {}".format(str(e)), True)
 
     def zip_project_dir(self):
         """
@@ -291,6 +291,11 @@ class DownloadProjectThread(QThread):
     Downloads project from cloud storage
     """
 
+    # signals to update the progress dialog.
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
+
     def __init__(self, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
         super().__init__()
         self.project_name = cloud_project_file_name
@@ -299,27 +304,40 @@ class DownloadProjectThread(QThread):
         self.cloud_settings = cloud_settings
 
     def run(self):
-        provider = get_provider(self.cloud_settings)
-        zip_file = provider.download_file(self.project_name)
-        zip_file = zipfile.ZipFile(zip_file, mode='r')
-        zip_file.extractall(self.project_dest_path)
-        zip_file.close()
-        project_name = zip_file.namelist()[0].strip('/')
+        try:
+            self.update.emit(0)
+            provider = get_provider(self.cloud_settings)
+            zip_file = provider.download_file(self.project_name)
+            zip_file = zipfile.ZipFile(zip_file, mode='r')
+            zip_file.extractall(self.project_dest_path)
+            zip_file.close()
+            project_name = zip_file.namelist()[0].strip('/')
 
-        with open(os.path.join(self.project_dest_path, project_name, project_name + '.gns3'), 'r') as f:
-            project_settings = json.loads(f.read())
+            self.update.emit(20)
 
-            images = set()
-            for node in project_settings["topology"].get("nodes", []):
-                if "properties" in node and "image" in node["properties"]:
-                    images.add(node["properties"]["image"])
+            with open(os.path.join(self.project_dest_path, project_name, project_name + '.gns3'), 'r') as f:
+                project_settings = json.loads(f.read())
 
-        image_names_in_cloud = provider.find_storage_image_names(images)
+                images = set()
+                for node in project_settings["topology"].get("nodes", []):
+                    if "properties" in node and "image" in node["properties"]:
+                        images.add(node["properties"]["image"])
 
-        for image in images:
-            dest_path = os.path.join(self.images_dest_path, *image_names_in_cloud[image].split('/')[1:])
+            image_names_in_cloud = provider.find_storage_image_names(images)
 
-            if not os.path.exists(os.path.dirname(dest_path)):
-                os.makedirs(os.path.dirname(dest_path))
+            for i, image in enumerate(images):
+                dest_path = os.path.join(self.images_dest_path, *image_names_in_cloud[image].split('/')[1:])
 
-            provider.download_file(image_names_in_cloud[image], dest_path)
+                if not os.path.exists(os.path.dirname(dest_path)):
+                    os.makedirs(os.path.dirname(dest_path))
+
+                provider.download_file(image_names_in_cloud[image], dest_path)
+                self.update.emit(20 + (float(i) / len(images) * 80))
+
+            self.completed.emit()
+        except Exception as e:
+            log.exception("Error importing project from cloud")
+            self.error.emit("Error importing project: {}".format(str(e)), True)
+
+    def stop(self):
+        pass  # TODO cleanup and delete downloaded files
