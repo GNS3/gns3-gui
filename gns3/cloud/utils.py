@@ -245,7 +245,7 @@ killall gns3server gns3dms
                     'dead_time': self._dead_time,
                 }
                 # TODO: Properly escape the data portion of the command line
-                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}"'.format(data)
+                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}" 2> /tmp/gns3-stderr.log'.format(data)
                 stdout, stderr = self.exec_command(client, start_cmd, wait_time=15)
                 response = stdout.decode('utf-8')
                 self.gns3server_started.emit(str(self._server_id), str(self._host), str(response))
