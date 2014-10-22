@@ -253,16 +253,16 @@ class BaseCloudCtrl(object):
     def list_projects(self):
         """
         Lists projects in cloud storage
-        :return: List of (project name, object name in storage)
+        :return: Dictionary where project names are keys and values are names of objects in storage
         """
 
         try:
             gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
-            projects = [
-                (obj.name.replace('projects/', '').replace('.zip', ''), obj.name)
+            projects = {
+                obj.name.replace('projects/', '').replace('.zip', ''): obj.name
                 for obj in gns3_container.list_objects()
                 if obj.name.startswith('projects/') and obj.name[-4:] == '.zip'
-            ]
+            }
             return projects
         except ContainerDoesNotExistError:
             return []

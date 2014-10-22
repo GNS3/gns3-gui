@@ -41,6 +41,7 @@ from .dialogs.about_dialog import AboutDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
+from .dialogs.import_cloud_project_dialog import ImportCloudProjectDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
@@ -1602,4 +1603,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         progress_dialog.exec_()
 
     def _importProjectActionSlot(self):
-        print('import project action')
+        dialog = ImportCloudProjectDialog(
+            self,
+            self._settings['projects_path'],
+            self._settings['images_path'],
+            self._cloud_settings
+        )
+
+        dialog.show()
+        dialog.exec_()

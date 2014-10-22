@@ -340,3 +340,8 @@ class DownloadProjectThread(QThread):
 
     def stop(self):
         pass  # TODO cleanup and delete downloaded files
+
+
+def get_cloud_projects(cloud_settings):
+    provider = get_provider(cloud_settings)
+    return provider.list_projects()
