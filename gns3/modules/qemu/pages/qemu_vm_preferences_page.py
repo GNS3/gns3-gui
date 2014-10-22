@@ -71,7 +71,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtGui.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
         QtGui.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
-        QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
+        if qemu_vm["qemu_path"]:
+            QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
 
         # fill out the Hard disks section
         if qemu_vm["hda_disk_image"] or qemu_vm["hdb_disk_image"]:

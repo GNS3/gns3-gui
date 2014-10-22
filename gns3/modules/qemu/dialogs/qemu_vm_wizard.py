@@ -197,6 +197,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             if not server.connected() and ConnectToServer(self, server) is False:
                 return False
             self._server = server
+
+        if self.currentPage() == self.uiBinaryMemoryWizardPage:
+            if not self.uiQemuListComboBox.count():
+                QtGui.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
+                return False
+
         return True
 
     def initializePage(self, page_id):
