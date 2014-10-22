@@ -1106,7 +1106,9 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            if node_data["server"] == "local":
+            if not "server" in node_data:
+                server = node_module.allocateServer(node_class)
+            elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
             else:
                 host, port = node_data["server"].rsplit(":", 1)
