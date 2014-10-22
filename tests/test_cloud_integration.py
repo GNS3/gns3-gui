@@ -377,9 +377,10 @@ class TestRackspaceCtrl(unittest.TestCase):
 
             projects = self.ctrl.list_projects()
 
-            self.assertEqual(len(projects), 2)
-            self.assertTrue(('project1.gns3', 'projects/project1.gns3.zip') in projects)
-            self.assertTrue(('project2.gns3', 'projects/project2.gns3.zip') in projects)
+            self.assertDictEqual(projects, {
+                'project1.gns3': 'projects/project1.gns3.zip',
+                'project2.gns3': 'projects/project2.gns3.zip'
+            })
 
         finally:
             self._delete_container()
