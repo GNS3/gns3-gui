@@ -78,10 +78,12 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         if result is False:
             # load a local resource if the page is not available
             resource_name = os.path.join("static", "gns3_jungle.html")
+            gns3_jungle = None
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):
                 gns3_jungle = os.path.normpath(resource_name)
             elif pkg_resources.resource_exists("gns3", resource_name):
                 gns3_jungle_page = pkg_resources.resource_filename("gns3", resource_name)
                 gns3_jungle = os.path.normpath(gns3_jungle_page)
-            self.uiWebView.load(QtCore.QUrl("file://{}".format(gns3_jungle)))
+            if gns3_jungle:
+                self.uiWebView.load(QtCore.QUrl("file://{}".format(gns3_jungle)))
             self._refresh_timer.stop()
