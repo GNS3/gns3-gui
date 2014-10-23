@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Sun Oct 19 16:55:07 2014
+# Created: Wed Oct 22 16:46:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,8 +26,8 @@ except AttributeError:
 class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName(_fromUtf8("QemuVMWizard"))
-        QemuVMWizard.setWindowModality(QtCore.Qt.WindowModal)
         QemuVMWizard.resize(514, 366)
+        QemuVMWizard.setModal(True)
         self.uiServerWizardPage = QtGui.QWizardPage()
         self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
         self.gridLayout_4 = QtGui.QGridLayout(self.uiServerWizardPage)

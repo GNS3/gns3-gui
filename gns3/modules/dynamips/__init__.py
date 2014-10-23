@@ -439,7 +439,7 @@ class Dynamips(Module):
 
             name = ios_router["name"]
             settings = {}
-            # set initial settings like the chassis or an idle-pc value etc.
+            # set initial settings like the chassis or an Idle-PC value etc.
             if ios_router["chassis"]:
                 settings["chassis"] = ios_router["chassis"]
             if ios_router["idlepc"]:
@@ -479,10 +479,10 @@ class Dynamips(Module):
 
     def updateImageIdlepc(self, image_path, idlepc):
         """
-        Updates the idle-pc for an IOS image.
+        Updates the Idle-PC for an IOS image.
 
         :param image_path: path to the IOS image
-        :param idlepc: idle-pc value
+        :param idlepc: Idle-PC value
         """
 
         for ios_router in self._ios_routers.values():

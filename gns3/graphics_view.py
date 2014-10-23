@@ -37,6 +37,7 @@ from .ports.port import Port
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from .dialogs.idlepc_dialog import IdlePCDialog
 from .utils.connect_to_server import ConnectToServer
 
 # link items
@@ -948,7 +949,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
     def _showIdlepcError(self, node_id, code, message):
         """
-        Shows an error message if the idle-pc values cannot be computed.
+        Shows an error message if the Idle-PC values cannot be computed.
         """
 
         self._idlepc_progress_dialog.reject()
@@ -968,17 +969,11 @@ class GraphicsView(QtGui.QGraphicsView):
         router.server_error_signal.disconnect(self._showIdlepcError)
         idlepcs = router.idlepcs()
         if idlepcs and idlepcs[0] != "0x0":
-            idlepc, ok = QtGui.QInputDialog.getItem(self, "Idle-PC values", "Please select an idle-pc value", idlepcs, 0, False)
-            if ok:
-                idlepc = idlepc.split()[0]
-
-                # apply idle-pc to all routers with the same IOS image
-                ios_image = router.settings()["image"]
-                for node in self._topology.nodes():
-                    if hasattr(node, "idlepcs") and node.settings()["image"] == ios_image:
-                        node.setIdlepc(idlepc)
+            dialog = IdlePCDialog(router, idlepcs, parent=self)
+            dialog.show()
+            dialog.exec_()
         else:
-            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no idle-pc values could be computed, please check again with Cisco IOS in a different state")
+            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
     def duplicateActionSlot(self):
         """
