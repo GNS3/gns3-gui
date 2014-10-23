@@ -141,24 +141,24 @@ class Dynamips(Module):
                 continue
 
             self._ios_routers[key] = {"name": name,
-                                     "path": path,
-                                     "image": image,
-                                     "default_symbol": default_symbol,
-                                     "hover_symbol": hover_symbol,
-                                     "category": category,
-                                     "startup_config": startup_config,
-                                     "private_config": private_config,
-                                     "platform": platform,
-                                     "chassis": chassis,
-                                     "idlepc": idlepc,
-                                     "ram": ram,
-                                     "nvram": nvram,
-                                     "mac_addr": mac_addr,
-                                     "disk0": disk0,
-                                     "disk1": disk1,
-                                     "confreg": confreg,
-                                     "system_id": system_id,
-                                     "server": server}
+                                      "path": path,
+                                      "image": image,
+                                      "default_symbol": default_symbol,
+                                      "hover_symbol": hover_symbol,
+                                      "category": category,
+                                      "startup_config": startup_config,
+                                      "private_config": private_config,
+                                      "platform": platform,
+                                      "chassis": chassis,
+                                      "idlepc": idlepc,
+                                      "ram": ram,
+                                      "nvram": nvram,
+                                      "mac_addr": mac_addr,
+                                      "disk0": disk0,
+                                      "disk1": disk1,
+                                      "confreg": confreg,
+                                      "system_id": system_id,
+                                       "server": server}
 
             for slot_id in range(0, 7):
                 slot = "slot{}".format(slot_id)
@@ -433,9 +433,7 @@ class Dynamips(Module):
                 for ios_key, info in self._ios_routers.items():
                     if node_name == info["name"]:
                         ios_router = self._ios_routers[ios_key]
-                    if isinstance(node, EtherSwitchRouter) and info["platform"] == "c3725":
-                        # hack for EtherSwitch router.
-                        ios_router = self._ios_routers[ios_key]
+                        break
 
             if not ios_router:
                 raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))

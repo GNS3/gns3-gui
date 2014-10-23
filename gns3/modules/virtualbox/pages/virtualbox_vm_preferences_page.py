@@ -121,7 +121,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                                          "adapter_start_index": 0,
                                          "adapter_type": "Automatic",
                                          "headless": False,
-                                         "enable_console": True,
+                                         "enable_console": False,
                                          "server": "local"}
 
             self._virtualbox_vms[key].update(new_vm_settings)

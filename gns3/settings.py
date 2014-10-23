@@ -132,9 +132,9 @@ elif sys.platform.startswith("darwin"):
     DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Terminal + socat"]
 
 else:
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
-                                             'Gnome Terminal + socat': 'gnome-terminal -t %d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
-                                             'Konsole + socat': 'konsole --new-tab -p tabtitle=%d -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\''}
+    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T "%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
+                                             'Gnome Terminal + socat': 'gnome-terminal -t "%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
+                                             'Konsole + socat': 'konsole --new-tab -p tabtitle="%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\''}
 
     # default serial console command on other systems
     DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Xterm + socat"]

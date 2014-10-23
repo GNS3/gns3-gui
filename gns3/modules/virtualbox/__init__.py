@@ -96,7 +96,7 @@ class VirtualBox(Module):
             adapter_start_index = settings.value("adapter_start_index", 0, type=int)
             adapter_type = settings.value("adapter_type", "Automatic")
             headless = settings.value("headless", False, type=bool)
-            enable_console = settings.value("enable_console", True, type=bool)
+            enable_console = settings.value("enable_console", False, type=bool)
             server = settings.value("server", "local")
 
             key = "{server}:{vmname}".format(server=server, vmname=vmname)
