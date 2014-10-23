@@ -50,6 +50,10 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
+        if sys.platform.startswith("win"):
+            # Cannot use IOU locally on Windows
+            self.uiLocalRadioButton.setEnabled(False)
+
         # Available types
         self.uiTypeComboBox.addItems(["L2 image", "L3 image"])
 
@@ -60,6 +64,8 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         if IOU.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
             self.setStartId(1)
+        else:
+            self.uiIOUImageToolButton.setEnabled(False)
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -70,8 +76,10 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
 
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(True)
+            self.uiIOUImageToolButton.setEnabled(False)
         else:
             self.uiRemoteServersGroupBox.setEnabled(False)
+            self.uiIOUImageToolButton.setEnabled(True)
 
     def _loadBalanceToggledSlot(self, checked):
         """
@@ -121,6 +129,9 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+        if self.page(page_id) == self.uiNameImageWizardPage:
+            if not self.uiIOUImageToolButton.isEnabled():
+                QtGui.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
 
     def validateCurrentPage(self):
         """
