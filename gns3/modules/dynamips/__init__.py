@@ -435,34 +435,47 @@ class Dynamips(Module):
                         ios_router = self._ios_routers[ios_key]
                         break
 
+            # hack for EtherSwitch router
+            if isinstance(node, EtherSwitchRouter) and node.server() == Servers.instance().localServer():
+                for info in self._ios_routers.values():
+                    if info["platform"] == "c3725" and info["server"] == "local":
+                        ios_router = {
+                            "platform": "c3725",
+                            "path": info["path"],
+                            "ram": info["ram"],
+                            "startup_config": info["startup_config"],
+                        }
+                        break
+                if not ios_router:
+                    raise ModuleError("Please create an c3725 IOS router in order to use an EtherSwitch router")
+
             if not ios_router:
                 raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))
 
-            name = ios_router["name"]
             settings = {}
             # set initial settings like the chassis or an Idle-PC value etc.
-            if ios_router["chassis"]:
+            if "chassis" in ios_router and ios_router["chassis"]:
                 settings["chassis"] = ios_router["chassis"]
-            if ios_router["idlepc"]:
+            if "idlepc" in ios_router and ios_router["idlepc"]:
                 settings["idlepc"] = ios_router["idlepc"]
             if ios_router["startup_config"]:
                 settings["startup_config"] = ios_router["startup_config"]
-            if ios_router["private_config"]:
+            if "private_config" in ios_router and ios_router["private_config"]:
                 settings["private_config"] = ios_router["private_config"]
 
             if ios_router["platform"] == "c7200":
                 settings["midplane"] = ios_router["midplane"]
                 settings["npe"] = ios_router["npe"]
-            else:
+            elif "iomem" in ios_router:
                 settings["iomem"] = ios_router["iomem"]
 
-            if ios_router["nvram"]:
+            if "nvram" in ios_router and ios_router["nvram"]:
                 settings["nvram"] = ios_router["nvram"]
 
-            if ios_router["disk0"]:
+            if "disk0" in ios_router and ios_router["disk0"]:
                 settings["disk0"] = ios_router["disk0"]
 
-            if ios_router["disk1"]:
+            if "disk1" in ios_router and ios_router["disk1"]:
                 settings["disk1"] = ios_router["disk1"]
 
             for slot_id in range(0, 7):
