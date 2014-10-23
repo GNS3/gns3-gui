@@ -433,9 +433,12 @@ class Dynamips(Module):
                 for ios_key, info in self._ios_routers.items():
                     if node_name == info["name"]:
                         ios_router = self._ios_routers[ios_key]
+                    if isinstance(node, EtherSwitchRouter) and info["platform"] == "c3725":
+                        # hack for EtherSwitch router.
+                        ios_router = self._ios_routers[ios_key]
 
             if not ios_router:
-                raise ModuleError("No IOS image found for platform {}".format(node.settings()["platform"]))
+                raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))
 
             name = ios_router["name"]
             settings = {}
