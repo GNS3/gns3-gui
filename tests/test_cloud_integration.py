@@ -25,7 +25,7 @@ import os
 from io import StringIO, BytesIO
 
 from libcloud.compute.base import Node, NodeSize, KeyPair
-from libcloud.storage.types import ContainerDoesNotExistError
+from libcloud.storage.types import ContainerDoesNotExistError, ObjectDoesNotExistError
 import pytest
 
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
@@ -414,3 +414,17 @@ class TestRackspaceCtrl(unittest.TestCase):
         finally:
             self._delete_container()
             os.remove('downloaded_file.zip')
+
+    def test_delete_file(self):
+        container = self.ctrl.storage_driver.create_container(self.ctrl.GNS3_CONTAINER_NAME)
+
+        try:
+            container.upload_object_via_stream(StringIO('abcde'), 'projects/project1.gns3.zip')
+            container.upload_object_via_stream(StringIO('1234'), 'projects/project1.gns3.zip.md5')
+
+            self.ctrl.delete_file('projects/project1.gns3.zip')
+
+            self.assertRaises(ObjectDoesNotExistError, container.get_object, 'projects/project1.gns3.zip')
+            self.assertRaises(ObjectDoesNotExistError, container.get_object, 'projects/project1.gns3.zip.md5')
+        finally:
+            self._delete_container()

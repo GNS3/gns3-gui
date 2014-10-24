@@ -1597,7 +1597,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._project_settings['project_path'],
             self._settings['images_path']
         )
-        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel",
+        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project files...", "Cancel",
                                          parent=self)
         progress_dialog.show()
         progress_dialog.exec_()

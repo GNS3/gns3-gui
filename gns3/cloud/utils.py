@@ -339,7 +339,35 @@ class DownloadProjectThread(QThread):
             self.error.emit("Error importing project: {}".format(str(e)), True)
 
     def stop(self):
-        pass  # TODO cleanup and delete downloaded files
+        self.quit()
+
+
+class DeleteProjectThread(QThread):
+    """
+    Deletes project from cloud storage
+    """
+
+    # signals to update the progress dialog.
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
+
+    def __init__(self, project_file_name, cloud_settings):
+        super().__init__()
+        self.project_file_name = project_file_name
+        self.cloud_settings = cloud_settings
+
+    def run(self):
+        try:
+            provider = get_provider(self.cloud_settings)
+            provider.delete_file(self.project_file_name)
+            self.completed.emit()
+        except Exception as e:
+            log.exception("Error deleting project")
+            self.error.emit("Error deleting project: {}".format(str(e)), True)
+
+    def stop(self):
+        pass
 
 
 def get_cloud_projects(cloud_settings):

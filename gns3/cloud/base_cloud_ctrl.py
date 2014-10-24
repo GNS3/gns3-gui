@@ -29,7 +29,7 @@ import logging
 from io import StringIO, BytesIO
 
 from libcloud.compute.base import NodeAuthSSHKey
-from libcloud.storage.types import ContainerAlreadyExistsError, ContainerDoesNotExistError
+from libcloud.storage.types import ContainerAlreadyExistsError, ContainerDoesNotExistError, ObjectDoesNotExistError
 
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
 from .exceptions import OverLimit, BadRequest, ServiceUnavailable
@@ -324,3 +324,18 @@ class BaseCloudCtrl(object):
                 raise Exception('Image does not exist in cloud storage or is duplicated')
 
         return images
+
+    def delete_file(self, file_name):
+        gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+
+        try:
+            object_to_delete = gns3_container.get_object(file_name)
+            object_to_delete.delete()
+        except ObjectDoesNotExistError:
+            pass
+
+        try:
+            hash_object = gns3_container.get_object(file_name + '.md5')
+            hash_object.delete()
+        except ObjectDoesNotExistError:
+            pass
