@@ -138,7 +138,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
         #FIXME: hide the cloud dock for release
-        self.uiCloudInspectorDockWidget.hide()
+        # self.uiCloudInspectorDockWidget.hide()
 
         # Network Manager (used to check for update)
         self._network_manager = QtNetwork.QNetworkAccessManager(self)
