@@ -605,23 +605,8 @@ class GraphicsView(QtGui.QGraphicsView):
         item = self.itemAt(event.pos())
         if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
             item.setSelected(True)
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                if hasattr(item.node(), "serialConsole") and item.node().serialConsole():
-                    try:
-                        from .serial_console import serialConsole
-                        serialConsole(item.node().name())
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
-                else:
-                    node = item.node()
-                    name = node.name()
-                    console_port = node.console()
-                    console_host = node.server().host
-                    try:
-                        from .telnet_console import telnetConsole
-                        telnetConsole(name, console_host, console_port)
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+            if isinstance(item, NodeItem):
+                self.consoleToNode(item.node())
             else:
                 self.configureSlot()
         else:
@@ -878,33 +863,48 @@ class GraphicsView(QtGui.QGraphicsView):
             dialog.show()
             dialog.exec_()
 
+    def consoleToNode(self, node):
+        """
+        Start a console application to connect to a node.
+
+        :param node: Node instance
+
+        :returns: False if the console application could not be started
+        """
+
+        if not hasattr(node, "console") or not node.initialized() or node.status() != Node.started:
+            # returns True to ignore this node.
+            return True
+
+        if hasattr(node, "serialConsole") and node.serialConsole():
+            try:
+                from .serial_console import serialConsole
+                serialConsole(node.name())
+            except (OSError, ValueError) as e:
+                QtGui.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
+                return False
+        else:
+            name = node.name()
+            console_port = node.console()
+            console_host = node.server().host
+            try:
+                from .telnet_console import telnetConsole
+                telnetConsole(name, console_host, console_port)
+            except (OSError, ValueError) as e:
+                QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+                return False
+        return True
+
     def consoleActionSlot(self):
         """
         Slot to receive events from the console action in the
         contextual menu.
         """
 
-        from .telnet_console import telnetConsole
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
-                if hasattr(item.node(), "serialConsole") and item.node().serialConsole():
-                    try:
-                        from .serial_console import serialConsole
-                        serialConsole(item.node().name())
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
-                else:
-                    node = item.node()
-                    if node.status() != Node.started:
-                        continue
-                    name = node.name()
-                    console_port = node.console()
-                    console_host = node.server().host
-                    try:
-                        telnetConsole(name, console_host, console_port)
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
-                        break
+            if isinstance(item, NodeItem):
+                if self.consoleToNode(item.node()):
+                    continue
 
     def captureActionSlot(self):
         """

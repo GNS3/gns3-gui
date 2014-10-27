@@ -28,6 +28,7 @@ import shutil
 import json
 import glob
 import logging
+import functools
 
 from pkg_resources import parse_version
 
@@ -715,27 +716,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when connecting to all the nodes using the console.
         """
 
-        from .telnet_console import telnetConsole
+        delay = self._settings["delay_console_all"]
+        counter = 0
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
-                if hasattr(item.node(), "serialConsole") and item.node().serialConsole():
-                    try:
-                        from .serial_console import serialConsole
-                        serialConsole(item.node().name())
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
-                else:
-                    node = item.node()
-                    if node.status() != Node.started:
-                        continue
-                    name = node.name()
-                    console_port = node.console()
-                    console_host = node.server().host
-                    try:
-                        telnetConsole(name, console_host, console_port)
-                    except (OSError, ValueError) as e:
-                        QtGui.QMessageBox.critical(self, "Console", 'could not start console: {}'.format(e))
-                        break
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node())
+                QtCore.QTimer.singleShot(counter, callback)
+                counter += delay
 
     def _addNoteActionSlot(self):
         """

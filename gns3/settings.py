@@ -184,7 +184,7 @@ GENERAL_SETTINGS = {
     "serial_console_command": DEFAULT_SERIAL_CONSOLE_COMMAND,
     "auto_close_console": True,
     "bring_console_to_front": True,
-    "slow_console_all": 0.5,
+    "delay_console_all": 500,
 }
 
 GENERAL_SETTING_TYPES = {
@@ -199,7 +199,7 @@ GENERAL_SETTING_TYPES = {
     "serial_console_command": str,
     "auto_close_console": bool,
     "bring_console_to_front": bool,
-    "slow_console_all": float,
+    "delay_console_all": int,
 }
 
 GRAPHICS_VIEW_SETTINGS = {
