@@ -223,7 +223,7 @@ class Router(Node):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def setup(self, image, ram, name=None, router_id=None, initial_settings={}):
+    def setup(self, image, ram, name=None, router_id=None, initial_settings={}, base_name="R"):
         """
         Setups this router.
 
@@ -235,7 +235,7 @@ class Router(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName("R")
+            name = self.allocateName(base_name)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this router")
@@ -627,6 +627,16 @@ class Router(Node):
             log.info("{} has received idle-pc proposals".format(self.name()))
             self._idlepcs = result["idlepcs"]
             self.idlepc_signal.emit()
+
+    def computeAutoIdlepc(self, callback):
+        """
+        Automatically search for an Idle-PC value.
+
+        :param callback: Callback for the response
+        """
+
+        log.debug("{} is starting an auto idle-pc lookup".format(self.name()))
+        self._server.send_message("dynamips.vm.auto_idlepc", {"id": self._router_id}, callback)
 
     def idlepcs(self):
         """
@@ -1109,8 +1119,8 @@ class Router(Node):
         :returns: QWidget object
         """
 
-        from ..pages.router_configuration_page import RouterConfigurationPage
-        return RouterConfigurationPage
+        from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
+        return IOSRouterConfigurationPage
 
     @staticmethod
     def defaultSymbol():

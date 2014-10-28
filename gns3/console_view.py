@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import platform
 import sys
 import struct
 import inspect
@@ -37,7 +37,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # Set introduction message
         bitness = struct.calcsize("P") * 8
         self.intro = "GNS3 management console. Running GNS3 Early Release (ER) version {} on {} ({}-bit).\n" \
-                     "Copyright (c) 2006-2014 GNS3 Technologies.".format(__version__, sys.platform, bitness)
+                     "Copyright (c) 2006-2014 GNS3 Technologies.".format(__version__, platform.system(), bitness)
 
         # Parent class initialization
         try:

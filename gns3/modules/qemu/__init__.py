@@ -292,27 +292,6 @@ class Qemu(Module):
             params.update({"project_name": project_name})
         server.send_notification("qemu.settings", params)
 
-    def allocateServer(self, node_class):
-        """
-        Allocates a server.
-
-        :param node_class: Node object
-
-        :returns: allocated server (WebSocketClient instance)
-        """
-
-        # allocate a server for the node
-        servers = Servers.instance()
-        if self._settings["use_local_server"]:
-            # use the local server
-            server = servers.localServer()
-        else:
-            # pick up a remote server (round-robin method)
-            server = next(iter(servers))
-            if not server:
-                raise ModuleError("No remote server is configured")
-        return server
-
     def createNode(self, node_class, server):
         """
         Creates a new node.
@@ -435,6 +414,25 @@ class Qemu(Module):
                     self.notification_signal.emit(message, params["details"])
                     node.stop()
 
+    def getQemuBinariesFromServer(self, server, callback):
+        """
+        Gets the QEMU binaries list from a server.
+
+        :param server: server to send the request to
+        :param callback: callback for the reply from the server
+        """
+
+        if not server.connected():
+            try:
+                log.info("reconnecting to server {}:{}".format(server.host, server.port))
+                server.reconnect()
+            except OSError as e:
+                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
+                                                                                 server.port,
+                                                                                 e))
+
+        server.send_message("qemu.qemu_list", None, callback)
+
     def refreshQemuBinaries(self, server):
         """
         Gets the QEMU binaries list from a server.
@@ -508,23 +506,15 @@ class Qemu(Module):
         """
 
         nodes = []
-        if not self._qemu_vms:
+        for qemu_vm in self._qemu_vms.values():
             nodes.append(
                 {"class": QemuVM.__name__,
-                 "name": QemuVM.symbolName(),
+                 "name": qemu_vm["name"],
+                 "server": qemu_vm["server"],
                  "categories": QemuVM.categories(),
-                 "default_symbol": QemuVM.defaultSymbol(),
-                 "hover_symbol": QemuVM.hoverSymbol()}
-                )
-        else:
-            for qemu_vm in self._qemu_vms.values():
-                nodes.append(
-                    {"class": QemuVM.__name__,
-                     "name": qemu_vm["name"],
-                     "categories": QemuVM.categories(),
-                     "default_symbol": qemu_vm["default_symbol"],
-                     "hover_symbol": qemu_vm["hover_symbol"]}
-                )
+                 "default_symbol": qemu_vm["default_symbol"],
+                 "hover_symbol": qemu_vm["hover_symbol"]}
+        )
         return nodes
 
     @staticmethod

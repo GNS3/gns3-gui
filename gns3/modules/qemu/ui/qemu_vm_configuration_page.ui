@@ -123,7 +123,7 @@
          <item>
           <widget class="QToolButton" name="uiHdaDiskImageToolButton">
            <property name="text">
-            <string>Browse...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -147,7 +147,7 @@
          <item>
           <widget class="QToolButton" name="uiHdbDiskImageToolButton">
            <property name="text">
-            <string>Browse...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -272,7 +272,7 @@
           <item row="0" column="2">
            <widget class="QToolButton" name="uiInitrdToolButton">
             <property name="text">
-             <string>Browse...</string>
+             <string>&amp;Browse...</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextOnly</enum>
@@ -282,7 +282,7 @@
           <item row="1" column="2">
            <widget class="QToolButton" name="uiKernelImageToolButton">
             <property name="text">
-             <string>Browse...</string>
+             <string>&amp;Browse...</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextOnly</enum>

@@ -32,7 +32,7 @@
          <item>
           <widget class="QToolButton" name="uiIOURCPathToolButton">
            <property name="text">
-            <string>...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -76,7 +76,7 @@
          <item>
           <widget class="QToolButton" name="uiIouyapPathToolButton">
            <property name="text">
-            <string>...</string>
+            <string>&amp;Browse...</string>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
@@ -95,7 +95,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="uiUseLocalServercheckBox">
          <property name="text">
-          <string>Use the local server (Linux only)</string>
+          <string>Always use the local server (Linux only)</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -112,6 +112,9 @@
            <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
             </property>
             <column>
              <property name="text">

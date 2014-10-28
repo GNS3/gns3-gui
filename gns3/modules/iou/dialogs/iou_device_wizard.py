@@ -20,6 +20,7 @@ Wizard for IOU devices.
 """
 
 import os
+import re
 import sys
 import pkg_resources
 
@@ -44,6 +45,8 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
 
+        self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
+        self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
@@ -53,6 +56,34 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         # Mandatory fields
         self.uiNameImageWizardPage.registerField("name*", self.uiNameLineEdit)
         self.uiNameImageWizardPage.registerField("image*", self.uiIOUImageLineEdit)
+
+        if IOU.instance().settings()["use_local_server"]:
+            # skip the server page if we use the local server
+            self.setStartId(1)
+
+    def _remoteServerToggledSlot(self, checked):
+        """
+        Slot for when the remote server radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersGroupBox.setEnabled(True)
+        else:
+            self.uiRemoteServersGroupBox.setEnabled(False)
+
+    def _loadBalanceToggledSlot(self, checked):
+        """
+        Slot for when the load balance checkbox is toggled.
+
+        :param checked: either the box is checked or not
+        """
+
+        if checked:
+            self.uiRemoteServersComboBox.setEnabled(False)
+        else:
+            self.uiRemoteServersComboBox.setEnabled(True)
 
     def _iouImageBrowserSlot(self):
         """
@@ -84,6 +115,26 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             #  L3 image
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
 
+    def initializePage(self, page_id):
+
+        if self.page(page_id) == self.uiServerWizardPage:
+            self.uiRemoteServersComboBox.clear()
+            for server in Servers.instance().remoteServers().values():
+                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+
+    def validateCurrentPage(self):
+        """
+        Validates the server.
+        """
+
+        if self.currentPage() == self.uiServerWizardPage:
+
+            #FIXME: prevent users to use "cloud"
+            if self.uiCloudRadioButton.isChecked():
+                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+                return False
+        return True
+
     def getSettings(self):
         """
         Returns the settings set in this Wizard.
@@ -93,7 +144,7 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
 
         path = self.uiIOUImageLineEdit.text()
 
-        if "l2" in path:
+        if self.uiTypeComboBox.currentText() == "L2 image":
             # set the default L2 base initial-config
             resource_name = "configs/iou_l2_base_initial-config.txt"
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):
@@ -114,15 +165,16 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             default_symbol = ":/symbols/router.normal.svg"
             hover_symbol = ":/symbols/router.selected.svg"
 
-        #TODO: mutiple remote server
-        if IOU.instance().settings()["use_local_server"]:
+        if IOU.instance().settings()["use_local_server"] or self.uiLoadBalanceCheckBox.isChecked():
             server = "local"
-        else:
+        elif self.uiLoadBalanceCheckBox.isChecked():
             server = next(iter(Servers.instance()))
             if not server:
-                QtGui.QMessageBox.critical(self, "IOU image", "No remote server available!")
+                QtGui.QMessageBox.critical(self, "IOU device", "No remote server available!")
                 return
-            server = server.host
+            server = "{}:{}".format(server.host, server.port)
+        else:
+            server = self.uiRemoteServersComboBox.currentText()
 
         settings = {
             "name": self.uiNameLineEdit.text(),

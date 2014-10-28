@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
 #
-# Created: Tue Sep 30 19:03:23 2014
+# Created: Sun Oct 19 11:35:54 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,6 +46,7 @@ class Ui_QemuPreferencesPageWidget(object):
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.uiRemoteServersTreeWidget = QtGui.QTreeWidget(self.uiRemoteServersGroupBox)
         self.uiRemoteServersTreeWidget.setEnabled(False)
+        self.uiRemoteServersTreeWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.uiRemoteServersTreeWidget.setObjectName(_fromUtf8("uiRemoteServersTreeWidget"))
         self.horizontalLayout_11.addWidget(self.uiRemoteServersTreeWidget)
         self.verticalLayout_3.addWidget(self.uiRemoteServersGroupBox)
@@ -121,7 +122,7 @@ class Ui_QemuPreferencesPageWidget(object):
 
     def retranslateUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setWindowTitle(_translate("QemuPreferencesPageWidget", "QEMU", None))
-        self.uiUseLocalServercheckBox.setText(_translate("QemuPreferencesPageWidget", "Use the local server", None))
+        self.uiUseLocalServercheckBox.setText(_translate("QemuPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("QemuPreferencesPageWidget", "Remote servers", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("QemuPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("QemuPreferencesPageWidget", "Port", None))

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Tue Oct  7 18:19:06 2014
+# Created: Fri Oct 10 10:43:47 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -178,9 +178,9 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiGeneralgroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "General", None))
         self.uiNameLabel.setText(_translate("iouDeviceConfigPageWidget", "Name:", None))
         self.uiIOUImageLabel.setText(_translate("iouDeviceConfigPageWidget", "IOU image:", None))
-        self.uiIOUImageToolButton.setText(_translate("iouDeviceConfigPageWidget", "Browse...", None))
+        self.uiIOUImageToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse...", None))
         self.uiInitialConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Initial config:", None))
-        self.uiInitialConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "Browse...", None))
+        self.uiInitialConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse...", None))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:", None))
         self.uiOtherSettingsGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Other settings", None))
         self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages (testing only)", None))

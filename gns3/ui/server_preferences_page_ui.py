@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Tue Sep 30 18:58:59 2014
+# Created: Fri Oct 10 10:46:44 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -130,7 +130,7 @@ class Ui_ServerPreferencesPageWidget(object):
     def retranslateUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "GNS3 server", None))
         self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:", None))
-        self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "...", None))
+        self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "&Browse...", None))
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:", None))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
         self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Automatically start the server on startup", None))
@@ -140,8 +140,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host:", None))
         self.uiRemoteServerPortLineEdit.setText(_translate("ServerPreferencesPageWidget", "192.168.56.101", None))
         self.uiRemoteServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
-        self.uiAddRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Add", None))
-        self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Delete", None))
+        self.uiAddRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Add", None))
+        self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers", None))
         self.uiTestSettingsPushButton.setText(_translate("ServerPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults", None))
