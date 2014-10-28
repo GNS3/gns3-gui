@@ -156,13 +156,13 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def createdSlot(self, node_id):
         """
-        The node for the auto idle-pc has been created.
+        The node for the auto Idle-PC has been created.
 
         :param node_id: not used
         """
 
         self._router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
-        self._auto_idlepc_progress_dialog = QtGui.QProgressDialog("Searching for an idle-pc value...", "Cancel", 0, 0, parent=self)
+        self._auto_idlepc_progress_dialog = QtGui.QProgressDialog("Searching for an Idle-PC value...", "Cancel", 0, 0, parent=self)
         self._auto_idlepc_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
         self._auto_idlepc_progress_dialog.setWindowTitle("Idle-PC finder")
         self._auto_idlepc_progress_dialog.show()
@@ -187,7 +187,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 self.uiIdlepcLineEdit.setText(result["idlepc"])
             else:
                 logs = "\n".join(result["logs"])
-                MessageBox(self, "Idle-PC finder", "Could not find an idle-pc value", details=logs)
+                MessageBox(self, "Idle-PC finder", "Could not find an Idle-PC value", details=logs)
 
     def _iosImageBrowserSlot(self):
         """
@@ -203,7 +203,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
         # try to guess the platform
         image = os.path.basename(path)
-        match = re.match("^(c[0-9]+)\\-\w+", image)
+        match = re.match("^(c[0-9]+)\\-\w+", image.lower())
         if not match:
             QtGui.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return

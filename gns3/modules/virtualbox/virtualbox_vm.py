@@ -53,7 +53,7 @@ class VirtualBoxVM(Node):
                           "adapter_start_index": 0,
                           "adapter_type": "Automatic",
                           "headless": False,
-                          "enable_console": True}
+                          "enable_console": False}
 
         self._addAdapters(2)
 
@@ -635,6 +635,17 @@ class VirtualBoxVM(Node):
         """
 
         return self._ports
+
+    def serialConsole(self):
+        """
+        Returns either the serial console must be used or not.
+
+        :return: boolean
+        """
+
+        if self._settings["enable_console"]:
+            return False
+        return True
 
     def console(self):
         """

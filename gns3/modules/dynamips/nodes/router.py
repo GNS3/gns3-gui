@@ -609,10 +609,10 @@ class Router(Node):
 
     def computeIdlepcs(self):
         """
-        Get idle-pc proposals
+        Get Idle-PC proposals
         """
 
-        log.debug("{} is requesting idle-pc proposals".format(self.name()))
+        log.debug("{} is requesting Idle-PC proposals".format(self.name()))
         self._server.send_message("dynamips.vm.idlepcs", {"id": self._router_id}, self._computeIdlepcsCallback)
 
     def _computeIdlepcsCallback(self, result, error=False):
@@ -624,10 +624,10 @@ class Router(Node):
         """
 
         if error:
-            log.error("error while computing idle-pc proposals {}: {}".format(self.name(), result["message"]))
+            log.error("error while computing Idle-PC proposals {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
-            log.info("{} has received idle-pc proposals".format(self.name()))
+            log.info("{} has received Idle-PC proposals".format(self.name()))
             self._idlepcs = result["idlepcs"]
             self.idlepc_signal.emit()
 
@@ -638,21 +638,21 @@ class Router(Node):
         :param callback: Callback for the response
         """
 
-        log.debug("{} is starting an auto idle-pc lookup".format(self.name()))
+        log.debug("{} is starting an auto Idle-PC lookup".format(self.name()))
         self._server.send_message("dynamips.vm.auto_idlepc", {"id": self._router_id}, callback)
 
     def idlepcs(self):
         """
-        Returns previously computed idle-pc values.
+        Returns previously computed Idle-PC values.
 
-        :returns: idle-pc values (list)
+        :returns: Idle-PC values (list)
         """
 
         return self._idlepcs
 
     def idlepc(self):
         """
-        Returns the current idle-pc value for this router.
+        Returns the current Idle-PC value for this router.
 
         :returns: idlepc value (string)
         """
@@ -661,7 +661,7 @@ class Router(Node):
 
     def setIdlepc(self, idlepc):
         """
-        Sets a new idle-pc value for this router.
+        Sets a new Idle-PC value for this router.
 
         :param idlepc: idlepc value (string)
         """
@@ -867,7 +867,7 @@ class Router(Node):
         if self._settings["jit_sharing_group"] != None:
             jitsharing_group_info = "JIT blocks sharing group is {group}".format(group=self._settings["jit_sharing_group"])
 
-        # get info about idle-pc
+        # get info about Idle-PC
         idlepc_info = "with no idlepc value"
         if self._settings["idlepc"]:
             idlepc_info = "with idlepc value of {idlepc}, idlemax of {idlemax} and idlesleep of {idlesleep} ms".format(idlepc=self._settings["idlepc"],

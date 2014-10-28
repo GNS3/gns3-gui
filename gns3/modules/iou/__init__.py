@@ -21,8 +21,10 @@ IOU module implementation.
 
 import base64
 import os
+
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.node import Node
+
 from ..module import Module
 from ..module_error import ModuleError
 from .iou_device import IOUDevice
@@ -92,6 +94,7 @@ class IOU(Module):
             name = settings.value("name", "IOU{}".format(index + 1))
             default_symbol = settings.value("default_symbol", ":/symbols/multilayer_switch.normal.svg")
             hover_symbol = settings.value("hover_symbol", ":/symbols/multilayer_switch.selected.svg")
+            category = settings.value("category", Node.routers, type=int)
             path = settings.value("path", "")
             image = settings.value("image", "")
             initial_config = settings.value("initial_config", "")
@@ -106,6 +109,7 @@ class IOU(Module):
                                       "path": path,
                                       "default_symbol": default_symbol,
                                       "hover_symbol": hover_symbol,
+                                      "category": category,
                                       "image": image,
                                       "initial_config": initial_config,
                                       "use_default_iou_values": use_default_iou_values,
@@ -530,9 +534,10 @@ class IOU(Module):
                 {"class": IOUDevice.__name__,
                  "name": iou_device["name"],
                  "server": iou_device["server"],
-                 "categories": IOUDevice.categories(),
                  "default_symbol": iou_device["default_symbol"],
-                 "hover_symbol": iou_device["hover_symbol"]}
+                 "hover_symbol": iou_device["hover_symbol"],
+                 "categories": [iou_device["category"]]
+                }
             )
         return nodes
 

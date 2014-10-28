@@ -85,23 +85,24 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         wizard.show()
         if wizard.exec_():
 
-            new_vm_settings = wizard.getSettings()
+            new_device_settings = wizard.getSettings()
 
-            key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
-            self._iou_devices[key] = {"name": new_vm_settings["name"],
-                                      "path": new_vm_settings["path"],
-                                      "default_symbol": new_vm_settings["default_symbol"],
-                                      "hover_symbol": new_vm_settings["hover_symbol"],
-                                      "image": os.path.basename(new_vm_settings["path"]),
-                                      "initial_config": new_vm_settings["initial_config"],
+            key = "{server}:{name}".format(server=new_device_settings["server"], name=new_device_settings["name"])
+            self._iou_devices[key] = {"name": new_device_settings["name"],
+                                      "path": new_device_settings["path"],
+                                      "default_symbol": new_device_settings["default_symbol"],
+                                      "hover_symbol": new_device_settings["hover_symbol"],
+                                      "category": new_device_settings["category"],
+                                      "image": os.path.basename(new_device_settings["path"]),
+                                      "initial_config": new_device_settings["initial_config"],
                                       "use_default_iou_values": True,
                                       "ram": 256,
                                       "nvram": 128,
                                       "ethernet_adapters": 2,
                                       "serial_adapters": 2,
-                                      "server": new_vm_settings["server"]}
+                                      "server": new_device_settings["server"]}
 
-            self._iou_devices[key].update(new_vm_settings)
+            self._iou_devices[key].update(new_device_settings)
             item = QtGui.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, self._iou_devices[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["default_symbol"]))
@@ -324,6 +325,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         dialog.show()
         if dialog.exec_():
             normal_symbol, selected_symbol = dialog.getSymbols()
+            category = dialog.getCategory()
             item = self.uiIOUDevicesTreeWidget.currentItem()
             if item:
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
@@ -331,6 +333,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 iou_device = self._iou_devices[key]
                 iou_device["default_symbol"] = normal_symbol
                 iou_device["hover_symbol"] = selected_symbol
+                iou_device["category"] = category
 
     def loadPreferences(self):
         """

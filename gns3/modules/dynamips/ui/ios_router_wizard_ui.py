@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Sat Oct 18 20:33:37 2014
+# Created: Wed Oct 22 16:46:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,8 +26,8 @@ except AttributeError:
 class Ui_IOSRouterWizard(object):
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName(_fromUtf8("IOSRouterWizard"))
-        IOSRouterWizard.setWindowModality(QtCore.Qt.WindowModal)
         IOSRouterWizard.resize(517, 398)
+        IOSRouterWizard.setModal(True)
         self.uiServerWizardPage = QtGui.QWizardPage()
         self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
         self.verticalLayout = QtGui.QVBoxLayout(self.uiServerWizardPage)
@@ -320,7 +320,7 @@ class Ui_IOSRouterWizard(object):
         self.uiWic1Label.setText(_translate("IOSRouterWizard", "wic 1:", None))
         self.uiWic2Label.setText(_translate("IOSRouterWizard", "wic 2:", None))
         self.uiIdlePCWizardPage.setTitle(_translate("IOSRouterWizard", "Idle-PC", None))
-        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core.", None))
+        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An Idle-PC value is necessary to prevent IOS to use 100% of your processor or one of its core.", None))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:", None))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder", None))
 

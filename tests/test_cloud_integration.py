@@ -25,7 +25,7 @@ import os
 from io import StringIO, BytesIO
 
 from libcloud.compute.base import Node, NodeSize, KeyPair
-from libcloud.storage.types import ContainerDoesNotExistError
+from libcloud.storage.types import ContainerDoesNotExistError, ObjectDoesNotExistError
 import pytest
 
 from gns3.cloud.rackspace_ctrl import RackspaceCtrl
@@ -344,11 +344,11 @@ class TestRackspaceCtrl(unittest.TestCase):
             with test_file.file as f:
                 f.write(test_data)
 
-            return_value = self.ctrl.upload_file(test_file.name, 'test_folder')
+            return_value = self.ctrl.upload_file(test_file.name, 'test_folder/test_file.txt')
 
             container = self.ctrl.storage_driver.get_container(self.ctrl.GNS3_CONTAINER_NAME)
-            file_object = container.get_object('test_folder/' + os.path.basename(test_file.name))
-            hash_object = container.get_object('test_folder/' + os.path.basename(test_file.name) + '.md5')
+            file_object = container.get_object('test_folder/test_file.txt')
+            hash_object = container.get_object('test_folder/test_file.txt.md5')
 
             cloud_file_hash = ''
             for chunk in hash_object.as_stream():
@@ -377,9 +377,10 @@ class TestRackspaceCtrl(unittest.TestCase):
 
             projects = self.ctrl.list_projects()
 
-            self.assertEqual(len(projects), 2)
-            self.assertTrue(('project1.gns3', 'projects/project1.gns3.zip') in projects)
-            self.assertTrue(('project2.gns3', 'projects/project2.gns3.zip') in projects)
+            self.assertDictEqual(projects, {
+                'project1.gns3': 'projects/project1.gns3.zip',
+                'project2.gns3': 'projects/project2.gns3.zip'
+            })
 
         finally:
             self._delete_container()
@@ -413,3 +414,17 @@ class TestRackspaceCtrl(unittest.TestCase):
         finally:
             self._delete_container()
             os.remove('downloaded_file.zip')
+
+    def test_delete_file(self):
+        container = self.ctrl.storage_driver.create_container(self.ctrl.GNS3_CONTAINER_NAME)
+
+        try:
+            container.upload_object_via_stream(StringIO('abcde'), 'projects/project1.gns3.zip')
+            container.upload_object_via_stream(StringIO('1234'), 'projects/project1.gns3.zip.md5')
+
+            self.ctrl.delete_file('projects/project1.gns3.zip')
+
+            self.assertRaises(ObjectDoesNotExistError, container.get_object, 'projects/project1.gns3.zip')
+            self.assertRaises(ObjectDoesNotExistError, container.get_object, 'projects/project1.gns3.zip.md5')
+        finally:
+            self._delete_container()

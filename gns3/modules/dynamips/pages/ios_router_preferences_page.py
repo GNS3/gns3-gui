@@ -28,6 +28,7 @@ import math
 import zipfile
 
 from gns3.qt import QtCore, QtGui
+from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -114,6 +115,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                       "image": ios_settings["image"],
                                       "default_symbol": ":/symbols/router.normal.svg",
                                       "hover_symbol": ":/symbols/router.selected.svg",
+                                      "category": Node.routers,
                                       "startup_config": startup_config,
                                       "private_config": private_config,
                                       "platform": ios_settings["platform"],
@@ -485,6 +487,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         dialog.show()
         if dialog.exec_():
             normal_symbol, selected_symbol = dialog.getSymbols()
+            category = dialog.getCategory()
             item = self.uiIOSRoutersTreeWidget.currentItem()
             if item:
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
@@ -492,6 +495,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 ios_router = self._ios_routers[key]
                 ios_router["default_symbol"] = normal_symbol
                 ios_router["hover_symbol"] = selected_symbol
+                ios_router["category"] = category
 
     def loadPreferences(self):
         """

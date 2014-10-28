@@ -28,6 +28,7 @@ import shutil
 import json
 import glob
 import logging
+import functools
 
 from pkg_resources import parse_version
 
@@ -41,6 +42,7 @@ from .dialogs.about_dialog import AboutDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
+from .dialogs.import_cloud_project_dialog import ImportCloudProjectDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
@@ -87,6 +89,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
 
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
+        except ImportError:
+            pass
+
         self._settings = {}
         self._cloud_settings = {}
         self._loadSettings()
@@ -103,12 +111,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "project_files_dir": None,
             "project_type": "local",
         }
-
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
-        except ImportError:
-            pass
 
         # do not show the nodes dock widget my default
         self.uiNodesDockWidget.setVisible(False)
@@ -138,7 +140,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
-        #FIXME: hide the cloud dock for beta release
+        #FIXME: hide the cloud dock for release
         # self.uiCloudInspectorDockWidget.hide()
 
         # Network Manager (used to check for update)
@@ -256,6 +258,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
+        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -327,6 +330,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         return self._settings["telnet_console_command"]
+
+    def serialConsoleCommand(self):
+        """
+        Returns the Serial console command line.
+
+        :returns: command (string)
+        """
+
+        return self._settings["serial_console_command"]
 
     def setUnsavedState(self):
         """
@@ -709,20 +721,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when connecting to all the nodes using the console.
         """
 
-        from .telnet_console import telnetConsole
+        delay = self._settings["delay_console_all"]
+        counter = 0
         for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
-                node = item.node()
-                if node.status() != Node.started:
-                    continue
-                name = node.name()
-                console_port = node.console()
-                console_host = node.server().host
-                try:
-                    telnetConsole(name, console_host, console_port)
-                except (OSError, ValueError) as e:
-                    QtGui.QMessageBox.critical(self, "Console", 'could not start console: {}'.format(e))
-                    break
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node())
+                QtCore.QTimer.singleShot(counter, callback)
+                counter += delay
 
     def _addNoteActionSlot(self):
         """
@@ -842,7 +847,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         dialog = GettingStartedDialog(self)
         dialog.showit()
-        if auto is True and not dialog.showit():
+        if auto is True and dialog.showit():
             return
         dialog.show()
         dialog.exec_()
@@ -1595,10 +1600,26 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 "Cannot export temporary projects, please save current project first.")
             return
 
-        upload_thread = UploadProjectThread(self._project_settings, self.cloudSettings())
-        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project flies...", "Cancel", parent=self)
+        upload_thread = UploadProjectThread(
+            self._cloud_settings,
+            self._project_settings['project_path'],
+            self._settings['images_path']
+        )
+        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project files...", "Cancel",
+                                         parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def _importProjectActionSlot(self):
+        dialog = ImportCloudProjectDialog(
+            self,
+            self._settings['projects_path'],
+            self._settings['images_path'],
+            self._cloud_settings
+        )
+
+        dialog.show()
+        dialog.exec_()
 
     def _saveCloudInstances(self):
         """

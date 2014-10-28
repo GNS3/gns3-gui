@@ -29,7 +29,7 @@ import logging
 from io import StringIO, BytesIO
 
 from libcloud.compute.base import NodeAuthSSHKey
-from libcloud.storage.types import ContainerAlreadyExistsError, ContainerDoesNotExistError
+from libcloud.storage.types import ContainerAlreadyExistsError, ContainerDoesNotExistError, ObjectDoesNotExistError
 
 from .exceptions import ItemNotFound, KeyPairExists, MethodNotAllowed
 from .exceptions import OverLimit, BadRequest, ServiceUnavailable
@@ -216,11 +216,11 @@ class BaseCloudCtrl(object):
 
         return self.driver.list_key_pairs()
 
-    def upload_file(self, file_path, folder):
+    def upload_file(self, file_path, cloud_object_name):
         """
         Uploads file to cloud storage (if it is not identical to a file already in cloud storage).
         :param file_path: path to file to upload
-        :param folder: folder in cloud storage to save file in
+        :param cloud_object_name: name of file saved in cloud storage
         :return: True if file was uploaded, False if it was skipped because it already existed and was identical
         """
         try:
@@ -231,7 +231,6 @@ class BaseCloudCtrl(object):
         with open(file_path, 'rb') as file:
             local_file_hash = hashlib.md5(file.read()).hexdigest()
 
-            cloud_object_name = folder + '/' + os.path.basename(file_path)
             cloud_hash_name = cloud_object_name + '.md5'
             cloud_objects = [obj.name for obj in gns3_container.list_objects()]
 
@@ -254,23 +253,24 @@ class BaseCloudCtrl(object):
     def list_projects(self):
         """
         Lists projects in cloud storage
-        :return: List of (project name, object name in storage)
+        :return: Dictionary where project names are keys and values are names of objects in storage
         """
 
         try:
             gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
-            projects = [
-                (obj.name.replace('projects/', '').replace('.zip', ''), obj.name)
+            projects = {
+                obj.name.replace('projects/', '').replace('.zip', ''): obj.name
                 for obj in gns3_container.list_objects()
                 if obj.name.startswith('projects/') and obj.name[-4:] == '.zip'
-            ]
+            }
             return projects
         except ContainerDoesNotExistError:
             return []
 
     def download_file(self, file_name, destination=None):
         """
-        Downloads file from cloud storage
+        Downloads file from cloud storage. If a file exists at destination, and it is identical to the file in cloud
+        storage, it is not downloaded.
         :param file_name: name of file in cloud storage to download
         :param destination: local path to save file to (if None, returns file contents as a file-like object)
         :return: A file-like object if file contents are returned, or None if file is saved to filesystem
@@ -278,7 +278,22 @@ class BaseCloudCtrl(object):
 
         gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
         storage_object = gns3_container.get_object(file_name)
+
         if destination is not None:
+            if os.path.isfile(destination):
+                # if a file exists at destination and its hash matches that of the
+                # file in cloud storage, don't download it
+                with open(destination, 'rb') as f:
+                    local_file_hash = hashlib.md5(f.read()).hexdigest()
+
+                    hash_object = gns3_container.get_object(file_name + '.md5')
+                    cloud_object_hash = ''
+                    for chunk in hash_object.as_stream():
+                        cloud_object_hash += chunk.decode('utf8')
+
+                    if local_file_hash == cloud_object_hash:
+                        return
+
             storage_object.download(destination)
         else:
             contents = b''
@@ -287,3 +302,40 @@ class BaseCloudCtrl(object):
                 contents += chunk
 
             return BytesIO(contents)
+
+    def find_storage_image_names(self, images_to_find):
+        """
+        Maps names of image files to their full name in cloud storage
+        :param images_to_find: list of image names to find
+        :return: A dictionary where keys are image names, and values are the corresponding names of
+        the files in cloud storage
+        """
+        gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+        images_in_storage = [obj.name for obj in gns3_container.list_objects() if obj.name.startswith('images/')]
+
+        images = {}
+        for image_name in images_to_find:
+            images_with_same_name =\
+                list(filter(lambda storage_image_name: storage_image_name.endswith(image_name), images_in_storage))
+
+            if len(images_with_same_name) == 1:
+                images[image_name] = images_with_same_name[0]
+            else:
+                raise Exception('Image does not exist in cloud storage or is duplicated')
+
+        return images
+
+    def delete_file(self, file_name):
+        gns3_container = self.storage_driver.get_container(self.GNS3_CONTAINER_NAME)
+
+        try:
+            object_to_delete = gns3_container.get_object(file_name)
+            object_to_delete.delete()
+        except ObjectDoesNotExistError:
+            pass
+
+        try:
+            hash_object = gns3_container.get_object(file_name + '.md5')
+            hash_object.delete()
+        except ObjectDoesNotExistError:
+            pass

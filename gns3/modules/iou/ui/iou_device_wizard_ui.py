@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created: Sat Oct 18 20:33:37 2014
+# Created: Wed Oct 22 16:46:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,8 +26,8 @@ except AttributeError:
 class Ui_IOUDeviceWizard(object):
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName(_fromUtf8("IOUDeviceWizard"))
-        IOUDeviceWizard.setWindowModality(QtCore.Qt.WindowModal)
         IOUDeviceWizard.resize(514, 366)
+        IOUDeviceWizard.setModal(True)
         self.uiServerWizardPage = QtGui.QWizardPage()
         self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
         self.gridLayout_2 = QtGui.QGridLayout(self.uiServerWizardPage)

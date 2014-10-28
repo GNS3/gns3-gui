@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Fri Oct 10 10:43:47 2014
+# Created: Sun Oct 26 19:14:55 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -110,7 +110,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllLabel.setObjectName(_fromUtf8("uiSlowStartAllLabel"))
         self.gridLayout_2.addWidget(self.uiSlowStartAllLabel, 3, 0, 1, 2)
         self.uiSlowStartAllSpinBox = QtGui.QSpinBox(self.uiGeneralMiscGroupBox)
+        self.uiSlowStartAllSpinBox.setMinimum(0)
         self.uiSlowStartAllSpinBox.setMaximum(10000)
+        self.uiSlowStartAllSpinBox.setProperty("value", 0)
         self.uiSlowStartAllSpinBox.setObjectName(_fromUtf8("uiSlowStartAllSpinBox"))
         self.gridLayout_2.addWidget(self.uiSlowStartAllSpinBox, 4, 0, 1, 2)
         self.uiLinkManualModeCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
@@ -188,13 +190,11 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowConsoleAllLabel = QtGui.QLabel(self.uiConsoleMiscGroupBox)
         self.uiSlowConsoleAllLabel.setObjectName(_fromUtf8("uiSlowConsoleAllLabel"))
         self.gridLayout_7.addWidget(self.uiSlowConsoleAllLabel, 2, 0, 1, 1)
-        self.uiSlowConsoleAllDoubleSpinBox = QtGui.QDoubleSpinBox(self.uiConsoleMiscGroupBox)
-        self.uiSlowConsoleAllDoubleSpinBox.setDecimals(1)
-        self.uiSlowConsoleAllDoubleSpinBox.setMinimum(0.0)
-        self.uiSlowConsoleAllDoubleSpinBox.setSingleStep(0.5)
-        self.uiSlowConsoleAllDoubleSpinBox.setProperty("value", 1.0)
-        self.uiSlowConsoleAllDoubleSpinBox.setObjectName(_fromUtf8("uiSlowConsoleAllDoubleSpinBox"))
-        self.gridLayout_7.addWidget(self.uiSlowConsoleAllDoubleSpinBox, 3, 0, 1, 1)
+        self.uiDelayConsoleAllSpinBox = QtGui.QSpinBox(self.uiConsoleMiscGroupBox)
+        self.uiDelayConsoleAllSpinBox.setMaximum(10000)
+        self.uiDelayConsoleAllSpinBox.setProperty("value", 500)
+        self.uiDelayConsoleAllSpinBox.setObjectName(_fromUtf8("uiDelayConsoleAllSpinBox"))
+        self.gridLayout_7.addWidget(self.uiDelayConsoleAllSpinBox, 3, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.uiConsoleMiscGroupBox)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem2)
@@ -304,7 +304,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiBringConsoleWindowToFrontCheckBox.setToolTip(_translate("GeneralPreferencesPageWidget", "<html>This option will attempt to bring existing opened console window to front, instead of opening a new window.<br>If no existing opened console window exists, it will start a new  console window.</html>", None))
         self.uiBringConsoleWindowToFrontCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Bring console window to front (experimental feature)", None))
         self.uiSlowConsoleAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each console launch when consoling to all devices:", None))
-        self.uiSlowConsoleAllDoubleSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
+        self.uiDelayConsoleAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " ms", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiConsoleTab), _translate("GeneralPreferencesPageWidget", "Console applications", None))
         self.uiSceneWidthLabel.setText(_translate("GeneralPreferencesPageWidget", "Default width:", None))
         self.uiSceneWidthSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " pixels", None))

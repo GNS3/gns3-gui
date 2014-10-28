@@ -21,6 +21,7 @@ Dialog to change the topology symbol of NodeItems
 
 from ..qt import QtSvg, QtCore, QtGui
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
+from ..node import Node
 
 
 class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
@@ -41,6 +42,19 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
 
         if not self._items:
             self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).hide()
+
+            # current categories
+            categories = {"Routers": Node.routers,
+                          "Switches": Node.switches,
+                          "End devices": Node.end_devices,
+                          "Security devices": Node.security_devices
+                          }
+
+            for name, category in categories.items():
+                self.uiCategoryComboBox.addItem(name, category)
+        else:
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
 
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
@@ -77,6 +91,10 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
             normal_symbol = ":/symbols/{}.normal.svg".format(name)
             selected_symbol = ":/symbols/{}.selected.svg".format(name)
         return normal_symbol, selected_symbol
+
+    def getCategory(self):
+
+        return self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
     def done(self, result):
         """

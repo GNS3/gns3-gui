@@ -38,6 +38,7 @@ from .ports.port import Port
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from .dialogs.idlepc_dialog import IdlePCDialog
 from .utils.connect_to_server import ConnectToServer
 
 # link items
@@ -607,16 +608,8 @@ class GraphicsView(QtGui.QGraphicsView):
         item = self.itemAt(event.pos())
         if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
             item.setSelected(True)
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                node = item.node()
-                name = node.name()
-                console_port = node.console()
-                console_host = node.server().host
-                try:
-                    from .telnet_console import telnetConsole
-                    telnetConsole(name, console_host, console_port)
-                except (OSError, ValueError) as e:
-                    QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+            if isinstance(item, NodeItem):
+                self.consoleToNode(item.node())
             else:
                 self.configureSlot()
         else:
@@ -873,26 +866,48 @@ class GraphicsView(QtGui.QGraphicsView):
             dialog.show()
             dialog.exec_()
 
+    def consoleToNode(self, node):
+        """
+        Start a console application to connect to a node.
+
+        :param node: Node instance
+
+        :returns: False if the console application could not be started
+        """
+
+        if not hasattr(node, "console") or not node.initialized() or node.status() != Node.started:
+            # returns True to ignore this node.
+            return True
+
+        if hasattr(node, "serialConsole") and node.serialConsole():
+            try:
+                from .serial_console import serialConsole
+                serialConsole(node.name())
+            except (OSError, ValueError) as e:
+                QtGui.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
+                return False
+        else:
+            name = node.name()
+            console_port = node.console()
+            console_host = node.server().host
+            try:
+                from .telnet_console import telnetConsole
+                telnetConsole(name, console_host, console_port)
+            except (OSError, ValueError) as e:
+                QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+                return False
+        return True
+
     def consoleActionSlot(self):
         """
         Slot to receive events from the console action in the
         contextual menu.
         """
 
-        from .telnet_console import telnetConsole
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
-                node = item.node()
-                if node.status() != Node.started:
+            if isinstance(item, NodeItem):
+                if self.consoleToNode(item.node()):
                     continue
-                name = node.name()
-                console_port = node.console()
-                console_host = node.server().host
-                try:
-                    telnetConsole(name, console_host, console_port)
-                except (OSError, ValueError) as e:
-                    QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
-                    break
 
     def captureActionSlot(self):
         """
@@ -951,7 +966,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
     def _showIdlepcError(self, node_id, code, message):
         """
-        Shows an error message if the idle-pc values cannot be computed.
+        Shows an error message if the Idle-PC values cannot be computed.
         """
 
         self._idlepc_progress_dialog.reject()
@@ -971,17 +986,11 @@ class GraphicsView(QtGui.QGraphicsView):
         router.server_error_signal.disconnect(self._showIdlepcError)
         idlepcs = router.idlepcs()
         if idlepcs and idlepcs[0] != "0x0":
-            idlepc, ok = QtGui.QInputDialog.getItem(self, "Idle-PC values", "Please select an idle-pc value", idlepcs, 0, False)
-            if ok:
-                idlepc = idlepc.split()[0]
-
-                # apply idle-pc to all routers with the same IOS image
-                ios_image = router.settings()["image"]
-                for node in self._topology.nodes():
-                    if hasattr(node, "idlepcs") and node.settings()["image"] == ios_image:
-                        node.setIdlepc(idlepc)
+            dialog = IdlePCDialog(router, idlepcs, parent=self)
+            dialog.show()
+            dialog.exec_()
         else:
-            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no idle-pc values could be computed, please check again with Cisco IOS in a different state")
+            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
     def duplicateActionSlot(self):
         """
@@ -1110,7 +1119,9 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            if node_data["server"] == "local":
+            if not "server" in node_data:
+                server = node_module.allocateServer(node_class)
+            elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
             elif node_data["server"] == "cloud":
                 server = Servers.instance().anyCloudServer()

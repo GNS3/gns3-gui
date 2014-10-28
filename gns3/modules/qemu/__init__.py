@@ -20,8 +20,10 @@ QEMU module implementation.
 """
 
 import os
+
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.node import Node
+
 from ..module import Module
 from ..module_error import ModuleError
 from .qemu_vm import QemuVM
@@ -44,7 +46,6 @@ class Qemu(Module):
         self._nodes = []
         self._servers = []
         self._working_dir = ""
-        self._qemu_binaries = {}
 
         # load the settings
         self._loadSettings()
@@ -91,6 +92,7 @@ class Qemu(Module):
             name = settings.value("name", "")
             default_symbol = settings.value("default_symbol", ":/symbols/qemu_guest.normal.svg")
             hover_symbol = settings.value("hover_symbol", ":/symbols/qemu_guest.selected.svg")
+            category = settings.value("category", Node.end_devices, type=int)
             qemu_path = settings.value("qemu_path", "")
             hda_disk_image = settings.value("hda_disk_image", "")
             hdb_disk_image = settings.value("hdb_disk_image", "")
@@ -108,6 +110,7 @@ class Qemu(Module):
             self._qemu_vms[key] = {"name": name,
                                    "default_symbol": default_symbol,
                                    "hover_symbol": hover_symbol,
+                                   "category": category,
                                    "qemu_path": qemu_path,
                                    "hda_disk_image": hda_disk_image,
                                    "hdb_disk_image": hdb_disk_image,
@@ -379,14 +382,6 @@ class Qemu(Module):
         name = self._qemu_vms[vm]["name"]
         node.setup(qemu_path, initial_settings=settings, base_name=name)
 
-        # refresh the Qemu binaries list
-        if node.server().isLocal():
-            server = "local"
-        else:
-            server = node.server().host
-        if not self._qemu_binaries or server not in self._qemu_binaries:
-            self.refreshQemuBinaries(node.server())
-
     def reset(self):
         """
         Resets the servers.
@@ -433,50 +428,6 @@ class Qemu(Module):
 
         server.send_message("qemu.qemu_list", None, callback)
 
-    def refreshQemuBinaries(self, server):
-        """
-        Gets the QEMU binaries list from a server.
-
-        :param server: server to send the request to
-        """
-
-        if not server.connected():
-            try:
-                log.info("reconnecting to server {}:{}".format(server.host, server.port))
-                server.reconnect()
-            except OSError as e:
-                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
-                                                                                 server.port,
-                                                                                 e))
-
-        server.send_message("qemu.qemu_list", None, self._refreshQemuBinariesCallback)
-
-    def _refreshQemuBinariesCallback(self, result, error=False):
-        """
-        Callback to get the QEMU binaries list.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("could not get the QEMU binaries list: {}".format(result["message"]))
-        else:
-            if self.settings()["use_local_server"]:
-                server = "local"
-            else:
-                server = result["server"]
-            self._qemu_binaries[server] = result
-
-    def getQemuBinariesList(self):
-        """
-        Returns the list of Qemu binaries
-
-        :return: dict
-        """
-
-        return self._qemu_binaries
-
     @staticmethod
     def getNodeClass(name):
         """
@@ -511,9 +462,10 @@ class Qemu(Module):
                 {"class": QemuVM.__name__,
                  "name": qemu_vm["name"],
                  "server": qemu_vm["server"],
-                 "categories": QemuVM.categories(),
                  "default_symbol": qemu_vm["default_symbol"],
-                 "hover_symbol": qemu_vm["hover_symbol"]}
+                 "hover_symbol": qemu_vm["hover_symbol"],
+                 "categories": [qemu_vm["category"]]
+                }
         )
         return nodes
 
