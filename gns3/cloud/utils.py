@@ -117,32 +117,33 @@ class StartGNS3ServerThread(QThread):
     gns3server_started = pyqtSignal(str, str, str)
 
     # Note: The htop package is for troubleshooting.  It can safely be removed.
-    commands = '''
-DEBIAN_FRONTEND=noninteractive apt-get -y update
-DEBIAN_FRONTEND=noninteractive apt-get -y install htop
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
-mkdir -p /opt/gns3
-tar xzf /tmp/gns3-server.tgz -C /opt/gns3
-cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
-cd /opt/gns3/gns3-server; python3 ./setup.py install
-ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
-killall python3 gns3server gns3dms
-'''
-
 #     commands = '''
 # DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 # DEBIAN_FRONTEND=noninteractive apt-get -y update
 # DEBIAN_FRONTEND=noninteractive apt-get -y install htop
 # DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-# DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq
+# DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
 # mkdir -p /opt/gns3
-# cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
-# cd /opt/gns3/gns3-server; git checkout gns-110
+# tar xzf /tmp/gns3-server.tgz -C /opt/gns3
 # cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 # cd /opt/gns3/gns3-server; python3 ./setup.py install
-# killall gns3server gns3dms
+# ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+# killall python3 gns3server gns3dms
 # '''
+
+    commands = '''
+DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+DEBIAN_FRONTEND=noninteractive apt-get -y update
+DEBIAN_FRONTEND=noninteractive apt-get -y install htop
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+mkdir -p /opt/gns3
+cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
+cd /opt/gns3/gns3-server; git checkout gns-110
+cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
+cd /opt/gns3/gns3-server; python3 ./setup.py install
+killall python3 gns3server gns3dms
+'''
 
     def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
@@ -171,8 +172,6 @@ killall python3 gns3server gns3dms
             time.sleep(1)
             wait -= 1
 
-        # stdout_data += stdout.channel.recv()
-        # stderr_data += stderr.channel.recv()
         stdout_data = stdout.read()
         stderr_data = stderr.read()
         log.debug('exit status: {}'.format(stdout.channel.exit_status))
@@ -195,12 +194,12 @@ killall python3 gns3server gns3dms
                     continue
                 ssh_connected = True
 
-                os.system('rm -rf /tmp/gns3-server')
-                os.system('cp -a /Users/jseutter/projects/gns3-server /tmp/gns3-server')
-                os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
-                sftp = client.open_sftp()
-                sftp.put('/tmp/gns3-server.tgz', '/tmp/gns3-server.tgz')
-                sftp.close()
+                # os.system('rm -rf /tmp/gns3-server')
+                # os.system('cp -a /Users/jseutter/projects/gns3-server /tmp/gns3-server')
+                # os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
+                # sftp = client.open_sftp()
+                # sftp.put('/tmp/gns3-server.tgz', '/tmp/gns3-server.tgz')
+                # sftp.close()
 
                 for cmd in [l for l in self.commands.splitlines() if l.strip()]:
                     self.exec_command(client, cmd)
