@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
-    <height>396</height>
+    <width>319</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="2">
     <widget class="QListWidget" name="uiSymbolListWidget">
      <property name="minimumSize">
       <size>
@@ -28,6 +28,23 @@
     </widget>
    </item>
    <item row="1" column="0">
+    <widget class="QLabel" name="uiCategoryLabel">
+     <property name="text">
+      <string>Category:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="uiCategoryComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -55,6 +72,10 @@
     </layout>
    </item>
   </layout>
+  <zorder>uiSymbolListWidget</zorder>
+  <zorder>uiButtonBox</zorder>
+  <zorder>uiCategoryLabel</zorder>
+  <zorder>uiCategoryComboBox</zorder>
  </widget>
  <resources>
   <include location="../../resources/resources.qrc"/>

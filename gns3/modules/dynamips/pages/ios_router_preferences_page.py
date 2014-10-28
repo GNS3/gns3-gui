@@ -28,10 +28,12 @@ import math
 import zipfile
 
 from gns3.qt import QtCore, QtGui
+from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
+from gns3.cloud.utils import UploadFileThread
 
 from ..utils.decompress_ios import isIOSCompressed
 from ..utils.decompress_ios_thread import DecompressIOSThread
@@ -113,6 +115,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                       "image": ios_settings["image"],
                                       "default_symbol": ":/symbols/router.normal.svg",
                                       "hover_symbol": ":/symbols/router.selected.svg",
+                                      "category": Node.routers,
                                       "startup_config": startup_config,
                                       "private_config": private_config,
                                       "platform": ios_settings["platform"],
@@ -126,6 +129,26 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                       "confreg": "0x2102",
                                       "system_id": "FTX0945W0MY",
                                       "server": ios_settings["server"]}
+
+            if ios_settings["server"] == 'cloud':
+                import logging
+                log = logging.getLogger(__name__)
+
+                log.debug(ios_settings["image"])
+                # Start uploading the image to cloud files
+
+                self._upload_image_progress_dialog = QtGui.QProgressDialog("Uploading image file {}".format(ios_settings['image']), "Cancel", 0, 0, parent=self)
+                self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+                self._upload_image_progress_dialog.setWindowTitle("IOS image upload")
+                self._upload_image_progress_dialog.show()
+                try:
+                    upload_thread = UploadFileThread(MainWindow.instance().cloudSettings(), self._ios_routers[key])
+                    upload_thread.completed_callback = self._imageUploadComplete
+                    upload_thread.start()
+                except Exception as e:
+                    self._upload_image_progress_dialog.reject()
+                    log.error(e)
+                    QtGui.QMessageBox.critical(self, "IOS image upload", "Error uploading IOS image: {}".format(e))
 
             if ios_settings["platform"] == "c7200":
                 self._ios_routers[key]["midplane"] = "vxr"
@@ -150,6 +173,11 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOSRoutersTreeWidget.setCurrentItem(item)
+
+    def _imageUploadComplete(self):
+        if self._upload_image_progress_dialog.wasCanceled():
+            return
+        self._upload_image_progress_dialog.accept()
 
     def _iosRouterEditSlot(self):
         """
@@ -459,6 +487,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         dialog.show()
         if dialog.exec_():
             normal_symbol, selected_symbol = dialog.getSymbols()
+            category = dialog.getCategory()
             item = self.uiIOSRoutersTreeWidget.currentItem()
             if item:
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
@@ -466,6 +495,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 ios_router = self._ios_routers[key]
                 ios_router["default_symbol"] = normal_symbol
                 ios_router["hover_symbol"] = selected_symbol
+                ios_router["category"] = category
 
     def loadPreferences(self):
         """

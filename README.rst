@@ -1,20 +1,31 @@
 GNS3-gui
 ========
 
-New GNS3 GUI repository (beta stage).
+GNS3 GUI repository (beta stage).
 
-Warning: this is not the repository for the stable version of GNS3 (0.8.6), please go to the gns3-legacy repository for it.
+Linux (Debian based)
+--------------------
 
-Linux/Unix
-----------
+The following instructions have been tested with Ubuntu and Mint.
+You must be connected to the Internet in order to install the dependencies.
 
 Dependencies:
 
-- Python version 3.3 or above
-- pip & setuptools must be installed, please see http://pip.readthedocs.org/en/latest/installing.html
-  (or sudo apt-get install python3-pip but install more packages)
-- PyQt must be installed, to install on Debian-like Linux: sudo apt-get install python3-pyqt4
-- Dynamips version 0.2.11 or above (http://github.com/GNS3/dynamips)
+- Python 3.3 or above
+- Setuptools
+- PyQt libraries
+- Apache Libcloud library
+- Requests library
+- Paramiko library
+
+The following commands will install some of these dependencies:
+
+.. code:: bash
+
+   sudo apt-get install python3-setuptools
+   sudo apt-get install python3-pyqt4
+
+Finally these commands will install the GUI as well as the rest of the dependencies:
 
 .. code:: bash
 
@@ -34,7 +45,7 @@ Please use our DMG package or you can manually install using the following steps
 
 `First install homebrew <http://brew.sh/>`_.
 
-Then install GNS3 dependencies.
+Then install the GNS3 dependencies.
 
 .. code:: bash
 

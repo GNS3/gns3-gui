@@ -17,7 +17,7 @@
 
 """ Interacts with Rackspace API to create and manage cloud instances. """
 
-from gns3.cloud.base_cloud_ctrl import BaseCloudCtrl
+from .base_cloud_ctrl import BaseCloudCtrl
 import json
 import requests
 from libcloud.compute.drivers.rackspace import ENDPOINT_ARGS_MAP
@@ -276,3 +276,36 @@ class RackspaceCtrl(BaseCloudCtrl):
 
     def get_image(self, image_id):
         return self.driver.get_image(image_id)
+
+
+def get_provider(cloud_settings):
+    """
+    Utility function to retrieve a cloud provider instance already authenticated and with the
+    region set
+
+    :param cloud_settings: cloud settings dictionary
+    :return: a provider instance or None on errors
+    """
+    try:
+        username = cloud_settings['cloud_user_name']
+        apikey = cloud_settings['cloud_api_key']
+        region = cloud_settings['cloud_region']
+        ias_url = cloud_settings['gns3_ias_url']
+    except KeyError as e:
+        log.error("Unable to create cloud provider: {}".format(e))
+        return
+
+    provider = RackspaceCtrl(username, apikey, ias_url)
+
+    if not provider.authenticate():
+        log.error("Authentication failed for cloud provider")
+        return
+
+    if not region:
+        region = provider.list_regions().values()[0]
+
+    if not provider.set_region(region):
+        log.error("Unable to set cloud provider region")
+        return
+
+    return provider

@@ -21,8 +21,11 @@ Dynamips module implementation.
 
 import os
 import glob
+
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.node import Node
+
 from ..module import Module
 from ..module_error import ModuleError
 from .nodes.router import Router
@@ -120,6 +123,7 @@ class Dynamips(Module):
             private_config = settings.value("private_config", "")
             default_symbol = settings.value("default_symbol", ":/symbols/router.normal.svg")
             hover_symbol = settings.value("hover_symbol", ":/symbols/router.selected.svg")
+            category = settings.value("category", Node.routers, type=int)
             platform = settings.value("platform", "")
             chassis = settings.value("chassis", "")
             idlepc = settings.value("idlepc", "")
@@ -137,23 +141,24 @@ class Dynamips(Module):
                 continue
 
             self._ios_routers[key] = {"name": name,
-                                     "path": path,
-                                     "image": image,
-                                     "default_symbol": default_symbol,
-                                     "hover_symbol": hover_symbol,
-                                     "startup_config": startup_config,
-                                     "private_config": private_config,
-                                     "platform": platform,
-                                     "chassis": chassis,
-                                     "idlepc": idlepc,
-                                     "ram": ram,
-                                     "nvram": nvram,
-                                     "mac_addr": mac_addr,
-                                     "disk0": disk0,
-                                     "disk1": disk1,
-                                     "confreg": confreg,
-                                     "system_id": system_id,
-                                     "server": server}
+                                      "path": path,
+                                      "image": image,
+                                      "default_symbol": default_symbol,
+                                      "hover_symbol": hover_symbol,
+                                      "category": category,
+                                      "startup_config": startup_config,
+                                      "private_config": private_config,
+                                      "platform": platform,
+                                      "chassis": chassis,
+                                      "idlepc": idlepc,
+                                      "ram": ram,
+                                      "nvram": nvram,
+                                      "mac_addr": mac_addr,
+                                      "disk0": disk0,
+                                      "disk1": disk1,
+                                      "confreg": confreg,
+                                      "system_id": system_id,
+                                       "server": server}
 
             for slot_id in range(0, 7):
                 slot = "slot{}".format(slot_id)
@@ -387,6 +392,34 @@ class Dynamips(Module):
             params.update({"project_name": project_name})
         server.send_notification("dynamips.settings", params)
 
+    def allocateServer(self, node_class, use_cloud=False):
+        """
+        Allocates a server.
+
+        :param node_class: Node object
+
+        :returns: allocated server (WebSocketClient instance)
+        """
+
+        # allocate a server for the node
+        servers = Servers.instance()
+
+        if use_cloud:
+            from ...topology import Topology
+            topology = Topology.instance()
+            top_instance = topology.anyInstance()
+            server = servers.getCloudServer(top_instance.host, top_instance.port, top_instance.ssl_ca_file)
+        else:
+            if self._settings["use_local_server"]:
+                # use the local server
+                server = servers.localServer()
+            else:
+                # pick up a remote server (round-robin method)
+                server = next(iter(servers))
+                if not server:
+                    raise ModuleError("No remote server is configured")
+        return server
+
     def createNode(self, node_class, server):
         """
         Creates a new node.
@@ -428,35 +461,49 @@ class Dynamips(Module):
                 for ios_key, info in self._ios_routers.items():
                     if node_name == info["name"]:
                         ios_router = self._ios_routers[ios_key]
+                        break
+
+            # hack for EtherSwitch router
+            if isinstance(node, EtherSwitchRouter) and node.server() == Servers.instance().localServer():
+                for info in self._ios_routers.values():
+                    if info["platform"] == "c3725" and info["server"] == "local":
+                        ios_router = {
+                            "platform": "c3725",
+                            "path": info["path"],
+                            "ram": info["ram"],
+                            "startup_config": info["startup_config"],
+                        }
+                        break
+                if not ios_router:
+                    raise ModuleError("Please create an c3725 IOS router in order to use an EtherSwitch router")
 
             if not ios_router:
-                raise ModuleError("No IOS image found for platform {}".format(node.settings()["platform"]))
+                raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))
 
-            name = ios_router["name"]
             settings = {}
-            # set initial settings like the chassis or an idle-pc value etc.
-            if ios_router["chassis"]:
+            # set initial settings like the chassis or an Idle-PC value etc.
+            if "chassis" in ios_router and ios_router["chassis"]:
                 settings["chassis"] = ios_router["chassis"]
-            if ios_router["idlepc"]:
+            if "idlepc" in ios_router and ios_router["idlepc"]:
                 settings["idlepc"] = ios_router["idlepc"]
             if ios_router["startup_config"]:
                 settings["startup_config"] = ios_router["startup_config"]
-            if ios_router["private_config"]:
+            if "private_config" in ios_router and ios_router["private_config"]:
                 settings["private_config"] = ios_router["private_config"]
 
             if ios_router["platform"] == "c7200":
                 settings["midplane"] = ios_router["midplane"]
                 settings["npe"] = ios_router["npe"]
-            else:
+            elif "iomem" in ios_router:
                 settings["iomem"] = ios_router["iomem"]
 
-            if ios_router["nvram"]:
+            if "nvram" in ios_router and ios_router["nvram"]:
                 settings["nvram"] = ios_router["nvram"]
 
-            if ios_router["disk0"]:
+            if "disk0" in ios_router and ios_router["disk0"]:
                 settings["disk0"] = ios_router["disk0"]
 
-            if ios_router["disk1"]:
+            if "disk1" in ios_router and ios_router["disk1"]:
                 settings["disk1"] = ios_router["disk1"]
 
             for slot_id in range(0, 7):
@@ -468,16 +515,19 @@ class Dynamips(Module):
                 if wic in ios_router:
                     settings[wic] = ios_router[wic]
 
-            node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
+            if node.server().isCloud():
+                node.setup(ios_router["image"], ios_router["ram"], initial_settings=settings)
+            else:
+                node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
         else:
             node.setup()
 
     def updateImageIdlepc(self, image_path, idlepc):
         """
-        Updates the idle-pc for an IOS image.
+        Updates the Idle-PC for an IOS image.
 
         :param image_path: path to the IOS image
-        :param idlepc: idle-pc value
+        :param idlepc: Idle-PC value
         """
 
         for ios_router in self._ios_routers.values():
@@ -640,9 +690,9 @@ class Dynamips(Module):
                 {"class": node_class.__name__,
                  "name": ios_router["name"],
                  "server": ios_router["server"],
-                 "categories": node_class.categories(),
                  "default_symbol": ios_router["default_symbol"],
-                 "hover_symbol": ios_router["hover_symbol"]}
+                 "hover_symbol": ios_router["hover_symbol"],
+                 "categories": [ios_router["category"]]}
             )
 
         return nodes

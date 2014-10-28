@@ -56,6 +56,7 @@ class WebSocketClient(WebSocketBaseClient):
         self.callbacks = {}
         self._connected = False
         self._local = False
+        self._cloud = False
         self._version = ""
         self._fd_notifier = None
         self._heartbeat_timer = None
@@ -108,6 +109,12 @@ class WebSocketClient(WebSocketBaseClient):
 
         return self._local
 
+    def setCloud(self, value):
+        self._cloud = value
+
+    def isCloud(self):
+        return self._cloud
+
     def opened(self):
         """
         Called when the connection with the server is successful.
@@ -141,7 +148,7 @@ class WebSocketClient(WebSocketBaseClient):
         except OSError:
             raise
         except Exception as e:
-            log.error("could to connect {}: {}".format(self.url, e))
+            log.error("could not to connect {}: {}".format(self.url, e))
             raise OSError("Websocket exception {}: {}".format(type(e), e))
 
     def check_server_version(self):
@@ -353,28 +360,57 @@ class WebSocketClient(WebSocketBaseClient):
 
 
 class SecureWebSocketClient(WebSocketClient):
-    def connect(self, ca_file=''):
+    def __init__(self, url, protocols=None, extensions=None,
+                 heartbeat_freq=None, ssl_options=None, headers=None):
+
         self.use_auth = True
-        self.use_ssl = True
+        self.use_ssl = False
 
-        self.ca_file = ca_file
-        self.login_url = "https://{host}:{port}/login".format(host=self.host, port=self.port)
-        self.version_url = "https://{host}:{port}/version".format(host=self.host, port=self.port)
-        self.websocket_url = "wss://{host}:{port}".format(host=self.host, port=self.port)
-        self.auth_user = 'test123'
-        self.auth_password = 'test456'
+        # The url has to be set before the constructor is called
+        scheme, rest = url.split(':', 1)
+        if self.use_ssl:
+            url = "wss:{}".format(rest)
+        else:
+            url = "ws:{}".format(rest)
 
-        self.ssl_options = {'ca_certs': self.ca_file}
-        self.https_handler = urllib.request.HTTPSHandler(check_hostname=False)
+        WebSocketClient.__init__(self, url,
+                                     protocols,
+                                     extensions,
+                                     heartbeat_freq,
+                                     ssl_options,
+                                     headers)
+
+
+    def setSecureOptions(self, ca_file, auth_user, auth_password):
+        self._ca_file = ca_file
+        self._auth_user = auth_user
+        self._auth_password = auth_password
+
+    def connect(self):
+        log.debug('In SecureWebSocketClient.connect()')
+
+        import ssl
+        import socket
+
+        if self.use_ssl:
+            self.login_url = "https://{host}:{port}/login".format(host=self.host, port=self.port)
+            self.version_url = "https://{host}:{port}/version".format(host=self.host, port=self.port)
+            self.ssl_options = {'ca_certs': self._ca_file}
+            context = ssl._create_stdlib_context(cert_reqs=ssl.CERT_REQUIRED, cafile=self._ca_file)
+            self.https_handler = urllib.request.HTTPSHandler(context=context, check_hostname=False)
+        else:
+            self.login_url = "http://{host}:{port}/login".format(host=self.host, port=self.port)
+            self.version_url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
+            self.ssl_options = {}
+            self.https_handler = urllib.request.HTTPHandler()
+
         self.cookie_processor = urllib.request.HTTPCookieProcessor()
         self.opener = urllib.request.build_opener(self.https_handler, self.cookie_processor)
 
         self.check_server_version()
-
-        data = urllib.parse.urlencode({'name': self.auth_user, 'password': self.auth_password}).encode('utf-8')
-        urllib.request.install_opener(self.opener)
-        f = urllib.request.urlopen(self.login_url, data, cafile=self.ca_file)
-        log.debug(self.cookie_processor.cookiejar)
+        data = urllib.parse.urlencode({'name': self._auth_user, 'password': self._auth_password}).encode('utf-8')
+        f = self.opener.open(self.login_url, data, socket._GLOBAL_DEFAULT_TIMEOUT)
+        log.debug('login result: {}'.format(f.read()))
 
         self._connect()
         log.debug(self.sock)

@@ -22,9 +22,8 @@ Configuration page for VirtualBox VM preferences.
 import copy
 
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.node import Node
 from gns3.main_window import MainWindow
-from gns3.modules.module_error import ModuleError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
@@ -117,11 +116,12 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             self._virtualbox_vms[key] = {"vmname": "",
                                          "default_symbol": ":/symbols/vbox_guest.normal.svg",
                                          "hover_symbol": ":/symbols/vbox_guest.selected.svg",
+                                         "category": Node.end_devices,
                                          "adapters": 1,
                                          "adapter_start_index": 0,
                                          "adapter_type": "Automatic",
                                          "headless": False,
-                                         "enable_console": True,
+                                         "enable_console": False,
                                          "server": "local"}
 
             self._virtualbox_vms[key].update(new_vm_settings)
@@ -195,6 +195,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         dialog.show()
         if dialog.exec_():
             normal_symbol, selected_symbol = dialog.getSymbols()
+            category = dialog.getCategory()
             item = self.uiVirtualBoxVMsTreeWidget.currentItem()
             if item:
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
@@ -202,6 +203,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                 vbox_vm = self._virtualbox_vms[key]
                 vbox_vm["default_symbol"] = normal_symbol
                 vbox_vm["hover_symbol"] = selected_symbol
+                vbox_vm["category"] = category
 
     def loadPreferences(self):
         """
