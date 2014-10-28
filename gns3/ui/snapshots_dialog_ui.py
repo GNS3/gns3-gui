@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/snapshots_dialog.ui'
 #
-# Created: Sun Oct 19 17:43:05 2014
+# Created: Mon Oct 20 14:23:13 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,6 +37,7 @@ class Ui_SnapshotsDialog(object):
         self.uiCreatePushButton.setObjectName(_fromUtf8("uiCreatePushButton"))
         self.gridLayout.addWidget(self.uiCreatePushButton, 1, 0, 1, 1)
         self.uiRestorePushButton = QtGui.QPushButton(SnapshotsDialog)
+        self.uiRestorePushButton.setEnabled(False)
         self.uiRestorePushButton.setObjectName(_fromUtf8("uiRestorePushButton"))
         self.gridLayout.addWidget(self.uiRestorePushButton, 1, 2, 1, 1)
         self.uiButtonBox = QtGui.QDialogButtonBox(SnapshotsDialog)
@@ -45,6 +46,7 @@ class Ui_SnapshotsDialog(object):
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.gridLayout.addWidget(self.uiButtonBox, 1, 3, 1, 1)
         self.uiDeletePushButton = QtGui.QPushButton(SnapshotsDialog)
+        self.uiDeletePushButton.setEnabled(False)
         self.uiDeletePushButton.setObjectName(_fromUtf8("uiDeletePushButton"))
         self.gridLayout.addWidget(self.uiDeletePushButton, 1, 1, 1, 1)
 

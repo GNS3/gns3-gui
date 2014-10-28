@@ -248,9 +248,17 @@ class Servers(QtCore.QObject):
         return server
 
     def getRemoteServer(self, host, port):
+        """
+        Gets a remote server.
+
+        :param host: host address
+        :param port: port
+
+        :returns: remote server (WebSocketClient instance)
+        """
 
         for server in self._remote_servers.values():
-            if server.host == host and server.port == port:
+            if server.host == host and int(server.port) == int(port):
                 return server
 
         return self._addRemoteServer(host, port)

@@ -68,7 +68,7 @@
        <item row="3" column="0" colspan="2">
         <widget class="QCheckBox" name="uiEnableConsoleCheckBox">
          <property name="text">
-          <string>Enable console</string>
+          <string>Enable remote console</string>
          </property>
         </widget>
        </item>
