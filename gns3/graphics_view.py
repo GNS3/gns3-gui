@@ -19,6 +19,7 @@
 Graphical view on the scene where items are drawn.
 """
 
+import logging
 import os
 import pickle
 
@@ -50,6 +51,8 @@ from .items.shape_item import ShapeItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
+
+log = logging.getLogger(__name__)
 
 
 class GraphicsView(QtGui.QGraphicsView):
@@ -1095,6 +1098,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         try:
+            log.debug('In createNode')
             node_module = None
             for module in MODULES:
                 instance = module.instance()
@@ -1108,11 +1112,30 @@ class GraphicsView(QtGui.QGraphicsView):
 
             if node_data["server"] == "local":
                 server = Servers.instance().localServer()
+            elif node_data["server"] == "cloud":
+                server = Servers.instance().anyCloudServer()
             else:
                 host, port = node_data["server"].rsplit(":", 1)
                 server = Servers.instance().getRemoteServer(host, port)
             if not server.connected() and ConnectToServer(self, server) is False:
                 return
+            # if self._topology.resourcesType == "cloud":
+            #     use_cloud = True
+            # else:
+            #     use_cloud = False
+            # log.debug("use_cloud is set to {}".format(use_cloud))
+            #
+            # server = node_module.allocateServer(node_class, use_cloud)
+            # if not server.connected():
+            #     # connect to server in a non-blocking way.
+            #     self._thread = WaitForConnectionThread(server.host, server.port)
+            #     progress_dialog = ProgressDialog(self._thread,
+            #                                      "Server",
+            #                                      "Connecting to server {} on port {}...".format(server.host, server.port),
+            #                                      "Cancel", busy=True, parent=self)
+            #     progress_dialog.show()
+            #     if progress_dialog.exec_() is False:
+            #         return
 
             node = node_module.createNode(node_class, server)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)

@@ -305,12 +305,12 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         Validates the IOS name.
         """
 
-        if self.currentPage() == self.uiServerWizardPage:
-
-            #FIXME: prevent users to use "cloud"
-            if self.uiCloudRadioButton.isChecked():
-                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
-                return False
+        # if self.currentPage() == self.uiServerWizardPage:
+        #
+        #     #FIXME: prevent users to use "cloud"
+        #     if self.uiCloudRadioButton.isChecked():
+        #         QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+        #         return False
 
         # if self.currentPage() == self.uiNameImageWizardPage:
         #     name = self.uiNameLineEdit.text()
@@ -347,14 +347,17 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         path = self.uiIOSImageLineEdit.text()
         if Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
-        elif self.uiLoadBalanceCheckBox.isChecked():
-            server = next(iter(Servers.instance()))
-            if not server:
-                QtGui.QMessageBox.critical(self, "IOS router", "No remote server available!")
-                return
-            server = "{}:{}".format(server.host, server.port)
-        else:
-            server = self.uiRemoteServersComboBox.currentText()
+        elif self.uiRemoteRadioButton.isChecked():
+            if self.uiLoadBalanceCheckBox.isChecked():
+                server = next(iter(Servers.instance()))
+                if not server:
+                    QtGui.QMessageBox.critical(self, "IOS router", "No remote server available!")
+                    return
+                server = "{}:{}".format(server.host, server.port)
+            else:
+                server = self.uiRemoteServersComboBox.currentText()
+        else: # Cloud is selected
+            server = "cloud"
 
         settings = {
             "name": self.uiNameLineEdit.text(),

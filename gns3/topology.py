@@ -40,9 +40,43 @@ from pkg_resources import parse_version
 import logging
 log = logging.getLogger(__name__)
 
-TopologyInstance = namedtuple("TopologyInstance",
-                              ["name", "id", "size_id", "image_id", "private_key", "public_key"],
-                              verbose=False)
+
+# TopologyInstance = namedtuple("TopologyInstance",
+#                               ["name", "id", "size_id", "image_id", "private_key", "public_key",
+#                                "host", "port", "ssl_ca", "ssl_ca_file"],
+#                               verbose=False)
+
+class TopologyInstance:
+    def __init__(self, name, id, size_id, image_id, private_key, public_key,
+                 host=None, port=None, ssl_ca=None, ssl_ca_file=None):
+        # host, port, ssl_ca and ssl_ca_file are not known when the instance is created.
+        # They will typically be set at a later point in time.
+        self.name = name
+        self.id = id
+        self.size_id = size_id
+        self.image_id = image_id
+        self.public_key = public_key
+        self.private_key = private_key
+        self.host = host
+        self.port = port
+        self.ssl_ca = ssl_ca
+        self.ssl_ca_file = ssl_ca_file
+
+    @classmethod
+    def fields(cls):
+        return ["name", "id", "size_id", "image_id", "private_key", "public_key",
+                "host", "port", "ssl_ca", "ssl_ca_file"]
+
+    def set_later_attributes(self, host, port, ssl_ca, ssl_ca_file):
+        """
+        Set attributes that are not known at the time of cloud instance creation.
+        """
+        self.host = host
+        self.port = port
+        self.ssl_ca = ssl_ca
+        self.ssl_ca_file = ssl_ca_file
+
+
 
 
 class Topology(object):
@@ -203,13 +237,16 @@ class Topology(object):
         if image in self._images:
             self._images.remove(image)
 
-    def addInstance(self, name, id, size_id, image_id, private_key, public_key):
+    def addInstance(self, name, id, size_id, image_id, private_key, public_key,
+                    host=None, port=None, ssl_ca=None, ssl_ca_file=None):
         """
         Add an instance to this cloud topology
         """
 
         i = TopologyInstance(name=name, id=id, size_id=size_id, image_id=image_id,
-                             private_key=private_key, public_key=public_key)
+                             private_key=private_key, public_key=public_key, host=host,
+                             port=port, ssl_ca=ssl_ca, ssl_ca_file=ssl_ca_file)
+
         self._instances.append(i)
 
     def removeInstance(self, id):
@@ -235,6 +272,10 @@ class Topology(object):
         for instance in self._instances:
             if instance.id == id:
                 return instance
+
+    def anyInstance(self):
+        # For now, just return the first instance
+        return self._instances[0]
 
     def nodes(self):
         """

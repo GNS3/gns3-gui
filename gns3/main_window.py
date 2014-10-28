@@ -1617,7 +1617,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         index = 0
         for instance in instances:
             settings.setArrayIndex(index)
-            for name in instance._fields:
+            for name in instance.fields():
                 log.debug('{}={}'.format(name, getattr(instance, name)))
                 settings.setValue(name, getattr(instance, name))
             index += 1
@@ -1638,7 +1638,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for index in range(0, size):
             settings.setArrayIndex(index)
             info = {}
-            for name in TopologyInstance._fields:
+            for name in TopologyInstance.fields():
                 log.debug('{}={}'.format(name, settings.value(name, "")))
                 info[name] = settings.value(name, "")
             topology.addInstance(**info)

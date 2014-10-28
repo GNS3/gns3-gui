@@ -8,7 +8,6 @@ import tempfile
 import time
 import zipfile
 
-from PyQt4 import QtCore
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
@@ -117,34 +116,33 @@ class StartGNS3ServerThread(QThread):
     """
     gns3server_started = pyqtSignal(str, str, str)
 
-#     # Note: The htop package is for troubleshooting.  It can safely be removed.
+    # Note: The htop package is for troubleshooting.  It can safely be removed.
+    commands = '''
+DEBIAN_FRONTEND=noninteractive apt-get -y update
+DEBIAN_FRONTEND=noninteractive apt-get -y install htop
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+mkdir -p /opt/gns3
+tar xzf /tmp/gns3-server.tgz -C /opt/gns3
+cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
+cd /opt/gns3/gns3-server; python3 ./setup.py install
+ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+killall python3 gns3server gns3dms
+'''
+
 #     commands = '''
-# echo 'hello world'
+# DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 # DEBIAN_FRONTEND=noninteractive apt-get -y update
 # DEBIAN_FRONTEND=noninteractive apt-get -y install htop
 # DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 # DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq
 # mkdir -p /opt/gns3
-# tar xzf /tmp/gns3-server.tgz -C /opt/gns3
+# cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
+# cd /opt/gns3/gns3-server; git checkout gns-110
 # cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 # cd /opt/gns3/gns3-server; python3 ./setup.py install
 # killall gns3server gns3dms
 # '''
-
-    commands = '''
-echo 'hello world'
-DEBIAN_FRONTEND=noninteractive dpkg --configure -a
-DEBIAN_FRONTEND=noninteractive apt-get -y update
-DEBIAN_FRONTEND=noninteractive apt-get -y install htop
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq
-mkdir -p /opt/gns3
-cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
-cd /opt/gns3/gns3-server; git checkout dev
-cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
-cd /opt/gns3/gns3-server; python3 ./setup.py install
-killall gns3server gns3dms
-'''
 
     def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
@@ -186,10 +184,6 @@ killall gns3server gns3dms
     def run(self):
         # Uncomment this at the same time as the commands above to test without having to push
         # changes to github.
-        # os.system('rm -rf /tmp/gns3-server')
-        # os.system('cp -a /Users/jseutter/projects/gns3-server-newinstancerework /tmp/gns3-server')
-        # os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
-        # os.system('scp /tmp/gns3-server.tgz root@{}:/tmp/'.format(self._host))
 
         # We might be attempting a connection before the instance is fully booted, so retry
         # when the ssh connection fails.
@@ -201,6 +195,13 @@ killall gns3server gns3dms
                     continue
                 ssh_connected = True
 
+                os.system('rm -rf /tmp/gns3-server')
+                os.system('cp -a /Users/jseutter/projects/gns3-server /tmp/gns3-server')
+                os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
+                sftp = client.open_sftp()
+                sftp.put('/tmp/gns3-server.tgz', '/tmp/gns3-server.tgz')
+                sftp.close()
+
                 for cmd in [l for l in self.commands.splitlines() if l.strip()]:
                     self.exec_command(client, cmd)
 
@@ -208,11 +209,11 @@ killall gns3server gns3dms
                     'instance_id': self._server_id,
                     'cloud_user_name': self._username,
                     'cloud_api_key': self._api_key,
-                    'region': self._region,
+                    'cloud_region': self._region,
                     'dead_time': self._dead_time,
                 }
                 # TODO: Properly escape the data portion of the command line
-                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}"'.format(data)
+                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --ip={} --data="{}" 2>/tmp/gns3-stderr.log'.format(self._host, data)
                 stdout, stderr = self.exec_command(client, start_cmd, wait_time=15)
                 response = stdout.decode('utf-8')
                 self.gns3server_started.emit(str(self._server_id), str(self._host), str(response))
@@ -225,13 +226,15 @@ class WSConnectThread(QThread):
     """
     established = pyqtSignal(str)
 
-    def __init__(self, parent, provider, server_id, host, port, ca_file):
+    def __init__(self, parent, provider, server_id, host, port, ca_file, auth_user, auth_password):
         super(QThread, self).__init__(parent)
         self._provider = provider
         self._server_id = server_id
         self._host = host
         self._port = port
         self._ca_file = ca_file
+        self._auth_user = auth_user
+        self._auth_password = auth_password
 
     def run(self):
         """
@@ -240,7 +243,7 @@ class WSConnectThread(QThread):
 
         log.debug('WSConnectThread.run() begin')
         servers = Servers.instance()
-        server = servers.getCloudServer(self._host, self._port, self._ca_file)
+        server = servers.getCloudServer(self._host, self._port, self._ca_file, self._auth_user, self._auth_password)
         log.debug('after getCloudServer call. {}'.format(server))
         self.established.emit(str(self._server_id))
 
@@ -253,42 +256,23 @@ class UploadProjectThread(QThread):
     """
     Zip and Upload project to the cloud
     """
-
-    # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
-
     def __init__(self, project_settings, cloud_settings):
         super().__init__()
         self.project_settings = project_settings
         self.cloud_settings = cloud_settings
 
     def run(self):
-        try:
-            log.info("Exporting project to cloud")
-            self.update.emit(0)
+        log.info("Exporting project to cloud")
+        zipped_project_file = self.zip_project_dir()
 
-            zipped_project_file = self.zip_project_dir()
+        provider = get_provider(self.cloud_settings)
+        provider.upload_file(zipped_project_file, 'projects')
 
-            self.update.emit(10)  # update progress to 10%
+        topology = Topology.instance()
+        images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
 
-            provider = get_provider(self.cloud_settings)
-            provider.upload_file(zipped_project_file, 'projects')
-
-            self.update.emit(20)  # update progress to 20%
-
-            topology = Topology.instance()
-            images = set([node.settings()["image"] for node in topology.nodes() if 'image' in node.settings()])
-
-            for i, image in enumerate(images):
-                provider.upload_file(image, 'images')
-                self.update.emit(20 + (float(i) / len(images) * 80))
-
-            self.completed.emit()
-        except Exception as e:
-            log.exception("Error exporting project to cloud")
-            self.error.emit("Error exporting project {}".format(str(e)), True)
+        for image in images:
+            provider.upload_file(image, 'images')
 
     def zip_project_dir(self):
         """
@@ -305,19 +289,34 @@ class UploadProjectThread(QThread):
                 zip_file.write(root, os.path.relpath(root, relroot))
                 for file in files:
                     filename = os.path.join(root, file)
-                    if os.path.isfile(filename) and not self._should_exclude(filename):  # regular files only
+                    if os.path.isfile(filename):  # regular files only
                         arcname = os.path.join(os.path.relpath(root, relroot), file)
                         zip_file.write(filename, arcname)
 
         return output_filename
 
-    def _should_exclude(self, filename):
-        """
-        Returns True if file should be excluded from zip of project files
-        :param filename:
-        :return: True if file should be excluded from zip, False otherwise
-        """
-        return filename.endswith('.ghost')
+class UploadFileThread(QThread):
+    """
+    Upload an file to cloud files
+    """
+    def __init__(self, cloud_settings, router_settings):
+        super().__init__()
+        self._cloud_settings = cloud_settings
+        self._router_settings = router_settings
+        self.completed_callback = None
 
-    def stop(self):
-        self.quit()
+
+    def run(self):
+        disk_path = self._router_settings['path']
+        filename = self._router_settings['image']
+
+        log.debug('Uploading image {}'.format(disk_path))
+        log.debug('Cloud filename: {}'.format(filename))
+        provider = get_provider(self._cloud_settings)
+        provider.upload_file(disk_path, 'images')
+
+        self._cloud_settings['image'] = filename
+
+        log.debug('Uploading image completed')
+        if self.completed_callback:
+            self.completed_callback()

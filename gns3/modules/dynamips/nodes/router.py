@@ -263,6 +263,9 @@ class Router(Node):
         if "chassis" in initial_settings:
             params["chassis"] = self._settings["chassis"] = initial_settings.pop("chassis")
 
+        #TODO: make this only send when dealing with cloud
+        params["cloud_path"] = "images/IOS"
+
         # other initial settings will be applied when the router has been created
         if initial_settings:
             self._inital_settings = initial_settings
