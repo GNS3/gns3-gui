@@ -388,24 +388,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 self._loadCloudInstances()
 
-                # if new_project_settings["project_type"] == "cloud":
-                #     provider = self.cloudProvider
-                #     if provider is None:
-                #         log.error("Unable to get a cloud provider")
-                #         return
-
-                #     # create an instance for this project
-                #     default_flavor = self.cloudSettings()['default_flavor']
-                #     default_image_id = self.cloudSettings()['default_image']
-                #     instance, keypair = self._create_instance(new_project_settings["project_name"],
-                #                                               default_flavor,
-                #                                               default_image_id)
-                #     if instance:
-                #         topology = Topology.instance()
-                #         topology.addInstance(instance.name, instance.id,
-                #                              default_flavor, default_image_id,
-                #                              keypair.private_key, keypair.public_key)
-
                 self._project_settings.update(new_project_settings)
                 self.saveProject(new_project_settings["project_path"])
 
@@ -1495,26 +1477,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         self._saveCloudInstances()
-
-        # with open(project) as f:
-        #     old_json_topology = json.load(f)
-
-        #     if old_json_topology["resources_type"] != 'cloud':
-        #         # do nothing in case of local projects
-        #         return
-
-        #     provider = self.cloudProvider
-        #     if provider is None:
-        #         log.error("Unable to get a cloud provider")
-        #         return
-
-        #     for instance in old_json_topology["topology"]["instances"]:
-        #         # shutdown the instance, we can pass to libcloud our namedtuple instead of a Node
-        #         # object because only instance.id is actually accessed
-        #         ti = TopologyInstance(**instance)
-        #         self.cloudProvider.delete_instance(ti)
-        #         # delete keypairs
-        #         self.cloudProvider.delete_key_pair_by_name(instance["name"])
 
     def project_created(self, project):
         """

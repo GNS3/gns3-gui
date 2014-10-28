@@ -41,11 +41,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-# TopologyInstance = namedtuple("TopologyInstance",
-#                               ["name", "id", "size_id", "image_id", "private_key", "public_key",
-#                                "host", "port", "ssl_ca", "ssl_ca_file"],
-#                               verbose=False)
-
 class TopologyInstance:
     def __init__(self, name, id, size_id, image_id, private_key, public_key,
                  host=None, port=None, ssl_ca=None, ssl_ca_file=None):

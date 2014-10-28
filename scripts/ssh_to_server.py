@@ -1,3 +1,12 @@
+"""
+This script can be used to ssh to a cloud server started by GNS3.  It copies
+the ssh keys for a server to a temp file on disk and starts ssh using the
+keys.
+
+Right now it only connects to the first cloud server listed in the config
+file.
+"""
+
 import os
 from PyQt4 import QtCore, QtGui
 

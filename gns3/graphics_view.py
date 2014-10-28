@@ -1130,23 +1130,6 @@ class GraphicsView(QtGui.QGraphicsView):
                 server = Servers.instance().getRemoteServer(host, port)
             if not server.connected() and ConnectToServer(self, server) is False:
                 return
-            # if self._topology.resourcesType == "cloud":
-            #     use_cloud = True
-            # else:
-            #     use_cloud = False
-            # log.debug("use_cloud is set to {}".format(use_cloud))
-            #
-            # server = node_module.allocateServer(node_class, use_cloud)
-            # if not server.connected():
-            #     # connect to server in a non-blocking way.
-            #     self._thread = WaitForConnectionThread(server.host, server.port)
-            #     progress_dialog = ProgressDialog(self._thread,
-            #                                      "Server",
-            #                                      "Connecting to server {} on port {}...".format(server.host, server.port),
-            #                                      "Cancel", busy=True, parent=self)
-            #     progress_dialog.show()
-            #     if progress_dialog.exec_() is False:
-            #         return
 
             node = node_module.createNode(node_class, server)
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)

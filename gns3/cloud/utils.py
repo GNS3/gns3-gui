@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 
 @contextmanager
-def ssh_client(host, key_string, retry=False):
+def ssh_client(host, key_string):
     """
     Context manager wrapping a SSHClient instance: the client connects on
     enter and close the connection on exit
@@ -117,11 +117,10 @@ class StartGNS3ServerThread(QThread):
     """
     gns3server_started = pyqtSignal(str, str, str)
 
-    # Note: The htop package is for troubleshooting.  It can safely be removed.
+# This is for testing without pushing to github
 #     commands = '''
 # DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 # DEBIAN_FRONTEND=noninteractive apt-get -y update
-# DEBIAN_FRONTEND=noninteractive apt-get -y install htop
 # DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 # DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
 # mkdir -p /opt/gns3
@@ -135,12 +134,11 @@ class StartGNS3ServerThread(QThread):
     commands = '''
 DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 DEBIAN_FRONTEND=noninteractive apt-get -y update
-DEBIAN_FRONTEND=noninteractive apt-get -y install htop
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
 mkdir -p /opt/gns3
 cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
-cd /opt/gns3/gns3-server; git checkout gns-110
+cd /opt/gns3/gns3-server; git checkout gns-110; git pull
 cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 cd /opt/gns3/gns3-server; python3 ./setup.py install
 ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
@@ -196,6 +194,7 @@ killall python3 gns3server gns3dms
                     continue
                 ssh_connected = True
 
+                # This is for testing without pushing to github
                 # os.system('rm -rf /tmp/gns3-server')
                 # os.system('cp -a /Users/jseutter/projects/gns3-server /tmp/gns3-server')
                 # os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
@@ -322,7 +321,7 @@ class UploadProjectThread(QThread):
 
 class UploadFileThread(QThread):
     """
-    Upload an file to cloud files
+    Upload a file to cloud files
     """
     def __init__(self, cloud_settings, router_settings):
         super().__init__()
