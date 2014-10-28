@@ -244,13 +244,22 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                 else:
                     self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
 
-            #FIXME: use findData instead
+            is_64bit = sys.maxsize > 2**32
             if sys.platform.startswith("win"):
-                # default is qemu-system-x86_64w on Windows
-                index = self.uiQemuListComboBox.findText("x86_64w", QtCore.Qt.MatchContains)
+                if is_64bit:
+                    # default is qemu-system-x86_64w.exe on Windows 64-bit
+                    search_string = "x86_64w.exe"
+                else:
+                    # default is qemu-system-i386w.exe on Windows 32-bit
+                    search_string = "i386w.exe"
+            elif is_64bit:
+                # default is qemu-system-x86_64 on other 64-bit platforms
+                search_string = "x86_64"
             else:
-                # default is qemu-system-x86_64 on other platforms
-                index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
+                # default is qemu-system-i386 on other platforms
+                search_string = "i386"
+
+            index = self.uiQemuListComboBox.findData(search_string, flags=QtCore.Qt.MatchEndsWith)
             if index != -1:
                 self.uiQemuListComboBox.setCurrentIndex(index)
 
