@@ -142,6 +142,7 @@ cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
 cd /opt/gns3/gns3-server; git checkout gns-110
 cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 cd /opt/gns3/gns3-server; python3 ./setup.py install
+ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
 killall python3 gns3server gns3dms
 '''
 
