@@ -337,7 +337,7 @@ class UploadFileThread(QThread):
         log.debug('Uploading image {}'.format(disk_path))
         log.debug('Cloud filename: {}'.format(filename))
         provider = get_provider(self._cloud_settings)
-        provider.upload_file(disk_path, 'images')
+        provider.upload_file(disk_path, 'images/IOS/{}'.format(filename))
 
         self._cloud_settings['image'] = filename
 
