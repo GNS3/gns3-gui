@@ -4,14 +4,15 @@ import json
 from socket import error as socket_error
 import logging
 import os
-import zipfile
+import select
 import tempfile
+import time
+import zipfile
 
-from PyQt4 import QtCore
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
-from .rackspace_ctrl import RackspaceCtrl
+from .rackspace_ctrl import RackspaceCtrl, get_provider
 from ..topology import Topology
 from ..servers import Servers
 
@@ -50,39 +51,6 @@ def ssh_client(host, key_string):
         yield None
     finally:
         client.close()
-
-
-def get_provider(cloud_settings):
-    """
-    Utility function to retrieve a cloud provider instance already authenticated and with the
-    region set
-
-    :param cloud_settings: cloud settings dictionary
-    :return: a provider instance or None on errors
-    """
-    try:
-        username = cloud_settings['cloud_user_name']
-        apikey = cloud_settings['cloud_api_key']
-        region = cloud_settings['cloud_region']
-        ias_url = cloud_settings['gns3_ias_url']
-    except KeyError as e:
-        log.error("Unable to create cloud provider: {}".format(e))
-        return
-
-    provider = RackspaceCtrl(username, apikey, ias_url)
-
-    if not provider.authenticate():
-        log.error("Authentication failed for cloud provider")
-        return
-
-    if not region:
-        region = provider.list_regions().values()[0]
-
-    if not provider.set_region(region):
-        log.error("Unable to set cloud provider region")
-        return
-
-    return provider
 
 
 class ListInstancesThread(QThread):
@@ -149,6 +117,34 @@ class StartGNS3ServerThread(QThread):
     """
     gns3server_started = pyqtSignal(str, str, str)
 
+# This is for testing without pushing to github
+#     commands = '''
+# DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+# DEBIAN_FRONTEND=noninteractive apt-get -y update
+# DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+# DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+# mkdir -p /opt/gns3
+# tar xzf /tmp/gns3-server.tgz -C /opt/gns3
+# cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
+# cd /opt/gns3/gns3-server; python3 ./setup.py install
+# ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+# killall python3 gns3server gns3dms
+# '''
+
+    commands = '''
+DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+DEBIAN_FRONTEND=noninteractive apt-get -y update
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+mkdir -p /opt/gns3
+cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
+cd /opt/gns3/gns3-server; git checkout gns-110; git pull
+cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
+cd /opt/gns3/gns3-server; python3 ./setup.py install
+ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+killall python3 gns3server gns3dms
+'''
+
     def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
         super(QThread, self).__init__(parent)
         self._host = host
@@ -159,23 +155,67 @@ class StartGNS3ServerThread(QThread):
         self._region = region
         self._dead_time = dead_time
 
+    def exec_command(self, client, cmd, wait_time=-1):
+
+        cmd += '; exit $?'
+
+        stdout_data = b''
+        stderr_data = b''
+
+        log.debug('cmd: {}'.format(cmd))
+        # Send the command (non-blocking)
+        stdin, stdout, stderr = client.exec_command(cmd)
+
+        # Wait for the command to terminate
+        wait = int(wait_time)
+        while not stdout.channel.exit_status_ready() and wait != 0:
+            time.sleep(1)
+            wait -= 1
+
+        stdout_data = stdout.read()
+        stderr_data = stderr.read()
+        log.debug('exit status: {}'.format(stdout.channel.exit_status))
+        log.debug('stdout: {}'.format(stdout_data.decode('utf-8')))
+        log.debug('stderr: {}'.format(stderr_data.decode('utf-8')))
+        return stdout_data, stderr_data
+
+
     def run(self):
-        with ssh_client(self._host, self._private_key_string) as client:
-            if client is not None:
+        # Uncomment this at the same time as the commands above to test without having to push
+        # changes to github.
+
+        # We might be attempting a connection before the instance is fully booted, so retry
+        # when the ssh connection fails.
+        ssh_connected = False
+        while not ssh_connected:
+            with ssh_client(self._host, self._private_key_string) as client:
+                if client is None:
+                    time.sleep(1)
+                    continue
+                ssh_connected = True
+
+                # This is for testing without pushing to github
+                # os.system('rm -rf /tmp/gns3-server')
+                # os.system('cp -a /Users/jseutter/projects/gns3-server /tmp/gns3-server')
+                # os.system('cd /tmp; tar czf /tmp/gns3-server.tgz gns3-server')
+                # sftp = client.open_sftp()
+                # sftp.put('/tmp/gns3-server.tgz', '/tmp/gns3-server.tgz')
+                # sftp.close()
+
+                for cmd in [l for l in self.commands.splitlines() if l.strip()]:
+                    self.exec_command(client, cmd)
+
                 data = {
                     'instance_id': self._server_id,
                     'cloud_user_name': self._username,
                     'cloud_api_key': self._api_key,
-                    'region': self._region,
+                    'cloud_region': self._region,
                     'dead_time': self._dead_time,
                 }
                 # TODO: Properly escape the data portion of the command line
-                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --data="{}" 2>/tmp/gns3_stderr.log'.format(data)
-                log.debug(start_cmd)
-                stdin, stdout, stderr = client.exec_command(start_cmd)
-                response = stdout.read().decode('ascii')
-                log.debug('ssh response: {}'.format(response))
-
+                start_cmd = '/usr/bin/python3 /opt/gns3/gns3-server/gns3server/start_server.py -d -v --ip={} --data="{}" 2>/tmp/gns3-stderr.log'.format(self._host, data)
+                stdout, stderr = self.exec_command(client, start_cmd, wait_time=15)
+                response = stdout.decode('utf-8')
                 self.gns3server_started.emit(str(self._server_id), str(self._host), str(response))
 
 
@@ -186,13 +226,15 @@ class WSConnectThread(QThread):
     """
     established = pyqtSignal(str)
 
-    def __init__(self, parent, provider, server_id, host, port, ca_file):
+    def __init__(self, parent, provider, server_id, host, port, ca_file, auth_user, auth_password):
         super(QThread, self).__init__(parent)
         self._provider = provider
         self._server_id = server_id
         self._host = host
         self._port = port
         self._ca_file = ca_file
+        self._auth_user = auth_user
+        self._auth_password = auth_password
 
     def run(self):
         """
@@ -201,7 +243,7 @@ class WSConnectThread(QThread):
 
         log.debug('WSConnectThread.run() begin')
         servers = Servers.instance()
-        server = servers.getCloudServer(self._host, self._port, self._ca_file)
+        server = servers.getCloudServer(self._host, self._port, self._ca_file, self._auth_user, self._auth_password)
         log.debug('after getCloudServer call. {}'.format(server))
         self.established.emit(str(self._server_id))
 
@@ -216,9 +258,9 @@ class UploadProjectThread(QThread):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
+    error = pyqtSignal(str, bool)
+    completed = pyqtSignal()
+    update = pyqtSignal(int)
 
     def __init__(self, cloud_settings, project_path, images_path):
         super().__init__()
@@ -285,15 +327,42 @@ class UploadProjectThread(QThread):
         self.quit()
 
 
+class UploadFileThread(QThread):
+    """
+    Upload a file to cloud files
+    """
+
+    completed = pyqtSignal()
+
+    def __init__(self, cloud_settings, router_settings):
+        super().__init__()
+        self._cloud_settings = cloud_settings
+        self._router_settings = router_settings
+
+    def run(self):
+        disk_path = self._router_settings['path']
+        filename = self._router_settings['image']
+
+        log.debug('Uploading image {}'.format(disk_path))
+        log.debug('Cloud filename: {}'.format(filename))
+        provider = get_provider(self._cloud_settings)
+        provider.upload_file(disk_path, 'images/IOS/{}'.format(filename))
+
+        self._cloud_settings['image'] = filename
+
+        log.debug('Uploading image completed')
+        self.completed.emit()
+
+
 class DownloadProjectThread(QThread):
     """
     Downloads project from cloud storage
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
+    error = pyqtSignal(str, bool)
+    completed = pyqtSignal()
+    update = pyqtSignal(int)
 
     def __init__(self, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
         super().__init__()
@@ -348,9 +417,9 @@ class DeleteProjectThread(QThread):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
+    error = pyqtSignal(str, bool)
+    completed = pyqtSignal()
+    update = pyqtSignal(int)
 
     def __init__(self, project_file_name, cloud_settings):
         super().__init__()

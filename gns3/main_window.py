@@ -56,7 +56,8 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
-from .cloud.utils import get_provider, UploadProjectThread
+from .cloud.utils import UploadProjectThread
+from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 
 log = logging.getLogger(__name__)
@@ -385,23 +386,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # let all modules know about the new project files directory
                 self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
-                if new_project_settings["project_type"] == "cloud":
-                    provider = self.cloudProvider
-                    if provider is None:
-                        log.error("Unable to get a cloud provider")
-                        return
-
-                    # create an instance for this project
-                    default_flavor = self.cloudSettings()['default_flavor']
-                    default_image_id = self.cloudSettings()['default_image']
-                    instance, keypair = self._create_instance(new_project_settings["project_name"],
-                                                              default_flavor,
-                                                              default_image_id)
-                    if instance:
-                        topology = Topology.instance()
-                        topology.addInstance(instance.name, instance.id,
-                                             default_flavor, default_image_id,
-                                             keypair.private_key, keypair.public_key)
+                self._loadCloudInstances()
 
                 self._project_settings.update(new_project_settings)
                 self.saveProject(new_project_settings["project_path"])
@@ -1276,29 +1261,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # if we're opening a cloud project, fire up instances
                 if json_topology["resources_type"] == "cloud":
                     self._project_settings["project_type"] = "cloud"
-                    provider = self.cloudProvider
-                    new_instances = []
-                    for instance in json_topology["topology"]["instances"]:
-                        name = instance["name"]
-                        flavor = instance["size_id"]
-                        image = instance["image_id"]
-                        i, k = self._create_instance(name, flavor, image)
-                        new_instances.append({
-                            "name": i.name,
-                            "id": i.id,
-                            "size_id": flavor,
-                            "image_id": image,
-                            "private_key": k.private_key,
-                            "public_key": k.public_key
-                        })
-                    # update topology with new image data
-                    json_topology["topology"]["instances"] = new_instances
-                    # we need to save the updates
-                    need_to_save = True
+                    # new_instances = []
+                    # for instance in json_topology["topology"]["instances"]:
+                    #     name = instance["name"]
+                    #     flavor = instance["size_id"]
+                    #     image = instance["image_id"]
+                    #     i, k = self._create_instance(name, flavor, image)
+                    #     new_instances.append({
+                    #         "name": i.name,
+                    #         "id": i.id,
+                    #         "size_id": flavor,
+                    #         "image_id": image,
+                    #         "private_key": k.private_key,
+                    #         "public_key": k.public_key
+                    #     })
+                    # # update topology with new image data
+                    # json_topology["topology"]["instances"] = new_instances
+                    # # we need to save the updates
+                    # need_to_save = True
                 else:
                     self._project_settings["project_type"] = "local"
 
                 topology.load(json_topology)
+                self._loadCloudInstances()
 
                 if need_to_save:
                     self.saveProject(path)
@@ -1491,25 +1476,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # do nothing if previous project was temporary
             return
 
-        with open(project) as f:
-            old_json_topology = json.load(f)
-
-            if old_json_topology["resources_type"] != 'cloud':
-                # do nothing in case of local projects
-                return
-
-            provider = self.cloudProvider
-            if provider is None:
-                log.error("Unable to get a cloud provider")
-                return
-
-            for instance in old_json_topology["topology"]["instances"]:
-                # shutdown the instance, we can pass to libcloud our namedtuple instead of a Node
-                # object because only instance.id is actually accessed
-                ti = TopologyInstance(**instance)
-                self.cloudProvider.delete_instance(ti)
-                # delete keypairs
-                self.cloudProvider.delete_key_pair_by_name(instance["name"])
+        self._saveCloudInstances()
 
     def project_created(self, project):
         """
@@ -1615,3 +1582,47 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         dialog.show()
         dialog.exec_()
+
+    def _saveCloudInstances(self):
+        """
+        Save the list of cloud instances to the config file
+        """
+        log.debug('Saving cloud instances')
+        # save the settings
+        settings = QtCore.QSettings()
+        settings.beginGroup("CloudInstances")
+        settings.remove("")
+
+        # save the cloud instances
+        topology = Topology.instance()
+        instances = topology.instances()
+        settings.beginWriteArray("cloud_instance", len(instances))
+        index = 0
+        for instance in instances:
+            settings.setArrayIndex(index)
+            for name in instance.fields():
+                log.debug('{}={}'.format(name, getattr(instance, name)))
+                settings.setValue(name, getattr(instance, name))
+            index += 1
+        settings.endArray()
+        settings.endGroup()
+
+    def _loadCloudInstances(self):
+        """
+        Load instance info from the config file to the topology
+        """
+        log.debug('Loading cloud instances')
+        settings = QtCore.QSettings()
+        settings.beginGroup("CloudInstances")
+        topology = Topology.instance()
+
+        # Load the instances
+        size = settings.beginReadArray("cloud_instance")
+        for index in range(0, size):
+            settings.setArrayIndex(index)
+            info = {}
+            for name in TopologyInstance.fields():
+                log.debug('{}={}'.format(name, settings.value(name, "")))
+                info[name] = settings.value(name, "")
+            topology.addInstance(**info)
+
