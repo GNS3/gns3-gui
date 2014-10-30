@@ -143,7 +143,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 self._upload_image_progress_dialog.show()
                 try:
                     upload_thread = UploadFileThread(MainWindow.instance().cloudSettings(), self._ios_routers[key])
-                    upload_thread.completed_callback = self._imageUploadComplete
+                    upload_thread.completed.connect(self._imageUploadComplete)
                     upload_thread.start()
                 except Exception as e:
                     self._upload_image_progress_dialog.reject()

@@ -8,9 +8,13 @@ file.
 """
 
 import os
+import sys
+
 from PyQt4 import QtCore, QtGui
 
-QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+
+if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
+    QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
 
 app = QtGui.QApplication([])
 app.setOrganizationName("GNS3")
@@ -36,10 +40,10 @@ def read_cloud_settings():
 
         # For now, just use the first system.
         return name, host, private_key, public_key
-
+    raise Exception("Could not find any servers")
     
 
-name, host, private_key, public_key = read_cloud_settings()    
+name, host, private_key, public_key = read_cloud_settings()
 
 print(name)
 print(host)
@@ -53,4 +57,3 @@ os.system('chmod 0600 /tmp/id_rsa')
 
 cmd = 'ssh -i /tmp/id_rsa root@{}'.format(host) 
 os.system(cmd)
-

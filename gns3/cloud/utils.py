@@ -323,12 +323,13 @@ class UploadFileThread(QThread):
     """
     Upload a file to cloud files
     """
+
+    completed = pyqtSignal()
+
     def __init__(self, cloud_settings, router_settings):
         super().__init__()
         self._cloud_settings = cloud_settings
         self._router_settings = router_settings
-        self.completed_callback = None
-
 
     def run(self):
         disk_path = self._router_settings['path']
@@ -342,8 +343,7 @@ class UploadFileThread(QThread):
         self._cloud_settings['image'] = filename
 
         log.debug('Uploading image completed')
-        if self.completed_callback:
-            self.completed_callback()
+        self.completed.emit()
 
 
 class DownloadProjectThread(QThread):
