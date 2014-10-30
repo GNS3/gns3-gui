@@ -23,7 +23,11 @@ app.setApplicationName("GNS3")
 
 settings = QtCore.QSettings()
 
-print('Reading config from {}'.format(QtCore.QSettings().fileName()))
+if not os.path.isfile(QtCore.QSettings().fileName()):
+    print('Config file {} not found! Aborting...'.format(QtCore.QSettings().fileName()))
+    sys.exit(1)
+
+print('Reading config file {}...'.format(QtCore.QSettings().fileName()))
 
 def read_cloud_settings():
     settings = QtCore.QSettings()
@@ -45,15 +49,17 @@ def read_cloud_settings():
 
 name, host, private_key, public_key = read_cloud_settings()
 
-print(name)
-print(host)
-print(private_key)
-print(public_key)
+print('Instance name: {}'.format(name))
+print('Host ip: {}'.format(host))
 
+public_key_path = '/tmp/id_rsa.pub'
+open(public_key_path, 'w').write(public_key)
+private_key_path = '/tmp/id_rsa'
+open(private_key_path, 'w').write(private_key)
+cmd = 'chmod 0600 {}'.format(private_key_path)
+os.system(cmd)
+print('Per-instance ssh keys written to {}'.format(private_key_path))
 
-open('/tmp/id_rsa.pub', 'w').write(public_key)
-open('/tmp/id_rsa', 'w').write(private_key)
-os.system('chmod 0600 /tmp/id_rsa')
-
-cmd = 'ssh -i /tmp/id_rsa root@{}'.format(host) 
+cmd = 'ssh -i /tmp/id_rsa root@{}'.format(host)
+print(cmd)
 os.system(cmd)
