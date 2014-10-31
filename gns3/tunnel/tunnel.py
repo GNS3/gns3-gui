@@ -121,11 +121,11 @@ class Tunnel(object):
         new_endpoint.enable()
         self.end_points[new_endpoint.getId()] = new_endpoint
 
-        return new_endpoint.getId()
+        return new_endpoint
 
-    def remove_endpoint(self, name):
-        if name in self.end_points:
-            self.end_points[name].disable()
+    def remove_endpoint(self, endpoint):
+        if endpoint.getId() in self.end_points:
+            self.end_points[endpoint.getId()].disable()
 
     def list_endpoints(self):
         remotes = {}
