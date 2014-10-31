@@ -19,6 +19,7 @@
 Graphical view on the scene where items are drawn.
 """
 
+import logging
 import os
 import pickle
 
@@ -51,6 +52,8 @@ from .items.shape_item import ShapeItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
+
+log = logging.getLogger(__name__)
 
 
 class GraphicsView(QtGui.QGraphicsView):
@@ -1104,6 +1107,7 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         try:
+            log.debug('In createNode')
             node_module = None
             for module in MODULES:
                 instance = module.instance()
@@ -1119,6 +1123,8 @@ class GraphicsView(QtGui.QGraphicsView):
                 server = node_module.allocateServer(node_class)
             elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
+            elif node_data["server"] == "cloud":
+                server = Servers.instance().anyCloudServer()
             else:
                 try:
                     host, port = node_data["server"].rsplit(":", 1)

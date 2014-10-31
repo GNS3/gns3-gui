@@ -62,7 +62,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>980</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -82,6 +82,7 @@ background-none;
     <addaction name="uiOpenProjectAction"/>
     <addaction name="uiSaveProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
+    <addaction name="uiImportProjectAction"/>
     <addaction name="uiExportProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiImportExportConfigsAction"/>
@@ -1117,6 +1118,11 @@ background-none;
   <action name="uiExportProjectAction">
    <property name="text">
     <string>Export project</string>
+   </property>
+  </action>
+  <action name="uiImportProjectAction">
+   <property name="text">
+    <string>Import project</string>
    </property>
   </action>
  </widget>
