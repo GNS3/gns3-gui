@@ -235,7 +235,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self._qemu_binaries_progress_dialog.accept()
 
         if error:
-            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
+            QtGui.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
             for qemu in result["qemus"]:

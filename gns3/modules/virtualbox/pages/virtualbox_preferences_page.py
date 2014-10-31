@@ -40,25 +40,25 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         # connect signals
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiVboxWrapperPathToolButton.clicked.connect(self._vboxPathBrowserSlot)
+        self.uiVboxManagePathToolButton.clicked.connect(self._vboxPathBrowserSlot)
 
         #FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
 
     def _vboxPathBrowserSlot(self):
         """
-        Slot to open a file browser and select VirtualBox wrapper.
+        Slot to open a file browser and select VBoxManage.
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select VirtualBox wrapper", ".")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Select VBoxManage", ".")
         if not path:
             return
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "VirtualBox wrapper", "{} is not an executable".format(os.path.basename(path)))
+            QtGui.QMessageBox.critical(self, "VBoxManage", "{} is not an executable".format(os.path.basename(path)))
             return
 
-        self.uiVboxWrapperPathLineEdit.setText(os.path.normpath(path))
+        self.uiVboxManagePathLineEdit.setText(os.path.normpath(path))
 
     def _restoreDefaultsSlot(self):
         """
@@ -84,7 +84,7 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         :param settings: VirtualBox settings
         """
 
-        self.uiVboxWrapperPathLineEdit.setText(settings["vboxwrapper_path"])
+        self.uiVboxManagePathLineEdit.setText(settings["vboxmanage_path"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
@@ -125,7 +125,7 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         """
 
         new_settings = {}
-        new_settings["vboxwrapper_path"] = self.uiVboxWrapperPathLineEdit.text()
+        new_settings["vboxmanage_path"] = self.uiVboxManagePathLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
