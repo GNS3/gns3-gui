@@ -453,3 +453,7 @@ class SecureWebSocketClient(WebSocketClient):
             headers.extend(self.extra_headers)
 
         return headers
+
+    @property
+    def tunnel(self):
+        return self._tunnel
