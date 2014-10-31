@@ -23,7 +23,7 @@ import sys
 import os
 
 # default path to VirtualBox vboxmanage executable
-if sys.platform.startswith("win"):
+if sys.platform.startswith("win") and "VBOX_INSTALL_PATH" in os.environ:
     DEFAULT_VBOXMANAGE_PATH = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")
 else:
     paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
