@@ -29,6 +29,7 @@ from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
 from ws4py import WS_VERSION
 from .qt import QtCore
+from .tunnel import tunnel
 
 import logging
 log = logging.getLogger(__name__)
@@ -60,6 +61,7 @@ class WebSocketClient(WebSocketBaseClient):
         self._version = ""
         self._fd_notifier = None
         self._heartbeat_timer = None
+        self._tunnel = None
 
         # create an unique ID
         self._id = WebSocketClient._instance_count
@@ -358,6 +360,9 @@ class WebSocketClient(WebSocketBaseClient):
         self._heartbeat_timer.timeout.connect(self._heartbeat)
         self._heartbeat_timer.start(interval)
 
+    def setupTunnel(self):
+        pass
+
 
 class SecureWebSocketClient(WebSocketClient):
     def __init__(self, url, protocols=None, extensions=None,
@@ -381,10 +386,11 @@ class SecureWebSocketClient(WebSocketClient):
                                      headers)
 
 
-    def setSecureOptions(self, ca_file, auth_user, auth_password):
+    def setSecureOptions(self, ca_file, auth_user, auth_password, ssh_pkey):
         self._ca_file = ca_file
         self._auth_user = auth_user
         self._auth_password = auth_password
+        self._ssh_pkey = ssh_pkey
 
     def connect(self):
         log.debug('In SecureWebSocketClient.connect()')
@@ -414,6 +420,9 @@ class SecureWebSocketClient(WebSocketClient):
 
         self._connect()
         log.debug(self.sock)
+
+        self._tunnel = tunnel.Tunnel(self.host, 22, username='root', client_key=self._ssh_pkey)
+        log.debug('tunnel status: {}'.format(self._tunnel.is_connected()))
 
     @property
     def handshake_headers(self):

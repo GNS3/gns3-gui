@@ -326,9 +326,11 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         topology = Topology.instance()
         top_instance = topology.getInstance(id)
         top_instance.set_later_attributes(host_ip, port, ssl_cert, ca_file)
+        ssh_pkey = top_instance.private_key
 
         log.debug('Cloud server gns3server started.')
-        wss_thread = WSConnectThread(self, self._provider, id, host_ip, port, ca_file, username, password)
+        wss_thread = WSConnectThread(self, self._provider, id, host_ip, port, ca_file,
+                                     username, password, ssh_pkey)
         wss_thread.established.connect(self._wss_connected_slot)
         wss_thread.start()
 

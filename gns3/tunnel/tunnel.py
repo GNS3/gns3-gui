@@ -72,7 +72,7 @@ class Tunnel(object):
         if hasattr(data, 'readlines'):
             key_file = data
         else:
-            key_file = StringIO.StringIO()
+            key_file = StringIO()
             key_file.write(data)
             key_file.flush()
             key_file.seek(0)
