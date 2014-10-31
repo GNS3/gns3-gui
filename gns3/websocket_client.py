@@ -227,6 +227,7 @@ class WebSocketClient(WebSocketBaseClient):
         if self._heartbeat_timer is not None:
             self._heartbeat_timer.stop()
         self._connected = False
+        self._tunnel.disconnect()
 
     def received_message(self, message):
         """
