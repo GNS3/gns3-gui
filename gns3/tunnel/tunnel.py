@@ -4,7 +4,7 @@ import socket
 import paramiko
 import logging
 from io import StringIO
-from endpoint import Endpoint
+from .endpoint import Endpoint
 
 log = logging.getLogger(__name__)
 
