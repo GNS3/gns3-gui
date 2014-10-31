@@ -896,7 +896,13 @@ class GraphicsView(QtGui.QGraphicsView):
                 def cb(*args, **kwargs):
                     print('Console DONE on port {}'.format(args[2]))
 
-                # TODO if node is deployed on the cloud, open a SSH tunnel before telnetting
+                try:
+                    if node.server().isCloud():
+                        # TODO if node is deployed on the cloud, open a SSH tunnel before telnetting
+                        print('We are on a cloud!')
+                except AttributeError:
+                    pass
+
                 telnetConsole(name, console_host, console_port, cb)
             except (OSError, ValueError) as e:
                 QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
