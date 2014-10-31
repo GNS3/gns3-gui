@@ -892,7 +892,12 @@ class GraphicsView(QtGui.QGraphicsView):
             console_host = node.server().host
             try:
                 from .telnet_console import telnetConsole
-                telnetConsole(name, console_host, console_port)
+
+                def cb(*args, **kwargs):
+                    print('Console DONE on port {}'.format(args[2]))
+
+                # TODO if node is deployed on the cloud, open a SSH tunnel before telnetting
+                telnetConsole(name, console_host, console_port, cb)
             except (OSError, ValueError) as e:
                 QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
                 return False
