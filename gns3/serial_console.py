@@ -31,8 +31,11 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def serialConsole(name, vmname):
+#TODO: support more than just Vbox (Qemu maybe?)
+def serialConsole(vmname):
     """
+    :param vmname: Virtual machine name.
+
     Start a Serial console program.
     """
 
@@ -49,7 +52,7 @@ def serialConsole(name, vmname):
 
     # replace the place-holders by the actual values
     command = command.replace("%s", pipe_name)
-    command = command.replace("%d", name)
+    command = command.replace("%d", vmname)
     log.info('starting serial console "{}"'.format(command))
 
     try:

@@ -23,9 +23,8 @@ import os
 import copy
 
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.node import Node
 from gns3.main_window import MainWindow
-from gns3.modules.module_error import ModuleError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
@@ -72,7 +71,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtGui.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
         QtGui.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
-        QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
+        if qemu_vm["qemu_path"]:
+            QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
 
         # fill out the Hard disks section
         if qemu_vm["hda_disk_image"] or qemu_vm["hdb_disk_image"]:
@@ -143,6 +143,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             self._qemu_vms[key] = {"name": "",
                                    "default_symbol": ":/symbols/qemu_guest.normal.svg",
                                    "hover_symbol": ":/symbols/qemu_guest.selected.svg",
+                                   "category": Node.end_devices,
                                    "qemu_path": "default",
                                    "hda_disk_image": "",
                                    "hdb_disk_image": "",
@@ -223,6 +224,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         dialog.show()
         if dialog.exec_():
             normal_symbol, selected_symbol = dialog.getSymbols()
+            category = dialog.getCategory()
             item = self.uiQemuVMsTreeWidget.currentItem()
             if item:
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
@@ -230,6 +232,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 qemu_vm = self._qemu_vms[key]
                 qemu_vm["default_symbol"] = normal_symbol
                 qemu_vm["hover_symbol"] = selected_symbol
+                qemu_vm["category"] = category
 
     def loadPreferences(self):
         """

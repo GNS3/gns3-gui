@@ -210,7 +210,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
             self.uiSerialConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
         self.uiCloseConsoleWindowsOnDeleteCheckBox.setChecked(settings["auto_close_console"])
         self.uiBringConsoleWindowToFrontCheckBox.setChecked(settings["bring_console_to_front"])
-        self.uiSlowConsoleAllDoubleSpinBox.setValue(settings["slow_console_all"])
+        self.uiDelayConsoleAllSpinBox.setValue(settings["delay_console_all"])
 
     def _populateGraphicsViewSettingWidgets(self, settings):
         """
@@ -260,7 +260,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         new_settings["serial_console_command"] = self.uiSerialConsoleCommandLineEdit.text()
         new_settings["auto_close_console"] = self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked()
         new_settings["bring_console_to_front"] = self.uiBringConsoleWindowToFrontCheckBox.isChecked()
-        new_settings["slow_console_all"] = self.uiSlowConsoleAllDoubleSpinBox.value()
+        new_settings["delay_console_all"] = self.uiDelayConsoleAllSpinBox.value()
 
         from ..main_window import MainWindow
         MainWindow.instance().setSettings(new_settings)

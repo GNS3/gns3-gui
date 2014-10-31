@@ -333,7 +333,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             self.uiExecAreaLabel.hide()
             self.uiExecAreaSpinBox.hide()
 
-        # load the idle-pc setting
+        # load the Idle-PC setting
         self.uiIdlepcLineEdit.setText(settings["idlepc"])
 
         if "idlemax" in settings:
@@ -518,7 +518,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         # save the exec area setting
         settings["exec_area"] = self.uiExecAreaSpinBox.value()
 
-        # save the idle-pc setting
+        # save the Idle-PC setting
         # TODO: check the format?
         settings["idlepc"] = self.uiIdlepcLineEdit.text()
 

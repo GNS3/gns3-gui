@@ -21,8 +21,11 @@ Configuration page for QEMU VMs.
 
 import os
 import shutil
+from functools import partial
 
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
+from gns3.servers import Servers
+from gns3.modules.module_error import ModuleError
 from gns3.main_window import MainWindow
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 
@@ -135,6 +138,35 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
 
+    def _getQemuBinariesFromServerCallback(self, result, error=False, qemu_path=None):
+        """
+        Callback for getQemuBinariesFromServer.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if self._qemu_binaries_progress_dialog.wasCanceled():
+            return
+        self._qemu_binaries_progress_dialog.accept()
+
+        if error:
+            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
+        else:
+            self.uiQemuListComboBox.clear()
+            for qemu in result["qemus"]:
+                if qemu["version"]:
+                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+                else:
+                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
+
+        index = self.uiQemuListComboBox.findData("{path}".format(path=qemu_path))
+        if index != -1:
+            self.uiQemuListComboBox.setCurrentIndex(index)
+        else:
+            QtGui.QMessageBox.critical(self, "Qemu", "Could not find {} in the Qemu binaries list".format(qemu_path))
+            self.uiQemuListComboBox.clear()
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the QEMU VM settings.
@@ -145,28 +177,23 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         """
 
         if node:
-            if node.server().isLocal():
-                server = "local"
-            else:
-                server = node.server().host
+            server = node.server()
         else:
             server = settings["server"]
+            if server == "local":
+                server = Servers.instance().localServer()
 
-        qemu_binaries = Qemu.instance().getQemuBinariesList()
-        if server in qemu_binaries:
-            qemus = qemu_binaries[server]["qemus"]
+        self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
+        self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+        self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
+        self._qemu_binaries_progress_dialog.show()
 
-            for qemu in qemus:
-                key = "{server}:{qemu}".format(server=server, qemu=qemu["path"])
-                if qemu["version"]:
-                    self.uiQemuListComboBox.addItem("{key} (v{version})".format(key=key, version=qemu["version"]), key)
-                else:
-                    self.uiQemuListComboBox.addItem("{key}".format(key=key), key)
-
-        index = self.uiQemuListComboBox.findData("{server}:{qemu_path}".format(server=server, qemu_path=settings["qemu_path"]))
-        if index != -1:
-            self.uiQemuListComboBox.setCurrentIndex(index)
-        else:
+        callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
+        try:
+            Qemu.instance().getQemuBinariesFromServer(server, callback)
+        except ModuleError as e:
+            self._qemu_binaries_progress_dialog.reject()
+            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
             self.uiQemuListComboBox.clear()
 
         if not group:
@@ -244,8 +271,9 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             del settings["kernel_image"]
 
         if self.uiQemuListComboBox.count():
-            server, qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex()).split(":", 1)
+            qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
             settings["qemu_path"] = qemu_path
+
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["kernel_command_line"] = self.uiKernelCommandLineEdit.text()
 

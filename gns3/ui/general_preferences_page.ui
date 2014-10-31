@@ -192,8 +192,14 @@
             <property name="suffix">
              <string> seconds</string>
             </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
             <property name="maximum">
              <number>10000</number>
+            </property>
+            <property name="value">
+             <number>0</number>
             </property>
            </widget>
           </item>
@@ -353,21 +359,15 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QDoubleSpinBox" name="uiSlowConsoleAllDoubleSpinBox">
+           <widget class="QSpinBox" name="uiDelayConsoleAllSpinBox">
             <property name="suffix">
-             <string> seconds</string>
+             <string> ms</string>
             </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="minimum">
-             <double>0.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>0.500000000000000</double>
+            <property name="maximum">
+             <number>10000</number>
             </property>
             <property name="value">
-             <double>1.000000000000000</double>
+             <number>500</number>
             </property>
            </widget>
           </item>

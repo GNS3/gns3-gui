@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
 #
-# Created: Sun Oct 19 16:55:07 2014
+# Created: Wed Oct 22 16:46:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,8 +26,8 @@ except AttributeError:
 class Ui_VirtualBoxVMWizard(object):
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName(_fromUtf8("VirtualBoxVMWizard"))
-        VirtualBoxVMWizard.setWindowModality(QtCore.Qt.WindowModal)
         VirtualBoxVMWizard.resize(514, 367)
+        VirtualBoxVMWizard.setModal(True)
         self.uiServerWizardPage = QtGui.QWizardPage()
         self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
         self.gridLayout_2 = QtGui.QGridLayout(self.uiServerWizardPage)

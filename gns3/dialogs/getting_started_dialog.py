@@ -88,9 +88,13 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         if result is False:
             # load a local resource if the page is not available
             resource_name = os.path.join("static", "getting_started.html")
+            getting_started = None
             if hasattr(sys, "frozen") and os.path.isfile(resource_name):
                 getting_started = os.path.normpath(resource_name)
             elif pkg_resources.resource_exists("gns3", resource_name):
                 getting_started_page = pkg_resources.resource_filename("gns3", resource_name)
                 getting_started = os.path.normpath(getting_started_page)
-            self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))
+            if getting_started:
+                self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))
+            else:
+                self.accept()

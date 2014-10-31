@@ -35,7 +35,7 @@ class EtherSwitchRouter(Router):
     """
 
     def __init__(self, module, server):
-        Router.__init__(self, module, server, platform="c3745")
+        Router.__init__(self, module, server, platform="c3725")
 
         self._platform_settings = {"ram": 128,
                                    "nvram": 304,

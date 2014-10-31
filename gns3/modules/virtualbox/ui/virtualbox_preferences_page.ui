@@ -28,19 +28,19 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="2" column="0">
-        <widget class="QLabel" name="uiVboxWrapperPathLabel">
+        <widget class="QLabel" name="uiVboxManagePathLabel">
          <property name="text">
-          <string>Path to the VirtualBox wrapper (Linux/UNIX only):</string>
+          <string>Path to VBoxManage:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLineEdit" name="uiVboxWrapperPathLineEdit"/>
+          <widget class="QLineEdit" name="uiVboxManagePathLineEdit"/>
          </item>
          <item>
-          <widget class="QToolButton" name="uiVboxWrapperPathToolButton">
+          <widget class="QToolButton" name="uiVboxManagePathToolButton">
            <property name="text">
             <string>&amp;Browse...</string>
            </property>

@@ -19,11 +19,13 @@
 Wizard for QEMU VMs.
 """
 
+import sys
 import os
 import shutil
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.modules.module_error import ModuleError
 from gns3.utils.connect_to_server import ConnectToServer
@@ -195,6 +197,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             if not server.connected() and ConnectToServer(self, server) is False:
                 return False
             self._server = server
+
+        if self.currentPage() == self.uiBinaryMemoryWizardPage:
+            if not self.uiQemuListComboBox.count():
+                QtGui.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
+                return False
+
         return True
 
     def initializePage(self, page_id):
@@ -227,14 +235,31 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self._qemu_binaries_progress_dialog.accept()
 
         if error:
-            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
+            QtGui.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
             for qemu in result["qemus"]:
-                self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+                if qemu["version"]:
+                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+                else:
+                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
 
-            # default is qemu-system-x86_64
-            index = self.uiQemuListComboBox.findText("x86_64 ", QtCore.Qt.MatchContains)  # the space after x86_64 must be present!
+            is_64bit = sys.maxsize > 2**32
+            if sys.platform.startswith("win"):
+                if is_64bit:
+                    # default is qemu-system-x86_64w.exe on Windows 64-bit
+                    search_string = "x86_64w.exe"
+                else:
+                    # default is qemu-system-i386w.exe on Windows 32-bit
+                    search_string = "i386w.exe"
+            elif is_64bit:
+                # default is qemu-system-x86_64 on other 64-bit platforms
+                search_string = "x86_64"
+            else:
+                # default is qemu-system-i386 on other platforms
+                search_string = "i386"
+
+            index = self.uiQemuListComboBox.findData(search_string, flags=QtCore.Qt.MatchEndsWith)
             if index != -1:
                 self.uiQemuListComboBox.setCurrentIndex(index)
 
@@ -266,6 +291,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["options"] = "-nographic -cpu coreduo -icount auto -hdachs 980,16,32"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"
+            settings["category"] = Node.security_devices
         elif self.uiTypeComboBox.currentText() == "IDS":
             settings["adapters"] = 3
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
@@ -273,8 +299,10 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["options"] = "-smbios type=1,product=IDS-4215"
             settings["default_symbol"] = ":/symbols/ids.normal.svg"
             settings["hover_symbol"] = ":/symbols/ids.selected.svg"
+            settings["category"] = Node.security_devices
         else:
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["category"] = Node.end_devices
 
         return settings
 

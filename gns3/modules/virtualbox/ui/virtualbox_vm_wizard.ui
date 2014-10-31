@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>VirtualBoxVMWizard</class>
  <widget class="QWizard" name="VirtualBoxVMWizard">
-  <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,6 +12,9 @@
   </property>
   <property name="windowTitle">
    <string>New VirtualBox VM</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
   </property>
   <widget class="QWizardPage" name="uiServerWizardPage">
    <property name="title">

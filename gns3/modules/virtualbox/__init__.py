@@ -21,7 +21,7 @@ VirtualBox module implementation.
 
 import os
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.node import Node
 from ..module import Module
 from ..module_error import ModuleError
 from .virtualbox_vm import VirtualBoxVM
@@ -92,16 +92,18 @@ class VirtualBox(Module):
             adapters = settings.value("adapters", 1, type=int)
             default_symbol = settings.value("default_symbol", ":/symbols/vbox_guest.normal.svg")
             hover_symbol = settings.value("hover_symbol", ":/symbols/vbox_guest.selected.svg")
+            category = settings.value("category", Node.end_devices, type=int)
             adapter_start_index = settings.value("adapter_start_index", 0, type=int)
             adapter_type = settings.value("adapter_type", "Automatic")
             headless = settings.value("headless", False, type=bool)
-            enable_console = settings.value("enable_console", True, type=bool)
+            enable_console = settings.value("enable_console", False, type=bool)
             server = settings.value("server", "local")
 
             key = "{server}:{vmname}".format(server=server, vmname=vmname)
             self._virtualbox_vms[key] = {"vmname": vmname,
                                          "default_symbol": default_symbol,
                                          "hover_symbol": hover_symbol,
+                                         "category": category,
                                          "adapters": adapters,
                                          "adapter_start_index": adapter_start_index,
                                          "adapter_type": adapter_type,
@@ -275,8 +277,8 @@ class VirtualBox(Module):
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            if "vboxwrapper_path" in params:
-                del params["vboxwrapper_path"]  # do not send Vboxwrapper path to remote servers
+            if "vboxmanage_path" in params:
+                del params["vboxmanage_path"]  # do not send VBoxManage path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
@@ -402,8 +404,10 @@ class VirtualBox(Module):
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
                                                                                  e))
-
-        server.send_message("virtualbox.vm_list", None, callback)
+        params = {}
+        if server.isLocal():
+            params["vboxmanage_path"] = self._settings["vboxmanage_path"]
+        server.send_message("virtualbox.vm_list", params, callback)
 
     def getVirtualBoxVMList(self):
         """
@@ -450,7 +454,8 @@ class VirtualBox(Module):
                  "server": vbox_vm["server"],
                  "categories": VirtualBoxVM.categories(),
                  "default_symbol": vbox_vm["default_symbol"],
-                 "hover_symbol": vbox_vm["hover_symbol"]}
+                 "hover_symbol": vbox_vm["hover_symbol"],
+                 "categories": [vbox_vm["category"]]}
             )
         return nodes
 
