@@ -277,8 +277,8 @@ class VirtualBox(Module):
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
-            if "vboxwrapper_path" in params:
-                del params["vboxwrapper_path"]  # do not send Vboxwrapper path to remote servers
+            if "vboxmanage_path" in params:
+                del params["vboxmanage_path"]  # do not send VBoxManage path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]
@@ -404,8 +404,10 @@ class VirtualBox(Module):
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
                                                                                  e))
-
-        server.send_message("virtualbox.vm_list", None, callback)
+        params = {}
+        if server.isLocal():
+            params["vboxmanage_path"] = self._settings["vboxmanage_path"]
+        server.send_message("virtualbox.vm_list", params, callback)
 
     def getVirtualBoxVMList(self):
         """

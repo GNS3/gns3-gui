@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created: Sun Oct 19 11:35:54 2014
+# Created: Thu Oct 30 17:14:33 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,18 +36,18 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.uiGeneralSettingsTabWidget.setObjectName(_fromUtf8("uiGeneralSettingsTabWidget"))
         self.gridLayout = QtGui.QGridLayout(self.uiGeneralSettingsTabWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.uiVboxWrapperPathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
-        self.uiVboxWrapperPathLabel.setObjectName(_fromUtf8("uiVboxWrapperPathLabel"))
-        self.gridLayout.addWidget(self.uiVboxWrapperPathLabel, 2, 0, 1, 1)
+        self.uiVboxManagePathLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
+        self.uiVboxManagePathLabel.setObjectName(_fromUtf8("uiVboxManagePathLabel"))
+        self.gridLayout.addWidget(self.uiVboxManagePathLabel, 2, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.uiVboxWrapperPathLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
-        self.uiVboxWrapperPathLineEdit.setObjectName(_fromUtf8("uiVboxWrapperPathLineEdit"))
-        self.horizontalLayout_5.addWidget(self.uiVboxWrapperPathLineEdit)
-        self.uiVboxWrapperPathToolButton = QtGui.QToolButton(self.uiGeneralSettingsTabWidget)
-        self.uiVboxWrapperPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-        self.uiVboxWrapperPathToolButton.setObjectName(_fromUtf8("uiVboxWrapperPathToolButton"))
-        self.horizontalLayout_5.addWidget(self.uiVboxWrapperPathToolButton)
+        self.uiVboxManagePathLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
+        self.uiVboxManagePathLineEdit.setObjectName(_fromUtf8("uiVboxManagePathLineEdit"))
+        self.horizontalLayout_5.addWidget(self.uiVboxManagePathLineEdit)
+        self.uiVboxManagePathToolButton = QtGui.QToolButton(self.uiGeneralSettingsTabWidget)
+        self.uiVboxManagePathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiVboxManagePathToolButton.setObjectName(_fromUtf8("uiVboxManagePathToolButton"))
+        self.horizontalLayout_5.addWidget(self.uiVboxManagePathToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_5, 3, 0, 1, 2)
         spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 5, 0, 1, 2)
@@ -141,8 +141,8 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
 
     def retranslateUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxPreferencesPageWidget", "VirtualBox", None))
-        self.uiVboxWrapperPathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to the VirtualBox wrapper (Linux/UNIX only):", None))
-        self.uiVboxWrapperPathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse...", None))
+        self.uiVboxManagePathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to VBoxManage:", None))
+        self.uiVboxManagePathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse...", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxPreferencesPageWidget", "Remote servers", None))

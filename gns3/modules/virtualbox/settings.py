@@ -22,23 +22,23 @@ Default VirtualBox settings.
 import sys
 import os
 
-# default path to VirtualBox wrapper executable
-if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-    DEFAULT_VBOXWRAPPER_PATH = os.path.join(os.getcwd(), "vboxwrapper")
+# default path to VirtualBox vboxmanage executable
+if sys.platform.startswith("win") and "VBOX_INSTALL_PATH" in os.environ:
+    DEFAULT_VBOXMANAGE_PATH = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")
 else:
     paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
-    # look for VirtualBox wrapper in the current working directory and $PATH
-    DEFAULT_VBOXWRAPPER_PATH = "vboxwrapper"
+    # look for vboxmanage in the current working directory and $PATH
+    DEFAULT_VBOXMANAGE_PATH = "vboxmanage"
     for path in paths:
         try:
-            if "vboxwrapper" in os.listdir(path) and os.access(os.path.join(path, "vboxwrapper"), os.X_OK):
-                DEFAULT_VBOXWRAPPER_PATH = os.path.join(path, "vboxwrapper")
+            if "vboxmanage" in os.listdir(path) and os.access(os.path.join(path, "vboxmanage"), os.X_OK):
+                DEFAULT_VBOXMANAGE_PATH = os.path.join(path, "vboxmanage")
                 break
         except OSError:
             continue
 
 VBOX_SETTINGS = {
-    "vboxwrapper_path": DEFAULT_VBOXWRAPPER_PATH,
+    "vboxmanage_path": DEFAULT_VBOXMANAGE_PATH,
     "console_start_port_range": 3501,
     "console_end_port_range": 4000,
     "udp_start_port_range": 35001,
@@ -47,7 +47,7 @@ VBOX_SETTINGS = {
 }
 
 VBOX_SETTING_TYPES = {
-    "vboxwrapper_path": str,
+    "vboxmanage_path": str,
     "console_start_port_range": int,
     "console_end_port_range": int,
     "udp_start_port_range": int,

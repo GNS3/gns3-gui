@@ -1126,7 +1126,10 @@ class GraphicsView(QtGui.QGraphicsView):
             elif node_data["server"] == "cloud":
                 server = Servers.instance().anyCloudServer()
             else:
-                host, port = node_data["server"].rsplit(":", 1)
+                try:
+                    host, port = node_data["server"].rsplit(":", 1)
+                except ValueError:
+                    raise ModuleError("Wrong format for server: '{}', please recreate the node in preferences".format(node_data["server"]))
                 server = Servers.instance().getRemoteServer(host, port)
             if not server.connected() and ConnectToServer(self, server) is False:
                 return
