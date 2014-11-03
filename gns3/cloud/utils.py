@@ -181,9 +181,6 @@ killall python3 gns3server gns3dms
 
 
     def run(self):
-        # Uncomment this at the same time as the commands above to test without having to push
-        # changes to github.
-
         # We might be attempting a connection before the instance is fully booted, so retry
         # when the ssh connection fails.
         ssh_connected = False
