@@ -27,6 +27,7 @@ from gns3.servers import Servers
 from gns3.utils.message_box import MessageBox
 from gns3.dialogs.exec_command_dialog import ExecCommandDialog
 
+from ....settings import ENABLE_CLOUD
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 from .. import Dynamips
@@ -95,6 +96,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         if Dynamips.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
             self.setStartId(1)
+
+        if not ENABLE_CLOUD:
+            self.uiCloudRadioButton.hide()
+
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -307,13 +312,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
         Validates the IOS name.
         """
-
-        # if self.currentPage() == self.uiServerWizardPage:
-        #
-        #     #FIXME: prevent users to use "cloud"
-        #     if self.uiCloudRadioButton.isChecked():
-        #         QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
-        #         return False
 
         if self.currentPage() == self.uiNamePlatformWizardPage:
             name = self.uiNameLineEdit.text()
