@@ -87,12 +87,13 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
         QtGui.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
-        QtGui.QTreeWidgetItem(section_item, ["Console enabled:", "{}".format(vbox_vm["enable_console"])])
+        QtGui.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_console"])])
         QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
         QtGui.QTreeWidgetItem(section_item, ["Adapters:", str(vbox_vm["adapters"])])
+        QtGui.QTreeWidgetItem(section_item, ["Start at:", str(vbox_vm["adapter_start_index"])])
         QtGui.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
 
         self.uiVirtualBoxVMInfoTreeWidget.expandAll()

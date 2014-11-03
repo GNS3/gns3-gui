@@ -254,6 +254,8 @@ class VirtualBox(Module):
                 if server.isLocal():
                     params.update({"working_dir": self._working_dir})
                 else:
+                    if "vboxmanage_path" in params:
+                        del params["vboxmanage_path"]  # do not send VBoxManage path to remote servers
                     project_name = os.path.basename(self._working_dir)
                     if project_name.endswith("-files"):
                         project_name = project_name[:-6]

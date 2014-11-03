@@ -87,7 +87,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Creates a new IOS router.
         """
 
-        wizard = IOSRouterWizard(parent=self)
+        wizard = IOSRouterWizard(self._ios_routers, parent=self)
         wizard.show()
         if wizard.exec_():
 

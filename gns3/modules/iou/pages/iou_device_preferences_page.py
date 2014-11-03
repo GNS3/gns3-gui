@@ -81,7 +81,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Creates a new IOU device.
         """
 
-        wizard = IOUDeviceWizard(parent=self)
+        wizard = IOUDeviceWizard(self._iou_devices, parent=self)
         wizard.show()
         if wizard.exec_():
 

@@ -54,9 +54,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
     Wizard to create an IOS router.
 
     :param parent: parent widget
+    :param ios_routers: existing IOS routers
     """
 
-    def __init__(self, parent):
+    def __init__(self, ios_routers, parent):
 
         QtGui.QWizard.__init__(self, parent)
         self.setupUi(self)
@@ -88,6 +89,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                              2: self.uiWic2comboBox}
 
         self.uiTestIOSImagePushButton.hide()  # hide it because it doesn't work
+
+        self._ios_routers = ios_routers
 
         if Dynamips.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
@@ -312,14 +315,12 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         #         QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
         #         return False
 
-        # if self.currentPage() == self.uiNameImageWizardPage:
-        #     name = self.uiNameLineEdit.text()
-        #     if not re.search(r"""^[\-\w]+$""", name):
-        #         # IOS names must start with a letter, end with a letter or digit, and
-        #         # have as interior characters only letters, digits, and hyphens.
-        #         # They must be 63 characters or fewer.
-        #         QtGui.QMessageBox.critical(self, "Name", "Invalid name detected: {}".format(name))
-        #         return False
+        if self.currentPage() == self.uiNamePlatformWizardPage:
+            name = self.uiNameLineEdit.text()
+            for ios_router in self._ios_routers.values():
+                if ios_router["name"] == name:
+                    QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
+                    return False
         return True
 
 

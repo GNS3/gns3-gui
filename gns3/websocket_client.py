@@ -188,7 +188,7 @@ class WebSocketClient(WebSocketBaseClient):
         if self._local:
             # check the local host address is still valid
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                    sock.bind((self.host, 0))
+                sock.bind((self.host, 0))
 
         self.connect()
 

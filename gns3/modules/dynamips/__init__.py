@@ -364,6 +364,8 @@ class Dynamips(Module):
                 if server.isLocal():
                     params.update({"working_dir": self._working_dir})
                 else:
+                    if "path" in params:
+                        del params["path"]  # do not send Dynamips path to remote servers
                     project_name = os.path.basename(self._working_dir)
                     if project_name.endswith("-files"):
                         project_name = project_name[:-6]
@@ -386,6 +388,8 @@ class Dynamips(Module):
         if server.isLocal():
             params.update({"working_dir": self._working_dir})
         else:
+            if "path" in params:
+                del params["path"]  # do not send Dynamips path to remote servers
             project_name = os.path.basename(self._working_dir)
             if project_name.endswith("-files"):
                 project_name = project_name[:-6]

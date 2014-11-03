@@ -336,7 +336,7 @@ class FrameRelaySwitch(Node):
                     try:
                         port.startPacketCapture(result["capture_file_path"])
                     except OSError as e:
-                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}".format(e))
+                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
                     self.updated_signal.emit()
                     break
 

@@ -87,6 +87,9 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
                 if cls is preference_pages[0]:
                     parent = item
 
+        # expand all items by default
+        self.uiTreeWidget.expandAll()
+
     def _showPreferencesPageSlot(self, current, previous):
         """
         Shows a preference page in the current dialog.
