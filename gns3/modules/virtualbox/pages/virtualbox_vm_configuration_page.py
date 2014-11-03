@@ -108,7 +108,9 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
                 else:
                     settings["name"] = name
 
-            settings["console"] = self.uiConsolePortSpinBox.value()
+            if "console" in settings:
+                settings["console"] = self.uiConsolePortSpinBox.value()
+
             settings["enable_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
         else:

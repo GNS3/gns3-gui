@@ -293,7 +293,7 @@ class ShapeItem:
             border_color.setAlpha(border_transparency)
         pen.setColor(border_color)
         if border_width is not None:
-            pen.setWidth(border_width)
+            pen.setWidth(int(border_width))
         if border_style:
             pen.setStyle(QtCore.Qt.PenStyle(border_style))
         self.setPen(pen)

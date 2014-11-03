@@ -38,7 +38,7 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
     :param parent: parent widget
     """
 
-    def __init__(self, parent):
+    def __init__(self, iou_devices, parent):
 
         QtGui.QWizard.__init__(self, parent)
         self.setupUi(self)
@@ -60,6 +60,8 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         # Mandatory fields
         self.uiNameImageWizardPage.registerField("name*", self.uiNameLineEdit)
         self.uiNameImageWizardPage.registerField("image*", self.uiIOUImageLineEdit)
+
+        self._iou_devices = iou_devices
 
         if IOU.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
@@ -144,6 +146,12 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             if self.uiCloudRadioButton.isChecked():
                 QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
                 return False
+        if self.currentPage() == self.uiNameImageWizardPage:
+            name = self.uiNameLineEdit.text()
+            for iou_device in self._iou_devices.values():
+                if iou_device["name"] == name:
+                    QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
+                    return False
         return True
 
     def getSettings(self):

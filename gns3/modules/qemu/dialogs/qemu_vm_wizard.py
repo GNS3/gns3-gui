@@ -41,7 +41,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
     :param parent: parent widget
     """
 
-    def __init__(self, parent):
+    def __init__(self, qemu_vms, parent):
 
         QtGui.QWizard.__init__(self, parent)
         self.setupUi(self)
@@ -64,6 +64,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiDiskImageHdbWizardPage.registerField("hdb_disk_image*", self.uiHdbDiskImageLineEdit)
         self.uiASAWizardPage.registerField("initrd*", self.uiInitrdLineEdit)
         self.uiASAWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
+
+        self._qemu_vms = qemu_vms
 
         if Qemu.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
@@ -197,6 +199,13 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             if not server.connected() and ConnectToServer(self, server) is False:
                 return False
             self._server = server
+
+        if self.currentPage() == self.uiNameTypeWizardPage:
+            name = self.uiNameLineEdit.text()
+            for qemu_vm in self._qemu_vms.values():
+                if qemu_vm["name"] == name:
+                    QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
+                    return False
 
         if self.currentPage() == self.uiBinaryMemoryWizardPage:
             if not self.uiQemuListComboBox.count():

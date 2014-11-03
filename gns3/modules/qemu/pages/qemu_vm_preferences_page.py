@@ -129,7 +129,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         Creates a new VM.
         """
 
-        wizard = QemuVMWizard(parent=self)
+        wizard = QemuVMWizard(self._qemu_vms, parent=self)
         wizard.show()
         if wizard.exec_():
             new_vm_settings = wizard.getSettings()
