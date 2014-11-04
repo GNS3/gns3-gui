@@ -87,9 +87,35 @@ elif sys.platform.startswith("win"):
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
-    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Terminal': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"telnet %h %p ; exit\"'",
-                                             'iTerm': "/usr/bin/osascript -e 'tell app \"iTerm\"' -e 'activate' -e 'set myterm to the first terminal' -e 'tell myterm' -e 'set mysession to (make new session at the end of sessions)' -e 'tell mysession' -e 'exec command \"telnet %h %p\"' -e 'set name to \"%d\"' -e 'end tell' -e 'end tell' -e 'end tell'",
-                                             'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /ARG %d /T /TELNET %h %p'}
+    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
+        'Terminal': "osascript -e 'tell application \"Terminal\"'"
+                    " -e 'activate'"
+                    " -e 'set _tab to do script \"telnet %h %p ; exit\"'"
+                    " -e 'delay 1'"
+                    " -e 'repeat while _tab exists'"
+                    " -e 'delay 1'"
+                    " -e 'end repeat'"
+                    " -e 'end tell'",
+        'iTerm': "osascript -e 'tell application \"iTerm\"'"
+                 " -e 'activate'"
+                 " -e 'if (count of terminals) = 0 then'"
+                 " -e '  set t to (make new terminal)'"
+                 " -e 'else'"
+                 " -e '  set t to current terminal'"
+                 " -e 'end if'"
+                 " -e 'tell t'"
+                 " -e '  set s to (make new session at the end of sessions)'"
+                 " -e '  tell s'"
+                 " -e '    exec command (\"telnet %h %p\")'"
+                 " -e '    delay 1'"
+                 " -e '    repeat while s exists'"
+                 " -e '      delay 1'"
+                 " -e '    end repeat'"
+                 " -e '  end tell'"
+                 " -e 'end tell'"
+                 " -e 'end tell'",
+        'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /ARG %d /T /TELNET %h %p'
+    }
 
     # default Mac OS X Telnet console command
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Terminal"]
@@ -231,6 +257,8 @@ PACKET_CAPTURE_SETTING_TYPES = {
     "command_auto_start": bool,
     "packet_capture_analyzer_command": str,
 }
+
+ENABLE_CLOUD = True
 
 CLOUD_SETTINGS = {
     "cloud_user_name": "",

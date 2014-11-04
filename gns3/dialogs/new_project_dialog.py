@@ -19,6 +19,7 @@ import os
 import shutil
 from ..qt import QtCore, QtGui
 from ..ui.new_project_dialog_ui import Ui_NewProjectDialog
+from ..settings import ENABLE_CLOUD
 
 
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
@@ -39,6 +40,8 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
 
         self.uiNameLineEdit.textEdited.connect(self._projectNameSlot)
         self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
+        if not ENABLE_CLOUD:
+            self.uiCloudRadioButton.hide()
 
     def keyPressEvent(self, e):
         """

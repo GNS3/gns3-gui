@@ -892,7 +892,27 @@ class GraphicsView(QtGui.QGraphicsView):
             console_host = node.server().host
             try:
                 from .telnet_console import telnetConsole
-                telnetConsole(name, console_host, console_port)
+
+                telnet_callback = None
+
+                try:
+                    if node.server().isCloud():
+                        # override target host with localhost
+                        console_host = '127.0.0.1'
+                        ep = node.server().tunnel.add_endpoint(console_host, console_port)
+                        # override target port with local tunneled port
+                        local_addr, _ = ep.get()
+                        console_port = local_addr[1]
+
+                        def cb(*args, **kwargs):
+                            node.server().tunnel.remove_endpoint(ep)
+                            log.debug('Console DONE on port {}'.format(args[2]))
+                        telnet_callback = cb
+
+                except AttributeError:
+                    pass
+
+                telnetConsole(name, console_host, console_port, telnet_callback)
             except (OSError, ValueError) as e:
                 QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
                 return False

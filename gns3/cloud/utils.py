@@ -223,7 +223,8 @@ class WSConnectThread(QThread):
     """
     established = pyqtSignal(str)
 
-    def __init__(self, parent, provider, server_id, host, port, ca_file, auth_user, auth_password):
+    def __init__(self, parent, provider, server_id, host, port, ca_file,
+                 auth_user, auth_password, ssh_pkey):
         super(QThread, self).__init__(parent)
         self._provider = provider
         self._server_id = server_id
@@ -232,6 +233,7 @@ class WSConnectThread(QThread):
         self._ca_file = ca_file
         self._auth_user = auth_user
         self._auth_password = auth_password
+        self._ssh_pkey = ssh_pkey
 
     def run(self):
         """
@@ -240,7 +242,8 @@ class WSConnectThread(QThread):
 
         log.debug('WSConnectThread.run() begin')
         servers = Servers.instance()
-        server = servers.getCloudServer(self._host, self._port, self._ca_file, self._auth_user, self._auth_password)
+        server = servers.getCloudServer(self._host, self._port, self._ca_file,
+                                        self._auth_user, self._auth_password, self._ssh_pkey)
         log.debug('after getCloudServer call. {}'.format(server))
         self.established.emit(str(self._server_id))
 

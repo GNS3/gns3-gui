@@ -45,7 +45,7 @@ from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.import_cloud_project_dialog import ImportCloudProjectDialog
-from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES
+from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES, ENABLE_CLOUD
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
@@ -121,7 +121,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
-        self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
+        if ENABLE_CLOUD:
+            self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 
         # set the images directory
         self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
@@ -141,9 +142,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
-
-        #FIXME: hide the cloud dock for release
-        # self.uiCloudInspectorDockWidget.hide()
 
         # Network Manager (used to check for update)
         self._network_manager = QtNetwork.QNetworkAccessManager(self)
