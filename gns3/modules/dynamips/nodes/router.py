@@ -262,6 +262,8 @@ class Router(Node):
             params["mac_addr"] = self._settings["mac_addr"] = initial_settings.pop("mac_addr")
         if "chassis" in initial_settings:
             params["chassis"] = self._settings["chassis"] = initial_settings.pop("chassis")
+        if "cloud_path" in initial_settings:
+            params["cloud_path"] = self._settings["cloud_path"] = initial_settings.pop("cloud_path")
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
