@@ -4,7 +4,7 @@ import socket
 import paramiko
 import logging
 from io import StringIO
-from endpoint import Endpoint
+from .endpoint import Endpoint
 
 log = logging.getLogger(__name__)
 
@@ -72,7 +72,7 @@ class Tunnel(object):
         if hasattr(data, 'readlines'):
             key_file = data
         else:
-            key_file = StringIO.StringIO()
+            key_file = StringIO()
             key_file.write(data)
             key_file.flush()
             key_file.seek(0)
@@ -121,11 +121,11 @@ class Tunnel(object):
         new_endpoint.enable()
         self.end_points[new_endpoint.getId()] = new_endpoint
 
-        return new_endpoint.getId()
+        return new_endpoint
 
-    def remove_endpoint(self, name):
-        if name in self.end_points:
-            self.end_points[name].disable()
+    def remove_endpoint(self, endpoint):
+        if endpoint.getId() in self.end_points:
+            self.end_points[endpoint.getId()].disable()
 
     def list_endpoints(self):
         remotes = {}

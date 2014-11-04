@@ -299,7 +299,7 @@ class Servers(QtCore.QObject):
 
         return self._remote_servers
 
-    def getCloudServer(self, host, port, ca_file, auth_user, auth_password):
+    def getCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey):
         """
         Return a websocket connection to the cloud server, creating one if none exists.
 
@@ -314,9 +314,11 @@ class Servers(QtCore.QObject):
                 return server
 
         heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
-        return self._addCloudServer(host, port, ca_file, auth_user, auth_password, heartbeat_freq)
+        return self._addCloudServer(host, port, ca_file, auth_user, auth_password, ssh_pkey,
+                                    heartbeat_freq)
     
-    def _addCloudServer(self, host, port, ca_file, auth_user, auth_password, heartbeat_freq):
+    def _addCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey,
+                        heartbeat_freq):
         """
         Create a websocket connection to the specified cloud server
 
@@ -331,8 +333,9 @@ class Servers(QtCore.QObject):
         url = "wss://{host}:{port}".format(host=host, port=port)
         log.debug('Starting SecureWebSocketClient url={}'.format(url))
         log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
+        log.debug('Starting SecureWebSocketClient ssh_pkey={}'.format(ssh_pkey))
         server = SecureWebSocketClient(url)
-        server.setSecureOptions(ca_file, auth_user, auth_password)
+        server.setSecureOptions(ca_file, auth_user, auth_password, ssh_pkey)
         server.setCloud(True)
         server.enableHeartbeatsAt(heartbeat_freq)
         self._cloud_servers[host] = server

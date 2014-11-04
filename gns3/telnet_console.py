@@ -18,6 +18,7 @@
 """
 Functions to start external console terminals.
 """
+from PyQt4.QtCore import QThread, pyqtSignal
 
 import sys
 import shlex
@@ -28,7 +29,38 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def telnetConsole(name, host, port):
+class ConsoleThread(QThread):
+    """
+
+    """
+    consoleDone = pyqtSignal(str, str, int)
+
+    def __init__(self, parent, command, name, host, port):
+        super(QThread, self).__init__(parent)
+        self._command = command
+        self._name = name
+        self._host = host
+        self._port = port
+
+    def run(self):
+        try:
+            if sys.platform.startswith("win"):
+                # use the string on Windows
+                subprocess.call(self._command)
+            else:
+                # use arguments on other platforms
+                args = shlex.split(self._command)
+                subprocess.call(args)
+
+            # emit signal upon completion
+            self.consoleDone.emit(self._name, self._host, self._port)
+
+        except (OSError, ValueError) as e:
+            log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
+            raise
+
+
+def telnetConsole(name, host, port, callback=None):
     """
     Start a Telnet console program.
 
@@ -46,14 +78,8 @@ def telnetConsole(name, host, port):
     command = command.replace("%d", name)
     log.info('starting telnet console "{}"'.format(command))
 
-    try:
-        if sys.platform.startswith("win"):
-            # use the string on Windows
-            subprocess.Popen(command)
-        else:
-            # use arguments on other platforms
-            args = shlex.split(command)
-            subprocess.Popen(args)
-    except (OSError, ValueError) as e:
-        log.warning('could not start Telnet console "{}": {}'.format(command, e))
-        raise
+    console_thread = ConsoleThread(MainWindow.instance(), command, name, host, port)
+    if callback is not None:
+        console_thread.consoleDone.connect(callback)
+
+    console_thread.start()
