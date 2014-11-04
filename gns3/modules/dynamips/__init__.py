@@ -396,6 +396,34 @@ class Dynamips(Module):
             params.update({"project_name": project_name})
         server.send_notification("dynamips.settings", params)
 
+    def allocateServer(self, node_class, use_cloud=False):
+        """
+        Allocates a server.
+
+        :param node_class: Node object
+
+        :returns: allocated server (WebSocketClient instance)
+        """
+
+        # allocate a server for the node
+        servers = Servers.instance()
+
+        if use_cloud:
+            from ...topology import Topology
+            topology = Topology.instance()
+            top_instance = topology.anyInstance()
+            server = servers.getCloudServer(top_instance.host, top_instance.port, top_instance.ssl_ca_file)
+        else:
+            if self._settings["use_local_server"]:
+                # use the local server
+                server = servers.localServer()
+            else:
+                # pick up a remote server (round-robin method)
+                server = next(iter(servers))
+                if not server:
+                    raise ModuleError("No remote server is configured")
+        return server
+
     def createNode(self, node_class, server):
         """
         Creates a new node.
@@ -491,7 +519,11 @@ class Dynamips(Module):
                 if wic in ios_router:
                     settings[wic] = ios_router[wic]
 
-            node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
+            if node.server().isCloud():
+                settings["cloud_path"] = "images/IOS"
+                node.setup(ios_router["image"], ios_router["ram"], initial_settings=settings)
+            else:
+                node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
         else:
             node.setup()
 

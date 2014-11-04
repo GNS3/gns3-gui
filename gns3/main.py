@@ -194,7 +194,11 @@ def main():
             if options.debug:
                 root_logger = logging.getLogger()
                 root_logger.setLevel(logging.DEBUG)
-                root_handler = root_logger.handlers[0]
+                if len(root_logger.handlers) > 0:
+                    root_handler = root_logger.handlers[0]
+                else:
+                    root_handler = logging.StreamHandler()
+                    root_logger.addHandler(root_handler)
                 root_handler.setLevel(logging.DEBUG)
             else:
                 handler.setLevel(logging.INFO)
