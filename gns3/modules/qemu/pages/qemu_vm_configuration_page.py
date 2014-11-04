@@ -182,6 +182,9 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             server = settings["server"]
             if server == "local":
                 server = Servers.instance().localServer()
+            else:
+                host, port = server.rsplit(":")
+                server = Servers.instance().getRemoteServer(host, port)
 
         self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
         self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
