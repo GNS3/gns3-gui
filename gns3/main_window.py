@@ -19,6 +19,8 @@
 Main window for the GUI.
 """
 
+import traceback
+import sys
 import os
 import platform
 import time
@@ -1246,6 +1248,47 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._setCurrentFile(path)
         return True
 
+    def _convertOldProject(self, path):
+        """
+        Converts old ini-style GNS3 topologies (<=0.8.7) to the newer version 1+ JSON format.
+
+        :param path: path to the project file.
+        """
+
+        try:
+            from gns3converter.main import do_conversion
+        except ImportError:
+            QtGui.QMessageBox.critical(self, "GNS3 converter", "Please install GNS3 converter in order to open old ini-style GNS3 projects")
+            return
+
+        try:
+            project_name = os.path.basename(os.path.dirname(path))
+            project_dir = os.path.join(self._settings["projects_path"], project_name)
+
+            while os.path.isdir(project_dir):
+                text, ok = QtGui.QInputDialog.getText(self,
+                                                      "GNS3 converter",
+                                                      "Project '{}' already exists. Please choose an alternative project name:".format(project_name),
+                                                      text=project_name + "2")
+                if ok:
+                    project_name = text
+                    project_dir = os.path.join(self._settings["projects_path"], project_name)
+                else:
+                    return
+
+            topology_def = {'file': path, 'snapshot': False}
+            do_conversion(topology_def, project_name, project_dir)
+        except Exception:
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            lines = traceback.format_exception(exc_type, exc_value, exc_tb)
+            tb = "".join(lines)
+            MessageBox(self, "GNS3 converter", "Could not convert project {}".format(path), details=tb)
+            return
+
+        QtGui.QMessageBox.information(self, "GNS3 converter", "Your project has been converted to a new format and can be found in: {}".format(project_dir))
+        project_path = os.path.join(project_dir, project_name + ".gns3")
+        self.loadProject(project_path)
+
     def loadProject(self, path):
         """
         Loads a project into GNS3.
@@ -1256,6 +1299,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiGraphicsView.reset()
         topology = Topology.instance()
         try:
+
+            extension = os.path.splitext(path)[1]
+            if extension == ".net":
+                self._convertOldProject(path)
+                return
+
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             with open(path, "r") as f:
                 need_to_save = False
