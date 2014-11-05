@@ -34,7 +34,8 @@ class CloudInstances(QtCore.QObject):
     when switching projects and is stored in the .ini file.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(CloudInstances, self).__init__(*args, **kwargs)
         self._instances = []
 
 
