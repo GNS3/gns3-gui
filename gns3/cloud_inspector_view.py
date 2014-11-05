@@ -20,6 +20,7 @@ from .topology import Topology
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
+from gns3.cloud_instances import CloudInstances
 
 log = logging.getLogger(__name__)
 
@@ -358,6 +359,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if not instances:
             return
 
+        CloudInstances.instance().update_instances(instances)
+
         # filter instances to only those in the current project
         project_instances = [i for i in instances if i.id in self._project_instances_id]
         for i in project_instances:
@@ -390,6 +393,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
                 self._running[i.id] = True
 
                 public_ip = self._get_public_ip(i.public_ips)
+                CloudInstances.instance().update_host_for_instance(i.id, public_ip)
                 # start GNS3 server and deadman switch
                 ssh_thread = StartGNS3ServerThread(
                     self, public_ip, topology_instance.private_key, i.id,
@@ -427,4 +431,5 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if ok:
             create_thread = CreateInstanceThread(self, self._provider, name, flavor_id, image_id)
             create_thread.instanceCreated.connect(self._main_window.add_instance_to_project)
+            create_thread.instanceCreated.connect(CloudInstances.instance().add_instance)
             create_thread.start()
