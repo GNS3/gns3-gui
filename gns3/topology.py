@@ -244,6 +244,9 @@ class Topology(object):
 
         self._instances.append(i)
 
+    def addInstance2(self, topology_instance):
+        self._instances.append(topology_instance)
+
     def removeInstance(self, id):
         """
         Removes an instance from this cloud topology
