@@ -28,6 +28,7 @@ from ..module import Module
 from ..module_error import ModuleError
 from .qemu_vm import QemuVM
 from .settings import QEMU_SETTINGS, QEMU_SETTING_TYPES
+from .settings import QEMU_VM_SETTINGS, QEMU_VM_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
@@ -88,40 +89,14 @@ class Qemu(Module):
         size = settings.beginReadArray("VM")
         for index in range(0, size):
             settings.setArrayIndex(index)
-
-            name = settings.value("name", "")
-            default_symbol = settings.value("default_symbol", ":/symbols/qemu_guest.normal.svg")
-            hover_symbol = settings.value("hover_symbol", ":/symbols/qemu_guest.selected.svg")
-            category = settings.value("category", Node.end_devices, type=int)
-            qemu_path = settings.value("qemu_path", "")
-            hda_disk_image = settings.value("hda_disk_image", "")
-            hdb_disk_image = settings.value("hdb_disk_image", "")
-            ram = settings.value("ram", 256, type=int)
-            adapters = settings.value("adapters", 1, type=int)
-            adapter_type = settings.value("adapter_type", "e1000")
-            initrd = settings.value("initrd", "")
-            kernel_image = settings.value("kernel_image", "")
-            kernel_command_line = settings.value("kernel_command_line", "")
-            options = settings.value("options", "")
-
-            server = settings.value("server", "local")
-
+            name = settings.value("name")
+            server = settings.value("server")
             key = "{server}:{name}".format(server=server, name=name)
-            self._qemu_vms[key] = {"name": name,
-                                   "default_symbol": default_symbol,
-                                   "hover_symbol": hover_symbol,
-                                   "category": category,
-                                   "qemu_path": qemu_path,
-                                   "hda_disk_image": hda_disk_image,
-                                   "hdb_disk_image": hdb_disk_image,
-                                   "ram": ram,
-                                   "adapters": adapters,
-                                   "adapter_type": adapter_type,
-                                   "options": options,
-                                   "initrd": initrd,
-                                   "kernel_image": kernel_image,
-                                   "kernel_command_line": kernel_command_line,
-                                   "server": server}
+            if key in self._qemu_vms or not name or not server:
+                continue
+            self._qemu_vms[key] = {}
+            for setting_name, default_value in QEMU_VM_SETTINGS.items():
+                self._qemu_vms[key][setting_name] = settings.value(setting_name, default_value, QEMU_VM_SETTING_TYPES[setting_name])
 
         settings.endArray()
         settings.endGroup()

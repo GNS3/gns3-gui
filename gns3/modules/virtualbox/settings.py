@@ -19,6 +19,8 @@
 Default VirtualBox settings.
 """
 
+from gns3.node import Node
+
 import sys
 import os
 
@@ -53,4 +55,30 @@ VBOX_SETTING_TYPES = {
     "udp_start_port_range": int,
     "udp_end_port_range": int,
     "use_local_server": bool,
+}
+
+VBOX_VM_SETTINGS = {
+    "vmname": "",
+    "default_symbol": ":/symbols/vbox_guest.normal.svg",
+    "hover_symbol": ":/symbols/vbox_guest.selected.svg",
+    "category": Node.end_devices,
+    "adapters": 1,
+    "adapter_start_index": 0,
+    "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
+    "headless": False,
+    "enable_console": False,
+    "server": "local"
+}
+
+VBOX_VM_SETTING_TYPES = {
+    "vmname": str,
+    "default_symbol": str,
+    "hover_symbol": str,
+    "category": int,
+    "adapters": int,
+    "adapter_start_index": int,
+    "adapter_type": str,
+    "headless": bool,
+    "enable_console": bool,
+    "server": str
 }

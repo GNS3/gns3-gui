@@ -22,6 +22,7 @@ VirtualBox VM implementation.
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
+from .settings import VBOX_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -49,11 +50,11 @@ class VirtualBoxVM(Node):
         self._settings = {"name": "",
                           "vmname": "",
                           "console": None,
-                          "adapters": 2,
-                          "adapter_start_index": 0,
-                          "adapter_type": "Automatic",
-                          "headless": False,
-                          "enable_console": False}
+                          "adapters": VBOX_VM_SETTINGS["adapters"],
+                          "adapter_start_index": VBOX_VM_SETTINGS["adapter_start_index"],
+                          "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
+                          "headless": VBOX_VM_SETTINGS["headless"],
+                          "enable_console": VBOX_VM_SETTINGS["enable_console"]}
 
         self._addAdapters(2)
 

@@ -36,8 +36,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         self.setupUi(self)
 
         self.uiAdapterTypesComboBox.clear()
-        self.uiAdapterTypesComboBox.addItems(["Automatic",
-                                              "PCnet-PCI II (Am79C970A)",
+        self.uiAdapterTypesComboBox.addItems(["PCnet-PCI II (Am79C970A)",
                                               "PCNet-FAST III (Am79C973)",
                                               "Intel PRO/1000 MT Desktop (82540EM)",
                                               "Intel PRO/1000 T Server (82543GC)",

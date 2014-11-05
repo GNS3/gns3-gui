@@ -31,6 +31,7 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
 from .. import IOU
+from ..settings import IOU_DEVICE_SETTINGS
 from ..ui.iou_device_preferences_page_ui import Ui_IOUDevicePreferencesPageWidget
 from ..pages.iou_device_configuration_page import iouDeviceConfigurationPage
 from ..dialogs.iou_device_wizard import IOUDeviceWizard
@@ -86,23 +87,10 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         if wizard.exec_():
 
             new_device_settings = wizard.getSettings()
-
             key = "{server}:{name}".format(server=new_device_settings["server"], name=new_device_settings["name"])
-            self._iou_devices[key] = {"name": new_device_settings["name"],
-                                      "path": new_device_settings["path"],
-                                      "default_symbol": new_device_settings["default_symbol"],
-                                      "hover_symbol": new_device_settings["hover_symbol"],
-                                      "category": new_device_settings["category"],
-                                      "image": os.path.basename(new_device_settings["path"]),
-                                      "initial_config": new_device_settings["initial_config"],
-                                      "use_default_iou_values": True,
-                                      "ram": 256,
-                                      "nvram": 128,
-                                      "ethernet_adapters": 2,
-                                      "serial_adapters": 2,
-                                      "server": new_device_settings["server"]}
-
+            self._iou_devices[key] = IOU_DEVICE_SETTINGS.copy()
             self._iou_devices[key].update(new_device_settings)
+
             item = QtGui.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, self._iou_devices[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["default_symbol"]))
@@ -123,11 +111,16 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             dialog.show()
             if dialog.exec_():
                 if iou_device["name"] != item.text(0):
-                    if "{}:{}".format(iou_device["server"], iou_device["name"]) in self._iou_devices:
-                        # FIXME: bug when changing name
-                        QtGui.QMessageBox.critical(self, "New IOU device", "IOU device name {} already exists".format(iou_device["name"]))
+                    new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
+                    if new_key in self._iou_devices:
+                        QtGui.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists for server {}".format(iou_device["name"],
+                                                                                                                                iou_device["server"]))
                         iou_device["name"] = item.text(0)
+                        return
+                    self._iou_devices[new_key] = self._iou_devices[key]
+                    del self._iou_devices[key]
                     item.setText(0, iou_device["name"])
+                    item.setData(0, QtCore.Qt.UserRole, new_key)
                 self._refreshInfo(iou_device)
 
     def _iouDeviceDeleteSlot(self):
