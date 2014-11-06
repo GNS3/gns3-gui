@@ -138,6 +138,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._updateRecentFileActions()
 
         self._cloud_provider = None
+        CloudInstances.instance().clear()
         CloudInstances.instance().load()
 
         # set the window icon
