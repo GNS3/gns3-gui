@@ -344,7 +344,7 @@ class VirtualBox(Module):
                     "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
                     "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
                     "headless": self._virtualbox_vms[vm]["headless"],
-                    "enable_console": self._virtualbox_vms[vm]["enable_console"]}
+                    "enable_remote_console": self._virtualbox_vms[vm]["enable_remote_console"]}
 
         vmname = self._virtualbox_vms[vm]["vmname"]
         node.setup(vmname, initial_settings=settings)

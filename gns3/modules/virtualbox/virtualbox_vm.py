@@ -54,7 +54,7 @@ class VirtualBoxVM(Node):
                           "adapter_start_index": VBOX_VM_SETTINGS["adapter_start_index"],
                           "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
                           "headless": VBOX_VM_SETTINGS["headless"],
-                          "enable_console": VBOX_VM_SETTINGS["enable_console"]}
+                          "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
 
         self._addAdapters(2)
 
@@ -644,7 +644,7 @@ class VirtualBoxVM(Node):
         :return: boolean
         """
 
-        if self._settings["enable_console"]:
+        if self._settings["enable_remote_console"]:
             return False
         return True
 

@@ -66,7 +66,7 @@ VBOX_VM_SETTINGS = {
     "adapter_start_index": 0,
     "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
     "headless": False,
-    "enable_console": False,
+    "enable_remote_console": False,
     "server": "local"
 }
 
@@ -79,6 +79,6 @@ VBOX_VM_SETTING_TYPES = {
     "adapter_start_index": int,
     "adapter_type": str,
     "headless": bool,
-    "enable_console": bool,
+    "enable_remote_console": bool,
     "server": str
 }
