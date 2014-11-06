@@ -58,7 +58,6 @@ class CloudInstances(QtCore.QObject):
     def add(self, topology_instance):
         self._instances.append(topology_instance)
 
-
     def add_instance(self, instance, keypair):
         if instance is None:
             return
@@ -132,3 +131,12 @@ class CloudInstances(QtCore.QObject):
                 info[name] = value
             ti = TopologyInstance(**info)
             self._instances.append(ti)
+
+    def get_instance(self, instance_id):
+        """
+        Retrieve a TopologyInstance objects if present
+        """
+        for i in self._instances:
+            if i.id == instance_id:
+                return i
+        return None
