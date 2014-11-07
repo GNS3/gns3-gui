@@ -28,6 +28,7 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
 from .. import VirtualBox
+from ..settings import VBOX_VM_SETTINGS
 from ..ui.virtualbox_vm_preferences_page_ui import Ui_VirtualBoxVMPreferencesPageWidget
 from ..pages.virtualbox_vm_configuration_page import virtualBoxVMConfigurationPage
 from ..dialogs.virtualbox_vm_wizard import VirtualBoxVMWizard
@@ -87,7 +88,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
         QtGui.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
-        QtGui.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_console"])])
+        QtGui.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
         QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
 
         # fill out the Network section
@@ -110,22 +111,10 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            if not new_vm_settings:
-                return
-
             key = "{server}:{vmname}".format(server=new_vm_settings["server"], vmname=new_vm_settings["vmname"])
-            self._virtualbox_vms[key] = {"vmname": "",
-                                         "default_symbol": ":/symbols/vbox_guest.normal.svg",
-                                         "hover_symbol": ":/symbols/vbox_guest.selected.svg",
-                                         "category": Node.end_devices,
-                                         "adapters": 1,
-                                         "adapter_start_index": 0,
-                                         "adapter_type": "Automatic",
-                                         "headless": False,
-                                         "enable_console": False,
-                                         "server": "local"}
-
+            self._virtualbox_vms[key] = VBOX_VM_SETTINGS.copy()
             self._virtualbox_vms[key].update(new_vm_settings)
+
             item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, self._virtualbox_vms[key]["vmname"])
             item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["default_symbol"]))
@@ -146,11 +135,16 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             dialog.show()
             if dialog.exec_():
                 if vbox_vm["vmname"] != item.text(0):
-                    if "{}:{}".format(vbox_vm["server"], vbox_vm["vmname"]) in self._virtualbox_vms:
-                        # FIXME: bug when changing name
-                        QtGui.QMessageBox.critical(self, "New VirtualBox VM", "VM name {} already exists".format(vbox_vm["vmname"]))
+                    new_key = "{server}:{vmname}".format(server=vbox_vm["server"], name=vbox_vm["vmname"])
+                    if new_key in self._virtualbox_vms:
+                        QtGui.QMessageBox.critical(self, "VirtualBox VM", "VirtualBox VM name {} already exists for server {}".format(vbox_vm["vmname"],
+                                                                                                                                      vbox_vm["server"]))
                         vbox_vm["vmname"] = item.text(0)
+                        return
+                    self._virtualbox_vms[new_key] = self._virtualbox_vms[key]
+                    del self._virtualbox_vms[key]
                     item.setText(0, vbox_vm["vmname"])
+                    item.setData(0, QtCore.Qt.UserRole, new_key)
                 self._refreshInfo(vbox_vm)
 
     def _vboxVMDeleteSlot(self):

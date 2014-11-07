@@ -29,6 +29,7 @@ from ..module import Module
 from ..module_error import ModuleError
 from .iou_device import IOUDevice
 from .settings import IOU_SETTINGS, IOU_SETTING_TYPES
+from .settings import IOU_DEVICE_SETTINGS, IOU_DEVICE_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
@@ -91,33 +92,14 @@ class IOU(Module):
         size = settings.beginReadArray("iou_device")
         for index in range(0, size):
             settings.setArrayIndex(index)
-            name = settings.value("name", "IOU{}".format(index + 1))
-            default_symbol = settings.value("default_symbol", ":/symbols/multilayer_switch.normal.svg")
-            hover_symbol = settings.value("hover_symbol", ":/symbols/multilayer_switch.selected.svg")
-            category = settings.value("category", Node.routers, type=int)
-            path = settings.value("path", "")
-            image = settings.value("image", "")
-            initial_config = settings.value("initial_config", "")
-            use_default_iou_values = settings.value("use_default_iou_values", True, type=bool)
-            ram = settings.value("ram", 256, type=int)
-            nvram = settings.value("nvram", 128, type=int)
-            ethernet_adapters = settings.value("ethernet_adapters", 2, type=int)
-            serial_adapters = settings.value("serial_adapters", 2, type=int)
-            server = settings.value("server", "local")
+            name = settings.value("name")
+            server = settings.value("server")
             key = "{server}:{name}".format(server=server, name=name)
-            self._iou_devices[key] = {"name": name,
-                                      "path": path,
-                                      "default_symbol": default_symbol,
-                                      "hover_symbol": hover_symbol,
-                                      "category": category,
-                                      "image": image,
-                                      "initial_config": initial_config,
-                                      "use_default_iou_values": use_default_iou_values,
-                                      "ram": ram,
-                                      "nvram": nvram,
-                                      "ethernet_adapters": ethernet_adapters,
-                                      "serial_adapters": serial_adapters,
-                                      "server": server}
+            if key in self._iou_devices or not name or not server:
+                continue
+            self._iou_devices[key] = {}
+            for setting_name, default_value in IOU_DEVICE_SETTINGS.items():
+                self._iou_devices[key][setting_name] = settings.value(setting_name, default_value, IOU_DEVICE_SETTING_TYPES[setting_name])
 
         settings.endArray()
         settings.endGroup()

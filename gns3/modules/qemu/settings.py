@@ -19,6 +19,8 @@
 Default QEMU settings.
 """
 
+from gns3.node import Node
+
 QEMU_SETTINGS = {
     "console_start_port_range": 5001,
     "console_end_port_range": 5500,
@@ -33,4 +35,40 @@ QEMU_SETTING_TYPES = {
     "udp_start_port_range": int,
     "udp_end_port_range": int,
     "use_local_server": bool,
+}
+
+QEMU_VM_SETTINGS = {
+    "name": "",
+    "default_symbol": ":/symbols/qemu_guest.normal.svg",
+    "hover_symbol": ":/symbols/qemu_guest.selected.svg",
+    "category": Node.end_devices,
+    "qemu_path": "",
+    "hda_disk_image": "",
+    "hdb_disk_image": "",
+    "ram": 256,
+    "adapters": 1,
+    "adapter_type": "e1000",
+    "options": "",
+    "initrd": "",
+    "kernel_image": "",
+    "kernel_command_line": "",
+    "server": "local"
+}
+
+QEMU_VM_SETTING_TYPES = {
+    "name": str,
+    "default_symbol": str,
+    "hover_symbol": str,
+    "category": int,
+    "qemu_path": str,
+    "hda_disk_image": str,
+    "hdb_disk_image": str,
+    "ram": int,
+    "adapters": int,
+    "adapter_type": str,
+    "options": str,
+    "initrd": str,
+    "kernel_image": str,
+    "kernel_command_line": str,
+    "server": str
 }

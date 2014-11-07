@@ -28,16 +28,16 @@ import math
 import zipfile
 
 from gns3.qt import QtCore, QtGui
-from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFileThread
 
+from .. import Dynamips
+from ..settings import IOS_ROUTER_SETTINGS
 from ..utils.decompress_ios import isIOSCompressed
 from ..utils.decompress_ios_thread import DecompressIOSThread
-from .. import Dynamips
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
 from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
 from ..dialogs.ios_router_wizard import IOSRouterWizard
@@ -110,25 +110,11 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
                 private_config = os.path.normpath(ios_base_config_path)
 
-            self._ios_routers[key] = {"name": ios_settings["name"],
-                                      "path": ios_settings["path"],
-                                      "image": ios_settings["image"],
-                                      "default_symbol": ":/symbols/router.normal.svg",
-                                      "hover_symbol": ":/symbols/router.selected.svg",
-                                      "category": Node.routers,
-                                      "startup_config": startup_config,
-                                      "private_config": private_config,
-                                      "platform": ios_settings["platform"],
-                                      "chassis": ios_settings["chassis"],
-                                      "idlepc": ios_settings["idlepc"],
-                                      "ram": ios_settings["ram"],
-                                      "nvram": 256,
-                                      "mac_addr": "",
-                                      "disk0": 1,
-                                      "disk1": 0,
-                                      "confreg": "0x2102",
-                                      "system_id": "FTX0945W0MY",
-                                      "server": ios_settings["server"]}
+            ios_settings["startup_config"] = startup_config
+            ios_settings["private_config"] = private_config
+
+            self._ios_routers[key] = IOS_ROUTER_SETTINGS.copy()
+            self._ios_routers[key].update(ios_settings)
 
             if ios_settings["server"] == 'cloud':
                 import logging
@@ -193,11 +179,16 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             dialog.show()
             if dialog.exec_():
                 if ios_router["name"] != item.text(0):
-                    if "{}:{}".format(ios_router["server"], ios_router["name"]) in self._ios_routers:
-                        # FIXME: bug when changing name
-                        QtGui.QMessageBox.critical(self, "New IOS router", "IOS router name {} already exists".format(ios_router["name"]))
+                    new_key = "{server}:{name}".format(server=ios_router["server"], name=ios_router["name"])
+                    if new_key in self._ios_routers:
+                        QtGui.QMessageBox.critical(self, "IOS router", "IOS router name {} already exists for server {}".format(ios_router["name"],
+                                                                                                                                ios_router["server"]))
                         ios_router["name"] = item.text(0)
+                        return
+                    self._ios_routers[new_key] = self._ios_routers[key]
+                    del self._ios_routers[key]
                     item.setText(0, ios_router["name"])
+                    item.setData(0, QtCore.Qt.UserRole, new_key)
                 self._refreshInfo(ios_router)
 
     def _iosRouterDeleteSlot(self):

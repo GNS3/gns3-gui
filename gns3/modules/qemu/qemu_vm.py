@@ -22,6 +22,7 @@ QEMU VM implementation.
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
+from .settings import QEMU_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -46,19 +47,19 @@ class QemuVM(Node):
         self._loading = False
         self._module = module
         self._ports = []
+
         self._settings = {"name": "",
                           "qemu_path": "",
                           "hda_disk_image": "",
                           "hdb_disk_image": "",
                           "options": "",
-                          "ram": 256,
+                          "ram": QEMU_VM_SETTINGS["ram"],
                           "console": None,
-                          "adapters": 1,
-                          "adapter_type": "e1000",
+                          "adapters": QEMU_VM_SETTINGS["adapters"],
+                          "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                           "initrd": "",
                           "kernel_image": "",
-                          "kernel_command_line": "",
-                          }
+                          "kernel_command_line": ""}
 
         self._addAdapters(1)
 

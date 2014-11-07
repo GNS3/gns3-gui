@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>275</height>
+    <width>203</width>
+    <height>225</height>
    </rect>
   </property>
   <property name="floating">
@@ -17,7 +17,7 @@
    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
   </property>
   <property name="windowTitle">
-   <string>GNS3 Jungle</string>
+   <string>Jungle Newsfeed</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -27,21 +27,30 @@
     <property name="sizeConstraint">
      <enum>QLayout::SetFixedSize</enum>
     </property>
-    <property name="margin">
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>2</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item>
      <widget class="QWebView" name="uiWebView" native="true">
       <property name="minimumSize">
        <size>
-        <width>300</width>
-        <height>250</height>
+        <width>200</width>
+        <height>200</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>300</width>
-        <height>250</height>
+        <width>200</width>
+        <height>200</height>
        </size>
       </property>
       <property name="url" stdset="0">

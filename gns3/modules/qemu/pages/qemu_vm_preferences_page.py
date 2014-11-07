@@ -29,6 +29,7 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
 from .. import Qemu
+from ..settings import QEMU_VM_SETTINGS
 from ..ui.qemu_vm_preferences_page_ui import Ui_QemuVMPreferencesPageWidget
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..dialogs.qemu_vm_wizard import QemuVMWizard
@@ -132,31 +133,15 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         wizard = QemuVMWizard(self._qemu_vms, parent=self)
         wizard.show()
         if wizard.exec_():
+
             new_vm_settings = wizard.getSettings()
-
             key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
-
             if key in self._qemu_vms:
                 QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(new_vm_settings["name"]))
                 return
-
-            self._qemu_vms[key] = {"name": "",
-                                   "default_symbol": ":/symbols/qemu_guest.normal.svg",
-                                   "hover_symbol": ":/symbols/qemu_guest.selected.svg",
-                                   "category": Node.end_devices,
-                                   "qemu_path": "default",
-                                   "hda_disk_image": "",
-                                   "hdb_disk_image": "",
-                                   "ram": 256,
-                                   "adapters": 1,
-                                   "adapter_type": "e1000",
-                                   "options": "",
-                                   "initrd": "",
-                                   "kernel_image": "",
-                                   "kernel_command_line": "",
-                                   "server": "local"}
-
+            self._qemu_vms[key] = QEMU_VM_SETTINGS.copy()
             self._qemu_vms[key].update(new_vm_settings)
+
             item = QtGui.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, self._qemu_vms[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._qemu_vms[key]["default_symbol"]))
@@ -177,11 +162,16 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             dialog.show()
             if dialog.exec_():
                 if qemu_vm["name"] != item.text(0):
-                    if "{}:{}".format(qemu_vm["server"], qemu_vm["name"]) in self._qemu_vms:
-                        # FIXME: bug when changing name
-                        QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(qemu_vm["name"]))
+                    new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
+                    if new_key in self._qemu_vms:
+                        QtGui.QMessageBox.critical(self, "QEMU VM", "QEMU VM name {} already exists for server {}".format(qemu_vm["name"],
+                                                                                                                          qemu_vm["server"]))
                         qemu_vm["name"] = item.text(0)
+                        return
+                    self._qemu_vms[new_key] = self._qemu_vms[key]
+                    del self._qemu_vms[key]
                     item.setText(0, qemu_vm["name"])
+                    item.setData(0, QtCore.Qt.UserRole, new_key)
                 self._refreshInfo(qemu_vm)
 
     def _qemuVMDeleteSlot(self):

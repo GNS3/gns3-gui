@@ -41,7 +41,9 @@ from .nodes.ethernet_switch import EthernetSwitch
 from .nodes.ethernet_hub import EthernetHub
 from .nodes.frame_relay_switch import FrameRelaySwitch
 from .nodes.atm_switch import ATMSwitch
-from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES, PLATFORMS_DEFAULT_RAM
+from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES
+from .settings import IOS_ROUTER_SETTINGS, IOS_ROUTER_SETTING_TYPES
+from .settings import PLATFORMS_DEFAULT_RAM
 
 PLATFORM_TO_CLASS = {
     "c1700": C1700,
@@ -111,54 +113,18 @@ class Dynamips(Module):
         settings = QtCore.QSettings()
         settings.beginGroup("IOSRouters")
 
-        #FIXME: this is ugly
         # load the IOS images
         size = settings.beginReadArray("ios_router")
         for index in range(0, size):
             settings.setArrayIndex(index)
-            name = settings.value("name", "")
-            path = settings.value("path", "")
-            image = settings.value("image", "")
-            startup_config = settings.value("startup_config", "")
-            private_config = settings.value("private_config", "")
-            default_symbol = settings.value("default_symbol", ":/symbols/router.normal.svg")
-            hover_symbol = settings.value("hover_symbol", ":/symbols/router.selected.svg")
-            category = settings.value("category", Node.routers, type=int)
-            platform = settings.value("platform", "")
-            chassis = settings.value("chassis", "")
-            idlepc = settings.value("idlepc", "")
-            mac_addr = settings.value("mac_addr", "")
-            ram = settings.value("ram", 128, type=int)
-            nvram = settings.value("nvram", 256, type=int)
-            disk0 = settings.value("disk0", 16, type=int)
-            disk1 = settings.value("disk1", 0, type=int)
-            confreg = settings.value("confreg", "0x2102")
-            system_id = settings.value("system_id", "FTX0945W0MY")
-            server = settings.value("server", "local")
-
+            name = settings.value("name")
+            server = settings.value("server")
             key = "{server}:{name}".format(server=server, name=name)
-            if key in self._ios_routers:
+            if key in self._ios_routers or not name or not server:
                 continue
-
-            self._ios_routers[key] = {"name": name,
-                                      "path": path,
-                                      "image": image,
-                                      "default_symbol": default_symbol,
-                                      "hover_symbol": hover_symbol,
-                                      "category": category,
-                                      "startup_config": startup_config,
-                                      "private_config": private_config,
-                                      "platform": platform,
-                                      "chassis": chassis,
-                                      "idlepc": idlepc,
-                                      "ram": ram,
-                                      "nvram": nvram,
-                                      "mac_addr": mac_addr,
-                                      "disk0": disk0,
-                                      "disk1": disk1,
-                                      "confreg": confreg,
-                                      "system_id": system_id,
-                                       "server": server}
+            self._ios_routers[key] = {}
+            for setting_name, default_value in IOS_ROUTER_SETTINGS.items():
+                self._ios_routers[key][setting_name] = settings.value(setting_name, default_value, IOS_ROUTER_SETTING_TYPES[setting_name])
 
             for slot_id in range(0, 7):
                 slot = "slot{}".format(slot_id)
@@ -169,6 +135,9 @@ class Dynamips(Module):
                 wic = "wic{}".format(wic_id)
                 if settings.contains(wic):
                     self._ios_routers[key][wic] = settings.value(wic, "")
+
+            platform = self._ios_routers[key]["platform"]
+            chassis = self._ios_routers[key]["chassis"]
 
             if platform == "c7200":
                 self._ios_routers[key]["midplane"] = settings.value("midplane", "vxr")

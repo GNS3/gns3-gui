@@ -15,12 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import os
-
 """
 Default IOU settings.
 """
+
+from gns3.node import Node
+
+import sys
+import os
+
 
 if sys.platform.startswith("linux"):
     paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
@@ -58,4 +61,36 @@ IOU_SETTING_TYPES = {
     "udp_start_port_range": int,
     "udp_end_port_range": int,
     "use_local_server": bool,
+}
+
+IOU_DEVICE_SETTINGS = {
+    "name": "",
+    "path": "",
+    "default_symbol": ":/symbols/multilayer_switch.normal.svg",
+    "hover_symbol": ":/symbols/multilayer_switch.selected.svg",
+    "category": Node.routers,
+    "image": "",
+    "initial_config": "",
+    "use_default_iou_values": True,
+    "ram": 256,
+    "nvram": 128,
+    "ethernet_adapters": 2,
+    "serial_adapters": 2,
+    "server": "local"
+}
+
+IOU_DEVICE_SETTING_TYPES = {
+    "name": str,
+    "path": str,
+    "default_symbol": str,
+    "hover_symbol": str,
+    "category": int,
+    "image": str,
+    "initial_config": str,
+    "use_default_iou_values": bool,
+    "ram": int,
+    "nvram": int,
+    "ethernet_adapters": int,
+    "serial_adapters": int,
+    "server": str
 }
