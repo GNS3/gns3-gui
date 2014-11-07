@@ -36,8 +36,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         self.setupUi(self)
 
         self.uiAdapterTypesComboBox.clear()
-        self.uiAdapterTypesComboBox.addItems(["Automatic",
-                                              "PCnet-PCI II (Am79C970A)",
+        self.uiAdapterTypesComboBox.addItems(["PCnet-PCI II (Am79C970A)",
                                               "PCNet-FAST III (Am79C973)",
                                               "Intel PRO/1000 MT Desktop (82540EM)",
                                               "Intel PRO/1000 T Server (82543GC)",
@@ -86,7 +85,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
-        self.uiEnableConsoleCheckBox.setChecked(settings["enable_console"])
+        self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -111,12 +110,12 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
             if "console" in settings:
                 settings["console"] = self.uiConsolePortSpinBox.value()
 
-            settings["enable_console"] = self.uiEnableConsoleCheckBox.isChecked()
+            settings["enable_remote_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
         else:
             del settings["name"]
             del settings["console"]
-            del settings["enable_console"]
+            del settings["enable_remote_console"]
 
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()

@@ -19,9 +19,10 @@
 Default Dynamips settings.
 """
 
+from gns3.node import Node
+
 import sys
 import os
-from collections import OrderedDict
 
 
 # default path to Dynamips executable
@@ -79,6 +80,50 @@ DYNAMIPS_SETTING_TYPES = {
     "jit_sharing_support": bool,
     "sparse_memory_support": bool,
     "mmap_support": bool,
+}
+
+IOS_ROUTER_SETTINGS = {
+    "name": "",
+    "path": "",
+    "image": "",
+    "default_symbol": ":/symbols/router.normal.svg",
+    "hover_symbol": ":/symbols/router.selected.svg",
+    "category": Node.routers,
+    "startup_config": "",
+    "private_config": "",
+    "platform": "",
+    "chassis": "",
+    "idlepc": "",
+    "ram": 128,
+    "nvram": 256,
+    "mac_addr": "",
+    "disk0": 1,
+    "disk1": 0,
+    "confreg": "0x2102",
+    "system_id": "FTX0945W0MY",
+    "server": "local"
+}
+
+IOS_ROUTER_SETTING_TYPES = {
+    "name": str,
+    "path": str,
+    "image": str,
+    "default_symbol": str,
+    "hover_symbol": str,
+    "category": int,
+    "startup_config": str,
+    "private_config": str,
+    "platform": str,
+    "chassis": str,
+    "idlepc": str,
+    "ram": int,
+    "nvram": int,
+    "mac_addr": str,
+    "disk0": int,
+    "disk1": int,
+    "confreg": str,
+    "system_id": str,
+    "server": str
 }
 
 # supported platforms with the default RAM value

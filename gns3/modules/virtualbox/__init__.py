@@ -26,6 +26,7 @@ from ..module import Module
 from ..module_error import ModuleError
 from .virtualbox_vm import VirtualBoxVM
 from .settings import VBOX_SETTINGS, VBOX_SETTING_TYPES
+from .settings import VBOX_VM_SETTINGS, VBOX_VM_SETTING_TYPES
 
 import logging
 log = logging.getLogger(__name__)
@@ -87,29 +88,14 @@ class VirtualBox(Module):
         size = settings.beginReadArray("VM")
         for index in range(0, size):
             settings.setArrayIndex(index)
-
-            vmname = settings.value("vmname", "")
-            adapters = settings.value("adapters", 1, type=int)
-            default_symbol = settings.value("default_symbol", ":/symbols/vbox_guest.normal.svg")
-            hover_symbol = settings.value("hover_symbol", ":/symbols/vbox_guest.selected.svg")
-            category = settings.value("category", Node.end_devices, type=int)
-            adapter_start_index = settings.value("adapter_start_index", 0, type=int)
-            adapter_type = settings.value("adapter_type", "Automatic")
-            headless = settings.value("headless", False, type=bool)
-            enable_console = settings.value("enable_console", False, type=bool)
-            server = settings.value("server", "local")
-
-            key = "{server}:{vmname}".format(server=server, vmname=vmname)
-            self._virtualbox_vms[key] = {"vmname": vmname,
-                                         "default_symbol": default_symbol,
-                                         "hover_symbol": hover_symbol,
-                                         "category": category,
-                                         "adapters": adapters,
-                                         "adapter_start_index": adapter_start_index,
-                                         "adapter_type": adapter_type,
-                                         "headless": headless,
-                                         "enable_console": enable_console,
-                                         "server": server}
+            name = settings.value("name")
+            server = settings.value("server")
+            key = "{server}:{name}".format(server=server, name=name)
+            if key in self._virtualbox_vms or not name or not server:
+                continue
+            self._virtualbox_vms[key] = {}
+            for setting_name, default_value in VBOX_VM_SETTINGS.items():
+                self._virtualbox_vms[key][setting_name] = settings.value(setting_name, default_value, VBOX_VM_SETTING_TYPES[setting_name])
 
         settings.endArray()
         settings.endGroup()
@@ -358,7 +344,7 @@ class VirtualBox(Module):
                     "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
                     "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
                     "headless": self._virtualbox_vms[vm]["headless"],
-                    "enable_console": self._virtualbox_vms[vm]["enable_console"]}
+                    "enable_remote_console": self._virtualbox_vms[vm]["enable_remote_console"]}
 
         vmname = self._virtualbox_vms[vm]["vmname"]
         node.setup(vmname, initial_settings=settings)
