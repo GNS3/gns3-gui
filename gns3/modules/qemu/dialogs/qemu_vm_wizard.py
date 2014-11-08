@@ -30,8 +30,10 @@ from gns3.main_window import MainWindow
 from gns3.modules.module_error import ModuleError
 from gns3.utils.connect_to_server import ConnectToServer
 
+from ....settings import ENABLE_CLOUD
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from .. import Qemu
+from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
 class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
@@ -73,6 +75,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
         # By default we use the local server
         self._server = Servers.instance().localServer()
+
+        if not ENABLE_CLOUD:
+            self.uiCloudRadioButton.hide()
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -186,19 +191,14 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         """
 
         if self.currentPage() == self.uiServerWizardPage:
-
-            #FIXME: prevent users to use "cloud"
-            if self.uiCloudRadioButton.isChecked():
-                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
-                return False
-
-            if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
-                server = Servers.instance().localServer()
-            else:
-                server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
-            if not server.connected() and ConnectToServer(self, server) is False:
-                return False
-            self._server = server
+            if not self.uiCloudRadioButton.isChecked():
+                if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                    server = Servers.instance().localServer()
+                elif self.uiRemoteRadioButton.isChecked():
+                    server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
+                if not server.connected() and ConnectToServer(self, server) is False:
+                    return False
+                self._server = server
 
         if self.currentPage() == self.uiNameTypeWizardPage:
             name = self.uiNameLineEdit.text()
@@ -221,15 +221,23 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
         if self.page(page_id) == self.uiBinaryMemoryWizardPage:
-            self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
-            self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-            self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
-            self._qemu_binaries_progress_dialog.show()
-            try:
-                Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
-            except ModuleError as e:
-                self._qemu_binaries_progress_dialog.reject()
-                QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+            if self.uiCloudRadioButton.isChecked():
+                for binary in QEMU_BINARIES_FOR_CLOUD:
+                    self.uiQemuListComboBox.addItem("{path}".format(path=binary), binary)
+                # Default to x86_64 for the user
+                index = self.uiQemuListComboBox.findData("x86_64", flags=QtCore.Qt.MatchEndsWith)
+                if index != -1:
+                    self.uiQemuListComboBox.setCurrentIndex(index)
+            else:
+                self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
+                self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+                self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
+                self._qemu_binaries_progress_dialog.show()
+                try:
+                    Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
+                except ModuleError as e:
+                    self._qemu_binaries_progress_dialog.reject()
+                    QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
 
     def _getQemuBinariesFromServerCallback(self, result, error=False):
         """
@@ -281,8 +289,11 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
         if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
-        else:
+        elif self.uiRemoteRadioButton.isChecked():
             server = self.uiRemoteServersComboBox.currentText()
+        else: # Cloud is selected
+            server = "cloud"
+
 
         qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
         settings = {
