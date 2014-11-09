@@ -933,7 +933,7 @@ class Router(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
-        # make the IOU path relative
+        # make the IOS path relative
         image_path = router["properties"]["image"]
         if self.server().isLocal():
             if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():

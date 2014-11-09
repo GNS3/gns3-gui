@@ -474,6 +474,9 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         self.uiGenericEthernetComboBox.clear()
         index = 0
         for interface in settings["interfaces"]:
+            if interface["name"].startswith("tap"):
+                # do not add TAP interfaces
+                continue
             self.uiGenericEthernetComboBox.addItem(interface["name"])
             self.uiGenericEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
             index += 1
@@ -483,7 +486,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         self.uiLinuxEthernetComboBox.clear()
         index = 0
         for interface in settings["interfaces"]:
-            if not interface["name"].startswith(r"\Device\NPF_"):
+            if not interface["name"].startswith(r"\Device\NPF_") and not interface["name"].startswith("tap"):
                 self.uiLinuxEthernetComboBox.addItem(interface["name"])
                 self.uiLinuxEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
                 index += 1

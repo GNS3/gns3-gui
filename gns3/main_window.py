@@ -92,12 +92,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
 
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
-        except ImportError:
-            pass
-
         self._settings = {}
         self._cloud_settings = {}
         self._loadSettings()
@@ -107,6 +101,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._max_recent_files = 5
         self._recent_file_actions = []
         self._start_time = time.time()
+
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
+        except ImportError:
+            pass
 
         self._project_settings = {
             "project_name": "unsaved",

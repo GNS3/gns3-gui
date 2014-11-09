@@ -25,6 +25,7 @@ from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
 from .cloud import Cloud
+from .host import Host
 
 
 import logging
@@ -241,7 +242,7 @@ class Builtin(Module):
         :returns: list of classes
         """
 
-        return [Cloud]
+        return [Cloud, Host]
 
     def nodes(self):
         """

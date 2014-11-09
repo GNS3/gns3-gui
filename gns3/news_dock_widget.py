@@ -46,7 +46,10 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         self._timer.timeout.connect(self._loadFinishedSlot)
         self._timer.setSingleShot(True)
         self._timer.start(5000)
-        self.uiWebView.load(QtCore.QUrl("http://as.gns3.com/software/docked_200x200.html"))
+        if parent.settings()["default_local_news"]:
+            self._loadFinishedSlot()
+        else:
+            self.uiWebView.load(QtCore.QUrl("http://as.gns3.com/software/docked_200x200.html"))
 
     def _refreshSlot(self):
         """

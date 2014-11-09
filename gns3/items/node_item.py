@@ -224,7 +224,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has been updated.
         """
 
-        self._node_label.setPlainText(self._node.name())
+        if self._node_label:
+            self._node_label.setPlainText(self._node.name())
         self.setUnsavedState()
 
         # update the link tooltips in case the
