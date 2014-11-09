@@ -88,10 +88,10 @@ class VirtualBox(Module):
         size = settings.beginReadArray("VM")
         for index in range(0, size):
             settings.setArrayIndex(index)
-            name = settings.value("name")
+            vmname = settings.value("vmname")
             server = settings.value("server")
-            key = "{server}:{name}".format(server=server, name=name)
-            if key in self._virtualbox_vms or not name or not server:
+            key = "{server}:{vmname}".format(server=server, vmname=vmname)
+            if key in self._virtualbox_vms or not vmname or not server:
                 continue
             self._virtualbox_vms[key] = {}
             for setting_name, default_value in VBOX_VM_SETTINGS.items():
@@ -335,6 +335,9 @@ class VirtualBox(Module):
             else:
                 vm = selected_vms[0]
 
+        #print(self._virtualbox_vms[vm]["linked_base"])
+        #linked_base = True
+
         for other_node in self._nodes:
             if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
                     (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
@@ -347,7 +350,7 @@ class VirtualBox(Module):
                     "enable_remote_console": self._virtualbox_vms[vm]["enable_remote_console"]}
 
         vmname = self._virtualbox_vms[vm]["vmname"]
-        node.setup(vmname, initial_settings=settings)
+        node.setup(vmname, linked_clone=False, initial_settings=settings)
 
     def reset(self):
         """

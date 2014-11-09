@@ -142,7 +142,7 @@ class Dynamips(Module):
             if platform == "c7200":
                 self._ios_routers[key]["midplane"] = settings.value("midplane", "vxr")
                 self._ios_routers[key]["npe"] = settings.value("npe", "npe-400")
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C7200-IO-2FE")
+                self._ios_routers[key]["slot0"] = settings.value("slot0", "C7200-IO-FE")
             else:
                 self._ios_routers[key]["iomem"] = 5
 

@@ -21,7 +21,6 @@ Handles the saving and loading of a topology.
 """
 
 import os
-from collections import namedtuple
 
 from .qt import QtCore, QtGui, QtSvg
 from .items.node_item import NodeItem
@@ -35,7 +34,6 @@ from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
 from .version import __version__
-from pkg_resources import parse_version
 
 import logging
 log = logging.getLogger(__name__)
@@ -70,9 +68,6 @@ class TopologyInstance:
         self.port = port
         self.ssl_ca = ssl_ca
         self.ssl_ca_file = ssl_ca_file
-
-
-
 
 class Topology(object):
     """

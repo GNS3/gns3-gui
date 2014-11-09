@@ -306,7 +306,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 chassis = ""
             self._populateAdapters(platform, chassis)
             if platform == "c7200":
-                self.uiSlot0comboBox.setCurrentIndex(self.uiSlot0comboBox.findText("C7200-IO-2FE"))
+                self.uiSlot0comboBox.setCurrentIndex(self.uiSlot0comboBox.findText("C7200-IO-FE"))
 
     def validateCurrentPage(self):
         """

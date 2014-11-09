@@ -1334,7 +1334,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self._project_settings["project_type"] = "local"
 
                 topology.load(json_topology)
-                self._loadCloudInstances()
 
                 if need_to_save:
                     self.saveProject(path)

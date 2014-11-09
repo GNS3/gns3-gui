@@ -41,6 +41,7 @@ class VirtualBoxVM(Node):
 
         log.info("VirtualBox VM instance is being created")
         self._vbox_id = None
+        self._linked_clone = False
         self._defaults = {}
         self._inital_settings = None
         self._export_directory = None
@@ -78,25 +79,31 @@ class VirtualBoxVM(Node):
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, vmname, name=None, console=None, vbox_id=None, initial_settings={}):
+    def setup(self, vmname, name=None, console=None, vbox_id=None, linked_clone=False, initial_settings={}):
         """
         Setups this VirtualBox VM.
 
         :param name: optional name
         """
 
+        self._linked_clone = linked_clone
+
         # let's create a unique name if none has been chosen
         if not name:
-            name = vmname
-            self.setName(name)
-            #name = self.allocateName("VBOX")
+            if linked_clone:
+                name = self.allocateName(vmname + " ")
+            else:
+                name = vmname
+                self.setName(name)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this VirtualBox VM")
             return
 
         params = {"name": name,
-                  "vmname": vmname}
+                  "vmname": vmname,
+                  "linked_clone": linked_clone}
+
         if console:
             params["console"] = self._settings["console"] = console
 
@@ -548,6 +555,7 @@ class VirtualBoxVM(Node):
 
         vbox_vm = {"id": self.id(),
                    "vbox_id": self._vbox_id,
+                   "linked_clone": self._linked_clone,
                    "type": self.__class__.__name__,
                    "description": str(self),
                    "properties": {},
@@ -576,6 +584,7 @@ class VirtualBoxVM(Node):
 
         self.node_info = node_info
         vbox_id = node_info.get("vbox_id")
+        linked_clone = node_info.get("linked_clone", False)
         settings = node_info["properties"]
         name = settings.pop("name")
         vmname = settings.pop("vmname")
@@ -585,7 +594,7 @@ class VirtualBoxVM(Node):
         self._loading = True
         log.info("VirtualBox VM {} is loading".format(name))
         self.setName(name)
-        self.setup(vmname, name, console, vbox_id, settings)
+        self.setup(vmname, name, console, vbox_id, linked_clone, settings)
 
     def _updatePortSettings(self):
         """
