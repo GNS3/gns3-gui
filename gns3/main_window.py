@@ -140,6 +140,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._updateRecentFileActions()
 
         self._cloud_provider = None
+        CloudInstances.instance().load()
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
@@ -387,7 +388,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # let all modules know about the new project files directory
                 self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
-                CloudInstances.instance().load()
                 topology = Topology.instance()
                 for instance in CloudInstances.instance().instances:
                     topology.addInstance2(instance)

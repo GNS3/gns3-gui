@@ -27,13 +27,13 @@ log = logging.getLogger(__name__)
 POLLING_TIMER = 10000  # in milliseconds
 
 
-class RunningInstanceState():
+class RunningInstanceState(NodeState):
     """
     GNS3 states for running instances
     """
-    IDLE = 0
-    GNS3SERVER_STARTED = 1
-    WS_CONNECTED = 2
+    GNS3SERVER_STARTING = 10
+    GNS3SERVER_STARTED = 11
+    WS_CONNECTED = 12
 
 
 class InstanceTableModel(QAbstractTableModel):
@@ -57,16 +57,18 @@ class InstanceTableModel(QAbstractTableModel):
         self._ids = []
         self.reset()
 
-    def _get_status_icon_path(self, state):
+    def _get_status_icon_path(self, instance):
         """
         Return a string pointing to the graphic resource
         """
-        if state == NodeState.RUNNING:
+        if instance.state == RunningInstanceState.WS_CONNECTED:
             return ':/icons/led_green.svg'
-        elif state in (NodeState.REBOOTING, NodeState.PENDING, NodeState.UNKNOWN):
-            return ':/icons/led_yellow.svg'
-        else:
+        elif instance.state in (RunningInstanceState.STOPPED,
+                                RunningInstanceState.TERMINATED,
+                                RunningInstanceState.UNKNOWN):
             return ':/icons/led_red.svg'
+        else:
+            return ':/icons/led_yellow.svg'
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self._instances)
@@ -81,7 +83,7 @@ class InstanceTableModel(QAbstractTableModel):
         if role == Qt.DecorationRole:
             if col == 1:
                 # status
-                return QIcon(self._get_status_icon_path(instance.state))
+                return QIcon(self._get_status_icon_path(instance))
 
         elif role == Qt.DisplayRole:
             if col == 0:
@@ -196,9 +198,6 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         # map flavor ids to combobox indexes
         self.flavor_index_id = []
 
-        # internal status for running instances
-        self._running_instances = {}
-
         # TODO: Delete me
         self._running = {}
 
@@ -303,7 +302,11 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         :param host_ip: the host ip of the instance
         :param start_response: the output of the server start script on the remote host
         """
-        self._running_instances[id] = RunningInstanceState.GNS3SERVER_STARTED
+        # instance state transition: GNS3SERVER_STARTING --> GNS3SERVER_STARTED
+        instance = self._model.getInstanceById(id)
+        instance.state = RunningInstanceState.GNS3SERVER_STARTED
+        self._model.updateInstanceFields(instance, ['state'])
+
         data = ast.literal_eval(start_response)
 
         # TODO: have the server return the port it is running on
@@ -340,7 +343,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         This slot is called when the WSConnectThread succesfully connected to
         the websocket on the remote host
         """
-        self._running_instances[id] = RunningInstanceState.WS_CONNECTED
+        # instance state transition: GNS3SERVER_STARTED --> WS_CONNECTED
+        instance = self._model.getInstanceById(id)
+        instance.state = RunningInstanceState.WS_CONNECTED
+        self._model.updateInstanceFields(instance, ['state'])
 
     def _get_public_ip(self, ip_list):
         """
@@ -359,12 +365,14 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if not instances:
             return
 
-        CloudInstances.instance().update_instances(instances)
+        instance_manager = CloudInstances.instance()
+        instance_manager.update_instances(instances)
 
         # filter instances to only those in the current project
         project_instances = [i for i in instances if i.id in self._project_instances_id]
         for i in project_instances:
-            self._model.updateInstanceFields(i, ['state'])
+            if i.state != RunningInstanceState.RUNNING:
+                self._model.updateInstanceFields(i, ['state'])
 
         # cleanup removed instances
         real = set(i.id for i in project_instances)
@@ -373,41 +381,26 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             self._model.removeInstanceById(i)
         self.uiInstancesTableView.resizeColumnsToContents()
 
-        # handle state for running instances
-        topology = Topology.instance()
+        # start gns3server if needed
         for i in project_instances:
-            if i.state != NodeState.RUNNING:
-                self._running_instances = {}
-                continue
+            # get the real instance state from self._model
+            model_instance = self._model.getInstanceById(i.id)
 
-            topology_instance = topology.getInstance(i.id)
-            if topology_instance is None:
-                continue
+            if model_instance.state == RunningInstanceState.RUNNING:
+                # instance state transition: RUNNING --> GNS3SERVER_STARTING
+                model_instance.state = RunningInstanceState.GNS3SERVER_STARTING
+                self._model.updateInstanceFields(model_instance, ['state'])
 
-            state = self._running_instances.setdefault(i.id, RunningInstanceState.IDLE)
-
-            if state == RunningInstanceState.IDLE:
-                # TODO: Try to avoid re-entering this code multiple times simultaneously.
-                if self._running.get(i.id):
-                    return
-                self._running[i.id] = True
-
-                public_ip = self._get_public_ip(i.public_ips)
-                CloudInstances.instance().update_host_for_instance(i.id, public_ip)
                 # start GNS3 server and deadman switch
+                public_ip = self._get_public_ip(i.public_ips)
+                instance_manager.update_host_for_instance(i.id, public_ip)
+                topology_instance = instance_manager.get_instance(i.id)
                 ssh_thread = StartGNS3ServerThread(
                     self, public_ip, topology_instance.private_key, i.id,
                     self._provider.username, self._provider.api_key, self._provider.region,
                     1800)
                 ssh_thread.gns3server_started.connect(self._gns3server_started_slot)
                 ssh_thread.start()
-            elif state == RunningInstanceState.GNS3SERVER_STARTED:
-                # start WSS connection
-                # TODO: Don't think this is used, remove.
-                # wss_thread = WSConnectThread(self, i.id)
-                # wss_thread.established.connect(self._wss_connected_slot)
-                # wss_thread.start()
-                pass
 
     def _populate_model(self, instances):
         log.info('CloudInspectorView._populate_model')
