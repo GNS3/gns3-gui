@@ -324,6 +324,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
         self.project_new_signal.connect(self.project_created)
 
+        # cloud inspector
+        self.CloudInspectorView.instanceSelected.connect(self._cloud_instance_selected)
+        self.CloudInspectorView.instanceDeselected.connect(self._cloud_instance_deselected)
+
     def telnetConsoleCommand(self):
         """
         Returns the Telnet console command line.
@@ -1632,3 +1636,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         dialog.show()
         dialog.exec_()
+
+    def _cloud_instance_selected(self, instance_id):
+        """
+        Clear selection, then select all the nodes on the graphics view
+        running on the instance_id instance
+        """
+        self.uiGraphicsView.scene().clearSelection()
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, NodeItem):
+                if item.node()._server.instance_id == instance_id:
+                    item.setSelected(True)
+
+    def _cloud_instance_deselected(self, instance_id):
+        """
+        Deselect all the nodes on the graphics view
+        """
+        self.uiGraphicsView.scene().clearSelection()
