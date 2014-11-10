@@ -216,7 +216,7 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="uiLaunchNewProjectDialogCheckBox">
             <property name="text">
-             <string>Launch the new project dialog at startup</string>
+             <string>Launch the new project dialog on startup</string>
             </property>
             <property name="checked">
              <bool>true</bool>

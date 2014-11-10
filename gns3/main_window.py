@@ -1108,7 +1108,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                                                                                                                    error=e))
 
         self._createTemporaryProject()
-        if self._settings["launch_project_dialog_at_startup"]:
+        if self._settings["auto_launch_project_dialog"]:
             project_dialog = NewProjectDialog(self, showed_from_startup=True)
             project_dialog.show()
             create_new_project = project_dialog.exec_()

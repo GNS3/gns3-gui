@@ -179,6 +179,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiLocalServerPortSpinBox.setValue(local_server.port)
         self.uiLocalServerPathLineEdit.setText(servers.localServerPath())
         self.uiLocalServerAutoStartCheckBox.setChecked(servers.localServerAutoStart())
+        self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers.localServerAllowConsoleFromAnywhere())
 
         # load remote server preferences
         self._remote_servers.clear()
@@ -206,6 +207,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         local_server_port = self.uiLocalServerPortSpinBox.value()
         local_server_path = self.uiLocalServerPathLineEdit.text()
         local_server_auto_start = self.uiLocalServerAutoStartCheckBox.isChecked()
+        local_server_allow_console_from_anywhere = self.uiConsoleConnectionsToAnyIPCheckBox.isChecked()
 
         if local_server_path:
             if not os.path.isfile(local_server_path):
@@ -214,7 +216,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                 QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
             else:
                 server = servers.localServer()
-                if servers.localServerPath() != local_server_path or server.host != local_server_host or server.port != local_server_port:
+                if servers.localServerPath() != local_server_path or \
+                                server.host != local_server_host or \
+                                server.port != local_server_port or \
+                                servers.localServerAllowConsoleFromAnywhere() != local_server_allow_console_from_anywhere:
 
                     # first check if we have nodes on the local server
                     local_nodes = []
@@ -228,6 +233,12 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                         MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing settings", nodes)
                         return
 
+                    servers.setLocalServer(local_server_path,
+                                           local_server_host,
+                                           local_server_port,
+                                           local_server_auto_start,
+                                           local_server_allow_console_from_anywhere)
+
                     # local server settings have changed, let's stop the current local server.
                     if server.connected() and not sys.platform.startswith('win'):
                         server.close_connection()
@@ -240,8 +251,12 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                         dialog.exec_()
                     else:
                         QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(local_server_path))
-
-            servers.setLocalServer(local_server_path, local_server_host, local_server_port, local_server_auto_start)
+        else:
+            servers.setLocalServer(local_server_path,
+                                   local_server_host,
+                                   local_server_port,
+                                   local_server_auto_start,
+                                   local_server_allow_console_from_anywhere)
 
         # save the remote server preferences
         servers.updateRemoteServers(self._remote_servers)

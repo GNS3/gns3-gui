@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Fri Oct 10 10:46:44 2014
+# Created: Sun Nov  9 18:49:51 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,6 +48,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerToolButton.setObjectName(_fromUtf8("uiLocalServerToolButton"))
         self.horizontalLayout.addWidget(self.uiLocalServerToolButton)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 2)
+        spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 9, 0, 1, 2)
         self.uiLocalServerHostLabel = QtGui.QLabel(self.uiLocalTabWidget)
         self.uiLocalServerHostLabel.setObjectName(_fromUtf8("uiLocalServerHostLabel"))
         self.gridLayout.addWidget(self.uiLocalServerHostLabel, 2, 0, 1, 1)
@@ -57,8 +59,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerPortLabel = QtGui.QLabel(self.uiLocalTabWidget)
         self.uiLocalServerPortLabel.setObjectName(_fromUtf8("uiLocalServerPortLabel"))
         self.gridLayout.addWidget(self.uiLocalServerPortLabel, 4, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 8, 0, 1, 2)
         self.uiLocalServerPortSpinBox = QtGui.QSpinBox(self.uiLocalTabWidget)
         self.uiLocalServerPortSpinBox.setSuffix(_fromUtf8(" TCP"))
         self.uiLocalServerPortSpinBox.setMaximum(65535)
@@ -69,6 +69,9 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerAutoStartCheckBox.setChecked(True)
         self.uiLocalServerAutoStartCheckBox.setObjectName(_fromUtf8("uiLocalServerAutoStartCheckBox"))
         self.gridLayout.addWidget(self.uiLocalServerAutoStartCheckBox, 6, 0, 1, 2)
+        self.uiConsoleConnectionsToAnyIPCheckBox = QtGui.QCheckBox(self.uiLocalTabWidget)
+        self.uiConsoleConnectionsToAnyIPCheckBox.setObjectName(_fromUtf8("uiConsoleConnectionsToAnyIPCheckBox"))
+        self.gridLayout.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 7, 0, 1, 1)
         self.uiTabWidget.addTab(self.uiLocalTabWidget, _fromUtf8(""))
         self.uiRemoteTabWidget = QtGui.QWidget()
         self.uiRemoteTabWidget.setObjectName(_fromUtf8("uiRemoteTabWidget"))
@@ -134,6 +137,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:", None))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
         self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Automatically start the server on startup", None))
+        self.uiConsoleConnectionsToAnyIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Allow console connections to any local IP address", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("ServerPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("ServerPreferencesPageWidget", "Port", None))
