@@ -45,7 +45,7 @@ class WebSocketClient(WebSocketBaseClient):
     _instance_count = 1
 
     def __init__(self, url, protocols=None, extensions=None, 
-                 heartbeat_freq=None, ssl_options=None, headers=None):
+                 heartbeat_freq=None, ssl_options=None, headers=None, instance_id=None):
 
         WebSocketBaseClient.__init__(self, url,
                                      protocols,
@@ -62,6 +62,7 @@ class WebSocketClient(WebSocketBaseClient):
         self._fd_notifier = None
         self._heartbeat_timer = None
         self._tunnel = None
+        self._instance_id = instance_id
 
         # create an unique ID
         self._id = WebSocketClient._instance_count
@@ -75,6 +76,10 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         return self._id
+
+    @property
+    def instance_id(self):
+        return self._instance_id
 
     def version(self):
         """
@@ -367,7 +372,7 @@ class WebSocketClient(WebSocketBaseClient):
 
 class SecureWebSocketClient(WebSocketClient):
     def __init__(self, url, protocols=None, extensions=None,
-                 heartbeat_freq=None, ssl_options=None, headers=None):
+                 heartbeat_freq=None, ssl_options=None, headers=None, instance_id=None):
 
         self.use_auth = True
         self.use_ssl = False
@@ -379,12 +384,8 @@ class SecureWebSocketClient(WebSocketClient):
         else:
             url = "ws:{}".format(rest)
 
-        WebSocketClient.__init__(self, url,
-                                     protocols,
-                                     extensions,
-                                     heartbeat_freq,
-                                     ssl_options,
-                                     headers)
+        WebSocketClient.__init__(self, url, protocols, extensions, heartbeat_freq, ssl_options,
+                                 headers, instance_id)
 
 
     def setSecureOptions(self, ca_file, auth_user, auth_password, ssh_pkey):
