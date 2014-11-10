@@ -177,7 +177,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         instanceSelected(int) Emitted when users click and select an instance on the inspector.
         Param int is the ID of the instance
     """
-    instanceSelected = pyqtSignal(int)
+    instanceSelected = pyqtSignal(str)
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
@@ -195,7 +195,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
         # connections
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
-        self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
+        self.uiInstancesTableView.clicked.connect(self._rowChanged)
         self.uiCreateInstanceButton.clicked.connect(self._create_new_instance)
 
         self._pollingTimer = QTimer(self)
@@ -279,13 +279,18 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance.name = 'Deleting...'
             self._model.updateInstanceFields(instance, ['name',])
 
-    def _rowChanged(self, current, previous):
+    def _rowChanged(self, index):
         """
         This slot is invoked every time users change the current selected row on the
         inspector
         """
-        if current.isValid():
-            instance = self._model.getInstance(current.row())
+        selection = self.uiInstancesTableView.selectionModel().selection()
+        if selection.isEmpty():
+            return
+
+        item = selection.indexes()[0]
+        if item.isValid():
+            instance = self._model.getInstance(item.row())
             self.instanceSelected.emit(instance.id)
 
     def _polling_slot(self):
