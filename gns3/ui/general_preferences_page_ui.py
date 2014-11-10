@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Sun Oct 26 19:14:55 2014
+# Created: Sun Nov  9 18:20:34 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -105,20 +105,24 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiCheckForUpdateCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
         self.uiCheckForUpdateCheckBox.setChecked(True)
         self.uiCheckForUpdateCheckBox.setObjectName(_fromUtf8("uiCheckForUpdateCheckBox"))
-        self.gridLayout_2.addWidget(self.uiCheckForUpdateCheckBox, 0, 0, 2, 2)
+        self.gridLayout_2.addWidget(self.uiCheckForUpdateCheckBox, 1, 0, 2, 2)
         self.uiSlowStartAllLabel = QtGui.QLabel(self.uiGeneralMiscGroupBox)
         self.uiSlowStartAllLabel.setObjectName(_fromUtf8("uiSlowStartAllLabel"))
-        self.gridLayout_2.addWidget(self.uiSlowStartAllLabel, 3, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiSlowStartAllLabel, 4, 0, 1, 2)
         self.uiSlowStartAllSpinBox = QtGui.QSpinBox(self.uiGeneralMiscGroupBox)
         self.uiSlowStartAllSpinBox.setMinimum(0)
         self.uiSlowStartAllSpinBox.setMaximum(10000)
         self.uiSlowStartAllSpinBox.setProperty("value", 0)
         self.uiSlowStartAllSpinBox.setObjectName(_fromUtf8("uiSlowStartAllSpinBox"))
-        self.gridLayout_2.addWidget(self.uiSlowStartAllSpinBox, 4, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiSlowStartAllSpinBox, 5, 0, 1, 2)
         self.uiLinkManualModeCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
         self.uiLinkManualModeCheckBox.setChecked(True)
         self.uiLinkManualModeCheckBox.setObjectName(_fromUtf8("uiLinkManualModeCheckBox"))
-        self.gridLayout_2.addWidget(self.uiLinkManualModeCheckBox, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiLinkManualModeCheckBox, 3, 0, 1, 1)
+        self.uiLaunchNewProjectDialogCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
+        self.uiLaunchNewProjectDialogCheckBox.setChecked(True)
+        self.uiLaunchNewProjectDialogCheckBox.setObjectName(_fromUtf8("uiLaunchNewProjectDialogCheckBox"))
+        self.gridLayout_2.addWidget(self.uiLaunchNewProjectDialogCheckBox, 0, 0, 1, 1)
         self.gridLayout_8.addWidget(self.uiGeneralMiscGroupBox, 2, 0, 1, 2)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_8.addItem(spacerItem1, 4, 0, 1, 2)
@@ -288,6 +292,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each device start when starting all devices:", None))
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
         self.uiLinkManualModeCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Always use manual mode when adding links", None))
+        self.uiLaunchNewProjectDialogCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Launch the new project dialog at startup", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralTab), _translate("GeneralPreferencesPageWidget", "General", None))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings for Telnet connections", None))
         self.uiTelnetConsolePreconfiguredCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Preconfigured commands:", None))

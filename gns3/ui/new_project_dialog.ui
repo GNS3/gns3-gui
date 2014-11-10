@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
-    <height>175</height>
+    <width>491</width>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,17 +23,7 @@
    <property name="sizeConstraint">
     <enum>QLayout::SetFixedSize</enum>
    </property>
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="uiButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="3">
     <widget class="QGroupBox" name="uiProjectGroupBox">
      <property name="title">
       <string>Project</string>
@@ -128,6 +118,30 @@
        </spacer>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="uiOpenProjectPushButton">
+     <property name="text">
+      <string>&amp;Open a project</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="uiRecentProjectsPushButton">
+     <property name="text">
+      <string>&amp;Recent projects...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDialogButtonBox" name="uiButtonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
     </widget>
    </item>
   </layout>

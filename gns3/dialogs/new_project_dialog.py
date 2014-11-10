@@ -25,9 +25,13 @@ from ..settings import ENABLE_CLOUD
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
     """
     New project dialog.
+
+    :param parent: parent widget.
+    :param showed_from_startup: boolean to indicate if this dialog
+    has been opened automatically when GNS3 started.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, showed_from_startup=False):
 
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -40,8 +44,14 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
 
         self.uiNameLineEdit.textEdited.connect(self._projectNameSlot)
         self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
+        self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
+        self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
         if not ENABLE_CLOUD:
             self.uiCloudRadioButton.hide()
+
+        if not showed_from_startup:
+            self.uiOpenProjectPushButton.hide()
+            self.uiRecentProjectsPushButton.hide()
 
     def keyPressEvent(self, e):
         """
@@ -70,6 +80,35 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
     def getNewProjectSettings(self):
 
         return self._project_settings
+
+    def _menuTriggeredSlot(self, action):
+        """
+        Closes this dialog when a recent project
+        has been opened.
+
+        :param action: ignored.
+        """
+
+        self.reject()
+
+    def _openProjectActionSlot(self):
+        """
+        Opens a project and closes this dialog.
+        """
+
+        self._main_window.openProjectActionSlot()
+        self.reject()
+
+    def _showRecentProjectsSlot(self):
+        """
+        lot to show all the recent projects in a menu.
+        """
+
+        menu = QtGui.QMenu()
+        menu.triggered.connect(self._menuTriggeredSlot)
+        for action in self._main_window._recent_file_actions:
+            menu.addAction(action)
+        menu.exec_(QtGui.QCursor.pos())
 
     def done(self, result):
 

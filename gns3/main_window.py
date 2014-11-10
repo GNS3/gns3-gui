@@ -132,7 +132,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for i in range(0, self._max_recent_files):
             action = QtGui.QAction(self.uiFileMenu)
             action.setVisible(False)
-            action.triggered.connect(self._openRecentFileSlot)
+            action.triggered.connect(self.openRecentFileSlot)
             self._recent_file_actions.append(action)
         self.uiFileMenu.insertActions(self.uiQuitAction, self._recent_file_actions)
         self._recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
@@ -256,7 +256,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # file menu connections
         self.uiNewProjectAction.triggered.connect(self._newProjectActionSlot)
-        self.uiOpenProjectAction.triggered.connect(self._openProjectActionSlot)
+        self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
@@ -360,6 +360,33 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._ignore_unsaved_state = value
 
+    def _createNewProject(self, new_project_settings):
+        """
+        Crates a new project.
+
+        :param new_project_settings: project settings (dict)
+        """
+
+        self.uiGraphicsView.reset()
+        # create the destination directory for project files
+        try:
+            os.makedirs(new_project_settings["project_files_dir"])
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"]), str(e))
+            return
+
+        # let all modules know about the new project files directory
+        self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
+
+        topology = Topology.instance()
+        for instance in CloudInstances.instance().instances:
+            topology.addInstance2(instance)
+
+        self._project_settings.update(new_project_settings)
+        self.saveProject(new_project_settings["project_path"])
+
     def _newProjectActionSlot(self):
         """
         Slot called to create a new project.
@@ -373,34 +400,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.project_about_to_close_signal.emit(self._project_settings["project_path"])
 
             if create_new_project:
-                self.uiGraphicsView.reset()
                 new_project_settings = project_dialog.getNewProjectSettings()
-
-                # create the destination directory for project files
-                try:
-                    os.makedirs(new_project_settings["project_files_dir"])
-                except FileExistsError:
-                    pass
-                except OSError as e:
-                    QtGui.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"]), str(e))
-                    return
-
-                # let all modules know about the new project files directory
-                self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
-
-                topology = Topology.instance()
-                for instance in CloudInstances.instance().instances:
-                    topology.addInstance2(instance)
-
-                self._project_settings.update(new_project_settings)
-                self.saveProject(new_project_settings["project_path"])
-
+                self.uiGraphicsView.reset(new_project_settings)
             else:
                 self._createTemporaryProject()
 
             self.project_new_signal.emit(self._project_settings["project_path"])
 
-    def _openProjectActionSlot(self):
+    def openProjectActionSlot(self):
         """
         Slot called to open a project.
         """
@@ -415,7 +422,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if self.loadProject(path):
                 self.project_new_signal.emit(path)
 
-    def _openRecentFileSlot(self):
+    def openRecentFileSlot(self):
         """
         Slot called to open recent file from the File menu.
         """
@@ -1035,8 +1042,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._gettingStartedActionSlot(auto=True)
-        self._createTemporaryProject()
-        self._newProjectActionSlot()
 
         # connect to the local server
         servers = Servers.instance()
@@ -1101,6 +1106,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
                                                                                                                                                    port=server.port,
                                                                                                                                                    error=e))
+
+        self._createTemporaryProject()
+        if self._settings["launch_project_dialog_at_startup"]:
+            project_dialog = NewProjectDialog(self, showed_from_startup=True)
+            project_dialog.show()
+            create_new_project = project_dialog.exec_()
+            if create_new_project:
+                new_project_settings = project_dialog.getNewProjectSettings()
+                self._createNewProject(new_project_settings)
+                self.project_new_signal.emit(self._project_settings["project_path"])
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)

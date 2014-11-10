@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/new_project_dialog.ui'
 #
-# Created: Mon Oct 20 16:31:02 2014
+# Created: Sun Nov  9 18:17:35 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,16 +27,11 @@ class Ui_NewProjectDialog(object):
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName(_fromUtf8("NewProjectDialog"))
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewProjectDialog.resize(472, 175)
+        NewProjectDialog.resize(491, 169)
         NewProjectDialog.setModal(True)
         self.gridLayout_2 = QtGui.QGridLayout(NewProjectDialog)
         self.gridLayout_2.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.uiButtonBox = QtGui.QDialogButtonBox(NewProjectDialog)
-        self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
-        self.gridLayout_2.addWidget(self.uiButtonBox, 1, 0, 1, 1)
         self.uiProjectGroupBox = QtGui.QGroupBox(NewProjectDialog)
         self.uiProjectGroupBox.setObjectName(_fromUtf8("uiProjectGroupBox"))
         self.gridLayout = QtGui.QGridLayout(self.uiProjectGroupBox)
@@ -88,7 +83,18 @@ class Ui_NewProjectDialog(object):
         self.gridLayout.addWidget(self.uiCloudRadioButton, 2, 2, 1, 1)
         spacerItem = QtGui.QSpacerItem(201, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 2, 3, 1, 2)
-        self.gridLayout_2.addWidget(self.uiProjectGroupBox, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiProjectGroupBox, 0, 0, 1, 3)
+        self.uiOpenProjectPushButton = QtGui.QPushButton(NewProjectDialog)
+        self.uiOpenProjectPushButton.setObjectName(_fromUtf8("uiOpenProjectPushButton"))
+        self.gridLayout_2.addWidget(self.uiOpenProjectPushButton, 1, 0, 1, 1)
+        self.uiRecentProjectsPushButton = QtGui.QPushButton(NewProjectDialog)
+        self.uiRecentProjectsPushButton.setObjectName(_fromUtf8("uiRecentProjectsPushButton"))
+        self.gridLayout_2.addWidget(self.uiRecentProjectsPushButton, 1, 1, 1, 1)
+        self.uiButtonBox = QtGui.QDialogButtonBox(NewProjectDialog)
+        self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
+        self.gridLayout_2.addWidget(self.uiButtonBox, 1, 2, 1, 1)
 
         self.retranslateUi(NewProjectDialog)
         QtCore.QObject.connect(self.uiButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), NewProjectDialog.accept)
@@ -104,4 +110,6 @@ class Ui_NewProjectDialog(object):
         self.uiTypeLabel.setText(_translate("NewProjectDialog", "Type:", None))
         self.uiLocalRadioButton.setText(_translate("NewProjectDialog", "Local", None))
         self.uiCloudRadioButton.setText(_translate("NewProjectDialog", "Cloud", None))
+        self.uiOpenProjectPushButton.setText(_translate("NewProjectDialog", "&Open a project", None))
+        self.uiRecentProjectsPushButton.setText(_translate("NewProjectDialog", "&Recent projects...", None))
 
