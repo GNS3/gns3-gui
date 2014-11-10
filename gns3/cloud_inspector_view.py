@@ -102,7 +102,13 @@ class InstanceTableModel(QAbstractTableModel):
                     return 'Unknown'
             elif col == 3:
                 # devices
-                return 0
+                count = 0
+                topology = Topology.instance()
+                for node in topology.nodes():
+                    id = node._server.instance_id or 0
+                    if instance.id == id:
+                        count += 1
+                return count
             return None
 
     def headerData(self, section, orientation, role=None):
@@ -160,7 +166,7 @@ class InstanceTableModel(QAbstractTableModel):
             self.addInstance(instance)
 
     def getInstanceById(self, instance_id):
-        return self._instances[instance_id]
+        return self._instances.get(instance_id, None)
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
@@ -171,7 +177,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         instanceSelected(int) Emitted when users click and select an instance on the inspector.
         Param int is the ID of the instance
     """
-    instanceSelected = pyqtSignal(int)
+    instanceSelected = pyqtSignal(str)
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
@@ -189,7 +195,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
         # connections
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
-        self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
+        self.uiInstancesTableView.clicked.connect(self._rowChanged)
         self.uiCreateInstanceButton.clicked.connect(self._create_new_instance)
 
         self._pollingTimer = QTimer(self)
@@ -215,15 +221,12 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._provider = main_win.cloudProvider
         self._settings = main_win.cloudSettings()
         log.info('CloudInspectorView.load')
-        # TODO: If a network error occurs in the first ListInstances call,
-        # the instance will *never* appear in the cloud inspector and will
-        # not get cleaned up when the gui exits.  Fix this bug.
 
         for i in instances:
             self._project_instances_id.append(i["id"])
 
         update_thread = ListInstancesThread(self, self._provider)
-        update_thread.instancesReady.connect(self._populate_model)
+        update_thread.instancesReady.connect(self._update_model)
         update_thread.start()
         self._pollingTimer.start(POLLING_TIMER)
         # fill sizes comboboxes
@@ -273,13 +276,18 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance.name = 'Deleting...'
             self._model.updateInstanceFields(instance, ['name',])
 
-    def _rowChanged(self, current, previous):
+    def _rowChanged(self, index):
         """
         This slot is invoked every time users change the current selected row on the
         inspector
         """
-        if current.isValid():
-            instance = self._model.getInstance(current.row())
+        selection = self.uiInstancesTableView.selectionModel().selection()
+        if selection.isEmpty():
+            return
+
+        item = selection.indexes()[0]
+        if item.isValid():
+            instance = self._model.getInstance(item.row())
             self.instanceSelected.emit(instance.id)
 
     def _polling_slot(self):
@@ -334,7 +342,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
         log.debug('Cloud server gns3server started.')
         wss_thread = WSConnectThread(self, self._provider, id, host_ip, port, ca_file,
-                                     username, password, ssh_pkey)
+                                     username, password, ssh_pkey, id)
         wss_thread.established.connect(self._wss_connected_slot)
         wss_thread.start()
 
@@ -364,6 +372,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     def _update_model(self, instances):
         if not instances:
             return
+
+        # populate underlying model if this is the first call
+        if self._model.rowCount() == 0 and len(instances) > 0:
+            self._populate_model(instances)
 
         instance_manager = CloudInstances.instance()
         instance_manager.update_instances(instances)
