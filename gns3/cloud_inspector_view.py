@@ -160,7 +160,7 @@ class InstanceTableModel(QAbstractTableModel):
             self.addInstance(instance)
 
     def getInstanceById(self, instance_id):
-        return self._instances[instance_id]
+        return self._instances.get(instance_id, None)
 
 
 class CloudInspectorView(QWidget, Ui_CloudInspectorView):
@@ -364,6 +364,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
     def _update_model(self, instances):
         if not instances:
             return
+
+        # TODO populate model here if this is the first call
 
         instance_manager = CloudInstances.instance()
         instance_manager.update_instances(instances)
