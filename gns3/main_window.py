@@ -326,7 +326,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # cloud inspector
         self.CloudInspectorView.instanceSelected.connect(self._cloud_instance_selected)
-        self.CloudInspectorView.instanceDeselected.connect(self._cloud_instance_deselected)
 
     def telnetConsoleCommand(self):
         """
@@ -1647,9 +1646,3 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if isinstance(item, NodeItem):
                 if item.node()._server.instance_id == instance_id:
                     item.setSelected(True)
-
-    def _cloud_instance_deselected(self, instance_id):
-        """
-        Deselect all the nodes on the graphics view
-        """
-        self.uiGraphicsView.scene().clearSelection()
