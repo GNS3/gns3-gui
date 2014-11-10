@@ -215,15 +215,12 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._provider = main_win.cloudProvider
         self._settings = main_win.cloudSettings()
         log.info('CloudInspectorView.load')
-        # TODO: If a network error occurs in the first ListInstances call,
-        # the instance will *never* appear in the cloud inspector and will
-        # not get cleaned up when the gui exits.  Fix this bug.
 
         for i in instances:
             self._project_instances_id.append(i["id"])
 
         update_thread = ListInstancesThread(self, self._provider)
-        update_thread.instancesReady.connect(self._populate_model)
+        update_thread.instancesReady.connect(self._update_model)
         update_thread.start()
         self._pollingTimer.start(POLLING_TIMER)
         # fill sizes comboboxes
@@ -365,7 +362,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         if not instances:
             return
 
-        # TODO populate model here if this is the first call
+        # populate underlying model if this is the first call
+        if self._model.rowCount() == 0 and len(instances) > 0:
+            self._populate_model(instances)
 
         instance_manager = CloudInstances.instance()
         instance_manager.update_instances(instances)
