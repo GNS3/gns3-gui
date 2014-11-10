@@ -48,7 +48,8 @@ setup(
         "ws4py>=0.3.4",
         "apache-libcloud>=0.14.1",
         "requests",
-        "paramiko"
+        "paramiko",
+        "gns3-converter"
     ],
     entry_points={
         "gui_scripts": [

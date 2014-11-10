@@ -418,7 +418,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
                                                              "Open project",
                                                              self.projectsDirPath(),
-                                                             "All files (*.*);;GNS3 project files (*.gns3)",
+                                                             "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
             self.project_about_to_close_signal.emit(self._project_settings["project_path"])
@@ -1261,9 +1261,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         try:
-            from gns3converter.main import do_conversion
+            from gns3converter.main import do_conversion, get_snapshots, ConvertError
         except ImportError:
-            QtGui.QMessageBox.critical(self, "GNS3 converter", "Please install GNS3 converter in order to open old ini-style GNS3 projects")
+            QtGui.QMessageBox.critical(self, "GNS3 converter", "Please install gns3-converter in order to open old ini-style GNS3 projects")
             return
 
         try:
@@ -1281,13 +1281,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 else:
                     return
 
+            for snapshot_def in get_snapshots(path):
+                do_conversion(snapshot_def, project_name, project_dir, quiet=True)
+
             topology_def = {'file': path, 'snapshot': False}
-            do_conversion(topology_def, project_name, project_dir)
+            do_conversion(topology_def, project_name, project_dir, quiet=True)
+        except ConvertError as e:
+            QtGui.QMessageBox.critical(self, "GNS3 converter", "Could not convert {}: {}".format(path, e))
+            return
         except Exception:
             exc_type, exc_value, exc_tb = sys.exc_info()
             lines = traceback.format_exception(exc_type, exc_value, exc_tb)
             tb = "".join(lines)
-            MessageBox(self, "GNS3 converter", "Could not convert project {}".format(path), details=tb)
+            MessageBox(self, "GNS3 converter", "Unexpected exception while converting {}".format(path), details=tb)
             return
 
         QtGui.QMessageBox.information(self, "GNS3 converter", "Your project has been converted to a new format and can be found in: {}".format(project_dir))
