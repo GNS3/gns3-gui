@@ -171,7 +171,8 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         instanceSelected(int) Emitted when users click and select an instance on the inspector.
         Param int is the ID of the instance
     """
-    instanceSelected = pyqtSignal(int)
+    instanceSelected = pyqtSignal(str)
+    instanceDeselected = pyqtSignal(str)
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
@@ -189,7 +190,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
         # connections
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
-        self.uiInstancesTableView.selectionModel().currentRowChanged.connect(self._rowChanged)
+        self.uiInstancesTableView.selectionModel().selectionChanged.connect(self._rowChanged)
         self.uiCreateInstanceButton.clicked.connect(self._create_new_instance)
 
         self._pollingTimer = QTimer(self)
@@ -273,14 +274,22 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance.name = 'Deleting...'
             self._model.updateInstanceFields(instance, ['name',])
 
-    def _rowChanged(self, current, previous):
+    def _rowChanged(self, selection, deselection):
         """
         This slot is invoked every time users change the current selected row on the
         inspector
         """
-        if current.isValid():
-            instance = self._model.getInstance(current.row())
-            self.instanceSelected.emit(instance.id)
+        if not deselection.isEmpty():
+            for item in deselection.indexes():
+                if item.isValid():
+                    instance = self._model.getInstance(item.row())
+                    self.instanceDeselected.emit(instance.id)
+
+        if not selection.isEmpty():
+            item = selection.indexes()[0]
+            if item.isValid():
+                instance = self._model.getInstance(item.row())
+                self.instanceSelected.emit(instance.id)
 
     def _polling_slot(self):
         """
