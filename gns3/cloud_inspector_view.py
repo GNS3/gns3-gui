@@ -102,7 +102,13 @@ class InstanceTableModel(QAbstractTableModel):
                     return 'Unknown'
             elif col == 3:
                 # devices
-                return 0
+                count = 0
+                topology = Topology.instance()
+                for node in topology.nodes():
+                    id = node._server.instance_id or 0
+                    if instance.id == id:
+                        count += 1
+                return count
             return None
 
     def headerData(self, section, orientation, role=None):
@@ -334,7 +340,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
         log.debug('Cloud server gns3server started.')
         wss_thread = WSConnectThread(self, self._provider, id, host_ip, port, ca_file,
-                                     username, password, ssh_pkey)
+                                     username, password, ssh_pkey, id)
         wss_thread.established.connect(self._wss_connected_slot)
         wss_thread.start()
 
