@@ -25,7 +25,7 @@ import re
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.utils.message_box import MessageBox
-from gns3.dialogs.exec_command_dialog import ExecCommandDialog
+from gns3.utils.run_in_terminal import RunInTerminal
 
 from ....settings import ENABLE_CLOUD
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
@@ -89,8 +89,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                              1: self.uiWic1comboBox,
                              2: self.uiWic2comboBox}
 
-        self.uiTestIOSImagePushButton.hide()  # hide it because it doesn't work
-
         self._ios_routers = ios_routers
 
         if Dynamips.instance().settings()["use_local_server"]:
@@ -137,14 +135,22 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self.uiChassisComboBox.addItems(CHASSIS[platform])
 
     def _testIOSImageSlot(self):
+        """
+        Slot to locally test the IOS image.
+        """
 
         platform = self.uiPlatformComboBox.currentText()
         ram = self.uiRamSpinBox.value()
         ios_image = self.uiIOSImageLineEdit.text()
-        params = ["-P", platform[1:], "-r", str(ram), ios_image]
-        dialog = ExecCommandDialog(self, "/usr/bin/dynamips", params)
-        dialog.show()
-        dialog.exec_()
+        dynamips = Dynamips.instance().settings()["path"]
+        command = '{path} -P {platform} -r {ram} "{ios_image}"'.format(path=dynamips,
+                                                                       platform=platform[1:],
+                                                                       ram=ram,
+                                                                       ios_image=ios_image)
+        try:
+            RunInTerminal(command)
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "IOS image", "Could not test the IOS image: {}".format(e))
 
     def _idlePCFinderSlot(self):
         """
