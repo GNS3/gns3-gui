@@ -434,6 +434,9 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
                                         "then wait for the instance to appear in the inspector.")
 
         if ok:
+            if not name.endswith("-gns3"):
+                name += "-gns3"
+
             create_thread = CreateInstanceThread(self, self._provider, name, flavor_id, image_id)
             create_thread.instanceCreated.connect(self._main_window.add_instance_to_project)
             create_thread.instanceCreated.connect(CloudInstances.instance().add_instance)
