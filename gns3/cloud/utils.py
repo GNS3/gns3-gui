@@ -12,6 +12,7 @@ import zipfile
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
+from .exceptions import KeyPairExists
 from .rackspace_ctrl import RackspaceCtrl, get_provider
 from ..topology import Topology
 from ..servers import Servers
@@ -87,8 +88,19 @@ class CreateInstanceThread(QThread):
         self._image_id = image_id
 
     def run(self):
-        k = self._provider.create_key_pair(self._name)
+        log.debug("Creating cloud keypair with name {}".format(self._name))
+        try:
+            k = self._provider.create_key_pair(self._name)
+        except KeyPairExists:
+            log.debug("Cloud keypair with name {} exists.  Recreating.".format(self._name))
+            # delete keypairs if they already exist
+            self._provider.delete_key_pair_by_name(self._name)
+            k = self._provider.create_key_pair(self._name)
+
+        log.debug("Creating cloud server with name {}".format(self._name))
         i = self._provider.create_instance(self._name, self._flavor_id, self._image_id, k)
+        log.debug("Cloud server {} created".format(self._name))
+
         self.instanceCreated.emit(i, k)
 
 
