@@ -29,6 +29,7 @@ from gns3.qt import QtCore, QtGui
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
+from gns3.cloud.utils import UploadFileThread
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -97,6 +98,33 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOUDevicesTreeWidget.setCurrentItem(item)
+
+            if new_device_settings["server"] == 'cloud':
+                import logging
+                log = logging.getLogger(__name__)
+
+                log.debug(new_device_settings["image"])
+                # Start uploading the image to cloud files
+
+                self._upload_image_progress_dialog = QtGui.QProgressDialog(
+                    "Uploading image file {}".format(new_device_settings['image']), "Cancel", 0, 0, parent=self)
+                self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+                self._upload_image_progress_dialog.setWindowTitle("IOU image upload")
+                self._upload_image_progress_dialog.show()
+                try:
+                    upload_thread = UploadFileThread(MainWindow.instance().cloudSettings(), self._iou_devices[key],
+                                                     'images/IOU')
+                    upload_thread.completed.connect(self._imageUploadComplete)
+                    upload_thread.start()
+                except Exception as e:
+                    self._upload_image_progress_dialog.reject()
+                    log.error(e)
+                    QtGui.QMessageBox.critical(self, "IOU image upload", "Error uploading IOU image: {}".format(e))
+
+    def _imageUploadComplete(self):
+        if self._upload_image_progress_dialog.wasCanceled():
+            return
+        self._upload_image_progress_dialog.accept()
 
     def _iouDeviceEditSlot(self):
         """

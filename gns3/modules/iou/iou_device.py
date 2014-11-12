@@ -134,6 +134,9 @@ class IOUDevice(Node):
         if console:
             params["console"] = self._settings["console"] = console
 
+        if "cloud_path" in initial_settings:
+            params["cloud_path"] = self._settings["cloud_path"] = initial_settings.pop("cloud_path")
+
         # other initial settings will be applied when the router has been created
         if initial_settings:
             self._inital_settings = initial_settings

@@ -7,32 +7,79 @@ Right now it only connects to the first cloud server listed in the config
 file.
 """
 
+import getopt
 import os
 import sys
 
 from PyQt4 import QtCore, QtGui
 
 
-if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
-    QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+SCRIPT_NAME = os.path.basename(__file__)
 
-app = QtGui.QApplication([])
-app.setOrganizationName("GNS3")
-app.setOrganizationDomain("gns3.net")
-app.setApplicationName("GNS3")
 
-settings = QtCore.QSettings()
+def parse_cmd_line(argv):
+    """
+    Parse command line arguments
 
-if not os.path.isfile(QtCore.QSettings().fileName()):
-    print('Config file {} not found! Aborting...'.format(QtCore.QSettings().fileName()))
-    sys.exit(1)
+    argv: Passed in sys.argv
+    """
 
-print('Reading config file {}...'.format(QtCore.QSettings().fileName()))
+
+    usage = """
+    USAGE: %s [-l] [-s <server_num>]
+
+    If no options are supplied a connection to server 1 will be opened.
+    Options:
+
+      -h, --help          Display this menu :)
+      -l, --list          List instances that are tracked
+      -s, --server-num    Connect to this server number (1-indexed)
+    """ % (SCRIPT_NAME)
+
+    short_args = "hls:"
+    long_args = ("help", "list", "server-num=")
+    try:
+        opts, extra_opts = getopt.getopt(argv[1:], short_args, long_args)
+    except getopt.GetoptError as e:
+        print("Unrecognized command line option or missing required argument: %s" %(e))
+        print(usage)
+        sys.exit(2)
+
+    cmd_line_option_list = {'action': 'ssh', 'server': '1'}
+
+    for opt, val in opts:
+        if opt in ("-h", "--help"):
+            print(usage)
+            sys.exit(0)
+        elif opt in ("-l", "--list"):
+            cmd_line_option_list['action'] = 'list'
+        elif opt in ("-s", "--server-num"):
+            cmd_line_option_list['server'] = val
+
+    return cmd_line_option_list
+
+
+def setup():
+    if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
+        QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+
+    app = QtGui.QApplication([])
+    app.setOrganizationName("GNS3")
+    app.setOrganizationDomain("gns3.net")
+    app.setApplicationName("GNS3")
+
+    if not os.path.isfile(QtCore.QSettings().fileName()):
+        print('Config file {} not found! Aborting...'.format(QtCore.QSettings().fileName()))
+        sys.exit(1)
+
+    print('Config file: {}'.format(QtCore.QSettings().fileName()))
+
 
 def read_cloud_settings():
     settings = QtCore.QSettings()
     settings.beginGroup("CloudInstances")
 
+    instances = []
     # Load the instances
     size = settings.beginReadArray("cloud_instance")
     for index in range(0, size):
@@ -42,24 +89,43 @@ def read_cloud_settings():
         private_key = settings.value('private_key')
         public_key = settings.value('public_key')
 
-        # For now, just use the first system.
-        return name, host, private_key, public_key
-    raise Exception("Could not find any servers")
-    
+        instances.append((name, host, private_key, public_key))
 
-name, host, private_key, public_key = read_cloud_settings()
+    if len(instances) == 0:
+        raise Exception("Could not find any servers")
 
-print('Instance name: {}'.format(name))
-print('Host ip: {}'.format(host))
+    return instances
 
-public_key_path = '/tmp/id_rsa.pub'
-open(public_key_path, 'w').write(public_key)
-private_key_path = '/tmp/id_rsa'
-open(private_key_path, 'w').write(private_key)
-cmd = 'chmod 0600 {}'.format(private_key_path)
-os.system(cmd)
-print('Per-instance ssh keys written to {}'.format(private_key_path))
 
-cmd = 'ssh -i /tmp/id_rsa root@{}'.format(host)
-print(cmd)
-os.system(cmd)
+def main():
+    options = parse_cmd_line(sys.argv)
+    setup()
+    instances = read_cloud_settings()
+
+    if options['action'] == 'ssh':
+        name, host, private_key, public_key = instances[int(options['server'])-1]
+        print('Instance name: {}'.format(name))
+        print('Host ip: {}'.format(host))
+
+        public_key_path = '/tmp/id_rsa.pub'
+        open(public_key_path, 'w').write(public_key)
+        private_key_path = '/tmp/id_rsa'
+        open(private_key_path, 'w').write(private_key)
+        cmd = 'chmod 0600 {}'.format(private_key_path)
+        os.system(cmd)
+        print('Per-instance ssh keys written to {}'.format(private_key_path))
+
+        cmd = 'ssh -i /tmp/id_rsa root@{}'.format(host)
+        print(cmd)
+        os.system(cmd)
+    elif options['action'] == 'list':
+        print('ID   Name')
+        for idx, info in enumerate(instances):
+            name, host, private_key, public_key = info
+            print('{:2d}   {}'.format(idx+1, name))
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

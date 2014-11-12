@@ -55,6 +55,9 @@ class CloudInstances(QtCore.QObject):
     def instances(self):
         return self._instances
 
+    def clear(self):
+        self._instances.clear()
+
     def add(self, topology_instance):
         self._instances.append(topology_instance)
 
