@@ -158,7 +158,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install libc6:i386 libstdc++6:i386 lib
 ln -s /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.4
 mkdir -p /opt/gns3
 cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
-cd /opt/gns3/gns3-server; git checkout gns-125; git pull
+cd /opt/gns3/gns3-server; git checkout dev; git pull
 cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 cd /opt/gns3/gns3-server; python3 ./setup.py install
 ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
