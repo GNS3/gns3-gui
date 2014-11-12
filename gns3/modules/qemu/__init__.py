@@ -355,6 +355,10 @@ class Qemu(Module):
 
         qemu_path = self._qemu_vms[vm]["qemu_path"]
         name = self._qemu_vms[vm]["name"]
+
+        if node.server().isCloud():
+            settings["cloud_path"] = "images/qemu"
+
         node.setup(qemu_path, initial_settings=settings, base_name=name)
 
     def reset(self):

@@ -31,6 +31,7 @@ from gns3.dialogs.node_configurator_dialog import ConfigurationError
 
 from ..ui.qemu_vm_configuration_page_ui import Ui_QemuVMConfigPageWidget
 from .. import Qemu
+from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
 class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
@@ -182,22 +183,26 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             server = settings["server"]
             if server == "local":
                 server = Servers.instance().localServer()
-            else:
+            elif ":" in server:
                 host, port = server.rsplit(":")
                 server = Servers.instance().getRemoteServer(host, port)
 
-        self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
-        self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-        self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
-        self._qemu_binaries_progress_dialog.show()
+        if server == "cloud":
+            for binary in QEMU_BINARIES_FOR_CLOUD:
+                self.uiQemuListComboBox.addItem("{path}".format(path=binary), binary)
+        else:
+            self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
+            self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+            self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
+            self._qemu_binaries_progress_dialog.show()
 
-        callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
-        try:
-            Qemu.instance().getQemuBinariesFromServer(server, callback)
-        except ModuleError as e:
-            self._qemu_binaries_progress_dialog.reject()
-            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
-            self.uiQemuListComboBox.clear()
+            callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
+            try:
+                Qemu.instance().getQemuBinariesFromServer(server, callback)
+            except ModuleError as e:
+                self._qemu_binaries_progress_dialog.reject()
+                QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+                self.uiQemuListComboBox.clear()
 
         if not group:
             # set the device name

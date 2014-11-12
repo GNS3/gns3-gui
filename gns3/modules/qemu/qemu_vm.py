@@ -190,6 +190,9 @@ class QemuVM(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
+        if "cloud_path" in new_settings:
+            params["cloud_path"] = self._settings["cloud_path"] = new_settings.pop("cloud_path")
+
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("qemu.update", params, self._updateCallback)
 

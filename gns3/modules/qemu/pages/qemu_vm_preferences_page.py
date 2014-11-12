@@ -19,6 +19,7 @@
 Configuration page for QEMU VM preferences.
 """
 
+import ntpath
 import os
 import copy
 
@@ -27,12 +28,14 @@ from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
+from gns3.cloud.utils import UploadFilesThread
 
 from .. import Qemu
 from ..settings import QEMU_VM_SETTINGS
 from ..ui.qemu_vm_preferences_page_ui import Ui_QemuVMPreferencesPageWidget
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..dialogs.qemu_vm_wizard import QemuVMWizard
+
 
 
 class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
@@ -149,6 +152,51 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             self._items.append(item)
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
 
+            if self._qemu_vms[key]["server"] == 'cloud':
+                self._qemu_vms[key]["options"] = "-nographic"
+                self._uploadImages(new_vm_settings)
+
+    def _imageUploadComplete(self):
+        if self._upload_image_progress_dialog.wasCanceled():
+            return
+        self._upload_image_progress_dialog.accept()
+
+    def _uploadImages(self, qemu_vm):
+        """
+        Upload hard drive images to Cloud Files.
+        """
+
+        # Start uploading the image to cloud files
+        self._upload_image_progress_dialog = QtGui.QProgressDialog(
+            "Uploading image file(s)", "Cancel", 0, 0, parent=self)
+        self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+        self._upload_image_progress_dialog.setWindowTitle("Qemu image upload")
+        self._upload_image_progress_dialog.show()
+
+        try:
+            uploads = []
+            src = qemu_vm.get("hda_disk_image", None)
+            if src:
+                _, filename = ntpath.split(src)
+                dest = "images/qemu/{}".format(filename)
+                uploads.append((src, dest))
+
+            src = qemu_vm.get("hdb_disk_image", None)
+            if src:
+                _, filename = ntpath.split(src)
+                dest = "images/qemu/{}".format(filename)
+                uploads.append((src, dest))
+
+            upload_thread = UploadFilesThread(self, MainWindow.instance().cloudSettings(), uploads)
+            upload_thread.completed.connect(self._imageUploadComplete)
+            upload_thread.start()
+        except Exception as e:
+            self._upload_image_progress_dialog.reject()
+            import logging
+            log = logging.getLogger(__name__)
+            log.error(e)
+            QtGui.QMessageBox.critical(self, "Qemu image upload", "Error uploading Qemu image: {}".format(e))
+
     def _qemuVMEditSlot(self):
         """
         Edits a QEMU VM.
@@ -172,6 +220,10 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                     del self._qemu_vms[key]
                     item.setText(0, qemu_vm["name"])
                     item.setData(0, QtCore.Qt.UserRole, new_key)
+
+                if qemu_vm["server"] == 'cloud':
+                    self._uploadImages(qemu_vm)
+
                 self._refreshInfo(qemu_vm)
 
     def _qemuVMDeleteSlot(self):

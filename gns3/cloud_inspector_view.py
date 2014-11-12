@@ -348,7 +348,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def _wss_connected_slot(self, id):
         """
-        This slot is called when the WSConnectThread succesfully connected to
+        This slot is called when the WSConnectThread successfully connected to
         the websocket on the remote host
         """
         # instance state transition: GNS3SERVER_STARTED --> WS_CONNECTED
