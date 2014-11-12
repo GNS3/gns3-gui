@@ -353,41 +353,11 @@ class UploadProjectThread(QThread):
         self.quit()
 
 
-class UploadFileThread(QThread):
-    """
-    Upload a file to cloud files
-    """
-
-    completed = pyqtSignal()
-
-    def __init__(self, cloud_settings, router_settings, upload_path):
-        super().__init__()
-        self._cloud_settings = cloud_settings
-        self._router_settings = router_settings
-        self._upload_path = upload_path
-
-    def run(self):
-        disk_path = self._router_settings['path']
-        filename = self._router_settings['image']
-        # Eg: images/IOS/c3745.img
-        upload_path = '{}/{}'.format(self._upload_path, filename)
-
-        log.debug('Uploading image {}'.format(disk_path))
-        log.debug('Cloud filename: {}'.format(filename))
-        provider = get_provider(self._cloud_settings)
-        provider.upload_file(disk_path, upload_path)
-
-        self._cloud_settings['image'] = filename
-
-        log.debug('Uploading image completed')
-        self.completed.emit()
-
-
 class UploadFilesThread(QThread):
     """
     Upload multiple files to cloud files
 
-    uploads - A list of 2-tuples of (local_src_path, remote_dest_path)
+    uploads - A list of 2-tuples of (local_src_path, remote_dst_path)
     """
 
     completed = pyqtSignal()
@@ -398,10 +368,10 @@ class UploadFilesThread(QThread):
         self._uploads = uploads
 
     def run(self):
-        for src, dest in self._uploads:
-            log.debug('Upload from {} to {}'.format(src, dest))
+        for src, dst in self._uploads:
+            log.debug('Upload from {} to {}'.format(src, dst))
             provider = get_provider(self._cloud_settings)
-            provider.upload_file(src, dest)
+            provider.upload_file(src, dst)
             log.debug('Upload image completed')
         self.completed.emit()
 

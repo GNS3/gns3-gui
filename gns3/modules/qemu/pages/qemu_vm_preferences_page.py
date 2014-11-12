@@ -178,14 +178,14 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             src = qemu_vm.get("hda_disk_image", None)
             if src:
                 _, filename = ntpath.split(src)
-                dest = "images/qemu/{}".format(filename)
-                uploads.append((src, dest))
+                dst = "images/qemu/{}".format(filename)
+                uploads.append((src, dst))
 
             src = qemu_vm.get("hdb_disk_image", None)
             if src:
                 _, filename = ntpath.split(src)
-                dest = "images/qemu/{}".format(filename)
-                uploads.append((src, dest))
+                dst = "images/qemu/{}".format(filename)
+                uploads.append((src, dst))
 
             upload_thread = UploadFilesThread(self, MainWindow.instance().cloudSettings(), uploads)
             upload_thread.completed.connect(self._imageUploadComplete)
