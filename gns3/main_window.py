@@ -260,7 +260,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
-        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
+        #self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -283,6 +283,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # style menu connections
         self.uiDefaultStyleAction.triggered.connect(self._defaultStyleActionSlot)
         self.uiEnergySavingStyleAction.triggered.connect(self._energySavingStyleActionSlot)
+        self.uiDarkStyleAction.triggered.connect(self._darkStyleActionSlot)
 
         # control menu connections
         self.uiStartAllAction.triggered.connect(self._startAllActionSlot)
@@ -643,22 +644,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, LinkItem):
                 item.adjust()
-
-    def _defaultStyleActionSlot(self):
-        """
-        Slot called to set the default style.
-        """
-
-        self.setStyleSheet("")
-        self.uiEnergySavingStyleAction.setChecked(False)
-
-    def _energySavingStyleActionSlot(self):
-        """
-        Slot called to set the energy saving style.
-        """
-
-        self.setStyleSheet("QMainWindow {} QMenuBar { background: black; } QDockWidget { background: black; color: white; } QToolBar { background: black; } QFrame { background: gray; } QToolButton { width: 30px; height: 30px; /*border:solid 1px black opacity 0.4;*/ /*background-none;*/ } QStatusBar { /*    background-image: url(:/pictures/pictures/texture_blackgrid.png);*/     background: black; color: rgb(255,255,255); }")
-        self.uiDefaultStyleAction.setChecked(False)
 
     def _startAllActionSlot(self):
         """
@@ -1667,3 +1652,102 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if isinstance(item, NodeItem):
                 if item.node()._server.instance_id == instance_id:
                     item.setSelected(True)
+
+    def _getStyleIcon(self, normal_file, active_file):
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(normal_file), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(active_file), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        return icon
+
+    def _defaultStyleActionSlot(self):
+        """
+        Slot called to set the default style.
+        """
+
+        self.setStyleSheet("")
+        self.uiEnergySavingStyleAction.setChecked(False)
+
+        self.uiNewProjectAction.setIcon(QtGui.QIcon(":/icons/new-project.svg"))
+        self.uiOpenProjectAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
+        self.uiSaveProjectAction.setIcon(QtGui.QIcon(":/icons/save.svg"))
+        self.uiSaveProjectAsAction.setIcon(QtGui.QIcon(":/icons/save-as.svg"))
+        self.uiImportExportConfigsAction.setIcon(QtGui.QIcon(":/icons/import_export_configs.svg"))
+        self.uiScreenshotAction.setIcon(QtGui.QIcon(":/icons/camera-photo.svg"))
+        self.uiSnapshotAction.setIcon(QtGui.QIcon(":/icons/snapshot.svg"))
+        self.uiQuitAction.setIcon(QtGui.QIcon(":/icons/quit.svg"))
+        self.uiPreferencesAction.setIcon(QtGui.QIcon(":/icons/applications.svg"))
+        self.uiZoomInAction.setIcon(QtGui.QIcon(":/icons/zoom-in.png"))
+        self.uiZoomOutAction.setIcon(QtGui.QIcon(":/icons/zoom-out.png"))
+        self.uiShowNamesAction.setIcon(QtGui.QIcon(":/icons/show-hostname.svg"))
+        self.uiShowPortNamesAction.setIcon(QtGui.QIcon(":/icons/show-interface-names.svg"))
+        self.uiStartAllAction.setIcon(self._getStyleIcon(":/icons/play7-test.svg", ":/icons/play2-test.svg"))
+        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/icons/pause3-test.svg", ":/icons/pause2-test.svg"))
+        self.uiStopAllAction.setIcon(self._getStyleIcon(":/icons/stop3-test.svg", ":/icons/stop2-test.svg"))
+        self.uiReloadAllAction.setIcon(QtGui.QIcon(":/icons/reload.svg"))
+        self.uiAuxConsoleAllAction.setIcon(QtGui.QIcon(":/icons/aux-console.svg"))
+        self.uiConsoleAllAction.setIcon(QtGui.QIcon(":/icons/console.svg"))
+        self.uiAddNoteAction.setIcon(QtGui.QIcon(":/icons/add-note.svg"))
+        self.uiInsertImageAction.setIcon(QtGui.QIcon(":/icons/image.svg"))
+        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/icons/rectangle3-test.svg", ":/icons/rectangle2-test.svg"))
+        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/icons/ellipse3-test.svg", ":/icons/ellipse2-test.svg"))
+        self.uiOnlineHelpAction.setIcon(QtGui.QIcon(":/icons/help.svg"))
+        self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/icons/router.png", ":/icons/router-hover.png"))
+        self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/icons/switch.png", ":/icons/switch-hover.png"))
+        self.uiBrowseEndDevicesAction.setIcon(self._getStyleIcon(":/icons/PC.png", ":/icons/PC-hover.png"))
+        self.uiBrowseSecurityDevicesAction.setIcon(self._getStyleIcon(":/icons/firewall.png", ":/icons/firewall-hover.png"))
+        self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/icons/browse-all-icons.png", ":/icons/browse-all-icons-hover.png"))
+        self.uiAddLinkAction.setIcon(self._getStyleIcon(":/icons/connection-new.svg", ":/dark_style/connection-new-hover.svg"))
+
+    def _energySavingStyleActionSlot(self):
+        """
+        Slot called to set the energy saving style.
+        """
+
+        self.setStyleSheet("QMainWindow {} QMenuBar { background: black; } QDockWidget { background: black; color: white; } QToolBar { background: black; } QFrame { background: gray; } QToolButton { width: 30px; height: 30px; /*border:solid 1px black opacity 0.4;*/ /*background-none;*/ } QStatusBar { /*    background-image: url(:/pictures/pictures/texture_blackgrid.png);*/     background: black; color: rgb(255,255,255); }")
+        self.uiDefaultStyleAction.setChecked(False)
+
+    def _darkStyleActionSlot(self):
+
+        self.setStyleSheet("""QWidget {background-color: #535353}
+QToolBar {border:0px}
+QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
+QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 10px}
+QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
+QMenuBar::item {background-color: #535353}
+QMenu::item:selected {color: white; background-color: #5f5f5f}
+QToolButton:hover {background-color: #5f5f5f}
+QGroupBox {color: #dedede; font: bold 12px}
+""")
+
+        self.uiNewProjectAction.setIcon(self._getStyleIcon(":/dark_style/new-project.svg", ":/dark_style/new-project-hover.svg"))
+        self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/dark_style/open.svg", ":/dark_style/open-hover.svg"))
+        self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/dark_style/save-as-project.svg", ":/dark_style/save-as-project-hover.svg"))  # FIXME: icon for save
+        self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/dark_style/save-as-project.svg", ":/dark_style/save-as-project-hover.svg"))
+        #self.uiImportExportConfigsAction.setIcon()
+        self.uiScreenshotAction.setIcon(self._getStyleIcon(":/dark_style/camera-photo.svg", ":/dark_style/camera-photo-hover.svg"))
+        self.uiSnapshotAction.setIcon(self._getStyleIcon(":/dark_style/snapshot.svg", ":/dark_style/snapshot-hover.svg"))
+        #self.uiQuitAction.setIcon()
+        #self.uiPreferencesAction.setIcon()
+        self.uiZoomInAction.setIcon(self._getStyleIcon(":/dark_style/zoom-in.svg", ":/dark_style/zoom-in-hover.svg"))
+        self.uiZoomOutAction.setIcon(self._getStyleIcon(":/dark_style/zoom-out.svg", ":/dark_style/zoom-out-hover.svg"))
+        #self.uiShowNamesAction.setIcon()
+        self.uiShowPortNamesAction.setIcon(self._getStyleIcon(":/dark_style/show-interface-names.svg", ":/dark_style/show-interface-names-hover.svg"))
+        self.uiStartAllAction.setIcon(self._getStyleIcon(":/dark_style/start.svg", ":/dark_style/start-hover.svg"))
+        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/dark_style/pause.svg", ":/dark_style/pause-hover.svg"))
+        self.uiStopAllAction.setIcon(self._getStyleIcon(":/dark_style/stop.svg", ":/dark_style/stop-hover.svg"))
+        self.uiReloadAllAction.setIcon(self._getStyleIcon(":/dark_style/reload.svg", ":/dark_style/reload-hover.svg"))
+        #self.uiAuxConsoleAllAction.setIcon()
+        self.uiConsoleAllAction.setIcon(self._getStyleIcon(":/dark_style/console.svg", ":/dark_style/console-hover.svg"))
+        self.uiAddNoteAction.setIcon(self._getStyleIcon(":/dark_style/add-note.svg", ":/dark_style/add-note-hover.svg"))
+        self.uiInsertImageAction.setIcon(self._getStyleIcon(":/dark_style/image.svg", ":/dark_style/image-hover.svg"))
+        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/dark_style/rectangle.svg", ":/dark_style/rectangle-hover.svg"))
+        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/dark_style/ellipse.svg", ":/dark_style/ellipse-hover.svg"))
+        #self.uiOnlineHelpAction.setIcon()
+
+        self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/dark_style/router.svg", ":/dark_style/router-hover.svg"))
+        self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/dark_style/switch.svg", ":/dark_style/switch-hover.svg"))
+        self.uiBrowseEndDevicesAction.setIcon(self._getStyleIcon(":/dark_style/pc.svg", ":/dark_style/pc-hover.svg"))
+        self.uiBrowseSecurityDevicesAction.setIcon(self._getStyleIcon(":/dark_style/firewall.svg", ":/dark_style/firewall-hover.svg"))
+        self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/dark_style/browse-all-icons.svg", ":/dark_style/browse-all-icons-hover.svg"))
+        self.uiAddLinkAction.setIcon(self._getStyleIcon(":/dark_style/add-link-1.svg", ":/dark_style/add-link-1-hover.svg"))

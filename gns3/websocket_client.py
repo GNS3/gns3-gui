@@ -29,7 +29,6 @@ from . import jsonrpc
 from ws4py.client import WebSocketBaseClient
 from ws4py import WS_VERSION
 from .qt import QtCore
-from .tunnel import tunnel
 
 import logging
 log = logging.getLogger(__name__)
@@ -399,6 +398,7 @@ class SecureWebSocketClient(WebSocketClient):
 
         import ssl
         import socket
+        from .tunnel import tunnel
 
         if self.use_ssl:
             self.login_url = "https://{host}:{port}/login".format(host=self.host, port=self.port)

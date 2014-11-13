@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/news_dock_widget.ui'
 #
-# Created: Tue Nov  4 11:41:22 2014
+# Created: Tue Nov 11 15:47:57 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,6 +29,7 @@ class Ui_NewsDockWidget(object):
         NewsDockWidget.resize(203, 225)
         NewsDockWidget.setFloating(False)
         NewsDockWidget.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
+        NewsDockWidget.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.dockWidgetContents = QtGui.QWidget()
         self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.dockWidgetContents)

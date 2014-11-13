@@ -33,6 +33,9 @@ background-none;
 
 </string>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>false</bool>
   </property>
@@ -62,7 +65,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>980</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -112,6 +115,7 @@ background-none;
      </property>
      <addaction name="uiDefaultStyleAction"/>
      <addaction name="uiEnergySavingStyleAction"/>
+     <addaction name="uiDarkStyleAction"/>
     </widget>
     <widget class="QMenu" name="uiDocksMenu">
      <property name="title">
@@ -1085,7 +1089,9 @@ background-none;
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/connection-new.svg</normaloff>
-     <activeoff>:/icons/connection-new-hover.svg</activeoff>:/icons/connection-new.svg</iconset>
+     <normalon>:/icons/cancel-connection.svg</normalon>
+     <activeoff>:/icons/connection-new-hover.svg</activeoff>
+     <activeon>:/icons/cancel-connection.svg</activeon>:/icons/connection-new.svg</iconset>
    </property>
    <property name="text">
     <string>Add a link</string>
@@ -1123,6 +1129,11 @@ background-none;
   <action name="uiImportProjectAction">
    <property name="text">
     <string>Import project</string>
+   </property>
+  </action>
+  <action name="uiDarkStyleAction">
+   <property name="text">
+    <string>Dark Style</string>
    </property>
   </action>
  </widget>

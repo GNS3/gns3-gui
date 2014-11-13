@@ -51,6 +51,15 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         else:
             self.uiWebView.load(QtCore.QUrl("http://as.gns3.com/software/docked_200x200.html"))
 
+    def closeEvent(self, event):
+        """
+        You really cannot close that dock (using ATL+F4...)
+
+        :param event: closeEvent instance.
+        """
+
+        event.ignore()
+
     def _refreshSlot(self):
         """
         Refeshes the page.
