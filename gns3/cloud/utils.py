@@ -12,6 +12,7 @@ import zipfile
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
+from .exceptions import KeyPairExists
 from .rackspace_ctrl import RackspaceCtrl, get_provider
 from ..topology import Topology
 from ..servers import Servers
@@ -67,9 +68,7 @@ class ListInstancesThread(QThread):
     def run(self):
         try:
             instances = self._provider.list_instances()
-            log.debug('Instance list:')
-            for instance in instances:
-                log.debug('  name={}, state={}'.format(instance.name, instance.state))
+            log.debug('Instance list: {}'.format([(i.name, i.state) for i in instances]))
             self.instancesReady.emit(instances)
         except Exception as e:
             log.info('list_instances error: {}'.format(e))
@@ -89,8 +88,19 @@ class CreateInstanceThread(QThread):
         self._image_id = image_id
 
     def run(self):
-        k = self._provider.create_key_pair(self._name)
+        log.debug("Creating cloud keypair with name {}".format(self._name))
+        try:
+            k = self._provider.create_key_pair(self._name)
+        except KeyPairExists:
+            log.debug("Cloud keypair with name {} exists.  Recreating.".format(self._name))
+            # delete keypairs if they already exist
+            self._provider.delete_key_pair_by_name(self._name)
+            k = self._provider.create_key_pair(self._name)
+
+        log.debug("Creating cloud server with name {}".format(self._name))
         i = self._provider.create_instance(self._name, self._flavor_id, self._image_id, k)
+        log.debug("Cloud server {} created".format(self._name))
+
         self.instanceCreated.emit(i, k)
 
 
@@ -120,28 +130,42 @@ class StartGNS3ServerThread(QThread):
 # This is for testing without pushing to github
 #     commands = '''
 # DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+# DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386 # for iou
 # DEBIAN_FRONTEND=noninteractive apt-get -y update
 # DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 # DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+# DEBIAN_FRONTEND=noninteractive apt-get -y install libc6:i386 libstdc++6:i386 libssl1.0.0:i386
+# ln -s /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.4
 # mkdir -p /opt/gns3
 # tar xzf /tmp/gns3-server.tgz -C /opt/gns3
 # cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 # cd /opt/gns3/gns3-server; python3 ./setup.py install
-# ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+# ln -sf /usr/bin/dynamips /usr/local/bin/dynamips # for ios
+# wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz' # for iou
+# python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))' # set hostid for iou
+# hostname gns3-iouvm # set hostname for iou
+# tar xzf iouyap.tar.gz -C /usr/local/bin
 # killall python3 gns3server gns3dms
 # '''
 
     commands = '''
 DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386 # for iou
 DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+DEBIAN_FRONTEND=noninteractive apt-get -y install libc6:i386 libstdc++6:i386 libssl1.0.0:i386
+ln -s /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.4
 mkdir -p /opt/gns3
 cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
 cd /opt/gns3/gns3-server; git checkout dev; git pull
 cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 cd /opt/gns3/gns3-server; python3 ./setup.py install
-ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+ln -sf /usr/bin/dynamips /usr/local/bin/dynamips # for ios
+wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz' # for iou
+tar xzf iouyap.tar.gz -C /usr/local/bin #
+python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))' # set hostid for iou
+hostname gns3-iouvm # set hostname for iou
 killall python3 gns3server gns3dms
 '''
 
@@ -336,19 +360,22 @@ class UploadFileThread(QThread):
 
     completed = pyqtSignal()
 
-    def __init__(self, cloud_settings, router_settings):
+    def __init__(self, cloud_settings, router_settings, upload_path):
         super().__init__()
         self._cloud_settings = cloud_settings
         self._router_settings = router_settings
+        self._upload_path = upload_path
 
     def run(self):
         disk_path = self._router_settings['path']
         filename = self._router_settings['image']
+        # Eg: images/IOS/c3745.img
+        upload_path = '{}/{}'.format(self._upload_path, filename)
 
         log.debug('Uploading image {}'.format(disk_path))
         log.debug('Cloud filename: {}'.format(filename))
         provider = get_provider(self._cloud_settings)
-        provider.upload_file(disk_path, 'images/IOS/{}'.format(filename))
+        provider.upload_file(disk_path, upload_path)
 
         self._cloud_settings['image'] = filename
 

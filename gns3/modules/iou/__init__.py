@@ -389,7 +389,12 @@ class IOU(Module):
             settings["nvram"] = self._iou_devices[iouimage]["nvram"]
         settings["ethernet_adapters"] = self._iou_devices[iouimage]["ethernet_adapters"]
         settings["serial_adapters"] = self._iou_devices[iouimage]["serial_adapters"]
-        node.setup(iou_path, initial_settings=settings)
+
+        if node.server().isCloud():
+            settings["cloud_path"] = "images/IOU"
+            node.setup(self._iou_devices[iouimage]["image"], initial_settings=settings)
+        else:
+            node.setup(iou_path, initial_settings=settings)
 
     def reset(self):
         """
