@@ -130,30 +130,30 @@ class StartGNS3ServerThread(QThread):
 # This is for testing without pushing to github
 #     commands = '''
 # DEBIAN_FRONTEND=noninteractive dpkg --configure -a
-# DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386 # for iou
+# DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386
 # DEBIAN_FRONTEND=noninteractive apt-get -y update
 # DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-# DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+# DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips qemu-system
 # DEBIAN_FRONTEND=noninteractive apt-get -y install libc6:i386 libstdc++6:i386 libssl1.0.0:i386
 # ln -s /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.4
 # mkdir -p /opt/gns3
 # tar xzf /tmp/gns3-server.tgz -C /opt/gns3
 # cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 # cd /opt/gns3/gns3-server; python3 ./setup.py install
-# ln -sf /usr/bin/dynamips /usr/local/bin/dynamips # for ios
-# wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz' # for iou
-# python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))' # set hostid for iou
-# hostname gns3-iouvm # set hostname for iou
+# ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+# wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz'
+# python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))'
+# hostname gns3-iouvm
 # tar xzf iouyap.tar.gz -C /usr/local/bin
 # killall python3 gns3server gns3dms
 # '''
 
     commands = '''
 DEBIAN_FRONTEND=noninteractive dpkg --configure -a
-DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386 # for iou
+DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386
 DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips
+DEBIAN_FRONTEND=noninteractive apt-get -y install git python3-setuptools python3-netifaces python3-pip python3-zmq dynamips qemu-system
 DEBIAN_FRONTEND=noninteractive apt-get -y install libc6:i386 libstdc++6:i386 libssl1.0.0:i386
 ln -s /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.4
 mkdir -p /opt/gns3
@@ -161,10 +161,10 @@ cd /opt/gns3; git clone https://github.com/planctechnologies/gns3-server.git
 cd /opt/gns3/gns3-server; git checkout dev; git pull
 cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 cd /opt/gns3/gns3-server; python3 ./setup.py install
-ln -sf /usr/bin/dynamips /usr/local/bin/dynamips # for ios
-wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz' # for iou
-tar xzf iouyap.tar.gz -C /usr/local/bin #
-python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))' # set hostid for iou
+ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
+wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz'
+tar xzf iouyap.tar.gz -C /usr/local/bin
+python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))'
 hostname gns3-iouvm # set hostname for iou
 killall python3 gns3server gns3dms
 '''
@@ -353,33 +353,26 @@ class UploadProjectThread(QThread):
         self.quit()
 
 
-class UploadFileThread(QThread):
+class UploadFilesThread(QThread):
     """
-    Upload a file to cloud files
+    Upload multiple files to cloud files
+
+    uploads - A list of 2-tuples of (local_src_path, remote_dst_path)
     """
 
     completed = pyqtSignal()
 
-    def __init__(self, cloud_settings, router_settings, upload_path):
-        super().__init__()
+    def __init__(self, parent, cloud_settings, uploads):
+        super(QThread, self).__init__(parent)
         self._cloud_settings = cloud_settings
-        self._router_settings = router_settings
-        self._upload_path = upload_path
+        self._uploads = uploads
 
     def run(self):
-        disk_path = self._router_settings['path']
-        filename = self._router_settings['image']
-        # Eg: images/IOS/c3745.img
-        upload_path = '{}/{}'.format(self._upload_path, filename)
-
-        log.debug('Uploading image {}'.format(disk_path))
-        log.debug('Cloud filename: {}'.format(filename))
-        provider = get_provider(self._cloud_settings)
-        provider.upload_file(disk_path, upload_path)
-
-        self._cloud_settings['image'] = filename
-
-        log.debug('Uploading image completed')
+        for src, dst in self._uploads:
+            log.debug('Upload from {} to {}'.format(src, dst))
+            provider = get_provider(self._cloud_settings)
+            provider.upload_file(src, dst)
+            log.debug('Upload image completed')
         self.completed.emit()
 
 
