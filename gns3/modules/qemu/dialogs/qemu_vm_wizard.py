@@ -49,6 +49,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.setupUi(self)
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        if sys.platform.startswith("darwin"):
+            # we want to see the cancel button on OSX
+            self.setOptions(QtGui.QWizard.NoDefaultButton)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)

@@ -19,6 +19,8 @@
 Wizard for VirtualBox VMs.
 """
 
+import sys
+
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.utils.connect_to_server import ConnectToServer
@@ -42,6 +44,9 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         self.setupUi(self)
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        if sys.platform.startswith("darwin"):
+            # we want to see the cancel button on OSX
+            self.setOptions(QtGui.QWizard.NoDefaultButton)
 
         if VirtualBox.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server

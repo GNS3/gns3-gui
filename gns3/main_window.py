@@ -102,12 +102,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._recent_file_actions = []
         self._start_time = time.time()
 
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
-        except ImportError:
-            pass
-
         self._project_settings = {
             "project_name": "unsaved",
             "project_path": None,
@@ -829,7 +823,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         dialog = GettingStartedDialog(self)
         dialog.showit()
-        if auto is True and dialog.showit():
+        if auto is True and not dialog.showit():
             return
         dialog.show()
         dialog.exec_()
@@ -1029,6 +1023,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
+        except ImportError:
+            pass
 
         self._gettingStartedActionSlot(auto=True)
 

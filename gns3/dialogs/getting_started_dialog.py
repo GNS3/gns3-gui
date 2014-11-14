@@ -94,7 +94,8 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
             elif pkg_resources.resource_exists("gns3", resource_name):
                 getting_started_page = pkg_resources.resource_filename("gns3", resource_name)
                 getting_started = os.path.normpath(getting_started_page)
-            if getting_started:
+            if getting_started and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
+                # do not show the page on Windows 32-bit (crash when no Internet connection)
                 self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))
             else:
                 self.accept()

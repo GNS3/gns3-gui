@@ -96,6 +96,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
             elif pkg_resources.resource_exists("gns3", resource_name):
                 gns3_jungle_page = pkg_resources.resource_filename("gns3", resource_name)
                 gns3_jungle = os.path.normpath(gns3_jungle_page)
-            if gns3_jungle:
+            if gns3_jungle and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
+                # do not show the page on Windows 32-bit (crash when no Internet connection)
                 self.uiWebView.load(QtCore.QUrl("file://{}".format(gns3_jungle)))
             self._refresh_timer.stop()

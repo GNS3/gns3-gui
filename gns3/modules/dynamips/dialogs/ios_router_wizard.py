@@ -19,6 +19,7 @@
 Wizard for IOS routers.
 """
 
+import sys
 import os
 import re
 
@@ -64,6 +65,9 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.setupUi(self)
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        if sys.platform.startswith("darwin"):
+            # we want to see the cancel button on OSX
+            self.setOptions(QtGui.QWizard.NoDefaultButton)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
@@ -142,11 +146,13 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         platform = self.uiPlatformComboBox.currentText()
         ram = self.uiRamSpinBox.value()
         ios_image = self.uiIOSImageLineEdit.text()
-        dynamips = Dynamips.instance().settings()["path"]
-        command = '{path} -P {platform} -r {ram} "{ios_image}"'.format(path=dynamips,
-                                                                       platform=platform[1:],
-                                                                       ram=ram,
-                                                                       ios_image=ios_image)
+        dynamips = os.path.realpath(Dynamips.instance().settings()["path"])
+        if not os.path.exists(dynamips):
+            QtGui.QMessageBox.critical(self, "IOS image", "Could not find Dynamips executable: {}".format(dynamips))
+        command = '"{path}" -P {platform} -r {ram} "{ios_image}"'.format(path=dynamips,
+                                                                         platform=platform[1:],
+                                                                         ram=ram,
+                                                                         ios_image=ios_image)
         try:
             RunInTerminal(command)
         except OSError as e:
