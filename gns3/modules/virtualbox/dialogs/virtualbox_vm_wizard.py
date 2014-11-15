@@ -87,7 +87,6 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         self._vbox_vms_progress_dialog.accept()
 
         if error:
-            print(result)
             QtGui.QMessageBox.critical(self, "VirtualBox VMs", "{}".format(result["message"]))
         else:
             self.uiVMListComboBox.clear()
