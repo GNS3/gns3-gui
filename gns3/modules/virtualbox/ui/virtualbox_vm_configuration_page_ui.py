@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created: Wed Oct 22 22:07:00 2014
+# Created: Sat Nov 15 15:33:17 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_virtualBoxVMConfigPageWidget(object):
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName(_fromUtf8("virtualBoxVMConfigPageWidget"))
-        virtualBoxVMConfigPageWidget.resize(514, 365)
+        virtualBoxVMConfigPageWidget.resize(509, 346)
         self.verticalLayout = QtGui.QVBoxLayout(virtualBoxVMConfigPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(virtualBoxVMConfigPageWidget)
@@ -66,8 +66,12 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName(_fromUtf8("uiHeadlessModeCheckBox"))
         self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 4, 0, 1, 2)
+        self.uiBaseVMCheckBox = QtGui.QCheckBox(self.tab)
+        self.uiBaseVMCheckBox.setEnabled(True)
+        self.uiBaseVMCheckBox.setObjectName(_fromUtf8("uiBaseVMCheckBox"))
+        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 5, 0, 1, 2)
         spacerItem = QtGui.QSpacerItem(20, 138, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 5, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem, 6, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
@@ -117,6 +121,7 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiConsolePortLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Console port:", None))
         self.uiEnableConsoleCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Enable remote console", None))
         self.uiHeadlessModeCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Start VM in headless mode", None))
+        self.uiBaseVMCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Use as a linked base VM", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("virtualBoxVMConfigPageWidget", "General settings", None))
         self.uiAdaptersLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Adapters:", None))
         self.uiAdapterStartIndexLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Start at:", None))

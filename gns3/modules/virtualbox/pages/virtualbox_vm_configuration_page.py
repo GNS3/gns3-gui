@@ -71,6 +71,11 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
                 self.uiConsolePortLabel.hide()
                 self.uiConsolePortSpinBox.hide()
 
+            if "linked_base" in settings:
+                self.uiBaseVMCheckBox.setChecked(settings["linked_base"])
+            else:
+                self.uiBaseVMCheckBox.hide()
+
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
@@ -109,6 +114,9 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
 
             if "console" in settings:
                 settings["console"] = self.uiConsolePortSpinBox.value()
+
+            if "linked_base" in settings:
+                settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()
 
             settings["enable_remote_console"] = self.uiEnableConsoleCheckBox.isChecked()
 

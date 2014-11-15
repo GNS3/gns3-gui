@@ -335,13 +335,13 @@ class VirtualBox(Module):
             else:
                 vm = selected_vms[0]
 
-        #print(self._virtualbox_vms[vm]["linked_base"])
-        #linked_base = True
+        linked_base = self._virtualbox_vms[vm]["linked_base"]
 
-        for other_node in self._nodes:
-            if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
-                    (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
-                raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
+        if not linked_base:
+            for other_node in self._nodes:
+                if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
+                        (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
+                    raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
 
         settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
                     "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
@@ -350,7 +350,7 @@ class VirtualBox(Module):
                     "enable_remote_console": self._virtualbox_vms[vm]["enable_remote_console"]}
 
         vmname = self._virtualbox_vms[vm]["vmname"]
-        node.setup(vmname, linked_clone=False, initial_settings=settings)
+        node.setup(vmname, linked_clone=linked_base, initial_settings=settings)
 
     def reset(self):
         """

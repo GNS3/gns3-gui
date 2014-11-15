@@ -140,6 +140,7 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         settings = {
             "vmname": vmname,
             "server": server,
+            "linked_base": self.uiBaseVMCheckBox.isChecked()
         }
 
         return settings
