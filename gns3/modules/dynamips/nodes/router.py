@@ -940,7 +940,7 @@ class Router(Node):
                 # save only the image name if it is stored the images directory
                 router["properties"]["image"] = os.path.basename(image_path)
         else:
-            router["properties"]["image"] = os.path.basename(image_path)
+            router["properties"]["image"] = image_path
 
         return router
 

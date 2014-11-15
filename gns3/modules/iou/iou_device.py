@@ -618,7 +618,7 @@ class IOUDevice(Node):
                 # save only the image name if it is stored the images directory
                 iou["properties"]["path"] = os.path.basename(image_path)
         else:
-            iou["properties"]["path"] = os.path.basename(image_path)
+            iou["properties"]["path"] = image_path
 
         return iou
 

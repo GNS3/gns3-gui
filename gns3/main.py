@@ -184,7 +184,7 @@ def main():
         app.setApplicationVersion(__version__)
 
         # save client logging info to a file
-        logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")
+        logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")  # FIXME: does it work?
         try:
             try:
                 os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))

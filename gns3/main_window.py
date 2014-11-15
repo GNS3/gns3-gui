@@ -400,7 +400,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
-                self.uiGraphicsView.reset(new_project_settings)
+                self._createNewProject(new_project_settings)
             else:
                 self._createTemporaryProject()
 

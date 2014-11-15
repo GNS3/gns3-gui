@@ -239,7 +239,6 @@ class Servers(QtCore.QObject):
         url = "ws://{host}:{port}".format(host=host, port=port)
         self._local_server = WebSocketClient(url)
         self._local_server.setLocal(True)
-        self._local_server.enableHeartbeatsAt(heartbeat_freq)
         log.info("new local server connection {} registered".format(url))
 
     def localServer(self):
@@ -266,7 +265,6 @@ class Servers(QtCore.QObject):
         server_socket = "{host}:{port}".format(host=host, port=port)
         url = "ws://{server_socket}".format(server_socket=server_socket)
         server = WebSocketClient(url)
-        server.enableHeartbeatsAt(heartbeat_freq)
         self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server
