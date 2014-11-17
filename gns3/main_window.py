@@ -1623,6 +1623,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         upload_thread = UploadProjectThread(
+            self,
             self._cloud_settings,
             self._project_settings['project_path'],
             self._settings['images_path']
