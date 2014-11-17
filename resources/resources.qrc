@@ -152,6 +152,9 @@
         <file>icons/browse-all-icons-hover.png</file>
         <file>icons/camera-photo.svg</file>
         <file>icons/camera-photo-hover.svg</file>
+        <file>icons/play.svg</file>
+        <file>icons/stop.svg</file>
+        <file>icons/pause.svg</file>
         <file>images/gns3_logo.png</file>
         <file>images/gns3_icon_128x128.png</file>
         <file>images/gns3_icon_256x256.png</file>
