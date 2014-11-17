@@ -34,6 +34,7 @@ class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
         project_file_name = self.projects[self.listWidget.currentItem().text()]
 
         download_thread = DownloadProjectThread(
+            self,
             project_file_name,
             self.project_dest_path,
             self.images_dest_path,
@@ -59,7 +60,7 @@ class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
         )
 
         if button_clicked == QtGui.QMessageBox.Yes:
-            delete_project_thread = DeleteProjectThread(project_file_name, self.cloud_settings)
+            delete_project_thread = DeleteProjectThread(self, project_file_name, self.cloud_settings)
             progress_dialog = ProgressDialog(delete_project_thread, "Deleting project", "Deleting project files...",
                                              "Cancel", parent=self)
             progress_dialog.show()
