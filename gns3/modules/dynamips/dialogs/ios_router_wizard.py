@@ -77,6 +77,9 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
+        #FIXME: hide because of issue on Windows.
+        self.uiTestIOSImagePushButton.hide()
+
         # Mandatory fields
         self.uiNamePlatformWizardPage.registerField("name*", self.uiNameLineEdit)
         self.uiIOSImageWizardPage.registerField("image*", self.uiIOSImageLineEdit)
@@ -149,6 +152,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         dynamips = os.path.realpath(Dynamips.instance().settings()["path"])
         if not os.path.exists(dynamips):
             QtGui.QMessageBox.critical(self, "IOS image", "Could not find Dynamips executable: {}".format(dynamips))
+            return
         command = '"{path}" -P {platform} -r {ram} "{ios_image}"'.format(path=dynamips,
                                                                          platform=platform[1:],
                                                                          ram=ram,

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Sun Nov  9 18:49:51 2014
+# Created: Mon Nov 17 18:55:08 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,15 +26,15 @@ except AttributeError:
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName(_fromUtf8("GeneralPreferencesPageWidget"))
-        GeneralPreferencesPageWidget.resize(502, 621)
+        GeneralPreferencesPageWidget.resize(467, 639)
         self.verticalLayout = QtGui.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(GeneralPreferencesPageWidget)
         self.uiTabWidget.setObjectName(_fromUtf8("uiTabWidget"))
         self.uiGeneralTab = QtGui.QWidget()
         self.uiGeneralTab.setObjectName(_fromUtf8("uiGeneralTab"))
-        self.gridLayout_8 = QtGui.QGridLayout(self.uiGeneralTab)
-        self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
+        self.verticalLayout_5 = QtGui.QVBoxLayout(self.uiGeneralTab)
+        self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         self.uiLocalPathsGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiLocalPathsGroupBox.setObjectName(_fromUtf8("uiLocalPathsGroupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.uiLocalPathsGroupBox)
@@ -78,7 +78,15 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiTemporaryFilesPathToolButton.setObjectName(_fromUtf8("uiTemporaryFilesPathToolButton"))
         self.horizontalLayout_3.addWidget(self.uiTemporaryFilesPathToolButton)
         self.gridLayout_3.addLayout(self.horizontalLayout_3, 5, 0, 1, 1)
-        self.gridLayout_8.addWidget(self.uiLocalPathsGroupBox, 0, 0, 1, 2)
+        self.verticalLayout_5.addWidget(self.uiLocalPathsGroupBox)
+        self.uiStyleGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
+        self.uiStyleGroupBox.setObjectName(_fromUtf8("uiStyleGroupBox"))
+        self.verticalLayout_4 = QtGui.QVBoxLayout(self.uiStyleGroupBox)
+        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.uiStyleComboBox = QtGui.QComboBox(self.uiStyleGroupBox)
+        self.uiStyleComboBox.setObjectName(_fromUtf8("uiStyleComboBox"))
+        self.verticalLayout_4.addWidget(self.uiStyleComboBox)
+        self.verticalLayout_5.addWidget(self.uiStyleGroupBox)
         self.uiConfigurationFileGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiConfigurationFileGroupBox.setObjectName(_fromUtf8("uiConfigurationFileGroupBox"))
         self.gridLayout = QtGui.QGridLayout(self.uiConfigurationFileGroupBox)
@@ -97,7 +105,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.gridLayout.addWidget(self.uiConfigurationFileLabel, 0, 0, 1, 1)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
-        self.gridLayout_8.addWidget(self.uiConfigurationFileGroupBox, 1, 0, 1, 2)
+        self.verticalLayout_5.addWidget(self.uiConfigurationFileGroupBox)
         self.uiGeneralMiscGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiGeneralMiscGroupBox.setObjectName(_fromUtf8("uiGeneralMiscGroupBox"))
         self.gridLayout_2 = QtGui.QGridLayout(self.uiGeneralMiscGroupBox)
@@ -123,9 +131,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLaunchNewProjectDialogCheckBox.setChecked(True)
         self.uiLaunchNewProjectDialogCheckBox.setObjectName(_fromUtf8("uiLaunchNewProjectDialogCheckBox"))
         self.gridLayout_2.addWidget(self.uiLaunchNewProjectDialogCheckBox, 0, 0, 1, 1)
-        self.gridLayout_8.addWidget(self.uiGeneralMiscGroupBox, 2, 0, 1, 2)
+        self.verticalLayout_5.addWidget(self.uiGeneralMiscGroupBox)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_8.addItem(spacerItem1, 4, 0, 1, 2)
+        self.verticalLayout_5.addItem(spacerItem1)
         self.uiTabWidget.addTab(self.uiGeneralTab, _fromUtf8(""))
         self.uiConsoleTab = QtGui.QWidget()
         self.uiConsoleTab.setObjectName(_fromUtf8("uiConsoleTab"))
@@ -283,6 +291,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiTemporaryFilesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "Temporary files:", None))
         self.uiTemporaryFilesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where temporary files are stored", None))
         self.uiTemporaryFilesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse...", None))
+        self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style", None))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file", None))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import", None))
         self.uiExportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Export", None))

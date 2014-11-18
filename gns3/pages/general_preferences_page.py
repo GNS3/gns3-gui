@@ -23,7 +23,7 @@ import os
 import shutil
 from gns3.qt import QtGui, QtCore
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
-from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS
+from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, STYLES
 
 
 class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
@@ -58,6 +58,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
+        self.uiStyleComboBox.addItems(STYLES)
 
     def _projectsPathSlot(self):
         """
@@ -201,6 +202,9 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiSlowStartAllSpinBox.setValue(settings["slow_device_start_all"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
+        index = self.uiStyleComboBox.findText(settings["style"])
+        if index != -1:
+            self.uiStyleComboBox.setCurrentIndex(index)
         index = self.uiTelnetConsolePreconfiguredCommandComboBox.findData(settings["telnet_console_command"])
         if index != -1:
             self.uiTelnetConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
@@ -255,6 +259,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         new_settings["images_path"] = self.uiImagesPathLineEdit.text()
         new_settings["temporary_files_path"] = self.uiTemporaryFilesPathLineEdit.text()
         new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()
+        new_settings["style"] = self.uiStyleComboBox.currentText()
         new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()
         new_settings["link_manual_mode"] = self.uiLinkManualModeCheckBox.isChecked()
         new_settings["slow_device_start_all"] = self.uiSlowStartAllSpinBox.value()

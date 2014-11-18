@@ -90,6 +90,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         QtGui.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
         QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
+        QtGui.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_base"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

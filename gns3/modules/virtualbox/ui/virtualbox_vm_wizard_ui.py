@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
 #
-# Created: Sun Nov  9 11:49:53 2014
+# Created: Sat Nov 15 15:29:07 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -83,7 +83,7 @@ class Ui_VirtualBoxVMWizard(object):
         self.uiVMListComboBox.setObjectName(_fromUtf8("uiVMListComboBox"))
         self.gridLayout.addWidget(self.uiVMListComboBox, 0, 1, 1, 1)
         self.uiBaseVMCheckBox = QtGui.QCheckBox(self.uiVirtualBoxWizardPage)
-        self.uiBaseVMCheckBox.setEnabled(False)
+        self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName(_fromUtf8("uiBaseVMCheckBox"))
         self.gridLayout.addWidget(self.uiBaseVMCheckBox, 1, 0, 1, 2)
         VirtualBoxVMWizard.addPage(self.uiVirtualBoxWizardPage)

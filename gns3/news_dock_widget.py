@@ -88,6 +88,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         self._timer.stop()
         self._timer.timeout.disconnect()
         if result is False:
+            self._refresh_timer.stop()
             # load a local resource if the page is not available
             resource_name = os.path.join("static", "gns3_jungle.html")
             gns3_jungle = None
@@ -99,4 +100,5 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
             if gns3_jungle and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
                 # do not show the page on Windows 32-bit (crash when no Internet connection)
                 self.uiWebView.load(QtCore.QUrl("file://{}".format(gns3_jungle)))
-            self._refresh_timer.stop()
+            else:
+                self.hide()

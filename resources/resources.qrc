@@ -74,7 +74,6 @@
         <file>icons/configuration.svg</file>
         <file>icons/cancel.svg</file>
         <file>icons/cancel-connection.svg</file>
-        <file>icons/connection.svg</file>
         <file>icons/connection-new.svg</file>
         <file>icons/connection-new-hover.svg</file>
         <file>icons/console.svg</file>
@@ -84,18 +83,14 @@
         <file>icons/led_red.svg</file>
         <file>icons/led_yellow.svg</file>
         <file>icons/open.svg</file>
-        <file>icons/play2-test.svg</file>
-        <file>icons/play7-test.svg</file>
-        <file>icons/pause2-test.svg</file>
-        <file>icons/pause3-test.svg</file>
+        <file>icons/start.svg</file>
+        <file>icons/start-hover.svg</file>
+        <file>icons/pause.svg</file>
+        <file>icons/pause-hover.svg</file>
         <file>icons/save.svg</file>
         <file>icons/save-as.svg</file>
-        <file>icons/stop2-test.svg</file>
-        <file>icons/stop3-test.svg</file>
-        <file>icons/edit-project.svg</file>
-        <file>icons/edit-redo.svg</file>
-        <file>icons/edit-undo.svg</file>
-        <file>icons/edit-clear.svg</file>
+        <file>icons/stop.svg</file>
+        <file>icons/stop-hover.svg</file>
         <file>icons/reload.svg</file>
         <file>icons/add-note.svg</file>
         <file>icons/inspect.svg</file>
@@ -108,27 +103,22 @@
         <file>icons/save-as-project.svg</file>
         <file>icons/help.svg</file>
         <file>icons/quit.svg</file>
-        <file>icons/binary.svg</file>
         <file>icons/applications.svg</file>
         <file>icons/calculate.svg</file>
         <file>icons/console_port.svg</file>
-        <file>icons/startup_config.svg</file>
         <file>icons/wireshark.png</file>
         <file>icons/virtualbox.png</file>
         <file>icons/qemu.svg</file>
         <file>icons/rtv.png</file>
         <file>icons/image.svg</file>
-        <file>icons/package.svg</file>
         <file>icons/node_conception.svg</file>
         <file>icons/raise_z_value.svg</file>
         <file>icons/lower_z_value.svg</file>
         <file>icons/drawing.svg</file>
         <file>icons/rectangle.svg</file>
-        <file>icons/rectangle2-test.svg</file>
-        <file>icons/rectangle3-test.svg</file>
+        <file>icons/rectangle-hover.svg</file>
         <file>icons/ellipse.svg</file>
-        <file>icons/ellipse2-test.svg</file>
-        <file>icons/ellipse3-test.svg</file>
+        <file>icons/ellipse-hover.svg</file>
         <file>icons/snapshot.svg</file>
         <file>icons/plus.svg</file>
         <file>icons/minus.svg</file>
@@ -156,53 +146,64 @@
         <file>images/gns3_icon_128x128.png</file>
         <file>images/gns3_icon_256x256.png</file>
         <file>images/gns3.ico</file>
-	<file>dark_style/add-link-1.svg</file>
-	<file>dark_style/add-link-1-hover.svg</file>
-	<file>dark_style/add-note.svg</file>
-	<file>dark_style/add-note-hover.svg</file>
-	<file>dark_style/browse-all-icons.svg</file>
-	<file>dark_style/browse-all-icons-hover.svg</file>
-	<file>dark_style/camera-photo.svg</file>
-	<file>dark_style/camera-photo-hover.svg</file>
-	<file>dark_style/console.svg</file>
-	<file>dark_style/console-hover.svg</file>
-	<file>dark_style/ellipse.svg</file>
-	<file>dark_style/ellipse-hover.svg</file>
-	<file>dark_style/firewall.svg</file>
-	<file>dark_style/firewall-hover.svg</file>
-	<file>dark_style/image.svg</file>
-	<file>dark_style/image-hover.svg</file>
-	<file>dark_style/import_export_configs.svg</file>
-	<file>dark_style/import_export_configs-hover.svg</file>
-	<file>dark_style/new-project.svg</file>
-	<file>dark_style/new-project-hover.svg</file>
-	<file>dark_style/open.svg</file>
-	<file>dark_style/open-hover.svg</file>
-	<file>dark_style/pause.svg</file>
-	<file>dark_style/pause-hover.svg</file>
-	<file>dark_style/pc.svg</file>
-	<file>dark_style/pc-hover.svg</file>
-	<file>dark_style/rectangle.svg</file>
-	<file>dark_style/rectangle-hover.svg</file>
-	<file>dark_style/reload.svg</file>
-	<file>dark_style/reload-hover.svg</file>
-	<file>dark_style/router.svg</file>
-	<file>dark_style/router-hover.svg</file>
-	<file>dark_style/save-as-project.svg</file>
-	<file>dark_style/save-as-project-hover.svg</file>
-	<file>dark_style/show-interface-names.svg</file>
-	<file>dark_style/show-interface-names-hover.svg</file>
-	<file>dark_style/snapshot.svg</file>
-	<file>dark_style/snapshot-hover.svg</file>
-	<file>dark_style/start.svg</file>
-	<file>dark_style/start-hover.svg</file>
-	<file>dark_style/stop.svg</file>
-	<file>dark_style/stop-hover.svg</file>
-	<file>dark_style/switch.svg</file>
-	<file>dark_style/switch-hover.svg</file>
-	<file>dark_style/zoom-in.svg</file>
-	<file>dark_style/zoom-in-hover.svg</file>
-	<file>dark_style/zoom-out.svg</file>
-	<file>dark_style/zoom-out-hover.svg</file>
+        <file>charcoal_icons/add-link-1.svg</file>
+        <file>charcoal_icons/add-link-1-hover.svg</file>
+        <file>charcoal_icons/add-link-1-cancel.svg</file>
+        <file>charcoal_icons/add-note.svg</file>
+        <file>charcoal_icons/add-note-hover.svg</file>
+        <file>charcoal_icons/browse-all-icons.svg</file>
+        <file>charcoal_icons/browse-all-icons-hover.svg</file>
+        <file>charcoal_icons/camera-photo.svg</file>
+        <file>charcoal_icons/camera-photo-hover.svg</file>
+        <file>charcoal_icons/console.svg</file>
+        <file>charcoal_icons/console-hover.svg</file>
+        <file>charcoal_icons/aux-console.svg</file>
+        <file>charcoal_icons/aux-console-hover.svg</file>
+        <file>charcoal_icons/ellipse.svg</file>
+        <file>charcoal_icons/ellipse-hover.svg</file>
+        <file>charcoal_icons/firewall.svg</file>
+        <file>charcoal_icons/firewall-hover.svg</file>
+        <file>charcoal_icons/image.svg</file>
+        <file>charcoal_icons/image-hover.svg</file>
+        <file>charcoal_icons/import_export_configs.svg</file>
+        <file>charcoal_icons/import_export_configs-hover.svg</file>
+        <file>charcoal_icons/new-project.svg</file>
+        <file>charcoal_icons/new-project-hover.svg</file>
+        <file>charcoal_icons/open.svg</file>
+        <file>charcoal_icons/open-hover.svg</file>
+        <file>charcoal_icons/pause.svg</file>
+        <file>charcoal_icons/pause-hover.svg</file>
+        <file>charcoal_icons/pc.svg</file>
+        <file>charcoal_icons/pc-hover.svg</file>
+        <file>charcoal_icons/rectangle.svg</file>
+        <file>charcoal_icons/rectangle-hover.svg</file>
+        <file>charcoal_icons/reload.svg</file>
+        <file>charcoal_icons/reload-hover.svg</file>
+        <file>charcoal_icons/router.svg</file>
+        <file>charcoal_icons/router-hover.svg</file>
+        <file>charcoal_icons/save-project.svg</file>
+        <file>charcoal_icons/save-project-hover.svg</file>
+        <file>charcoal_icons/save-as-project.svg</file>
+        <file>charcoal_icons/save-as-project-hover.svg</file>
+        <file>charcoal_icons/show-interface-names.svg</file>
+        <file>charcoal_icons/show-interface-names-hover.svg</file>
+        <file>charcoal_icons/snapshot.svg</file>
+        <file>charcoal_icons/snapshot-hover.svg</file>
+        <file>charcoal_icons/start.svg</file>
+        <file>charcoal_icons/start-hover.svg</file>
+        <file>charcoal_icons/stop.svg</file>
+        <file>charcoal_icons/stop-hover.svg</file>
+        <file>charcoal_icons/switch.svg</file>
+        <file>charcoal_icons/switch-hover.svg</file>
+        <file>charcoal_icons/zoom-in.svg</file>
+        <file>charcoal_icons/zoom-in-hover.svg</file>
+        <file>charcoal_icons/zoom-out.svg</file>
+        <file>charcoal_icons/zoom-out-hover.svg</file>
+        <file>charcoal_icons/help.svg</file>
+        <file>charcoal_icons/help-hover.svg</file>
+        <file>charcoal_icons/preferences.svg</file>
+        <file>charcoal_icons/preferences-hover.svg</file>
+        <file>charcoal_icons/quit.svg</file>
+        <file>charcoal_icons/quit-hover.svg</file>
     </qresource>
 </RCC>

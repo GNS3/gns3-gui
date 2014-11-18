@@ -39,7 +39,7 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
-        self.uiCheckBox.setChecked(QtCore.QSettings().value("GUI/show_getting_started_dialog", True, type=bool))
+        self.uiCheckBox.setChecked(QtCore.QSettings().value("GUI/hide_getting_started_dialog", False, type=bool))
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self._loadFinishedSlot)
         self._timer.setSingleShot(True)
@@ -53,7 +53,7 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         :returns: boolean
         """
 
-        return self.uiCheckBox.isChecked()
+        return not self.uiCheckBox.isChecked()
 
     def done(self, result):
         """
@@ -62,7 +62,7 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         :param result: ignored
         """
 
-        QtCore.QSettings().setValue("GUI/show_getting_started_dialog", self.uiCheckBox.isChecked())
+        QtCore.QSettings().setValue("GUI/hide_getting_started_dialog", self.uiCheckBox.isChecked())
         QtGui.QDialog.done(self, result)
 
     def _urlClickedSlot(self, url):
@@ -98,4 +98,5 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
                 # do not show the page on Windows 32-bit (crash when no Internet connection)
                 self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))
             else:
+                self.uiCheckBox.setChecked(True)
                 self.accept()

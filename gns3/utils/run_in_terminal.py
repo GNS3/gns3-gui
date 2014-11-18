@@ -40,7 +40,7 @@ def RunInTerminal(command):
                 break
         if not terminal_cmd:
             raise OSError("xterm must be installed first")
-    subprocess.Popen(terminal_cmd, cwd=tempfile.gettempdir())
+    subprocess.Popen(terminal_cmd, stdout=subprocess.PIPE, cwd=tempfile.gettempdir())
 
 if __name__ == '__main__':
 
