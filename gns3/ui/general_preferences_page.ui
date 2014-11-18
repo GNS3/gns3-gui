@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>621</height>
+    <width>467</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,8 +23,8 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_8">
-       <item row="0" column="0" colspan="2">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
         <widget class="QGroupBox" name="uiLocalPathsGroupBox">
          <property name="title">
           <string>Local paths</string>
@@ -117,7 +117,19 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item>
+        <widget class="QGroupBox" name="uiStyleGroupBox">
+         <property name="title">
+          <string>Style</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QComboBox" name="uiStyleComboBox"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="uiConfigurationFileGroupBox">
          <property name="title">
           <string>Configuration file</string>
@@ -164,7 +176,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item>
         <widget class="QGroupBox" name="uiGeneralMiscGroupBox">
          <property name="title">
           <string>Miscellaneous</string>
@@ -226,7 +238,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

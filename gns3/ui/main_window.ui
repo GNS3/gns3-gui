@@ -109,14 +109,6 @@ background-none;
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="uiStyleMenu">
-     <property name="title">
-      <string>Window Style</string>
-     </property>
-     <addaction name="uiDefaultStyleAction"/>
-     <addaction name="uiEnergySavingStyleAction"/>
-     <addaction name="uiDarkStyleAction"/>
-    </widget>
     <widget class="QMenu" name="uiDocksMenu">
      <property name="title">
       <string>Docks</string>
@@ -129,9 +121,7 @@ background-none;
     <addaction name="separator"/>
     <addaction name="uiShowLayersAction"/>
     <addaction name="uiResetPortLabelsAction"/>
-    <addaction name="uiShowNamesAction"/>
     <addaction name="uiShowPortNamesAction"/>
-    <addaction name="uiStyleMenu"/>
     <addaction name="separator"/>
     <addaction name="uiDocksMenu"/>
    </widget>
@@ -560,10 +550,8 @@ background-none;
    </property>
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/play7-test.svg</normaloff>
-     <normalon>:/icons/play7-test.svg</normalon>
-     <activeoff>:/icons/play2-test.svg</activeoff>
-     <activeon>:/icons/play2-test.svg</activeon>:/icons/play7-test.svg</iconset>
+     <normaloff>:/icons/start.svg</normaloff>
+     <activeoff>:/icons/start-hover.svg</activeoff>:/icons/start.svg</iconset>
    </property>
    <property name="text">
     <string>Start/Resume all devices</string>
@@ -581,9 +569,8 @@ background-none;
    </property>
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/stop3-test.svg</normaloff>
-     <activeoff>:/icons/stop2-test.svg</activeoff>
-     <activeon>:/icons/stop2-test.svg</activeon>:/icons/stop3-test.svg</iconset>
+     <normaloff>:/icons/stop.svg</normaloff>
+     <activeoff>:/icons/stop-hover.svg</activeoff>:/icons/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Stop all devices</string>
@@ -731,9 +718,8 @@ background-none;
   <action name="uiSuspendAllAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/pause3-test.svg</normaloff>
-     <activeoff>:/icons/pause2-test.svg</activeoff>
-     <activeon>:/icons/pause2-test.svg</activeon>:/icons/pause3-test.svg</iconset>
+     <normaloff>:/icons/pause.svg</normaloff>
+     <activeoff>:/icons/pause-hover.svg</activeoff>:/icons/pause.svg</iconset>
    </property>
    <property name="text">
     <string>Suspend all devices</string>
@@ -823,9 +809,8 @@ background-none;
    </property>
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/rectangle3-test.svg</normaloff>
-     <activeoff>:/icons/rectangle2-test.svg</activeoff>
-     <activeon>:/icons/rectangle2-test.svg</activeon>:/icons/rectangle3-test.svg</iconset>
+     <normaloff>:/icons/rectangle.svg</normaloff>
+     <activeoff>:/icons/rectangle-hover.svg</activeoff>:/icons/rectangle.svg</iconset>
    </property>
    <property name="text">
     <string>Draw rectangle</string>
@@ -843,9 +828,8 @@ background-none;
    </property>
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/ellipse3-test.svg</normaloff>
-     <activeoff>:/icons/ellipse2-test.svg</activeoff>
-     <activeon>:/icons/ellipse2-test.svg</activeon>:/icons/ellipse3-test.svg</iconset>
+     <normaloff>:/icons/ellipse.svg</normaloff>
+     <activeoff>:/icons/ellipse-hover.svg</activeoff>:/icons/ellipse.svg</iconset>
    </property>
    <property name="text">
     <string>Draw ellipse</string>

@@ -739,7 +739,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "start"), items)):
             start_action = QtGui.QAction("Start", menu)
-            start_action.setIcon(QtGui.QIcon(':/icons/play.svg'))
+            start_action.setIcon(QtGui.QIcon(':/icons/start.svg'))
             start_action.triggered.connect(self.startActionSlot)
             menu.addAction(start_action)
 

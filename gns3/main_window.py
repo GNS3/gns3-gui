@@ -174,6 +174,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._cloud_settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
         settings.endGroup()
 
+        # restore the style
+        self._setStyle(self._settings["style"])
+
         # restore packet capture settings
         Port.loadPacketCaptureSettings()
 
@@ -214,6 +217,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # set a new images directory
         if new_settings.get("images_path", '') != self.imagesDirPath():
             self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
+
+        style = new_settings.get("style")
+        if style and new_settings["style"] != self._settings["style"]:
+            if not self._setStyle(style):
+                self._setLegacyStyle()
 
         # save the settings
         self._settings.update(new_settings)
@@ -274,11 +282,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowNamesAction.triggered.connect(self._showNamesActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
-
-        # style menu connections
-        self.uiDefaultStyleAction.triggered.connect(self._defaultStyleActionSlot)
-        self.uiEnergySavingStyleAction.triggered.connect(self._energySavingStyleActionSlot)
-        self.uiDarkStyleAction.triggered.connect(self._darkStyleActionSlot)
 
         # control menu connections
         self.uiStartAllAction.triggered.connect(self._startAllActionSlot)
@@ -920,24 +923,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if not self.uiAddLinkAction.isChecked():
             self.uiAddLinkAction.setText("Add a link")
-            link_icon = QtGui.QIcon()
-            link_icon.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-            link_icon.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-            self.uiAddLinkAction.setIcon(link_icon)
             self.adding_link_signal.emit(False)
         else:
-#TODO: handle automatic linking based on the link type
-#             modifiers = QtGui.QApplication.keyboardModifiers()
-#             if not globals.GApp.systconf['general'].manual_connection or modifiers == QtCore.Qt.ShiftModifier:
-#                 menu = QtGui.QMenu()
-#                 for linktype in globals.linkTypes.keys():
-#                     menu.addAction(linktype)
-#                 menu.connect(menu, QtCore.SIGNAL("triggered(QAction *)"), self.__setLinkType)
-#                 menu.exec_(QtGui.QCursor.pos())
-#             else:
-#                 globals.currentLinkType = globals.Enum.LinkType.Manual
             self.uiAddLinkAction.setText("Cancel")
-            self.uiAddLinkAction.setIcon(QtGui.QIcon(':/icons/cancel-connection.svg'))
             self.adding_link_signal.emit(True)
 
     def _preferencesActionSlot(self):
@@ -1653,6 +1641,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if item.node()._server.instance_id == instance_id:
                     item.setSelected(True)
 
+    def _setStyle(self, style):
+
+        if style == "Charcoal (default)":
+            self._setCharcoalStyle()
+            return True
+
+        return False
+
     def _getStyleIcon(self, normal_file, active_file):
 
         icon = QtGui.QIcon()
@@ -1660,9 +1656,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         icon.addPixmap(QtGui.QPixmap(active_file), QtGui.QIcon.Active, QtGui.QIcon.Off)
         return icon
 
-    def _defaultStyleActionSlot(self):
+    def _setLegacyStyle(self):
         """
-        Slot called to set the default style.
+        Sets the legacy GUI style.
         """
 
         self.setStyleSheet("")
@@ -1679,40 +1675,34 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiPreferencesAction.setIcon(QtGui.QIcon(":/icons/applications.svg"))
         self.uiZoomInAction.setIcon(QtGui.QIcon(":/icons/zoom-in.png"))
         self.uiZoomOutAction.setIcon(QtGui.QIcon(":/icons/zoom-out.png"))
-        self.uiShowNamesAction.setIcon(QtGui.QIcon(":/icons/show-hostname.svg"))
         self.uiShowPortNamesAction.setIcon(QtGui.QIcon(":/icons/show-interface-names.svg"))
-        self.uiStartAllAction.setIcon(self._getStyleIcon(":/icons/play7-test.svg", ":/icons/play2-test.svg"))
-        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/icons/pause3-test.svg", ":/icons/pause2-test.svg"))
-        self.uiStopAllAction.setIcon(self._getStyleIcon(":/icons/stop3-test.svg", ":/icons/stop2-test.svg"))
+        self.uiStartAllAction.setIcon(self._getStyleIcon(":/icons/start.svg", ":/icons/start-hover.svg"))
+        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/icons/pause.svg", ":/icons/pause-hover.svg"))
+        self.uiStopAllAction.setIcon(self._getStyleIcon(":/icons/stop.svg", ":/icons/stop-hover.svg"))
         self.uiReloadAllAction.setIcon(QtGui.QIcon(":/icons/reload.svg"))
         self.uiAuxConsoleAllAction.setIcon(QtGui.QIcon(":/icons/aux-console.svg"))
         self.uiConsoleAllAction.setIcon(QtGui.QIcon(":/icons/console.svg"))
         self.uiAddNoteAction.setIcon(QtGui.QIcon(":/icons/add-note.svg"))
         self.uiInsertImageAction.setIcon(QtGui.QIcon(":/icons/image.svg"))
-        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/icons/rectangle3-test.svg", ":/icons/rectangle2-test.svg"))
-        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/icons/ellipse3-test.svg", ":/icons/ellipse2-test.svg"))
+        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/icons/rectangle.svg", ":/icons/rectangle-hover.svg"))
+        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/icons/ellipse.svg", ":/icons/ellipse-hover.svg"))
         self.uiOnlineHelpAction.setIcon(QtGui.QIcon(":/icons/help.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/icons/router.png", ":/icons/router-hover.png"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/icons/switch.png", ":/icons/switch-hover.png"))
         self.uiBrowseEndDevicesAction.setIcon(self._getStyleIcon(":/icons/PC.png", ":/icons/PC-hover.png"))
         self.uiBrowseSecurityDevicesAction.setIcon(self._getStyleIcon(":/icons/firewall.png", ":/icons/firewall-hover.png"))
         self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/icons/browse-all-icons.png", ":/icons/browse-all-icons-hover.png"))
-        self.uiAddLinkAction.setIcon(self._getStyleIcon(":/icons/connection-new.svg", ":/dark_style/connection-new-hover.svg"))
+        self.uiAddLinkAction.setIcon(self._getStyleIcon(":/icons/connection-new.svg", ":/charcoal_icons/connection-new-hover.svg"))
 
-    def _energySavingStyleActionSlot(self):
+    def _setCharcoalStyle(self):
         """
-        Slot called to set the energy saving style.
+        Sets the charcoal GUI style.
         """
-
-        self.setStyleSheet("QMainWindow {} QMenuBar { background: black; } QDockWidget { background: black; color: white; } QToolBar { background: black; } QFrame { background: gray; } QToolButton { width: 30px; height: 30px; /*border:solid 1px black opacity 0.4;*/ /*background-none;*/ } QStatusBar { /*    background-image: url(:/pictures/pictures/texture_blackgrid.png);*/     background: black; color: rgb(255,255,255); }")
-        self.uiDefaultStyleAction.setChecked(False)
-
-    def _darkStyleActionSlot(self):
 
         self.setStyleSheet("""QWidget {background-color: #535353}
 QToolBar {border:0px}
 QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
-QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 10px}
+QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 11px}
 QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
 QMenuBar::item {background-color: #535353}
 QMenu::item:selected {color: white; background-color: #5f5f5f}
@@ -1720,34 +1710,37 @@ QToolButton:hover {background-color: #5f5f5f}
 QGroupBox {color: #dedede; font: bold 12px}
 """)
 
-        self.uiNewProjectAction.setIcon(self._getStyleIcon(":/dark_style/new-project.svg", ":/dark_style/new-project-hover.svg"))
-        self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/dark_style/open.svg", ":/dark_style/open-hover.svg"))
-        self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/dark_style/save-as-project.svg", ":/dark_style/save-as-project-hover.svg"))  # FIXME: icon for save
-        self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/dark_style/save-as-project.svg", ":/dark_style/save-as-project-hover.svg"))
-        #self.uiImportExportConfigsAction.setIcon()
-        self.uiScreenshotAction.setIcon(self._getStyleIcon(":/dark_style/camera-photo.svg", ":/dark_style/camera-photo-hover.svg"))
-        self.uiSnapshotAction.setIcon(self._getStyleIcon(":/dark_style/snapshot.svg", ":/dark_style/snapshot-hover.svg"))
-        #self.uiQuitAction.setIcon()
-        #self.uiPreferencesAction.setIcon()
-        self.uiZoomInAction.setIcon(self._getStyleIcon(":/dark_style/zoom-in.svg", ":/dark_style/zoom-in-hover.svg"))
-        self.uiZoomOutAction.setIcon(self._getStyleIcon(":/dark_style/zoom-out.svg", ":/dark_style/zoom-out-hover.svg"))
-        #self.uiShowNamesAction.setIcon()
-        self.uiShowPortNamesAction.setIcon(self._getStyleIcon(":/dark_style/show-interface-names.svg", ":/dark_style/show-interface-names-hover.svg"))
-        self.uiStartAllAction.setIcon(self._getStyleIcon(":/dark_style/start.svg", ":/dark_style/start-hover.svg"))
-        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/dark_style/pause.svg", ":/dark_style/pause-hover.svg"))
-        self.uiStopAllAction.setIcon(self._getStyleIcon(":/dark_style/stop.svg", ":/dark_style/stop-hover.svg"))
-        self.uiReloadAllAction.setIcon(self._getStyleIcon(":/dark_style/reload.svg", ":/dark_style/reload-hover.svg"))
-        #self.uiAuxConsoleAllAction.setIcon()
-        self.uiConsoleAllAction.setIcon(self._getStyleIcon(":/dark_style/console.svg", ":/dark_style/console-hover.svg"))
-        self.uiAddNoteAction.setIcon(self._getStyleIcon(":/dark_style/add-note.svg", ":/dark_style/add-note-hover.svg"))
-        self.uiInsertImageAction.setIcon(self._getStyleIcon(":/dark_style/image.svg", ":/dark_style/image-hover.svg"))
-        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/dark_style/rectangle.svg", ":/dark_style/rectangle-hover.svg"))
-        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/dark_style/ellipse.svg", ":/dark_style/ellipse-hover.svg"))
-        #self.uiOnlineHelpAction.setIcon()
+        self.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
+        self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
+        self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-project.svg", ":/charcoal_icons/save-project-hover.svg"))
+        self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-as-project.svg", ":/charcoal_icons/save-as-project-hover.svg"))
+        self.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/charcoal_icons/import_export_configs.svg", ":/charcoal_icons/import_export_configs-hover.svg"))
+        self.uiScreenshotAction.setIcon(self._getStyleIcon(":/charcoal_icons/camera-photo.svg", ":/charcoal_icons/camera-photo-hover.svg"))
+        self.uiSnapshotAction.setIcon(self._getStyleIcon(":/charcoal_icons/snapshot.svg", ":/charcoal_icons/snapshot-hover.svg"))
+        self.uiQuitAction.setIcon(self._getStyleIcon(":/charcoal_icons/quit.svg", ":/charcoal_icons/quit-hover.svg"))
+        self.uiPreferencesAction.setIcon(self._getStyleIcon(":/charcoal_icons/preferences.svg", ":/charcoal_icons/preferences-hover.svg"))
+        self.uiZoomInAction.setIcon(self._getStyleIcon(":/charcoal_icons/zoom-in.svg", ":/charcoal_icons/zoom-in-hover.svg"))
+        self.uiZoomOutAction.setIcon(self._getStyleIcon(":/charcoal_icons/zoom-out.svg", ":/charcoal_icons/zoom-out-hover.svg"))
+        self.uiShowPortNamesAction.setIcon(self._getStyleIcon(":/charcoal_icons/show-interface-names.svg", ":/charcoal_icons/show-interface-names-hover.svg"))
+        self.uiStartAllAction.setIcon(self._getStyleIcon(":/charcoal_icons/start.svg", ":/charcoal_icons/start-hover.svg"))
+        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/charcoal_icons/pause.svg", ":/charcoal_icons/pause-hover.svg"))
+        self.uiStopAllAction.setIcon(self._getStyleIcon(":/charcoal_icons/stop.svg", ":/charcoal_icons/stop-hover.svg"))
+        self.uiReloadAllAction.setIcon(self._getStyleIcon(":/charcoal_icons/reload.svg", ":/charcoal_icons/reload-hover.svg"))
+        self.uiAuxConsoleAllAction.setIcon(self._getStyleIcon(":/charcoal_icons/aux-console.svg", ":/charcoal_icons/aux-console-hover.svg"))
+        self.uiConsoleAllAction.setIcon(self._getStyleIcon(":/charcoal_icons/console.svg", ":/charcoal_icons/console-hover.svg"))
+        self.uiAddNoteAction.setIcon(self._getStyleIcon(":/charcoal_icons/add-note.svg", ":/charcoal_icons/add-note-hover.svg"))
+        self.uiInsertImageAction.setIcon(self._getStyleIcon(":/charcoal_icons/image.svg", ":/charcoal_icons/image-hover.svg"))
+        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/charcoal_icons/rectangle.svg", ":/charcoal_icons/rectangle-hover.svg"))
+        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/charcoal_icons/ellipse.svg", ":/charcoal_icons/ellipse-hover.svg"))
+        self.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/charcoal_icons/help.svg", ":/charcoal_icons/help-hover.svg"))
+        self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/charcoal_icons/router.svg", ":/charcoal_icons/router-hover.svg"))
+        self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/charcoal_icons/switch.svg", ":/charcoal_icons/switch-hover.svg"))
+        self.uiBrowseEndDevicesAction.setIcon(self._getStyleIcon(":/charcoal_icons/pc.svg", ":/charcoal_icons/pc-hover.svg"))
+        self.uiBrowseSecurityDevicesAction.setIcon(self._getStyleIcon(":/charcoal_icons/firewall.svg", ":/charcoal_icons/firewall-hover.svg"))
+        self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/charcoal_icons/browse-all-icons.svg", ":/charcoal_icons/browse-all-icons-hover.svg"))
 
-        self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/dark_style/router.svg", ":/dark_style/router-hover.svg"))
-        self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/dark_style/switch.svg", ":/dark_style/switch-hover.svg"))
-        self.uiBrowseEndDevicesAction.setIcon(self._getStyleIcon(":/dark_style/pc.svg", ":/dark_style/pc-hover.svg"))
-        self.uiBrowseSecurityDevicesAction.setIcon(self._getStyleIcon(":/dark_style/firewall.svg", ":/dark_style/firewall-hover.svg"))
-        self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/dark_style/browse-all-icons.svg", ":/dark_style/browse-all-icons-hover.svg"))
-        self.uiAddLinkAction.setIcon(self._getStyleIcon(":/dark_style/add-link-1.svg", ":/dark_style/add-link-1-hover.svg"))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-cancel.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.uiAddLinkAction.setIcon(icon)
