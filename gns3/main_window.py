@@ -109,6 +109,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "project_type": "local",
         }
 
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self._uiNewsDockWidget = NewsDockWidget(self)
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
+        except ImportError:
+            self._uiNewsDockWidget = None
+
+        # restore the geometry and state of the main window.
+        settings = QtCore.QSettings()
+        self.restoreGeometry(settings.value("GUI/geometry", QtCore.QByteArray()))
+        self.restoreState(settings.value("GUI/state", QtCore.QByteArray()))
+
         # do not show the nodes dock widget my default
         self.uiNodesDockWidget.setVisible(False)
 
@@ -157,12 +169,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Loads the settings from the persistent settings file.
         """
 
-        # restore the geometry and state of the main window.
-        settings = QtCore.QSettings()
-        self.restoreGeometry(settings.value("GUI/geometry", QtCore.QByteArray()))
-        self.restoreState(settings.value("GUI/state", QtCore.QByteArray()))
-
         # restore the general settings
+        settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
         for name, value in GENERAL_SETTINGS.items():
             self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
@@ -1011,11 +1019,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
-        except ImportError:
-            pass
+        if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
 
         self._gettingStartedActionSlot(auto=True)
 
