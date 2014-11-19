@@ -198,7 +198,7 @@ if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.p
     # Windows 64-bit
     DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"C:\Program Files (x86)\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'
 
-STYLES = ["Charcoal (default)", "Legacy"]
+STYLES = ["Charcoal (default)", "Classic", "Legacy"]
 
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,

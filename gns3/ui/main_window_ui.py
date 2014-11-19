@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Nov 17 19:07:29 2014
+# Created: Wed Nov 19 14:45:32 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(980, 715)
+        MainWindow.resize(984, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet(_fromUtf8("#toolBar_Devices QToolButton {\n"
 "width: 50px;\n"
@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtGui.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 980, 25))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName(_fromUtf8("uiMenuBar"))
         self.uiEditMenu = QtGui.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName(_fromUtf8("uiEditMenu"))
@@ -124,6 +124,7 @@ class Ui_MainWindow(object):
         self.uiBrowsersToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.uiBrowsersToolBar.setObjectName(_fromUtf8("uiBrowsersToolBar"))
         MainWindow.addToolBar(QtCore.Qt.LeftToolBarArea, self.uiBrowsersToolBar)
+        MainWindow.insertToolBarBreak(self.uiBrowsersToolBar)
         self.uiControlToolBar = QtGui.QToolBar(MainWindow)
         self.uiControlToolBar.setIconSize(QtCore.QSize(32, 32))
         self.uiControlToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
+    <width>984</width>
     <height>715</height>
    </rect>
   </property>
@@ -64,7 +64,7 @@ background-none;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>980</width>
+     <width>984</width>
      <height>25</height>
     </rect>
    </property>
@@ -274,7 +274,7 @@ background-none;
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
    <addaction name="uiBrowseRoutersAction"/>
    <addaction name="separator"/>
