@@ -1746,7 +1746,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Sets the charcoal GUI style.
         """
 
-        self.setStyleSheet("""QWidget {background-color: #535353}
+        style = """QWidget {background-color: #535353}
 QToolBar {border:0px}
 QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
 QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 11px}
@@ -1757,8 +1757,12 @@ QToolButton:hover {background-color: #5f5f5f}
 QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none;}
 QComboBox {selection-color: black; selection-background-color: #dedede}
-""")
+"""
 
+        if sys.platform.startswith("darwin"):
+            style += "QDockWidget::title {text-align: center; background-color: #535353}"
+
+        self.setStyleSheet(style)
         self.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
         self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
         self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-project.svg", ":/charcoal_icons/save-project-hover.svg"))
