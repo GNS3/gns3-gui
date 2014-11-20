@@ -1755,7 +1755,8 @@ QMenuBar::item {background-color: #535353}
 QMenu::item:selected {color: white; background-color: #5f5f5f}
 QToolButton:hover {background-color: #5f5f5f}
 QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none;}
+QAbstractScrollArea::corner { background: #535353}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none}
 QComboBox {selection-color: black; selection-background-color: #dedede}
 """
 

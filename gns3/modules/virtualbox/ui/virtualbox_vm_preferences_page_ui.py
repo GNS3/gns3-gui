@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_preferences_page.ui'
 #
-# Created: Tue Oct  7 12:02:22 2014
+# Created: Wed Nov 19 18:57:20 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,7 +57,7 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
         self.uiVirtualBoxVMsTreeWidget.setSizePolicy(sizePolicy)
         self.uiVirtualBoxVMsTreeWidget.setMaximumSize(QtCore.QSize(160, 16777215))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
         self.uiVirtualBoxVMsTreeWidget.setFont(font)

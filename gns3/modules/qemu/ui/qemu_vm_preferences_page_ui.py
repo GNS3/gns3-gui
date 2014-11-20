@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_preferences_page.ui'
 #
-# Created: Fri Oct  3 14:05:58 2014
+# Created: Wed Nov 19 18:57:19 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,7 +37,7 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.uiQemuVMsTreeWidget.setSizePolicy(sizePolicy)
         self.uiQemuVMsTreeWidget.setMaximumSize(QtCore.QSize(160, 16777215))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
         self.uiQemuVMsTreeWidget.setFont(font)
