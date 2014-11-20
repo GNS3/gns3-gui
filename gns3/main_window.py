@@ -1754,7 +1754,9 @@ QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
 QMenuBar::item {background-color: #535353}
 QMenu::item:selected {color: white; background-color: #5f5f5f}
 QToolButton:hover {background-color: #5f5f5f}
-QGroupBox {color: #dedede; font: bold 12px}
+QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none;}
+QComboBox {selection-color: black; selection-background-color: #dedede}
 """)
 
         self.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
