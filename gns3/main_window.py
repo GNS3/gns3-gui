@@ -122,7 +122,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.restoreState(settings.value("GUI/state", QtCore.QByteArray()))
 
         # do not show the nodes dock widget my default
-        self.uiNodesDockWidget.setVisible(False)
+        if not ENABLE_CLOUD:
+            self.uiNodesDockWidget.setVisible(False)
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
