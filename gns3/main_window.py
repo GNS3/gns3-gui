@@ -283,6 +283,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiPreferencesAction.triggered.connect(self._preferencesActionSlot)
 
         # view menu connections
+        self.uiActionFullscreen.triggered.connect(self._fullScreenActionSlot)
         self.uiZoomInAction.triggered.connect(self._zoomInActionSlot)
         self.uiZoomOutAction.triggered.connect(self._zoomOutActionSlot)
         self.uiZoomResetAction.triggered.connect(self._zoomResetActionSlot)
@@ -580,6 +581,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         scene = self.uiGraphicsView.scene()
         for item in scene.items():
             item.setSelected(False)
+
+    def _fullScreenActionSlot(self):
+        """
+        Slot to switch to full screen.
+        """
+
+        if not self.windowState() & QtCore.Qt.WindowFullScreen:
+            # switch to full screen
+            self.setWindowState(self.windowState() | QtCore.Qt.WindowFullScreen)
+        else:
+            # switch back to normal
+            self.setWindowState(self.windowState() & ~QtCore.Qt.WindowFullScreen)
 
     def _zoomInActionSlot(self):
         """
