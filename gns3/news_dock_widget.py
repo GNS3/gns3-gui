@@ -36,6 +36,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         QtGui.QDockWidget.__init__(self, parent)
         self.setupUi(self)
 
+        self._visible = True
         self.visibilityChanged.connect(self._visibilityChangedSlot)
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
