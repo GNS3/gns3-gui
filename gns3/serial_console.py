@@ -63,6 +63,6 @@ def serialConsole(vmname):
             # use arguments on other platforms
             args = shlex.split(command)
             subprocess.Popen(args)
-    except (OSError, ValueError) as e:
+    except subprocess.SubprocessError as e:
         log.warning('could not start serial console "{}": {}'.format(command, e))
         raise
