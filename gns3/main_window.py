@@ -87,12 +87,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, project, parent=None):
 
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
+        MainWindow._instance = self
 
         self._settings = {}
+        self._project_from_cmdline = project
         self._cloud_settings = {}
         self._loadSettings()
         self._connections()
@@ -1103,7 +1105,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                                                                                                                    error=e))
 
         self._createTemporaryProject()
-        if self._settings["auto_launch_project_dialog"]:
+        if self._project_from_cmdline:
+            time.sleep(0.5)  # give so time to the server to initialize
+            self.loadProject(self._project_from_cmdline)
+        elif self._settings["auto_launch_project_dialog"]:
             project_dialog = NewProjectDialog(self, showed_from_startup=True)
             project_dialog.show()
             create_new_project = project_dialog.exec_()
@@ -1120,8 +1125,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
-
-        AnalyticsClient().send_event("GNS3", "Open", "Version {} on {}".format(__version__, platform.system()))
 
     def saveProjectAs(self):
         """
@@ -1360,7 +1363,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if need_to_save:
                     self.saveProject(path)
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
+            QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
             return False
         except ValueError as e:
