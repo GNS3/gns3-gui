@@ -114,6 +114,8 @@ background-none;
       <string>Docks</string>
      </property>
     </widget>
+    <addaction name="uiActionFullscreen"/>
+    <addaction name="separator"/>
     <addaction name="uiZoomInAction"/>
     <addaction name="uiZoomOutAction"/>
     <addaction name="uiZoomResetAction"/>
@@ -274,7 +276,7 @@ background-none;
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="uiBrowseRoutersAction"/>
    <addaction name="separator"/>
@@ -1118,6 +1120,14 @@ background-none;
   <action name="uiDarkStyleAction">
    <property name="text">
     <string>Dark Style</string>
+   </property>
+  </action>
+  <action name="uiActionFullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>
