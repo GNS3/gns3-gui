@@ -3,8 +3,7 @@ from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..settings import CLOUD_PROVIDERS
 from ..utils import import_from_string
 
-from PyQt4 import QtGui
-from PyQt4 import Qt
+from ..qt import QtCore, QtGui
 
 
 class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
@@ -58,7 +57,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         return self.uiRememberAPIKeyRadioButton.isChecked()
 
     def _terms_accepted(self):
-        return self.uiTermsCheckBox.checkState() == Qt.Qt.Checked
+        return self.uiTermsCheckBox.checkState() == QtCore.Qt.Qt.Checked
 
     def _validate(self):
         """

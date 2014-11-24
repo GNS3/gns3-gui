@@ -4,16 +4,14 @@ import json
 from socket import error as socket_error
 import logging
 import os
-import select
 import tempfile
 import time
 import zipfile
 
-from PyQt4.QtCore import QThread
-from PyQt4.QtCore import pyqtSignal
+from ..qt import QtCore
 
 from .exceptions import KeyPairExists
-from .rackspace_ctrl import RackspaceCtrl, get_provider
+from .rackspace_ctrl import get_provider
 from ..topology import Topology
 from ..servers import Servers
 
@@ -54,15 +52,15 @@ def ssh_client(host, key_string):
         client.close()
 
 
-class ListInstancesThread(QThread):
+class ListInstancesThread(QtCore.QThread):
     """
     Helper class to retrieve data from the provider in a separate thread,
     avoid freezing the gui
     """
-    instancesReady = pyqtSignal(object)
+    instancesReady = QtCore.pyqtSignal(object)
 
     def __init__(self, parent, provider):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._provider = provider
 
     def run(self):
@@ -74,14 +72,14 @@ class ListInstancesThread(QThread):
             log.info('list_instances error: {}'.format(e))
 
 
-class CreateInstanceThread(QThread):
+class CreateInstanceThread(QtCore.QThread):
     """
     Helper class to create instances in a separate thread
     """
-    instanceCreated = pyqtSignal(object, object)
+    instanceCreated = QtCore.pyqtSignal(object, object)
 
     def __init__(self, parent, provider, name, flavor_id, image_id):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._provider = provider
         self._name = name
         self._flavor_id = flavor_id
@@ -104,14 +102,14 @@ class CreateInstanceThread(QThread):
         self.instanceCreated.emit(i, k)
 
 
-class DeleteInstanceThread(QThread):
+class DeleteInstanceThread(QtCore.QThread):
     """
     Helper class to remove an instance in a separate thread
     """
-    instanceDeleted = pyqtSignal(object)
+    instanceDeleted = QtCore.pyqtSignal(object)
 
     def __init__(self, parent, provider, instance):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._provider = provider
         self._instance = instance
 
@@ -120,12 +118,12 @@ class DeleteInstanceThread(QThread):
             self.instanceDeleted.emit(self._instance)
 
 
-class StartGNS3ServerThread(QThread):
+class StartGNS3ServerThread(QtCore.QThread):
     """
     Perform an SSH connection to the instances in a separate thread,
     outside the GUI event loop, and start GNS3 server
     """
-    gns3server_started = pyqtSignal(str, str, str)
+    gns3server_started = QtCore.pyqtSignal(str, str, str)
 
 # This is for testing without pushing to github
 #     commands = '''
@@ -170,7 +168,7 @@ killall python3 gns3server gns3dms
 '''
 
     def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._host = host
         self._private_key_string = private_key_string
         self._server_id = server_id
@@ -240,16 +238,16 @@ killall python3 gns3server gns3dms
                 self.gns3server_started.emit(str(self._server_id), str(self._host), str(response))
 
 
-class WSConnectThread(QThread):
+class WSConnectThread(QtCore.QThread):
     """
     Establish a websocket connection with the remote gns3server
     instance. Run outside the GUI event loop.
     """
-    established = pyqtSignal(str)
+    established = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, provider, server_id, host, port, ca_file,
                  auth_user, auth_password, ssh_pkey, instance_id):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._provider = provider
         self._server_id = server_id
         self._host = host
@@ -278,15 +276,15 @@ class WSConnectThread(QThread):
         self.established.emit(self._server_id)
 
 
-class UploadProjectThread(QThread):
+class UploadProjectThread(QtCore.QThread):
     """
     Zip and Upload project to the cloud
     """
 
     # signals to update the progress dialog.
-    error = pyqtSignal(str, bool)
-    completed = pyqtSignal()
-    update = pyqtSignal(int)
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
 
     def __init__(self, cloud_settings, project_path, images_path):
         super().__init__()
@@ -353,17 +351,17 @@ class UploadProjectThread(QThread):
         self.quit()
 
 
-class UploadFilesThread(QThread):
+class UploadFilesThread(QtCore.QThread):
     """
     Upload multiple files to cloud files
 
     uploads - A list of 2-tuples of (local_src_path, remote_dst_path)
     """
 
-    completed = pyqtSignal()
+    completed = QtCore.pyqtSignal()
 
     def __init__(self, parent, cloud_settings, uploads):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._cloud_settings = cloud_settings
         self._uploads = uploads
 
@@ -376,15 +374,15 @@ class UploadFilesThread(QThread):
         self.completed.emit()
 
 
-class DownloadProjectThread(QThread):
+class DownloadProjectThread(QtCore.QThread):
     """
     Downloads project from cloud storage
     """
 
     # signals to update the progress dialog.
-    error = pyqtSignal(str, bool)
-    completed = pyqtSignal()
-    update = pyqtSignal(int)
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
 
     def __init__(self, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
         super().__init__()
@@ -433,15 +431,15 @@ class DownloadProjectThread(QThread):
         self.quit()
 
 
-class DeleteProjectThread(QThread):
+class DeleteProjectThread(QtCore.QThread):
     """
     Deletes project from cloud storage
     """
 
     # signals to update the progress dialog.
-    error = pyqtSignal(str, bool)
-    completed = pyqtSignal()
-    update = pyqtSignal(int)
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
 
     def __init__(self, project_file_name, cloud_settings):
         super().__init__()

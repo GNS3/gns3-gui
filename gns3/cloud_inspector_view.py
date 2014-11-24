@@ -2,17 +2,8 @@
 import ast
 import logging
 import os
-from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QIcon
-from PyQt4.QtGui import QMenu
-from PyQt4.QtGui import QAction
-from PyQt4.QtGui import QInputDialog
-from PyQt4.QtCore import QAbstractTableModel
-from PyQt4.QtCore import QModelIndex
-from PyQt4.QtCore import QTimer
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.Qt import Qt
 
+from .qt import QtCore, QtGui
 from .cloud.utils import (ListInstancesThread, CreateInstanceThread, DeleteInstanceThread,
                           StartGNS3ServerThread, WSConnectThread)
 from libcloud.compute.types import NodeState
@@ -36,7 +27,7 @@ class RunningInstanceState(NodeState):
     WS_CONNECTED = 12
 
 
-class InstanceTableModel(QAbstractTableModel):
+class InstanceTableModel(QtCore.QAbstractTableModel):
     """
     A custom table model storing data of cloud instances
     """
@@ -80,12 +71,12 @@ class InstanceTableModel(QAbstractTableModel):
         instance = self._instances.get(self._ids[index.row()])
         col = index.column()
 
-        if role == Qt.DecorationRole:
+        if role == QtCore.Qt.DecorationRole:
             if col == 1:
                 # status
-                return QIcon(self._get_status_icon_path(instance))
+                return QtGui.QIcon(self._get_status_icon_path(instance))
 
-        elif role == Qt.DisplayRole:
+        elif role == QtCore.Qt.DisplayRole:
             if col == 0:
                 # name
                 return instance.name
@@ -112,7 +103,7 @@ class InstanceTableModel(QAbstractTableModel):
             return None
 
     def headerData(self, section, orientation, role=None):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             try:
                 return self._header_data[section]
             except IndexError:
@@ -120,9 +111,9 @@ class InstanceTableModel(QAbstractTableModel):
         return super(InstanceTableModel, self).headerData(section, orientation, role)
 
     def addInstance(self, instance):
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self.beginInsertRows(QtCore.QModelIndex(), self.rowCount(), self.rowCount())
         if not len(self._instances):
-            self.beginInsertColumns(QModelIndex(), 0, self._width-1)
+            self.beginInsertColumns(QtCore.QModelIndex(), 0, self._width-1)
             self.endInsertColumns()
         self._ids.append(instance.id)
         self._instances[instance.id] = instance
@@ -143,7 +134,7 @@ class InstanceTableModel(QAbstractTableModel):
     def removeInstanceById(self, instance_id):
         try:
             index = self._ids.index(instance_id)
-            self.beginRemoveRows(QModelIndex(), index, index)
+            self.beginRemoveRows(QtCore.QModelIndex(), index, index)
             del self._instances[instance_id]
             del self._ids[index]
             self.endRemoveRows()
@@ -169,7 +160,7 @@ class InstanceTableModel(QAbstractTableModel):
         return self._instances.get(instance_id, None)
 
 
-class CloudInspectorView(QWidget, Ui_CloudInspectorView):
+class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
     """
     Table view showing data coming from InstanceTableModel
 
@@ -177,10 +168,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         instanceSelected(int) Emitted when users click and select an instance on the inspector.
         Param int is the ID of the instance
     """
-    instanceSelected = pyqtSignal(str)
+    instanceSelected = QtCore.pyqtSignal(str)
 
     def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+        super(QtGui.QWidget, self).__init__(parent)
         self.setupUi(self)
 
         self._provider = None
@@ -191,14 +182,14 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         self._model = InstanceTableModel()  # shortcut for self.uiInstancesTableView.model()
         self.uiInstancesTableView.setModel(self._model)
         self.uiInstancesTableView.verticalHeader().hide()
-        self.uiInstancesTableView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.uiInstancesTableView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.uiInstancesTableView.horizontalHeader().setStretchLastSection(True)
         # connections
         self.uiInstancesTableView.customContextMenuRequested.connect(self._contextMenu)
         self.uiInstancesTableView.clicked.connect(self._rowChanged)
         self.uiCreateInstanceButton.clicked.connect(self._create_new_instance)
 
-        self._pollingTimer = QTimer(self)
+        self._pollingTimer = QtCore.QTimer(self)
         self._pollingTimer.timeout.connect(self._polling_slot)
 
         # map flavor ids to combobox indexes
@@ -253,10 +244,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
 
     def _contextMenu(self, pos):
         # create actions
-        delete_action = QAction("Delete", self)
+        delete_action = QtGui.QAction("Delete", self)
         delete_action.triggered.connect(self._deleteSelectedInstance)
         # create context menu and add actions
-        menu = QMenu(self.uiInstancesTableView)
+        menu = QtGui.QMenu(self.uiInstancesTableView)
         menu.addAction(delete_action)
         # show the menu
         menu.popup(self.uiInstancesTableView.viewport().mapToGlobal(pos))
@@ -428,10 +419,10 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
         flavor_id = self.flavor_index_id[idx]
         image_id = self._settings['default_image']
 
-        name, ok = QInputDialog.getText(self,
-                                        "New instance",
-                                        "Choose a name for the instance and press Ok,\n"
-                                        "then wait for the instance to appear in the inspector.")
+        name, ok = QtGui.QInputDialog.getText(self,
+                                              "New instance",
+                                              "Choose a name for the instance and press Ok,\n"
+                                              "then wait for the instance to appear in the inspector.")
 
         if ok:
             if not name.endswith("-gns3"):
