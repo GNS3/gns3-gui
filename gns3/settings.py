@@ -282,7 +282,6 @@ CLOUD_SETTINGS = {
     "accepted_terms": False,
     "instance_timeout": 30,
     "default_image": "",
-    "gns3_ias_url": "http://ias.gns3.net:8888",
 }
 
 CLOUD_SETTINGS_TYPES = {
@@ -298,7 +297,6 @@ CLOUD_SETTINGS_TYPES = {
     "accepted_terms": bool,
     "instance_timeout": int,
     "default_image": str,
-    "gns3_ias_url": str,
 }
 
 # TODO proof of concept, needs review
