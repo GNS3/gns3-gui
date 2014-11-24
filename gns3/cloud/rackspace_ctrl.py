@@ -42,10 +42,8 @@ class RackspaceCtrl(BaseCloudCtrl):
 
     """ Controller class for interacting with Rackspace API. """
 
-    def __init__(self, username, api_key, gns3_ias_url):
+    def __init__(self, username, api_key, *args, **kwargs):
         super(RackspaceCtrl, self).__init__(username, api_key)
-
-        self.gns3_ias_url = gns3_ias_url
 
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post
@@ -225,55 +223,6 @@ class RackspaceCtrl(BaseCloudCtrl):
         self.region = region
         return True
 
-    def _get_shared_images(self, username, region, gns3_version):
-        """
-        Given a GNS3 version, ask gns3-ias to share compatible images
-
-        Response:
-            [{"created_at": "", "schema": "", "status": "", "member_id": "", "image_id": "", "updated_at": ""},]
-            or, if access was already asked
-            [{"image_id": "", "member_id": "", "status": "ALREADYREQUESTED"},]
-        """
-        endpoint = self.gns3_ias_url+"/images/grant_access"
-        params = {
-            "user_id": username,
-            "user_region": region.upper(),
-            "gns3_version": gns3_version,
-        }
-        try:
-            response = requests.get(endpoint, params=params)
-        except requests.ConnectionError:
-            raise ApiError("Unable to connect to IAS")
-
-        status = response.status_code
-
-        if status == 200:
-            return response.json()
-        elif status == 404:
-            raise ItemNotFound()
-        else:
-            raise ApiError("IAS status code: %d" % status)
-
-    def list_images(self):
-        """
-        Return a dictionary containing RackSpace server images
-        retrieved from gns3-ias server
-        """
-        if not (self.tenant_id and self.region):
-            return {}
-
-        try:
-            shared_images = self._get_shared_images(self.tenant_id, self.region, __version__)
-            images = {}
-            for i in shared_images:
-                images[i['image_id']] = i['image_name']
-            return images
-        except ItemNotFound:
-            return {}
-        except ApiError as e:
-            log.error('Error while retrieving image list: %s' % e)
-            return {}
-
     def get_image(self, image_id):
         return self.driver.get_image(image_id)
 
@@ -290,12 +239,11 @@ def get_provider(cloud_settings):
         username = cloud_settings['cloud_user_name']
         apikey = cloud_settings['cloud_api_key']
         region = cloud_settings['cloud_region']
-        ias_url = cloud_settings['gns3_ias_url']
     except KeyError as e:
         log.error("Unable to create cloud provider: {}".format(e))
         return
 
-    provider = RackspaceCtrl(username, apikey, ias_url)
+    provider = RackspaceCtrl(username, apikey)
 
     if not provider.authenticate():
         log.error("Authentication failed for cloud provider")
