@@ -121,11 +121,9 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
                     self.uiRegionComboBox.addItem(api_region_names[0])
                     self.region_index_id.append(api_libcloud_names[0])
                 # fill image template list
-                self.image_index_id = [""]
-                self.uiImageTemplateComboBox.addItem("Select default template...")
-                for image_id, image_name in provider.list_images().items():
-                    self.uiImageTemplateComboBox.addItem(image_name)
-                    self.image_index_id.append(image_id)
+                self.image_index_id = ["cc6e0096-84f9-4beb-a21e-d80a11a769d8"]
+                self.uiImageTemplateComboBox.addItem("Ubuntu 14.04")
+                self.uiImageTemplateComboBox.setCurrentIndex(0)
                 # fill flavor comboboxes
                 for id, name in provider.list_flavors().items():
                     self.uiInstanceFlavorComboBox.addItem(name)
