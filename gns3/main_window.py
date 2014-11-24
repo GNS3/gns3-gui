@@ -1321,8 +1321,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     project_files_dir = path[:-4]
                 self._project_settings["project_files_dir"] = project_files_dir + "-files"
 
-                if not os.path.isdir(self._project_settings["project_files_dir"]):
+                try:
                     os.makedirs(self._project_settings["project_files_dir"])
+                except FileExistsError:
+                    pass
+                except OSError as e:
+                    QtGui.QMessageBox.critical(self, "Load project", "Could not create project sub-directory {}: {}".format(self._project_settings["project_files_dir"], e))
+                    return
+
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
 
                 # if we're opening a cloud project, fire up instances
