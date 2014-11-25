@@ -91,7 +91,7 @@ class VirtualBoxVM(Node):
         # let's create a unique name if none has been chosen
         if not name:
             if linked_clone:
-                name = self.allocateName(vmname + " ")
+                name = self.allocateName(vmname + "-")
             else:
                 name = vmname
                 self.setName(name)
