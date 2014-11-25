@@ -154,13 +154,14 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             if type(slot_adapters) == str:
                 # only one default adapter for this slot.
                 self._widget_slots[slot_number].addItem(slot_adapters)
-#             elif platform == "c7200" and slot_number == 0 and settings["slot0"] != None:
-#                 # special case
-#                 self._widget_slots[slot_number].addItem(settings["slot0"])
             else:
                 # list of adapters
                 module_list = list(slot_adapters)
-                self._widget_slots[slot_number].addItems([""] + module_list)
+                if platform == "c7200" and slot_number == 0:
+                    # special case
+                    self._widget_slots[slot_number].addItems(module_list)
+                else:
+                    self._widget_slots[slot_number].addItems([""] + module_list)
 
             # set the combox box to the correct slot adapter if configured.
             if settings["slot" + str(slot_number)]:

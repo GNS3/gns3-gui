@@ -88,6 +88,9 @@ def main():
     options = parser.parse_args()
     exception_file_path = "exception.log"
 
+    if options.project and hasattr(sys, "frozen"):
+        os.chdir(os.path.dirname(os.path.abspath(sys.executable)))
+
     def exceptionHook(exception, value, tb):
 
         if exception == KeyboardInterrupt:
@@ -157,7 +160,7 @@ def main():
     if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
         QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
 
-    if sys.platform.startswith('win'):
+    if sys.platform.startswith('win') and hasattr(sys, "frozen"):
         try:
             import win32console
             import win32con

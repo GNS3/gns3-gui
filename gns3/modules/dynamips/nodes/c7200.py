@@ -47,7 +47,7 @@ class C7200(Router):
         if npe == "npe-g2":
             self._platform_settings["slot0"] = "C7200-IO-GE-E"
         else:
-            self._platform_settings["slot0"] = "C7200-IO-2FE"
+            self._platform_settings["slot0"] = "C7200-IO-FE"
 
         # merge platform settings with the generic ones
         self._settings.update(self._platform_settings)
