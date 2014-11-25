@@ -370,6 +370,10 @@ class Servers(QtCore.QObject):
             return value
         return None
 
+    @property
+    def cloud_servers(self):
+        return self._cloud_servers
+
     def __iter__(self):
         """
         Creates a round-robin system to pick up a remote server.

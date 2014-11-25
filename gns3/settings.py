@@ -266,7 +266,7 @@ PACKET_CAPTURE_SETTING_TYPES = {
     "packet_capture_analyzer_command": str,
 }
 
-ENABLE_CLOUD = False
+ENABLE_CLOUD = True
 
 CLOUD_SETTINGS = {
     "cloud_user_name": "",
@@ -282,7 +282,6 @@ CLOUD_SETTINGS = {
     "accepted_terms": False,
     "instance_timeout": 30,
     "default_image": "",
-    "gns3_ias_url": "http://ias.gns3.net:8888",
 }
 
 CLOUD_SETTINGS_TYPES = {
@@ -298,7 +297,6 @@ CLOUD_SETTINGS_TYPES = {
     "accepted_terms": bool,
     "instance_timeout": int,
     "default_image": str,
-    "gns3_ias_url": str,
 }
 
 # TODO proof of concept, needs review

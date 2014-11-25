@@ -995,6 +995,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             servers = Servers.instance()
             servers.stopLocalServer(wait=True)
 
+            for cs in servers.cloud_servers.values():
+                cs.close_connection()
+
             time_spent = "{:.0f}".format(time.time() - self._start_time)
             AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
         else:
@@ -1638,6 +1641,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         upload_thread = UploadProjectThread(
+            self,
             self._cloud_settings,
             self._project_settings['project_path'],
             self._settings['images_path']

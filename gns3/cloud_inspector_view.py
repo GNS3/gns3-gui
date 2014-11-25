@@ -22,9 +22,9 @@ class RunningInstanceState(NodeState):
     """
     GNS3 states for running instances
     """
-    GNS3SERVER_STARTING = 10
-    GNS3SERVER_STARTED = 11
-    WS_CONNECTED = 12
+    GNS3SERVER_STARTING = -1
+    GNS3SERVER_STARTED = -2
+    WS_CONNECTED = -3
 
 
 class InstanceTableModel(QtCore.QAbstractTableModel):
@@ -373,9 +373,6 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
 
         # filter instances to only those in the current project
         project_instances = [i for i in instances if i.id in self._project_instances_id]
-        for i in project_instances:
-            if i.state != RunningInstanceState.RUNNING:
-                self._model.updateInstanceFields(i, ['state'])
 
         # cleanup removed instances
         real = set(i.id for i in project_instances)
@@ -384,12 +381,17 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
             self._model.removeInstanceById(i)
         self.uiInstancesTableView.resizeColumnsToContents()
 
-        # start gns3server if needed
         for i in project_instances:
-            # get the real instance state from self._model
+            # get the customized instance state from self._model
             model_instance = self._model.getInstanceById(i.id)
 
-            if model_instance.state == RunningInstanceState.RUNNING:
+            # update model instance state if needed
+            if i.state != RunningInstanceState.RUNNING:
+                self._model.updateInstanceFields(i, ['state'])
+
+            # start gns3server if needed
+            if i.state == RunningInstanceState.RUNNING and (
+                    model_instance.state >= RunningInstanceState.RUNNING):
                 # instance state transition: RUNNING --> GNS3SERVER_STARTING
                 model_instance.state = RunningInstanceState.GNS3SERVER_STARTING
                 self._model.updateInstanceFields(model_instance, ['state'])

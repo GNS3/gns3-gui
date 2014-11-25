@@ -286,8 +286,8 @@ class UploadProjectThread(QtCore.QThread):
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
-    def __init__(self, cloud_settings, project_path, images_path):
-        super().__init__()
+    def __init__(self, parent, cloud_settings, project_path, images_path):
+        super(QThread, self).__init__(parent)
         self.cloud_settings = cloud_settings
         self.project_path = project_path
         self.images_path = images_path
@@ -384,8 +384,8 @@ class DownloadProjectThread(QtCore.QThread):
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
-    def __init__(self, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
-        super().__init__()
+    def __init__(self, parent, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
+        super(QThread, self).__init__(parent)
         self.project_name = cloud_project_file_name
         self.project_dest_path = project_dest_path
         self.images_dest_path = images_dest_path
@@ -441,8 +441,8 @@ class DeleteProjectThread(QtCore.QThread):
     completed = QtCore.pyqtSignal()
     update = QtCore.pyqtSignal(int)
 
-    def __init__(self, project_file_name, cloud_settings):
-        super().__init__()
+    def __init__(self, parent, project_file_name, cloud_settings):
+        super(QThread, self).__init__(parent)
         self.project_file_name = project_file_name
         self.cloud_settings = cloud_settings
 
