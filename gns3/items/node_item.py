@@ -341,19 +341,25 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             QtGui.QMessageBox.critical(self.scene().parent(), "Link", "No port available, please configure this device")
             return None
 
-        # sort by port number
-        port_numbers = {}
+        # sort the ports
+        ports_dict = {}
         for port in ports:
-            if port.slotNumber():
+            if port.slotNumber() is not None:
                 # multiply the slot number by 16 to make the port number unique.
-                port_numbers[(port.slotNumber() * 16) + port.portNumber()] = port
+                ports_dict[(port.slotNumber() * 16) + port.portNumber()] = port
+            elif port.portNumber()is not None:
+                ports_dict[port.portNumber()] = port
             else:
-                port_numbers[port.portNumber()] = port
-        ports = sorted(port_numbers.keys(), key=int)
+                ports_dict[port.name()] = port
+
+        try:
+            ports = sorted(ports_dict.keys(), key=int)
+        except ValueError:
+            ports = sorted(ports_dict.keys())
 
         # show a contextual menu for the user to choose a port
         for port in ports:
-            port_object = port_numbers[port]
+            port_object = ports_dict[port]
             if port in unavailable_ports:
                 # this port cannot be chosen by the user (grayed out)
                 action = menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port_object.name())

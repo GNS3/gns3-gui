@@ -41,7 +41,7 @@ class Host(Cloud):
         self._name_id = Host._name_instance_count
         Host._name_instance_count += 1
 
-        name = "Host {}".format(self._name_id)
+        name = "Host{}".format(self._name_id)
         self._settings["name"] = name
 
         self.created_signal.connect(self._autoConfigure)
