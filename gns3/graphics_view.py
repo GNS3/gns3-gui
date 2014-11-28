@@ -1151,6 +1151,10 @@ class GraphicsView(QtGui.QGraphicsView):
                 except ValueError:
                     raise ModuleError("Wrong format for server: '{}', please recreate the node in preferences".format(node_data["server"]))
                 server = Servers.instance().getRemoteServer(host, port)
+
+            if server is None:
+                return
+            
             if not server.connected() and ConnectToServer(self, server) is False:
                 return
 
