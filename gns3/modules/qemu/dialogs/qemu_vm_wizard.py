@@ -266,7 +266,10 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2**32
             if sys.platform.startswith("win"):
-                if is_64bit:
+                if self.uiTypeComboBox.currentText() == "ASA 8.4(2)" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
+                    # special case for ASA on Windows on local server
+                    search_string = r"qemu-0.11.0\qemu.exe"
+                elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit
                     search_string = "x86_64w.exe"
                 else:
@@ -311,7 +314,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["initrd"] = self.uiInitrdLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
-            settings["options"] = "-nographic -cpu coreduo -icount auto -hdachs 980,16,32"
+            settings["options"] = "-cpu coreduo -icount auto -hdachs 980,16,32"
+            if server == "local" and sys.platform.startswith("win") and qemu_path.endswith(r"qemu-0.11.0\qemu.exe"):
+                settings["options"] += " -vga none -vnc none"
+                settings["legacy_networking"] = True
+            else:
+                settings["options"] += " -nographic"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"
             settings["category"] = Node.security_devices

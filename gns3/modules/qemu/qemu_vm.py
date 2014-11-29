@@ -57,6 +57,7 @@ class QemuVM(Node):
                           "console": None,
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
+                          "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
                           "initrd": "",
                           "kernel_image": "",
                           "kernel_command_line": ""}

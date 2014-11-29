@@ -335,6 +335,7 @@ class Qemu(Module):
                     "adapters": self._qemu_vms[vm]["adapters"],
                     "adapter_type": self._qemu_vms[vm]["adapter_type"]}
 
+        #FIXME: this is ugly...
         if self._qemu_vms[vm]["hda_disk_image"]:
             settings["hda_disk_image"] = self._qemu_vms[vm]["hda_disk_image"]
 
@@ -349,6 +350,9 @@ class Qemu(Module):
 
         if self._qemu_vms[vm]["kernel_command_line"]:
             settings["kernel_command_line"] = self._qemu_vms[vm]["kernel_command_line"]
+
+        if self._qemu_vms[vm]["legacy_networking"]:
+            settings["legacy_networking"] = self._qemu_vms[vm]["legacy_networking"]
 
         if self._qemu_vms[vm]["options"]:
             settings["options"] = self._qemu_vms[vm]["options"]

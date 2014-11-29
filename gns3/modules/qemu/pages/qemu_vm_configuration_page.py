@@ -239,7 +239,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
-
+        self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiQemuOptionsLineEdit.setText(settings["options"])
 
@@ -295,5 +295,6 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
+        settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()
         settings["options"] = self.uiQemuOptionsLineEdit.text()

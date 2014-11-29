@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Sun Nov  9 16:27:45 2014
+# Created: Fri Nov 28 19:11:35 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -106,11 +106,11 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiQemutabWidget.addTab(self.tab_3, _fromUtf8(""))
         self.tab_7 = QtGui.QWidget()
         self.tab_7.setObjectName(_fromUtf8("tab_7"))
-        self.gridLayout_8 = QtGui.QGridLayout(self.tab_7)
-        self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
+        self.gridLayout_5 = QtGui.QGridLayout(self.tab_7)
+        self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
         self.uiAdaptersLabel = QtGui.QLabel(self.tab_7)
         self.uiAdaptersLabel.setObjectName(_fromUtf8("uiAdaptersLabel"))
-        self.gridLayout_8.addWidget(self.uiAdaptersLabel, 0, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.uiAdaptersLabel, 0, 0, 1, 1)
         self.uiAdaptersSpinBox = QtGui.QSpinBox(self.tab_7)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -120,10 +120,10 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiAdaptersSpinBox.setMinimum(0)
         self.uiAdaptersSpinBox.setMaximum(8)
         self.uiAdaptersSpinBox.setObjectName(_fromUtf8("uiAdaptersSpinBox"))
-        self.gridLayout_8.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
         self.uiAdapterTypesLabel = QtGui.QLabel(self.tab_7)
         self.uiAdapterTypesLabel.setObjectName(_fromUtf8("uiAdapterTypesLabel"))
-        self.gridLayout_8.addWidget(self.uiAdapterTypesLabel, 1, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.uiAdapterTypesLabel, 1, 0, 1, 1)
         self.uiAdapterTypesComboBox = QtGui.QComboBox(self.tab_7)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -131,9 +131,12 @@ class Ui_QemuVMConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiAdapterTypesComboBox.sizePolicy().hasHeightForWidth())
         self.uiAdapterTypesComboBox.setSizePolicy(sizePolicy)
         self.uiAdapterTypesComboBox.setObjectName(_fromUtf8("uiAdapterTypesComboBox"))
-        self.gridLayout_8.addWidget(self.uiAdapterTypesComboBox, 1, 1, 1, 2)
+        self.gridLayout_5.addWidget(self.uiAdapterTypesComboBox, 1, 1, 1, 1)
+        self.uiLegacyNetworkingCheckBox = QtGui.QCheckBox(self.tab_7)
+        self.uiLegacyNetworkingCheckBox.setObjectName(_fromUtf8("uiLegacyNetworkingCheckBox"))
+        self.gridLayout_5.addWidget(self.uiLegacyNetworkingCheckBox, 2, 0, 1, 2)
         spacerItem2 = QtGui.QSpacerItem(20, 261, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_8.addItem(spacerItem2, 2, 1, 1, 1)
+        self.gridLayout_5.addItem(spacerItem2, 3, 1, 1, 1)
         self.uiQemutabWidget.addTab(self.tab_7, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
@@ -205,6 +208,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_3), _translate("QemuVMConfigPageWidget", "HDD", None))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:", None))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:", None))
+        self.uiLegacyNetworkingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use the legacy networking mode", None))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_7), _translate("QemuVMConfigPageWidget", "Network", None))
         self.uiLinuxBootGroupBox.setTitle(_translate("QemuVMConfigPageWidget", "Linux boot specific settings", None))
         self.uiKernelCommandLineLabel.setText(_translate("QemuVMConfigPageWidget", "Kernel command line:", None))
