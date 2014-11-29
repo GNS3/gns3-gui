@@ -32,6 +32,8 @@ if sys.platform.startswith("win"):
         DEFAULT_VBOXMANAGE_PATH = os.path.join(os.environ["VBOX_MSI_INSTALL_PATH"], "VBoxManage.exe")
     else:
         DEFAULT_VBOXMANAGE_PATH = "VBoxManage.exe"
+elif sys.platform.startswith("darwin"):
+    DEFAULT_VBOXMANAGE_PATH = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
 else:
     paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
     # look for vboxmanage in the current working directory and $PATH
