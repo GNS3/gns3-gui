@@ -372,7 +372,7 @@ class Servers(QtCore.QObject):
 
     def cloudServerById(self, instance_id):
         """
-        Return the server having instance_id if it exists\
+        Return the server with the specified instance id, or None.
         """
         for cs in self.cloud_servers.values():
             if cs.instance_id == instance_id:

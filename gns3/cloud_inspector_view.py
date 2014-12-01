@@ -273,7 +273,7 @@ class CloudInspectorView(QWidget, Ui_CloudInspectorView):
             instance = self._model.getInstance(index)
 
             # warn user this is destructive
-            msg = "Do you want to remove the instance and any device running on it?"
+            msg = "Do you want to remove the instance and any devices running on it?"
             proceed = QtGui.QMessageBox.question(self, 'Warning', msg,
                                                  QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
