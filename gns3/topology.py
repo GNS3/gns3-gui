@@ -251,6 +251,12 @@ class Topology(object):
 
         for instance in self._instances:
             if instance.id == id:
+                # remove all the nodes running on the instance
+                for node in self._nodes:
+                    if node._server.instance_id == id:
+                        self.removeNode(node)
+                        node.delete()
+                # remove the instance itself
                 self._instances.remove(instance)
                 break
 
