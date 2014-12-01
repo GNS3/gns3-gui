@@ -60,10 +60,12 @@ Finally, install both the GUI & server from the source.
 
    cd gns3-gui-master
    python3 setup.py install
+   python3 gns3/main.py
 
 .. code:: bash
 
    cd gns3-server-master
    python3 setup.py install
+   python3 gns3server/main.py
 
 Or follow this `HOWTO that uses MacPorts <http://binarynature.blogspot.ca/2014/05/install-gns3-early-release-on-mac-os-x.html>`_.
