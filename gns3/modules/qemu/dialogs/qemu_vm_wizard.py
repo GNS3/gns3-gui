@@ -102,11 +102,11 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         """
 
         if vm_type == "IOSv":
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv.normal.svg"))
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.normal.svg"))
             self.uiNameLineEdit.setText("vIOS")
             self.uiHdaDiskImageLabel.setText("IOSv VDMK file:")
         elif vm_type == "IOSv-L2":
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2.normal.svg"))
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.normal.svg"))
             self.uiNameLineEdit.setText("vIOS-L2")
             self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
         elif vm_type == "ASA 8.4(2)":
@@ -281,7 +281,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             if sys.platform.startswith("win"):
                 if self.uiTypeComboBox.currentText() == "ASA 8.4(2)" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
                     # special case for ASA on Windows on local server
-                    search_string = r"qemu-0.11.0\qemu.exe"
+                    search_string = "qemu.exe"
                 elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit
                     search_string = "x86_64w.exe"
@@ -325,16 +325,16 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         if self.uiTypeComboBox.currentText() == "IOSv":
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["default_symbol"] = ":/symbols/iosv.normal.svg"
-            settings["hover_symbol"] = ":/symbols/iosv.selected.svg"
+            settings["default_symbol"] = ":/symbols/iosv_virl.normal.svg"
+            settings["hover_symbol"] = ":/symbols/iosv_virl.selected.svg"
             settings["category"] = Node.routers
             settings["options"] = "-nographic"
 
         elif self.uiTypeComboBox.currentText() == "IOSv-L2":
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["default_symbol"] = ":/symbols/iosv_l2.normal.svg"
-            settings["hover_symbol"] = ":/symbols/iosv_l2.selected.svg"
+            settings["default_symbol"] = ":/symbols/iosv_l2_virl.normal.svg"
+            settings["hover_symbol"] = ":/symbols/iosv_l2_virl.selected.svg"
             settings["category"] = Node.switches
             settings["options"] = "-nographic"
 
@@ -343,8 +343,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["initrd"] = self.uiInitrdLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
-            settings["options"] = "-cpu coreduo -icount auto -hdachs 980,16,32"
-            if server == "local" and sys.platform.startswith("win") and qemu_path.endswith(r"qemu-0.11.0\qemu.exe"):
+            settings["options"] = "-icount auto -hdachs 980,16,32"
+            if server == "local" and sys.platform.startswith("win") and qemu_path.endswith("qemu.exe"):
                 settings["options"] += " -vga none -vnc none"
                 settings["legacy_networking"] = True
             else:

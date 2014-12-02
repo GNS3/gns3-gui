@@ -4,8 +4,8 @@
     <file>symbols/router.selected.svg</file>
     <file>symbols/gateway.normal.svg</file>
     <file>symbols/gateway.selected.svg</file>
-    <file>symbols/iosv.normal.svg</file>
-    <file>symbols/iosv.selected.svg</file>
+    <file>symbols/iosv_virl.normal.svg</file>
+    <file>symbols/iosv_virl.selected.svg</file>
     <file>symbols/label_switch_router.normal.svg</file>
     <file>symbols/label_switch_router.selected.svg</file>
     <file>symbols/optical_router.normal.svg</file>
@@ -54,8 +54,8 @@
     <file>symbols/route_switch_processor.selected.svg</file>
     <file>symbols/multilayer_switch.normal.svg</file>
     <file>symbols/multilayer_switch.selected.svg</file>
-    <file>symbols/iosv_l2.normal.svg</file>
-    <file>symbols/iosv_l2.selected.svg</file>
+    <file>symbols/iosv_l2_virl.normal.svg</file>
+    <file>symbols/iosv_l2_virl.selected.svg</file>
     <file>symbols/lightweight_ap.normal.svg</file>
     <file>symbols/lightweight_ap.selected.svg</file>
     <file>symbols/wlan_controller.normal.svg</file>
