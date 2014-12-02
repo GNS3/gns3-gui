@@ -61,7 +61,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
         # Available types
-        self.uiTypeComboBox.addItems(["Default", "ASA 8.4(2)", "IDS"])
+        self.uiTypeComboBox.addItems(["Default", "IOSv", "IOSv-L2", "ASA 8.4(2)", "IDS"])
 
         # Mandatory fields
         self.uiNameTypeWizardPage.registerField("vm_name*", self.uiNameLineEdit)
@@ -101,12 +101,25 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         :param vm_type: type of VM
         """
 
-        if vm_type == "ASA 8.4(2)":
+        if vm_type == "IOSv":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv.normal.svg"))
+            self.uiNameLineEdit.setText("vIOS")
+            self.uiHdaDiskImageLabel.setText("IOSv VDMK file:")
+        elif vm_type == "IOSv-L2":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2.normal.svg"))
+            self.uiNameLineEdit.setText("vIOS-L2")
+            self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
+        elif vm_type == "ASA 8.4(2)":
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
+            self.uiNameLineEdit.setText("ASA")
         elif vm_type == "IDS":
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.normal.svg"))
+            self.uiNameLineEdit.setText("IDS")
+            self.uiHdaDiskImageLabel.setText("Disk image (hda):")
         else:
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+            self.uiHdaDiskImageLabel.setText("Disk image (hda):")
+            self.uiNameLineEdit.setText("")
 
     def _getDiskImage(self):
 
@@ -309,8 +322,24 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             "server": server,
         }
 
-        if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
-            settings["adapters"] = 6
+        if self.uiTypeComboBox.currentText() == "IOSv":
+            settings["adapters"] = 8
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["default_symbol"] = ":/symbols/iosv.normal.svg"
+            settings["hover_symbol"] = ":/symbols/iosv.selected.svg"
+            settings["category"] = Node.routers
+            settings["options"] = "-nographic"
+
+        elif self.uiTypeComboBox.currentText() == "IOSv-L2":
+            settings["adapters"] = 8
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["default_symbol"] = ":/symbols/iosv_l2.normal.svg"
+            settings["hover_symbol"] = ":/symbols/iosv_l2.selected.svg"
+            settings["category"] = Node.switches
+            settings["options"] = "-nographic"
+
+        elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
+            settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
@@ -345,7 +374,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         current_id = self.currentId()
         if self.page(current_id) == self.uiNameTypeWizardPage:
 
-            if self.uiTypeComboBox.currentText() != "Default":
+            if self.uiTypeComboBox.currentText().startswith("IOSv"):
+                self.uiRamSpinBox.setValue(384)
+            elif self.uiTypeComboBox.currentText() != "Default":
                 self.uiRamSpinBox.setValue(1024)
 
         elif self.page(current_id) == self.uiBinaryMemoryWizardPage:

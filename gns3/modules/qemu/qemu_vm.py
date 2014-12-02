@@ -90,7 +90,7 @@ class QemuVM(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(base_name)
+            name = self.allocateName(base_name + "-")
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this QEMU VM")
