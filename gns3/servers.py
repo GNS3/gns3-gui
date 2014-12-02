@@ -370,6 +370,24 @@ class Servers(QtCore.QObject):
             return value
         return None
 
+    def cloudServerById(self, instance_id):
+        """
+        Return the server with the specified instance id, or None.
+        """
+        for cs in self.cloud_servers.values():
+            if cs.instance_id == instance_id:
+                return cs
+        return None
+
+    def removeCloudServer(self, server):
+        try:
+            cs = self.cloud_servers[server.host]
+            cs.close_connection()
+            del self.cloud_servers[server.host]
+            return True
+        except KeyError:
+            return False
+
     @property
     def cloud_servers(self):
         return self._cloud_servers
