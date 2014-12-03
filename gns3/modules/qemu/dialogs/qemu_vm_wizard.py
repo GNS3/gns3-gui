@@ -344,6 +344,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
             settings["options"] = "-icount auto -hdachs 980,16,32"
+            settings["cpu_throttling"] = 65
+            settings["process_priority"] = "low"
             if server == "local" and sys.platform.startswith("win") and qemu_path.endswith("qemu.exe"):
                 settings["options"] += " -vga none -vnc none"
                 settings["legacy_networking"] = True

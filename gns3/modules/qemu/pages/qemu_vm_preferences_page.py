@@ -101,6 +101,14 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             if qemu_vm["kernel_command_line"]:
                 QtGui.QTreeWidgetItem(section_item, ["Kernel command line:", qemu_vm["kernel_command_line"]])
 
+        # performance section
+        section_item = self._createSectionItem("Optimizations")
+        if qemu_vm["cpu_throttling"]:
+            QtGui.QTreeWidgetItem(section_item, ["CPU throttling:", "{}%".format(qemu_vm["cpu_throttling"])])
+        else:
+            QtGui.QTreeWidgetItem(section_item, ["CPU throttling:", "disabled"])
+        QtGui.QTreeWidgetItem(section_item, ["Process priority:", qemu_vm["process_priority"]])
+
         # fill out the Additional options section
         if qemu_vm["options"]:
             section_item = self._createSectionItem("Additional options")

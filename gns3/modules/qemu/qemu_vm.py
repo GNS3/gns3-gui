@@ -58,6 +58,8 @@ class QemuVM(Node):
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                           "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
+                          "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
+                          "process_priority": QEMU_VM_SETTINGS["process_priority"],
                           "initrd": "",
                           "kernel_image": "",
                           "kernel_command_line": ""}

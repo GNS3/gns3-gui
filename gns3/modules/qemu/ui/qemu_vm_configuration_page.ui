@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>492</width>
-    <height>399</height>
+    <width>486</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,8 +242,8 @@
       <attribute name="title">
        <string>Advanced settings</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
         <widget class="QGroupBox" name="uiLinuxBootGroupBox">
          <property name="title">
           <string>Linux boot specific settings</string>
@@ -302,7 +302,99 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item>
+        <widget class="QGroupBox" name="uiOptimizationGroupBox">
+         <property name="title">
+          <string>Optimizations</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiActivateCPUThrottlingCheckBox">
+            <property name="text">
+             <string>Activate CPU throttling</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiCPUThrottlingLabel">
+            <property name="text">
+             <string>Percentage of CPU allowed:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="uiCPUThrottlingSpinBox">
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>800</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiProcessPriorityLabel">
+            <property name="text">
+             <string>Process priority:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="uiProcessPriorityComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>3</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Realtime</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Very high</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>High</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Normal</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Low</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Very low</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Aditional settings</string>
@@ -323,7 +415,7 @@
          <zorder>uiQemuOptionsLabel</zorder>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
