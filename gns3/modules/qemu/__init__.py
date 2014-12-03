@@ -354,8 +354,7 @@ class Qemu(Module):
         if self._qemu_vms[vm]["legacy_networking"]:
             settings["legacy_networking"] = self._qemu_vms[vm]["legacy_networking"]
 
-        if self._qemu_vms[vm]["cpu_throttling"]:
-            settings["cpu_throttling"] = self._qemu_vms[vm]["cpu_throttling"]
+        settings["cpu_throttling"] = self._qemu_vms[vm]["cpu_throttling"]
 
         if self._qemu_vms[vm]["process_priority"]:
             settings["process_priority"] = self._qemu_vms[vm]["process_priority"]
