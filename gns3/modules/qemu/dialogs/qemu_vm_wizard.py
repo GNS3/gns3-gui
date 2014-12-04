@@ -344,7 +344,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
             settings["options"] = "-icount auto -hdachs 980,16,32"
-            settings["cpu_throttling"] = 65
+            if not sys.platform.startswith("darwin"):
+                settings["cpu_throttling"] = 65
             settings["process_priority"] = "low"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"
@@ -364,8 +365,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         if self.uiTypeComboBox.currentText() != "Default":
             if not "options" in settings:
                 settings["options"] = ""
-            if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or \
-                    (sys.platform.startswith("darwing") and "GNS3.app" in qemu_path):
+            if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
                 settings["options"] += " -vga none -vnc none"
                 settings["legacy_networking"] = True
             else:
