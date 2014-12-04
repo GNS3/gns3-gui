@@ -362,14 +362,16 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["category"] = Node.end_devices
 
         if self.uiTypeComboBox.currentText() != "Default":
+            if not "options" in settings:
+                settings["options"] = ""
             if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or \
                     (sys.platform.startswith("darwing") and "GNS3.app" in qemu_path):
                 settings["options"] += " -vga none -vnc none"
                 settings["legacy_networking"] = True
             else:
                 settings["options"] += " -nographic"
+            settings["options"] = settings["options"].strip()
 
-        settings["options"] = settings["options"].strip()
         return settings
 
     def nextId(self):
