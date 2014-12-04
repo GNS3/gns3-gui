@@ -361,10 +361,14 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
-        elif self.currentPage() == self.uiIdlePCWizardPage:
+        if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
                 QtGui.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
+                return False
+        if self.currentPage() == self.uiServerWizardPage and self.uiRemoteRadioButton.isChecked():
+            if not Servers.instance().remoteServers():
+                QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in Dynamips preferences")
                 return False
         return True
 
@@ -396,9 +400,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():
                 server = next(iter(Servers.instance()))
-                if not server:
-                    QtGui.QMessageBox.critical(self, "IOS router", "No remote server available!")
-                    return
                 server = "{}:{}".format(server.host, server.port)
             else:
                 server = self.uiRemoteServersComboBox.currentText()

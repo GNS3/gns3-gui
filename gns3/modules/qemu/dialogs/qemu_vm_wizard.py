@@ -211,6 +211,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                 if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
                     server = Servers.instance().localServer()
                 elif self.uiRemoteRadioButton.isChecked():
+                    if not Servers.instance().remoteServers():
+                        QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in QEMU preferences")
+                        return False
                     server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
                 if not server.connected() and ConnectToServer(self, server) is False:
                     return False
@@ -279,15 +282,16 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2**32
             if sys.platform.startswith("win"):
-                if self.uiTypeComboBox.currentText() == "ASA 8.4(2)" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
-                    # special case for ASA on Windows on local server
+                if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
                     search_string = "qemu.exe"
                 elif is_64bit:
-                    # default is qemu-system-x86_64w.exe on Windows 64-bit
+                    # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
                     search_string = "x86_64w.exe"
                 else:
-                    # default is qemu-system-i386w.exe on Windows 32-bit
+                    # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
                     search_string = "i386w.exe"
+            elif sys.platform.startswith("darwin") and hasattr(sys, "frozen") and Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                search_string = "GNS3.app/Contents/Resources/qemu/bin/qemu-system-x86_64"
             elif is_64bit:
                 # default is qemu-system-x86_64 on other 64-bit platforms
                 search_string = "x86_64"
@@ -328,16 +332,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["default_symbol"] = ":/symbols/iosv_virl.normal.svg"
             settings["hover_symbol"] = ":/symbols/iosv_virl.selected.svg"
             settings["category"] = Node.routers
-            settings["options"] = "-nographic"
-
         elif self.uiTypeComboBox.currentText() == "IOSv-L2":
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["default_symbol"] = ":/symbols/iosv_l2_virl.normal.svg"
             settings["hover_symbol"] = ":/symbols/iosv_l2_virl.selected.svg"
             settings["category"] = Node.switches
-            settings["options"] = "-nographic"
-
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdLineEdit.text()
@@ -346,11 +346,6 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["options"] = "-icount auto -hdachs 980,16,32"
             settings["cpu_throttling"] = 65
             settings["process_priority"] = "low"
-            if server == "local" and sys.platform.startswith("win") and qemu_path.endswith("qemu.exe"):
-                settings["options"] += " -vga none -vnc none"
-                settings["legacy_networking"] = True
-            else:
-                settings["options"] += " -nographic"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"
             settings["category"] = Node.security_devices
@@ -366,6 +361,15 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["category"] = Node.end_devices
 
+        if self.uiTypeComboBox.currentText() != "Default":
+            if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or \
+                    (sys.platform.startswith("darwing") and "GNS3.app" in qemu_path):
+                settings["options"] += " -vga none -vnc none"
+                settings["legacy_networking"] = True
+            else:
+                settings["options"] += " -nographic"
+
+        settings["options"] = settings["options"].strip()
         return settings
 
     def nextId(self):
