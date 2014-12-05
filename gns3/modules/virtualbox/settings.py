@@ -48,6 +48,7 @@ else:
 
 VBOX_SETTINGS = {
     "vboxmanage_path": DEFAULT_VBOXMANAGE_PATH,
+    "vbox_user": "",
     "console_start_port_range": 3501,
     "console_end_port_range": 4000,
     "udp_start_port_range": 35001,
@@ -57,6 +58,7 @@ VBOX_SETTINGS = {
 
 VBOX_SETTING_TYPES = {
     "vboxmanage_path": str,
+    "vbox_user": str,
     "console_start_port_range": int,
     "console_end_port_range": int,
     "udp_start_port_range": int,

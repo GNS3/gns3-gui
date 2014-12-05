@@ -398,6 +398,7 @@ class VirtualBox(Module):
         params = {}
         if server.isLocal():
             params["vboxmanage_path"] = self._settings["vboxmanage_path"]
+            params["vbox_user"] = self._settings["vbox_user"]
         server.send_message("virtualbox.vm_list", params, callback)
 
     def getVirtualBoxVMList(self):
