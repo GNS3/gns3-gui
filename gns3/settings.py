@@ -258,7 +258,7 @@ PACKET_CAPTURE_SETTING_TYPES = {
     "packet_capture_analyzer_command": str,
 }
 
-ENABLE_CLOUD = False
+ENABLE_CLOUD = True
 
 CLOUD_SETTINGS = {
     "cloud_user_name": "",
