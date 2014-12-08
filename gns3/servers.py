@@ -194,7 +194,7 @@ class Servers(QtCore.QObject):
                 # use arguments on other platforms
                 args = shlex.split(command)
                 self._local_server_proccess = subprocess.Popen(args)
-        except OSError as e:
+        except subprocess.SubprocessError as e:
             log.warning('could not start local server "{}": {}'.format(command, e))
             return False
 
@@ -202,16 +202,16 @@ class Servers(QtCore.QObject):
 
     def stopLocalServer(self, wait=False):
 
-        if self._local_server and self._local_server.connected() and not sys.platform.startswith('win'):
-            # only gracefully disconnect if we are not on Windows
-            self._local_server.close_connection()
+        #if self._local_server and self._local_server.connected() and not sys.platform.startswith('win'):
+        #    # only gracefully disconnect if we are not on Windows
+        #    self._local_server.close_connection()
         if self._local_server_proccess and self._local_server_proccess.poll() is None:
             if sys.platform.startswith("win"):
                 self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
             else:
                 self._local_server_proccess.send_signal(signal.SIGINT)
             if wait:
-                self._local_server_proccess.wait()
+                self._local_server_proccess.wait(timeout=3000)
 
     def setLocalServer(self, path, host, port, auto_start, allow_console_from_anywhere, heartbeat_freq=DEFAULT_HEARTBEAT_FREQ):
         """

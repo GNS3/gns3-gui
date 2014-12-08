@@ -54,32 +54,23 @@ DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
 DEFAULT_LOCAL_SERVER_PORT = 8000
 
 # Pre-configured Telnet console commands on various OSes
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
-    # windows 64-bit
-    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
-                                             'SuperPutty': 'SuperPutty.exe -telnet "%h -P %p -wt \"%d\" -gns3 5 -skin 4"',
-                                             'SecureCRT': '"C:\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.EXE" /SCRIPT securecrt.vbs /ARG %d /T /TELNET %h %p',
-                                             'TeraTerm Pro (64-bit)': r'"C:\Program Files (x86)\teraterm\ttermpro.exe" /W="%d" /M="C:\Program Files\GNS3\ttstart.macro" /T=1 %h %p',
-                                             'TeraTerm Pro (32-bit)': r'"C:\Program Files\teraterm\ttermpro.exe" /W="%d" /M="C:\Program Files\GNS3\ttstart.macro" /T=1 %h %p"',
-                                             'Telnet': 'telnet %h %p',
-                                             'Xshell 4': 'C:\Program Files (x86)\\NetSarang\\Xshell 4\\xshell.exe -url telnet://%h:%p'}
-
-    # default Windows 64-bit Telnet console command
-    if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty"]
+if sys.platform.startswith("win"):
+    if "PROGRAMFILES(X86)" in os.environ:
+        # windows 64-bit
+        program_files = os.environ["PROGRAMFILES(X86)"]
     else:
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
+        # windows 32-bit
+        program_files = os.environ["PROGRAMFILES"]
 
-elif sys.platform.startswith("win"):
-    # windows 32-bit
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'SuperPutty': 'SuperPutty.exe -telnet "%h -P %p -wt \"%d\" -gns3 5 -skin 4"',
-                                             'SecureCRT': '"C:\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.EXE" /SCRIPT securecrt.vbs /ARG %d /T /TELNET %h %p',
-                                             'TeraTerm Pro': r'"C:\Program Files\teraterm\ttermpro.exe" /W="%d" /M="C:\Program Files\GNS3\ttstart.macro" /T=1 %h %p"',
+                                             'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT securecrt.vbs /ARG "%d" /T /TELNET %h %p'.format(program_files),
+                                             'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files),
                                              'Telnet': 'telnet %h %p',
-                                             'Xshell 4': 'C:\Program Files\\NetSarang\\Xshell 4\\xshell.exe -url telnet://%h:%p'}
+                                             'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files),
+                                             'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files)}
 
-    # default Windows 32-bit Telnet console command
+    # default on Windows
     if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty"]
     else:
@@ -114,7 +105,8 @@ elif sys.platform.startswith("darwin"):
                  " -e '  end tell'"
                  " -e 'end tell'"
                  " -e 'end tell'",
-        'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /ARG %d /T /TELNET %h %p'
+        'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /ARG "%d" /T /TELNET %h %p',
+        'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
     }
 
     # default Mac OS X Telnet console command
@@ -175,8 +167,8 @@ WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "C:\Program Files\Wireshark\wireshark.exe %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "C:\Program Files\Wireshark\wireshark.exe" -k -i -'}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(os.environ["PROGRAMFILES"]),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -k -i -'.format(os.environ["PROGRAMFILES"])}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -194,11 +186,11 @@ else:
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
 DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ and os.path.exists(os.environ["PROGRAMFILES(X86)"]):
+if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ:
     # Windows 64-bit
-    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"C:\Program Files (x86)\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'
+    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(os.environ["PROGRAMFILES(X86)"])
 
-STYLES = ["Charcoal (default)", "Legacy"]
+STYLES = ["Charcoal (default)", "Classic", "Legacy"]
 
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,

@@ -154,6 +154,10 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
                 if iou_device["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
+        if self.currentPage() == self.uiServerWizardPage and self.uiRemoteRadioButton.isChecked():
+            if not Servers.instance().remoteServers():
+                QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in IOS on UNIX preferences")
+                return False
         return True
 
     def getSettings(self):
@@ -193,9 +197,6 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():
                 server = next(iter(Servers.instance()))
-                if not server:
-                    QtGui.QMessageBox.critical(self, "IOU device", "No remote server available!")
-                    return
                 server = "{}:{}".format(server.host, server.port)
             else:
                 server = self.uiRemoteServersComboBox.currentText()

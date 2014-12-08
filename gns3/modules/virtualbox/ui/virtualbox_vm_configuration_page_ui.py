@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created: Sat Nov 15 15:33:17 2014
+# Created: Tue Dec  2 14:17:34 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,7 +121,7 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiConsolePortLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Console port:", None))
         self.uiEnableConsoleCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Enable remote console", None))
         self.uiHeadlessModeCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Start VM in headless mode", None))
-        self.uiBaseVMCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Use as a linked base VM", None))
+        self.uiBaseVMCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Use as a linked base VM (experimental)", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("virtualBoxVMConfigPageWidget", "General settings", None))
         self.uiAdaptersLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Adapters:", None))
         self.uiAdapterStartIndexLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Start at:", None))

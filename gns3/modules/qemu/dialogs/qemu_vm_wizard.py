@@ -61,7 +61,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
         # Available types
-        self.uiTypeComboBox.addItems(["Default", "ASA 8.4(2)", "IDS"])
+        self.uiTypeComboBox.addItems(["Default", "IOSv", "IOSv-L2", "ASA 8.4(2)", "IDS"])
 
         # Mandatory fields
         self.uiNameTypeWizardPage.registerField("vm_name*", self.uiNameLineEdit)
@@ -101,12 +101,25 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         :param vm_type: type of VM
         """
 
-        if vm_type == "ASA 8.4(2)":
+        if vm_type == "IOSv":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.normal.svg"))
+            self.uiNameLineEdit.setText("vIOS")
+            self.uiHdaDiskImageLabel.setText("IOSv VDMK file:")
+        elif vm_type == "IOSv-L2":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.normal.svg"))
+            self.uiNameLineEdit.setText("vIOS-L2")
+            self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
+        elif vm_type == "ASA 8.4(2)":
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
+            self.uiNameLineEdit.setText("ASA")
         elif vm_type == "IDS":
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.normal.svg"))
+            self.uiNameLineEdit.setText("IDS")
+            self.uiHdaDiskImageLabel.setText("Disk image (hda):")
         else:
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+            self.uiHdaDiskImageLabel.setText("Disk image (hda):")
+            self.uiNameLineEdit.setText("")
 
     def _getDiskImage(self):
 
@@ -198,6 +211,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                 if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
                     server = Servers.instance().localServer()
                 elif self.uiRemoteRadioButton.isChecked():
+                    if not Servers.instance().remoteServers():
+                        QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in QEMU preferences")
+                        return False
                     server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
                 if not server.connected() and ConnectToServer(self, server) is False:
                     return False
@@ -266,12 +282,16 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2**32
             if sys.platform.startswith("win"):
-                if is_64bit:
-                    # default is qemu-system-x86_64w.exe on Windows 64-bit
+                if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                    search_string = "qemu.exe"
+                elif is_64bit:
+                    # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
                     search_string = "x86_64w.exe"
                 else:
-                    # default is qemu-system-i386w.exe on Windows 32-bit
+                    # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
                     search_string = "i386w.exe"
+            elif sys.platform.startswith("darwin") and hasattr(sys, "frozen") and Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                search_string = "GNS3.app/Contents/Resources/qemu/bin/qemu-system-x86_64"
             elif is_64bit:
                 # default is qemu-system-x86_64 on other 64-bit platforms
                 search_string = "x86_64"
@@ -306,12 +326,27 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             "server": server,
         }
 
-        if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
-            settings["adapters"] = 6
+        if self.uiTypeComboBox.currentText() == "IOSv":
+            settings["adapters"] = 8
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["default_symbol"] = ":/symbols/iosv_virl.normal.svg"
+            settings["hover_symbol"] = ":/symbols/iosv_virl.selected.svg"
+            settings["category"] = Node.routers
+        elif self.uiTypeComboBox.currentText() == "IOSv-L2":
+            settings["adapters"] = 8
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["default_symbol"] = ":/symbols/iosv_l2_virl.normal.svg"
+            settings["hover_symbol"] = ":/symbols/iosv_l2_virl.selected.svg"
+            settings["category"] = Node.switches
+        elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
+            settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
-            settings["options"] = "-nographic -cpu coreduo -icount auto -hdachs 980,16,32"
+            settings["options"] = "-icount auto -hdachs 980,16,32"
+            if not sys.platform.startswith("darwin"):
+                settings["cpu_throttling"] = 65
+            settings["process_priority"] = "low"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"
             settings["category"] = Node.security_devices
@@ -327,6 +362,16 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["category"] = Node.end_devices
 
+        if self.uiTypeComboBox.currentText() != "Default":
+            if not "options" in settings:
+                settings["options"] = ""
+            if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
+                settings["options"] += " -vga none -vnc none"
+                settings["legacy_networking"] = True
+            else:
+                settings["options"] += " -nographic"
+            settings["options"] = settings["options"].strip()
+
         return settings
 
     def nextId(self):
@@ -337,7 +382,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         current_id = self.currentId()
         if self.page(current_id) == self.uiNameTypeWizardPage:
 
-            if self.uiTypeComboBox.currentText() != "Default":
+            if self.uiTypeComboBox.currentText().startswith("IOSv"):
+                self.uiRamSpinBox.setValue(384)
+            elif self.uiTypeComboBox.currentText() != "Default":
                 self.uiRamSpinBox.setValue(1024)
 
         elif self.page(current_id) == self.uiBinaryMemoryWizardPage:

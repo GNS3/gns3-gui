@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created: Tue Sep 30 18:52:19 2014
+# Created: Wed Nov 19 16:42:07 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,9 +47,9 @@ class Ui_PreferencesDialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiTreeWidget.sizePolicy().hasHeightForWidth())
         self.uiTreeWidget.setSizePolicy(sizePolicy)
-        self.uiTreeWidget.setMaximumSize(QtCore.QSize(140, 16777215))
+        self.uiTreeWidget.setMaximumSize(QtCore.QSize(160, 16777215))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
         self.uiTreeWidget.setFont(font)

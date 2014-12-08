@@ -82,10 +82,14 @@ def main():
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', help="show the version", action='version', version=__version__)
-    parser.add_argument('--debug', help="print out debug messages", action='store_true', default=False)
+    parser.add_argument("project", help="load a GNS3 project (.gns3)", metavar="path", nargs="?")
+    parser.add_argument("--version", help="show the version", action="version", version=__version__)
+    parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
     options = parser.parse_args()
     exception_file_path = "exception.log"
+
+    if options.project and hasattr(sys, "frozen"):
+        os.chdir(os.path.dirname(os.path.abspath(sys.executable)))
 
     def exceptionHook(exception, value, tb):
 
@@ -156,7 +160,7 @@ def main():
     if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
         QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
 
-    if sys.platform.startswith('win'):
+    if sys.platform.startswith('win') and hasattr(sys, "frozen"):
         try:
             import win32console
             import win32con
@@ -165,7 +169,7 @@ def main():
             raise RuntimeError("Python for Windows extensions must be installed.")
 
         try:
-            win32console.AllocConsole()
+            # hide the console
             console_window = win32console.GetConsoleWindow()
             win32gui.ShowWindow(console_window, win32con.SW_HIDE)
         except win32console.error as e:
@@ -214,7 +218,7 @@ def main():
         # update the exception file path to have it in the same directory as the settings file.
         exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
 
-        mainwindow = MainWindow.instance()
+        mainwindow = MainWindow(options.project)
         mainwindow.show()
         exit_code = app.exec_()
         delattr(MainWindow, "_instance")

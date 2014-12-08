@@ -18,7 +18,8 @@
 """
 Functions to start external console terminals.
 """
-from PyQt4.QtCore import QThread, pyqtSignal
+
+from .qt import QtCore
 
 import sys
 import shlex
@@ -29,14 +30,14 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class ConsoleThread(QThread):
+class ConsoleThread(QtCore.QThread):
     """
 
     """
-    consoleDone = pyqtSignal(str, str, int)
+    consoleDone = QtCore.pyqtSignal(str, str, int)
 
     def __init__(self, parent, command, name, host, port):
-        super(QThread, self).__init__(parent)
+        super(QtCore.QThread, self).__init__(parent)
         self._command = command
         self._name = name
         self._host = host
@@ -55,7 +56,7 @@ class ConsoleThread(QThread):
             # emit signal upon completion
             self.consoleDone.emit(self._name, self._host, self._port)
 
-        except (OSError, ValueError) as e:
+        except subprocess.SubprocessError as e:
             log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
             raise
 

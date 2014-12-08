@@ -203,6 +203,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             key = item.data(0, QtCore.Qt.UserRole)
             del self._ios_routers[key]
             self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))
+            if self._ios_routers == {}:
+                self.uiEditIOSRouterPushButton.setEnabled(False)
+                self.uiDeleteIOSRouterPushButton.setEnabled(False)
+                self.uiDecompressIOSPushButton.setEnabled(False)
 
     @staticmethod
     def getIOSImage(parent):

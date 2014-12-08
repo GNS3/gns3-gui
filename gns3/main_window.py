@@ -87,12 +87,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, project, parent=None):
 
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
+        MainWindow._instance = self
 
         self._settings = {}
+        self._project_from_cmdline = project
         self._cloud_settings = {}
         self._loadSettings()
         self._connections()
@@ -109,8 +111,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "project_type": "local",
         }
 
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self._uiNewsDockWidget = NewsDockWidget(self)
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
+        except ImportError:
+            self._uiNewsDockWidget = None
+
+        # restore the geometry and state of the main window.
+        settings = QtCore.QSettings()
+        self.restoreGeometry(settings.value("GUI/geometry", QtCore.QByteArray()))
+        self.restoreState(settings.value("GUI/state", QtCore.QByteArray()))
+
         # do not show the nodes dock widget my default
-        self.uiNodesDockWidget.setVisible(False)
+        if not ENABLE_CLOUD:
+            self.uiNodesDockWidget.setVisible(False)
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
@@ -157,12 +172,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Loads the settings from the persistent settings file.
         """
 
-        # restore the geometry and state of the main window.
-        settings = QtCore.QSettings()
-        self.restoreGeometry(settings.value("GUI/geometry", QtCore.QByteArray()))
-        self.restoreState(settings.value("GUI/state", QtCore.QByteArray()))
-
         # restore the general settings
+        settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
         for name, value in GENERAL_SETTINGS.items():
             self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
@@ -274,6 +285,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiPreferencesAction.triggered.connect(self._preferencesActionSlot)
 
         # view menu connections
+        self.uiActionFullscreen.triggered.connect(self._fullScreenActionSlot)
         self.uiZoomInAction.triggered.connect(self._zoomInActionSlot)
         self.uiZoomOutAction.triggered.connect(self._zoomOutActionSlot)
         self.uiZoomResetAction.triggered.connect(self._zoomResetActionSlot)
@@ -571,6 +583,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         scene = self.uiGraphicsView.scene()
         for item in scene.items():
             item.setSelected(False)
+
+    def _fullScreenActionSlot(self):
+        """
+        Slot to switch to full screen.
+        """
+
+        if not self.windowState() & QtCore.Qt.WindowFullScreen:
+            # switch to full screen
+            self.setWindowState(self.windowState() | QtCore.Qt.WindowFullScreen)
+        else:
+            # switch back to normal
+            self.setWindowState(self.windowState() & ~QtCore.Qt.WindowFullScreen)
 
     def _zoomInActionSlot(self):
         """
@@ -1014,11 +1038,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), NewsDockWidget(self))
-        except ImportError:
-            pass
+        if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
 
         self._gettingStartedActionSlot(auto=True)
 
@@ -1087,7 +1108,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                                                                                                                    error=e))
 
         self._createTemporaryProject()
-        if self._settings["auto_launch_project_dialog"]:
+        if self._project_from_cmdline:
+            time.sleep(0.5)  # give so time to the server to initialize
+            self.loadProject(self._project_from_cmdline)
+        elif self._settings["auto_launch_project_dialog"]:
             project_dialog = NewProjectDialog(self, showed_from_startup=True)
             project_dialog.show()
             create_new_project = project_dialog.exec_()
@@ -1104,8 +1128,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
-
-        AnalyticsClient().send_event("GNS3", "Open", "Version {} on {}".format(__version__, platform.system()))
 
     def saveProjectAs(self):
         """
@@ -1305,8 +1327,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     project_files_dir = path[:-4]
                 self._project_settings["project_files_dir"] = project_files_dir + "-files"
 
-                if not os.path.isdir(self._project_settings["project_files_dir"]):
+                try:
                     os.makedirs(self._project_settings["project_files_dir"])
+                except FileExistsError:
+                    pass
+                except OSError as e:
+                    QtGui.QMessageBox.critical(self, "Load project", "Could not create project sub-directory {}: {}".format(self._project_settings["project_files_dir"], e))
+                    return
+
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
 
                 # if we're opening a cloud project, fire up instances
@@ -1338,7 +1366,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if need_to_save:
                     self.saveProject(path)
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Load", "Could not load project from {}: {}".format(path, e))
+            QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
             return False
         except ValueError as e:
@@ -1650,6 +1678,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if style == "Charcoal (default)":
             self._setCharcoalStyle()
             return True
+        elif style == "Classic":
+            self._setClassicStyle()
+            return True
 
         return False
 
@@ -1666,8 +1697,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self.setStyleSheet("")
-        self.uiEnergySavingStyleAction.setChecked(False)
-
         self.uiNewProjectAction.setIcon(QtGui.QIcon(":/icons/new-project.svg"))
         self.uiOpenProjectAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
         self.uiSaveProjectAction.setIcon(QtGui.QIcon(":/icons/save.svg"))
@@ -1698,12 +1727,53 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/icons/browse-all-icons.png", ":/icons/browse-all-icons-hover.png"))
         self.uiAddLinkAction.setIcon(self._getStyleIcon(":/icons/connection-new.svg", ":/charcoal_icons/connection-new-hover.svg"))
 
+    def _setClassicStyle(self):
+        """
+        Sets the classic GUI style.
+        """
+
+        self.setStyleSheet("")
+        self.uiNewProjectAction.setIcon(self._getStyleIcon(":/classic_icons/new-project.svg", ":/classic_icons/new-project-hover.svg"))
+        self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
+        self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/classic_icons/save-project.svg", ":/classic_icons/save-project-hover.svg"))
+        self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/classic_icons/save-as-project.svg", ":/classic_icons/save-as-project-hover.svg"))
+        self.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/classic_icons/import_export_configs.svg", ":/classic_icons/import_export_configs-hover.svg"))
+        self.uiScreenshotAction.setIcon(self._getStyleIcon(":/classic_icons/camera-photo.svg", ":/classic_icons/camera-photo-hover.svg"))
+        self.uiSnapshotAction.setIcon(self._getStyleIcon(":/classic_icons/snapshot.svg", ":/classic_icons/snapshot-hover.svg"))
+        self.uiQuitAction.setIcon(self._getStyleIcon(":/classic_icons/quit.svg", ":/classic_icons/quit-hover.svg"))
+        self.uiPreferencesAction.setIcon(self._getStyleIcon(":/classic_icons/preferences.svg", ":/classic_icons/preferences-hover.svg"))
+        self.uiZoomInAction.setIcon(self._getStyleIcon(":/classic_icons/zoom-in.svg", ":/classic_icons/zoom-in-hover.svg"))
+        self.uiZoomOutAction.setIcon(self._getStyleIcon(":/classic_icons/zoom-out.svg", ":/classic_icons/zoom-out-hover.svg"))
+        self.uiShowPortNamesAction.setIcon(self._getStyleIcon(":/classic_icons/show-interface-names.svg", ":/classic_icons/show-interface-names-hover.svg"))
+        self.uiStartAllAction.setIcon(self._getStyleIcon(":/classic_icons/start.svg", ":/classic_icons/start-hover.svg"))
+        self.uiSuspendAllAction.setIcon(self._getStyleIcon(":/classic_icons/pause.svg", ":/classic_icons/pause-hover.svg"))
+        self.uiStopAllAction.setIcon(self._getStyleIcon(":/classic_icons/stop.svg", ":/classic_icons/stop-hover.svg"))
+        self.uiReloadAllAction.setIcon(self._getStyleIcon(":/classic_icons/reload.svg", ":/classic_icons/reload-hover.svg"))
+        self.uiAuxConsoleAllAction.setIcon(self._getStyleIcon(":/classic_icons/aux-console.svg", ":/classic_icons/aux-console-hover.svg"))
+        self.uiConsoleAllAction.setIcon(self._getStyleIcon(":/classic_icons/console.svg", ":/classic_icons/console-hover.svg"))
+        self.uiAddNoteAction.setIcon(self._getStyleIcon(":/classic_icons/add-note.svg", ":/classic_icons/add-note-hover.svg"))
+        self.uiInsertImageAction.setIcon(self._getStyleIcon(":/classic_icons/image.svg", ":/classic_icons/image-hover.svg"))
+        self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/classic_icons/rectangle.svg", ":/classic_icons/rectangle-hover.svg"))
+        self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/classic_icons/ellipse.svg", ":/classic_icons/ellipse-hover.svg"))
+        self.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/classic_icons/help.svg", ":/classic_icons/help-hover.svg"))
+        self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/classic_icons/router.svg", ":/classic_icons/router-hover.svg"))
+        self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/classic_icons/switch.svg", ":/classic_icons/switch-hover.svg"))
+        self.uiBrowseEndDevicesAction.setIcon(self._getStyleIcon(":/classic_icons/pc.svg", ":/classic_icons/pc-hover.svg"))
+        self.uiBrowseSecurityDevicesAction.setIcon(self._getStyleIcon(":/classic_icons/firewall.svg", ":/classic_icons/firewall-hover.svg"))
+        self.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/classic_icons/browse-all-icons.svg", ":/classic_icons/browse-all-icons-hover.svg"))
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-cancel.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.uiAddLinkAction.setIcon(icon)
+
     def _setCharcoalStyle(self):
         """
         Sets the charcoal GUI style.
         """
 
-        self.setStyleSheet("""QWidget {background-color: #535353}
+        style = """QWidget {background-color: #535353}
 QToolBar {border:0px}
 QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
 QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 11px}
@@ -1711,9 +1781,16 @@ QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
 QMenuBar::item {background-color: #535353}
 QMenu::item:selected {color: white; background-color: #5f5f5f}
 QToolButton:hover {background-color: #5f5f5f}
-QGroupBox {color: #dedede; font: bold 12px}
-""")
+QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
+QAbstractScrollArea::corner { background: #535353}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none}
+QComboBox {selection-color: black; selection-background-color: #dedede}
+"""
 
+        if sys.platform.startswith("darwin"):
+            style += "QDockWidget::title {text-align: center; background-color: #535353}"
+
+        self.setStyleSheet(style)
         self.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
         self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
         self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-project.svg", ":/charcoal_icons/save-project-hover.svg"))

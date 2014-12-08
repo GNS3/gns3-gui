@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Nov 17 19:07:29 2014
+# Created: Fri Nov 21 14:57:39 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(980, 715)
+        MainWindow.resize(984, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet(_fromUtf8("#toolBar_Devices QToolButton {\n"
 "width: 50px;\n"
@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtGui.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 980, 25))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName(_fromUtf8("uiMenuBar"))
         self.uiEditMenu = QtGui.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName(_fromUtf8("uiEditMenu"))
@@ -407,6 +407,8 @@ class Ui_MainWindow(object):
         self.uiImportProjectAction.setObjectName(_fromUtf8("uiImportProjectAction"))
         self.uiDarkStyleAction = QtGui.QAction(MainWindow)
         self.uiDarkStyleAction.setObjectName(_fromUtf8("uiDarkStyleAction"))
+        self.uiActionFullscreen = QtGui.QAction(MainWindow)
+        self.uiActionFullscreen.setObjectName(_fromUtf8("uiActionFullscreen"))
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -429,6 +431,8 @@ class Ui_MainWindow(object):
         self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
         self.uiHelpMenu.addAction(self.uiAboutAction)
+        self.uiViewMenu.addAction(self.uiActionFullscreen)
+        self.uiViewMenu.addSeparator()
         self.uiViewMenu.addAction(self.uiZoomInAction)
         self.uiViewMenu.addAction(self.uiZoomOutAction)
         self.uiViewMenu.addAction(self.uiZoomResetAction)
@@ -646,6 +650,8 @@ class Ui_MainWindow(object):
         self.uiExportProjectAction.setText(_translate("MainWindow", "Export project", None))
         self.uiImportProjectAction.setText(_translate("MainWindow", "Import project", None))
         self.uiDarkStyleAction.setText(_translate("MainWindow", "Dark Style", None))
+        self.uiActionFullscreen.setText(_translate("MainWindow", "Fullscreen", None))
+        self.uiActionFullscreen.setShortcut(_translate("MainWindow", "Ctrl+F", None))
 
 from ..cloud_inspector_view import CloudInspectorView
 from ..console_view import ConsoleView

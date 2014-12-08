@@ -57,6 +57,9 @@ class QemuVM(Node):
                           "console": None,
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
+                          "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
+                          "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
+                          "process_priority": QEMU_VM_SETTINGS["process_priority"],
                           "initrd": "",
                           "kernel_image": "",
                           "kernel_command_line": ""}
@@ -89,7 +92,7 @@ class QemuVM(Node):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(base_name)
+            name = self.allocateName(base_name + "-")
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this QEMU VM")

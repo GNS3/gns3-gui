@@ -77,6 +77,14 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
+        # Validate the Idle PC value
+        self._idle_valid = False
+        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]+)?$")
+        validator = QtGui.QRegExpValidator(idle_pc_rgx)
+        self.uiIdlepcLineEdit.setValidator(validator)
+        self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
+        self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
+
         #FIXME: hide because of issue on Windows.
         self.uiTestIOSImagePushButton.hide()
 
@@ -161,6 +169,24 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             RunInTerminal(command)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "IOS image", "Could not test the IOS image: {}".format(e))
+
+    def _idlePCValidateSlot(self):
+        """
+        Slot to validate the entered Idle-PC Value
+        """
+        sender = self.sender()
+        validator = sender.validator()
+        state = validator.validate(sender.text(), 0)[0]
+        if state == QtGui.QValidator.Acceptable:
+            color = '#A2C964'  # green
+            self._idle_valid = True
+        elif state == QtGui.QValidator.Intermediate:
+            color = '#fff79a'  # yellow
+            self._idle_valid = False
+        else:
+            color = '#f6989d'  # red
+            self._idle_valid = False
+        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
 
     def _idlePCFinderSlot(self):
         """
@@ -326,7 +352,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def validateCurrentPage(self):
         """
-        Validates the IOS name.
+        Validates the IOS name and checks validation state for Idle-PC value
         """
 
         if self.currentPage() == self.uiNamePlatformWizardPage:
@@ -335,6 +361,15 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
+        if self.currentPage() == self.uiIdlePCWizardPage:
+            if not self._idle_valid:
+                idle_pc = self.uiIdlepcLineEdit.text()
+                QtGui.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
+                return False
+        if self.currentPage() == self.uiServerWizardPage and self.uiRemoteRadioButton.isChecked():
+            if not Servers.instance().remoteServers():
+                QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in Dynamips preferences")
+                return False
         return True
 
 
@@ -365,9 +400,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():
                 server = next(iter(Servers.instance()))
-                if not server:
-                    QtGui.QMessageBox.critical(self, "IOS router", "No remote server available!")
-                    return
                 server = "{}:{}".format(server.host, server.port)
             else:
                 server = self.uiRemoteServersComboBox.currentText()

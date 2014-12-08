@@ -48,6 +48,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
+        self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
 
         self.uiAdapterTypesComboBox.clear()
         self.uiAdapterTypesComboBox.addItems(["ne2k_pci",
@@ -168,6 +169,16 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             QtGui.QMessageBox.critical(self, "Qemu", "Could not find {} in the Qemu binaries list".format(qemu_path))
             self.uiQemuListComboBox.clear()
 
+    def _cpuThrottlingChangedSlot(self, state):
+        """
+        Slot to enable or not CPU throttling.
+        """
+
+        if state:
+            self.uiCPUThrottlingSpinBox.setEnabled(True)
+        else:
+            self.uiCPUThrottlingSpinBox.setEnabled(False)
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the QEMU VM settings.
@@ -239,8 +250,18 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
-
+        self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
         self.uiRamSpinBox.setValue(settings["ram"])
+
+        if settings["cpu_throttling"]:
+            self.uiActivateCPUThrottlingCheckBox.setChecked(True)
+            self.uiCPUThrottlingSpinBox.setValue(settings["cpu_throttling"])
+        else:
+            self.uiActivateCPUThrottlingCheckBox.setChecked(False)
+
+        index = self.uiProcessPriorityComboBox.findText(settings["process_priority"], QtCore.Qt.MatchFixedString)
+        if index != -1:
+            self.uiProcessPriorityComboBox.setCurrentIndex(index)
         self.uiQemuOptionsLineEdit.setText(settings["options"])
 
     def saveSettings(self, settings, node=None, group=False):
@@ -295,5 +316,11 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
+        settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()
+        if self.uiActivateCPUThrottlingCheckBox.isChecked():
+            settings["cpu_throttling"] = self.uiCPUThrottlingSpinBox.value()
+        else:
+            settings["cpu_throttling"] = 0
+        settings["process_priority"] = self.uiProcessPriorityComboBox.currentText().lower()
         settings["options"] = self.uiQemuOptionsLineEdit.text()

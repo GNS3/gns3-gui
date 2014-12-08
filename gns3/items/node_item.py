@@ -341,29 +341,33 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             QtGui.QMessageBox.critical(self.scene().parent(), "Link", "No port available, please configure this device")
             return None
 
-        # sort by port name
-        port_names = {}
+        # sort the ports
+        ports_dict = {}
         for port in ports:
-            port_names[port.name()] = port
+            if port.slotNumber() is not None:
+                # multiply the slot number by 16 to make the port number unique.
+                ports_dict[(port.slotNumber() * 16) + port.portNumber()] = port
+            elif port.portNumber()is not None:
+                ports_dict[port.portNumber()] = port
+            else:
+                ports_dict[port.name()] = port
 
         try:
-            # try a numeric sort first
-            ports = sorted(port_names.keys(), key=int)
+            ports = sorted(ports_dict.keys(), key=int)
         except ValueError:
-            # fall back to a classic sort
-            ports = sorted(port_names.keys())
+            ports = sorted(ports_dict.keys())
 
         # show a contextual menu for the user to choose a port
         for port in ports:
-            port_object = port_names[port]
+            port_object = ports_dict[port]
             if port in unavailable_ports:
                 # this port cannot be chosen by the user (grayed out)
-                action = menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port)
+                action = menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port_object.name())
                 action.setDisabled(True)
             elif port_object.isFree():
-                menu.addAction(QtGui.QIcon(':/icons/led_red.svg'), port)
+                menu.addAction(QtGui.QIcon(':/icons/led_red.svg'), port_object.name())
             else:
-                menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port)
+                menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port_object.name())
 
         menu.triggered.connect(self.selectedPortSlot)
         menu.exec_(QtGui.QCursor.pos())

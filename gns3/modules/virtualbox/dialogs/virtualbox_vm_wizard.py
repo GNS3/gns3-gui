@@ -113,6 +113,9 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
             if VirtualBox.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
                 server = Servers.instance().localServer()
             else:
+                if not Servers.instance().remoteServers():
+                    QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in VirtualBox preferences")
+                    return False
                 server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
             if not server.connected() and ConnectToServer(self, server) is False:
                 return False

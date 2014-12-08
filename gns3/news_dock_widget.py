@@ -36,6 +36,8 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         QtGui.QDockWidget.__init__(self, parent)
         self.setupUi(self)
 
+        self._visible = True
+        self.visibilityChanged.connect(self._visibilityChangedSlot)
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
@@ -50,6 +52,19 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
             self._loadFinishedSlot()
         else:
             self.uiWebView.load(QtCore.QUrl("http://as.gns3.com/software/docked_200x200.html"))
+
+    def _visibilityChangedSlot(self, visible):
+        """
+        Slot for visibility changed signal.
+
+        :param visible: either the dock is visible or not
+        """
+
+        self._visible = visible
+
+    def isVisible(self):
+
+        return self._visible
 
     def closeEvent(self, event):
         """

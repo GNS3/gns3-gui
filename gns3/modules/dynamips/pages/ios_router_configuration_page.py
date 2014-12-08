@@ -24,7 +24,7 @@ import re
 import sys
 import pkg_resources
 
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -55,6 +55,31 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
+
+        self._idle_valid = False
+        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]+)?$")
+        validator = QtGui.QRegExpValidator(idle_pc_rgx)
+        self.uiIdlepcLineEdit.setValidator(validator)
+        self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
+        self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
+
+    def _idlePCValidateSlot(self):
+        """
+        Slot to validate the entered Idle-PC Value
+        """
+        sender = self.sender()
+        validator = sender.validator()
+        state = validator.validate(sender.text(), 0)[0]
+        if state == QtGui.QValidator.Acceptable:
+            color = '#A2C964'  # green
+            self._idle_valid = True
+        elif state == QtGui.QValidator.Intermediate:
+            color = '#fff79a'  # yellow
+            self._idle_valid = False
+        else:
+            color = '#f6989d'  # red
+            self._idle_valid = False
+        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
 
     def _iosImageBrowserSlot(self):
         """
@@ -154,13 +179,14 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             if type(slot_adapters) == str:
                 # only one default adapter for this slot.
                 self._widget_slots[slot_number].addItem(slot_adapters)
-#             elif platform == "c7200" and slot_number == 0 and settings["slot0"] != None:
-#                 # special case
-#                 self._widget_slots[slot_number].addItem(settings["slot0"])
             else:
                 # list of adapters
                 module_list = list(slot_adapters)
-                self._widget_slots[slot_number].addItems([""] + module_list)
+                if platform == "c7200" and slot_number == 0:
+                    # special case
+                    self._widget_slots[slot_number].addItems(module_list)
+                else:
+                    self._widget_slots[slot_number].addItems([""] + module_list)
 
             # set the combox box to the correct slot adapter if configured.
             if settings["slot" + str(slot_number)]:
@@ -419,6 +445,12 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         # in the node configurator.
 
         if not group:
+
+            # Check if the Idle-PC value has been validated okay
+            if not self._idle_valid:
+                idle_pc = self.uiIdlepcLineEdit.text()
+                QtGui.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
+                raise ConfigurationError()
 
             # set the device name
             name = self.uiNameLineEdit.text()
