@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Tue Dec  2 15:47:26 2014
+# Created: Mon Dec  8 14:12:35 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -173,27 +173,27 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiKernelCommandLineEdit.setObjectName(_fromUtf8("uiKernelCommandLineEdit"))
         self.gridLayout_2.addWidget(self.uiKernelCommandLineEdit, 2, 1, 1, 2)
         self.verticalLayout_2.addWidget(self.uiLinuxBootGroupBox)
-        self.groupBox_2 = QtGui.QGroupBox(self.tab_2)
-        self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
-        self.gridLayout = QtGui.QGridLayout(self.groupBox_2)
+        self.uiOptimizationGroupBox = QtGui.QGroupBox(self.tab_2)
+        self.uiOptimizationGroupBox.setObjectName(_fromUtf8("uiOptimizationGroupBox"))
+        self.gridLayout = QtGui.QGridLayout(self.uiOptimizationGroupBox)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.uiActivateCPUThrottlingCheckBox = QtGui.QCheckBox(self.groupBox_2)
+        self.uiActivateCPUThrottlingCheckBox = QtGui.QCheckBox(self.uiOptimizationGroupBox)
         self.uiActivateCPUThrottlingCheckBox.setChecked(True)
         self.uiActivateCPUThrottlingCheckBox.setObjectName(_fromUtf8("uiActivateCPUThrottlingCheckBox"))
         self.gridLayout.addWidget(self.uiActivateCPUThrottlingCheckBox, 0, 0, 1, 2)
-        self.uiCPUThrottlingLabel = QtGui.QLabel(self.groupBox_2)
+        self.uiCPUThrottlingLabel = QtGui.QLabel(self.uiOptimizationGroupBox)
         self.uiCPUThrottlingLabel.setObjectName(_fromUtf8("uiCPUThrottlingLabel"))
         self.gridLayout.addWidget(self.uiCPUThrottlingLabel, 1, 0, 1, 1)
-        self.uiCPUThrottlingSpinBox = QtGui.QSpinBox(self.groupBox_2)
+        self.uiCPUThrottlingSpinBox = QtGui.QSpinBox(self.uiOptimizationGroupBox)
         self.uiCPUThrottlingSpinBox.setMinimum(1)
         self.uiCPUThrottlingSpinBox.setMaximum(800)
         self.uiCPUThrottlingSpinBox.setProperty("value", 100)
         self.uiCPUThrottlingSpinBox.setObjectName(_fromUtf8("uiCPUThrottlingSpinBox"))
         self.gridLayout.addWidget(self.uiCPUThrottlingSpinBox, 1, 1, 1, 1)
-        self.uiProcessPriorityLabel = QtGui.QLabel(self.groupBox_2)
+        self.uiProcessPriorityLabel = QtGui.QLabel(self.uiOptimizationGroupBox)
         self.uiProcessPriorityLabel.setObjectName(_fromUtf8("uiProcessPriorityLabel"))
         self.gridLayout.addWidget(self.uiProcessPriorityLabel, 2, 0, 1, 1)
-        self.uiProcessPriorityComboBox = QtGui.QComboBox(self.groupBox_2)
+        self.uiProcessPriorityComboBox = QtGui.QComboBox(self.uiOptimizationGroupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -207,7 +207,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiProcessPriorityComboBox.addItem(_fromUtf8(""))
         self.uiProcessPriorityComboBox.addItem(_fromUtf8(""))
         self.gridLayout.addWidget(self.uiProcessPriorityComboBox, 2, 1, 1, 1)
-        self.verticalLayout_2.addWidget(self.groupBox_2)
+        self.verticalLayout_2.addWidget(self.uiOptimizationGroupBox)
         self.groupBox = QtGui.QGroupBox(self.tab_2)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
@@ -252,7 +252,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiKernelImageLabel.setText(_translate("QemuVMConfigPageWidget", "Kernel image:", None))
         self.uiInitrdToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse...", None))
         self.uiKernelImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse...", None))
-        self.groupBox_2.setTitle(_translate("QemuVMConfigPageWidget", "Performance", None))
+        self.uiOptimizationGroupBox.setTitle(_translate("QemuVMConfigPageWidget", "Optimizations", None))
         self.uiActivateCPUThrottlingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Activate CPU throttling", None))
         self.uiCPUThrottlingLabel.setText(_translate("QemuVMConfigPageWidget", "Percentage of CPU allowed:", None))
         self.uiCPUThrottlingSpinBox.setSuffix(_translate("QemuVMConfigPageWidget", " %", None))
