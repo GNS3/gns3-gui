@@ -8,6 +8,7 @@ from .cloud.utils import (ListInstancesThread, CreateInstanceThread, DeleteInsta
                           StartGNS3ServerThread, WSConnectThread)
 from libcloud.compute.types import NodeState
 from .topology import Topology
+from .servers import Servers
 
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
@@ -260,12 +261,29 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         if len(sel) and self._provider is not None:
             index = sel[0].row()
             instance = self._model.getInstance(index)
-            delete_thread = DeleteInstanceThread(self, self._provider, instance)
-            delete_thread.instanceDeleted.connect(self._main_window.remove_instance_from_project)
-            delete_thread.start()
 
-            instance.name = 'Deleting...'
-            self._model.updateInstanceFields(instance, ['name',])
+            # warn user this is destructive
+            msg = "Do you want to remove the instance and any devices running on it?"
+            proceed = QtGui.QMessageBox.question(self, 'Warning', msg,
+                                                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+            if proceed == QtGui.QMessageBox.Yes:
+                # disconnect and remove the server
+                servers = Servers.instance()
+                cs = servers.cloudServerById(instance.id)
+                if cs is not None:
+                    servers.removeCloudServer(cs)
+
+                # remove instance from the the topology
+                topology = Topology.instance()
+                topology.removeInstance(instance.id)
+
+                delete_thread = DeleteInstanceThread(self, self._provider, instance)
+                delete_thread.instanceDeleted.connect(self._main_window.remove_instance_from_project)
+                delete_thread.start()
+
+                instance.name = 'Deleting...'
+                self._model.updateInstanceFields(instance, ['name'])
 
     def _rowChanged(self, index):
         """
