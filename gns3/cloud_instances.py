@@ -64,29 +64,38 @@ class CloudInstances(QtCore.QObject):
     def add_instance(self, instance, keypair):
         if instance is None:
             return
-        ti = TopologyInstance(instance.name, instance.id, instance.extra['flavorId'],
-                              instance.extra['imageId'], keypair.private_key, keypair.public_key)
-        self._instances.append(ti)
-        self.save()
+        existing = self.get_instance(instance.id)
+        if existing is None:
+            ti = TopologyInstance(instance.name, instance.id, instance.extra['flavorId'],
+                                  instance.extra['imageId'], keypair.private_key, keypair.public_key)
+            self._instances.append(ti)
+            self.save()
 
     def update_instances(self, instances):
+        """
+        Compare with the existing list of instances to purge instances that no
+        longer exist.
+        """
         save_needed = False
         # Look for instances that have been deleted
-        for static in self._instances:
+        for stored in self._instances:
             found = False
             for dynamic in instances:
-                if static.id == dynamic.id:
+                if stored.id == dynamic.id:
                     found = True
                     break
 
             if not found:
-                self._instances.remove(static)
+                self._instances.remove(stored)
                 save_needed = True
 
         if save_needed:
             self.save()
 
-    def update_host_for_instance(self, instance_id, host):
+    def update_host_for_instance(self, host, instance_id):
+        """
+        Update the public IP for the instance.
+        """
         for instance in self.instances:
             if instance.id == instance_id:
                 if instance.host != host:

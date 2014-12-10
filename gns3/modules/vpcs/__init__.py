@@ -26,6 +26,7 @@ from ..module import Module
 from ..module_error import ModuleError
 from .vpcs_device import VPCSDevice
 from .settings import VPCS_SETTINGS, VPCS_SETTING_TYPES
+from ...settings import ENABLE_CLOUD
 
 import logging
 log = logging.getLogger(__name__)
@@ -342,6 +343,15 @@ class VPCS(Module):
                  "default_symbol": node_class.defaultSymbol(),
                  "hover_symbol": node_class.hoverSymbol()}
             )
+            if ENABLE_CLOUD:
+                nodes.append(
+                    {"class": node_class.__name__,
+                     "name": node_class.symbolName() + " (cloud)",
+                     "server": "cloud",
+                     "categories": node_class.categories(),
+                     "default_symbol": node_class.defaultSymbol(),
+                     "hover_symbol": node_class.hoverSymbol()}
+                )
         return nodes
 
     @staticmethod

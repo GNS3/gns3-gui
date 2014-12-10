@@ -128,10 +128,15 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 self._upload_image_progress_dialog.setWindowTitle("IOS image upload")
                 self._upload_image_progress_dialog.show()
                 try:
-                    src = self._ios_routers[key]['path']
-                    # Eg: images/IOS/c3745.img
-                    dst = 'images/IOS/{}'.format(self._ios_routers[key]['image'])
-                    upload_thread = UploadFilesThread(self, MainWindow.instance().cloudSettings(), [(src, dst)])
+                    upload_thread = UploadFilesThread(
+                        self,
+                        cloud_settings=MainWindow.instance().cloudSettings(),
+                        files_to_upload=[(
+                            self._ios_routers[key]["path"],
+                            'images/' + os.path.relpath(self._ios_routers[key]["path"],
+                                                        self._main_window.settings()["images_path"])
+                        )]
+                    )
                     upload_thread.completed.connect(self._imageUploadComplete)
                     upload_thread.start()
                 except Exception as e:

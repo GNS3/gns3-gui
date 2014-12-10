@@ -88,8 +88,9 @@ def read_cloud_settings():
         host = settings.value('host')
         private_key = settings.value('private_key')
         public_key = settings.value('public_key')
+        uid = settings.value('id')
 
-        instances.append((name, host, private_key, public_key))
+        instances.append((name, host, private_key, public_key, uid))
 
     if len(instances) == 0:
         raise Exception("Could not find any servers")
@@ -103,7 +104,7 @@ def main():
     instances = read_cloud_settings()
 
     if options['action'] == 'ssh':
-        name, host, private_key, public_key = instances[int(options['server'])-1]
+        name, host, private_key, public_key, uid = instances[int(options['server'])-1]
         print('Instance name: {}'.format(name))
         print('Host ip: {}'.format(host))
 
@@ -119,10 +120,10 @@ def main():
         print(cmd)
         os.system(cmd)
     elif options['action'] == 'list':
-        print('ID   Name')
+        print('ID   Name   IP   UID')
         for idx, info in enumerate(instances):
-            name, host, private_key, public_key = info
-            print('{:2d}   {}'.format(idx+1, name))
+            name, host, private_key, public_key, uid = info
+            print('{:2d}   {}   {}   {}'.format(idx+1, name, host, uid))
 
     return 0
 

@@ -250,6 +250,10 @@ class Router(Node):
                   "ram": ram,
                   "image": image}
 
+        if self.server().isCloud():
+            initial_settings["cloud_path"] = "images/IOS"
+            params["image"] = os.path.basename(params["image"])
+
         if router_id:
             params["router_id"] = router_id
 

@@ -267,7 +267,6 @@ class Topology(object):
         :param id: the instance id
         :return: a TopologyInstance object
         """
-
         for instance in self._instances:
             if instance.id == id:
                 return instance
