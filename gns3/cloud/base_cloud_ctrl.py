@@ -170,10 +170,7 @@ class BaseCloudCtrl(object):
     def list_instances(self):
         """ Return a list of instances in the current region. """
 
-        try:
-            return self.driver.list_nodes()
-        except Exception as e:
-            log.error("list_instances returned an error: {}".format(e))
+        return self.driver.list_nodes()
 
 
     def create_key_pair(self, name):

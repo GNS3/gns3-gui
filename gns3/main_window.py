@@ -31,6 +31,8 @@ import json
 import glob
 import logging
 import functools
+import ast
+import posixpath
 
 from pkg_resources import parse_version
 
@@ -58,7 +60,7 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology, TopologyInstance
-from .cloud.utils import UploadProjectThread
+from .cloud.utils import UploadProjectThread, UploadFilesThread, ssh_client
 from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 from .cloud_instances import CloudInstances
@@ -274,7 +276,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
-        #self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
+        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
+        self.uiMoveLocalProjectToCloudAction.triggered.connect(self._moveLocalProjectToCloudActionSlot)
+        self.uiMoveCloudProjectToLocalAction.triggered.connect(self._moveCloudProjectToLocalActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -376,7 +380,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def _createNewProject(self, new_project_settings):
         """
-        Crates a new project.
+        Creates a new project.
 
         :param new_project_settings: project settings (dict)
         """
@@ -1640,9 +1644,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._temporary_project:
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
-                self, "Export project server",
-                "Cannot export temporary projects, please save current project first.")
+                self,
+                "Backup project",
+                "Cannot backup temporary projects, please save current project first."
+            )
             return
+        if self.checkForUnsavedChanges():
+            self.saveProject(self._project_settings["project_path"])
 
         upload_thread = UploadProjectThread(
             self,
@@ -1650,7 +1658,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._project_settings['project_path'],
             self._settings['images_path']
         )
-        progress_dialog = ProgressDialog(upload_thread, "Exporting Project", "Uploading project files...", "Cancel",
+        progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
                                          parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
@@ -1665,6 +1673,112 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         dialog.show()
         dialog.exec_()
+
+    def _moveLocalProjectToCloudActionSlot(self):
+        if self._temporary_project:
+            # do nothing if project is temporary
+            QtGui.QMessageBox.critical(
+                self,
+                "Move project to Cloud",
+                "Cannot move temporary projects, please save current project first.")
+            return
+        if self._project_settings["project_type"] == "cloud":
+            # do nothing if project is already a cloud project
+            QtGui.QMessageBox.critical(
+                self,
+                "Move project to Cloud",
+                "This project is already a Cloud Project")
+            return
+        if not self.checkForUnsavedChanges():
+            # do nothing if project is already a cloud project
+            QtGui.QMessageBox.critical(
+                self,
+                "Unsaved changes",
+                "There are unsaved changes. Please save the project first.")
+            return
+
+        # Upload images to cloud storage
+        topology = Topology.instance()
+        images = set([
+            (
+                node.settings()['image'],
+                'images/' + os.path.relpath(node.settings()['image'], self._settings["images_path"])
+            )
+            for node in topology.nodes() if 'image' in node.settings()
+        ])
+        log.debug('uploading images ' + str(images) + ' to cloud')
+        upload_thread = UploadFilesThread(self, self._cloud_settings, images)
+        upload_images_progress_dialog = ProgressDialog(upload_thread, "Uploading images", "Uploading image files...",
+                                                       "Cancel", parent=self)
+        upload_images_progress_dialog.show()
+        upload_images_progress_dialog.exec_()
+
+        progress_dialog = QtGui.QProgressDialog("Moving project to cloud", "Cancel", 0, 100, self)
+        progress_dialog.show()
+
+        def buildComplete(server_id):
+            progress_dialog.setValue(80)
+            log.debug("websocket connected, server_id=" + str(server_id))
+
+            instance = topology.getInstance(server_id)
+            # copy nvram, config, and disk files to server
+            with ssh_client(instance.host, instance.private_key) as client:
+                log.debug('copying device files to cloud instance')
+                sftp = client.open_sftp()
+
+                def should_copy(filename):
+                    return not filename.endswith('.ghost')
+
+                project_files_dir = os.path.join(
+                    os.path.dirname(self._project_settings['project_path']),
+                    os.path.basename(os.path.dirname(self._project_settings['project_path'])) + '-files'
+                )
+                dest_project_path = posixpath.join(
+                    '/root/GNS3/projects',
+                    os.path.basename(os.path.dirname(self._project_settings['project_path']))
+                )
+
+                for root, dirs, files in os.walk(project_files_dir):
+                    directory = posixpath.normpath(posixpath.join(
+                        dest_project_path,
+                        os.path.relpath(root, project_files_dir).replace('\\', '/')
+                    ))
+                    sftp.mkdir(directory)
+                    sftp.chdir(directory)
+
+                    for file in files:
+                        local_filepath = os.path.join(root, file)
+                        if os.path.isfile(local_filepath) and should_copy(file):
+                            log.debug('copying file ' + local_filepath)
+                            sftp.put(local_filepath, file)
+                            log.debug('copied file successfully')
+
+                sftp.close()
+
+            self._project_settings["project_type"] = "cloud"
+
+            server = Servers.instance().anyCloudServer()
+
+            for node in topology.nodes():
+                node._server = server
+
+            self.saveProject(self._project_settings["project_path"])
+            topology.reset()
+            self.loadProject(self._project_settings["project_path"])
+            progress_dialog.accept()
+
+        self.CloudInspectorView.load(self, [])
+        builder = self.CloudInspectorView.createNewInstance(
+            self._project_settings["project_name"],
+            self.cloudSettings()['default_flavor'],
+            self.cloudSettings()['default_image']
+        )
+        builder.buildComplete.connect(buildComplete)
+
+
+    def _moveCloudProjectToLocalActionSlot(self):
+        #TODO implement moving cloud project to local
+        print("move cloud project to local")
 
     def _cloud_instance_selected(self, instance_id):
         """
