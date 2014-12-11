@@ -86,9 +86,9 @@ class CloudBuilder(QThread):
                 self._createInstance(self._provider, self._instance_name, self._flavor_id,
                                      self._image_id)
                 log.debug('got here 3')
-            # if self._start_at_setup:
-            #     log.debug('CloudBuilder start at setup')
-            #     self._instanceCreated(self._instance, self._key_pair)
+            if self._start_at_setup:
+                log.debug('CloudBuilder start at setup')
+                self._instanceCreated(self._instance, self._key_pair)
         except Exception:
             log.exception("CloudBuilder trapped an exception:")
             log.error('CloudBuilder stopped in error state.')

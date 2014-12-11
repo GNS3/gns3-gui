@@ -31,8 +31,8 @@ import json
 import glob
 import logging
 import functools
-import ast
 import posixpath
+import stat
 
 from pkg_resources import parse_version
 
@@ -59,11 +59,12 @@ from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
-from .topology import Topology, TopologyInstance
-from .cloud.utils import UploadProjectThread, UploadFilesThread, ssh_client
+from .topology import Topology
+from .cloud.utils import UploadProjectThread, UploadFilesThread, ssh_client, DownloadImagesThread, DeleteInstanceThread
 from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 from .cloud_instances import CloudInstances
+
 
 log = logging.getLogger(__name__)
 
@@ -1726,9 +1727,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 log.debug('copying device files to cloud instance')
                 sftp = client.open_sftp()
 
-                def should_copy(filename):
-                    return not filename.endswith('.ghost')
-
                 project_files_dir = os.path.join(
                     os.path.dirname(self._project_settings['project_path']),
                     os.path.basename(os.path.dirname(self._project_settings['project_path'])) + '-files'
@@ -1748,7 +1746,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                     for file in files:
                         local_filepath = os.path.join(root, file)
-                        if os.path.isfile(local_filepath) and should_copy(file):
+                        if os.path.isfile(local_filepath) and not self._should_exclude_copying_file(file):
                             log.debug('copying file ' + local_filepath)
                             sftp.put(local_filepath, file)
                             log.debug('copied file successfully')
@@ -1757,11 +1755,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             self._project_settings["project_type"] = "cloud"
 
+            # switch server on all nodes to cloud instance
             server = Servers.instance().anyCloudServer()
 
             for node in topology.nodes():
                 node._server = server
 
+            # reload project
             self.saveProject(self._project_settings["project_path"])
             topology.reset()
             self.loadProject(self._project_settings["project_path"])
@@ -1775,10 +1775,103 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
         builder.buildComplete.connect(buildComplete)
 
-
     def _moveCloudProjectToLocalActionSlot(self):
-        #TODO implement moving cloud project to local
-        print("move cloud project to local")
+        if self._temporary_project:
+            # do nothing if project is temporary
+            QtGui.QMessageBox.critical(
+                self,
+                "Move project to local machine",
+                "Cannot move temporary projects, please save current project first.")
+            return
+        if self._project_settings["project_type"] == "local":
+            # do nothing if project is already a cloud project
+            QtGui.QMessageBox.critical(
+                self,
+                "Move project to ",
+                "This project is already a local project")
+            return
+        if not self.checkForUnsavedChanges():
+            # do nothing if project is already a cloud project
+            QtGui.QMessageBox.critical(
+                self,
+                "Unsaved changes",
+                "There are unsaved changes. Please save the project first.")
+            return
+
+        topology = Topology.instance()
+
+        # download images from cloud storage
+        images = set(
+            [posixpath.basename(node.settings()["image"]) for node in topology.nodes() if 'image' in node.settings()]
+        )
+
+        log.debug('downloading images ' + str(images))
+        download_images_thread = DownloadImagesThread(self._cloud_settings, self._settings['images_path'], images)
+        download_images_progress_dialog = ProgressDialog(download_images_thread, "Downloading Images",
+                                                         "Downloading images files...", "Cancel", parent=self)
+        download_images_progress_dialog.show()
+        download_images_progress_dialog.exec_()
+
+        # copy device files from cloud instances
+        src_project_path = posixpath.join(
+            '/root/GNS3/projects',
+            os.path.basename(os.path.dirname(self._project_settings['project_path']))
+        )
+        project_files_dir = os.path.join(
+            os.path.dirname(self._project_settings['project_path']),
+            os.path.basename(os.path.dirname(self._project_settings['project_path'])) + '-files'
+        )
+
+        for topology_instance in topology.instances():
+            log.debug('copying device files from instance ' + str(topology_instance.host))
+            with ssh_client(topology_instance.host, topology_instance.private_key) as client:
+                if client is not None:
+                    sftp = client.open_sftp()
+
+                    def copy_files(src_dir, dest_dir):
+                        if not os.path.exists(dest_dir):
+                            os.makedirs(dest_dir)
+
+                        files = [f.filename for f in sftp.listdir_attr(src_dir) if stat.S_ISREG(f.st_mode)]
+                        for file in files:
+                            if not self._should_exclude_copying_file(file):
+                                src_filename = posixpath.join(src_dir, file)
+                                dest_filename = os.path.join(dest_dir, file)
+                                sftp.get(src_filename, dest_filename)
+
+                        dirs = [d.filename for d in sftp.listdir_attr(src_dir) if stat.S_ISDIR(d.st_mode)]
+                        for d in dirs:
+                            copy_files(posixpath.join(src_dir, d), os.path.join(dest_dir, d))
+
+                    copy_files(src_project_path, project_files_dir)
+
+                    sftp.close()
+                else:
+                    log.debug('could not connect to instance ' + str(topology_instance.host))
+
+        # switch server on all nodes to local server
+        server = Servers.instance().localServer()
+
+        for node in topology.nodes():
+            node._server = server
+            if "image" in node.settings():
+                node.settings()["image"] = os.path.basename(node.settings()["image"])
+
+        # reload project
+        self._project_settings["project_type"] = "local"
+        self.saveProject(self._project_settings["project_path"])
+        topology.reset()
+        self.loadProject(self._project_settings["project_path"])
+
+    @staticmethod
+    def _should_exclude_copying_file(filename):
+        """
+        Returns whether or not a file should be excluded from copying when converting projects
+        from cloud to local or vice versa
+        :param filename:
+        :return: True if file should be excluded, False otherwise
+        """
+        return filename.endswith('.ghost')
 
     def _cloud_instance_selected(self, instance_id):
         """
