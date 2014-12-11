@@ -57,7 +57,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
         return self.uiRememberAPIKeyRadioButton.isChecked()
 
     def _terms_accepted(self):
-        return self.uiTermsCheckBox.checkState() == QtCore.Qt.Qt.Checked
+        return self.uiTermsCheckBox.checkState() == QtCore.Qt.Checked
 
     def _validate(self):
         """

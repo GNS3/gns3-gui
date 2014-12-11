@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+	 id="svg7631" xmlns:cc="http://creativecommons.org/ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" sodipodi:docname="camera-photo.svg" sodipodi:version="0.32" inkscape:version="0.48.3.1 r9886" inkscape:output_extension="org.inkscape.output.svg.inkscape"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 288 288"
+	 enable-background="new 0 0 288 288" xml:space="preserve">
+<g>
+	<g>
+		<polygon fill="none" points="177.5,56.1 172.7,53.7 165.1,60.8 40.9,60.8 40.9,232.2 232.1,232.2 232.1,130.5 232.1,52.4 
+			188,52.4 187.8,52.6 		"/>
+		<rect x="40.9" y="232.2" fill="#221F1F" width="191.1" height="8.5"/>
+		<path fill="#221F1F" d="M31.5,29.2h167.3l6.9-8.3l0.1-0.2H31.5c-12.2,0-22.1,9.9-22.1,22.1v8.5C9.4,39.2,19.3,29.2,31.5,29.2z"/>
+		<polygon fill="#221F1F" points="232.1,120.4 232.1,130.5 263.6,101 263.6,90.6 		"/>
+		<polygon fill="#FFFFFF" points="172.7,53.7 172.6,53.6 174,52.4 40.9,52.4 40.9,60.8 165.1,60.8 		"/>
+		<path fill="#FFFFFF" d="M241.5,263.8H31.5c-12.2,0-22.1-9.9-22.1-22.1v8.5c0,12.2,9.9,22.1,22.1,22.1h210.1
+			c12.2,0,22.1-9.9,22.1-22.1v-8.5C263.6,253.9,253.7,263.8,241.5,263.8z"/>
+		<path fill="#FFFFFF" d="M232.1,232.2v8.5H40.9v-8.5V60.8v-8.5H174l24.8-23.1H31.5c-12.2,0-22.1,9.9-22.1,22.1v190.3
+			c0,12.2,9.9,22.1,22.1,22.1h210.1c12.2,0,22.1-9.9,22.1-22.1V101l-31.6,29.5V232.2z"/>
+	</g>
+	<g>
+		<path fill="#221F1F" d="M279.4,56.4L135.7,191.6l-44.9-47.7L233.8,9.3c2.8-2.7,7.3-2.5,10,0.3l35.9,38.1
+			C282,50.2,281.9,54.1,279.4,56.4z"/>
+	</g>
+	<path fill="#221F1F" d="M279.4,56.4L135.7,191.6l-44.9-47.7L233.8,9.3c2.8-2.7,7.3-2.5,10,0.3l35.9,38.1
+		C282,50.2,281.9,54.1,279.4,56.4z"/>
+	<path fill="#FFFFFF" d="M279.4,64.9L135.7,200.1l-44.9-47.7L233.8,17.8c2.8-2.7,7.3-2.5,10,0.3l35.9,38.1
+		C282,58.7,281.9,62.5,279.4,64.9z"/>
+	<polygon fill="none" points="40.9,240.7 232.1,240.7 232.1,130.5 147,210.1 80.7,139.7 165.1,60.8 40.9,60.8 	"/>
+	<polygon fill="none" points="136.3,178.1 232.1,88 232.1,60.8 210.8,60.8 112.8,153 	"/>
+	<polygon fill="#FFFFFF" points="232.1,88 261.9,60 238.3,34.9 210.8,60.8 232.1,60.8 	"/>
+	<path fill="#FFFFFF" d="M279.4,64.9L135.7,200.1l-44.9-47.7L233.8,17.8c2.8-2.7,7.3-2.5,10,0.3l35.9,38.1
+		C282,58.7,281.9,62.5,279.4,64.9z"/>
+	<path fill="#FFFFFF" d="M129.6,206.4l-45-47.7l-2.8,39.3c-0.2,2.6,1.8,4.9,4.4,5.1L129.6,206.4z"/>
+</g>
+</svg>

@@ -355,7 +355,8 @@ class WebSocketClient(WebSocketBaseClient):
         return {"id": self._id,
                 "host": self.host,
                 "port": self.port,
-                "local": self._local}
+                "local": self._local,
+                "cloud": self._cloud}
 
     def _heartbeat(self):
         self.send_notification("deadman.heartbeat")

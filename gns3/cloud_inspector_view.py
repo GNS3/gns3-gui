@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-import ast
+from collections import namedtuple
 import logging
 import os
 
-from .qt import QtCore, QtGui
-from .cloud.utils import (ListInstancesThread, CreateInstanceThread, DeleteInstanceThread,
-                          StartGNS3ServerThread, WSConnectThread)
 from libcloud.compute.types import NodeState
+
+from .qt import QtCore, QtGui
+from .cloud.utils import (ListInstancesThread, DeleteInstanceThread)
 from .topology import Topology
 from .servers import Servers
 
+
 # this widget was promoted on Creator, must use absolute imports
 from gns3.ui.cloud_inspector_view_ui import Ui_CloudInspectorView
+from gns3.cloud_builder import CloudBuilder
 from gns3.cloud_instances import CloudInstances
 
 log = logging.getLogger(__name__)
@@ -196,8 +198,8 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         # map flavor ids to combobox indexes
         self.flavor_index_id = []
 
-        # TODO: Delete me
-        self._running = {}
+        # A dictionary of {image_id, CloudBuilder}
+        self._builders = {}
 
     def _get_flavor_index(self, flavor_id):
         try:
@@ -205,17 +207,17 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         except ValueError:
             return -1
 
-    def load(self, main_win, instances):
+    def load(self, main_win, instance_ids):
         """
-        Fill the model data layer with instances retrieved through libcloud
+        Fill the model data layer with instance info loaded from the topology file
         """
         self._main_window = main_win
         self._provider = main_win.cloudProvider
         self._settings = main_win.cloudSettings()
         log.info('CloudInspectorView.load')
 
-        for i in instances:
-            self._project_instances_id.append(i["id"])
+        for instance_id in instance_ids:
+            self._project_instances_id.append(instance_id)
 
         update_thread = ListInstancesThread(self, self._provider)
         update_thread.instancesReady.connect(self._update_model)
@@ -310,95 +312,39 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         update_thread.instancesReady.connect(self._update_model)
         update_thread.start()
 
-    def _gns3server_started_slot(self, id, host_ip, start_response):
+    def _instanceBuilt(self, id):
         """
-        This slot is called when the StartGNS3ServerThread succesfully started
-        the server.
-
-        :param id: the id of the instance
-        :param host_ip: the host ip of the instance
-        :param start_response: the output of the server start script on the remote host
+        This slot is called when instance has finished building.
         """
-        # instance state transition: GNS3SERVER_STARTING --> GNS3SERVER_STARTED
-        instance = self._model.getInstanceById(id)
-        instance.state = RunningInstanceState.GNS3SERVER_STARTED
-        self._model.updateInstanceFields(instance, ['state'])
-
-        data = ast.literal_eval(start_response)
-
-        # TODO: have the server return the port it is running on
-        port = 8000
-
-        username = data['WEB_USERNAME']
-        password = data['WEB_PASSWORD']
-
-        ssl_cert = ''.join(data['SSL_CRT'])
-        ca_filename = 'cloud_server_{}.crt'.format(host_ip)
-        # TODO: Move this directory into projectSettings.
-        ca_dir = os.path.join(self._main_window.projectSettings()["project_files_dir"], "keys")
-        ca_file = os.path.join(ca_dir, ca_filename)
-        try:
-            os.makedirs(ca_dir)
-        except FileExistsError:
-            pass
-        with open(ca_file, 'wb') as ca_fh:
-            ca_fh.write(ssl_cert.encode('utf-8'))
-
-        topology = Topology.instance()
-        top_instance = topology.getInstance(id)
-        top_instance.set_later_attributes(host_ip, port, ssl_cert, ca_file)
-        ssh_pkey = top_instance.private_key
-
-        log.debug('Cloud server gns3server started.')
-        wss_thread = WSConnectThread(self, self._provider, id, host_ip, port, ca_file,
-                                     username, password, ssh_pkey, id)
-        wss_thread.established.connect(self._wss_connected_slot)
-        wss_thread.start()
-
-    def _wss_connected_slot(self, id):
-        """
-        This slot is called when the WSConnectThread successfully connected to
-        the websocket on the remote host
-        """
-        # instance state transition: GNS3SERVER_STARTED --> WS_CONNECTED
         instance = self._model.getInstanceById(id)
         instance.state = RunningInstanceState.WS_CONNECTED
         self._model.updateInstanceFields(instance, ['state'])
-
-    def _get_public_ip(self, ip_list):
-        """
-        Pick the ipv4 address from the list of ip addresses that the instance
-        has.
-        """
-        for ip in ip_list:
-            log.debug('Cloud server ip {}'.format(ip))
-            # Don't use the ipv6 address
-            if ':' not in ip:
-                log.debug('Chose {} as public ip'.format(ip))
-                return ip
-        return None
 
     def _update_model(self, instances):
         if not instances:
             return
 
+        # Filter instances to only those in the current project
+        project_instances = [i for i in instances if i.id in self._project_instances_id]
+
         # populate underlying model if this is the first call
-        if self._model.rowCount() == 0 and len(instances) > 0:
-            self._populate_model(instances)
+        if self._model.rowCount() == 0 and len(project_instances) > 0:
+            self._populate_model(project_instances)
+            self._rebuild_instances(project_instances)
+
 
         instance_manager = CloudInstances.instance()
         instance_manager.update_instances(instances)
 
-        # filter instances to only those in the current project
-        project_instances = [i for i in instances if i.id in self._project_instances_id]
 
-        # cleanup removed instances
+        # Clean up removed instances
         real = set(i.id for i in project_instances)
         current = set(self._model.instanceIds)
         for i in current.difference(real):
             self._model.removeInstanceById(i)
         self.uiInstancesTableView.resizeColumnsToContents()
 
+        # Update instance status
         for i in project_instances:
             # get the customized instance state from self._model
             model_instance = self._model.getInstanceById(i.id)
@@ -407,31 +353,12 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
             if i.state != RunningInstanceState.RUNNING:
                 self._model.updateInstanceFields(i, ['state'])
 
-            # start gns3server if needed
-            if i.state == RunningInstanceState.RUNNING and (
-                    model_instance.state >= RunningInstanceState.RUNNING):
-                # instance state transition: RUNNING --> GNS3SERVER_STARTING
-                model_instance.state = RunningInstanceState.GNS3SERVER_STARTING
-                self._model.updateInstanceFields(model_instance, ['state'])
-
-                # start GNS3 server and deadman switch
-                public_ip = self._get_public_ip(i.public_ips)
-                instance_manager.update_host_for_instance(i.id, public_ip)
-                topology_instance = instance_manager.get_instance(i.id)
-                ssh_thread = StartGNS3ServerThread(
-                    self, public_ip, topology_instance.private_key, i.id,
-                    self._provider.username, self._provider.api_key, self._provider.region,
-                    1800)
-                ssh_thread.gns3server_started.connect(self._gns3server_started_slot)
-                ssh_thread.start()
-
     def _populate_model(self, instances):
         log.info('CloudInspectorView._populate_model')
         self._model.flavors = self._provider.list_flavors()
         # filter instances for current project
-        project_instances = [i for i in instances if i.id in self._project_instances_id]
-        for i in project_instances:
-            self._model.addInstance(i)
+        for inst in instances:
+            self._model.addInstance(inst)
         self.uiInstancesTableView.resizeColumnsToContents()
 
     def _create_new_instance(self):
@@ -445,10 +372,44 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
                                               "then wait for the instance to appear in the inspector.")
 
         if ok:
-            if not name.endswith("-gns3"):
-                name += "-gns3"
+            self.createInstance(name, flavor_id, image_id)
 
-            create_thread = CreateInstanceThread(self, self._provider, name, flavor_id, image_id)
-            create_thread.instanceCreated.connect(self._main_window.add_instance_to_project)
-            create_thread.instanceCreated.connect(CloudInstances.instance().add_instance)
-            create_thread.start()
+    def createInstance(self, instance_name, flavor_id, image_id):
+        if not instance_name.endswith("-gns3"):
+            instance_name += "-gns3"
+        # TODO: Add a keys_dir to projectSettings
+        ca_dir = os.path.join(self._main_window.projectSettings()["project_files_dir"], "keys")
+
+        builder = CloudBuilder(self, self._provider, ca_dir)
+        builder.startAtCreate(instance_name, flavor_id, image_id)
+        builder.instanceCreated.connect(self._main_window.add_instance_to_project)
+        builder.instanceCreated.connect(CloudInstances.instance().add_instance)
+        builder.instanceIdExists.connect(self._associateBuilderWithInstance)
+        builder.instanceHasIP.connect(CloudInstances.instance().update_host_for_instance)
+        builder.buildComplete.connect(self._instanceBuilt)
+        builder.start()
+        return builder
+
+    def _associateBuilderWithInstance(self, builder, instance_id):
+        self._builders[instance_id] = builder
+
+    def _rebuild_instances(self, instances):
+        # TODO: Add a keys_dir to projectSettings
+        ca_dir = os.path.join(self._main_window.projectSettings()["project_files_dir"], "keys")
+
+        for instance in instances:
+            log.debug('CloudInspectorView._rebuild_instances {}'.format(instance.name))
+            builder = CloudBuilder(self, self._provider, ca_dir)
+            cloud_instance = CloudInstances.instance().get_instance(instance.id)
+            public_key = cloud_instance.public_key
+            private_key = cloud_instance.private_key
+            # Fake a KeyPair object because we don't store it.
+            keypair = namedtuple('KeyPair', ['private_key', 'public_key'])(private_key, public_key)
+            builder.startAtSetup(instance, keypair)
+            builder.instanceCreated.connect(self._main_window.add_instance_to_project)
+            builder.instanceCreated.connect(CloudInstances.instance().add_instance)
+            builder.instanceIdExists.connect(self._associateBuilderWithInstance)
+            builder.instanceHasIP.connect(CloudInstances.instance().update_host_for_instance)
+            builder.buildComplete.connect(self._instanceBuilt)
+            builder.start()
+            return builder

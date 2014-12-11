@@ -488,11 +488,7 @@ class Dynamips(Module):
                 if wic in ios_router:
                     settings[wic] = ios_router[wic]
 
-            if node.server().isCloud():
-                settings["cloud_path"] = "images/IOS"
-                node.setup(ios_router["image"], ios_router["ram"], initial_settings=settings)
-            else:
-                node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
+            node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
         else:
             node.setup()
 
