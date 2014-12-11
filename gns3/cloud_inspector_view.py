@@ -207,7 +207,7 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         except ValueError:
             return -1
 
-    def load(self, main_win, instances):
+    def load(self, main_win, instance_ids):
         """
         Fill the model data layer with instance info loaded from the topology file
         """
@@ -216,8 +216,8 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         self._settings = main_win.cloudSettings()
         log.info('CloudInspectorView.load')
 
-        for i in instances:
-            self._project_instances_id.append(i["id"])
+        for instance_id in instance_ids:
+            self._project_instances_id.append(instance_id)
 
         update_thread = ListInstancesThread(self, self._provider)
         update_thread.instancesReady.connect(self._update_model)
@@ -372,9 +372,9 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
                                               "then wait for the instance to appear in the inspector.")
 
         if ok:
-            self.createNewInstance(name, flavor_id, image_id)
+            self.createInstance(name, flavor_id, image_id)
 
-    def createNewInstance(self, instance_name, flavor_id, image_id):
+    def createInstance(self, instance_name, flavor_id, image_id):
         if not instance_name.endswith("-gns3"):
             instance_name += "-gns3"
         # TODO: Add a keys_dir to projectSettings
