@@ -248,5 +248,6 @@ killall python3 gns3server gns3dms
         servers = Servers.instance()
         server = servers.getCloudServer(self._public_ip, port, ca_file, username, password,
                                         self._key_pair.private_key, self._instance_id)
+        servers.save()
         log.debug('Cloud server gns3server started.')
         self.buildComplete.emit(self._instance_id)
