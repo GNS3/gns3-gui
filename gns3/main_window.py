@@ -410,7 +410,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_dialog = NewProjectDialog(self)
             project_dialog.show()
             create_new_project = project_dialog.exec_()
-            # Close the device doc so it repopulates.  Done in case switching
+            # Close the device dock so it repopulates.  Done in case switching
             # between cloud and local.
             self.uiNodesDockWidget.setVisible(False)
             self.uiNodesDockWidget.setWindowTitle("")
