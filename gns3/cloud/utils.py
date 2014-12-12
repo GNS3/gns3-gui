@@ -164,8 +164,8 @@ wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap-64-bit.tar.gz
 tar xzf iouyap-64-bit.tar.gz -C /usr/local/bin
 python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))'
 hostname gns3-iouvm # set hostname for iou
-wget 'https://github.com/GNS3/vpcs/releases/download/v0.5b1/vpcs_0.5b1_Linux64'
-cp vpcs_0.5b1_Linux64 /usr/local/bin/vpcs
+wget -O vpcs http://sourceforge.net/projects/vpcs/files/0.6/vpcs_0.6_Linux64/download
+cp vpcs /usr/local/bin/vpcs
 chmod a+x /usr/local/bin/vpcs
 killall python3 gns3server gns3dms
 '''

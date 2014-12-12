@@ -141,7 +141,7 @@ class BaseCloudCtrl(object):
                 self._handle_exception(status, error_text)
             else:
                 log.error("create_instance method raised an exception: {}".format(e))
-                log.error('image id {}'.format(image))
+                log.error('image id {}'.format(image_id))
 
     def delete_instance(self, instance):
         """ Delete the specified instance.  Returns True or False. """
