@@ -160,10 +160,13 @@ cd /opt/gns3/gns3-server; git checkout dev; git pull
 cd /opt/gns3/gns3-server; pip3 install -r dev-requirements.txt
 cd /opt/gns3/gns3-server; python3 ./setup.py install
 ln -sf /usr/bin/dynamips /usr/local/bin/dynamips
-wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap.tar.gz'
-tar xzf iouyap.tar.gz -C /usr/local/bin
+wget 'https://github.com/GNS3/iouyap/releases/download/0.95/iouyap-64-bit.tar.gz'
+tar xzf iouyap-64-bit.tar.gz -C /usr/local/bin
 python -c 'import struct; open("/etc/hostid", "w").write(struct.pack("i", 00000000))'
 hostname gns3-iouvm # set hostname for iou
+wget -O vpcs http://sourceforge.net/projects/vpcs/files/0.6/vpcs_0.6_Linux64/download
+cp vpcs /usr/local/bin/vpcs
+chmod a+x /usr/local/bin/vpcs
 killall python3 gns3server gns3dms
 '''
 
