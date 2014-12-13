@@ -194,6 +194,17 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 _, filename = ntpath.split(src)
                 dst = "images/qemu/{}".format(filename)
                 uploads.append((src, dst))
+            src = qemu_vm.get("initrd", None)
+            if src:
+                _, filename = ntpath.split(src)
+                dst = "images/qemu/{}".format(filename)
+                uploads.append((src, dst))
+
+            src = qemu_vm.get("kernel_image", None)
+            if src:
+                _, filename = ntpath.split(src)
+                dst = "images/qemu/{}".format(filename)
+                uploads.append((src, dst))
 
             upload_thread = UploadFilesThread(self, MainWindow.instance().cloudSettings(), uploads)
             upload_thread.completed.connect(self._imageUploadComplete)
