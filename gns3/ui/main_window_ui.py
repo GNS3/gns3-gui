@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Fri Nov 21 14:57:39 2014
+# Created: Thu Dec 11 23:26:53 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -112,7 +112,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.uiNodesView.sizePolicy().hasHeightForWidth())
         self.uiNodesView.setSizePolicy(sizePolicy)
         self.uiNodesView.setDragEnabled(False)
-        self.uiNodesView.setIconSize(QtCore.QSize(24, 24))
+        self.uiNodesView.setIconSize(QtCore.QSize(32, 32))
         self.uiNodesView.setRootIsDecorated(False)
         self.uiNodesView.setObjectName(_fromUtf8("uiNodesView"))
         self.uiNodesView.header().setVisible(False)

@@ -20,7 +20,7 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 """
 
 import pickle
-from .qt import QtCore, QtGui
+from .qt import QtCore, QtGui, QtSvg
 from .modules import MODULES
 
 
@@ -55,9 +55,15 @@ class NodesView(QtGui.QTreeWidget):
                 if server_type is not None and server_type != project_type:
                     continue
                 item = QtGui.QTreeWidgetItem(self)
-                item.setIcon(0, QtGui.QIcon(node["default_symbol"]))
                 item.setText(0, node["name"])
                 item.setData(0, QtCore.Qt.UserRole, node)
+                svg_renderer = QtSvg.QSvgRenderer(node["default_symbol"])
+                image = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
+                # Set the ARGB to 0 to prevent rendering artifacts
+                image.fill(0x00000000)
+                svg_renderer.render(QtGui.QPainter(image))
+                icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
+                item.setIcon(0, icon)
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 

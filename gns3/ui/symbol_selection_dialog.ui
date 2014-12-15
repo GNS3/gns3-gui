@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>319</width>
-    <height>386</height>
+    <height>389</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,10 +72,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>uiSymbolListWidget</zorder>
-  <zorder>uiButtonBox</zorder>
-  <zorder>uiCategoryLabel</zorder>
-  <zorder>uiCategoryComboBox</zorder>
  </widget>
  <resources>
   <include location="../../resources/resources.qrc"/>

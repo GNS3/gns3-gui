@@ -63,7 +63,13 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
                 name = symbol[:-11]
                 item = QtGui.QListWidgetItem(self.uiSymbolListWidget)
                 item.setText(name)
-                item.setIcon(QtGui.QIcon(':/symbols/' + symbol))
+                svg_renderer = QtSvg.QSvgRenderer(':/symbols/' + symbol)
+                image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
+                # Set the ARGB to 0 to prevent rendering artifacts
+                image.fill(0x00000000)
+                svg_renderer.render(QtGui.QPainter(image))
+                icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
+                item.setIcon(icon)
 
     def _applyPreferencesSlot(self):
         """
