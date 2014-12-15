@@ -32,8 +32,8 @@
      inkscape:zoom="0.81944444"
      inkscape:cx="144"
      inkscape:cy="144"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="75"
+     inkscape:window-y="34"
      inkscape:window-maximized="0"
      inkscape:current-layer="g3" /><metadata
      id="metadata17"><rdf:RDF><cc:Work
@@ -46,7 +46,7 @@
        style="fill:#231f20" /><polygon
        points="144.1,107.4 144.1,142.7 10,186.7 10,154.5 96.2,124.7 10,90.2 10,58 "
        id="polygon7"
-       style="fill:#999999;fill-opacity:1" /><rect
+       style="fill:#808080;fill-opacity:1" /><rect
        width="124.4"
        height="26.5"
        x="153.8"
@@ -58,4 +58,4 @@
        x="153.8"
        y="202.60001"
        id="rect11"
-       style="fill:#999999;fill-opacity:1" /></g></svg>
+       style="fill:#808080;fill-opacity:1" /></g></svg>
