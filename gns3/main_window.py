@@ -415,7 +415,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             project_dialog = NewProjectDialog(self)
             project_dialog.show()
             create_new_project = project_dialog.exec_()
-            # Close the device doc so it repopulates.  Done in case switching
+            # Close the device dock so it repopulates.  Done in case switching
             # between cloud and local.
             self.uiNodesDockWidget.setVisible(False)
             self.uiNodesDockWidget.setWindowTitle("")
@@ -1585,7 +1585,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
             project_instances = json_topology["topology"]["instances"]
-            self.CloudInspectorView.load(self, project_instances)
+            self.CloudInspectorView.load(self, [i["id"] for i in project_instances])
 
     def add_instance_to_project(self, instance, keypair):
         """
@@ -1767,8 +1767,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.loadProject(self._project_settings["project_path"])
             progress_dialog.accept()
 
-        self.CloudInspectorView.load(self, [])
-        builder = self.CloudInspectorView.createNewInstance(
+        instances = CloudInstances.instance().instances
+        for instance in instances:
+            topology.addInstance2(instance)
+        self.CloudInspectorView.load(self, [i.id for i in topology.instances()])
+
+        # Create a new instance.  At some point we could reuse an existing instance.
+        builder = self.CloudInspectorView.createInstance(
             self._project_settings["project_name"],
             self.cloudSettings()['default_flavor'],
             self.cloudSettings()['default_image']
