@@ -1255,6 +1255,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
             return False
 
+        if not self._temporary_project:
+            self._createScreenshot(os.path.join(os.path.dirname(path), "screenshot.png"))
         self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
         self._project_settings["project_path"] = path
         self._setCurrentFile(path)
