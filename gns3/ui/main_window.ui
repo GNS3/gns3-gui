@@ -85,8 +85,11 @@ background-none;
     <addaction name="uiOpenProjectAction"/>
     <addaction name="uiSaveProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
-    <addaction name="uiImportProjectAction"/>
     <addaction name="uiExportProjectAction"/>
+    <addaction name="uiImportProjectAction"/>
+    <addaction name="separator"/>
+    <addaction name="uiMoveLocalProjectToCloudAction"/>
+    <addaction name="uiMoveCloudProjectToLocalAction"/>
     <addaction name="separator"/>
     <addaction name="uiImportExportConfigsAction"/>
     <addaction name="uiScreenshotAction"/>
@@ -1109,12 +1112,22 @@ background-none;
   </action>
   <action name="uiExportProjectAction">
    <property name="text">
-    <string>Export project</string>
+    <string>Backup project to cloud</string>
    </property>
   </action>
   <action name="uiImportProjectAction">
    <property name="text">
-    <string>Import project</string>
+    <string>Restore backup from cloud</string>
+   </property>
+  </action>
+  <action name="uiMoveLocalProjectToCloudAction">
+   <property name="text">
+    <string>Move local project to cloud</string>
+   </property>
+  </action>
+  <action name="uiMoveCloudProjectToLocalAction">
+   <property name="text">
+    <string>Move cloud project to local</string>
    </property>
   </action>
   <action name="uiDarkStyleAction">

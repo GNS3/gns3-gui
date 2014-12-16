@@ -46,7 +46,10 @@ def ssh_client(host, key_string):
         client.connect(hostname=host, username="root", pkey=key)
         yield client
     except socket_error as e:
-        log.error("SSH connection error to {}: {}".format(host, e))
+        log.debug("SSH connection socket error to {}: {}".format(host, e))
+        yield None
+    except Exception as e:
+        log.debug("SSH connection error to {}: {}".format(host, e))
         yield None
     finally:
         client.close()
@@ -60,7 +63,7 @@ class ListInstancesThread(QtCore.QThread):
     instancesReady = QtCore.pyqtSignal(object)
 
     def __init__(self, parent, provider):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self._provider = provider
 
     def run(self):
@@ -79,7 +82,7 @@ class CreateInstanceThread(QtCore.QThread):
     instanceCreated = QtCore.pyqtSignal(object, object)
 
     def __init__(self, parent, provider, name, flavor_id, image_id):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self._provider = provider
         self._name = name
         self._flavor_id = flavor_id
@@ -109,7 +112,7 @@ class DeleteInstanceThread(QtCore.QThread):
     instanceDeleted = QtCore.pyqtSignal(object)
 
     def __init__(self, parent, provider, instance):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self._provider = provider
         self._instance = instance
 
@@ -171,7 +174,7 @@ killall python3 gns3server gns3dms
 '''
 
     def __init__(self, parent, host, private_key_string, server_id, username, api_key, region, dead_time):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self._host = host
         self._private_key_string = private_key_string
         self._server_id = server_id
@@ -250,7 +253,7 @@ class WSConnectThread(QtCore.QThread):
 
     def __init__(self, parent, provider, server_id, host, port, ca_file,
                  auth_user, auth_password, ssh_pkey, instance_id):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self._provider = provider
         self._server_id = server_id
         self._host = host
@@ -290,7 +293,7 @@ class UploadProjectThread(QtCore.QThread):
     update = QtCore.pyqtSignal(int)
 
     def __init__(self, parent, cloud_settings, project_path, images_path):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self.cloud_settings = cloud_settings
         self.project_path = project_path
         self.images_path = images_path
@@ -356,25 +359,41 @@ class UploadProjectThread(QtCore.QThread):
 
 class UploadFilesThread(QtCore.QThread):
     """
-    Upload multiple files to cloud files
+    Uploads files to cloud files
 
-    uploads - A list of 2-tuples of (local_src_path, remote_dst_path)
+    :param cloud_settings:
+    :param files_to_upload: list of tuples of (file path, file name to save in cloud)
     """
 
+    error = QtCore.pyqtSignal(str, bool)
     completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
 
-    def __init__(self, parent, cloud_settings, uploads):
-        super(QtCore.QThread, self).__init__(parent)
+    def __init__(self, parent, cloud_settings, files_to_upload):
+        super().__init__(parent)
         self._cloud_settings = cloud_settings
-        self._uploads = uploads
+        self._files_to_upload = files_to_upload
 
     def run(self):
-        for src, dst in self._uploads:
-            log.debug('Upload from {} to {}'.format(src, dst))
-            provider = get_provider(self._cloud_settings)
-            provider.upload_file(src, dst)
-            log.debug('Upload image completed')
+        self.update.emit(0)
+
+        try:
+            for i, file_to_upload in enumerate(self._files_to_upload):
+                provider = get_provider(self._cloud_settings)
+
+                log.debug('Uploading image {} to cloud as {}'.format(file_to_upload[0], file_to_upload[1]))
+                provider.upload_file(file_to_upload[0], file_to_upload[1])
+
+                self.update.emit((i+1) * 100 / len(self._files_to_upload))
+                log.debug('Uploading image completed')
+        except Exception as e:
+            log.exception("Error uploading images to cloud")
+            self.error.emit("Error uploading images: {}".format(str(e)), True)
+
         self.completed.emit()
+
+    def stop(self):
+        self.quit()
 
 
 class DownloadProjectThread(QtCore.QThread):
@@ -388,7 +407,7 @@ class DownloadProjectThread(QtCore.QThread):
     update = QtCore.pyqtSignal(int)
 
     def __init__(self, parent, cloud_project_file_name, project_dest_path, images_dest_path, cloud_settings):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self.project_name = cloud_project_file_name
         self.project_dest_path = project_dest_path
         self.images_dest_path = images_dest_path
@@ -445,7 +464,7 @@ class DeleteProjectThread(QtCore.QThread):
     update = QtCore.pyqtSignal(int)
 
     def __init__(self, parent, project_file_name, cloud_settings):
-        super(QtCore.QThread, self).__init__(parent)
+        super().__init__(parent)
         self.project_file_name = project_file_name
         self.cloud_settings = cloud_settings
 
