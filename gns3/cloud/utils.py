@@ -452,6 +452,45 @@ class DownloadProjectThread(QtCore.QThread):
     def stop(self):
         self.quit()
 
+class DownloadImagesThread(QtCore.QThread):
+    """
+    Downloads multiple files from cloud files
+    """
+
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
+
+    def __init__(self, cloud_settings, images_dest_path, image_names):
+        super().__init__()
+        self._cloud_settings = cloud_settings
+        self._images_dest_path = images_dest_path
+        self._image_names = image_names
+
+    def run(self):
+        self.update.emit(0)
+        try:
+            provider = get_provider(self._cloud_settings)
+            image_names_in_cloud = provider.find_storage_image_names(self._image_names)
+
+            for i, image in enumerate(self._image_names):
+                dest_path = os.path.join(self._images_dest_path, *image_names_in_cloud[image].split('/')[1:])
+
+                if not os.path.exists(os.path.dirname(dest_path)):
+                    os.makedirs(os.path.dirname(dest_path))
+
+                provider.download_file(image_names_in_cloud[image], dest_path)
+
+                self.update.emit(i * 100 / len(self._image_names))
+
+            self.completed.emit()
+        except Exception as e:
+            log.exception("Error importing project from cloud")
+            self.error.emit("Error importing project: {}".format(str(e)), True)
+
+    def stop(self):
+        self.quit()
+
 
 class DeleteProjectThread(QtCore.QThread):
     """
