@@ -342,16 +342,16 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Change a symbol for an IOU device.
         """
 
-        dialog = SymbolSelectionDialog(self)
-        dialog.show()
-        if dialog.exec_():
-            normal_symbol, selected_symbol = dialog.getSymbols()
-            category = dialog.getCategory()
-            item = self.uiIOUDevicesTreeWidget.currentItem()
-            if item:
+        item = self.uiIOUDevicesTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            iou_device = self._iou_devices[key]
+            dialog = SymbolSelectionDialog(self, symbol=iou_device["default_symbol"], category=iou_device["category"])
+            dialog.show()
+            if dialog.exec_():
+                normal_symbol, selected_symbol = dialog.getSymbols()
+                category = dialog.getCategory()
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
-                key = item.data(0, QtCore.Qt.UserRole)
-                iou_device = self._iou_devices[key]
                 iou_device["default_symbol"] = normal_symbol
                 iou_device["hover_symbol"] = selected_symbol
                 iou_device["category"] = category

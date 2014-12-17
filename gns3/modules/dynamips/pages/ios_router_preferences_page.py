@@ -486,16 +486,16 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Change a symbol for an IOS router.
         """
 
-        dialog = SymbolSelectionDialog(self)
-        dialog.show()
-        if dialog.exec_():
-            normal_symbol, selected_symbol = dialog.getSymbols()
-            category = dialog.getCategory()
-            item = self.uiIOSRoutersTreeWidget.currentItem()
-            if item:
+        item = self.uiIOSRoutersTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            ios_router = self._ios_routers[key]
+            dialog = SymbolSelectionDialog(self, symbol=ios_router["default_symbol"], category=ios_router["category"])
+            dialog.show()
+            if dialog.exec_():
+                normal_symbol, selected_symbol = dialog.getSymbols()
+                category = dialog.getCategory()
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
-                key = item.data(0, QtCore.Qt.UserRole)
-                ios_router = self._ios_routers[key]
                 ios_router["default_symbol"] = normal_symbol
                 ios_router["hover_symbol"] = selected_symbol
                 ios_router["category"] = category

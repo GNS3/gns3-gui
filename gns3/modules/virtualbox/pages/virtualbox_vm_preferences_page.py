@@ -187,16 +187,16 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         Change a symbol for a VirtualBox VM.
         """
 
-        dialog = SymbolSelectionDialog(self)
-        dialog.show()
-        if dialog.exec_():
-            normal_symbol, selected_symbol = dialog.getSymbols()
-            category = dialog.getCategory()
-            item = self.uiVirtualBoxVMsTreeWidget.currentItem()
-            if item:
+        item = self.uiVirtualBoxVMsTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            vbox_vm = self._virtualbox_vms[key]
+            dialog = SymbolSelectionDialog(self, symbol=vbox_vm["default_symbol"], category=vbox_vm["category"])
+            dialog.show()
+            if dialog.exec_():
+                normal_symbol, selected_symbol = dialog.getSymbols()
+                category = dialog.getCategory()
                 item.setIcon(0, QtGui.QIcon(normal_symbol))
-                key = item.data(0, QtCore.Qt.UserRole)
-                vbox_vm = self._virtualbox_vms[key]
                 vbox_vm["default_symbol"] = normal_symbol
                 vbox_vm["hover_symbol"] = selected_symbol
                 vbox_vm["category"] = category
