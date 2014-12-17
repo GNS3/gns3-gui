@@ -20,9 +20,9 @@ Configuration page for VPCS devices.
 """
 
 import os
-import sys
-import pkg_resources
+
 from gns3.qt import QtGui
+from gns3.utils.get_resource import get_resource
 from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 
@@ -42,10 +42,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
         Slot to open a file browser and select a script-file file.
         """
 
-        if hasattr(sys, "frozen"):
-            config_dir = "configs"
-        else:
-            config_dir = pkg_resources.resource_filename("gns3", "configs")
+        config_dir = get_resource("configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return

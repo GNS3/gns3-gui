@@ -21,11 +21,11 @@ Wizard for IOU devices.
 
 import os
 import sys
-import pkg_resources
 
 from gns3.qt import QtGui
 from gns3.node import Node
 from gns3.servers import Servers
+from gns3.utils.get_resource import get_resource
 
 from ....settings import ENABLE_CLOUD
 from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
@@ -169,25 +169,20 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
 
         path = self.uiIOUImageLineEdit.text()
 
+        initial_config = ""
         if self.uiTypeComboBox.currentText() == "L2 image":
             # set the default L2 base initial-config
-            resource_name = "configs/iou_l2_base_initial-config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                initial_config = os.path.normpath(resource_name)
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                initial_config = os.path.normpath(iou_base_config_path)
+            resource_name = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
+            if resource_name:
+                initial_config = resource_name
             default_symbol = ":/symbols/multilayer_switch.normal.svg"
             hover_symbol = ":/symbols/multilayer_switch.selected.svg"
             category = Node.switches
         else:
             # set the default L3 base initial-config
-            resource_name = "configs/iou_l3_base_initial-config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                initial_config = os.path.normpath(resource_name)
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                initial_config = os.path.normpath(iou_base_config_path)
+            resource_name = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
+            if resource_name:
+                initial_config = resource_name
             default_symbol = ":/symbols/router.normal.svg"
             hover_symbol = ":/symbols/router.selected.svg"
             category = Node.routers

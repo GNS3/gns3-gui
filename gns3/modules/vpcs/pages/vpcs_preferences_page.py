@@ -21,9 +21,12 @@ Configuration page for VPCS preferences.
 
 import os
 import sys
-import pkg_resources
+
 from gns3.qt import QtGui
 from gns3.servers import Servers
+from gns3.main_window import MainWindow
+from gns3.utils.get_resource import get_resource
+
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
 from ..settings import VPCS_SETTINGS
@@ -72,10 +75,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         Slot to open a file browser and select a base script file for VPCS
         """
 
-        if hasattr(sys, "frozen"):
-            config_dir = "configs"
-        else:
-            config_dir = pkg_resources.resource_filename("gns3", "configs")
+        config_dir = MainWindow.instance().baseConfigsDir()
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
         if not path:
             return
@@ -123,12 +123,9 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
         if not self.uiScriptFileEdit.text():
-            resource_name = "configs/vpcs_base_config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                self.uiScriptFileEdit.setText(os.path.normpath(resource_name))
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                vpcs_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiScriptFileEdit.setText(os.path.normpath(vpcs_base_config_path))
+            resource_name = get_resource(os.path.join("configs", "vpcs_base_config.txt"))
+            if resource_name:
+                self.uiScriptFileEdit.setText(resource_name)
 
     def _updateRemoteServersSlot(self):
         """

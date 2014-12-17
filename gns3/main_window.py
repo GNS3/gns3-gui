@@ -361,6 +361,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return self._settings["serial_console_command"]
 
+    def baseConfigsDir(self):
+        """
+        Returns the base configs directory.
+
+        :returns: command (string)
+        """
+
+        configs_dir = os.path.join(self._settings["projects_path"], "base_configs")
+        try:
+            os.makedirs(configs_dir)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            log.error("could not create base configs directory: {}: {}".format(configs_dir, e))
+        return configs_dir
+
     def setUnsavedState(self):
         """
         Sets the project in a unsaved state.

@@ -22,10 +22,10 @@ Configuration page for IOS router preferences.
 import os
 import copy
 import sys
-import pkg_resources
 import shutil
 import math
 import zipfile
+import logging
 
 from gns3.qt import QtCore, QtGui
 from gns3.main_window import MainWindow
@@ -33,6 +33,8 @@ from gns3.utils.progress_dialog import ProgressDialog
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
+from gns3.utils.normalize_filename import normalize_filename
+from gns3.utils.get_resource import get_resource
 
 from .. import Dynamips
 from ..settings import IOS_ROUTER_SETTINGS
@@ -41,6 +43,9 @@ from ..utils.decompress_ios_thread import DecompressIOSThread
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
 from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
 from ..dialogs.ios_router_wizard import IOSRouterWizard
+
+
+log = logging.getLogger(__name__)
 
 
 class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget):
@@ -63,6 +68,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self.uiIOSRoutersTreeWidget.itemPressed.connect(self._iosRouterPressedSlot)
         self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
 
+        self._base_startup_config_template = get_resource(os.path.join("configs", "ios_base_startup-config.txt"))
+        self._base_private_config_template = get_resource(os.path.join("configs", "ios_base_private-config.txt"))
+        self._base_configs_to_delete = []
+
     def _iosRouterChangedSlot(self, current, previous):
         """
         Loads a selected an IOS router from the tree widget.
@@ -82,6 +91,27 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         ios_router = self._ios_routers[key]
         self._refreshInfo(ios_router)
 
+    def _getBaseConfig(self, base_config_template_path, base_config_destination_filename):
+        """
+        Copy the base config template to in the base configs directory and returns the path.
+
+        :param base_config_template_path: path to the base config template
+        :param base_config_destination_filename: base config destination file name
+
+        :return: path to the base config
+        """
+
+        base_configs_dir = self._main_window.baseConfigsDir()
+        if base_config_template_path:
+            try:
+                base_config_path = os.path.join(base_configs_dir, base_config_destination_filename)
+                if not os.path.isfile(base_config_path):
+                    shutil.copyfile(base_config_template_path, base_config_path)
+                return base_config_path
+            except OSError as e:
+                log.error("could not copy {} to {}: {}".format(base_config_template_path, base_config_path, e))
+        return ""
+
     def _iosRouterNewSlot(self):
         """
         Creates a new IOS router.
@@ -94,24 +124,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             ios_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=ios_settings["server"], name=ios_settings["name"])
 
-            # set the default base startup-config
-            resource_name = "configs/ios_base_startup-config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                startup_config = os.path.normpath(resource_name)
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                startup_config = os.path.normpath(ios_base_config_path)
-
-            # set the default base private-config
-            resource_name = "configs/ios_base_private-config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                private_config = os.path.normpath(resource_name)
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                ios_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                private_config = os.path.normpath(ios_base_config_path)
-
-            ios_settings["startup_config"] = startup_config
-            ios_settings["private_config"] = private_config
+            ios_settings["startup_config"] = self._getBaseConfig(self._base_startup_config_template, "{}_base_startup-config.txt".format(normalize_filename(ios_settings["name"])))
+            ios_settings["private_config"] = self._getBaseConfig(self._base_private_config_template, "{}_base_private-config.txt".format(normalize_filename(ios_settings["name"])))
 
             self._ios_routers[key] = IOS_ROUTER_SETTINGS.copy()
             self._ios_routers[key].update(ios_settings)
@@ -186,6 +200,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             dialog.show()
             if dialog.exec_():
                 if ios_router["name"] != item.text(0):
+                    # rename the IOS router
                     new_key = "{server}:{name}".format(server=ios_router["server"], name=ios_router["name"])
                     if new_key in self._ios_routers:
                         QtGui.QMessageBox.critical(self, "IOS router", "IOS router name {} already exists for server {}".format(ios_router["name"],
@@ -194,8 +209,33 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                         return
                     self._ios_routers[new_key] = self._ios_routers[key]
                     del self._ios_routers[key]
+
+                    # rename the base startup-config file
+                    default_startup_config_name = "{}_base_startup-config.txt".format(normalize_filename(item.text(0)))
+                    if os.path.isfile(ios_router["startup_config"]) and ios_router["startup_config"] != self._base_startup_config_template \
+                            and os.path.basename(ios_router["startup_config"]) == default_startup_config_name:
+                        try:
+                            new_base_config_name = "{}_base_startup-config.txt".format(normalize_filename(ios_router["name"]))
+                            new_base_startup_config_path = os.path.join(os.path.dirname(ios_router["startup_config"]), new_base_config_name)
+                            os.rename(ios_router["startup_config"], new_base_startup_config_path)
+                            ios_router["startup_config"] = new_base_startup_config_path
+                        except OSError as e:
+                            QtGui.QMessageBox.critical(self, "IOS router", "Could not rename {} to {}: {}".format(ios_router["startup_config"], new_base_startup_config_path, e))
+
+                    # rename the base private-config file
+                    default_private_config_name = "{}_base_private-config.txt".format(normalize_filename(item.text(0)))
+                    if os.path.isfile(ios_router["private_config"]) and ios_router["private_config"] != self._base_private_config_template \
+                            and os.path.basename(ios_router["private_config"]) == default_private_config_name:
+                        try:
+                            new_base_private_config = os.path.join(os.path.dirname(ios_router["private_config"]), "{}_base_private-config.txt".format(normalize_filename(ios_router["name"])))
+                            os.rename(ios_router["private_config"], new_base_private_config)
+                            ios_router["private_config"] = new_base_private_config
+                        except OSError as e:
+                            QtGui.QMessageBox.critical(self, "IOS router", "Could not rename {} to {}: {}".format(ios_router["private_config"], new_base_private_config, e))
+
                     item.setText(0, ios_router["name"])
                     item.setData(0, QtCore.Qt.UserRole, new_key)
+
                 self._refreshInfo(ios_router)
 
     def _iosRouterDeleteSlot(self):
@@ -206,6 +246,22 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
+            ios_router = self._ios_routers[key]
+
+            # delete the base startup_config
+            default_startup_config_name = "{}_base_startup-config.txt".format(normalize_filename(ios_router["name"]))
+            if os.path.isfile(ios_router["startup_config"]) and ios_router["startup_config"] != self._base_startup_config_template \
+                    and os.path.basename(ios_router["startup_config"]) == default_startup_config_name:
+                if ios_router["startup_config"] not in self._base_configs_to_delete:
+                    self._base_configs_to_delete.append(ios_router["startup_config"])
+
+            # delete the base private_config
+            default_private_config_name = "{}_base_private-config.txt".format(normalize_filename(ios_router["name"]))
+            if os.path.isfile(ios_router["private_config"]) and ios_router["private_config"] != self._base_private_config_template \
+                    and os.path.basename(ios_router["private_config"]) == default_private_config_name:
+                if ios_router["private_config"] not in self._base_configs_to_delete:
+                    self._base_configs_to_delete.append(ios_router["private_config"])
+
             del self._ios_routers[key]
             self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))
             if self._ios_routers == {}:
@@ -321,46 +377,6 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         decompressed_size = (decompressed_size / (1000 * 1000)) + 1
         # round up to the closest multiple of 32 (step of the RAM SpinBox)
         return math.ceil(decompressed_size / 32) * 32
-
-    def _startupConfigBrowserSlot(self):
-        """
-        Slot to open a file browser and select a startup-config file.
-        """
-
-        if hasattr(sys, "frozen"):
-            config_dir = "configs"
-        else:
-            config_dir = pkg_resources.resource_filename("gns3", "configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
-        if not path:
-            return
-
-        if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
-            return
-
-        self.uiStartupConfigLineEdit.clear()
-        self.uiStartupConfigLineEdit.setText(path)
-
-    def _privateConfigBrowserSlot(self):
-        """
-        Slot to open a file browser and select a private-config file.
-        """
-
-        if hasattr(sys, "frozen"):
-            config_dir = "configs"
-        else:
-            config_dir = pkg_resources.resource_filename("gns3", "configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
-        if not path:
-            return
-
-        if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Private configuration", "Cannot read {}".format(path))
-            return
-
-        self.uiPrivateConfigLineEdit.clear()
-        self.uiPrivateConfigLineEdit.setText(path)
 
     def _decompressIOSSlot(self):
         """
@@ -526,3 +542,10 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         Dynamips.instance().setIOSRouters(self._ios_routers)
+
+        # delete base config files belonging to deleted IOS routers.
+        for base_config in self._base_configs_to_delete:
+            try:
+                os.remove(base_config)
+            except OSError as e:
+                log.warning("could not delete {}: {}".format(base_config, e))

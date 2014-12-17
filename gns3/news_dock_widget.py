@@ -17,10 +17,10 @@
 
 import os
 import sys
-import pkg_resources
 
 from .qt import QtGui, QtCore, QtWebKit
 from .ui.news_dock_widget_ui import Ui_NewsDockWidget
+from .utils.get_resource import get_resource
 
 import logging
 log = logging.getLogger(__name__)
@@ -105,13 +105,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         if result is False:
             self._refresh_timer.stop()
             # load a local resource if the page is not available
-            resource_name = os.path.join("static", "gns3_jungle.html")
-            gns3_jungle = None
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                gns3_jungle = os.path.normpath(resource_name)
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                gns3_jungle_page = pkg_resources.resource_filename("gns3", resource_name)
-                gns3_jungle = os.path.normpath(gns3_jungle_page)
+            gns3_jungle = get_resource(os.path.join("static", "gns3_jungle.html"))
             if gns3_jungle and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
                 # do not show the page on Windows 32-bit (crash when no Internet connection)
                 self.uiWebView.load(QtCore.QUrl("file://{}".format(gns3_jungle)))

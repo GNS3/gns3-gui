@@ -17,10 +17,10 @@
 
 import os
 import sys
-import pkg_resources
 
 from ..qt import QtCore, QtGui, QtWebKit
 from ..ui.getting_started_dialog_ui import Ui_GettingStartedDialog
+from ..utils.get_resource import get_resource
 
 
 class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
@@ -87,13 +87,7 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         self._timer.timeout.disconnect()
         if result is False:
             # load a local resource if the page is not available
-            resource_name = os.path.join("static", "getting_started.html")
-            getting_started = None
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                getting_started = os.path.normpath(resource_name)
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                getting_started_page = pkg_resources.resource_filename("gns3", resource_name)
-                getting_started = os.path.normpath(getting_started_page)
+            getting_started = get_resource(os.path.join("static", "getting_started.html"))
             if getting_started and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
                 # do not show the page on Windows 32-bit (crash when no Internet connection)
                 self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))

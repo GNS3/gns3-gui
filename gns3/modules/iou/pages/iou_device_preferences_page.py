@@ -22,7 +22,6 @@ Configuration page for IOU device preferences.
 import copy
 import os
 import sys
-import pkg_resources
 import shutil
 
 from gns3.qt import QtCore, QtGui
@@ -30,6 +29,7 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
+from gns3.utils.get_resource import get_resource
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -56,9 +56,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiDeleteIOUDevicePushButton.clicked.connect(self._iouDeviceDeleteSlot)
         self.uiIOUDevicesTreeWidget.currentItemChanged.connect(self._iouDeviceChangedSlot)
         self.uiIOUDevicesTreeWidget.itemPressed.connect(self._iouDevicePressedSlot)
-
-        # self.uiIOUPathToolButton.clicked.connect(self._iouImageBrowserSlot)
-        # self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
 
     def _iouDeviceChangedSlot(self, current, previous):
         """
@@ -279,40 +276,14 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         if "l2" in path:
             # set the default L2 base initial-config
-            resource_name = "configs/iou_l2_base_initial-config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                self.uiInitialConfigLineEdit.setText(os.path.normpath(resource_name))
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiInitialConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
+            resource_name = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
+            if resource_name:
+                self.uiInitialConfigLineEdit.setText(resource_name)
         else:
             # set the default L3 base initial-config
-            resource_name = "configs/iou_l3_base_initial-config.txt"
-            if hasattr(sys, "frozen") and os.path.isfile(resource_name):
-                self.uiInitialConfigLineEdit.setText(os.path.normpath(resource_name))
-            elif pkg_resources.resource_exists("gns3", resource_name):
-                iou_base_config_path = pkg_resources.resource_filename("gns3", resource_name)
-                self.uiInitialConfigLineEdit.setText(os.path.normpath(iou_base_config_path))
-
-    def _initialConfigBrowserSlot(self):
-        """
-        Slot to open a file browser and select a initial-config file.
-        """
-
-        if hasattr(sys, "frozen"):
-            config_dir = "configs"
-        else:
-            config_dir = pkg_resources.resource_filename("gns3", "configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
-        if not path:
-            return
-
-        if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Initial configuration", "Cannot read {}".format(path))
-            return
-
-        self.uiInitialConfigLineEdit.clear()
-        self.uiInitialConfigLineEdit.setText(path)
+            resource_name = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
+            if resource_name:
+                self.uiInitialConfigLineEdit.setText(resource_name)
 
     def _iouDevicePressedSlot(self, item, column):
         """
