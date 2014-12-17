@@ -32,7 +32,7 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
     :param items: list of items
     """
 
-    def __init__(self, parent, items=None):
+    def __init__(self, parent, items=None, symbol=None, category=None):
 
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -40,6 +40,8 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
         self._items = items
         self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
 
+        selected_symbol = symbol
+        selected_category = category
         if not self._items:
             self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).hide()
 
@@ -50,20 +52,33 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
                           "Security devices": Node.security_devices
                           }
 
+            index = 0
             for name, category in categories.items():
                 self.uiCategoryComboBox.addItem(name, category)
+                if category == selected_category:
+                    self.uiCategoryComboBox.setCurrentIndex(index)
+                index += 1
         else:
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
+            custom_symbol = items[0].defaultRenderer().objectName()
+            if not custom_symbol:
+                symbol_name = items[0].node().defaultSymbol()
+            else:
+                symbol_name = custom_symbol
+            selected_symbol = symbol_name
 
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
         for symbol in symbol_resources.children():
-            if symbol.endswith('.normal.svg'):
+            if symbol.endswith(".normal.svg"):
                 name = symbol[:-11]
                 item = QtGui.QListWidgetItem(self.uiSymbolListWidget)
                 item.setText(name)
-                svg_renderer = QtSvg.QSvgRenderer(':/symbols/' + symbol)
+                resource_path = ":/symbols/" + symbol
+                svg_renderer = QtSvg.QSvgRenderer(resource_path)
+                if resource_path == selected_symbol:
+                    self.uiSymbolListWidget.setCurrentItem(item)
                 image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
                 # Set the ARGB to 0 to prevent rendering artifacts
                 image.fill(0x00000000)
