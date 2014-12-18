@@ -1055,6 +1055,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return self.saveProject(self._project_settings["project_path"])
             elif reply == QtGui.QMessageBox.Cancel:
                 return False
+        else:
+            # check if any node is running
+            topology = Topology.instance()
+            running_node = False
+            for node in topology.nodes():
+                if hasattr(node, "start") and node.status() == Node.started:
+                    running_node = True
+                    break
+            if running_node:
+                reply = QtGui.QMessageBox.warning(self, "GNS3", "A device is still running, would you like to continue?",
+                                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.No:
+                    return False
         self._deleteTemporaryProject()
         return True
 
