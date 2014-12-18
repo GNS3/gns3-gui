@@ -1063,6 +1063,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Called by QTimer.singleShot to load everything needed at startup.
         """
 
+        if self._settings["debug_level"]:
+            root = logging.getLogger()
+            root.addHandler(logging.StreamHandler(sys.stdout))
+
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
 

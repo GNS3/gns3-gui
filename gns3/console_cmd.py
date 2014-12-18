@@ -218,6 +218,8 @@ class ConsoleCmd(cmd.Cmd):
                 else:
                     print("Activating debugging")
                     root.addHandler(ch)
+                from .main_window import MainWindow
+                MainWindow.instance().setSettings({"debug_level": level})
             except:
                 print(self.do_debug.__doc__)
         else:
