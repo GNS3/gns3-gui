@@ -725,6 +725,12 @@ class GraphicsView(QtGui.QGraphicsView):
             console_action.triggered.connect(self.consoleActionSlot)
             menu.addAction(console_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
+            aux_console_action = QtGui.QAction("Auxiliary console", menu)
+            aux_console_action.setIcon(QtGui.QIcon(':/icons/aux-console.svg'))
+            aux_console_action.triggered.connect(self.auxConsoleActionSlot)
+            menu.addAction(aux_console_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "startPacketCapture"), items)):
             capture_action = QtGui.QAction("Capture", menu)
             capture_action.setIcon(QtGui.QIcon(':/icons/inspect.svg'))
@@ -866,16 +872,21 @@ class GraphicsView(QtGui.QGraphicsView):
             dialog.show()
             dialog.exec_()
 
-    def consoleToNode(self, node):
+    def consoleToNode(self, node, aux=False):
         """
         Start a console application to connect to a node.
 
         :param node: Node instance
+        :param aux: auxiliary console mode
 
         :returns: False if the console application could not be started
         """
 
         if not hasattr(node, "console") or not node.initialized() or node.status() != Node.started:
+            # returns True to ignore this node.
+            return True
+
+        if aux and not hasattr(node, "auxConsole"):
             # returns True to ignore this node.
             return True
 
@@ -888,7 +899,10 @@ class GraphicsView(QtGui.QGraphicsView):
                 return False
         else:
             name = node.name()
-            console_port = node.console()
+            if aux:
+                console_port = node.auxConsole()
+            else:
+                console_port = node.console()
             console_host = node.server().host
             try:
                 from .telnet_console import telnetConsole
@@ -927,6 +941,17 @@ class GraphicsView(QtGui.QGraphicsView):
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
                 if self.consoleToNode(item.node()):
+                    continue
+
+    def auxConsoleActionSlot(self):
+        """
+        Slot to receive events from the auxiliary console action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem):
+                if self.consoleToNode(item.node(), aux=True):
                     continue
 
     def captureActionSlot(self):

@@ -741,8 +741,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when connecting to all the nodes using the AUX console.
         """
 
-        #TODO: connect to AUX consoles
-        pass
+        delay = self._settings["delay_console_all"]
+        counter = 0
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized() and item.node().status() == Node.started:
+                callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node(), aux=True)
+                QtCore.QTimer.singleShot(counter, callback)
+                counter += delay
 
     def _consoleAllActionSlot(self):
         """
