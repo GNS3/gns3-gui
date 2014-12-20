@@ -1101,7 +1101,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                     sock.bind((server.host, 0))
             except OSError as e:
-                QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {host}: {error} (please check your host binding setting)".format(host=server.host, error=e))
+                QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {host}: {error} (please check your host binding setting in the preferences)".format(host=server.host, error=e))
                 return
 
             try:

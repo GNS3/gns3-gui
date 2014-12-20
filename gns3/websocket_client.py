@@ -133,6 +133,7 @@ class WebSocketClient(WebSocketBaseClient):
         """
         Connects to the server.
         """
+
         self.use_auth = False
         self.use_ssl = False
         self.version_url = "http://{host}:{port}/version".format(host=self.host, port=self.port)
@@ -149,7 +150,10 @@ class WebSocketClient(WebSocketBaseClient):
         """
         Connect to the server.
         """
+
         try:
+            if self._local is True:
+                self.connection.settimeout(5)
             WebSocketBaseClient.connect(self)
         except OSError:
             raise
@@ -163,7 +167,9 @@ class WebSocketClient(WebSocketBaseClient):
 
         This is an http (or https) request.
         """
+
         content = self.opener.open(self.version_url).read()
+
         try:
             json_data = json.loads(content.decode("utf-8"))
             self._version = json_data.get("version")
@@ -341,7 +347,7 @@ class WebSocketClient(WebSocketBaseClient):
         """
 
         # read the data, if successful received_message() is called by once()
-        if self.once() == False:
+        if self.once() is False:
             log.warning("lost connection with server {}:{}".format(self.host, self.port))
             self.close_connection()
 
