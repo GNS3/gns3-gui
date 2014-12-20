@@ -175,54 +175,50 @@ def main():
         except win32console.error as e:
             print("warning: could not allocate console: {}".format(e))
 
-    exit_code = MainWindow.exit_code_reboot
-    while exit_code == MainWindow.exit_code_reboot:
+    app = QtGui.QApplication(sys.argv)
 
-        exit_code = 0
-        app = QtGui.QApplication(sys.argv)
+    # this info is necessary for QSettings
+    app.setOrganizationName("GNS3")
+    app.setOrganizationDomain("gns3.net")
+    app.setApplicationName("GNS3")
+    app.setApplicationVersion(__version__)
 
-        # this info is necessary for QSettings
-        app.setOrganizationName("GNS3")
-        app.setOrganizationDomain("gns3.net")
-        app.setApplicationName("GNS3")
-        app.setApplicationVersion(__version__)
-
-        # save client logging info to a file
-        logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")  # FIXME: does it work?
+    # save client logging info to a file
+    logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")  # FIXME: does it work?
+    try:
         try:
-            try:
-                os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))
-            except FileExistsError:
-                pass
-            handler = logging.FileHandler(logfile, "w")
-            if options.debug:
-                root_logger = logging.getLogger()
-                root_logger.setLevel(logging.DEBUG)
-                if len(root_logger.handlers) > 0:
-                    root_handler = root_logger.handlers[0]
-                else:
-                    root_handler = logging.StreamHandler()
-                    root_logger.addHandler(root_handler)
-                root_handler.setLevel(logging.DEBUG)
+            os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))
+        except FileExistsError:
+            pass
+        handler = logging.FileHandler(logfile, "w")
+        if options.debug:
+            root_logger = logging.getLogger()
+            root_logger.setLevel(logging.DEBUG)
+            if len(root_logger.handlers) > 0:
+                root_handler = root_logger.handlers[0]
             else:
-                handler.setLevel(logging.INFO)
-            log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
+                root_handler = logging.StreamHandler()
+                root_logger.addHandler(root_handler)
+            root_handler.setLevel(logging.DEBUG)
+        else:
+            handler.setLevel(logging.INFO)
+        log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
 
-            formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
-                                          datefmt="%y%m%d %H:%M:%S")
-            handler.setFormatter(formatter)
-            log.addHandler(handler)
-        except OSError as e:
-            log.warn("could not log to {}: {}".format(logfile, e))
+        formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
+                                      datefmt="%y%m%d %H:%M:%S")
+        handler.setFormatter(formatter)
+        log.addHandler(handler)
+    except OSError as e:
+        log.warn("could not log to {}: {}".format(logfile, e))
 
-        # update the exception file path to have it in the same directory as the settings file.
-        exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
+    # update the exception file path to have it in the same directory as the settings file.
+    exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
 
-        mainwindow = MainWindow(options.project)
-        mainwindow.show()
-        exit_code = app.exec_()
-        delattr(MainWindow, "_instance")
-        app.deleteLater()
+    mainwindow = MainWindow(options.project)
+    mainwindow.show()
+    exit_code = app.exec_()
+    delattr(MainWindow, "_instance")
+    app.deleteLater()
 
     sys.exit(exit_code)
 

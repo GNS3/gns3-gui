@@ -142,10 +142,9 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         QtGui.QMessageBox.information(self, "Configuration file", "Configuration file imported, default settings will be applied after a restart")
 
-        # restart the application
-        from ..main_window import MainWindow
-        main_window = MainWindow.instance()
-        main_window.reboot_signal.emit()
+        #TODO: implement restart
+        #QtCore.QProcess.startDetached(QtGui.QApplication.arguments()[0], QtGui.QApplication.arguments())
+        QtGui.QApplication.quit()
 
     def _exportConfigurationFileSlot(self):
         """

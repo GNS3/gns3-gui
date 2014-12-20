@@ -81,10 +81,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     # signal to tell the view if the user is adding a link or not
     adding_link_signal = QtCore.Signal(bool)
 
-    # for application reboot
-    reboot_signal = QtCore.Signal()
-    exit_code_reboot = -123456789
-
     # signal to tell a project was closed
     project_about_to_close_signal = QtCore.pyqtSignal(str)
     # signal to tell a new project was created
@@ -267,9 +263,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         Connect widgets to slots
         """
-
-        # to reboot
-        self.reboot_signal.connect(self.rebootSlot)
 
         # file menu connections
         self.uiNewProjectAction.triggered.connect(self._newProjectActionSlot)
@@ -1032,13 +1025,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
         else:
             event.ignore()
-
-    def rebootSlot(self):
-        """
-        Slot to receive the reboot signal.
-        """
-
-        QtGui.QApplication.exit(self.exit_code_reboot)
 
     def checkForUnsavedChanges(self):
         """
