@@ -63,7 +63,7 @@ if sys.platform.startswith("win"):
         program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
-                                             'SuperPutty': 'SuperPutty.exe -telnet "%h -P %p -wt \"%d\" -gns3 5 -skin 4"',
+                                             'SuperPutty (included with GNS3)': 'SuperPutty.exe -telnet "%h -P %p -wt \"%d\" -gns3 5"',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT securecrt.vbs /ARG "%d" /T /TELNET %h %p'.format(program_files),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files),
                                              'Telnet': 'telnet %h %p',
@@ -72,7 +72,7 @@ if sys.platform.startswith("win"):
 
     # default on Windows
     if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty"]
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty (included with GNS3)"]
     else:
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
 
