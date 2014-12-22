@@ -68,6 +68,8 @@ class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
+        self.uiMonitorStartPortSpinBox.setValue(settings["monitor_start_port_range"])
+        self.uiMonitorEndPortSpinBox.setValue(settings["monitor_end_port_range"])
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
@@ -108,6 +110,8 @@ class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
+        new_settings["monitor_start_port_range"] = self.uiMonitorStartPortSpinBox.value()
+        new_settings["monitor_end_port_range"] = self.uiMonitorEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         Qemu.instance().setSettings(new_settings)

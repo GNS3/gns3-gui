@@ -55,6 +55,7 @@ class QemuVM(Node):
                           "options": "",
                           "ram": QEMU_VM_SETTINGS["ram"],
                           "console": None,
+                          "monitor": None,
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                           "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
@@ -83,7 +84,7 @@ class QemuVM(Node):
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, qemu_path, name=None, console=None, qemu_id=None, initial_settings={}, base_name=None):
+    def setup(self, qemu_path, name=None, console=None, monitor=None, qemu_id=None, initial_settings={}, base_name=None):
         """
         Setups this QEMU VM.
 
@@ -103,6 +104,9 @@ class QemuVM(Node):
 
         if console:
             params["console"] = self._settings["console"] = console
+
+        if monitor:
+            params["monitor"] = self._settings["monitor"] = monitor
 
         if qemu_id:
             params["qemu_id"] = qemu_id
@@ -303,36 +307,36 @@ class QemuVM(Node):
                 port.setStatus(Port.stopped)
             self.stopped_signal.emit()
 
-    # def suspend(self):
-    #     """
-    #     Suspends this QEMU VM instance.
-    #     """
-    #
-    #     if self.status() == Node.suspended:
-    #         log.debug("{} is already suspended".format(self.name()))
-    #         return
-    #
-    #     log.debug("{} is being suspended".format(self.name()))
-    #     self._server.send_message("qemu.suspend", {"id": self._qemu_id}, self._suspendCallback)
-    #
-    # def _suspendCallback(self, result, error=False):
-    #     """
-    #     Callback for suspend.
-    #
-    #     :param result: server response
-    #     :param error: indicates an error (boolean)
-    #     """
-    #
-    #     if error:
-    #         log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-    #         self.server_error_signal.emit(self.id(), result["code"], result["message"])
-    #     else:
-    #         log.info("{} has suspended".format(self.name()))
-    #         self.setStatus(Node.suspended)
-    #         for port in self._ports:
-    #             # set ports as suspended
-    #             port.setStatus(Port.suspended)
-    #         self.suspended_signal.emit()
+    def suspend(self):
+        """
+        Suspends this QEMU VM instance.
+        """
+
+        if self.status() == Node.suspended:
+            log.debug("{} is already suspended".format(self.name()))
+            return
+
+        log.debug("{} is being suspended".format(self.name()))
+        self._server.send_message("qemu.suspend", {"id": self._qemu_id}, self._suspendCallback)
+
+    def _suspendCallback(self, result, error=False):
+        """
+        Callback for suspend.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+            log.info("{} has suspended".format(self.name()))
+            self.setStatus(Node.suspended)
+            for port in self._ports:
+                # set ports as suspended
+                port.setStatus(Port.suspended)
+            self.suspended_signal.emit()
 
     def reload(self):
         """
@@ -457,11 +461,13 @@ class QemuVM(Node):
         info = """QEMU VM {name} is {state}
   Node ID is {id}, server's QEMU VM ID is {qemu_id}
   console is on port {console}
+  monitor is on port {monitor}
 """.format(name=self.name(),
            id=self.id(),
            qemu_id=self._qemu_id,
            state=state,
-           console=self._settings["console"])
+           console=self._settings["console"],
+           monitor=self._settings["monitor"])
 
         port_info = ""
         for port in self._ports:
@@ -514,13 +520,14 @@ class QemuVM(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
         qemu_path = settings.pop("qemu_path")
-        console = settings.pop("console")
+        console = settings.pop("console", self._defaults["console"])
+        monitor = settings.pop("monitor", self._defaults["monitor"])
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self.setup(qemu_path, name, console, qemu_id, settings)
+        self.setup(qemu_path, name, console, monitor, qemu_id, settings)
 
     def _updatePortSettings(self):
         """
@@ -580,6 +587,15 @@ class QemuVM(Node):
         """
 
         return self._settings["console"]
+
+    def monitor(self):
+        """
+        Returns the monitor port for this QEMU VM instance.
+
+        :returns: port (integer)
+        """
+
+        return self._settings["monitor"]
 
     def configPage(self):
         """
