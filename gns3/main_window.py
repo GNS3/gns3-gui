@@ -37,6 +37,8 @@ import stat
 from pkg_resources import parse_version
 
 from .modules import MODULES
+from .modules.module_error import ModuleError
+from .modules.vpcs import VPCS
 from .version import __version__
 from .qt import QtGui, QtCore, QtNetwork
 from .servers import Servers
@@ -303,6 +305,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # device menu is contextual and is build on-the-fly
         self.uiDeviceMenu.aboutToShow.connect(self._deviceMenuActionSlot)
+
+        # tools menu connections
+        self.uiVPCSAction.triggered.connect(self._vpcsActionSlot)
 
         # annotate menu connections
         self.uiAddNoteAction.triggered.connect(self._addNoteActionSlot)
@@ -755,6 +760,33 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtCore.QTimer.singleShot(counter, callback)
                 counter += delay
 
+    def _vpcsActionSlot(self):
+        """
+        Slot called when VPCS multi-host is clicked in the Tools menu.
+        """
+
+        vpcs_module = VPCS.instance()
+        try:
+            working_dir = os.path.join(self._project_settings["project_files_dir"], "vpcs", "multi-host")
+            os.makedirs(working_dir)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "VPCS", "Could not create the VPCS working directory: {}".format(e))
+            return
+
+        try:
+            vpcs_port = vpcs_module.startMultiHostVPCS(working_dir)
+        except ModuleError as e:
+            QtGui.QMessageBox.critical(self, "VPCS", "{}".format(e))
+            return
+
+        try:
+            from .telnet_console import telnetConsole
+            telnetConsole("VPCS multi-host", "127.0.0.1", vpcs_port)
+        except (OSError, ValueError) as e:
+            QtGui.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+
     def _addNoteActionSlot(self):
         """
         Slot called when adding a new note on the scene.
@@ -1008,6 +1040,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if self.checkForUnsavedChanges():
             self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+            VPCS.instance().stopMultiHostVPCS()
 
             # save the geometry and state of the main window.
             settings = QtCore.QSettings()

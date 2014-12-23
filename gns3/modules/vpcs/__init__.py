@@ -20,7 +20,14 @@ VPCS module implementation.
 """
 
 import os
-from gns3.qt import QtCore, QtGui
+import subprocess
+import sys
+import signal
+import socket
+import re
+import pkg_resources
+
+from gns3.qt import QtCore
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
@@ -44,6 +51,9 @@ class VPCS(Module):
         self._nodes = []
         self._servers = []
         self._working_dir = ""
+
+        self._vpcs_multi_host_process = None
+        self._vpcs_multi_host_port = 0
 
         # load the settings
         self._loadSettings()
@@ -255,6 +265,7 @@ class VPCS(Module):
         """
 
         log.info("vpcs module reset")
+        self.stopMultiHostVPCS()
         for server in self._servers:
             if server.connected():
                 server.send_notification("vpcs.reset")
@@ -297,6 +308,79 @@ class VPCS(Module):
         for node in self._nodes:
             if hasattr(node, "importConfig") and node.initialized():
                 node.importConfig(directory)
+
+    def _check_vpcs_version(self, working_dir):
+        """
+        Checks if the VPCS executable version is >= 0.5b1.
+        """
+
+        try:
+            output = subprocess.check_output([self._settings["path"], "-v"], cwd=working_dir)
+            match = re.search("Welcome to Virtual PC Simulator, version ([0-9a-z\.]+)", output.decode("utf-8"))
+            if match:
+                version = match.group(1)
+                if pkg_resources.parse_version(version) < pkg_resources.parse_version("0.5b1"):
+                    raise ModuleError("VPCS executable version must be >= 0.5b1")
+            else:
+                raise ModuleError("Could not determine the VPCS version for {}".format(self._settings["path"]))
+        except (OSError, subprocess.SubprocessError) as e:
+            raise ModuleError("Error while looking for the VPCS version: {}".format(e))
+
+    def startMultiHostVPCS(self, working_dir):
+        """
+        Starts a VPCS process for multi-host support.
+
+        :param working_dir: VPCS multi-host working directory
+        :return: VPCS listening port
+        """
+
+        if self._vpcs_multi_host_process and self._vpcs_multi_host_process.poll() is None:
+            return self._vpcs_multi_host_port
+
+        if not self._settings["path"]:
+            raise ModuleError("No path to a VPCS executable has been set")
+
+        if not os.path.isfile(self._settings["path"]):
+            raise ModuleError("VPCS program '{}' is not accessible".format(self._settings["path"]))
+
+        if not os.access(self._settings["path"], os.X_OK):
+            raise ModuleError("VPCS program '{}' is not executable".format(self._settings["path"]))
+
+        self._check_vpcs_version(working_dir)
+
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.bind(("127.0.0.1", 0))
+                self._vpcs_multi_host_port = sock.getsockname()[1]
+        except OSError as e:
+            raise ModuleError("Cannot get a free port: {}".format(e))
+
+        flags = 0
+        if sys.platform.startswith("win32"):
+            flags = subprocess.CREATE_NEW_PROCESS_GROUP
+        try:
+            vpcs_command = [self._settings["path"], "-p", str(self._vpcs_multi_host_port), "-F"]
+            self._vpcs_multi_host_process = subprocess.Popen(vpcs_command, cwd=working_dir, creationflags=flags)
+        except (OSError, subprocess.SubprocessError) as e:
+            raise ModuleError("Could not start VPCS {}".format(e))
+
+        return self._vpcs_multi_host_port
+
+    def stopMultiHostVPCS(self):
+        """
+        Stops the VPCS process for multi-host support.
+        """
+
+        if self._vpcs_multi_host_process and self._vpcs_multi_host_process.poll() is None:
+            log.info("stopping VPCS multi-host instance PID={}".format(self._vpcs_multi_host_process.pid))
+            if sys.platform.startswith("win32"):
+                self._vpcs_multi_host_process.send_signal(signal.CTRL_BREAK_EVENT)
+            else:
+                self._vpcs_multi_host_process.terminate()
+
+            self._vpcs_multi_host_process.wait()
+
+        self._vpcs_multi_host_process = None
 
     @staticmethod
     def getNodeClass(name):

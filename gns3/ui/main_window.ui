@@ -159,6 +159,7 @@ background-none;
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="uiVPCSAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
    <addaction name="uiEditMenu"/>
@@ -1141,6 +1142,11 @@ background-none;
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="uiVPCSAction">
+   <property name="text">
+    <string>&amp;VPCS multi-host</string>
    </property>
   </action>
  </widget>

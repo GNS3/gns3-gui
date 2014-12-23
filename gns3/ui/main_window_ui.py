@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Dec 15 17:07:37 2014
+# Created: Mon Dec 22 18:39:57 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -413,6 +413,8 @@ class Ui_MainWindow(object):
         self.uiDarkStyleAction.setObjectName(_fromUtf8("uiDarkStyleAction"))
         self.uiActionFullscreen = QtGui.QAction(MainWindow)
         self.uiActionFullscreen.setObjectName(_fromUtf8("uiActionFullscreen"))
+        self.uiVPCSAction = QtGui.QAction(MainWindow)
+        self.uiVPCSAction.setObjectName(_fromUtf8("uiVPCSAction"))
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -460,6 +462,7 @@ class Ui_MainWindow(object):
         self.uiAnnotateMenu.addAction(self.uiInsertImageAction)
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
         self.uiAnnotateMenu.addAction(self.uiDrawEllipseAction)
+        self.uiToolsMenu.addAction(self.uiVPCSAction)
         self.uiMenuBar.addAction(self.uiFileMenu.menuAction())
         self.uiMenuBar.addAction(self.uiEditMenu.menuAction())
         self.uiMenuBar.addAction(self.uiViewMenu.menuAction())
@@ -661,6 +664,7 @@ class Ui_MainWindow(object):
         self.uiDarkStyleAction.setText(_translate("MainWindow", "Dark Style", None))
         self.uiActionFullscreen.setText(_translate("MainWindow", "Fullscreen", None))
         self.uiActionFullscreen.setShortcut(_translate("MainWindow", "Ctrl+F", None))
+        self.uiVPCSAction.setText(_translate("MainWindow", "&VPCS multi-host", None))
 
 from ..cloud_inspector_view import CloudInspectorView
 from ..console_view import ConsoleView
