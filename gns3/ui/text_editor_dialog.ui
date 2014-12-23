@@ -71,6 +71,13 @@ editing (notes only) with ALT and '+' (or P) / ALT and '-' (or M)</string>
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="uiApplyTextToAllItemsCheckBox">
+     <property name="text">
+      <string>Apply the text below to all selected items</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPlainTextEdit" name="uiPlainTextEdit"/>
    </item>
    <item>

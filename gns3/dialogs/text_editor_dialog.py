@@ -53,6 +53,10 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
         if not first_item.editable():
             self.uiPlainTextEdit.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
 
+        if len(self._items) == 1:
+            self.uiApplyTextToAllItemsCheckBox.setChecked(True)
+            self.uiApplyTextToAllItemsCheckBox.hide()
+
     def _setFontSlot(self):
         """
         Slot to select the font.
@@ -82,7 +86,7 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
             item.setDefaultTextColor(self._color)
             item.setFont(self.uiPlainTextEdit.font())
             item.setRotation(self.uiRotationSpinBox.value())
-            if item.editable():
+            if item.editable() and self.uiApplyTextToAllItemsCheckBox.isChecked():
                 item.setPlainText(self.uiPlainTextEdit.toPlainText())
 
     def done(self, result):
