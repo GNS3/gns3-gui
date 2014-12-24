@@ -434,6 +434,8 @@ class Topology(object):
         if self._nodes:
             topology_nodes = topology["topology"]["nodes"] = []
             for node in self._nodes:
+                if not node.initialized():
+                    continue
                 if node.server().id() not in servers:
                     servers[node.server().id()] = node.server()
                 log.info("saving node: {}".format(node.name()))
