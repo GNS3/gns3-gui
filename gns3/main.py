@@ -107,7 +107,7 @@ def main():
             logfile.write("".join(lines))
             logfile.close()
         except OSError as e:
-            print("Could not save traceback to {}: {}".format(exception_file_path, e))
+            print("Could not save traceback to {}: {}".format(os.path.normpath(exception_file_path), e))
 
         if not sys.stdout.isatty():
             # if stdout is not a tty (redirected to the console view),

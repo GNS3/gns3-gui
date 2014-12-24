@@ -135,7 +135,7 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -serial %s -wt "%d [Local Console]" -gns3 5',
-                                             'SuperPutty': 'SuperPutty.exe -serial "%s -wt \"%d\" -gns3 5 -skin 4"'}
+                                             'SuperPutty': 'SuperPutty.exe -serial "%s -wt \"%d\" -gns3 5"'}
 
     # default Windows serial console command
     if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):

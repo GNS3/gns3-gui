@@ -22,6 +22,7 @@ Configuration page for QEMU VMs.
 import os
 import shutil
 from functools import partial
+from collections import OrderedDict
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
@@ -50,15 +51,30 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
 
+        qemu_network_devices = OrderedDict([
+            ("e1000", "Intel Gigabit Ethernet"),
+            ("i82550", "Intel i82550 Ethernet"),
+            ("i82551", "Intel i82551 Ethernet"),
+            ("i82557a", "Intel i82557A Ethernet"),
+            ("i82557b", "Intel i82557B Ethernet"),
+            ("i82557c", "Intel i82557C Ethernet"),
+            ("i82558a", "Intel i82558A Ethernet"),
+            ("i82558b", "Intel i82558B Ethernet"),
+            ("i82559a", "Intel i82559A Ethernet"),
+            ("i82559b", "Intel i82559B Ethernet"),
+            ("i82559c", "Intel i82559C Ethernet"),
+            ("i82559er", "Intel i82559ER Ethernet"),
+            ("i82562", "Intel i82562 Ethernet"),
+            ("i82801", "Intel i82801 Ethernet"),
+            ("ne2k_pci", "NE2000 Ethernet"),
+            ("pcnet", "AMD PCNet Ethernet"),
+            ("rtl8139", "Realtek 8139 Ethernet"),
+            ("virtio-net-pci", "Paravirtualized Network I/O"),
+            ("vmxnet3", "VMWare Paravirtualized Ethernet v3")])
+
         self.uiAdapterTypesComboBox.clear()
-        self.uiAdapterTypesComboBox.addItems(["ne2k_pci",
-                                              "i82551",
-                                              "i82557b",
-                                              "i82559er",
-                                              "rtl8139",
-                                              "e1000",
-                                              "pcnet",
-                                              "virtio"])
+        for device_name, device_description in qemu_network_devices.items():
+            self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
 
     def _getDiskImage(self):
 
@@ -254,7 +270,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
-        index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
+        index = self.uiAdapterTypesComboBox.findData(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
@@ -314,7 +330,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
             settings["qemu_path"] = qemu_path
 
-        settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
+        settings["adapter_type"] = self.uiAdapterTypesComboBox.itemData(self.uiAdapterTypesComboBox.currentIndex())
         settings["kernel_command_line"] = self.uiKernelCommandLineEdit.text()
 
         adapters = self.uiAdaptersSpinBox.value()
