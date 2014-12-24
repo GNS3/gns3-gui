@@ -112,12 +112,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "project_type": "local",
         }
 
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self._uiNewsDockWidget = NewsDockWidget(self)
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
-        except ImportError:
-            self._uiNewsDockWidget = None
+        self._uiNewsDockWidget = None
+        if not self._settings["hide_news_dock_widget"]:
+            try:
+                from .news_dock_widget import NewsDockWidget
+                self._uiNewsDockWidget = NewsDockWidget(self)
+                self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
+            except ImportError:
+                pass
 
         # restore the geometry and state of the main window.
         settings = QtCore.QSettings()

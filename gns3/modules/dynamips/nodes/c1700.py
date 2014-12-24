@@ -33,7 +33,7 @@ class C1700(Router):
     def __init__(self, module, server, chassis="1720"):
         Router.__init__(self, module, server, platform="c1700")
 
-        self._platform_settings = {"ram": 64,
+        self._platform_settings = {"ram": 128,
                                    "nvram": 32,
                                    "disk0": 0,
                                    "disk1": 0,

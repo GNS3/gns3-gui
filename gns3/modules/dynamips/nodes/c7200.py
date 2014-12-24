@@ -33,7 +33,7 @@ class C7200(Router):
     def __init__(self, module, server, npe="npe-400"):
         Router.__init__(self, module, server, platform="c7200")
 
-        self._platform_settings = {"ram": 256,
+        self._platform_settings = {"ram": 512,
                                    "nvram": 128,
                                    "disk0": 64,
                                    "disk1": 0,

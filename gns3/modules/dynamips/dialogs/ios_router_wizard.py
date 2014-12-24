@@ -22,6 +22,8 @@ Wizard for IOS routers.
 import sys
 import os
 import re
+import math
+import zipfile
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
@@ -31,6 +33,7 @@ from gns3.utils.run_in_terminal import RunInTerminal
 from ....settings import ENABLE_CLOUD
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
+from ..utils.decompress_ios import isIOSCompressed
 from .. import Dynamips
 from ..nodes.c1700 import C1700
 from ..nodes.c2600 import C2600
@@ -350,6 +353,32 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             if platform == "c7200":
                 self.uiSlot0comboBox.setCurrentIndex(self.uiSlot0comboBox.findText("C7200-IO-FE"))
 
+    @staticmethod
+    def _getMinimumRequiredRAM(path):
+        """
+        Returns the minimum RAM required to run an IOS image.
+
+        :param path: path to the IOS image
+
+        :returns: minimum RAM in MB or 0 if there is an error
+        """
+
+        try:
+            if isIOSCompressed(path):
+                zip_file = zipfile.ZipFile(path, "r")
+                decompressed_size = 0
+                for zip_info in zip_file.infolist():
+                    decompressed_size += zip_info.file_size
+            else:
+                decompressed_size = os.path.getsize(path)
+        except OSError:
+            return 0
+
+        # get the size in MB
+        decompressed_size = (decompressed_size / (1000 * 1000)) + 1
+        # round up to the closest multiple of 32 (step of the RAM SpinBox)
+        return math.ceil(decompressed_size / 32) * 32
+
     def validateCurrentPage(self):
         """
         Validates the IOS name and checks validation state for Idle-PC value
@@ -361,6 +390,13 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
+        if self.currentPage() == self.uiIOSImageWizardPage:
+            if self.uiIOSImageLineEdit.text().startswith("c7200p"):
+                QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
+        if self.currentPage() == self.uiMemoryWizardPage and (Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
+            minimum_required_ram = self._getMinimumRequiredRAM(self.uiIOSImageLineEdit.text())
+            if minimum_required_ram > self.uiRamSpinBox.value():
+                QtGui.QMessageBox.warning(self, "IOS image", "There is not sufficient RAM allocated to your IOS image, minimum recommended RAM is {} MB".format(minimum_required_ram))
         if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
@@ -371,21 +407,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in Dynamips preferences")
                 return False
         return True
-
-
-    #     minimum_required_ram = self._getMinimumRequiredRAM(path)
-    #     if minimum_required_ram > ram:
-    #         QtGui.QMessageBox.warning(self, "IOS image", "There is not sufficient RAM allocated to this IOS image, recommended RAM is {} MB".format(minimum_required_ram))
-    #
-    #     # basename doesn't work on Unix with Windows paths
-    #     if not sys.platform.startswith('win') and len(path) > 2 and path[1] == ":":
-    #         import ntpath
-    #         image = ntpath.basename(path)
-    #     else:
-    #         image = os.path.basename(path)
-    #
-    #     if image.startswith("c7200p"):
-    #         QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
 
     def getSettings(self):
         """

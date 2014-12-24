@@ -209,6 +209,7 @@ GENERAL_SETTINGS = {
     "bring_console_to_front": True,
     "delay_console_all": 500,
     "default_local_news": False,
+    "hide_news_dock_widget": False,
     "debug_level": 0,
 }
 
@@ -228,6 +229,7 @@ GENERAL_SETTING_TYPES = {
     "bring_console_to_front": bool,
     "delay_console_all": int,
     "default_local_news": bool,
+    "hide_news_dock_widget": bool,
     "debug_level": int,
 }
 

@@ -137,12 +137,12 @@ IOS_ROUTER_SETTING_TYPES = {
 }
 
 # supported platforms with the default RAM value
-PLATFORMS_DEFAULT_RAM = {"c1700": 64,
-                         "c2600": 64,
-                         "c2691": 128,
-                         "c3600": 128,
+PLATFORMS_DEFAULT_RAM = {"c1700": 128,
+                         "c2600": 128,
+                         "c2691": 192,
+                         "c3600": 192,
                          "c3725": 128,
-                         "c3745": 128,
+                         "c3745": 256,
                          "c7200": 512}
 
 # platforms with supported chassis

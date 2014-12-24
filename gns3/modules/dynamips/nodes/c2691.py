@@ -33,7 +33,7 @@ class C2691(Router):
     def __init__(self, module, server):
         Router.__init__(self, module, server, platform="c2691")
 
-        self._platform_settings = {"ram": 128,
+        self._platform_settings = {"ram": 192,
                                    "nvram": 112,
                                    "disk0": 16,
                                    "disk1": 0,
