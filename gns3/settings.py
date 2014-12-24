@@ -57,18 +57,19 @@ DEFAULT_LOCAL_SERVER_PORT = 8000
 if sys.platform.startswith("win"):
     if "PROGRAMFILES(X86)" in os.environ:
         # windows 64-bit
-        program_files = os.environ["PROGRAMFILES(X86)"]
+        program_files = os.environ["PROGRAMFILES"]
+        program_files_x86 = os.environ["PROGRAMFILES(X86)"]
     else:
         # windows 32-bit
-        program_files = os.environ["PROGRAMFILES"]
+        program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'SuperPutty (included with GNS3)': 'SuperPutty.exe -telnet "%h -P %p -wt \"%d\" -gns3 5"',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT securecrt.vbs /ARG "%d" /T /TELNET %h %p'.format(program_files),
-                                             'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files),
+                                             'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
                                              'Telnet': 'telnet %h %p',
-                                             'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files),
-                                             'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files)}
+                                             'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files_x86),
+                                             'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
 
     # default on Windows
     if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
@@ -134,7 +135,7 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -serial %s -wt "%d [Local Console]" -gns3 5',
-                                             'SuperPutty': 'SuperPutty.exe -serial "%s -wt \"%d\" -gns3 5 -skin 4"'}
+                                             'SuperPutty': 'SuperPutty.exe -serial "%s -wt \"%d\" -gns3 5"'}
 
     # default Windows serial console command
     if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):

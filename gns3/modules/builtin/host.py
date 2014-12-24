@@ -44,7 +44,21 @@ class Host(Cloud):
         name = "Host{}".format(self._name_id)
         self._settings["name"] = name
 
-        self.created_signal.connect(self._autoConfigure)
+    def setup(self, name=None, initial_settings={}):
+        """
+        Setups this host.
+
+        :param name: optional name for this host
+        """
+
+        if name:
+            self._settings["name"] = name
+
+        if initial_settings:
+            self._initial_settings = initial_settings
+        else:
+            self.created_signal.connect(self._autoConfigure)
+        self._server.send_message("builtin.interfaces", None, self._setupCallback)
 
     def _autoConfigure(self, node_id):
         """

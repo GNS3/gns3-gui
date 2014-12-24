@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/text_editor_dialog.ui'
 #
-# Created: Sun Aug 17 18:05:15 2014
+# Created: Tue Dec 23 15:45:13 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,6 +55,9 @@ class Ui_TextEditorDialog(object):
         self.uiRotationSpinBox.setObjectName(_fromUtf8("uiRotationSpinBox"))
         self.gridLayout.addWidget(self.uiRotationSpinBox, 1, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiTextSettingsGroupBox)
+        self.uiApplyTextToAllItemsCheckBox = QtGui.QCheckBox(TextEditorDialog)
+        self.uiApplyTextToAllItemsCheckBox.setObjectName(_fromUtf8("uiApplyTextToAllItemsCheckBox"))
+        self.verticalLayout.addWidget(self.uiApplyTextToAllItemsCheckBox)
         self.uiPlainTextEdit = QtGui.QPlainTextEdit(TextEditorDialog)
         self.uiPlainTextEdit.setObjectName(_fromUtf8("uiPlainTextEdit"))
         self.verticalLayout.addWidget(self.uiPlainTextEdit)
@@ -87,6 +90,7 @@ class Ui_TextEditorDialog(object):
         self.uiRotationSpinBox.setToolTip(_translate("TextEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
 "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)", None))
         self.uiRotationSpinBox.setSuffix(_translate("TextEditorDialog", "°", None))
+        self.uiApplyTextToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the text below to all selected items", None))
         self.uiFontPushButton.setText(_translate("TextEditorDialog", "&Select font", None))
 
 from . import resources_rc
