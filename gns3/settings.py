@@ -64,7 +64,7 @@ if sys.platform.startswith("win"):
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
-                                             'SuperPutty (included with GNS3)': 'SuperPutty.exe -telnet "%h -P %p -wt \"%d\" -gns3 5"',
+                                             'SuperPutty (included with GNS3)': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT securecrt.vbs /ARG "%d" /T /TELNET %h %p'.format(program_files),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
                                              'Telnet': 'telnet %h %p',
@@ -135,7 +135,7 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -serial %s -wt "%d [Local Console]" -gns3 5',
-                                             'SuperPutty': 'SuperPutty.exe -serial "%s -wt \"%d\" -gns3 5"'}
+                                             'SuperPutty': r'SuperPutty.exe -serial "%s -wt \"%d\""'}
 
     # default Windows serial console command
     if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
