@@ -40,8 +40,10 @@ log = logging.getLogger(__name__)
 
 
 class TopologyInstance:
+
     def __init__(self, name, id, size_id, image_id, private_key, public_key,
                  host=None, port=None, ssl_ca=None, ssl_ca_file=None):
+
         # host, port, ssl_ca and ssl_ca_file are not known when the instance is created.
         # They will typically be set at a later point in time.
         self.name = name
@@ -86,6 +88,7 @@ class Topology(object):
         self._initialized_nodes = []
         self._resources_type = "local"
         self._instances = []
+        self._auto_start = False
 
     def addNode(self, node):
         """
@@ -423,6 +426,7 @@ class Topology(object):
                     "version": __version__,
                     "type": "topology",
                     "topology": {},
+                    "auto_start": False,
                     "resources_type": project_settings["project_type"],
                     }
 
@@ -488,6 +492,9 @@ class Topology(object):
         if "topology" not in topology or "version" not in topology:
             log.warn("not a topology file")
             return
+
+        # auto start option
+        self._auto_start = topology.get("auto_start", False)
 
         # deactivate the unsaved state support
         main_window.ignoreUnsavedState(True)
@@ -726,6 +733,10 @@ class Topology(object):
 
                     if source_port and destination_port:
                         view.addLink(source_node, source_port, destination_node, destination_port)
+
+        # Auto start
+        if self._auto_start and hasattr(node, "start"):
+            node.start()
 
     def _createPortLabel(self, node, label_info):
         """
