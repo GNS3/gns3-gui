@@ -21,7 +21,6 @@ Configuration page for IOU device preferences.
 
 import copy
 import os
-import sys
 import shutil
 
 from gns3.qt import QtCore, QtGui
@@ -29,8 +28,6 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
-from gns3.utils.get_resource import get_resource
-from gns3.utils.get_default_base_config import get_default_base_config
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -57,10 +54,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self.uiDeleteIOUDevicePushButton.clicked.connect(self._iouDeviceDeleteSlot)
         self.uiIOUDevicesTreeWidget.currentItemChanged.connect(self._iouDeviceChangedSlot)
         self.uiIOUDevicesTreeWidget.itemPressed.connect(self._iouDevicePressedSlot)
-
-        # location of the base config templates
-        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
-        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
 
     def _iouDeviceChangedSlot(self, current, previous):
         """
@@ -269,28 +262,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 except OSError:
                     pass
         return path
-
-    def _iouImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select an IOU image.
-        """
-
-        path = self.getIOUImage(self)
-        if not path:
-            return
-        self.uiIOUPathLineEdit.clear()
-        self.uiIOUPathLineEdit.setText(path)
-
-        if "l2" in path:
-            # set the default L2 base initial-config
-            default_base_config = get_default_base_config(self._base_iou_l2_config_template)
-            if default_base_config:
-                self.uiInitialConfigLineEdit.setText(default_base_config)
-        else:
-            # set the default L3 base initial-config
-            default_base_config = get_default_base_config(self._base_iou_l3_config_template)
-            if default_base_config:
-                self.uiInitialConfigLineEdit.setText(default_base_config)
 
     def _iouDevicePressedSlot(self, item, column):
         """

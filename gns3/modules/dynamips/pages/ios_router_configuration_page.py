@@ -229,12 +229,6 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 self.uiAuxPortLabel.hide()
                 self.uiAuxPortSpinBox.hide()
 
-            # load the startup-config
-            self.uiStartupConfigLineEdit.setText(settings["startup_config"])
-
-            # load the private-config
-            self.uiPrivateConfigLineEdit.setText(settings["private_config"])
-
             # load the MAC address setting
             self.uiBaseMACLineEdit.setInputMask("HHHH.HHHH.HHHH;_")
 
@@ -254,18 +248,25 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             self.uiIOSImageLabel.hide()
             self.uiIOSImageLineEdit.hide()
             self.uiIOSImageToolButton.hide()
-            self.uiStartupConfigLabel.hide()
-            self.uiStartupConfigLineEdit.hide()
-            self.uiStartupConfigToolButton.hide()
-            self.uiPrivateConfigLabel.hide()
-            self.uiPrivateConfigLineEdit.hide()
-            self.uiPrivateConfigToolButton.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
             self.uiAuxPortLabel.hide()
             self.uiAuxPortSpinBox.hide()
             self.uiBaseMacLabel.hide()
             self.uiBaseMACLineEdit.hide()
+
+        if not node:
+            # load the startup-config
+            self.uiStartupConfigLineEdit.setText(settings["startup_config"])
+            # load the private-config
+            self.uiPrivateConfigLineEdit.setText(settings["private_config"])
+        else:
+            self.uiStartupConfigLabel.hide()
+            self.uiStartupConfigLineEdit.hide()
+            self.uiStartupConfigToolButton.hide()
+            self.uiPrivateConfigLabel.hide()
+            self.uiPrivateConfigLineEdit.hide()
+            self.uiPrivateConfigToolButton.hide()
 
         # show the platform and chassis if applicable
         platform = settings["platform"]
@@ -460,20 +461,6 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             settings["console"] = self.uiConsolePortSpinBox.value()
             settings["aux"] = self.uiAuxPortSpinBox.value()
 
-            startup_config = self.uiStartupConfigLineEdit.text()
-            if startup_config != settings["startup_config"]:
-                if os.access(startup_config, os.R_OK):
-                    settings["startup_config"] = startup_config
-                else:
-                    QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
-
-            private_config = self.uiPrivateConfigLineEdit.text()
-            if private_config != settings["private_config"]:
-                if os.access(private_config, os.R_OK):
-                    settings["private_config"] = private_config
-                else:
-                    QtGui.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
-
             # check and save the base MAC address
             #mac = self.uiBaseMACLineEdit.text()
             #if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
@@ -494,6 +481,21 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             del settings["startup_config"]
             del settings["private_config"]
             del settings["image"]
+
+        if not node:
+            startup_config = self.uiStartupConfigLineEdit.text()
+            if startup_config != settings["startup_config"]:
+                if os.access(startup_config, os.R_OK):
+                    settings["startup_config"] = startup_config
+                else:
+                    QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+
+            private_config = self.uiPrivateConfigLineEdit.text()
+            if private_config != settings["private_config"]:
+                if os.access(private_config, os.R_OK):
+                    settings["private_config"] = private_config
+                else:
+                    QtGui.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
 
         # get the platform and chassis if applicable
         platform = settings["platform"]

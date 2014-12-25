@@ -25,44 +25,20 @@
     <widget class="QLineEdit" name="uiNameLineEdit"/>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="uiScriptFileLabel">
-     <property name="text">
-      <string>Script-File:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLineEdit" name="uiScriptFileLineEdit"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="uiScriptFileToolButton">
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextOnly</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
     <widget class="QLabel" name="uiConsolePortLabel">
      <property name="text">
       <string>Console port:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="1">
     <widget class="QSpinBox" name="uiConsolePortSpinBox">
      <property name="maximum">
       <number>65535</number>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="2" column="1">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

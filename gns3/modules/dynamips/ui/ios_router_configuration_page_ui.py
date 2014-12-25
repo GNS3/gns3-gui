@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Fri Oct 10 10:43:48 2014
+# Created: Wed Dec 24 17:35:25 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_iosRouterConfigPageWidget(object):
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName(_fromUtf8("iosRouterConfigPageWidget"))
-        iosRouterConfigPageWidget.resize(419, 522)
+        iosRouterConfigPageWidget.resize(435, 510)
         self.vboxlayout = QtGui.QVBoxLayout(iosRouterConfigPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(iosRouterConfigPageWidget)
@@ -566,11 +566,11 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiNameLabel.setText(_translate("iosRouterConfigPageWidget", "Name:", None))
         self.uiPlatformLabel.setText(_translate("iosRouterConfigPageWidget", "Platform:", None))
         self.uiChassisLabel.setText(_translate("iosRouterConfigPageWidget", "Chassis:", None))
-        self.uiIOSImageLabel.setText(_translate("iosRouterConfigPageWidget", "IOS image:", None))
+        self.uiIOSImageLabel.setText(_translate("iosRouterConfigPageWidget", "IOS image path:", None))
         self.uiIOSImageToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse...", None))
-        self.uiStartupConfigLabel.setText(_translate("iosRouterConfigPageWidget", "Startup-config:", None))
+        self.uiStartupConfigLabel.setText(_translate("iosRouterConfigPageWidget", "Initial startup-config:", None))
         self.uiStartupConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse...", None))
-        self.uiPrivateConfigLabel.setText(_translate("iosRouterConfigPageWidget", "Private-config:", None))
+        self.uiPrivateConfigLabel.setText(_translate("iosRouterConfigPageWidget", "Initial private-config:", None))
         self.uiPrivateConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse...", None))
         self.uiConsolePortLabel.setText(_translate("iosRouterConfigPageWidget", "Console port:", None))
         self.uiAuxPortLabel.setText(_translate("iosRouterConfigPageWidget", "Aux port:", None))

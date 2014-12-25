@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>419</width>
-    <height>522</height>
+    <width>435</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="uiIOSImageLabel">
          <property name="text">
-          <string>IOS image:</string>
+          <string>IOS image path:</string>
          </property>
         </widget>
        </item>
@@ -89,7 +89,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="uiStartupConfigLabel">
          <property name="text">
-          <string>Startup-config:</string>
+          <string>Initial startup-config:</string>
          </property>
         </widget>
        </item>
@@ -113,7 +113,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="uiPrivateConfigLabel">
          <property name="text">
-          <string>Private-config:</string>
+          <string>Initial private-config:</string>
          </property>
         </widget>
        </item>

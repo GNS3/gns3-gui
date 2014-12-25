@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Fri Oct 10 10:43:47 2014
+# Created: Wed Dec 24 17:35:25 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_iouDeviceConfigPageWidget(object):
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName(_fromUtf8("iouDeviceConfigPageWidget"))
-        iouDeviceConfigPageWidget.resize(420, 489)
+        iouDeviceConfigPageWidget.resize(392, 473)
         self.verticalLayout = QtGui.QVBoxLayout(iouDeviceConfigPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(iouDeviceConfigPageWidget)
@@ -177,9 +177,9 @@ class Ui_iouDeviceConfigPageWidget(object):
         iouDeviceConfigPageWidget.setWindowTitle(_translate("iouDeviceConfigPageWidget", "IOU device configuration", None))
         self.uiGeneralgroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "General", None))
         self.uiNameLabel.setText(_translate("iouDeviceConfigPageWidget", "Name:", None))
-        self.uiIOUImageLabel.setText(_translate("iouDeviceConfigPageWidget", "IOU image:", None))
+        self.uiIOUImageLabel.setText(_translate("iouDeviceConfigPageWidget", "IOU image path:", None))
         self.uiIOUImageToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse...", None))
-        self.uiInitialConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Initial config:", None))
+        self.uiInitialConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Initial startup-config:", None))
         self.uiInitialConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse...", None))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:", None))
         self.uiOtherSettingsGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Other settings", None))

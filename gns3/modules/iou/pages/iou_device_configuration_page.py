@@ -26,6 +26,8 @@ import pkg_resources
 
 from gns3.qt import QtGui
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.utils.get_resource import get_resource
+from gns3.utils.get_default_base_config import get_default_base_config
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
 
@@ -42,6 +44,10 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
         self._current_iou_image = ""
+
+        # location of the base config templates
+        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
+        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
 
     def _useDefaultValuesSlot(self, state):
         """
@@ -66,6 +72,17 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             return
         self.uiIOUImageLineEdit.clear()
         self.uiIOUImageLineEdit.setText(path)
+
+        if "l2" in path:
+            # set the default L2 base initial-config
+            default_base_config = get_default_base_config(self._base_iou_l2_config_template)
+            if default_base_config:
+                self.uiInitialConfigLineEdit.setText(default_base_config)
+        else:
+            # set the default L3 base initial-config
+            default_base_config = get_default_base_config(self._base_iou_l3_config_template)
+            if default_base_config:
+                self.uiInitialConfigLineEdit.setText(default_base_config)
 
     def _initialConfigBrowserSlot(self):
         """
@@ -105,14 +122,19 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
                 self.uiConsolePortLabel.hide()
                 self.uiConsolePortSpinBox.hide()
 
-            # load the initial-config
-            self.uiInitialConfigLineEdit.setText(settings["initial_config"])
-
             # load the IOU image path
             self.uiIOUImageLineEdit.setText(settings["path"])
 
         else:
             self.uiGeneralgroupBox.hide()
+
+        if not node:
+            # load the initial-config
+            self.uiInitialConfigLineEdit.setText(settings["initial_config"])
+        else:
+            self.uiInitialConfigLabel.hide()
+            self.uiInitialConfigLineEdit.hide()
+            self.uiInitialConfigToolButton.hide()
 
         # load advanced settings
         if "l1_keepalives" in settings:
@@ -154,13 +176,6 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
 
             settings["console"] = self.uiConsolePortSpinBox.value()
 
-            initial_config = self.uiInitialConfigLineEdit.text()
-            if initial_config != settings["initial_config"]:
-                if os.access(initial_config, os.R_OK):
-                    settings["initial_config"] = initial_config
-                else:
-                    QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
-
             # save the IOU image path
             ios_path = self.uiIOUImageLineEdit.text().strip()
             if ios_path:
@@ -168,6 +183,14 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         else:
             del settings["name"]
             del settings["console"]
+
+        if not node:
+            initial_config = self.uiInitialConfigLineEdit.text()
+            if initial_config != settings["initial_config"]:
+                if os.access(initial_config, os.R_OK):
+                    settings["initial_config"] = initial_config
+                else:
+                    QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
 
         # save advanced settings
         settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()

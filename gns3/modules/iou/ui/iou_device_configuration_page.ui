@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>489</height>
+    <width>392</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
           <item row="1" column="0">
            <widget class="QLabel" name="uiIOUImageLabel">
             <property name="text">
-             <string>IOU image:</string>
+             <string>IOU image path:</string>
             </property>
            </widget>
           </item>
@@ -70,7 +70,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="uiInitialConfigLabel">
             <property name="text">
-             <string>Initial config:</string>
+             <string>Initial startup-config:</string>
             </property>
            </widget>
           </item>
