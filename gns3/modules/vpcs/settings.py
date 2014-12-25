@@ -22,6 +22,9 @@ Default VPCS settings.
 import sys
 import os
 
+from gns3.utils.get_resource import get_resource
+from gns3.utils.get_default_base_config import get_default_base_config
+
 # default path to VPCS executable
 if sys.platform.startswith("win"):
     DEFAULT_VPCS_PATH = r"vpcs\vpcs.exe"
@@ -39,6 +42,8 @@ else:
         except OSError:
             continue
 
+DEFAULT_VPCS_CONFIG_PATH = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
+
 VPCS_SETTINGS = {
     "path": DEFAULT_VPCS_PATH,
     "console_start_port_range": 4501,
@@ -46,7 +51,7 @@ VPCS_SETTINGS = {
     "udp_start_port_range": 20501,
     "udp_end_port_range": 21000,
     "use_local_server": True,
-    "base_script_file": "",
+    "base_script_file": DEFAULT_VPCS_CONFIG_PATH,
 }
 
 VPCS_SETTING_TYPES = {

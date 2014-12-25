@@ -25,7 +25,6 @@ import sys
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from gns3.main_window import MainWindow
-from gns3.utils.get_resource import get_resource
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -121,11 +120,6 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
         self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
-
-        if not self.uiScriptFileEdit.text():
-            resource_name = get_resource(os.path.join("configs", "vpcs_base_config.txt"))
-            if resource_name:
-                self.uiScriptFileEdit.setText(resource_name)
 
     def _updateRemoteServersSlot(self):
         """

@@ -22,18 +22,17 @@ Wizard for IOS routers.
 import sys
 import os
 import re
-import math
-import zipfile
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.utils.message_box import MessageBox
 from gns3.utils.run_in_terminal import RunInTerminal
+from gns3.utils.get_resource import get_resource
+from gns3.utils.get_default_base_config import get_default_base_config
 
 from ....settings import ENABLE_CLOUD
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
-from ..utils.decompress_ios import isIOSCompressed
 from .. import Dynamips
 from ..nodes.c1700 import C1700
 from ..nodes.c2600 import C2600
@@ -88,6 +87,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
 
+        # location of the base config templates
+        self._base_startup_config_template = get_resource(os.path.join("configs", "ios_base_startup-config.txt"))
+        self._base_private_config_template = get_resource(os.path.join("configs", "ios_base_private-config.txt"))
+
         #FIXME: hide because of issue on Windows.
         self.uiTestIOSImagePushButton.hide()
 
@@ -115,7 +118,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
         if not ENABLE_CLOUD:
             self.uiCloudRadioButton.hide()
-
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -337,7 +339,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             path = self.uiIOSImageLineEdit.text()
             if os.path.isfile(path):
                 minimum_required_ram = IOSRouterPreferencesPage.getMinimumRequiredRAM(path)
-                if minimum_required_ram > PLATFORMS_DEFAULT_RAM[platform]:
+                if minimum_required_ram >= PLATFORMS_DEFAULT_RAM[platform]:
                     self.uiRamSpinBox.setValue(minimum_required_ram)
                 else:
                     self.uiRamSpinBox.setValue(PLATFORMS_DEFAULT_RAM[platform])
@@ -353,32 +355,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             if platform == "c7200":
                 self.uiSlot0comboBox.setCurrentIndex(self.uiSlot0comboBox.findText("C7200-IO-FE"))
 
-    @staticmethod
-    def _getMinimumRequiredRAM(path):
-        """
-        Returns the minimum RAM required to run an IOS image.
-
-        :param path: path to the IOS image
-
-        :returns: minimum RAM in MB or 0 if there is an error
-        """
-
-        try:
-            if isIOSCompressed(path):
-                zip_file = zipfile.ZipFile(path, "r")
-                decompressed_size = 0
-                for zip_info in zip_file.infolist():
-                    decompressed_size += zip_info.file_size
-            else:
-                decompressed_size = os.path.getsize(path)
-        except OSError:
-            return 0
-
-        # get the size in MB
-        decompressed_size = (decompressed_size / (1000 * 1000)) + 1
-        # round up to the closest multiple of 32 (step of the RAM SpinBox)
-        return math.ceil(decompressed_size / 32) * 32
-
     def validateCurrentPage(self):
         """
         Validates the IOS name and checks validation state for Idle-PC value
@@ -393,10 +369,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         if self.currentPage() == self.uiIOSImageWizardPage:
             if self.uiIOSImageLineEdit.text().startswith("c7200p"):
                 QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
-        if self.currentPage() == self.uiMemoryWizardPage and (Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
-            minimum_required_ram = self._getMinimumRequiredRAM(self.uiIOSImageLineEdit.text())
-            if minimum_required_ram > self.uiRamSpinBox.value():
-                QtGui.QMessageBox.warning(self, "IOS image", "There is not sufficient RAM allocated to your IOS image, minimum recommended RAM is {} MB".format(minimum_required_ram))
         if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
@@ -430,6 +402,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         settings = {
             "name": self.uiNameLineEdit.text(),
             "path": path,
+            "startup_config": get_default_base_config(self._base_startup_config_template),
+            "private_config": get_default_base_config(self._base_private_config_template),
             "ram": self.uiRamSpinBox.value(),
             "idlepc": self.uiIdlepcLineEdit.text(),
             "image": os.path.basename(path),

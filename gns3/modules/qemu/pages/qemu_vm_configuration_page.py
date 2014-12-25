@@ -76,17 +76,18 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         for device_name, device_description in qemu_network_devices.items():
             self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
 
-    def _getDiskImage(self):
+    @staticmethod
+    def getDiskImage(parent):
 
         destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "QEMU")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
                                                              "Select a QEMU disk image",
                                                              destination_directory)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "QEMU disk image", "Cannot read {}".format(path))
+            QtGui.QMessageBox.critical(parent, "QEMU disk image", "Cannot read {}".format(path))
             return
 
         try:
@@ -94,8 +95,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory,
-                                                                                                                                           str(e)))
+            QtGui.QMessageBox.critical(parent, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory, e))
             return
 
         if os.path.dirname(path) != destination_directory:
@@ -104,6 +104,8 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             try:
                 # try to create a symbolic link to it
                 symlink_path = new_destination_path
+                if os.path.islink(symlink_path):
+                    os.remove(symlink_path)
                 os.symlink(path, symlink_path)
                 path = symlink_path
             except (OSError, NotImplementedError):
@@ -121,7 +123,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hda disk image.
         """
 
-        path = self._getDiskImage()
+        path = self.getDiskImage(self)
         if path:
             self.uiHdaDiskImageLineEdit.clear()
             self.uiHdaDiskImageLineEdit.setText(path)
@@ -131,7 +133,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdb disk image.
         """
 
-        path = self._getDiskImage()
+        path = self.getDiskImage(self)
         if path:
             self.uiHdbDiskImageLineEdit.clear()
             self.uiHdbDiskImageLineEdit.setText(path)

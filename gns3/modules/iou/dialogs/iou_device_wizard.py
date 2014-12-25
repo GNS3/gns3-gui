@@ -26,6 +26,7 @@ from gns3.qt import QtGui
 from gns3.node import Node
 from gns3.servers import Servers
 from gns3.utils.get_resource import get_resource
+from gns3.utils.get_default_base_config import get_default_base_config
 
 from ....settings import ENABLE_CLOUD
 from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
@@ -76,6 +77,9 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         if not ENABLE_CLOUD:
             self.uiCloudRadioButton.hide()
 
+        # location of the base config templates
+        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
+        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -172,17 +176,17 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
         initial_config = ""
         if self.uiTypeComboBox.currentText() == "L2 image":
             # set the default L2 base initial-config
-            resource_name = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
-            if resource_name:
-                initial_config = resource_name
+            default_base_config = get_default_base_config(self._base_iou_l2_config_template)
+            if default_base_config:
+                initial_config = default_base_config
             default_symbol = ":/symbols/multilayer_switch.normal.svg"
             hover_symbol = ":/symbols/multilayer_switch.selected.svg"
             category = Node.switches
         else:
             # set the default L3 base initial-config
-            resource_name = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
-            if resource_name:
-                initial_config = resource_name
+            default_base_config = get_default_base_config(self._base_iou_l3_config_template)
+            if default_base_config:
+                initial_config = default_base_config
             default_symbol = ":/symbols/router.normal.svg"
             hover_symbol = ":/symbols/router.selected.svg"
             category = Node.routers

@@ -26,7 +26,6 @@ import shutil
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.node import Node
-from gns3.main_window import MainWindow
 from gns3.modules.module_error import ModuleError
 from gns3.utils.connect_to_server import ConnectToServer
 
@@ -121,52 +120,13 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             self.uiHdaDiskImageLabel.setText("Disk image (hda):")
             self.uiNameLineEdit.setText("")
 
-    def _getDiskImage(self):
-
-        destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "QEMU")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
-                                                             "Select a QEMU disk image",
-                                                             destination_directory)
-        if not path:
-            return
-
-        if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "QEMU disk image", "Cannot read {}".format(path))
-            return
-
-        try:
-            os.makedirs(destination_directory)
-        except FileExistsError:
-            pass
-        except OSError as e:
-            QtGui.QMessageBox.critical(self, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory,
-                                                                                                                                           str(e)))
-            return
-
-        if os.path.dirname(path) != destination_directory:
-            # the QEMU disk image is not in the default images directory
-            new_destination_path = os.path.join(destination_directory, os.path.basename(path))
-            try:
-                # try to create a symbolic link to it
-                symlink_path = new_destination_path
-                os.symlink(path, symlink_path)
-                path = symlink_path
-            except (OSError, NotImplementedError):
-                # if unsuccessful, then copy the QEMU disk image itself
-                try:
-                    shutil.copyfile(path, new_destination_path)
-                    path = new_destination_path
-                except OSError:
-                    pass
-
-        return path
-
     def _hdaDiskImageBrowserSlot(self):
         """
         Slot to open a file browser and select a QEMU hda disk image.
         """
 
-        path = self._getDiskImage()
+        from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
+        path = QemuVMConfigurationPage.getDiskImage(self)
         if path:
             self.uiHdaDiskImageLineEdit.clear()
             self.uiHdaDiskImageLineEdit.setText(path)
@@ -176,7 +136,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         Slot to open a file browser and select a QEMU hdb disk image.
         """
 
-        path = self._getDiskImage()
+        from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
+        path = QemuVMConfigurationPage.getDiskImage(self)
         if path:
             self.uiHdbDiskImageLineEdit.clear()
             self.uiHdbDiskImageLineEdit.setText(path)
