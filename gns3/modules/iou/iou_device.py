@@ -675,7 +675,39 @@ class IOUDevice(Node):
         self._inital_settings = None
         self._loading = False
 
-    def exportConfig(self, directory):
+    def exportConfig(self, config_export_path):
+        """
+        Exports the initial-config
+
+        :param config_export_path: export path for the initial-config
+        """
+
+        self._config_export_path = config_export_path
+        self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigCallback)
+
+    def _exportConfigCallback(self, result, error=False):
+        """
+        Callback for exportConfig.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+
+            if "initial_config_base64" in result and self._config_export_path:
+                config = base64.decodebytes(result["initial_config_base64"].encode("utf-8"))
+                try:
+                    with open(self._config_export_path, "wb") as f:
+                        log.info("saving {} initial-config to {}".format(self.name(), self._config_export_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(self._config_export_path, e))
+
+    def exportConfigToDirectory(self, directory):
         """
         Exports the initial-config to a directory.
 
@@ -683,11 +715,11 @@ class IOUDevice(Node):
         """
 
         self._export_directory = directory
-        self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigCallback)
+        self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigToDirectoryCallback)
 
-    def _exportConfigCallback(self, result, error=False):
+    def _exportConfigToDirectoryCallback(self, result, error=False):
         """
-        Callback for exportConfigs.
+        Callback for exportConfigToDirectory.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -710,7 +742,17 @@ class IOUDevice(Node):
 
             self._export_directory = None
 
-    def importConfig(self, directory):
+    def importConfig(self, path):
+        """
+        Imports an initial-config.
+
+        :param path: path to the initial config
+        """
+
+        new_settings = {"initial_config": path}
+        self.update(new_settings)
+
+    def importConfigFromDirectory(self, directory):
         """
         Imports an initial-config from a directory.
 

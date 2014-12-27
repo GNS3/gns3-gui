@@ -731,6 +731,18 @@ class GraphicsView(QtGui.QGraphicsView):
             aux_console_action.triggered.connect(self.auxConsoleActionSlot)
             menu.addAction(aux_console_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "importConfig"), items)):
+            import_config_action = QtGui.QAction("Import config", menu)
+            import_config_action.setIcon(QtGui.QIcon(':/icons/import_config.svg'))
+            import_config_action.triggered.connect(self.importConfigActionSlot)
+            menu.addAction(import_config_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "exportConfig"), items)):
+            export_config_action = QtGui.QAction("Export config", menu)
+            export_config_action.setIcon(QtGui.QIcon(':/icons/export_config.svg'))
+            export_config_action.triggered.connect(self.exportConfigActionSlot)
+            menu.addAction(export_config_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "startPacketCapture"), items)):
             capture_action = QtGui.QAction("Capture", menu)
             capture_action.setIcon(QtGui.QIcon(':/icons/inspect.svg'))
@@ -953,6 +965,71 @@ class GraphicsView(QtGui.QGraphicsView):
             if isinstance(item, NodeItem):
                 if self.consoleToNode(item.node(), aux=True):
                     continue
+
+    def importConfigActionSlot(self):
+        """
+        Slot to receive events from the import config action in the
+        contextual menu.
+        """
+
+        items = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "importConfig") and item.node().initialized():
+                items.append(item)
+
+        if not items:
+            return
+
+        if len(items) > 1:
+            path = QtGui.QFileDialog.getExistingDirectory(self, "Import directory", ".", QtGui.QFileDialog.ShowDirsOnly)
+            if path:
+                for item in items:
+                    item.node().importConfigFromDirectory(path)
+        else:
+            item = items[0]
+            path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+                                                                 "Import config",
+                                                                 ".",
+                                                                 "All files (*.*);;Config files (*.cfg)",
+                                                                 "Config files (*.cfg)")
+            if path:
+                item.node().importConfig(path)
+            if hasattr(item.node(), "importPrivateConfig"):
+                path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(self,
+                                                                     "Import private-config",
+                                                                     ".",
+                                                                     "All files (*.*);;Config files (*.cfg)",
+                                                                     "Config files (*.cfg)")
+                if path:
+                    item.node().importPrivateConfig(path)
+
+    def exportConfigActionSlot(self):
+        """
+        Slot to receive events from the export config action in the
+        contextual menu.
+        """
+
+        items = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "exportConfig") and item.node().initialized():
+                items.append(item)
+
+        if not items:
+            return
+
+        if len(items) > 1:
+            path = QtGui.QFileDialog.getExistingDirectory(self, "Export directory", ".", QtGui.QFileDialog.ShowDirsOnly)
+            if path:
+                for item in items:
+                    item.node().exportConfigToDirectory(path)
+        else:
+            item = items[0]
+            config_path = QtGui.QFileDialog.getSaveFileName(self, "Export config")
+            if hasattr(item.node(), "importPrivateConfig"):
+                private_config_path = QtGui.QFileDialog.getSaveFileName(self, "Export private-config")
+                item.node().exportConfig(config_path, private_config_path)
+            else:
+                item.node().exportConfig(config_path)
 
     def captureActionSlot(self):
         """

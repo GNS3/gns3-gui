@@ -258,7 +258,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
         # try to guess the platform
         image = os.path.basename(path)
-        match = re.match("^(c[0-9]+)\\-\w+", image.lower())
+        match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
         if not match:
             QtGui.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return
@@ -275,6 +275,9 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         if detected_platform not in PLATFORMS_DEFAULT_RAM:
             QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
             return
+
+        if image.lower().startswith("c7200p"):
+            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
 
         index = self.uiPlatformComboBox.findText(detected_platform)
         if index != -1:
@@ -332,6 +335,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             ios_image = self.uiIOSImageLineEdit.text()
             self.setWindowTitle("New IOS router - {}".format(os.path.basename(ios_image)))
+
         elif self.page(page_id) == self.uiMemoryWizardPage:
             # set the correct amount of RAM based on the platform
             from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
@@ -366,9 +370,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
-        if self.currentPage() == self.uiIOSImageWizardPage:
-            if self.uiIOSImageLineEdit.text().startswith("c7200p"):
-                QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the c7200 platform with NPE-G2 and using it is not recommended.\nPlease use an IOS image that do not start with c7200p.")
         if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
@@ -388,6 +389,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
 
         path = self.uiIOSImageLineEdit.text()
+        image = os.path.basename(path)
         if Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
@@ -406,11 +408,14 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             "private_config": get_default_base_config(self._base_private_config_template),
             "ram": self.uiRamSpinBox.value(),
             "idlepc": self.uiIdlepcLineEdit.text(),
-            "image": os.path.basename(path),
+            "image": image,
             "platform": self.uiPlatformComboBox.currentText(),
             "chassis": self.uiChassisComboBox.currentText(),
             "server": server,
         }
+
+        if image.lower().startswith("c7200p"):
+            settings["npe"] = "npe-g2"
 
         for slot_id, widget in self._widget_slots.items():
             if widget.isEnabled():

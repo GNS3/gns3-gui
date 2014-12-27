@@ -547,8 +547,8 @@ class Dynamips(Module):
         """
 
         for node in self._nodes:
-            if hasattr(node, "exportConfigs") and node.initialized():
-                node.exportConfigs(directory)
+            if isinstance(node, Router) and node.initialized():
+                node.exportConfigToDirectory(directory)
 
     def importConfigs(self, directory):
         """
@@ -558,8 +558,8 @@ class Dynamips(Module):
         """
 
         for node in self._nodes:
-            if hasattr(node, "importConfigs") and node.initialized():
-                node.importConfigs(directory)
+            if isinstance(node, Router) and node.initialized():
+                node.importConfigFromDirectory(directory)
 
     def findAlternativeIOSImage(self, image, node):
         """

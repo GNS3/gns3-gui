@@ -1006,7 +1006,50 @@ class Router(Node):
         self._inital_settings = None
         self._loading = False
 
-    def exportConfigs(self, directory):
+    def exportConfig(self, startup_config_export_path, private_config_export_path):
+        """
+        Exports the startup-config.
+
+        :param startup_config_export_path: export path for the startup-config
+        :param private_config_export_path: export path for the private-config
+        """
+
+        self._startup_config_export_path = startup_config_export_path
+        self._private_config_export_path = private_config_export_path
+        self._server.send_message("dynamips.vm.export_config", {"id": self._router_id}, self._exportConfigCallback)
+
+    def _exportConfigCallback(self, result, error=False):
+        """
+        Callback for exportConfig.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+
+            if "startup_config_base64" in result and self._startup_config_export_path:
+                config = base64.decodebytes(result["startup_config_base64"].encode("utf-8"))
+                try:
+                    with open(self._startup_config_export_path, "wb") as f:
+                        log.info("saving {} startup-config to {}".format(self.name(), self._startup_config_export_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(self._startup_config_export_path, e))
+
+            if "private_config_base64" in result and self._private_config_export_path:
+                config = base64.decodebytes(result["private_config_base64"].encode("utf-8"))
+                try:
+                    with open(self._private_config_export_path, "wb") as f:
+                        log.info("saving {} private-config to {}".format(self.name(), self._private_config_export_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export private-config to {}: {}".format(self._private_config_export_path, e))
+
+    def exportConfigToDirectory(self, directory):
         """
         Exports the startup-config and private-config to a directory.
 
@@ -1014,11 +1057,11 @@ class Router(Node):
         """
 
         self._export_directory = directory
-        self._server.send_message("dynamips.vm.export_config", {"id": self._router_id}, self._exportConfigsCallback)
+        self._server.send_message("dynamips.vm.export_config", {"id": self._router_id}, self._exportConfigToDirectoryCallback)
 
-    def _exportConfigsCallback(self, result, error=False):
+    def _exportConfigToDirectoryCallback(self, result, error=False):
         """
-        Callback for exportConfigs.
+        Callback for exportConfigToDirectory.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -1051,7 +1094,27 @@ class Router(Node):
 
             self._export_directory = None
 
-    def importConfigs(self, directory):
+    def importConfig(self, path):
+        """
+        Imports a startup-config.
+
+        :param path: path to the startup-config
+        """
+
+        new_settings = {"startup_config": path}
+        self.update(new_settings)
+
+    def importPrivateConfig(self, path):
+        """
+        Imports a private-config.
+
+        :param path: path to the private-config
+        """
+
+        new_settings = {"private_config": path}
+        self.update(new_settings)
+
+    def importConfigFromDirectory(self, directory):
         """
         Imports a startup-config and a private-config from a directory.
 

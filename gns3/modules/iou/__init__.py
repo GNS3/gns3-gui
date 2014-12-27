@@ -431,8 +431,8 @@ class IOU(Module):
         """
 
         for node in self._nodes:
-            if hasattr(node, "exportConfig") and node.initialized():
-                node.exportConfig(directory)
+            if node.initialized():
+                node.exportConfigToDirectory(directory)
 
     def importConfigs(self, directory):
         """
@@ -442,8 +442,8 @@ class IOU(Module):
         """
 
         for node in self._nodes:
-            if hasattr(node, "importConfig") and node.initialized():
-                node.importConfig(directory)
+            if node.initialized():
+                node.importConfigFromDirectory(directory)
 
     def findAlternativeIOUImage(self, image):
         """

@@ -97,6 +97,8 @@
     <file>icons/stop-hover.svg</file>
     <file>icons/reload.svg</file>
     <file>icons/add-note.svg</file>
+    <file>icons/import_config.svg</file>
+    <file>icons/export_config.svg</file>
     <file>icons/inspect.svg</file>
     <file>icons/capture-start.svg</file>
     <file>icons/capture-stop.svg</file>

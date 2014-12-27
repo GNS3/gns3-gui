@@ -505,7 +505,39 @@ class VPCSDevice(Node):
         self._inital_settings = None
         self._loading = False
 
-    def exportConfig(self, directory):
+    def exportConfig(self, config_export_path):
+        """
+        Exports the script file.
+
+        :param config_export_path: export path for the script file
+        """
+
+        self._config_export_path = config_export_path
+        self._server.send_message("vpcs.export_config", {"id": self._vpcs_id}, self._exportConfigCallback)
+
+    def _exportConfigCallback(self, result, error=False):
+        """
+        Callback for exportConfig.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+        else:
+
+            if "script_file_base64" in result and self._config_export_path:
+                config = base64.decodebytes(result["script_file_base64"].encode("utf-8"))
+                try:
+                    with open(self._config_export_path, "wb") as f:
+                        log.info("saving {} script file to {}".format(self.name(), self._config_export_path))
+                        f.write(config)
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(self._config_export_path, e))
+
+    def exportConfigToDirectory(self, directory):
         """
         Exports the script-file to a directory.
 
@@ -513,11 +545,11 @@ class VPCSDevice(Node):
         """
 
         self._export_directory = directory
-        self._server.send_message("vpcs.export_config", {"id": self._vpcs_id}, self._exportConfigCallback)
+        self._server.send_message("vpcs.export_config", {"id": self._vpcs_id}, self._exportConfigToDirectoryCallback)
 
-    def _exportConfigCallback(self, result, error=False):
+    def _exportConfigToDirectoryCallback(self, result, error=False):
         """
-        Callback for exportConfigs.
+        Callback for exportConfigToDirectory.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -540,7 +572,17 @@ class VPCSDevice(Node):
 
             self._export_directory = None
 
-    def importConfig(self, directory):
+    def importConfig(self, path):
+        """
+        Imports a script-file.
+
+        :param path: path to the script file
+        """
+
+        new_settings = {"script_file": path}
+        self.update(new_settings)
+
+    def importConfigFromDirectory(self, directory):
         """
         Imports an initial-config from a directory.
 
