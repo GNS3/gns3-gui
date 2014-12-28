@@ -104,6 +104,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._max_recent_files = 5
         self._recent_file_actions = []
         self._start_time = time.time()
+        self.loading_cloud_project = False
 
         self._project_settings = {
             "project_name": "unsaved",
@@ -1384,7 +1385,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             with open(path, "r") as f:
-                need_to_save = False
                 log.info("loading project: {}".format(path))
                 json_topology = json.load(f)
 
@@ -1405,34 +1405,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
 
-                # if we're opening a cloud project, fire up instances
+                # if we're opening a cloud project, defer topology load operations
                 if json_topology["resources_type"] == "cloud":
                     self._project_settings["project_type"] = "cloud"
-                    # new_instances = []
-                    # for instance in json_topology["topology"]["instances"]:
-                    #     name = instance["name"]
-                    #     flavor = instance["size_id"]
-                    #     image = instance["image_id"]
-                    #     i, k = self._create_instance(name, flavor, image)
-                    #     new_instances.append({
-                    #         "name": i.name,
-                    #         "id": i.id,
-                    #         "size_id": flavor,
-                    #         "image_id": image,
-                    #         "private_key": k.private_key,
-                    #         "public_key": k.public_key
-                    #     })
-                    # # update topology with new image data
-                    # json_topology["topology"]["instances"] = new_instances
-                    # # we need to save the updates
-                    # need_to_save = True
+                    self.loading_cloud_project = True
                 else:
                     self._project_settings["project_type"] = "local"
+                    topology.load(json_topology)
 
-                topology.load(json_topology)
-
-                if need_to_save:
-                    self.saveProject(path)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             #log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1664,7 +1644,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.CloudInspectorView.addInstance(instance)
 
         # persist infos saving current project
-        self.saveProject(self._project_settings["project_path"])
+        if not self.loading_cloud_project:
+            self.saveProject(self._project_settings["project_path"])
 
     def remove_instance_from_project(self, instance):
         """
