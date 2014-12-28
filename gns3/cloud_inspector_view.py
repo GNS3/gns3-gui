@@ -2,6 +2,7 @@
 from collections import namedtuple
 import logging
 import os
+import json
 
 from libcloud.compute.types import NodeState
 
@@ -319,6 +320,15 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
         instance = self._model.getInstanceById(id)
         instance.state = RunningInstanceState.WS_CONNECTED
         self._model.updateInstanceFields(instance, ['state'])
+
+        if self._main_window.loading_cloud_project:
+            project_settings = self._main_window.projectSettings()
+            path = project_settings.get("project_path")
+            with open(path, "r") as f:
+                json_topology = json.load(f)
+                topology = Topology.instance()
+                topology.load(json_topology)
+            self._main_window.loading_cloud_project = False
 
     def _update_model(self, instances):
         if not instances:
