@@ -25,6 +25,7 @@ import re
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.node import Node
 from gns3.utils.message_box import MessageBox
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
@@ -76,6 +77,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
+        self.uiEtherSwitchCheckBox.stateChanged.connect(self._etherSwitchSlot)
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
@@ -90,6 +92,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         # location of the base config templates
         self._base_startup_config_template = get_resource(os.path.join("configs", "ios_base_startup-config.txt"))
         self._base_private_config_template = get_resource(os.path.join("configs", "ios_base_private-config.txt"))
+        self._base_etherswitch_startup_config_template = get_resource(os.path.join("configs", "ios_etherswitch_startup-config.txt"))
 
         #FIXME: hide because of issue on Windows.
         self.uiTestIOSImagePushButton.hide()
@@ -153,6 +156,11 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiChassisComboBox.clear()
         if platform in CHASSIS:
             self.uiChassisComboBox.addItems(CHASSIS[platform])
+        if platform not in ("c2600", "c3600", "c2691", "c3725", "c3745"):
+            self.uiEtherSwitchCheckBox.setChecked(False)
+            self.uiEtherSwitchCheckBox.hide()
+        else:
+            self.uiEtherSwitchCheckBox.show()
 
     def _testIOSImageSlot(self):
         """
@@ -208,6 +216,20 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self._router.setup(ios_image, ram, name="AUTOIDLEPC")
         self._router.created_signal.connect(self.createdSlot)
         self.uiIdlePCFinderPushButton.setEnabled(False)
+
+    def _etherSwitchSlot(self, state):
+        """
+        Slot if the EtherSwitch option is chosen or not.
+        :param state: boolean
+        """
+
+        if state:
+            # forces the name to EtherSwitch
+            self.uiNameLineEdit.setText("EtherSwitch router")
+            #self.uiNameLineEdit.setEnabled(False)
+        else:
+            self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
+            #self.uiNameLineEdit.setEnabled(True)
 
     def createdSlot(self, node_id):
         """
@@ -358,6 +380,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self._populateAdapters(platform, chassis)
             if platform == "c7200":
                 self.uiSlot0comboBox.setCurrentIndex(self.uiSlot0comboBox.findText("C7200-IO-FE"))
+            if self.uiEtherSwitchCheckBox.isChecked():
+                self.uiSlot1comboBox.setCurrentIndex(self.uiSlot1comboBox.findText("NM-16ESW"))
 
     def validateCurrentPage(self):
         """
@@ -370,6 +394,9 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
+                #if self.uiEtherSwitchCheckBox.isChecked() and ios_router["etherswitch"]:
+                #    QtGui.QMessageBox.critical(self, "EtherSwitch router", "A router has already been configured to be used as the EtherSwitch router".format(name))
+                #    return False
         if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
@@ -413,6 +440,12 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             "chassis": self.uiChassisComboBox.currentText(),
             "server": server,
         }
+
+        if self.uiEtherSwitchCheckBox.isChecked():
+            settings["startup_config"] = get_default_base_config(self._base_etherswitch_startup_config_template)
+            settings["default_symbol"] = ":/symbols/multilayer_switch.normal.svg"
+            settings["hover_symbol"] = ":/symbols/multilayer_switch.selected.svg"
+            settings["category"] = Node.switches
 
         if image.lower().startswith("c7200p"):
             settings["npe"] = "npe-g2"

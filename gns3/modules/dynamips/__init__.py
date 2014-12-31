@@ -24,7 +24,6 @@ import glob
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
-from gns3.node import Node
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -436,19 +435,19 @@ class Dynamips(Module):
                         ios_router = self._ios_routers[ios_key]
                         break
 
-            # hack for EtherSwitch router
-            if isinstance(node, EtherSwitchRouter) and node.server() == Servers.instance().localServer():
-                for info in self._ios_routers.values():
-                    if info["platform"] == "c3725" and info["server"] == "local":
-                        ios_router = {
-                            "platform": "c3725",
-                            "path": info["path"],
-                            "ram": info["ram"],
-                            "startup_config": info["startup_config"],
-                        }
-                        break
-                if not ios_router:
-                    raise ModuleError("Please create an c3725 IOS router in order to use an EtherSwitch router")
+            # # hack for EtherSwitch router
+            # if isinstance(node, EtherSwitchRouter) and node.server() == Servers.instance().localServer():
+            #     for info in self._ios_routers.values():
+            #         if info["platform"] == "c3725" and info["server"] == "local":
+            #             ios_router = {
+            #                 "platform": "c3725",
+            #                 "path": info["path"],
+            #                 "ram": info["ram"],
+            #                 "startup_config": info["startup_config"],
+            #             }
+            #             break
+            #     if not ios_router:
+            #         raise ModuleError("Please create an c3725 IOS router in order to use an EtherSwitch router")
 
             if not ios_router:
                 raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))
@@ -488,7 +487,11 @@ class Dynamips(Module):
                 if wic in ios_router:
                     settings[wic] = ios_router[wic]
 
-            node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings)
+            base_name = "R"
+            if settings["slot1"] == "NM-16ESW":
+                # must be an EtherSwitch router
+                base_name = "ESW"
+            node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings, base_name=base_name)
         else:
             node.setup()
 
@@ -644,7 +647,7 @@ class Dynamips(Module):
                 server = "{}:{}".format(remote_server.host, remote_server.port)
 
         nodes = []
-        for node_class in [EtherSwitchRouter, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
+        for node_class in [EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),

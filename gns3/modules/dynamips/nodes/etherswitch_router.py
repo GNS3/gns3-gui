@@ -17,6 +17,7 @@
 
 """
 EtherSwitch router implementation (based on Dynamips c3745).
+This is legacy code, kept only to support topologies made with GNS3 < 1.2.2
 """
 
 import sys

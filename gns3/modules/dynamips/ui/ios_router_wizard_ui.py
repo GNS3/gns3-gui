@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Wed Oct 22 16:46:37 2014
+# Created: Wed Dec 31 11:23:11 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,6 +111,9 @@ class Ui_IOSRouterWizard(object):
         self.uiChassisLabel = QtGui.QLabel(self.uiNamePlatformWizardPage)
         self.uiChassisLabel.setObjectName(_fromUtf8("uiChassisLabel"))
         self.gridLayout.addWidget(self.uiChassisLabel, 2, 0, 1, 1)
+        self.uiEtherSwitchCheckBox = QtGui.QCheckBox(self.uiNamePlatformWizardPage)
+        self.uiEtherSwitchCheckBox.setObjectName(_fromUtf8("uiEtherSwitchCheckBox"))
+        self.gridLayout.addWidget(self.uiEtherSwitchCheckBox, 3, 0, 1, 2)
         IOSRouterWizard.addPage(self.uiNamePlatformWizardPage)
         self.uiMemoryWizardPage = QtGui.QWizardPage()
         self.uiMemoryWizardPage.setObjectName(_fromUtf8("uiMemoryWizardPage"))
@@ -299,6 +302,7 @@ class Ui_IOSRouterWizard(object):
         self.uiTypeLabel.setText(_translate("IOSRouterWizard", "Platform:", None))
         self.uiNameLabel.setText(_translate("IOSRouterWizard", "Name:", None))
         self.uiChassisLabel.setText(_translate("IOSRouterWizard", "Chassis:", None))
+        self.uiEtherSwitchCheckBox.setText(_translate("IOSRouterWizard", "This is an EtherSwitch router", None))
         self.uiMemoryWizardPage.setTitle(_translate("IOSRouterWizard", "Memory", None))
         self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Not enough RAM could prevent IOS to start.", None))
         self.uiRamLabel.setText(_translate("IOSRouterWizard", "Default RAM:", None))
@@ -320,7 +324,7 @@ class Ui_IOSRouterWizard(object):
         self.uiWic1Label.setText(_translate("IOSRouterWizard", "wic 1:", None))
         self.uiWic2Label.setText(_translate("IOSRouterWizard", "wic 2:", None))
         self.uiIdlePCWizardPage.setTitle(_translate("IOSRouterWizard", "Idle-PC", None))
-        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An Idle-PC value is necessary to prevent IOS to use 100% of your processor or one of its core.", None))
+        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core.", None))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:", None))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder", None))
 

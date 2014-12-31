@@ -183,6 +183,13 @@
       </property>
      </widget>
     </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="QCheckBox" name="uiEtherSwitchCheckBox">
+      <property name="text">
+       <string>This is an EtherSwitch router</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QWizardPage" name="uiMemoryWizardPage">
