@@ -20,18 +20,17 @@ Wizard for QEMU VMs.
 """
 
 import sys
-import os
-import shutil
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.node import Node
 from gns3.modules.module_error import ModuleError
 from gns3.utils.connect_to_server import ConnectToServer
+from gns3.settings import ENABLE_CLOUD
 
-from ....settings import ENABLE_CLOUD
-from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from .. import Qemu
+from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
+from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
@@ -125,7 +124,6 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         Slot to open a file browser and select a QEMU hda disk image.
         """
 
-        from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
         path = QemuVMConfigurationPage.getDiskImage(self)
         if path:
             self.uiHdaDiskImageLineEdit.clear()
@@ -136,7 +134,6 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         Slot to open a file browser and select a QEMU hdb disk image.
         """
 
-        from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
         path = QemuVMConfigurationPage.getDiskImage(self)
         if path:
             self.uiHdbDiskImageLineEdit.clear()
@@ -147,7 +144,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         Slot to open a file browser and select a QEMU initrd.
         """
 
-        path = self._getDiskImage()
+        path = QemuVMConfigurationPage.getDiskImage(self)
         if path:
             self.uiInitrdLineEdit.clear()
             self.uiInitrdLineEdit.setText(path)
@@ -157,7 +154,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         Slot to open a file browser and select a QEMU kernel image.
         """
 
-        path = self._getDiskImage()
+        from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
+        path = QemuVMConfigurationPage.getDiskImage(self)
         if path:
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
