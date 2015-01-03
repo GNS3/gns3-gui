@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Tue Dec 23 15:05:07 2014
+# Created: Sat Jan  3 14:50:40 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -125,7 +125,7 @@ class Ui_QemuVMConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiAdaptersSpinBox.sizePolicy().hasHeightForWidth())
         self.uiAdaptersSpinBox.setSizePolicy(sizePolicy)
         self.uiAdaptersSpinBox.setMinimum(0)
-        self.uiAdaptersSpinBox.setMaximum(8)
+        self.uiAdaptersSpinBox.setMaximum(32)
         self.uiAdaptersSpinBox.setObjectName(_fromUtf8("uiAdaptersSpinBox"))
         self.gridLayout_5.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
         self.uiAdapterTypesLabel = QtGui.QLabel(self.tab_7)
