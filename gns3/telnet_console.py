@@ -57,7 +57,7 @@ class ConsoleThread(QtCore.QThread):
             self.consoleDone.emit(self._name, self._host, self._port)
 
         except (OSError, subprocess.SubprocessError) as e:
-            log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
+            #log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
             raise
 
 
