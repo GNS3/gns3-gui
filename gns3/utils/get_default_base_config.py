@@ -32,8 +32,15 @@ def get_default_base_config(base_config_template_path):
     :return: path to the base config
     """
 
-    config_dir = os.path.dirname(QtCore.QSettings().fileName())
+    config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
     if base_config_template_path:
+        try:
+            os.makedirs(config_dir)
+        except FileExistsError:
+            pass
+        except OSError as e:
+            log.error("could not create the base configs directory {}: {}".format(config_dir, e))
+            return ""
         try:
             base_config_path = os.path.join(config_dir, os.path.basename(base_config_template_path))
             if not os.path.isfile(base_config_path):
