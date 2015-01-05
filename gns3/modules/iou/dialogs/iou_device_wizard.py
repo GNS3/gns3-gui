@@ -182,6 +182,8 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             default_symbol = ":/symbols/multilayer_switch.normal.svg"
             hover_symbol = ":/symbols/multilayer_switch.selected.svg"
             category = Node.switches
+            ethernet_adapters = 4
+            serial_adapters = 0
         else:
             # set the default L3 base initial-config
             default_base_config = get_default_base_config(self._base_iou_l3_config_template)
@@ -190,6 +192,8 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             default_symbol = ":/symbols/router.normal.svg"
             hover_symbol = ":/symbols/router.selected.svg"
             category = Node.routers
+            ethernet_adapters = 2
+            serial_adapters = 2
 
         if IOU.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
@@ -207,6 +211,8 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             "path": path,
             "image": os.path.basename(path),
             "initial_config": initial_config,
+            "ethernet_adapters": ethernet_adapters,
+            "serial_adapters": serial_adapters,
             "default_symbol": default_symbol,
             "category": category,
             "hover_symbol": hover_symbol,
