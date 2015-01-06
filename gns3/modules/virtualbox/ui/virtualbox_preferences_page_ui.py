@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
+# Form implementation generated from reading ui file 'virtualbox_preferences_page.ui'
 #
-# Created: Thu Oct 30 17:14:33 2014
+# Created: Fri Dec  5 22:50:01 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,8 +49,14 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.uiVboxManagePathToolButton.setObjectName(_fromUtf8("uiVboxManagePathToolButton"))
         self.horizontalLayout_5.addWidget(self.uiVboxManagePathToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_5, 3, 0, 1, 2)
+        self.uiVboxManageUserLabel = QtGui.QLabel(self.uiGeneralSettingsTabWidget)
+        self.uiVboxManageUserLabel.setObjectName(_fromUtf8("uiVboxManageUserLabel"))
+        self.gridLayout.addWidget(self.uiVboxManageUserLabel, 5, 0, 1, 1)
+        self.uiVboxManageUserLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsTabWidget)
+        self.uiVboxManageUserLineEdit.setObjectName(_fromUtf8("uiVboxManageUserLineEdit"))
+        self.gridLayout.addWidget(self.uiVboxManageUserLineEdit, 6, 0, 1, 1)
         spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 5, 0, 1, 2)
+        self.gridLayout.addItem(spacerItem, 7, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, _fromUtf8(""))
         self.uiServerSettingsTabWidget = QtGui.QWidget()
         self.uiServerSettingsTabWidget.setObjectName(_fromUtf8("uiServerSettingsTabWidget"))
@@ -143,6 +149,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         VirtualBoxPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxPreferencesPageWidget", "VirtualBox", None))
         self.uiVboxManagePathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to VBoxManage:", None))
         self.uiVboxManagePathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse...", None))
+        self.uiVboxManageUserLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Run VirtualBox as another user (GNS3 running as Linux root):", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxPreferencesPageWidget", "Remote servers", None))

@@ -268,8 +268,11 @@ class IOU(Module):
 
         if params:
             if "iourc" in params:
-                # encode the iourc file in base64
-                params["iourc"] = self._base64iourc(params["iourc"])
+                if os.path.isfile(params["iourc"]):
+                    # encode the iourc file in base64
+                    params["iourc"] = self._base64iourc(params["iourc"])
+                else:
+                    del params["iourc"]
             for server in self._servers:
                 # send the local working directory only if this is a local server
                 if server.isLocal():
@@ -296,8 +299,11 @@ class IOU(Module):
         log.info("sending IOU settings to server {}:{}".format(server.host, server.port))
         params = self._settings.copy()
 
-        # encode the iourc file in base64
-        params["iourc"] = self._base64iourc(params["iourc"])
+        if os.path.isfile(params["iourc"]):
+            # encode the iourc file in base64
+            params["iourc"] = self._base64iourc(params["iourc"])
+        else:
+            del params["iourc"]
 
         # send the local working directory only if this is a local server
         if server.isLocal():
@@ -321,7 +327,7 @@ class IOU(Module):
 
         log.info("creating node {}".format(node_class))
 
-        if not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"]):
+        if server.isLocal() and (not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"])):
             raise ModuleError("The path to IOURC must be configured")
 
         if not server.connected():

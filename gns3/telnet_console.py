@@ -19,7 +19,7 @@
 Functions to start external console terminals.
 """
 
-from .qt import QtCore
+from .qt import QtCore, QtGui
 
 import sys
 import shlex
@@ -31,9 +31,7 @@ log = logging.getLogger(__name__)
 
 
 class ConsoleThread(QtCore.QThread):
-    """
 
-    """
     consoleDone = QtCore.pyqtSignal(str, str, int)
 
     def __init__(self, parent, command, name, host, port):
@@ -43,22 +41,26 @@ class ConsoleThread(QtCore.QThread):
         self._host = host
         self._port = port
 
-    def run(self):
-        try:
-            if sys.platform.startswith("win"):
-                # use the string on Windows
-                subprocess.call(self._command)
-            else:
-                # use arguments on other platforms
-                args = shlex.split(self._command)
-                subprocess.call(args)
+    def exec_command(self):
 
+        if sys.platform.startswith("win"):
+            # use the string on Windows
+            subprocess.call(self._command)
+        else:
+            # use arguments on other platforms
+            args = shlex.split(self._command)
+            subprocess.call(args)
+
+    def run(self):
+
+        try:
+            self.exec_command()
+        except (OSError, subprocess.SubprocessError) as e:
+            pass
+            #log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
+        finally:
             # emit signal upon completion
             self.consoleDone.emit(self._name, self._host, self._port)
-
-        except (OSError, subprocess.SubprocessError) as e:
-            log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
-            raise
 
 
 def telnetConsole(name, host, port, callback=None):
@@ -82,5 +84,7 @@ def telnetConsole(name, host, port, callback=None):
     console_thread = ConsoleThread(MainWindow.instance(), command, name, host, port)
     if callback is not None:
         console_thread.consoleDone.connect(callback)
-
-    console_thread.start()
+        console_thread.start()
+    else:
+        # ugly hack to have the exception in the main thread
+        console_thread.exec_command()

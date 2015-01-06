@@ -304,7 +304,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
             settings["options"] = "-icount auto -hdachs 980,16,32"
             if not sys.platform.startswith("darwin"):
-                settings["cpu_throttling"] = 65
+                settings["cpu_throttling"] = 80  # limit to 80% CPU usage
             settings["process_priority"] = "low"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
             settings["hover_symbol"] = ":/symbols/asa.selected.svg"

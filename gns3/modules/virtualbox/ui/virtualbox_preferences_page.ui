@@ -51,7 +51,17 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiVboxManageUserLabel">
+         <property name="text">
+          <string>Run VirtualBox as another user (GNS3 running as Linux root):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLineEdit" name="uiVboxManageUserLineEdit"/>
+       </item>
+       <item row="7" column="0" colspan="2">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

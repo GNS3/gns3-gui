@@ -29,6 +29,9 @@ import pkg_resources
 
 from gns3.qt import QtCore
 from gns3.servers import Servers
+from gns3.utils.get_resource import get_resource
+from gns3.utils.get_default_base_config import get_default_base_config
+
 from ..module import Module
 from ..module_error import ModuleError
 from .vpcs_device import VPCSDevice
@@ -69,6 +72,9 @@ class VPCS(Module):
         for name, value in VPCS_SETTINGS.items():
             self._settings[name] = settings.value(name, value, type=VPCS_SETTING_TYPES[name])
         settings.endGroup()
+
+        if not self._settings["base_script_file"]:
+            self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
 
     def _saveSettings(self):
         """
