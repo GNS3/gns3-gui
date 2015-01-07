@@ -54,7 +54,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="uiVboxManageUserLabel">
          <property name="text">
-          <string>Run VirtualBox as another user (GNS3 running as Linux root):</string>
+          <string>Run VirtualBox as another user (GNS3 running as root):</string>
          </property>
         </widget>
        </item>

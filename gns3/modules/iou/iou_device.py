@@ -86,7 +86,9 @@ class IOUDevice(Node):
                 else:
                     port = SerialPort
                 port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
+                short_name = port.shortNameType() + str(slot_number) + "/" + str(port_number)
                 new_port = port(port_name)
+                new_port.setShortName(short_name)
                 new_port.setPortNumber(port_number)
                 new_port.setSlotNumber(slot_number)
                 new_port.setPacketCaptureSupported(True)

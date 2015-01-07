@@ -118,7 +118,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 from .news_dock_widget import NewsDockWidget
                 self._uiNewsDockWidget = NewsDockWidget(self)
-                self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
+                self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
             except ImportError:
                 pass
 
@@ -129,7 +129,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # do not show the nodes dock widget my default
         if not ENABLE_CLOUD:
-            self.uiNodesDockWidget.setVisible(False)
+            self.uiCloudInspectorDockWidget.close()
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
@@ -394,7 +394,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"]), str(e))
+            QtGui.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"], e))
             return
 
         # let all modules know about the new project files directory
@@ -1092,7 +1092,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             root.addHandler(logging.StreamHandler(sys.stdout))
 
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.RightDockWidgetArea), self._uiNewsDockWidget)
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
 
         self._gettingStartedActionSlot(auto=True)
 
@@ -1119,7 +1119,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # not a normal OSError, thrown from the Websocket client.
                     MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
                                                                                                                                                                                server.port),
-                                                                                                                                                                               str(e))
+                                                                                                                                                                               e)
                     return
 
                 if not servers.localServerAutoStart():
@@ -1214,7 +1214,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save project", "Could not create the projects directory {}: {}".format(projects_dir_path, str(e)))
+            QtGui.QMessageBox.critical(self, "Save project", "Could not create the projects directory {}: {}".format(projects_dir_path, e))
             return
 
         file_dialog = QtGui.QFileDialog(self)
@@ -1240,7 +1240,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(new_project_files_dir), str(e))
+            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(new_project_files_dir), e)
             return
 
         # create the sub-directories to avoid race conditions when setting the new working
@@ -1254,7 +1254,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 except FileExistsError:
                     pass
                 except OSError as e:
-                    QtGui.QMessageBox.critical(self, "Save project", "Could not create project sub-directory {}: {}".format(destination_dir, str(e)))
+                    QtGui.QMessageBox.critical(self, "Save project", "Could not create project sub-directory {}: {}".format(destination_dir, e))
                     return
 
         # let all modules know about the new project files directory

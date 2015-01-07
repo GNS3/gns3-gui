@@ -54,7 +54,9 @@ class VPCSDevice(Node):
                           "console": None}
 
         port_name = EthernetPort.longNameType() + str(0)
+        short_name = EthernetPort.shortNameType() + str(0)
         port = EthernetPort(port_name)
+        port.setShortName(short_name)
         port.setPortNumber(0)
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))

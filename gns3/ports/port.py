@@ -57,6 +57,7 @@ class Port(object):
         Port._instance_count += 1
 
         self._name = name
+        self._short_name = None
         self._port_number = None
         self._slot_number = None
         self._stub = stub
@@ -127,6 +128,26 @@ class Port(object):
         """
 
         self._name = new_name
+
+    def shortName(self):
+        """
+        Returns the short name of this port.
+
+        :returns: current short port name (string)
+        """
+
+        if not self._short_name:
+            return self._name
+        return self._short_name
+
+    def setShortName(self, short_name):
+        """
+        Sets a new short name for this port.
+
+        :param short_name: short port name (string)
+        """
+
+        self._short_name = short_name
 
     def status(self):
         """
@@ -265,16 +286,21 @@ class Port(object):
 
         self._link_id = link_id
 
-    def description(self):
+    def description(self, short=False):
         """
         Returns the text description of this port.
+
+        :param short: returns a shorter description.
 
         :returns: description
         """
 
         if self._destination_node and self._destination_port:
+            if short:
+                return "<-> {port} {name}".format(port=self._destination_port.shortName(),
+                                                  name=self._destination_node.name())
             return "connected to {name} on port {port}".format(name=self._destination_node.name(),
-                                                               port=self._destination_port.name())
+                                                       port=self._destination_port.name())
         return ""
 
     def setFree(self):

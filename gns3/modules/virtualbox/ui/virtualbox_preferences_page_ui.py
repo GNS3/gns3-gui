@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'virtualbox_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created: Fri Dec  5 22:50:01 2014
+# Created: Mon Jan  5 16:20:49 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -149,7 +149,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         VirtualBoxPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxPreferencesPageWidget", "VirtualBox", None))
         self.uiVboxManagePathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to VBoxManage:", None))
         self.uiVboxManagePathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse...", None))
-        self.uiVboxManageUserLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Run VirtualBox as another user (GNS3 running as Linux root):", None))
+        self.uiVboxManageUserLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Run VirtualBox as another user (GNS3 running as root):", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxPreferencesPageWidget", "Remote servers", None))

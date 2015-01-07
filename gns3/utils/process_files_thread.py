@@ -67,7 +67,7 @@ class ProcessFilesThread(QtCore.QThread):
         except FileExistsError:
             pass
         except OSError as e:
-            self.error.emit("Could not create directory {}: {}".format(self._destination, str(e)), True)
+            self.error.emit("Could not create directory {}: {}".format(self._destination, e), True)
             return
 
         copied = 0
@@ -86,7 +86,7 @@ class ProcessFilesThread(QtCore.QThread):
                 except FileExistsError:
                     pass
                 except OSError as e:
-                    self.error.emit("Could not create directory {}: {}".format(destination_dir, str(e)), True)
+                    self.error.emit("Could not create directory {}: {}".format(destination_dir, e), True)
                     return
 
             # finally the files themselves
@@ -103,10 +103,10 @@ class ProcessFilesThread(QtCore.QThread):
                 except OSError as e:
                     if self._move:
                         log.warning("cannot move: {}".format(e))
-                        self.error.emit("Could not move file to {}: {}".format(destination_file, str(e)), False)
+                        self.error.emit("Could not move file to {}: {}".format(destination_file, e), False)
                     else:
                         log.warning("cannot copy: {}".format(e))
-                        self.error.emit("Could not copy file to {}: {}".format(destination_file, str(e)), False)
+                        self.error.emit("Could not copy file to {}: {}".format(destination_file, e), False)
                 copied += 1
                 # update the progress made
                 progress = float(copied) / file_count * 100

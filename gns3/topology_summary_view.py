@@ -101,7 +101,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
         for port in ports:
             if not port.isFree():
                 item = QtGui.QTreeWidgetItem()
-                item.setText(0, "{} {}".format(port.name(), port.description()))
+                item.setText(0, "{} {}".format(port.shortName(), port.description(short=True)))
                 item.setData(0, QtCore.Qt.UserRole, port)
                 if port.capturing():
                     item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))

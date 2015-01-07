@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Dec 22 18:39:57 2014
+# Created: Tue Jan  6 18:13:15 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -180,6 +180,7 @@ class Ui_MainWindow(object):
         self.uiTopologySummaryDockWidget.setWidget(self.uiTopologySummaryDockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.uiTopologySummaryDockWidget)
         self.uiCloudInspectorDockWidget = QtGui.QDockWidget(MainWindow)
+        self.uiCloudInspectorDockWidget.setEnabled(True)
         self.uiCloudInspectorDockWidget.setObjectName(_fromUtf8("uiCloudInspectorDockWidget"))
         self.uiCloudInspectorDockWidgetContents = QtGui.QWidget()
         self.uiCloudInspectorDockWidgetContents.setObjectName(_fromUtf8("uiCloudInspectorDockWidgetContents"))

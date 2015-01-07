@@ -73,7 +73,9 @@ class VirtualBoxVM(Node):
             if port_number < self._settings["adapter_start_index"]:
                 continue
             port_name = EthernetPort.longNameType() + str(port_number)
+            short_name = EthernetPort.shortNameType() + str(port_number)
             new_port = EthernetPort(port_name)
+            new_port.setShortName(short_name)
             new_port.setPortNumber(port_number)
             new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)

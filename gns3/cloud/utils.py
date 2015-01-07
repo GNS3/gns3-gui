@@ -322,7 +322,7 @@ class UploadProjectThread(QtCore.QThread):
             self.completed.emit()
         except Exception as e:
             log.exception("Error exporting project to cloud")
-            self.error.emit("Error exporting project: {}".format(str(e)), True)
+            self.error.emit("Error exporting project: {}".format(e), True)
 
     def zip_project_dir(self):
         """
@@ -388,7 +388,7 @@ class UploadFilesThread(QtCore.QThread):
                 log.debug('Uploading image completed')
         except Exception as e:
             log.exception("Error uploading images to cloud")
-            self.error.emit("Error uploading images: {}".format(str(e)), True)
+            self.error.emit("Error uploading images: {}".format(e), True)
 
         self.completed.emit()
 
@@ -447,7 +447,7 @@ class DownloadProjectThread(QtCore.QThread):
             self.completed.emit()
         except Exception as e:
             log.exception("Error importing project from cloud")
-            self.error.emit("Error importing project: {}".format(str(e)), True)
+            self.error.emit("Error importing project: {}".format(e), True)
 
     def stop(self):
         self.quit()
@@ -486,7 +486,7 @@ class DownloadImagesThread(QtCore.QThread):
             self.completed.emit()
         except Exception as e:
             log.exception("Error importing project from cloud")
-            self.error.emit("Error importing project: {}".format(str(e)), True)
+            self.error.emit("Error importing project: {}".format(e), True)
 
     def stop(self):
         self.quit()
@@ -514,7 +514,7 @@ class DeleteProjectThread(QtCore.QThread):
             self.completed.emit()
         except Exception as e:
             log.exception("Error deleting project")
-            self.error.emit("Error deleting project: {}".format(str(e)), True)
+            self.error.emit("Error deleting project: {}".format(e), True)
 
     def stop(self):
         pass

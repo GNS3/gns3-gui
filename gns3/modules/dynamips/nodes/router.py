@@ -103,9 +103,12 @@ class Router(Node):
             if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
                 # these chassis show their interface without a slot number
                 port_name = port.longNameType() + str(port_number)
+                short_name = port.shortNameType() + str(port_number)
             else:
                 port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
+                short_name = port.shortNameType() + str(slot_number) + "/" + str(port_number)
             new_port = port(port_name)
+            new_port.setShortName(short_name)
             new_port.setPortNumber(port_number)
             new_port.setSlotNumber(slot_number)
             new_port.setPacketCaptureSupported(True)
@@ -138,7 +141,9 @@ class Router(Node):
             port = WIC_MATRIX[wic]["port"]
             # Dynamips WICs port number start on a multiple of 16.
             port_name = port.longNameType() + str(base + port_number)
+            short_name = port.shortNameType() + str(base + port_number)
             new_port = port(port_name)
+            new_port.setShortName(short_name)
             new_port.setPortNumber(base + port_number)
             # WICs are always in adapter slot 0.
             new_port.setSlotNumber(0)
@@ -190,8 +195,10 @@ class Router(Node):
                             if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
                                 # these chassis show their interface without a slot number
                                 port.setName(port.longNameType() + str(wic_port_number))
+                                port.setShortName(port.shortNameType() + str(wic_port_number))
                             else:
                                 port.setName(port.longNameType() + "0/" + str(wic_port_number))
+                                port.setShortName(port.shortNameType() + "0/" + str(wic_port_number))
                             log.debug("port {} renamed to {}".format(old_name, port.name()))
 
     def delete(self):

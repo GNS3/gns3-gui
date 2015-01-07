@@ -241,7 +241,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, str(e)))
+            QtGui.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, e))
             return
 
         if os.path.dirname(path) != destination_directory:
