@@ -135,6 +135,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
+	# toggle for the Jungle News Widget
+        self.uiDocksMenu.addAction(self._uiNewsDockWidget.toggleViewAction())
         if ENABLE_CLOUD:
             self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 

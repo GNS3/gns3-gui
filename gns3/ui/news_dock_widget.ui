@@ -14,7 +14,7 @@
    <bool>false</bool>
   </property>
   <property name="features">
-   <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   <set>QDockWidget::AllDockWidgetFeatures</set>
   </property>
   <property name="allowedAreas">
    <set>Qt::AllDockWidgetAreas</set>
@@ -43,7 +43,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QWebView" name="uiWebView" native="true">
+     <widget class="QWebView" name="uiWebView">
       <property name="minimumSize">
        <size>
         <width>200</width>
@@ -56,9 +56,9 @@
         <height>200</height>
        </size>
       </property>
-      <property name="url" stdset="0">
+      <property name="url">
        <url>
-        <string/>
+        <string>about:blank</string>
        </url>
       </property>
      </widget>

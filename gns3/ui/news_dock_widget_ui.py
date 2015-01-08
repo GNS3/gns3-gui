@@ -28,7 +28,7 @@ class Ui_NewsDockWidget(object):
         NewsDockWidget.setObjectName(_fromUtf8("NewsDockWidget"))
         NewsDockWidget.resize(203, 225)
         NewsDockWidget.setFloating(False)
-        NewsDockWidget.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
+        NewsDockWidget.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         NewsDockWidget.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.dockWidgetContents = QtGui.QWidget()
         self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))

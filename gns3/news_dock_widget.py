@@ -72,8 +72,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
 
         :param event: closeEvent instance.
         """
-
-        event.ignore()
+        event.accept()
 
     def _refreshSlot(self):
         """
