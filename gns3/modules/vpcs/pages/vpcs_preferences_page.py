@@ -22,9 +22,8 @@ Configuration page for VPCS preferences.
 import os
 import sys
 
-from gns3.qt import QtGui
+from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
-from gns3.main_window import MainWindow
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -74,7 +73,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         Slot to open a file browser and select a base script file for VPCS
         """
 
-        config_dir = MainWindow.instance().baseConfigsDir()
+        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
         path = QtGui.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
         if not path:
             return
