@@ -79,17 +79,22 @@ def telnetConsole(name, host, port, callback=None):
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))
     command = command.replace("%d", name)
-    log.info('starting telnet console "{}"'.format(command))
 
     if callback is not None:
+        log.info('starting telnet console in thread "{}"'.format(command))
         console_thread = ConsoleThread(MainWindow.instance(), command, name, host, port)
         console_thread.consoleDone.connect(callback)
         console_thread.start()
     else:
-        if sys.platform.startswith("win"):
-            # use the string on Windows
-            subprocess.call(command)
-        else:
-            # use arguments on other platforms
-            args = shlex.split(command)
-            subprocess.call(args)
+        try:
+            log.info('starting telnet console "{}"'.format(command))
+            if sys.platform.startswith("win"):
+                # use the string on Windows
+                subprocess.Popen(command)
+            else:
+                # use arguments on other platforms
+                args = shlex.split(command)
+                subprocess.Popen(args)
+        except (OSError, ValueError, subprocess.SubprocessError) as e:
+            log.warning('could not start Telnet console "{}": {}'.format(command, e))
+            raise
