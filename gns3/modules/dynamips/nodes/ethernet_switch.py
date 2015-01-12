@@ -146,31 +146,44 @@ class EthernetSwitch(Node):
         :param new_settings: settings dictionary
         """
 
-        ports_to_update = {}
-        ports = new_settings["ports"]
         updated = False
-        for port_number in ports.keys():
-            if port_number in self._settings["ports"]:
-                if self._settings["ports"][port_number] != ports[port_number]:
-                    for port in self._ports:
-                        if port.portNumber() == port_number and not port.isFree():
-                            ports_to_update[port_number] = ports[port_number]
-                            break
-                continue
-            port = EthernetPort(str(port_number))
-            port.setPortNumber(port_number)
-            port.setStatus(EthernetPort.started)
-            port.setPacketCaptureSupported(True)
-            self._ports.append(port)
-            updated = True
-            log.debug("port {} has been added".format(port_number))
-
         params = {"id": self._ethsw_id}
-        if ports_to_update:
-            params["ports"] = {}
-            for port_number, info in ports_to_update.items():
-                params["ports"][port_number] = info
-            updated = True
+        if "ports" in new_settings:
+            ports_to_update = {}
+            ports = new_settings["ports"]
+
+            for port_number in ports.keys():
+                if port_number in self._settings["ports"]:
+                    if self._settings["ports"][port_number] != ports[port_number]:
+                        for port in self._ports:
+                            if port.portNumber() == port_number and not port.isFree():
+                                ports_to_update[port_number] = ports[port_number]
+                                break
+                    continue
+                port = EthernetPort(str(port_number))
+                port.setPortNumber(port_number)
+                port.setStatus(EthernetPort.started)
+                port.setPacketCaptureSupported(True)
+                self._ports.append(port)
+                updated = True
+                log.debug("port {} has been added".format(port_number))
+
+            if ports_to_update:
+                params["ports"] = {}
+                for port_number, info in ports_to_update.items():
+                    params["ports"][port_number] = info
+                updated = True
+
+            # delete ports that are not configured
+            for port_number in self._settings["ports"].keys():
+                if port_number not in new_settings["ports"]:
+                    for port in self._ports.copy():
+                        if port.portNumber() == port_number:
+                            self._ports.remove(port)
+                            log.debug("port {} has been removed".format(port.name()))
+                            break
+
+            self._settings["ports"] = new_settings["ports"].copy()
 
         if "name" in new_settings and new_settings["name"] != self.name():
             if self.hasAllocatedName(new_settings["name"]):
@@ -179,16 +192,6 @@ class EthernetSwitch(Node):
             params["name"] = new_settings["name"]
             updated = True
 
-        # delete ports that are not configured
-        for port_number in self._settings["ports"].keys():
-            if port_number not in new_settings["ports"]:
-                for port in self._ports.copy():
-                    if port.portNumber() == port_number:
-                        self._ports.remove(port)
-                        log.debug("port {} has been removed".format(port.name()))
-                        break
-
-        self._settings["ports"] = new_settings["ports"].copy()
         if updated:
             log.debug("{} is being updated: {}".format(self.name(), params))
             self._server.send_message("dynamips.ethsw.update", params, self._updateCallback)

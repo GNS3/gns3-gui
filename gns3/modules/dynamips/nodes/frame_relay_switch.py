@@ -140,34 +140,37 @@ class FrameRelaySwitch(Node):
         :param new_settings: settings dictionary
         """
 
-        ports_to_create = []
-        mapping = new_settings["mappings"]
-
         updated = False
-        for source, destination in mapping.items():
-            source_port = source.split(":")[0]
-            destination_port = destination.split(":")[0]
-            if source_port not in ports_to_create:
-                ports_to_create.append(source_port)
-            if destination_port not in ports_to_create:
-                ports_to_create.append(destination_port)
+        if "mappings" in new_settings:
+            ports_to_create = []
+            mapping = new_settings["mappings"]
 
-        for port in self._ports.copy():
-            if port.isFree():
-                self._ports.remove(port)
+            for source, destination in mapping.items():
+                source_port = source.split(":")[0]
+                destination_port = destination.split(":")[0]
+                if source_port not in ports_to_create:
+                    ports_to_create.append(source_port)
+                if destination_port not in ports_to_create:
+                    ports_to_create.append(destination_port)
+
+            for port in self._ports.copy():
+                if port.isFree():
+                    self._ports.remove(port)
+                    updated = True
+                    log.debug("port {} has been removed".format(port.name()))
+                else:
+                    ports_to_create.remove(port.name())
+
+            for port_name in ports_to_create:
+                port = FrameRelayPort(port_name)
+                port.setPortNumber(int(port_name))
+                port.setStatus(FrameRelayPort.started)
+                port.setPacketCaptureSupported(True)
+                self._ports.append(port)
                 updated = True
-                log.debug("port {} has been removed".format(port.name()))
-            else:
-                ports_to_create.remove(port.name())
+                log.debug("port {} has been added".format(port_name))
 
-        for port_name in ports_to_create:
-            port = FrameRelayPort(port_name)
-            port.setPortNumber(int(port_name))
-            port.setStatus(FrameRelayPort.started)
-            port.setPacketCaptureSupported(True)
-            self._ports.append(port)
-            updated = True
-            log.debug("port {} has been added".format(port_name))
+            self._settings["mappings"] = new_settings["mappings"].copy()
 
         params = {}
         if "name" in new_settings and new_settings["name"] != self.name():
@@ -178,7 +181,6 @@ class FrameRelaySwitch(Node):
                       "name": new_settings["name"]}
             updated = True
 
-        self._settings["mappings"] = new_settings["mappings"].copy()
         if updated:
             if params:
                 log.debug("{} is being updated: {}".format(self.name(), params))

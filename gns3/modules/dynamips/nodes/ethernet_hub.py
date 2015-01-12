@@ -143,30 +143,33 @@ class EthernetHub(Node):
         :param new_settings: settings dictionary
         """
 
-        ports_to_create = []
-        ports = new_settings["ports"]
-
         updated = False
-        for port_number in ports:
-            if port_number not in ports_to_create:
-                ports_to_create.append(port_number)
+        if "ports" in new_settings:
+            ports_to_create = []
+            ports = new_settings["ports"]
+            for port_number in ports:
+                if port_number not in ports_to_create:
+                    ports_to_create.append(port_number)
 
-        for port in self._ports.copy():
-            if port.isFree():
-                self._ports.remove(port)
+            for port in self._ports.copy():
+                if port.isFree():
+                    self._ports.remove(port)
+                    updated = True
+                    log.debug("port {} has been removed".format(port.name()))
+                else:
+                    ports_to_create.remove(port.name())
+
+            for port_name in ports_to_create:
+                port = EthernetPort(port_name)
+                port.setPortNumber(int(port_name))
+                port.setStatus(EthernetPort.started)
+                port.setPacketCaptureSupported(True)
+                self._ports.append(port)
                 updated = True
-                log.debug("port {} has been removed".format(port.name()))
-            else:
-                ports_to_create.remove(port.name())
+                log.debug("port {} has been added".format(port_name))
 
-        for port_name in ports_to_create:
-            port = EthernetPort(port_name)
-            port.setPortNumber(int(port_name))
-            port.setStatus(EthernetPort.started)
-            port.setPacketCaptureSupported(True)
-            self._ports.append(port)
-            updated = True
-            log.debug("port {} has been added".format(port_name))
+            self._settings["ports"] = new_settings["ports"].copy()
+
 
         params = {}
         if "name" in new_settings and new_settings["name"] != self.name():
@@ -177,7 +180,6 @@ class EthernetHub(Node):
                       "name": new_settings["name"]}
             updated = True
 
-        self._settings["ports"] = new_settings["ports"].copy()
         if updated:
             if params:
                 log.debug("{} is being updated: {}".format(self.name(), params))
