@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Jan  6 18:13:15 2015
+# Created: Mon Jan 12 16:49:09 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -159,10 +159,14 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiTopologySummaryDockWidget.sizePolicy().hasHeightForWidth())
         self.uiTopologySummaryDockWidget.setSizePolicy(sizePolicy)
-        self.uiTopologySummaryDockWidget.setMinimumSize(QtCore.QSize(84, 109))
         self.uiTopologySummaryDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
         self.uiTopologySummaryDockWidget.setObjectName(_fromUtf8("uiTopologySummaryDockWidget"))
         self.uiTopologySummaryDockWidgetContents = QtGui.QWidget()
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiTopologySummaryDockWidgetContents.sizePolicy().hasHeightForWidth())
+        self.uiTopologySummaryDockWidgetContents.setSizePolicy(sizePolicy)
         self.uiTopologySummaryDockWidgetContents.setObjectName(_fromUtf8("uiTopologySummaryDockWidgetContents"))
         self.gridlayout1 = QtGui.QGridLayout(self.uiTopologySummaryDockWidgetContents)
         self.gridlayout1.setMargin(0)
