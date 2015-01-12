@@ -20,7 +20,6 @@ Configuration page for IOU devices.
 """
 
 import os
-import re
 
 from gns3.qt import QtCore, QtGui
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
@@ -161,10 +160,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             name = self.uiNameLineEdit.text()
             if not name:
                 QtGui.QMessageBox.critical(self, "Name", "IOU device name cannot be empty!")
-            elif node and not re.search(r"""^[\-\w]+$""", name):
-                # IOS names must start with a letter, end with a letter or digit, and
-                # have as interior characters only letters, digits, and hyphens.
-                # They must be 63 characters or fewer.
+            elif node and not node.validateHostname(name):
                 QtGui.QMessageBox.critical(self, "Name", "Invalid name detected for IOU device: {}".format(name))
             else:
                 settings["name"] = name

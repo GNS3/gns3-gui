@@ -225,7 +225,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if self._node_label:
-            self._node_label.setPlainText(self._node.name())
+            if self._node_label.toPlainText() != self._node.name():
+                self._node_label.setPlainText(self._node.name())
+                self._centerLabel()
         self.setUnsavedState()
 
         # update the link tooltips in case the
@@ -308,6 +310,19 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         self._node_label = label
 
+    def _centerLabel(self):
+        """
+        Centers the node label.
+        """
+
+        text_rect = self._node_label.boundingRect()
+        text_middle = text_rect.topRight() / 2
+        node_rect = self.boundingRect()
+        node_middle = node_rect.topRight() / 2
+        label_x_pos = node_middle.x() - text_middle.x()
+        label_y_pos = -25
+        self._node_label.setPos(label_x_pos, label_y_pos)
+
     def _showLabel(self):
         """
         Shows the node label on the scene.
@@ -317,13 +332,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             self._node_label = NoteItem(self)
             self._node_label.setEditable(False)
             self._node_label.setPlainText(self._node.name())
-            text_rect = self._node_label.boundingRect()
-            text_middle = text_rect.topRight() / 2
-            node_rect = self.boundingRect()
-            node_middle = node_rect.topRight() / 2
-            label_x_pos = node_middle.x() - text_middle.x()
-            label_y_pos = -25
-            self._node_label.setPos(label_x_pos, label_y_pos)
+            self._centerLabel()
 
     def connectToPort(self, unavailable_ports=[]):
         """

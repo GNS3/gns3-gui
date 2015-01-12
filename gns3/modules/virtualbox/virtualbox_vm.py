@@ -530,11 +530,13 @@ class VirtualBoxVM(Node):
 
         info = """VirtualBox VM {name} is {state}
   Node ID is {id}, server's VirtualBox VM ID is {vbox_id}
+  VirtualBox name is "{vmname}"
   console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
            vbox_id=self._vbox_id,
            state=state,
+           vmname=self._settings["vmname"],
            console=self._settings["console"])
 
         port_info = ""

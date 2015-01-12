@@ -712,12 +712,17 @@ class GraphicsView(QtGui.QGraphicsView):
             configure_action.triggered.connect(self.configureActionSlot)
             menu.addAction(configure_action)
 
+            # Action: Change hostname
+            change_hostname_action = QtGui.QAction("Change hostname", menu)
+            change_hostname_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))
+            self.connect(change_hostname_action, QtCore.SIGNAL('triggered()'), self.changeHostnameActionSlot)
+            menu.addAction(change_hostname_action)
+
             # Action: Change symbol
             change_symbol_action = QtGui.QAction("Change symbol", menu)
             change_symbol_action.setIcon(QtGui.QIcon(':/icons/node_conception.svg'))
             self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
-
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
             console_action = QtGui.QAction("Console", menu)
@@ -868,6 +873,22 @@ class GraphicsView(QtGui.QGraphicsView):
 
         if items:
             self.configureSlot(items)
+
+    def changeHostnameActionSlot(self):
+        """
+        Slot to receive events from the change hostname action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and item.node().initialized():
+                new_hostname, ok = QtGui.QInputDialog.getText(self, "Change hostname", "Hostname:", QtGui.QLineEdit.Normal, item.node().name())
+                if ok:
+                    if hasattr(item.node(), "validateHostname"):
+                        if not item.node().validateHostname(new_hostname):
+                            QtGui.QMessageBox.critical(self, "Change hostname", "Invalid name detected for this node: {}".format(new_hostname))
+                            continue
+                    item.node().update({"name": new_hostname})
 
     def changeSymbolActionSlot(self):
         """

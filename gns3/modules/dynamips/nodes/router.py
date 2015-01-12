@@ -21,6 +21,7 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 """
 
 import os
+import re
 import base64
 from gns3.node import Node
 from gns3.ports.port import Port
@@ -1197,6 +1198,23 @@ class Router(Node):
 
         from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
         return IOSRouterConfigurationPage
+
+    @staticmethod
+    def validateHostname(hostname):
+        """
+        Checks if the hostname is valid.
+
+        :param hostname: hostname to check
+
+        :returns: boolean
+        """
+
+        # IOS names must start with a letter, end with a letter or digit, and
+        # have as interior characters only letters, digits, and hyphens.
+        # They must be 63 characters or fewer.
+        if re.search(r"""^[\-\w]+$""", hostname) and len(hostname) <= 63:
+            return True
+        return False
 
     @staticmethod
     def defaultSymbol():
