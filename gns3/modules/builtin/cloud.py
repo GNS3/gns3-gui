@@ -211,53 +211,55 @@ class Cloud(Node):
         :param new_settings: settings dictionary
         """
 
-        nios = new_settings["nios"]
-
         updated = False
-        # add ports
-        for nio in nios:
-            if nio in self._settings["nios"]:
-                # port already created for this NIO
-                continue
-            nio_object = None
-            if nio.lower().startswith("nio_udp"):
-                nio_object = self._createNIOUDP(nio)
-            if nio.lower().startswith("nio_gen_eth"):
-                nio_object = self._createNIOGenericEthernet(nio)
-            if nio.lower().startswith("nio_gen_linux"):
-                nio_object = self._createNIOLinuxEthernet(nio)
-            if nio.lower().startswith("nio_tap"):
-                nio_object = self._createNIOTAP(nio)
-            if nio.lower().startswith("nio_unix"):
-                nio_object = self._createNIOUNIX(nio)
-            if nio.lower().startswith("nio_vde"):
-                nio_object = self._createNIOVDE(nio)
-            if nio.lower().startswith("nio_null"):
-                nio_object = self._createNIONull(nio)
-            if nio_object == None:
-                log.error("Could not create NIO object from {}".format(nio))
-                continue
-            port = Port(nio, nio_object, stub=True)
-            port.setStatus(Port.started)
-            self._ports.append(port)
-            updated = True
-            log.debug("port {} has been added".format(nio))
+        if "nios" in new_settings:
+            nios = new_settings["nios"]
 
-        # delete ports
-        for nio in self._settings["nios"]:
-            if nio not in nios:
-                for port in self._ports.copy():
-                    if port.name() == nio:
-                        self._ports.remove(port)
-                        updated = True
-                        log.debug("port {} has been deleted".format(nio))
-                        break
+            # add ports
+            for nio in nios:
+                if nio in self._settings["nios"]:
+                    # port already created for this NIO
+                    continue
+                nio_object = None
+                if nio.lower().startswith("nio_udp"):
+                    nio_object = self._createNIOUDP(nio)
+                if nio.lower().startswith("nio_gen_eth"):
+                    nio_object = self._createNIOGenericEthernet(nio)
+                if nio.lower().startswith("nio_gen_linux"):
+                    nio_object = self._createNIOLinuxEthernet(nio)
+                if nio.lower().startswith("nio_tap"):
+                    nio_object = self._createNIOTAP(nio)
+                if nio.lower().startswith("nio_unix"):
+                    nio_object = self._createNIOUNIX(nio)
+                if nio.lower().startswith("nio_vde"):
+                    nio_object = self._createNIOVDE(nio)
+                if nio.lower().startswith("nio_null"):
+                    nio_object = self._createNIONull(nio)
+                if nio_object is None:
+                    log.error("Could not create NIO object from {}".format(nio))
+                    continue
+                port = Port(nio, nio_object, stub=True)
+                port.setStatus(Port.started)
+                self._ports.append(port)
+                updated = True
+                log.debug("port {} has been added".format(nio))
+
+            # delete ports
+            for nio in self._settings["nios"]:
+                if nio not in nios:
+                    for port in self._ports.copy():
+                        if port.name() == nio:
+                            self._ports.remove(port)
+                            updated = True
+                            log.debug("port {} has been deleted".format(nio))
+                            break
+
+            self._settings["nios"] = new_settings["nios"].copy()
 
         if "name" in new_settings and new_settings["name"] != self.name():
             self._settings["name"] = new_settings["name"]
             updated = True
 
-        self._settings["nios"] = new_settings["nios"].copy()
         if updated:
             log.info("cloud {} has been updated".format(self.name()))
             self.updated_signal.emit()
