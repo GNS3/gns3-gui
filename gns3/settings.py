@@ -72,10 +72,7 @@ if sys.platform.startswith("win"):
                                              'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
 
     # default on Windows
-    if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["SuperPutty (included with GNS3)"]
-    else:
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
+    DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
