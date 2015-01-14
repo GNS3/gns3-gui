@@ -189,9 +189,13 @@ class VirtualBoxVM(Node):
         :param new_settings: settings dictionary
         """
 
-        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-            return
+        if "name" in new_settings and new_settings["name"] != self.name():
+            if self.hasAllocatedName(new_settings["name"]):
+                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
+                return
+            elif self._linked_clone:
+                # forces the update of the VM name in VirtualBox.
+                new_settings["vmname"] = new_settings["name"]
 
         params = {"id": self._vbox_id}
         for name, value in new_settings.items():
