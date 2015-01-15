@@ -488,7 +488,7 @@ class Dynamips(Module):
                     settings[wic] = ios_router[wic]
 
             base_name = "R"
-            if settings["slot1"] == "NM-16ESW":
+            if "slot1" in settings and settings["slot1"] == "NM-16ESW":
                 # must be an EtherSwitch router
                 base_name = "ESW"
             node.setup(ios_router["path"], ios_router["ram"], initial_settings=settings, base_name=base_name)
