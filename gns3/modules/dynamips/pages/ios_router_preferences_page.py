@@ -267,7 +267,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     path = decompressed_image_path
                 thread.wait()
 
-        if os.path.dirname(path) != destination_directory:
+        if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the IOS image is not in the default images directory
             reply = QtGui.QMessageBox.question(parent,
                                                "IOS image",

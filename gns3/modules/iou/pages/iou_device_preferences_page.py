@@ -242,7 +242,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             QtGui.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, e))
             return
 
-        if os.path.dirname(path) != destination_directory:
+        if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the IOU image is not in the default images directory
             reply = QtGui.QMessageBox.question(parent,
                                                "IOU image",

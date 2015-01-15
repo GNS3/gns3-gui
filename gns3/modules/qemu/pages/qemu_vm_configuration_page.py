@@ -99,7 +99,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             QtGui.QMessageBox.critical(parent, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory, e))
             return
 
-        if os.path.dirname(path) != destination_directory:
+        if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the QEMU disk image is not in the default images directory
             reply = QtGui.QMessageBox.question(parent,
                                                "QEMU disk image",
