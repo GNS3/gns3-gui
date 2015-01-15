@@ -241,7 +241,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2**32
             if sys.platform.startswith("win"):
-                if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                if self.uiTypeComboBox.currentText() != "Default" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
                     search_string = "qemu.exe"
                 elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server

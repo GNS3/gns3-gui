@@ -21,13 +21,15 @@ Configuration page for IOU device preferences.
 
 import copy
 import os
-import shutil
+import stat
 
 from gns3.qt import QtCore, QtGui
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
+from gns3.utils.progress_dialog import ProgressDialog
+from gns3.utils.file_copy_thread import FileCopyThread
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -232,10 +234,6 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             QtGui.QMessageBox.critical(parent, "IOU image", "Sorry, this is not a valid IOU image!")
             return
 
-        if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(parent, "IOU image", "{} is not executable".format(path))
-            return
-
         try:
             os.makedirs(destination_directory)
         except FileExistsError:
@@ -246,21 +244,29 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         if os.path.dirname(path) != destination_directory:
             # the IOU image is not in the default images directory
-            new_destination_path = os.path.join(destination_directory, os.path.basename(path))
-            try:
-                # try to create a symbolic link to it
-                symlink_path = new_destination_path
-                if os.path.islink(symlink_path):
-                    os.remove(symlink_path)
-                os.symlink(path, symlink_path)
-                path = symlink_path
-            except (OSError, NotImplementedError):
-                # if unsuccessful, then copy the IOU image itself
-                try:
-                    shutil.copyfile(path, new_destination_path)
-                    path = new_destination_path
-                except OSError:
-                    pass
+            reply = QtGui.QMessageBox.question(parent,
+                                               "IOU image",
+                                               "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                               QtGui.QMessageBox.Yes,
+                                               QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes:
+                destination_path = os.path.join(destination_directory, os.path.basename(path))
+                thread = FileCopyThread(path, destination_path)
+                progress_dialog = ProgressDialog(thread, "Project", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
+                thread.deleteLater()
+                progress_dialog.show()
+                progress_dialog.exec_()
+                errors = progress_dialog.errors()
+                if errors:
+                    QtGui.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
+                else:
+                    path = destination_path
+                    mode = os.stat(path).st_mode
+                    os.chmod(path, mode | stat.S_IXUSR)
+
+        if not os.access(path, os.X_OK):
+            QtGui.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))
+
         return path
 
     def _iouDevicePressedSlot(self, item, column):

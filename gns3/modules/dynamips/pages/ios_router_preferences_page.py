@@ -29,10 +29,11 @@ import logging
 
 from gns3.qt import QtCore, QtGui
 from gns3.main_window import MainWindow
-from gns3.utils.progress_dialog import ProgressDialog
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
+from gns3.utils.progress_dialog import ProgressDialog
+from gns3.utils.file_copy_thread import FileCopyThread
 
 from .. import Dynamips
 from ..settings import IOS_ROUTER_SETTINGS
@@ -268,21 +269,23 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         if os.path.dirname(path) != destination_directory:
             # the IOS image is not in the default images directory
-            new_destination_path = os.path.join(destination_directory, os.path.basename(path))
-            try:
-                # try to create a symbolic link to it
-                symlink_path = new_destination_path
-                if os.path.islink(symlink_path):
-                    os.remove(symlink_path)
-                os.symlink(path, symlink_path)
-                path = symlink_path
-            except (OSError, NotImplementedError):
-                # if unsuccessful, then copy the IOS image itself
-                try:
-                    shutil.copyfile(path, new_destination_path)
-                    path = new_destination_path
-                except OSError:
-                    pass
+            reply = QtGui.QMessageBox.question(parent,
+                                               "IOS image",
+                                               "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                               QtGui.QMessageBox.Yes,
+                                               QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes:
+                destination_path = os.path.join(destination_directory, os.path.basename(path))
+                thread = FileCopyThread(path, destination_path)
+                progress_dialog = ProgressDialog(thread, "IOS image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
+                thread.deleteLater()
+                progress_dialog.show()
+                progress_dialog.exec_()
+                errors = progress_dialog.errors()
+                if errors:
+                    QtGui.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
+                else:
+                    path = destination_path
 
         return path
 

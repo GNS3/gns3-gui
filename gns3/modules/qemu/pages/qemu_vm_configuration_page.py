@@ -20,7 +20,6 @@ Configuration page for QEMU VMs.
 """
 
 import os
-import shutil
 from functools import partial
 from collections import OrderedDict
 
@@ -29,6 +28,8 @@ from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.main_window import MainWindow
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.utils.progress_dialog import ProgressDialog
+from gns3.utils.file_copy_thread import FileCopyThread
 
 from ..ui.qemu_vm_configuration_page_ui import Ui_QemuVMConfigPageWidget
 from .. import Qemu
@@ -100,21 +101,23 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
         if os.path.dirname(path) != destination_directory:
             # the QEMU disk image is not in the default images directory
-            new_destination_path = os.path.join(destination_directory, os.path.basename(path))
-            try:
-                # try to create a symbolic link to it
-                symlink_path = new_destination_path
-                if os.path.islink(symlink_path):
-                    os.remove(symlink_path)
-                os.symlink(path, symlink_path)
-                path = symlink_path
-            except (OSError, NotImplementedError):
-                # if unsuccessful, then copy the QEMU disk image itself
-                try:
-                    shutil.copyfile(path, new_destination_path)
-                    path = new_destination_path
-                except OSError:
-                    pass
+            reply = QtGui.QMessageBox.question(parent,
+                                               "QEMU disk image",
+                                               "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                               QtGui.QMessageBox.Yes,
+                                               QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes:
+                destination_path = os.path.join(destination_directory, os.path.basename(path))
+                thread = FileCopyThread(path, destination_path)
+                progress_dialog = ProgressDialog(thread, "QEMU disk image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
+                thread.deleteLater()
+                progress_dialog.show()
+                progress_dialog.exec_()
+                errors = progress_dialog.errors()
+                if errors:
+                    QtGui.QMessageBox.critical(parent, "QEMU disk image", "{}".format("".join(errors)))
+                else:
+                    path = destination_path
 
         return path
 
