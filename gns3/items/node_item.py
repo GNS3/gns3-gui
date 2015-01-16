@@ -354,8 +354,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         ports_dict = {}
         for port in ports:
             if port.slotNumber() is not None:
-                # multiply the slot number by 16 to make the port number unique.
-                ports_dict[(port.slotNumber() * 16) + port.portNumber()] = port
+                # make the port number unique (special case with WICs).
+                port_number = port.portNumber()
+                if port_number >= 16:
+                    port_number *= 4
+                ports_dict[(port.slotNumber() * 16) + port_number] = port
             elif port.portNumber()is not None:
                 ports_dict[port.portNumber()] = port
             else:
