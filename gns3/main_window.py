@@ -195,6 +195,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # restore packet capture settings
         Port.loadPacketCaptureSettings()
 
+        # restore the temporary directory location
+        tempfile.tempdir = self._settings["temporary_files_path"]
+
     def settings(self):
         """
         Returns the general settings.
@@ -237,6 +240,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if style and new_settings["style"] != self._settings["style"]:
             if not self._setStyle(style):
                 self._setLegacyStyle()
+
+        # set the temporary directory
+        tempfile.tempdir = new_settings["temporary_files_path"]
 
         # save the settings
         self._settings.update(new_settings)
