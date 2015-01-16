@@ -146,7 +146,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU initrd.
         """
 
-        path = self._getDiskImage()
+        path = self.getDiskImage(self)
         if path:
             self.uiInitrdLineEdit.clear()
             self.uiInitrdLineEdit.setText(path)
@@ -156,7 +156,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU kernel image.
         """
 
-        path = self._getDiskImage()
+        path = self.getDiskImage(self)
         if path:
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
