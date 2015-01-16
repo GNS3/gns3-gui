@@ -52,7 +52,7 @@ class NodesView(QtGui.QTreeWidget):
                 if category is not None and category not in node["categories"]:
                     continue
                 server_type = node.get("server", None)
-                if server_type is not None and server_type != project_type:
+                if server_type is not None and server_type == "cloud" and server_type != project_type:
                     continue
                 item = QtGui.QTreeWidgetItem(self)
                 item.setText(0, node["name"])
