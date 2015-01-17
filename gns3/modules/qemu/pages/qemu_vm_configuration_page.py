@@ -51,30 +51,43 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
+        self.uiLegacyNetworkingCheckBox.stateChanged.connect(self._legacyNetworkingChangedSlot)
 
-        qemu_network_devices = OrderedDict([
-            ("e1000", "Intel Gigabit Ethernet"),
-            ("i82550", "Intel i82550 Ethernet"),
-            ("i82551", "Intel i82551 Ethernet"),
-            ("i82557a", "Intel i82557A Ethernet"),
-            ("i82557b", "Intel i82557B Ethernet"),
-            ("i82557c", "Intel i82557C Ethernet"),
-            ("i82558a", "Intel i82558A Ethernet"),
-            ("i82558b", "Intel i82558B Ethernet"),
-            ("i82559a", "Intel i82559A Ethernet"),
-            ("i82559b", "Intel i82559B Ethernet"),
-            ("i82559c", "Intel i82559C Ethernet"),
-            ("i82559er", "Intel i82559ER Ethernet"),
-            ("i82562", "Intel i82562 Ethernet"),
-            ("i82801", "Intel i82801 Ethernet"),
-            ("ne2k_pci", "NE2000 Ethernet"),
-            ("pcnet", "AMD PCNet Ethernet"),
-            ("rtl8139", "Realtek 8139 Ethernet"),
-            ("virtio-net-pci", "Paravirtualized Network I/O"),
-            ("vmxnet3", "VMWare Paravirtualized Ethernet v3")])
+        self._legacy_devices = ("e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio")
+        self._qemu_network_devices = OrderedDict([("e1000", "Intel Gigabit Ethernet"),
+                                                  ("i82550", "Intel i82550 Ethernet"),
+                                                  ("i82551", "Intel i82551 Ethernet"),
+                                                  ("i82557a", "Intel i82557A Ethernet"),
+                                                  ("i82557b", "Intel i82557B Ethernet"),
+                                                  ("i82557c", "Intel i82557C Ethernet"),
+                                                  ("i82558a", "Intel i82558A Ethernet"),
+                                                  ("i82558b", "Intel i82558B Ethernet"),
+                                                  ("i82559a", "Intel i82559A Ethernet"),
+                                                  ("i82559b", "Intel i82559B Ethernet"),
+                                                  ("i82559c", "Intel i82559C Ethernet"),
+                                                  ("i82559er", "Intel i82559ER Ethernet"),
+                                                  ("i82562", "Intel i82562 Ethernet"),
+                                                  ("i82801", "Intel i82801 Ethernet"),
+                                                  ("ne2k_pci", "NE2000 Ethernet"),
+                                                  ("pcnet", "AMD PCNet Ethernet"),
+                                                  ("rtl8139", "Realtek 8139 Ethernet"),
+                                                  ("virtio", "Legacy paravirtualized Network I/O"),
+                                                  ("virtio-net-pci", "Paravirtualized Network I/O"),
+                                                  ("vmxnet3", "VMWare Paravirtualized Ethernet v3")])
+
+        self._refreshQemuNetworkDevices()
+
+    def _refreshQemuNetworkDevices(self, legacy_networking=False):
+        """
+        Refreshes the Qemu network device list.
+
+        :param legacy_networking: True if legacy networking is enabled.
+        """
 
         self.uiAdapterTypesComboBox.clear()
-        for device_name, device_description in qemu_network_devices.items():
+        for device_name, device_description in self._qemu_network_devices.items():
+            if legacy_networking and device_name not in self._legacy_devices:
+                continue
             self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
 
     @staticmethod
@@ -200,6 +213,16 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self.uiCPUThrottlingSpinBox.setEnabled(False)
 
+    def _legacyNetworkingChangedSlot(self, state):
+        """
+        Slot to enable or not legacy networking.
+        """
+
+        if state:
+            self._refreshQemuNetworkDevices(legacy_networking=True)
+        else:
+            self._refreshQemuNetworkDevices()
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the QEMU VM settings.
@@ -275,10 +298,10 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
+        self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
         index = self.uiAdapterTypesComboBox.findData(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
-        self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
         self.uiRamSpinBox.setValue(settings["ram"])
 
         if settings["cpu_throttling"]:
