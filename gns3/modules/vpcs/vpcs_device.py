@@ -90,7 +90,7 @@ class VPCSDevice(Node):
         if initial_settings:
             self._inital_settings = initial_settings
 
-        self._server.send_message("vpcs.create", params, self._setupCallback)
+        self._server.post("/vpcs", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
         """

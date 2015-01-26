@@ -1,4 +1,3 @@
-ws4py
 apache-libcloud
 requests
 paramiko

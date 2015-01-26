@@ -24,8 +24,8 @@ import shlex
 import signal
 import subprocess
 
-from .qt import QtCore
-from .websocket_client import WebSocketClient, SecureWebSocketClient
+from .qt import QtCore, QtNetwork
+from .http_client import HTTPClient
 from .settings import DEFAULT_LOCAL_SERVER_PATH
 from .settings import DEFAULT_LOCAL_SERVER_HOST
 from .settings import DEFAULT_LOCAL_SERVER_PORT
@@ -53,6 +53,7 @@ class Servers(QtCore.QObject):
         self._local_server_auto_start = True
         self._local_server_allow_console_from_anywhere = False
         self._local_server_proccess = None
+        self._network_manager = QtNetwork.QNetworkAccessManager(self)
         self._settings = self._loadSettings()
         self._remote_server_iter_pos = 0
 
@@ -231,10 +232,10 @@ class Servers(QtCore.QObject):
                 self._local_server.close_connection()
             log.info("local server connection {} unregistered".format(self._local_server.url))
 
-        url = "ws://{host}:{port}".format(host=host, port=port)
-        self._local_server = WebSocketClient(url)
+        url = "http://{host}:{port}".format(host=host, port=port)
+        self._local_server = HTTPClient(url, self._network_manager)
         self._local_server.setLocal(True)
-        log.info("new local server connection {} registered".format(url))
+        log.info("New local server connection {} registered".format(url))
 
     def localServer(self):
         """
@@ -245,7 +246,7 @@ class Servers(QtCore.QObject):
 
         return self._local_server
 
-    def _addRemoteServer(self, host, port, heartbeat_freq=DEFAULT_HEARTBEAT_FREQ):
+    def _addRemoteServer(self, host, port):
         """
         Adds a new remote server.
 
@@ -257,9 +258,8 @@ class Servers(QtCore.QObject):
         """
 
         server_socket = "{host}:{port}".format(host=host, port=port)
-        url = "ws://{server_socket}".format(server_socket=server_socket)
-        server = WebSocketClient(url)
-        server.enableHeartbeatsAt(heartbeat_freq)
+        url = "http://{server_socket}".format(server_socket=server_socket)
+        server = HTTPClient(url, self._network_manager)
         self._remote_servers[server_socket] = server
         log.info("new remote server connection {} registered".format(url))
         return server
@@ -300,8 +300,8 @@ class Servers(QtCore.QObject):
 
             host = server["host"]
             port = server["port"]
-            url = "ws://{host}:{port}".format(host=host, port=port)
-            new_server = WebSocketClient(url)
+            url = "http://{host}:{port}".format(host=host, port=port)
+            new_server = HTTPClient(url, self._network_manager)
             self._remote_servers[server_id] = new_server
             log.info("new remote server connection {} registered".format(url))
 
@@ -333,7 +333,7 @@ class Servers(QtCore.QObject):
         heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
         return self._addCloudServer(host, port, ca_file, auth_user, auth_password, ssh_pkey,
                                     heartbeat_freq, instance_id)
-    
+
     def _addCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey,
                         heartbeat_freq, instance_id):
         """
@@ -433,7 +433,7 @@ class Servers(QtCore.QObject):
                 server.close_connection()
 
     @staticmethod
-    def instance():
+    def instance(network_manager=None):
         """
         Singleton to return only on instance of Servers.
 
