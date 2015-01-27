@@ -17,15 +17,17 @@
 
 from gns3.servers import Servers
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class Project:
     """Current project"""
 
-    def __init__(self, temporary=False):
+    def __init__(self):
 
-        self._temporary = temporary
         self._servers = Servers.instance()
-        self._create()
+        self._temporary = False
 
     @property
     def temporary(self):
@@ -54,12 +56,25 @@ class Project:
 
         return self._uuid
 
-    def _create(self):
+    @staticmethod
+    def instance():
+        """
+        Singleton to return only on instance of Project.
+
+        :returns: instance of Project
+        """
+
+        if not hasattr(Project, "_instance"):
+            Project._instance = Project()
+        return Project._instance
+
+    def create(self):
         """
         Create project on all servers
         """
 
         def project_created(status, params):
             self._uuid = params["uuid"]
+            log.info("Project {} created".format(self._uuid))
             #TODO: call all server when we got uuid
         self._servers.localServer().post("/project", {"temporary": self.temporary}, project_created)

@@ -433,7 +433,7 @@ class Servers(QtCore.QObject):
                 server.close_connection()
 
     @staticmethod
-    def instance(network_manager=None):
+    def instance():
         """
         Singleton to return only on instance of Servers.
 

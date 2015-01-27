@@ -97,7 +97,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._settings = {}
         # TODO: Temporary not True if project from command line
-        self._project = Project(temporary=True)
+        self._project = Project.instance()
+        self._project.temporary = True
+        self._project.create()
         self._project_from_cmdline = project
         self._cloud_settings = {}
         self._loadSettings()

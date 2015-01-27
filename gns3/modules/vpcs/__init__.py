@@ -224,12 +224,13 @@ class VPCS(Module):
             params.update({"project_name": project_name})
         server.send_notification("vpcs.settings", params)
 
-    def createNode(self, node_class, server):
+    def createNode(self, node_class, server, project):
         """
         Creates a new node.
 
         :param node_class: Node object
-        :param server: WebSocketClient instance
+        :param server: HTTPClient instance
+        :param project: Project instance
         """
 
         log.info("creating node {}".format(node_class))
@@ -246,7 +247,7 @@ class VPCS(Module):
             self.addServer(server)
 
         # create an instance of the node class
-        return node_class(self, server)
+        return node_class(self, server, project)
 
     def setupNode(self, node, node_name):
         """

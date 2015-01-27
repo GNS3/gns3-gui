@@ -21,13 +21,14 @@ from uuid import uuid4
 from gns3.project import Project
 
 
-def test_project_init():
+def test_project_create():
 
     uuid = uuid4()
     mock = MagicMock
     with patch("gns3.http_client.HTTPClient.post") as mock:
 
         project = Project()
+        project.create()
         args, kwargs = mock.call_args
         assert args[0] == "/project"
         assert args[1] == {"temporary": False}

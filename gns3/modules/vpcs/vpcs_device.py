@@ -38,10 +38,11 @@ class VPCSDevice(Node):
     :param server: GNS3 server instance
     """
 
-    def __init__(self, module, server):
+    def __init__(self, module, server, project):
         Node.__init__(self, server)
 
         log.info("VPCS instance is being created")
+        self._project = project
         self._vpcs_id = None
         self._defaults = {}
         self._inital_settings = None
@@ -90,6 +91,8 @@ class VPCSDevice(Node):
         if initial_settings:
             self._inital_settings = initial_settings
 
+
+        params["project_uuid"] = self._project.uuid
         self._server.post("/vpcs", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
