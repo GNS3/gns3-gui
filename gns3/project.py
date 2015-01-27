@@ -73,8 +73,9 @@ class Project:
         Create project on all servers
         """
 
-        def project_created(status, params):
+        def project_created(params):
+            # TODO: Manage errors
             self._uuid = params["uuid"]
             log.info("Project {} created".format(self._uuid))
-            #TODO: call all server when we got uuid
+            # TODO: call all server when we got uuid
         self._servers.localServer().post("/project", {"temporary": self.temporary}, project_created)
