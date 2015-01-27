@@ -33,11 +33,11 @@ before_install:
 
 notifications:
   email: false
-  irc:
-    channels:
-      - "chat.freenode.net#gns3"
-    on_success: change
-    on_failure: always
+  #irc:
+  #  channels:
+  #    - "chat.freenode.net#gns3"
+  #  on_success: change
+  #  on_failure: always
 
 install:
   - "pip install -r dev-requirements.txt"
