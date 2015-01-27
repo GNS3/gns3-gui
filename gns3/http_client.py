@@ -22,6 +22,7 @@ Non-blocking HTTP client with JSON support to connect to GNS3 servers.
 import json
 import socket
 import urllib.request
+from functools import partial
 
 from .version import __version__
 from .qt import QtCore, QtNetwork
@@ -105,7 +106,7 @@ class HTTPClient:
         :param callback: callback method to call when the server replies.
         """
 
-        print("Send message. Destination {destination}, {params}".format(destination=destination,params=params))
+        log.error("OLD Send message. Destination {destination}, {params}".format(destination=destination,params=params))
         # TODO : Remove this method when migration to rest api is done
 
     def send_notification(self, destination, params=None):
@@ -115,7 +116,7 @@ class HTTPClient:
         :param destination: server destination method
         :param params: params to send (dictionary)
         """
-        print("Send notification. Destination {destination}, {params}".format(destination=destination,params=params))
+        log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination,params=params))
         # TODO : Remove this method when migration to rest api is done
 
     def post(self, path, params, callback):
@@ -135,6 +136,25 @@ class HTTPClient:
         request.setRawHeader("Content-Length", str(len(post_data)))
         request.setRawHeader("User-Agent", "GNS3 QT Client {version}".format(version=__version__))
         response = self._network_manager.post(request, post_data)
-        def response_process(*args):
-            print(args)
-        response.finished.connect(response_process)
+
+        response.finished.connect(partial(self.response_process, response, callback))
+
+
+    def response_process(self, response, callback):
+        if response.error() != QtNetwork.QNetworkReply.NoError:
+            log.debug("Response error: {}".format(response.errorString()))
+            body = bytes(response.readAll()).decode()
+            log.debug(body)
+        else:
+            status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+            log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
+            body = bytes(response.readAll()).decode()
+            log.debug(body)
+            if len(body):
+                params = json.loads(body)
+            else:
+                params = {}
+            if status >= 400:
+                callback(params, error=True)
+            else:
+                callback(params)

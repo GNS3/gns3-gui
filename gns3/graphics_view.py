@@ -40,6 +40,7 @@ from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
 from .utils.connect_to_server import ConnectToServer
+from .project import Project
 
 # link items
 from .items.link_item import LinkItem
@@ -1277,11 +1278,11 @@ class GraphicsView(QtGui.QGraphicsView):
 
             if server is None:
                 return
-            
+
             if not server.connected() and ConnectToServer(self, server) is False:
                 return
 
-            node = node_module.createNode(node_class, server)
+            node = node_module.createNode(node_class, server, Project.instance())
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)

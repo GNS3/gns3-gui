@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 import os
+import uuid
+
+from gns3.project import Project
+from gns3.servers import Servers
 
 
 def pytest_addoption(parser):
@@ -25,6 +29,18 @@ def api_key(request):
 @pytest.fixture(scope="class")
 def run_instances(request):
     request.cls.run_instances = request.config.getoption("--run-instances")
+
+
+@pytest.fixture(scope="session")
+def project():
+    project = Project.instance()
+    project.uuid = str(uuid.uuid4())
+    return project
+
+
+@pytest.fixture(scope="session")
+def local_server():
+    return Servers.instance().localServer()
 
 
 def pytest_runtest_setup(item):

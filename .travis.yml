@@ -32,12 +32,13 @@ before_install:
   - cd $TRAVIS_BUILD_DIR
 
 notifications:
-  email: false
-  irc:
-    channels:
-      - "chat.freenode.net#gns3"
-    on_success: change
-    on_failure: always
+  email:
+    - julien@gns3.net
+  #irc:
+  #  channels:
+  #    - "chat.freenode.net#gns3"
+  #  on_success: change
+  #  on_failure: always
 
 install:
   - "pip install -r dev-requirements.txt"

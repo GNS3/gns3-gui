@@ -38,10 +38,11 @@ class VPCSDevice(Node):
     :param server: GNS3 server instance
     """
 
-    def __init__(self, module, server):
+    def __init__(self, module, server, project):
         Node.__init__(self, server)
 
         log.info("VPCS instance is being created")
+        self._project = project
         self._vpcs_id = None
         self._defaults = {}
         self._inital_settings = None
@@ -87,9 +88,12 @@ class VPCSDevice(Node):
             params["vpcs_id"] = vpcs_id
 
         # other initial settings will be applied when the router has been created
-        if initial_settings:
-            self._inital_settings = initial_settings
+        # TODO: COMMENTED during REST api migration
+        #if initial_settings:
+        #    self._inital_settings = initial_settings
 
+
+        params["project_uuid"] = self._project.uuid
         self._server.post("/vpcs", params, self._setupCallback)
 
     def _setupCallback(self, result, error=False):
@@ -105,7 +109,8 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
-        self._vpcs_id = result["id"]
+        # TODO: Manage id / uuid conversion
+        self._vpcs_id = result["uuid"]
         if not self._vpcs_id:
             self.error_signal.emit(self.id(), "returned ID from server is null")
             return
@@ -242,7 +247,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.send_message("vpcs.start", {"id": self._vpcs_id}, self._startCallback)
+        self._server.post("/vpcs/{uuid}/start".format(uuid=self._vpcs_id), {}, self._startCallback)
 
     def _startCallback(self, result, error=False):
         """
@@ -324,9 +329,9 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("vpcs.allocate_udp_port", {"id": self._vpcs_id, "port_id": port_id}, self._allocateUDPPortCallback)
+        self._server.post("/udp", {}, (lambda *args, **kwargs: self._allocateUDPPortCallback(port_id, *args, **kwargs)))
 
-    def _allocateUDPPortCallback(self, result, error=False):
+    def _allocateUDPPortCallback(self, port_id, result, error=False):
         """
         Callback for allocateUDPPort.
 
@@ -338,8 +343,7 @@ class VPCSDevice(Node):
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
-            port_id = result["port_id"]
-            lport = result["lport"]
+            lport = result["udp_port"]
             log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
             self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
 
@@ -351,15 +355,11 @@ class VPCSDevice(Node):
         :param nio: NIO instance
         """
 
-        params = {"id": self._vpcs_id,
-                  "port": port.portNumber(),
-                  "port_id": port.id()}
-
-        params["nio"] = self.getNIOInfo(nio)
+        params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.send_message("vpcs.add_nio", params, self._addNIOCallback)
+        self._server.post("/vpcs/{uuid}/ports/0/nio".format(uuid=self._vpcs_id), params,  (lambda *args, **kwargs: self._addNIOCallback(port.id(), *args, **kwargs)))
 
-    def _addNIOCallback(self, result, error=False):
+    def _addNIOCallback(self, port_id, result, error=False):
         """
         Callback for addNIO.
 
@@ -372,7 +372,7 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
             self.nio_cancel_signal.emit(self.id())
         else:
-            self.nio_signal.emit(self.id(), result["port_id"])
+            self.nio_signal.emit(self.id(), port_id)
 
     def deleteNIO(self, port):
         """
@@ -600,6 +600,16 @@ class VPCSDevice(Node):
             self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(script_file))
         if new_settings:
             self.update(new_settings)
+
+    @property
+    def uuid(self):
+        """
+        Return the UUID of this VPCS device
+
+        :returns: uuid (string)
+        """
+
+        return self._vpcs_id
 
     def name(self):
         """

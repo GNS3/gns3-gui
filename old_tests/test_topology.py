@@ -63,7 +63,7 @@ class TestTopology(TestCase):
 
     def test_instances_dumped(self):
         test_settings = {'project_type': 'cloud'}
-        MainWindow.instance() ._project_settings.update(test_settings)
+        MainWindow.instance()._project_settings.update(test_settings)
         self.t.addInstance(name="My instance", id="xyz", size_id="123", image_id="1234567890",
                            private_key="private key", public_key="public string")
         topology = self.t.dump()
