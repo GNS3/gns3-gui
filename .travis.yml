@@ -32,7 +32,8 @@ before_install:
   - cd $TRAVIS_BUILD_DIR
 
 notifications:
-  email: false
+  email:
+    - julien@gns3.net
   #irc:
   #  channels:
   #    - "chat.freenode.net#gns3"

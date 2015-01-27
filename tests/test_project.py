@@ -33,5 +33,5 @@ def test_project_create():
         assert args[0] == "/project"
         assert args[1] == {"temporary": False}
         # Call the project creation callback
-        args[2](200, {"uuid": uuid})
+        args[2]({"uuid": uuid})
         assert project.uuid == uuid
