@@ -210,18 +210,15 @@ class ConsoleCmd(cmd.Cmd):
         ch = logging.StreamHandler(sys.stdout)
 
         if len(args) == 1:
-            try:
-                level = int(args[0])
-                if level == 0:
-                    print("Deactivating debugging")
-                    root.removeHandler(ch)
-                else:
-                    print("Activating debugging")
-                    root.addHandler(ch)
-                from .main_window import MainWindow
-                MainWindow.instance().setSettings({"debug_level": level})
-            except:
-                print(self.do_debug.__doc__)
+            level = int(args[0])
+            if level == 0:
+                print("Deactivating debugging")
+                root.removeHandler(ch)
+            else:
+                print("Activating debugging")
+                root.addHandler(ch)
+            from .main_window import MainWindow
+            MainWindow.instance().setSettings({"debug_level": level})
         else:
             print(self.do_debug.__doc__)
 

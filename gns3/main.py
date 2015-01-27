@@ -183,33 +183,33 @@ def main():
     app.setApplicationName("GNS3")
     app.setApplicationVersion(__version__)
 
+    formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
+                                  datefmt="%y%m%d %H:%M:%S")
+
+    # on debug enable logging to stdout
+    root_logger = logging.getLogger()
+    if options.debug:
+        root_logger.setLevel(logging.DEBUG)
+        if len(root_logger.handlers) == 0:    # no log handlers installed
+            root_handler = logging.StreamHandler()
+            root_handler.setFormatter(formatter)
+            root_logger.addHandler(root_handler)
+    else:
+        root_logger.setLevel(logging.INFO)
+
     # save client logging info to a file
-    logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")  # FIXME: does it work?
+    logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")
     try:
         try:
             os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))
         except FileExistsError:
             pass
         handler = logging.FileHandler(logfile, "w")
-        if options.debug:
-            root_logger = logging.getLogger()
-            root_logger.setLevel(logging.DEBUG)
-            if len(root_logger.handlers) > 0:
-                root_handler = root_logger.handlers[0]
-            else:
-                root_handler = logging.StreamHandler()
-                root_logger.addHandler(root_handler)
-            root_handler.setLevel(logging.DEBUG)
-        else:
-            handler.setLevel(logging.INFO)
-        log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
-
-        formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
-                                      datefmt="%y%m%d %H:%M:%S")
-        handler.setFormatter(formatter)
-        log.addHandler(handler)
+        root_logger.addHandler(handler)
     except OSError as e:
         log.warn("could not log to {}: {}".format(logfile, e))
+
+    log.info('Log level: {}'.format(logging.getLevelName(log.getEffectiveLevel())))
 
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
