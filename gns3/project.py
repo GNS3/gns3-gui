@@ -56,6 +56,14 @@ class Project:
 
         return self._uuid
 
+    @uuid.setter
+    def uuid(self, uuid):
+        """
+        Set project UUID
+        """
+
+        self._uuid = uuid
+
     @staticmethod
     def instance():
         """
@@ -73,9 +81,11 @@ class Project:
         Create project on all servers
         """
 
-        def project_created(params):
-            # TODO: Manage errors
-            self._uuid = params["uuid"]
-            log.info("Project {} created".format(self._uuid))
-            # TODO: call all server when we got uuid
-        self._servers.localServer().post("/project", {"temporary": self.temporary}, project_created)
+        self._servers.localServer().post("/project", {"temporary": self.temporary}, self._project_created)
+
+    def _project_created(self, params):
+        # TODO: Manage errors
+        self._uuid = params["uuid"]
+        log.info("Project {} created".format(self._uuid))
+        # TODO: call all server when we got uuid
+

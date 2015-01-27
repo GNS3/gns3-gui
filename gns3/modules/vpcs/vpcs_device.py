@@ -601,6 +601,16 @@ class VPCSDevice(Node):
         if new_settings:
             self.update(new_settings)
 
+    @property
+    def uuid(self):
+        """
+        Return the UUID of this VPCS device
+
+        :returns: uuid (string)
+        """
+
+        return self._vpcs_id
+
     def name(self):
         """
         Returns the name of this VPCS device.
