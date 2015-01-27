@@ -66,6 +66,7 @@ from .cloud.utils import UploadProjectThread, UploadFilesThread, ssh_client, Dow
 from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 from .cloud_instances import CloudInstances
+from .project import Project
 
 
 log = logging.getLogger(__name__)
@@ -88,13 +89,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, project, parent=None):
+    def __init__(self, project=None, parent=None):
 
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         MainWindow._instance = self
 
         self._settings = {}
+        # TODO: Temporary not True if project from command line
+        self._project = Project(temporary=True)
         self._project_from_cmdline = project
         self._cloud_settings = {}
         self._loadSettings()

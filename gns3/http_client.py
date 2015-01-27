@@ -134,7 +134,18 @@ class HTTPClient:
         request.setRawHeader("Content-Type", "application/json")
         request.setRawHeader("Content-Length", str(len(post_data)))
         request.setRawHeader("User-Agent", "GNS3 QT Client {version}".format(version=__version__))
+        print("BUG")
         response = self._network_manager.post(request, post_data)
-        def response_process(*args):
-            print(args)
+        def response_process():
+            if response.error() != QtNetwork.QNetworkReply.NoError:
+                log.debug("Response error: {}".format(response.errorString()))
+                body = bytes(response.readAll()).decode()
+                log.debug(body)
+            else:
+                status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+                log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
+                body = bytes(response.readAll()).decode()
+                log.debug(body)
+                params = json.loads(body)
+                callback(status, params)
         response.finished.connect(response_process)
