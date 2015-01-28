@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_NodeConfiguratorDialog(object):
+
     def setupUi(self, NodeConfiguratorDialog):
         NodeConfiguratorDialog.setObjectName(_fromUtf8("NodeConfiguratorDialog"))
         NodeConfiguratorDialog.resize(689, 454)
@@ -83,7 +86,7 @@ class Ui_NodeConfiguratorDialog(object):
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtGui.QDialogButtonBox(NodeConfiguratorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Reset)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Reset)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 
@@ -96,6 +99,6 @@ class Ui_NodeConfiguratorDialog(object):
         self.uiNodesTreeWidget.headerItem().setText(0, _translate("NodeConfiguratorDialog", "Nodes", None))
         self.uiTitleLabel.setText(_translate("NodeConfiguratorDialog", "Node Configuration", None))
         self.textLabel.setText(_translate("NodeConfiguratorDialog", "Please select a node in the list \n"
-"to display the configuration page.", None))
+                                          "to display the configuration page.", None))
 
 from . import resources_rc

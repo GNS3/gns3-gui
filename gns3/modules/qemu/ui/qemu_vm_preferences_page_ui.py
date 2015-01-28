@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_QemuVMPreferencesPageWidget(object):
+
     def setupUi(self, QemuVMPreferencesPageWidget):
         QemuVMPreferencesPageWidget.setObjectName(_fromUtf8("QemuVMPreferencesPageWidget"))
         QemuVMPreferencesPageWidget.resize(706, 543)
@@ -79,4 +82,3 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.uiNewQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&New", None))
         self.uiEditQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&Edit", None))
         self.uiDeleteQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&Delete", None))
-

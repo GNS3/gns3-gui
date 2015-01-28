@@ -75,6 +75,7 @@ CLOUD_SETTINGS_GROUP = "Cloud"
 
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+
     """
     Main window implementation.
 
@@ -273,7 +274,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         settings_to_persist = self._cloud_settings if persist else CLOUD_SETTINGS
         for name, value in settings_to_persist.items():
-                settings.setValue(name, value)
+            settings.setValue(name, value)
         settings.endGroup()
 
     def _connections(self):
@@ -547,7 +548,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
         scene.render(painter)
         painter.end()
-        #TODO: quality option
+        # TODO: quality option
         return image.save(path)
 
     def _screenshotActionSlot(self):
@@ -668,7 +669,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to reset the port labels on the scene.
         """
 
-        #TODO: reset port labels
+        # TODO: reset port labels
         pass
 
     def _showNamesActionSlot(self):
@@ -676,7 +677,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to show the node names on the scene.
         """
 
-        #TODO: show/hide node names
+        # TODO: show/hide node names
         pass
 
     def _showPortNamesActionSlot(self):
@@ -877,13 +878,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             latest_release = bytes(network_reply.readAll()).decode().rstrip()
             if parse_version(__version__) < parse_version(latest_release):
-                    reply = QtGui.QMessageBox.question(self,
-                                                       "Check For Update",
-                                                       "Newer GNS3 version {} is available, do you want to visit our website to download it?".format(latest_release),
-                                                       QtGui.QMessageBox.Yes,
-                                                       QtGui.QMessageBox.No)
-                    if reply == QtGui.QMessageBox.Yes:
-                        QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
+                reply = QtGui.QMessageBox.question(self,
+                                                   "Check For Update",
+                                                   "Newer GNS3 version {} is available, do you want to visit our website to download it?".format(latest_release),
+                                                   QtGui.QMessageBox.Yes,
+                                                   QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
             elif not is_silent:
                 QtGui.QMessageBox.information(self, "Check For Update", "GNS3 is up-to-date!")
             return
@@ -918,11 +919,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
         if len(instructions_files):
             path = instructions_files[0]
-            if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + path, QtCore.QUrl.TolerantMode)) == False and silent == False:
+            if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + path, QtCore.QUrl.TolerantMode)) is False and silent is False:
                 QtGui.QMessageBox.critical(self, "Lab instructions", "Could not open {}".format(path))
         elif silent is False:
             QtGui.QMessageBox.critical(self, "Lab instructions", "No instructions found")
-
 
     def _aboutQtActionSlot(self):
         """
@@ -1131,7 +1131,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # not a normal OSError, thrown from the Websocket client.
                     MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
                                                                                                                                                                                server.port),
-                                                                                                                                                                               e)
+                               e)
                     return
 
                 if not servers.localServerAutoStart():
@@ -1154,14 +1154,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     return
 
                 if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
-                        self._thread = WaitForConnectionThread(server.host, server.port)
-                        progress_dialog = ProgressDialog(self._thread,
-                                                         "Local server",
-                                                         "Connecting to server {} on port {}...".format(server.host, server.port),
-                                                         "Cancel", busy=True, parent=self)
-                        progress_dialog.show()
-                        if not progress_dialog.exec_():
-                            return
+                    self._thread = WaitForConnectionThread(server.host, server.port)
+                    progress_dialog = ProgressDialog(self._thread,
+                                                     "Local server",
+                                                     "Connecting to server {} on port {}...".format(server.host, server.port),
+                                                     "Cancel", busy=True, parent=self)
+                    progress_dialog.show()
+                    if not progress_dialog.exec_():
+                        return
                 else:
                     QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                     return
@@ -1413,7 +1413,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
-            #log.error("exception {type}".format(type=type(e)), exc_info=1)
+            # log.error("exception {type}".format(type=type(e)), exc_info=1)
             return False
         except ValueError as e:
             QtGui.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))

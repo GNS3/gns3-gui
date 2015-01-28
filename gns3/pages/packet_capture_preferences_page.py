@@ -29,6 +29,7 @@ from ..ports.port import Port
 
 
 class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPageWidget):
+
     """
     QWidget configuration page for packet capture preferences.
     """

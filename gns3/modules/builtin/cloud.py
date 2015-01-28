@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 
 
 class Cloud(Node):
+
     """
     Dynamips cloud.
 
@@ -311,7 +312,7 @@ This is a pseudo-device for external connections
                  "properties": {"name": self.name(),
                                 "nios": self._settings["nios"]},
                  "server_id": self._server.id(),
-                }
+                 }
 
         # add the ports
         if self._ports:

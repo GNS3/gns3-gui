@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_configurationDialog(object):
+
     def setupUi(self, configurationDialog):
         configurationDialog.setObjectName(_fromUtf8("configurationDialog"))
         configurationDialog.resize(585, 454)
@@ -68,7 +71,7 @@ class Ui_configurationDialog(object):
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtGui.QDialogButtonBox(configurationDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 

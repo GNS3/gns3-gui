@@ -31,6 +31,7 @@ from ..settings import VPCS_SETTINGS
 
 
 class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
+
     """
     QWidget preference page for VPCS
     """
@@ -47,7 +48,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
 
-        #FIXME: temporally hide test button
+        # FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
 
     def _vpcsPathBrowserSlot(self):

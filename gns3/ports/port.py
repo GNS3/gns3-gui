@@ -34,6 +34,7 @@ from ..settings import PACKET_CAPTURE_SETTINGS, PACKET_CAPTURE_SETTING_TYPES
 
 
 class Port(object):
+
     """
     Base port.
 
@@ -300,7 +301,7 @@ class Port(object):
                 return "<-> {port} {name}".format(port=self._destination_port.shortName(),
                                                   name=self._destination_node.name())
             return "connected to {name} on port {port}".format(name=self._destination_node.name(),
-                                                       port=self._destination_port.name())
+                                                               port=self._destination_port.name())
         return ""
 
     def setFree(self):

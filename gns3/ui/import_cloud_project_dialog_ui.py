@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_ImportCloudProjectDialog(object):
+
     def setupUi(self, ImportCloudProjectDialog):
         ImportCloudProjectDialog.setObjectName(_fromUtf8("ImportCloudProjectDialog"))
         ImportCloudProjectDialog.resize(471, 402)
@@ -49,4 +52,3 @@ class Ui_ImportCloudProjectDialog(object):
         ImportCloudProjectDialog.setWindowTitle(_translate("ImportCloudProjectDialog", "Dialog", None))
         self.uiImportProjectAction.setText(_translate("ImportCloudProjectDialog", "Import", None))
         self.uiDeleteProjectAction.setText(_translate("ImportCloudProjectDialog", "Delete", None))
-

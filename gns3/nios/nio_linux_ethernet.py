@@ -23,6 +23,7 @@ from .nio import NIO
 
 
 class NIOLinuxEthernet(NIO):
+
     """
     Linux Ethernet NIO.
 

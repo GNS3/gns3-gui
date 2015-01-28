@@ -43,6 +43,6 @@ notifications:
 install:
   - "pip install -r dev-requirements.txt"
 
-script: "xvfb-run py.test --verbose" # Run tests in a fake X server
-
-
+script:
+    - "xvfb-run py.test --verbose" # Run tests in a fake X server
+    - "pep8"

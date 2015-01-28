@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_IOSRouterWizard(object):
+
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName(_fromUtf8("IOSRouterWizard"))
         IOSRouterWizard.resize(517, 398)
@@ -327,4 +330,3 @@ class Ui_IOSRouterWizard(object):
         self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core.", None))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:", None))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder", None))
-

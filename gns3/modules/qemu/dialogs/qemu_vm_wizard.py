@@ -35,6 +35,7 @@ from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
 class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
+
     """
     Wizard to create a Qemu VM.
 
@@ -239,7 +240,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                 else:
                     self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
 
-            is_64bit = sys.maxsize > 2**32
+            is_64bit = sys.maxsize > 2 ** 32
             if sys.platform.startswith("win"):
                 if self.uiTypeComboBox.currentText() != "Default" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
                     search_string = "qemu.exe"
@@ -273,9 +274,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
             server = self.uiRemoteServersComboBox.currentText()
-        else: # Cloud is selected
+        else:  # Cloud is selected
             server = "cloud"
-
 
         qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
         settings = {
@@ -322,7 +322,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["category"] = Node.end_devices
 
         if self.uiTypeComboBox.currentText() != "Default":
-            if not "options" in settings:
+            if "options" not in settings:
                 settings["options"] = ""
             if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
                 settings["options"] += " -vga none -vnc none"

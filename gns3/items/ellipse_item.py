@@ -24,6 +24,7 @@ from .shape_item import ShapeItem
 
 
 class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
+
     """
     Class to draw an ellipse on the scene.
     """

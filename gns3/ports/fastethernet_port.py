@@ -23,6 +23,7 @@ from .port import Port
 
 
 class FastEthernetPort(Port):
+
     """
     FastEthernet port.
 

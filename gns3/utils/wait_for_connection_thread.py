@@ -25,6 +25,7 @@ from ..qt import QtCore
 
 
 class WaitForConnectionThread(QtCore.QThread):
+
     """
     Thread to wait for a connection.
 

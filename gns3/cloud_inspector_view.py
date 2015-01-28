@@ -23,6 +23,7 @@ POLLING_TIMER = 10000  # in milliseconds
 
 
 class RunningInstanceState(NodeState):
+
     """
     GNS3 states for running instances
     """
@@ -32,9 +33,11 @@ class RunningInstanceState(NodeState):
 
 
 class InstanceTableModel(QtCore.QAbstractTableModel):
+
     """
     A custom table model storing data of cloud instances
     """
+
     def __init__(self, *args, **kwargs):
         super(InstanceTableModel, self).__init__(*args, **kwargs)
         self._header_data = ['Instance', '', 'Size', 'Devices']  # status has an empty header label
@@ -117,7 +120,7 @@ class InstanceTableModel(QtCore.QAbstractTableModel):
     def addInstance(self, instance):
         self.beginInsertRows(QtCore.QModelIndex(), self.rowCount(), self.rowCount())
         if not len(self._instances):
-            self.beginInsertColumns(QtCore.QModelIndex(), 0, self._width-1)
+            self.beginInsertColumns(QtCore.QModelIndex(), 0, self._width - 1)
             self.endInsertColumns()
         self._ids.append(instance.id)
         self._instances[instance.id] = instance
@@ -155,7 +158,7 @@ class InstanceTableModel(QtCore.QAbstractTableModel):
             for field in field_names:
                 setattr(current, field, getattr(instance, field))
             first_index = self.createIndex(index, 0)
-            last_index = self.createIndex(index, self.columnCount()-1)
+            last_index = self.createIndex(index, self.columnCount() - 1)
             self.dataChanged.emit(first_index, last_index)
         else:
             self.addInstance(instance)
@@ -165,6 +168,7 @@ class InstanceTableModel(QtCore.QAbstractTableModel):
 
 
 class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
+
     """
     Table view showing data coming from InstanceTableModel
 
@@ -342,10 +346,8 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
             self._populate_model(project_instances)
             self._rebuild_instances(project_instances)
 
-
         instance_manager = CloudInstances.instance()
         instance_manager.update_instances(instances)
-
 
         # Clean up removed instances
         real = set(i.id for i in project_instances)

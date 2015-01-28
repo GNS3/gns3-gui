@@ -25,6 +25,7 @@ from ..ui.atm_switch_configuration_page_ui import Ui_atmSwitchConfigPageWidget
 
 
 class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
+
     """
     QWidget configuration page for ATM switches.
     """
@@ -85,7 +86,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         """
 
         item = self.uiMappingTreeWidget.currentItem()
-        if item != None:
+        if item is not None:
             self.uiDeletePushButton.setEnabled(True)
         else:
             self.uiDeletePushButton.setEnabled(False)

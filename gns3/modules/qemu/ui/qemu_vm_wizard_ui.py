@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_QemuVMWizard(object):
+
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName(_fromUtf8("QemuVMWizard"))
         QemuVMWizard.resize(514, 366)
@@ -222,4 +225,3 @@ class Ui_QemuVMWizard(object):
         self.uiDiskImageHdbWizardPage.setSubTitle(_translate("QemuVMWizard", "Please add an additional disk image for IDS.", None))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):", None))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
-

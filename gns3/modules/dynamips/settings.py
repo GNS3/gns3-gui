@@ -191,7 +191,7 @@ C7200_PAS = (
 IO_C7200 = ("C7200-IO-FE",
             "C7200-IO-2FE",
             "C7200-IO-GE-E"
-)
+            )
 
 """
 Build the adapter compatibility matrix:

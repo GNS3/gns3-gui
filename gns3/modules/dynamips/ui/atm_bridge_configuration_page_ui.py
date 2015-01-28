@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_atmBridgeConfigPageWidget(object):
+
     def setupUi(self, atmBridgeConfigPageWidget):
         atmBridgeConfigPageWidget.setObjectName(_fromUtf8("atmBridgeConfigPageWidget"))
         atmBridgeConfigPageWidget.resize(432, 358)
@@ -164,4 +167,3 @@ class Ui_atmBridgeConfigPageWidget(object):
         self.uiDeletePushButton.setText(_translate("atmBridgeConfigPageWidget", "&Delete", None))
         self.uiGeneralGroupBox.setTitle(_translate("atmBridgeConfigPageWidget", "General", None))
         self.uiNameLabel.setText(_translate("atmBridgeConfigPageWidget", "Name:", None))
-

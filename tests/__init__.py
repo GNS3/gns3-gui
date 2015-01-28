@@ -19,6 +19,7 @@ def make_setitem(container):
 
 
 class BaseTest(TestCase):
+
     """
     Base class for all the tests
     """
@@ -26,9 +27,11 @@ class BaseTest(TestCase):
 
 
 class GUIBaseTest(BaseTest):
+
     """
     Base class implementing GUI boilerplates
     """
+
     def setUp(self):
         self.app = QApplication(sys.argv)
 

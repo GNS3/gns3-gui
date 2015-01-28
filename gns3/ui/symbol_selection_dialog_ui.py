@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_SymbolSelectionDialog(object):
+
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName(_fromUtf8("SymbolSelectionDialog"))
         SymbolSelectionDialog.resize(319, 389)
@@ -51,7 +54,7 @@ class Ui_SymbolSelectionDialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtGui.QDialogButtonBox(SymbolSelectionDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)

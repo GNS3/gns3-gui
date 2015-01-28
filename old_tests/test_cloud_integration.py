@@ -32,7 +32,6 @@ from gns3.cloud.rackspace_ctrl import RackspaceCtrl
 from gns3.cloud.exceptions import ItemNotFound, KeyPairExists
 
 
-
 # custom flag to skip tests if rackspace credentials was not provided
 rackspace_authentication = pytest.mark.rackspace_authentication
 
@@ -48,6 +47,7 @@ class StubObject(object):
 @rackspace_authentication
 @pytest.mark.usefixtures("username", "api_key", "run_instances")
 class TestRackspaceCtrl(unittest.TestCase):
+
     def setUp(self):
         # prefix to identify created objects
         self.object_prefix = "int_test_"
@@ -288,7 +288,6 @@ class TestRackspaceCtrl(unittest.TestCase):
         # we cannot create images until the build is over
         self.ctrl.driver.wait_until_running([instance])
         print("Instance up and running.")
-
 
         print("Creating an image...")
         gns3_image1 = self.ctrl.driver.ex_save_image(instance, 'gns3_3.0a', metadata=None)

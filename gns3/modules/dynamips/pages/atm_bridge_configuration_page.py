@@ -25,6 +25,7 @@ from ..ui.atm_bridge_configuration_page_ui import Ui_atmBridgeConfigPageWidget
 
 
 class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
+
     """
     QWidget configuration page for ATM bridges.
     """
@@ -74,7 +75,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         """
 
         item = self.uiMappingTreeWidget.currentItem()
-        if item != None:
+        if item is not None:
             self.uiDeletePushButton.setEnabled(True)
         else:
             self.uiDeletePushButton.setEnabled(False)

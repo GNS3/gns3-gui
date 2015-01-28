@@ -26,6 +26,7 @@ log = logging.getLogger(__name__)
 
 
 class Module(QtCore.QObject):
+
     """
     Module interface.
     """

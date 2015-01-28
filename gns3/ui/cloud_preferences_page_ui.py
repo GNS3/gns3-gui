@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_CloudPreferencesPageWidget(object):
+
     def setupUi(self, CloudPreferencesPageWidget):
         CloudPreferencesPageWidget.setObjectName(_fromUtf8("CloudPreferencesPageWidget"))
         CloudPreferencesPageWidget.resize(482, 485)
@@ -144,11 +147,10 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiUserNameLabel.setText(_translate("CloudPreferencesPageWidget", "User Name:", None))
         self.uiAPIKeyLabel.setText(_translate("CloudPreferencesPageWidget", "API Key", None))
         self.uiRememberAPIKeyRadioButton.setText(_translate("CloudPreferencesPageWidget", "Remeber these settings\n"
-"(Suggested for private computers)", None))
+                                                            "(Suggested for private computers)", None))
         self.uiStartNewProjectsLabel.setText(_translate("CloudPreferencesPageWidget", "Start new projects with:", None))
         self.uiCloudProviderLabel.setText(_translate("CloudPreferencesPageWidget", "Cloud provider", None))
         self.uiRegionLabel.setText(_translate("CloudPreferencesPageWidget", "Region (optional)", None))
         self.uiForgetAPIKeyRadioButton.setText(_translate("CloudPreferencesPageWidget", "Forget these settings on exit\n"
-"(Suggested for public computers)", None))
+                                                          "(Suggested for public computers)", None))
         self.uiTimeoutLabel2.setText(_translate("CloudPreferencesPageWidget", "minutes of lost communication", None))
-

@@ -27,6 +27,7 @@ from ..qt import QtCore, QtGui
 
 
 class LinkItem(QtGui.QGraphicsPathItem):
+
     """
     Base class for link items.
 

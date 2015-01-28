@@ -32,6 +32,7 @@ log = logging.getLogger(__name__)
 
 
 class HTTPClient:
+
     """
     HTTP client.
 
@@ -89,7 +90,7 @@ class HTTPClient:
         except ValueError as e:
             log.error("could not get the server version: {}".format(e))
 
-        #FIXME: temporary version check
+        # FIXME: temporary version check
         if self._version != __version__:
             if not self._version:
                 raise OSError("Could not determine the server version")
@@ -106,7 +107,7 @@ class HTTPClient:
         :param callback: callback method to call when the server replies.
         """
 
-        log.error("OLD Send message. Destination {destination}, {params}".format(destination=destination,params=params))
+        log.error("OLD Send message. Destination {destination}, {params}".format(destination=destination, params=params))
         # TODO : Remove this method when migration to rest api is done
 
     def send_notification(self, destination, params=None):
@@ -116,7 +117,7 @@ class HTTPClient:
         :param destination: server destination method
         :param params: params to send (dictionary)
         """
-        log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination,params=params))
+        log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination, params=params))
         # TODO : Remove this method when migration to rest api is done
 
     def post(self, path, params, callback):
@@ -129,8 +130,8 @@ class HTTPClient:
         """
 
         post_data = json.dumps(params)
-        log.debug("POST http://{host}:{port}{path} {data}".format(host=self.host,port=self.port,path=path, data=post_data))
-        url = QtCore.QUrl("http://{host}:{port}{path}".format(host=self.host,port=self.port,path=path))
+        log.debug("POST http://{host}:{port}{path} {data}".format(host=self.host, port=self.port, path=path, data=post_data))
+        url = QtCore.QUrl("http://{host}:{port}{path}".format(host=self.host, port=self.port, path=path))
         request = QtNetwork.QNetworkRequest(url)
         request.setRawHeader("Content-Type", "application/json")
         request.setRawHeader("Content-Length", str(len(post_data)))
@@ -138,7 +139,6 @@ class HTTPClient:
         response = self._network_manager.post(request, post_data)
 
         response.finished.connect(partial(self.response_process, response, callback))
-
 
     def response_process(self, response, callback):
         if response.error() != QtNetwork.QNetworkReply.NoError:

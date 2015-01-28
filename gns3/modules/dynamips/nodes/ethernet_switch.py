@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class EthernetSwitch(Node):
+
     """
     Dynamips Ethernet switch.
 

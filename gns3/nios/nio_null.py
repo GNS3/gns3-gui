@@ -23,6 +23,7 @@ from .nio import NIO
 
 
 class NIONull(NIO):
+
     """
     NULL NIO.
     """

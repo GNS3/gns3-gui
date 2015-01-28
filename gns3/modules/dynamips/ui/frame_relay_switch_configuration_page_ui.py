@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_frameRelaySwitchConfigPageWidget(object):
+
     def setupUi(self, frameRelaySwitchConfigPageWidget):
         frameRelaySwitchConfigPageWidget.setObjectName(_fromUtf8("frameRelaySwitchConfigPageWidget"))
         frameRelaySwitchConfigPageWidget.resize(499, 405)
@@ -161,4 +164,3 @@ class Ui_frameRelaySwitchConfigPageWidget(object):
         self.uiDestinationDLCILabel.setText(_translate("frameRelaySwitchConfigPageWidget", "DLCI:", None))
         self.uiAddPushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Add", None))
         self.uiDeletePushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Delete", None))
-

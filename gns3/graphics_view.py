@@ -58,6 +58,7 @@ log = logging.getLogger(__name__)
 
 
 class GraphicsView(QtGui.QGraphicsView):
+
     """
     Graphics view that displays the scene.
 
@@ -463,7 +464,7 @@ class GraphicsView(QtGui.QGraphicsView):
                 item.setSelected(True)
         elif is_not_link and event.button() == QtCore.Qt.RightButton and not self._adding_link:
             if item:
-                #Prevent right clicking on a selected item from de-selecting all other items
+                # Prevent right clicking on a selected item from de-selecting all other items
                 if not item.isSelected():
                     if not event.modifiers() & QtCore.Qt.ControlModifier:
                         for it in self.scene().items():
@@ -1093,7 +1094,7 @@ class GraphicsView(QtGui.QGraphicsView):
             idlepc = router.idlepc()
             router.computeIdlepcs()
 
-            #TODO: improve to show progress over 10 seconds
+            # TODO: improve to show progress over 10 seconds
             self._idlepc_progress_dialog = QtGui.QProgressDialog("Computing values...", "Cancel", 0, 0, parent=self)
             self._idlepc_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
             self._idlepc_progress_dialog.setWindowTitle("Idle-PC")
@@ -1263,7 +1264,7 @@ class GraphicsView(QtGui.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            if not "server" in node_data:
+            if "server" not in node_data:
                 server = node_module.allocateServer(node_class)
             elif node_data["server"] == "local":
                 server = Servers.instance().localServer()

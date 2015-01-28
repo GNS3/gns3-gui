@@ -25,6 +25,7 @@ from ..ui.ethernet_hub_configuration_page_ui import Ui_ethernetHubConfigPageWidg
 
 
 class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget):
+
     """
     QWidget configuration page for Ethernet hubs.
     """

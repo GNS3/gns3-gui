@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_QemuPreferencesPageWidget(object):
+
     def setupUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setObjectName(_fromUtf8("QemuPreferencesPageWidget"))
         QemuPreferencesPageWidget.resize(432, 586)
@@ -159,4 +162,3 @@ class Ui_QemuPreferencesPageWidget(object):
         self.uiUDPPortRangeLabel.setText(_translate("QemuPreferencesPageWidget", "to", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("QemuPreferencesPageWidget", "Advanced settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults", None))
-

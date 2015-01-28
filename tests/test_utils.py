@@ -9,6 +9,7 @@ import sys
 
 
 class TestChoicesSpinBox(TestCase):
+
     def setUp(self):
         self.app = QApplication(sys.argv)
         self.choices = [-1, 0, 1, 2, 3, 5, 8, 13]

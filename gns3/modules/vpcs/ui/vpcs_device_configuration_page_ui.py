@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_VPCSDeviceConfigPageWidget(object):
+
     def setupUi(self, VPCSDeviceConfigPageWidget):
         VPCSDeviceConfigPageWidget.setObjectName(_fromUtf8("VPCSDeviceConfigPageWidget"))
         VPCSDeviceConfigPageWidget.resize(411, 252)
@@ -52,4 +55,3 @@ class Ui_VPCSDeviceConfigPageWidget(object):
         VPCSDeviceConfigPageWidget.setWindowTitle(_translate("VPCSDeviceConfigPageWidget", "VPCS device configuration", None))
         self.uiNameLabel.setText(_translate("VPCSDeviceConfigPageWidget", "Name:", None))
         self.uiConsolePortLabel.setText(_translate("VPCSDeviceConfigPageWidget", "Console port:", None))
-

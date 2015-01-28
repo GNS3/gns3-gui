@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_NewProjectDialog(object):
+
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName(_fromUtf8("NewProjectDialog"))
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -92,7 +95,7 @@ class Ui_NewProjectDialog(object):
         self.gridLayout_2.addWidget(self.uiRecentProjectsPushButton, 1, 1, 1, 1)
         self.uiButtonBox = QtGui.QDialogButtonBox(NewProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.gridLayout_2.addWidget(self.uiButtonBox, 1, 2, 1, 1)
 
@@ -112,4 +115,3 @@ class Ui_NewProjectDialog(object):
         self.uiCloudRadioButton.setText(_translate("NewProjectDialog", "Cloud", None))
         self.uiOpenProjectPushButton.setText(_translate("NewProjectDialog", "&Open a project", None))
         self.uiRecentProjectsPushButton.setText(_translate("NewProjectDialog", "&Recent projects...", None))
-

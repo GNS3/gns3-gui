@@ -20,6 +20,7 @@ from ..ui.exec_command_dialog_ui import Ui_ExecCommandDialog
 
 
 class ExecCommandDialog(QtGui.QDialog, Ui_ExecCommandDialog):
+
     """
     Execute a command and display its output.
     """

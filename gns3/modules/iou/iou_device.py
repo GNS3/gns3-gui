@@ -34,6 +34,7 @@ log = logging.getLogger(__name__)
 
 
 class IOUDevice(Node):
+
     """
     IOU device.
 
@@ -63,7 +64,7 @@ class IOUDevice(Node):
                           "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
                           "console": None}
 
-        #self._occupied_slots = []
+        # self._occupied_slots = []
         self._addAdapters(2, 2)
 
         # save the default settings
@@ -79,8 +80,8 @@ class IOUDevice(Node):
 
         nb_adapters = nb_ethernet_adapters + nb_serial_adapters
         for slot_number in range(0, nb_adapters):
-#             if slot_number in self._occupied_slots:
-#                 continue
+            #             if slot_number in self._occupied_slots:
+            #                 continue
             for port_number in range(0, 4):
                 if slot_number < nb_ethernet_adapters:
                     port = EthernetPort
@@ -93,7 +94,7 @@ class IOUDevice(Node):
                 new_port.setPortNumber(port_number)
                 new_port.setSlotNumber(slot_number)
                 new_port.setPacketCaptureSupported(True)
-                #self._occupied_slots.append(slot_number)
+                # self._occupied_slots.append(slot_number)
                 self._ports.append(new_port)
                 log.debug("port {} has been added".format(port_name))
 
@@ -106,8 +107,8 @@ class IOUDevice(Node):
 
         for port in self._ports.copy():
             if (port.slotNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet") or \
-                (port.slotNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
-                #self._occupied_slots.remove(port.slotNumber())
+                    (port.slotNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
+                # self._occupied_slots.remove(port.slotNumber())
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
@@ -247,7 +248,7 @@ class IOUDevice(Node):
                 params[name] = value
 
         if "initial_config" in new_settings and self._settings["initial_config"] != new_settings["initial_config"] \
-        and not self.server().isLocal() and os.path.isfile(new_settings["initial_config"]):
+                and not self.server().isLocal() and os.path.isfile(new_settings["initial_config"]):
             params["initial_config_base64"] = self._base64Config(new_settings["initial_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
@@ -281,7 +282,7 @@ class IOUDevice(Node):
 
         if nb_adapters_changed:
             log.debug("number of adapters has changed: Ethernet={} Serial={}".format(self._settings["ethernet_adapters"], self._settings["serial_adapters"]))
-            #TODO: dynamically add/remove adapters
+            # TODO: dynamically add/remove adapters
             self._ports.clear()
             self._addAdapters(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
 

@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 
 
 class ATMSwitch(Node):
+
     """
     Dynamips ATM switch.
 
@@ -455,7 +456,7 @@ class ATMSwitch(Node):
                  "description": str(self),
                  "properties": {"name": self.name()},
                  "server_id": self._server.id(),
-                }
+                 }
 
         if self._settings["mappings"]:
             atmsw["properties"]["mappings"] = self._settings["mappings"]

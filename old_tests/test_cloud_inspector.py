@@ -30,6 +30,7 @@ def gen_fake_nodes(how_many):
 
 
 class TestInstanceModel(BaseTest):
+
     def setUp(self):
         super(TestInstanceModel, self).setUp()
         self.model = InstanceTableModel()
@@ -102,6 +103,7 @@ class TestInstanceModel(BaseTest):
 
 
 class TestCloudInspectorView(GUIBaseTest):
+
     def setUp(self):
         super(TestCloudInspectorView, self).setUp()
         self.view = CloudInspectorView(None)
@@ -154,7 +156,8 @@ class TestCloudInspectorView(GUIBaseTest):
             qmenu.assert_called_with(self.view.uiInstancesTableView)
             self.assertEqual(len(actions), 1)
 
-    # TODO: Commented because the test create an infinite loop
+    #
+    # TODO: Commented because the test create an infinite loop
     # def test_delete_instance(self):
     #     self.view._provider = mock.MagicMock()
     #     self.view._main_window = mock.MagicMock()

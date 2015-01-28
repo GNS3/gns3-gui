@@ -69,7 +69,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         For exception handling purposes
         (see exception hook in the program entry point).
         """
-        
+
         return False
 
     def onKeyPress_Tab(self):
@@ -184,7 +184,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         if node and node.name():
             name = " {}:".format(node.name())
             server = "from {}:{}".format(node.server().host,
-                                    node.server().port)
+                                         node.server().port)
 
         text = "Server error [{code}] {server}:{name} {message}".format(code=code,
                                                                         server=server,

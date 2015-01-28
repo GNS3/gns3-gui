@@ -28,6 +28,7 @@ from gns3.node import Node
 
 
 class EtherSwitchRouter(Router):
+
     """
     EtherSwitch router.
 

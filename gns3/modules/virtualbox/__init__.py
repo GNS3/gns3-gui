@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 
 
 class VirtualBox(Module):
+
     """
     VirtualBox module.
     """

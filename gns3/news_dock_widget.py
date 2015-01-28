@@ -27,6 +27,7 @@ log = logging.getLogger(__name__)
 
 
 class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
+
     """
     :param parent: parent widget
     """

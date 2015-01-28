@@ -32,6 +32,7 @@ def make_setitem(container):
 
 
 class TestPreferencesPage(TestCase):
+
     def setUp(self):
         self.app = QApplication(sys.argv)
         self.dialog = PreferencesDialog(None)
@@ -52,6 +53,7 @@ class TestPreferencesPage(TestCase):
 
 @mock.patch('gns3.pages.cloud_preferences_page.import_from_string')
 class TestCloudPreferencesPage(TestCase):
+
     def setUp(self):
         self.app = QApplication(sys.argv)
         self.app.setOrganizationName("GNS3")
@@ -89,6 +91,7 @@ class TestCloudPreferencesPage(TestCase):
         self.assertFalse(self.page.uiForgetAPIKeyRadioButton.isChecked())
         self.assertFalse(self.page.uiRememberAPIKeyRadioButton.isChecked())
         # saving preferences without setting "store or not" radio button triggers a message box
+
         def closeMsgBox():
             self.assertIsInstance(self.app.activeModalWidget(), QtGui.QMessageBox)
             self.app.activeModalWidget().close()
@@ -222,6 +225,7 @@ class TestCloudPreferencesPage(TestCase):
 @pytest.mark.skipif(not pytest.config.getvalue("apikey"),
                     reason="--apikey <key> was not specified")
 class TestCloudPreferencesPageIntegration(TestCase):
+
     def setUp(self):
         self.app = QApplication(sys.argv)
         self.page = CloudPreferencesPage()
@@ -240,4 +244,3 @@ class TestCloudPreferencesPageIntegration(TestCase):
             region_labels.append(self.page.uiRegionComboBox.model().item(i, 0).text())
         self.assertTrue(len(region_labels) > 1)
         self.assertIn('ORD', region_labels)
-

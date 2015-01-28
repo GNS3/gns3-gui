@@ -37,6 +37,7 @@ from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
 class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
+
     """
     QWidget configuration page for QEMU VMs.
     """

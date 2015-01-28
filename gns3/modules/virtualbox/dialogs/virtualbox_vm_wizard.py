@@ -31,6 +31,7 @@ from .. import VirtualBox
 
 
 class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
+
     """
     Wizard to create a VirtualBox VM.
 
@@ -105,7 +106,7 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
 
         if self.currentPage() == self.uiServerWizardPage:
 
-            #FIXME: prevent users to use "cloud"
+            # FIXME: prevent users to use "cloud"
             if self.uiCloudRadioButton.isChecked():
                 QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
                 return False

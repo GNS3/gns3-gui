@@ -23,6 +23,7 @@ from ..settings import ENABLE_CLOUD
 
 
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
+
     """
     New project dialog.
 

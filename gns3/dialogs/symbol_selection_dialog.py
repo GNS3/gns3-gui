@@ -25,6 +25,7 @@ from ..node import Node
 
 
 class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
+
     """
     Symbol selection dialog.
 

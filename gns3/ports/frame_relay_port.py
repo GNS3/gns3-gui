@@ -23,6 +23,7 @@ from .serial_port import SerialPort
 
 
 class FrameRelayPort(SerialPort):
+
     """
     Frame port.
 

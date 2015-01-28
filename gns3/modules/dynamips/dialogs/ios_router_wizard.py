@@ -55,6 +55,7 @@ PLATFORM_TO_CLASS = {
 
 
 class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
+
     """
     Wizard to create an IOS router.
 
@@ -94,7 +95,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self._base_private_config_template = get_resource(os.path.join("configs", "ios_base_private-config.txt"))
         self._base_etherswitch_startup_config_template = get_resource(os.path.join("configs", "ios_etherswitch_startup-config.txt"))
 
-        #FIXME: hide because of issue on Windows.
+        # FIXME: hide because of issue on Windows.
         self.uiTestIOSImagePushButton.hide()
 
         # Mandatory fields
@@ -226,10 +227,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         if state:
             # forces the name to EtherSwitch
             self.uiNameLineEdit.setText("EtherSwitch router")
-            #self.uiNameLineEdit.setEnabled(False)
+            # self.uiNameLineEdit.setEnabled(False)
         else:
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
-            #self.uiNameLineEdit.setEnabled(True)
+            # self.uiNameLineEdit.setEnabled(True)
 
     def createdSlot(self, node_id):
         """
@@ -326,7 +327,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         for slot_number, slot_adapters in ADAPTER_MATRIX[platform][chassis].items():
             self._widget_slots[slot_number].setEnabled(True)
 
-            if type(slot_adapters) == str:
+            if isinstance(slot_adapters, str):
                 # only one default adapter for this slot.
                 self._widget_slots[slot_number].addItem(slot_adapters)
             else:
@@ -394,7 +395,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
-                #if self.uiEtherSwitchCheckBox.isChecked() and ios_router["etherswitch"]:
+                # if self.uiEtherSwitchCheckBox.isChecked() and ios_router["etherswitch"]:
                 #    QtGui.QMessageBox.critical(self, "EtherSwitch router", "A router has already been configured to be used as the EtherSwitch router".format(name))
                 #    return False
         if self.currentPage() == self.uiIdlePCWizardPage:
@@ -425,7 +426,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 server = "{}:{}".format(server.host, server.port)
             else:
                 server = self.uiRemoteServersComboBox.currentText()
-        else: # Cloud is selected
+        else:  # Cloud is selected
             server = "cloud"
 
         settings = {

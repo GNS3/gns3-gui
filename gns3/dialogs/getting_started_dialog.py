@@ -24,6 +24,7 @@ from ..utils.get_resource import get_resource
 
 
 class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
+
     """
     GettingStarted dialog.
     """

@@ -55,8 +55,8 @@ ADAPTER_MATRIX = {"C1700-MB-1FE": {"nb_ports": 1,
                                    "port": FastEthernetPort},
 
                   "C7200-IO-FE": {"nb_ports": 1,
-                                   "wics": 0,
-                                   "port": FastEthernetPort},
+                                  "wics": 0,
+                                  "port": FastEthernetPort},
 
                   "C7200-IO-GE-E": {"nb_ports": 1,
                                     "wics": 0,
@@ -125,4 +125,4 @@ ADAPTER_MATRIX = {"C1700-MB-1FE": {"nb_ports": 1,
                   "PA-POS-OC3": {"nb_ports": 1,
                                  "wics": 0,
                                  "port": POSPort},
-                 }
+                  }

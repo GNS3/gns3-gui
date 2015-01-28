@@ -23,7 +23,9 @@ from ..qt import QtGui
 from ..ui.configuration_dialog_ui import Ui_configurationDialog
 from .node_configurator_dialog import ConfigurationError
 
+
 class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
+
     """
     Configuration dialog implementation.
 
@@ -61,4 +63,3 @@ class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
             except ConfigurationError:
                 return
             QtGui.QDialog.accept(self)
-

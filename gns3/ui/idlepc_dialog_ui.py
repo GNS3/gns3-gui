@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_IdlePCDialog(object):
+
     def setupUi(self, IdlePCDialog):
         IdlePCDialog.setObjectName(_fromUtf8("IdlePCDialog"))
         IdlePCDialog.setModal(True)
@@ -38,7 +41,7 @@ class Ui_IdlePCDialog(object):
         self.gridLayout.addWidget(self.uiComboBox, 1, 0, 1, 1)
         self.uiButtonBox = QtGui.QDialogButtonBox(IdlePCDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Help|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Help | QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.gridLayout.addWidget(self.uiButtonBox, 2, 0, 1, 1)
 
@@ -50,4 +53,3 @@ class Ui_IdlePCDialog(object):
     def retranslateUi(self, IdlePCDialog):
         IdlePCDialog.setWindowTitle(_translate("IdlePCDialog", "Idle-PC values", None))
         self.uiLabel.setText(_translate("IdlePCDialog", "Potentially better Idle-PC values are marked with \'*\'", None))
-

@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 
 
 class Builtin(Module):
+
     """
     Built-in module.
     """
@@ -137,7 +138,7 @@ class Builtin(Module):
         if not all(using_local_server) and len(remote_servers):
             # a module is not using a local server
 
-            if not True in using_local_server and len(remote_servers) == 1:
+            if True not in using_local_server and len(remote_servers) == 1:
                 # no module is using a local server and there is only one
                 # remote server available, so no need to ask the user.
                 return next(iter(servers))
@@ -147,7 +148,7 @@ class Builtin(Module):
             for remote_server in remote_servers:
                 server_list.append("{}".format(remote_server))
 
-            #TODO: move this to graphics_view
+            # TODO: move this to graphics_view
             from gns3.main_window import MainWindow
             mainwindow = MainWindow.instance()
             (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "Server", "Please choose a server", server_list, 0, False)

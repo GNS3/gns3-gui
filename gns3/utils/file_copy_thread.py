@@ -27,6 +27,7 @@ log = logging.getLogger(__name__)
 
 
 class FileCopyThread(QtCore.QThread):
+
     """
     Thread to copy a file.
 

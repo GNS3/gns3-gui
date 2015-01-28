@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_ExecCommandDialog(object):
+
     def setupUi(self, ExecCommandDialog):
         ExecCommandDialog.setObjectName(_fromUtf8("ExecCommandDialog"))
         ExecCommandDialog.resize(651, 343)

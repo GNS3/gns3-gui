@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_VirtualBoxVMWizard(object):
+
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName(_fromUtf8("VirtualBoxVMWizard"))
         VirtualBoxVMWizard.resize(514, 367)
@@ -105,4 +108,3 @@ class Ui_VirtualBoxVMWizard(object):
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a VirtualBox virtual machine from the list.", None))
         self.uiVMListLabel.setText(_translate("VirtualBoxVMWizard", "VM list:", None))
         self.uiBaseVMCheckBox.setText(_translate("VirtualBoxVMWizard", "Use as a linked base VM (experimental)", None))
-

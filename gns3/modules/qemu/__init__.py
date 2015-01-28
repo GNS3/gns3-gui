@@ -35,6 +35,7 @@ log = logging.getLogger(__name__)
 
 
 class Qemu(Module):
+
     """
     QEMU module.
     """
@@ -335,7 +336,7 @@ class Qemu(Module):
                     "adapters": self._qemu_vms[vm]["adapters"],
                     "adapter_type": self._qemu_vms[vm]["adapter_type"]}
 
-        #FIXME: this is ugly...
+        # FIXME: this is ugly...
         if self._qemu_vms[vm]["hda_disk_image"]:
             settings["hda_disk_image"] = self._qemu_vms[vm]["hda_disk_image"]
 
@@ -453,8 +454,8 @@ class Qemu(Module):
                  "default_symbol": qemu_vm["default_symbol"],
                  "hover_symbol": qemu_vm["hover_symbol"],
                  "categories": [qemu_vm["category"]]
-                }
-        )
+                 }
+            )
         return nodes
 
     @staticmethod

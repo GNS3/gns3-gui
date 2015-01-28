@@ -9,6 +9,7 @@ from ..utils.progress_dialog import ProgressDialog
 
 
 class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
+
     """
     Import cloud project dialog implementation.
     """

@@ -34,6 +34,7 @@ from ..settings import DEFAULT_LOCAL_SERVER_PORT
 
 
 class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
+
     """
     QWidget configuration page for server preferences.
     """
@@ -53,14 +54,14 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
 
-        #FIXME: temporally hide test button
+        # FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
             address_string = address.toString()
             if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
-                continue  #FIXME: finish IPv6 support (problem with ws4py)
+                continue  # FIXME: finish IPv6 support (problem with ws4py)
                 # we do not want the scope id when using an IPv6 address...
                 address.setScopeId("")
             self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
@@ -217,9 +218,9 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
             else:
                 server = servers.localServer()
                 if servers.localServerPath() != local_server_path or \
-                                server.host != local_server_host or \
-                                server.port != local_server_port or \
-                                servers.localServerAllowConsoleFromAnywhere() != local_server_allow_console_from_anywhere:
+                        server.host != local_server_host or \
+                        server.port != local_server_port or \
+                        servers.localServerAllowConsoleFromAnywhere() != local_server_allow_console_from_anywhere:
 
                     # first check if we have nodes on the local server
                     local_nodes = []
@@ -243,7 +244,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                     if server.connected() and not sys.platform.startswith('win'):
                         server.close_connection()
                     servers.stopLocalServer(wait=True)
-                    #TODO: ASK if the user wants to start local server
+                    # TODO: ASK if the user wants to start local server
                     if servers.startLocalServer(local_server_path, local_server_host, local_server_port):
                         self._thread = WaitForConnectionThread(local_server_host, local_server_port)
                         dialog = ProgressDialog(self._thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)

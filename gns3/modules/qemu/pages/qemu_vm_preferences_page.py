@@ -37,8 +37,8 @@ from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..dialogs.qemu_vm_wizard import QemuVMWizard
 
 
-
 class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
+
     """
     QWidget preference page for QEMU VM preferences.
     """

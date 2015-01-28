@@ -6,6 +6,7 @@ from gns3.main_window import MainWindow
 
 
 class TestTopology(TestCase):
+
     def setUp(self):
         self.t = Topology.instance()
 

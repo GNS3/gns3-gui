@@ -23,6 +23,7 @@ from ..qt import QtCore, QtGui
 
 
 class ShapeItem:
+
     """
     Base class to draw shapes on the scene.
     """

@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 
 
 class CloudBuilder(QThread):
+
     """
     """
     # Notify with progress amount and instance_id
@@ -55,7 +56,6 @@ class CloudBuilder(QThread):
 
     # Notify when instance id exists with builder and instance_id
     instanceIdExists = pyqtSignal(object, str)
-
 
     def __init__(self, parent, cloud_provider, ca_dir):
         super(QThread, self).__init__(parent)
@@ -124,7 +124,6 @@ class CloudBuilder(QThread):
         self.instanceCreated.emit(instance, key_pair)
         self._waitForPublicIP()
 
-
     def _waitForPublicIP(self):
         public_ip = None
         while public_ip is None:
@@ -171,6 +170,7 @@ cp vpcs_0.6_Linux64 /usr/local/bin/vpcs
 chmod a+x /usr/local/bin/vpcs
 killall python3 gns3server gns3dms
 '''
+
         def exec_command(client, cmd, wait_time=-1):
 
             cmd += '; exit $?'
@@ -194,7 +194,6 @@ killall python3 gns3server gns3dms
             log.debug('stdout: {}'.format(stdout_data.decode('utf-8')))
             log.debug('stderr: {}'.format(stderr_data.decode('utf-8')))
             return stdout_data, stderr_data
-
 
         # We might be attempting a connection before the instance is fully booted, so retry
         # when the ssh connection fails.

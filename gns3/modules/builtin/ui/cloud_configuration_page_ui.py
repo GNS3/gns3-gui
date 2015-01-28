@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_cloudConfigPageWidget(object):
+
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName(_fromUtf8("cloudConfigPageWidget"))
         cloudConfigPageWidget.resize(542, 500)
@@ -418,4 +421,3 @@ class Ui_cloudConfigPageWidget(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("cloudConfigPageWidget", "NIO NULL", None))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("cloudConfigPageWidget", "Misc.", None))
-

@@ -7,9 +7,11 @@ from ..qt import QtCore, QtGui
 
 
 class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
+
     """
     QWidget configuration page for cloud preferences.
     """
+
     def __init__(self):
 
         QtGui.QWidget.__init__(self)

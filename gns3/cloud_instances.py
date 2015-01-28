@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class CloudInstances(QtCore.QObject):
+
     """
     This class stores the instances that gns3 gui has started.  This can be different than the list
     of instances in the topology that can be changed when switching projects.  This list is not touched
@@ -37,7 +38,6 @@ class CloudInstances(QtCore.QObject):
     def __init__(self, *args, **kwargs):
         super(CloudInstances, self).__init__(*args, **kwargs)
         self._instances = []
-
 
     @staticmethod
     def instance():

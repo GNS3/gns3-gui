@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class ProcessFilesThread(QtCore.QThread):
+
     """
     Thread to process files (copy or move).
 

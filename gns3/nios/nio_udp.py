@@ -23,6 +23,7 @@ from .nio import NIO
 
 
 class NIOUDP(NIO):
+
     """
     NIO UDP.
 

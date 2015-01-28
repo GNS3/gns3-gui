@@ -85,7 +85,7 @@ QEMU_VM_SETTING_TYPES = {
 
 # Use a hardcoded list of binaries rather than a dynamic one so the user
 # doesn't require a running cloud instance to upload qemu images.
-QEMU_BINARIES_FOR_CLOUD = [
+QEMU_BINARIES_FOR_CLOUD = sorted([
     "qemu-system-arm",
     "qemu-system-microblaze",
     "qemu-system-mipsel",
@@ -112,5 +112,4 @@ QEMU_BINARIES_FOR_CLOUD = [
     "qemu-system-ppc64",
     "qemu-system-sparc",
     "qemu-system-xtensaeb",
-]
-QEMU_BINARIES_FOR_CLOUD.sort()
+])

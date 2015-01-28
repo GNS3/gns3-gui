@@ -14,6 +14,7 @@ the SSH server. This is similar to the openssh -L option.
 
 SSH_PORT = 22
 
+
 def get_host_port(spec, default_port):
     "parse 'hostname:22' into a host and port, with the port optional"
     args = (spec.split(':', 1) + [default_port])[:2]
@@ -55,8 +56,8 @@ def main():
     t = tunnel.Tunnel(server[0], server[1], username=options.user, client_key=my_key)
 
     print("Adding defaults ...")
-    t1 = t.add_endpoint('127.0.0.1',25)
-    t2 = t.add_endpoint('127.0.0.1',80)
+    t1 = t.add_endpoint('127.0.0.1', 25)
+    t2 = t.add_endpoint('127.0.0.1', 80)
 
     print("Adding command line destination")
     t3 = t.add_endpoint(remote[0], remote[1])

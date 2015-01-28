@@ -22,10 +22,10 @@ It is inspired by PyCute : http://gerard.vermeulen.free.fr
 
 import sys
 from .qt import QtCore, QtGui
-#from code import InteractiveInterpreter as Interpreter
+# from code import InteractiveInterpreter as Interpreter
 
 
-#===============================================================================
+# ===============================================================================
 # class MultipleRedirection:
 #     """ Dummy file which redirects stream to multiple file """
 #
@@ -39,9 +39,10 @@ from .qt import QtCore, QtGui
 #
 #         for f in self.files:
 #             f.write(str)
-#===============================================================================
+# ===============================================================================
 
 class PyCutExt(QtGui.QTextEdit):
+
     """
     PyCute is a Python shell for PyQt.
 
@@ -68,7 +69,7 @@ class PyCutExt(QtGui.QTextEdit):
 
         # capture all interactive input/output
         sys.stdout = self
-        #sys.stderr = MultipleRedirection((sys.stderr, self))
+        # sys.stderr = MultipleRedirection((sys.stderr, self))
         sys.stdin = self
 
         # last line + last incomplete lines
@@ -357,6 +358,7 @@ class PyCutExt(QtGui.QTextEdit):
 
 
 class SyntaxColor(object):
+
     """
     Allows to color python keywords.
     """

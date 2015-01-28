@@ -24,6 +24,7 @@ from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
 class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
+
     """
     Text editor dialog.
 

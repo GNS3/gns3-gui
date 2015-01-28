@@ -3,9 +3,11 @@ from ..qt import QtGui
 
 
 class ChoicesSpinBox(QtGui.QSpinBox):
+
     """
     A custom QSpinBox that shows only values contained in `choices` iterable
     """
+
     def __init__(self, choices, parent=None):
         super(ChoicesSpinBox, self).__init__(parent)
 
@@ -18,7 +20,7 @@ class ChoicesSpinBox(QtGui.QSpinBox):
         if idx < 0:
             idx = 0
         elif idx >= len(self._choices):
-            idx = len(self._choices)-1
+            idx = len(self._choices) - 1
 
         self._current_idx = idx
         self.setValue(self._choices[idx])
@@ -29,11 +31,9 @@ class ChoicesSpinBox(QtGui.QSpinBox):
         except ValueError:
             if p_int > self.maximum():
                 p_int = self.maximum()
-                self._current_idx = len(self._choices)-1
+                self._current_idx = len(self._choices) - 1
             elif p_int < self.minimum():
                 p_int = self.minimum()
                 self._current_idx = 0
 
         super(ChoicesSpinBox, self).setValue(p_int)
-
-

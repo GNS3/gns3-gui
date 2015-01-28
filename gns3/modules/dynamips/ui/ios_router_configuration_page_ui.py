@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_iosRouterConfigPageWidget(object):
+
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName(_fromUtf8("iosRouterConfigPageWidget"))
         iosRouterConfigPageWidget.resize(435, 510)
@@ -635,4 +638,3 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSensor4Label.setText(_translate("iosRouterConfigPageWidget", "NPE outlet:", None))
         self.uiSensor4SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " C", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiEnvironmentPageWidget), _translate("iosRouterConfigPageWidget", "Environment", None))
-

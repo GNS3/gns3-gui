@@ -26,6 +26,7 @@ log = logging.getLogger(__name__)
 
 
 class Node(QtCore.QObject):
+
     """
     Node implementation.
 

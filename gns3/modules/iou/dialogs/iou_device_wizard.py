@@ -34,6 +34,7 @@ from .. import IOU
 
 
 class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
+
     """
     Wizard to create an IOU device.
 
@@ -203,7 +204,7 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
                 server = "{}:{}".format(server.host, server.port)
             else:
                 server = self.uiRemoteServersComboBox.currentText()
-        else: # Cloud is selected
+        else:  # Cloud is selected
             server = "cloud"
 
         settings = {

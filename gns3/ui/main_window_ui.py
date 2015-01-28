@@ -17,34 +17,37 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.resize(984, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet(_fromUtf8("#toolBar_Devices QToolButton {\n"
-"width: 50px;\n"
-"height: 55px;\n"
-"border:solid 1px black opacity 0.4;\n"
-"background-none;\n"
-"}\n"
-"\n"
-"#toolBar_General QToolButton {\n"
-"width: 36px;\n"
-"height: 36px;\n"
-"border:solid 1px black opacity 0.4;\n"
-"background-none;\n"
-"}\n"
-"\n"
-""))
-        MainWindow.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks|QtGui.QMainWindow.AnimatedDocks)
+                                           "width: 50px;\n"
+                                           "height: 55px;\n"
+                                           "border:solid 1px black opacity 0.4;\n"
+                                           "background-none;\n"
+                                           "}\n"
+                                           "\n"
+                                           "#toolBar_General QToolButton {\n"
+                                           "width: 36px;\n"
+                                           "height: 36px;\n"
+                                           "border:solid 1px black opacity 0.4;\n"
+                                           "background-none;\n"
+                                           "}\n"
+                                           "\n"
+                                           ""))
+        MainWindow.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks | QtGui.QMainWindow.AnimatedDocks)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.uiCentralWidget = QtGui.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName(_fromUtf8("uiCentralWidget"))
@@ -97,7 +100,7 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidget.setEnabled(True)
         self.uiNodesDockWidget.setVisible(True)
         self.uiNodesDockWidget.setFloating(False)
-        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
+        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
         self.uiNodesDockWidget.setObjectName(_fromUtf8("uiNodesDockWidget"))
         self.uiNodesDockWidgetContents = QtGui.QWidget()
         self.uiNodesDockWidgetContents.setObjectName(_fromUtf8("uiNodesDockWidgetContents"))
@@ -159,7 +162,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiTopologySummaryDockWidget.sizePolicy().hasHeightForWidth())
         self.uiTopologySummaryDockWidget.setSizePolicy(sizePolicy)
-        self.uiTopologySummaryDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
+        self.uiTopologySummaryDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
         self.uiTopologySummaryDockWidget.setObjectName(_fromUtf8("uiTopologySummaryDockWidget"))
         self.uiTopologySummaryDockWidgetContents = QtGui.QWidget()
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)

@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class FrameRelaySwitch(Node):
+
     """
     Dynamips Frame-Relay switch.
 
@@ -398,7 +399,7 @@ class FrameRelaySwitch(Node):
                 port_info += "   Port {} is empty\n".format(port.name())
             else:
                 port_info += "   Port {name} {description}\n".format(name=port.name(),
-                                                                      description=port.description())
+                                                                     description=port.description())
 
             for source, destination in self._settings["mappings"].items():
                 source_port, source_dlci = source.split(":")

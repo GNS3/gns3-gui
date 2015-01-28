@@ -28,6 +28,7 @@ from ..settings import QEMU_SETTINGS
 
 
 class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
+
     """
     QWidget preference page for QEMU.
     """

@@ -172,7 +172,6 @@ class BaseCloudCtrl(object):
 
         return self.driver.list_nodes()
 
-
     def create_key_pair(self, name):
         """ Create and return a new Key Pair. """
 

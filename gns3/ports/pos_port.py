@@ -23,6 +23,7 @@ from .port import Port
 
 
 class POSPort(Port):
+
     """
     Packet over SONET port.
 

@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_CloudInspectorView(object):
+
     def setupUi(self, CloudInspectorView):
         CloudInspectorView.setObjectName(_fromUtf8("CloudInspectorView"))
         CloudInspectorView.resize(359, 283)
@@ -61,4 +64,3 @@ class Ui_CloudInspectorView(object):
         CloudInspectorView.setWindowTitle(_translate("CloudInspectorView", "Form", None))
         self.uiCreateInstanceGroupBox.setTitle(_translate("CloudInspectorView", "Create new Instance", None))
         self.uiCreateInstanceButton.setText(_translate("CloudInspectorView", "Create", None))
-

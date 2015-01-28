@@ -27,6 +27,7 @@ from ..ports.port import Port
 
 
 class SerialLinkItem(LinkItem):
+
     """
     Serial link for the scene.
 

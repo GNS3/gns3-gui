@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 
 
 class Servers(QtCore.QObject):
+
     """
     Server management class.
     """
@@ -68,11 +69,11 @@ class Servers(QtCore.QObject):
 
         # set the local server
         default_local_server_host = DEFAULT_LOCAL_SERVER_HOST
-        #try:
+        # try:
         #    address = socket.gethostbyname(socket.gethostname())
         #    if not address.startswith("127") and address != "::1":
         #        default_local_server_host = address
-        #except OSError as e:
+        # except OSError as e:
         #    log.warn("could not determine a default local server address other than 127.0.0.1: {}".format(e))
         local_server_host = settings.value("local_server_host", default_local_server_host)
         local_server_port = settings.value("local_server_port", DEFAULT_LOCAL_SERVER_PORT, type=int)
@@ -199,7 +200,7 @@ class Servers(QtCore.QObject):
 
     def stopLocalServer(self, wait=False):
 
-        #if self._local_server and self._local_server.connected() and not sys.platform.startswith('win'):
+        # if self._local_server and self._local_server.connected() and not sys.platform.startswith('win'):
         #    # only gracefully disconnect if we are not on Windows
         #    self._local_server.close_connection()
         if self._local_server_proccess and self._local_server_proccess.poll() is None:
@@ -288,7 +289,7 @@ class Servers(QtCore.QObject):
         """
 
         for server_id, server in self._remote_servers.copy().items():
-            if not server_id in servers:
+            if server_id not in servers:
                 if server.connected():
                     server.close()
                 log.info("remote server connection {} unregistered".format(server.url))

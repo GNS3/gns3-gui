@@ -11,6 +11,7 @@ from gns3.main_window import CLOUD_SETTINGS_GROUP
 
 
 class TestCloudPreferencesPage(TestCase):
+
     def setUp(self):
         self.app = QApplication(sys.argv)
         self.app.setOrganizationName("GNS3")

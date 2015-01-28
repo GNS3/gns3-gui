@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_IOUDeviceWizard(object):
+
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName(_fromUtf8("IOUDeviceWizard"))
         IOUDeviceWizard.resize(514, 366)
@@ -123,4 +126,3 @@ class Ui_IOUDeviceWizard(object):
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:", None))
         self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse...", None))
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:", None))
-

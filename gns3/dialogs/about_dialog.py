@@ -21,6 +21,7 @@ from ..ui.about_dialog_ui import Ui_AboutDialog
 
 
 class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
+
     """
     About dialog.
     """

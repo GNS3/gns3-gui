@@ -25,6 +25,7 @@ from ..ui.ethernet_switch_configuration_page_ui import Ui_ethernetSwitchConfigPa
 
 
 class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPageWidget):
+
     """
     QWidget configuration page for Ethernet switches.
     """

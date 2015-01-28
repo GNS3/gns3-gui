@@ -39,6 +39,7 @@ from ..dialogs.iou_device_wizard import IOUDeviceWizard
 
 
 class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget):
+
     """
     QWidget preference page for IOU image & device preferences.
     """
@@ -336,5 +337,5 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Saves the IOU devices preferences.
         """
 
-        #self._iouImageSaveSlot()
+        # self._iouImageSaveSlot()
         IOU.instance().setIOUDevices(self._iou_devices)

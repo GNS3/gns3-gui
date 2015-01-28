@@ -25,6 +25,7 @@ from .modules import MODULES
 
 
 class NodesView(QtGui.QTreeWidget):
+
     """
     Nodes view to list the nodes.
 
@@ -76,7 +77,7 @@ class NodesView(QtGui.QTreeWidget):
         """
 
         # check the left button isn't used and that an item has been selected.
-        if event.buttons() != QtCore.Qt.LeftButton or self.currentItem() == None:
+        if event.buttons() != QtCore.Qt.LeftButton or self.currentItem() is None:
             return
 
         item = self.currentItem()

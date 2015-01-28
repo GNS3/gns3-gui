@@ -27,8 +27,10 @@ if enable_debug:
     log.addHandler(log_console)
     log.debug("DEBUG IS ENABLED")
 
+
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
+
 
 class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
@@ -41,17 +43,17 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             log.critical('Incoming request to %s:%s failed: %s' % (
                 self.remote_address,
                 repr(e)
-                )
+            )
             )
             return
 
         if chan is None:
             log.critical('Incoming request to %s:%s was rejected by the SSH server.' %
-                    (self.remote_address))
+                         (self.remote_address))
             return
 
         log.debug('Connected!  Tunnel open %r -> %r -> %r' % (self.request.getpeername(),
-            chan.getpeername(), self.remote_address))
+                                                              chan.getpeername(), self.remote_address))
 
         while True:
             r, w, x = select.select([self.request, chan], [], [])
@@ -73,6 +75,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
 
 class Endpoint(object):
+
     def __init__(self, local_address, remote_address, transport):
         """
         Store local and remote tunnel address information in the format:
@@ -86,7 +89,7 @@ class Endpoint(object):
         self.server = None
 
     def get(self):
-        return ( self.local_address, self.remote_address )
+        return (self.local_address, self.remote_address)
 
     def log_msg(self, msg):
         if self.thread:
@@ -94,15 +97,14 @@ class Endpoint(object):
         else:
             thread_name = "Creating ID"
 
-        log.info("%s: local %s:%s for remote %s:%s - %s" %(
-                thread_name,
-                self.local_address[0],
-                self.local_address[1],
-                self.remote_address[0],
-                self.remote_address[1],
-                msg,
-            ))
-
+        log.info("%s: local %s:%s for remote %s:%s - %s" % (
+            thread_name,
+            self.local_address[0],
+            self.local_address[1],
+            self.remote_address[0],
+            self.remote_address[1],
+            msg,
+        ))
 
     def _enable(self, local_address, remote_address, ssh_transport):
         # https://github.com/paramiko/paramiko/blob/master/demos/forward.py

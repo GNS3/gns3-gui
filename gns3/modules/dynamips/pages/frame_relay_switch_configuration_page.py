@@ -24,6 +24,7 @@ from ..ui.frame_relay_switch_configuration_page_ui import Ui_frameRelaySwitchCon
 
 
 class FrameRelaySwitchConfigurationPage(QtGui.QWidget, Ui_frameRelaySwitchConfigPageWidget):
+
     """
     QWidget configuration page for Frame Relay switches.
     """
@@ -65,7 +66,7 @@ class FrameRelaySwitchConfigurationPage(QtGui.QWidget, Ui_frameRelaySwitchConfig
         """
 
         item = self.uiMappingTreeWidget.currentItem()
-        if item != None:
+        if item is not None:
             self.uiDeletePushButton.setEnabled(True)
         else:
             self.uiDeletePushButton.setEnabled(False)
@@ -108,7 +109,7 @@ class FrameRelaySwitchConfigurationPage(QtGui.QWidget, Ui_frameRelaySwitchConfig
 
         item = self.uiMappingTreeWidget.currentItem()
         if item:
-            #connected_ports = self.node.getConnectedInterfaceList()
+            # connected_ports = self.node.getConnectedInterfaceList()
             source = item.text(0)
             source_port = int(source.split(':')[0])
             destination = item.text(1)

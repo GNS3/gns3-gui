@@ -22,6 +22,7 @@ log = logging.getLogger(__name__)
 
 
 class Project:
+
     """Current project"""
 
     def __init__(self):
@@ -88,4 +89,3 @@ class Project:
         self._uuid = params["uuid"]
         log.info("Project {} created".format(self._uuid))
         # TODO: call all server when we got uuid
-

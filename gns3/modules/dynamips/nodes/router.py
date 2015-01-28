@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 
 
 class Router(Node):
+
     """
     Dynamips router (client implementation).
 
@@ -363,12 +364,12 @@ class Router(Node):
 
         # push the startup-config
         if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-        and not self.server().isLocal() and os.path.isfile(new_settings["startup_config"]):
+                and not self.server().isLocal() and os.path.isfile(new_settings["startup_config"]):
             params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
 
         # push the private-config
         if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"] \
-        and not self.server().isLocal() and os.path.isfile(new_settings["private_config"]):
+                and not self.server().isLocal() and os.path.isfile(new_settings["private_config"]):
             params["private_config_base64"] = self._base64Config(new_settings["private_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
@@ -791,7 +792,7 @@ class Router(Node):
 
         slot_info = ""
         for name, value in self._settings.items():
-            if name.startswith("slot") and value != None:
+            if name.startswith("slot") and value is not None:
                 slot_number = int(name[-1])
                 adapter_name = value
                 nb_ports = ADAPTER_MATRIX[adapter_name]["nb_ports"]
@@ -819,7 +820,7 @@ class Router(Node):
                         slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
                                                                                     port_description=port_info.description())
 
-            if name.startswith("wic") and value != None:
+            if name.startswith("wic") and value is not None:
                 wic_slot_number = int(name[-1])
                 wic_name = value
                 nb_ports = WIC_MATRIX[wic_name]["nb_ports"]
@@ -875,7 +876,7 @@ class Router(Node):
 
         # get info about JIT sharing
         jitsharing_group_info = "No JIT blocks sharing enabled"
-        if self._settings["jit_sharing_group"] != None:
+        if self._settings["jit_sharing_group"] is not None:
             jitsharing_group_info = "JIT blocks sharing group is {group}".format(group=self._settings["jit_sharing_group"])
 
         # get info about Idle-PC
@@ -911,7 +912,7 @@ class Router(Node):
            disk0=self._settings["disk0"],
            disk1=self._settings["disk1"])
 
-        #gather information about PA, their interfaces and connections
+        # gather information about PA, their interfaces and connections
         slot_info = self._slot_info()
         return info + slot_info
 

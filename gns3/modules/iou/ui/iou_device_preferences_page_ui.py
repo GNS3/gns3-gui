@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_IOUDevicePreferencesPageWidget(object):
+
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName(_fromUtf8("IOUDevicePreferencesPageWidget"))
         IOUDevicePreferencesPageWidget.resize(684, 516)
@@ -78,4 +81,3 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiNewIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&New", None))
         self.uiEditIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&Edit", None))
         self.uiDeleteIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "Delete", None))
-

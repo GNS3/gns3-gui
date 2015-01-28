@@ -30,6 +30,7 @@ from ..settings import ENABLE_CLOUD
 
 
 class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
+
     """
     Preferences dialog implementation.
 

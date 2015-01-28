@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_VirtualBoxPreferencesPageWidget(object):
+
     def setupUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setObjectName(_fromUtf8("VirtualBoxPreferencesPageWidget"))
         VirtualBoxPreferencesPageWidget.resize(432, 508)
@@ -163,4 +166,3 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "Advanced settings", None))
         self.uiTestSettingsPushButton.setText(_translate("VirtualBoxPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("VirtualBoxPreferencesPageWidget", "Restore defaults", None))
-

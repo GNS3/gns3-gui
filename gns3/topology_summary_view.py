@@ -30,6 +30,7 @@ log = logging.getLogger(__name__)
 
 
 class TopologyNodeItem(QtGui.QTreeWidgetItem):
+
     """
     Custom item for the QTreeWidget instance
     (topology summary view).
@@ -125,6 +126,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
 
 class TopologySummaryView(QtGui.QTreeWidget):
+
     """
     Topology summary view implementation.
 
@@ -241,7 +243,7 @@ class TopologySummaryView(QtGui.QTreeWidget):
             menu.addAction(devices_with_capture)
         else:
             show_all_devices = QtGui.QAction("Show all devices", menu)
-            #show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
+            # show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
             self.connect(show_all_devices, QtCore.SIGNAL('triggered()'), self._showAllDevicesSlot)
             menu.addAction(show_all_devices)
 

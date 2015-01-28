@@ -27,6 +27,7 @@ from ..version import __version__
 
 
 class AnalyticsClient(object):
+
     """
     Google analytics client to send events.
     """
@@ -47,12 +48,12 @@ class AnalyticsClient(object):
             self._visitor_id = self._generate_visitor_id()
 
         url = "http://www.google-analytics.com/__utm.gif?utmwv=5.3.6&utmac={property}" \
-        "&utmcc=__utma%3D999.999.999.999.999.1%3B&utmvid={visitor}&utmt=event&" \
-        "utme=5%28{category}*{action}*{label}%29".format(property=self._property_id,
-                                                         visitor=self._visitor_id,
-                                                         category=quote(category),
-                                                         action=quote(action),
-                                                         label=quote(label))
+            "&utmcc=__utma%3D999.999.999.999.999.1%3B&utmvid={visitor}&utmt=event&" \
+            "utme=5%28{category}*{action}*{label}%29".format(property=self._property_id,
+                                                             visitor=self._visitor_id,
+                                                             category=quote(category),
+                                                             action=quote(action),
+                                                             label=quote(label))
 
         if value is not None:
             url += "%28{value}%29".format(value=value)
@@ -69,5 +70,3 @@ class AnalyticsClient(object):
 if __name__ == '__main__':
     client = AnalyticsClient()
     client.send_event("Windows installer", "Install", __version__)
-
-

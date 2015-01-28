@@ -23,6 +23,7 @@ from .nio import NIO
 
 
 class NIOUNIX(NIO):
+
     """
     UNIX NIO.
 

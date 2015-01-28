@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class EthernetHub(Node):
+
     """
     Dynamips Ethernet hub.
 
@@ -169,7 +170,6 @@ class EthernetHub(Node):
                 log.debug("port {} has been added".format(port_name))
 
             self._settings["ports"] = new_settings["ports"].copy()
-
 
         params = {}
         if "name" in new_settings and new_settings["name"] != self.name():

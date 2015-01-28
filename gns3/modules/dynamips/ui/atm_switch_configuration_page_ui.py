@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_atmSwitchConfigPageWidget(object):
+
     def setupUi(self, atmSwitchConfigPageWidget):
         atmSwitchConfigPageWidget.setObjectName(_fromUtf8("atmSwitchConfigPageWidget"))
         atmSwitchConfigPageWidget.resize(459, 419)
@@ -198,4 +201,3 @@ class Ui_atmSwitchConfigPageWidget(object):
         self.uiDestinationPortLabel.setText(_translate("atmSwitchConfigPageWidget", "Port:", None))
         self.uiDestinationVPILabel.setText(_translate("atmSwitchConfigPageWidget", "VPI:", None))
         self.uiDestinationVCILabel.setText(_translate("atmSwitchConfigPageWidget", "VCI:", None))
-

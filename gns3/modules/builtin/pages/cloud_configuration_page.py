@@ -25,6 +25,7 @@ from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
 
 
 class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
+
     """
     QWidget configuration page for clouds.
     """
@@ -105,7 +106,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         interface = self.uiGenericEthernetLineEdit.text()
         if interface:
             nio = "nio_gen_eth:{interface}".format(interface=interface)
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiGenericEthernetListWidget.addItem(nio)
                 self._nios.append(nio)
 
@@ -154,7 +155,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         interface = self.uiLinuxEthernetLineEdit.text()
         if interface:
             nio = "nio_gen_linux:{interface}".format(interface=interface)
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiLinuxEthernetListWidget.addItem(nio)
                 self._nios.append(nio)
 
@@ -212,7 +213,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_udp:{lport}:{rhost}:{rport}".format(lport=local_port,
                                                            rhost=remote_host,
                                                            rport=remote_port)
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiNIOUDPListWidget.addItem(nio)
                 self._nios.append(nio)
                 self.uiLocalPortSpinBox.setValue(local_port + 1)
@@ -268,7 +269,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         tap_interface = self.uiNIOTAPLineEdit.text()
         if tap_interface:
             nio = "nio_tap:{}".format(tap_interface.lower())
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiNIOTAPListWidget.addItem(nio)
                 self._nios.append(nio)
 
@@ -325,7 +326,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         if local_file and remote_file:
             nio = "nio_unix:{local}:{remote}".format(local=local_file,
                                                      remote=remote_file)
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiNIOUNIXListWidget.addItem(nio)
                 self._nios.append(nio)
 
@@ -381,7 +382,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         local_file = self.uiVDELocalFileLineEdit.text()
         if local_file and control_file:
             nio = "nio_vde:{control}:{local}".format(control=control_file, local=local_file)
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiNIOVDEListWidget.addItem(nio)
                 self._nios.append(nio)
 
@@ -433,7 +434,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
         identifier = self.uiNIONullIdentiferLineEdit.text()
         if identifier:
             nio = "nio_null:{}".format(identifier)
-            if not nio in self._nios:
+            if nio not in self._nios:
                 self.uiNIONullListWidget.addItem(nio)
                 self._nios.append(nio)
 

@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_SnapshotsDialog(object):
+
     def setupUi(self, SnapshotsDialog):
         SnapshotsDialog.setObjectName(_fromUtf8("SnapshotsDialog"))
         SnapshotsDialog.setWindowModality(QtCore.Qt.WindowModal)
@@ -60,4 +63,3 @@ class Ui_SnapshotsDialog(object):
         self.uiCreatePushButton.setText(_translate("SnapshotsDialog", "&Create", None))
         self.uiRestorePushButton.setText(_translate("SnapshotsDialog", "&Restore", None))
         self.uiDeletePushButton.setText(_translate("SnapshotsDialog", "&Delete", None))
-

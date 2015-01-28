@@ -27,6 +27,7 @@ from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 
 class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
+
     """
     QWidget configuration page for VPCS devices.
     """
@@ -35,7 +36,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        #self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
+        # self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
 
     # def _scriptFileBrowserSlot(self):
     #     """
@@ -75,9 +76,9 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
             self.uiNameLineEdit.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-            #self.uiScriptFileLabel.hide()
-            #self.uiScriptFileLineEdit.hide()
-            #self.uiScriptFileToolButton.hide()
+            # self.uiScriptFileLabel.hide()
+            # self.uiScriptFileLineEdit.hide()
+            # self.uiScriptFileToolButton.hide()
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -101,8 +102,8 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
             settings["console"] = self.uiConsolePortSpinBox.value()
 
-            #script_file = self.uiScriptFileLineEdit.text()
-            #if script_file != settings["script_file"]:
+            # script_file = self.uiScriptFileLineEdit.text()
+            # if script_file != settings["script_file"]:
             #    if os.access(script_file, os.R_OK):
             #        settings["script_file"] = script_file
             #    else:

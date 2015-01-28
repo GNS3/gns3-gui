@@ -48,6 +48,7 @@ log = logging.getLogger(__name__)
 
 
 class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget):
+
     """
     QWidget preference page for IOS routers.
     """

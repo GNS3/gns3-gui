@@ -25,12 +25,12 @@ import tempfile
 def RunInTerminal(command):
 
     if sys.platform.startswith("win"):
-        if not "ComSpec" in os.environ:
+        if "ComSpec" not in os.environ:
             raise OSError("ComSpec environment variable is not set")
         terminal_cmd = "{} /K cd %TEMP% && {}".format(os.environ['ComSpec'], command)
     elif sys.platform.startswith('darwin'):
-            terminal_cmd = "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"{}; exit\"'".format(command)
-            terminal_cmd = shlex.split(terminal_cmd)
+        terminal_cmd = "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"{}; exit\"'".format(command)
+        terminal_cmd = shlex.split(terminal_cmd)
     else:
         terminal_cmd = None
         for path in os.environ["PATH"].split(os.pathsep):

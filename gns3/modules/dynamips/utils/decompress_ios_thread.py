@@ -24,6 +24,7 @@ from .decompress_ios import decompressIOS
 
 
 class DecompressIOSThread(QtCore.QThread):
+
     """
     Thread to decompress an IOS image.
 

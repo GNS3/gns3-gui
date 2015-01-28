@@ -26,6 +26,7 @@ from ..ports.port import Port
 
 
 class EthernetLinkItem(LinkItem):
+
     """
     Ethernet link for the scene.
 

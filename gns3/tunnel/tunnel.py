@@ -29,6 +29,7 @@ if enable_debug:
     log.addHandler(log_console)
     log.debug("DEBUG IS ENABLED")
 
+
 class Tunnel(object):
 
     def __init__(self, hostname, port, username=None, password=None, client_key=None, server_key=None):
@@ -41,7 +42,7 @@ class Tunnel(object):
         """
         self.server = (hostname, int(port))
 
-        self.auth_data={}
+        self.auth_data = {}
         self.auth_data['username'] = username
         self.auth_data['password'] = password
 
@@ -64,7 +65,7 @@ class Tunnel(object):
         Makes the SSH connection to the remote server
         """
 
-        log.info("Connecting to server: %s:%s" %(self.server))
+        log.info("Connecting to server: %s:%s" % (self.server))
         self.transport.connect(**self.auth_data)
         self.is_connected()
 
@@ -93,20 +94,19 @@ class Tunnel(object):
         Verifies the SSH connection is up and authenticated
         """
 
-        if self.transport.is_active() == False:
-            log.critical("Connection is down: %s" %(self.server[0]))
+        if self.transport.is_active() is False:
+            log.critical("Connection is down: %s" % (self.server[0]))
             self.connected = False
             return self.connected
 
-        if self.transport.is_authenticated() == False:
-            log.critical("Authentication failed: %s" %(self.server[0]))
+        if self.transport.is_authenticated() is False:
+            log.critical("Authentication failed: %s" % (self.server[0]))
             self.connected = False
         else:
-            log.info("Connection is up: %s" %(self.server[0]))
+            log.info("Connection is up: %s" % (self.server[0]))
             self.connected = True
 
         return self.connected
-
 
     def disconnect(self):
         for name, end_point in self.end_points.items():

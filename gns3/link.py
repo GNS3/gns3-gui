@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class Link(QtCore.QObject):
+
     """
     Link implementation.
 

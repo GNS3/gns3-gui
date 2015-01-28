@@ -31,7 +31,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-#TODO: support more than just Vbox (Qemu maybe?)
+# TODO: support more than just Vbox (Qemu maybe?)
 def serialConsole(vmname):
     """
     :param vmname: Virtual machine name.

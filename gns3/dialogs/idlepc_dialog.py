@@ -23,6 +23,7 @@ from ..ui.idlepc_dialog_ui import Ui_IdlePCDialog
 
 
 class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
+
     """
     Idle-PC dialog.
     """
@@ -84,4 +85,3 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
         if result:
             self._applySlot()
         QtGui.QDialog.done(self, result)
-

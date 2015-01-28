@@ -23,6 +23,7 @@ from .port import Port
 
 
 class ATMPort(Port):
+
     """
     ATM port.
 

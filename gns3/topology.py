@@ -71,7 +71,9 @@ class TopologyInstance:
         self.ssl_ca = ssl_ca
         self.ssl_ca_file = ssl_ca_file
 
+
 class Topology(object):
+
     """
     Topology.
     """
@@ -97,7 +99,7 @@ class Topology(object):
         :param node: Node instance
         """
 
-        #self._topology.add_node(node)
+        # self._topology.add_node(node)
         self._nodes.append(node)
 
     def removeNode(self, node):
@@ -129,7 +131,7 @@ class Topology(object):
         :param link: Link instance
         """
 
-        #self._topology.add_node(node)
+        # self._topology.add_node(node)
         self._links.append(link)
 
     def removeLink(self, link):
@@ -332,7 +334,7 @@ class Topology(object):
         Resets this topology.
         """
 
-        #self._topology.clear()
+        # self._topology.clear()
         self._links.clear()
         self._nodes.clear()
         self._notes.clear()

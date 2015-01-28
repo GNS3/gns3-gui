@@ -33,6 +33,7 @@ from ..node import Node
 
 
 class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
+
     """
     Snapshots dialog implementation.
 
@@ -145,7 +146,7 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
             if hasattr(node, "start") and node.status() == Node.started:
                 node.stop()
 
-        #FIXME: problably a bug when restoring a snapshot and the project name has changed.
+        # FIXME: problably a bug when restoring a snapshot and the project name has changed.
         thread = ProcessFilesThread(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
         thread.deleteLater()
         progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)

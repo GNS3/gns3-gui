@@ -27,6 +27,7 @@ from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_T
 
 
 class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
+
     """
     QWidget configuration page for general preferences.
     """
@@ -142,8 +143,8 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         QtGui.QMessageBox.information(self, "Configuration file", "Configuration file imported, default settings will be applied after a restart")
 
-        #TODO: implement restart
-        #QtCore.QProcess.startDetached(QtGui.QApplication.arguments()[0], QtGui.QApplication.arguments())
+        # TODO: implement restart
+        # QtCore.QProcess.startDetached(QtGui.QApplication.arguments()[0], QtGui.QApplication.arguments())
         QtGui.QApplication.quit()
 
     def _exportConfigurationFileSlot(self):
@@ -173,7 +174,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         selected_font, ok = QtGui.QFontDialog.getFont(self.uiDefaultLabelStylePlainTextEdit.font(), self)
         if ok:
             self.uiDefaultLabelStylePlainTextEdit.setFont(selected_font)
-
 
     def _setDefaultLabelColorSlot(self):
         """

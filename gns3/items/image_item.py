@@ -23,6 +23,7 @@ from ..qt import QtCore, QtGui
 
 
 class ImageItem(QtGui.QGraphicsPixmapItem):
+
     """
     Class to insert an image on the scene.
     """

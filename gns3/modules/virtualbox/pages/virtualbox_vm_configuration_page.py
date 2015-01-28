@@ -26,6 +26,7 @@ from ..ui.virtualbox_vm_configuration_page_ui import Ui_virtualBoxVMConfigPageWi
 
 
 class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidget):
+
     """
     QWidget configuration page for VirtualBox VMs.
     """
@@ -43,7 +44,7 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
                                               "Intel PRO/1000 MT Server (82545EM)",
                                               "Paravirtualized Network (virtio-net)"])
 
-        #TODO: finish VM name change
+        # TODO: finish VM name change
         self.uiVMListLabel.hide()
         self.uiVMListComboBox.hide()
 
@@ -124,7 +125,6 @@ class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
             del settings["name"]
             del settings["console"]
             del settings["enable_remote_console"]
-
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()

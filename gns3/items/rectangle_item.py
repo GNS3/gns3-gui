@@ -24,6 +24,7 @@ from .shape_item import ShapeItem
 
 
 class RectangleItem(ShapeItem, QtGui.QGraphicsRectItem):
+
     """
     Class to draw a rectangle on the scene.
     """

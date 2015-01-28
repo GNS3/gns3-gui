@@ -23,6 +23,7 @@ from .nio import NIO
 
 
 class NIOVDE(NIO):
+
     """
     VDE NIO.
 

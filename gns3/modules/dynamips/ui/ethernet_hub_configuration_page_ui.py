@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_ethernetHubConfigPageWidget(object):
+
     def setupUi(self, ethernetHubConfigPageWidget):
         ethernetHubConfigPageWidget.setObjectName(_fromUtf8("ethernetHubConfigPageWidget"))
         ethernetHubConfigPageWidget.resize(381, 270)
@@ -70,4 +73,3 @@ class Ui_ethernetHubConfigPageWidget(object):
         self.uiSettingsGroupBox.setTitle(_translate("ethernetHubConfigPageWidget", "Settings", None))
         self.uiNameLabel.setText(_translate("ethernetHubConfigPageWidget", "Name:", None))
         self.uiPortsLabel.setText(_translate("ethernetHubConfigPageWidget", "Number of ports:", None))
-

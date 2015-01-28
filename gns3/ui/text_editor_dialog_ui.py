@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_TextEditorDialog(object):
+
     def setupUi(self, TextEditorDialog):
         TextEditorDialog.setObjectName(_fromUtf8("TextEditorDialog"))
         TextEditorDialog.resize(457, 333)
@@ -70,7 +73,7 @@ class Ui_TextEditorDialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtGui.QDialogButtonBox(TextEditorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -88,7 +91,7 @@ class Ui_TextEditorDialog(object):
         self.uiColorLabel.setText(_translate("TextEditorDialog", "Color:", None))
         self.uiRotationLabel.setText(_translate("TextEditorDialog", "Rotation:", None))
         self.uiRotationSpinBox.setToolTip(_translate("TextEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
-"editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)", None))
+                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)", None))
         self.uiRotationSpinBox.setSuffix(_translate("TextEditorDialog", "°", None))
         self.uiApplyTextToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the text below to all selected items", None))
         self.uiFontPushButton.setText(_translate("TextEditorDialog", "&Select font", None))

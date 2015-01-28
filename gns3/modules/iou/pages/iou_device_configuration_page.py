@@ -29,6 +29,7 @@ from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
 
 class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
+
     """
     QWidget configuration page for IOU devices.
     """

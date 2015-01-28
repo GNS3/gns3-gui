@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_virtualBoxVMConfigPageWidget(object):
+
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName(_fromUtf8("virtualBoxVMConfigPageWidget"))
         virtualBoxVMConfigPageWidget.resize(509, 346)
@@ -127,4 +130,3 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiAdapterStartIndexLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Start at:", None))
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network", None))
-

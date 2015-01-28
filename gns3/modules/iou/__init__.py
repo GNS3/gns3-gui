@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 
 
 class IOU(Module):
+
     """
     IOU module.
     """
@@ -530,7 +531,7 @@ class IOU(Module):
                  "default_symbol": iou_device["default_symbol"],
                  "hover_symbol": iou_device["hover_symbol"],
                  "categories": [iou_device["category"]]
-                }
+                 }
             )
         return nodes
 

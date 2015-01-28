@@ -24,6 +24,7 @@ from gns3.modules.vpcs import VPCS
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 
+
 @pytest.fixture
 def vpcs(local_server, project):
     vpcs = VPCSDevice(VPCS(), local_server, project)
@@ -56,6 +57,7 @@ def test_vpcs_device_setup(vpcs):
         args[2](params)
 
         assert vpcs.uuid == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+
 
 def test_vpcs_device_start(vpcs):
 

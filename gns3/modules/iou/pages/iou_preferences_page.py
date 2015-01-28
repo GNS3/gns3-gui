@@ -31,6 +31,7 @@ from ..settings import IOU_SETTINGS
 
 
 class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
+
     """
     QWidget preference page for IOU.
     """
@@ -52,7 +53,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
-        #FIXME: temporally hide test button
+        # FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
 
     def _iourcPathBrowserSlot(self):
@@ -131,7 +132,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
         if error:
             pass
-            #log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
+            # log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
 
         print("Report received")
         print(result)

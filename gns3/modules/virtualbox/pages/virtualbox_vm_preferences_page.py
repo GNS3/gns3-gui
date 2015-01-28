@@ -35,6 +35,7 @@ from ..dialogs.virtualbox_vm_wizard import VirtualBoxVMWizard
 
 
 class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageWidget):
+
     """
     QWidget preference page for VirtualBox VM preferences.
     """
@@ -226,5 +227,5 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         Saves the VirtualBox VM preferences.
         """
 
-        #self._vboxVMSaveSlot()
+        # self._vboxVMSaveSlot()
         VirtualBox.instance().setVirtualBoxVMs(self._virtualbox_vms)

@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_StyleEditorDialog(object):
+
     def setupUi(self, StyleEditorDialog):
         StyleEditorDialog.setObjectName(_fromUtf8("StyleEditorDialog"))
         StyleEditorDialog.resize(328, 252)
@@ -79,7 +82,7 @@ class Ui_StyleEditorDialog(object):
         self.verticalLayout.addWidget(self.uiStyleSettingsGroupBox)
         self.uiButtonBox = QtGui.QDialogButtonBox(StyleEditorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.verticalLayout.addWidget(self.uiButtonBox)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -100,7 +103,7 @@ class Ui_StyleEditorDialog(object):
         self.uiBorderStyleLabel.setText(_translate("StyleEditorDialog", "Border style:", None))
         self.uiRotationLabel.setText(_translate("StyleEditorDialog", "Rotation:", None))
         self.uiRotationSpinBox.setToolTip(_translate("StyleEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
-"editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)", None))
+                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)", None))
         self.uiRotationSpinBox.setSuffix(_translate("StyleEditorDialog", "°", None))
 
 from . import resources_rc

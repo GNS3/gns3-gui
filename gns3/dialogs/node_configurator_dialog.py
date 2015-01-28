@@ -24,6 +24,7 @@ from ..ui.node_configurator_dialog_ui import Ui_NodeConfiguratorDialog
 
 
 class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
+
     """
     Node configurator implementation.
 
@@ -65,7 +66,7 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
                 continue
             group_name = " {} group".format(str(node_item.node()))
             parent = group_name
-            if not parent in self._parent_items:
+            if parent not in self._parent_items:
                 item = QtGui.QTreeWidgetItem(self.uiNodesTreeWidget, [group_name])
                 item.setIcon(0, QtGui.QIcon(node_item.node().defaultSymbol()))
                 item.setExpanded(True)
@@ -165,7 +166,7 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
                 page.saveSettings(settings, node, group=True)
                 for index in range(0, item.childCount()):
                     child = item.child(index)
-                    #child.node().update(settings)  #TODO: delete
+                    # child.node().update(settings)  #TODO: delete
                     child.settings().update(settings)
 
         # update the nodes with the settings
@@ -201,6 +202,7 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
 
 
 class ConfigurationPageItem(QtGui.QTreeWidgetItem):
+
     """
     Item for the QTreeWidget instance.
     Store temporary node settings configured in a page widget.
@@ -269,6 +271,7 @@ class ConfigurationPageItem(QtGui.QTreeWidgetItem):
 
 
 class ConfigurationError(Exception):
+
     """
     Exception to be raised when a configuration error occurs.
     """

@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_QemuVMConfigPageWidget(object):
+
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName(_fromUtf8("QemuVMConfigPageWidget"))
         QemuVMConfigPageWidget.resize(486, 407)
@@ -274,4 +277,3 @@ class Ui_QemuVMConfigPageWidget(object):
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings", None))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:", None))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings", None))
-

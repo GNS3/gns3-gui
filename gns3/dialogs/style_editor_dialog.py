@@ -24,6 +24,7 @@ from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 
 
 class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
+
     """
     Style editor dialog.
 

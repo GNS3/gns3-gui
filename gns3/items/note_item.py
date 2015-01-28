@@ -23,6 +23,7 @@ from ..qt import QtCore, QtGui
 
 
 class NoteItem(QtGui.QGraphicsTextItem):
+
     """
     Text note for the QGraphicsView.
 
@@ -77,9 +78,9 @@ class NoteItem(QtGui.QGraphicsTextItem):
         """
 
         self._editable = value
-        #if not self._editable:
+        # if not self._editable:
         #    self.setFlag(self.ItemIsSelectable, enabled=False)
-        #else:
+        # else:
         #    self.setFlag(self.ItemIsSelectable)
 
     def keyPressEvent(self, event):

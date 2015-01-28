@@ -29,6 +29,7 @@ from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
 
 class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
+
     """
     QWidget configuration page for IOS routers.
     """
@@ -168,7 +169,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         for slot_number, slot_adapters in ADAPTER_MATRIX[platform][chassis].items():
             self._widget_slots[slot_number].setEnabled(True)
 
-            if type(slot_adapters) == str:
+            if isinstance(slot_adapters, str):
                 # only one default adapter for this slot.
                 self._widget_slots[slot_number].addItem(slot_adapters)
             else:
@@ -313,7 +314,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 else:
                     self.uiPowerSupply2ComboBox.setCurrentIndex(1)
             else:
-               self.uiTabWidget.removeTab(4)  # environment tab
+                self.uiTabWidget.removeTab(4)  # environment tab
 
             # all platforms but c7200 have the iomem feature
             # let"s hide these widgets.
@@ -399,7 +400,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 if index != -1:
                     self._widget_slots[slot_number].setCurrentIndex(index)
                 QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter {}, please remove it first".format(node_port.name(),
-                                                                                                                                              adapter))
+                                                                                                                                            adapter))
                 raise ConfigurationError()
 
     def _checkForLinkConnectedToWIC(self, wic_number, settings, node):
@@ -432,7 +433,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         :param group: indicates the settings apply to a group of routers
         """
 
-        #print("saving {}".format(group))
+        # print("saving {}".format(group))
 
         # these settings cannot be shared by nodes and updated
         # in the node configurator.
@@ -458,16 +459,16 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             settings["aux"] = self.uiAuxPortSpinBox.value()
 
             # check and save the base MAC address
-            #mac = self.uiBaseMACLineEdit.text()
-            #if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
+            # mac = self.uiBaseMACLineEdit.text()
+            # if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
             #    QtGui.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
-            #elif mac != "":
+            # elif mac != "":
             #    settings["mac_addr"] = mac
 
             # save the IOS image path
             path = self.uiIOSImageLineEdit.text()
-            #settings["path"] = path
-            settings["image"] = path#os.path.basename(path)
+            # settings["path"] = path
+            settings["image"] = path  # os.path.basename(path)
 
         else:
             del settings["name"]

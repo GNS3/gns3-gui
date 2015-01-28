@@ -31,6 +31,7 @@ log = logging.getLogger(__name__)
 
 
 class VPCSDevice(Node):
+
     """
     VPCS device.
 
@@ -89,9 +90,8 @@ class VPCSDevice(Node):
 
         # other initial settings will be applied when the router has been created
         # TODO: COMMENTED during REST api migration
-        #if initial_settings:
+        # if initial_settings:
         #    self._inital_settings = initial_settings
-
 
         params["project_uuid"] = self._project.uuid
         self._server.post("/vpcs", params, self._setupCallback)
@@ -109,7 +109,7 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
             return
 
-        # TODO: Manage id / uuid conversion
+        # TODO: Manage id / uuid conversion
         self._vpcs_id = result["uuid"]
         if not self._vpcs_id:
             self.error_signal.emit(self.id(), "returned ID from server is null")
@@ -198,7 +198,7 @@ class VPCSDevice(Node):
                 params[name] = value
 
         if "script_file" in new_settings and self._settings["script_file"] != new_settings["script_file"] \
-        and not self.server().isLocal() and os.path.isfile(new_settings["script_file"]):
+                and not self.server().isLocal() and os.path.isfile(new_settings["script_file"]):
             params["script_file_base64"] = self._base64Config(new_settings["script_file"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
@@ -357,7 +357,7 @@ class VPCSDevice(Node):
 
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.post("/vpcs/{uuid}/ports/0/nio".format(uuid=self._vpcs_id), params,  (lambda *args, **kwargs: self._addNIOCallback(port.id(), *args, **kwargs)))
+        self._server.post("/vpcs/{uuid}/ports/0/nio".format(uuid=self._vpcs_id), params, (lambda *args, **kwargs: self._addNIOCallback(port.id(), *args, **kwargs)))
 
     def _addNIOCallback(self, port_id, result, error=False):
         """
@@ -459,7 +459,7 @@ class VPCSDevice(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
-        #TODO: handle the image path
+        # TODO: handle the image path
         # vpcs_device["properties"]["image"]
 
         return vpcs_device

@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_ethernetSwitchConfigPageWidget(object):
+
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName(_fromUtf8("ethernetSwitchConfigPageWidget"))
         ethernetSwitchConfigPageWidget.resize(397, 315)
@@ -138,4 +141,3 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiPortTypeComboBox.setItemText(2, _translate("ethernetSwitchConfigPageWidget", "qinq", None))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add", None))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete", None))
-

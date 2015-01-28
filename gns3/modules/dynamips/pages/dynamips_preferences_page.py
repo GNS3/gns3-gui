@@ -29,6 +29,7 @@ from ..settings import DYNAMIPS_SETTINGS
 
 
 class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
+
     """
     QWidget preference page for Dynamips.
     """
@@ -46,7 +47,7 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
-        #FIXME: temporally hide test button
+        # FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
 
     def _dynamipsPathBrowserSlot(self):

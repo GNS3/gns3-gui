@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 
 
 class QemuVM(Node):
+
     """
     QEMU VM.
 
@@ -233,7 +234,7 @@ class QemuVM(Node):
 
         if nb_adapters_changed:
             log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
-            #TODO: dynamically add/remove adapters
+            # TODO: dynamically add/remove adapters
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
 

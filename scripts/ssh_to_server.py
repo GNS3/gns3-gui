@@ -24,7 +24,6 @@ def parse_cmd_line(argv):
     argv: Passed in sys.argv
     """
 
-
     usage = """
     USAGE: %s [-l] [-s <server_num>]
 
@@ -41,7 +40,7 @@ def parse_cmd_line(argv):
     try:
         opts, extra_opts = getopt.getopt(argv[1:], short_args, long_args)
     except getopt.GetoptError as e:
-        print("Unrecognized command line option or missing required argument: %s" %(e))
+        print("Unrecognized command line option or missing required argument: %s" % (e))
         print(usage)
         sys.exit(2)
 
@@ -104,7 +103,7 @@ def main():
     instances = read_cloud_settings()
 
     if options['action'] == 'ssh':
-        name, host, private_key, public_key, uid = instances[int(options['server'])-1]
+        name, host, private_key, public_key, uid = instances[int(options['server']) - 1]
         print('Instance name: {}'.format(name))
         print('Host ip: {}'.format(host))
 
@@ -123,7 +122,7 @@ def main():
         print('ID   Name   IP   UID')
         for idx, info in enumerate(instances):
             name, host, private_key, public_key, uid = info
-            print('{:2d}   {}   {}   {}'.format(idx+1, name, host, uid))
+            print('{:2d}   {}   {}   {}'.format(idx + 1, name, host, uid))
 
     return 0
 

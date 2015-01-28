@@ -24,6 +24,7 @@ log = logging.getLogger(__name__)
 
 
 class Host(Cloud):
+
     """
     Pseudo host based on a Dynamips Cloud.
 

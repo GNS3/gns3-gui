@@ -28,6 +28,7 @@ from ..settings import VBOX_SETTINGS
 
 
 class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidget):
+
     """
     QWidget preference page for VirtualBox.
     """
@@ -42,7 +43,7 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVboxManagePathToolButton.clicked.connect(self._vboxPathBrowserSlot)
 
-        #FIXME: temporally hide test button
+        # FIXME: temporally hide test button
         self.uiTestSettingsPushButton.hide()
 
     def _vboxPathBrowserSlot(self):

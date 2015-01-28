@@ -171,12 +171,13 @@ class MockLibCloudDriver(object):
 
 
 class MockStorageObject(object):
-        def __init__(self, name, data=None):
-            self.name = name
-            self.stream = [data].__iter__() if data else None
 
-        def as_stream(self):
-            return self.stream
+    def __init__(self, name, data=None):
+        self.name = name
+        self.stream = [data].__iter__() if data else None
+
+    def as_stream(self):
+        return self.stream
 
 
 class TestRackspaceCtrl(unittest.TestCase):

@@ -26,11 +26,14 @@ def ssh_client(host, key_string):
     """
 
     import paramiko
+
     class AllowAndForgetPolicy(paramiko.MissingHostKeyPolicy):
+
         """
         Custom policy for server host keys: we simply accept the key
         the server sent to us without storing it.
         """
+
         def missing_host_key(self, *args, **kwargs):
             """
             According to MissingHostKeyPolicy protocol, to accept
@@ -56,6 +59,7 @@ def ssh_client(host, key_string):
 
 
 class ListInstancesThread(QtCore.QThread):
+
     """
     Helper class to retrieve data from the provider in a separate thread,
     avoid freezing the gui
@@ -76,6 +80,7 @@ class ListInstancesThread(QtCore.QThread):
 
 
 class CreateInstanceThread(QtCore.QThread):
+
     """
     Helper class to create instances in a separate thread
     """
@@ -106,6 +111,7 @@ class CreateInstanceThread(QtCore.QThread):
 
 
 class DeleteInstanceThread(QtCore.QThread):
+
     """
     Helper class to remove an instance in a separate thread
     """
@@ -122,6 +128,7 @@ class DeleteInstanceThread(QtCore.QThread):
 
 
 class StartGNS3ServerThread(QtCore.QThread):
+
     """
     Perform an SSH connection to the instances in a separate thread,
     outside the GUI event loop, and start GNS3 server
@@ -207,7 +214,6 @@ killall python3 gns3server gns3dms
         log.debug('stderr: {}'.format(stderr_data.decode('utf-8')))
         return stdout_data, stderr_data
 
-
     def run(self):
         # We might be attempting a connection before the instance is fully booted, so retry
         # when the ssh connection fails.
@@ -245,6 +251,7 @@ killall python3 gns3server gns3dms
 
 
 class WSConnectThread(QtCore.QThread):
+
     """
     Establish a websocket connection with the remote gns3server
     instance. Run outside the GUI event loop.
@@ -283,6 +290,7 @@ class WSConnectThread(QtCore.QThread):
 
 
 class UploadProjectThread(QtCore.QThread):
+
     """
     Zip and Upload project to the cloud
     """
@@ -358,6 +366,7 @@ class UploadProjectThread(QtCore.QThread):
 
 
 class UploadFilesThread(QtCore.QThread):
+
     """
     Uploads files to cloud files
 
@@ -384,7 +393,7 @@ class UploadFilesThread(QtCore.QThread):
                 log.debug('Uploading image {} to cloud as {}'.format(file_to_upload[0], file_to_upload[1]))
                 provider.upload_file(file_to_upload[0], file_to_upload[1])
 
-                self.update.emit((i+1) * 100 / len(self._files_to_upload))
+                self.update.emit((i + 1) * 100 / len(self._files_to_upload))
                 log.debug('Uploading image completed')
         except Exception as e:
             log.exception("Error uploading images to cloud")
@@ -397,6 +406,7 @@ class UploadFilesThread(QtCore.QThread):
 
 
 class DownloadProjectThread(QtCore.QThread):
+
     """
     Downloads project from cloud storage
     """
@@ -452,7 +462,9 @@ class DownloadProjectThread(QtCore.QThread):
     def stop(self):
         self.quit()
 
+
 class DownloadImagesThread(QtCore.QThread):
+
     """
     Downloads multiple files from cloud files
     """
@@ -493,6 +505,7 @@ class DownloadImagesThread(QtCore.QThread):
 
 
 class DeleteProjectThread(QtCore.QThread):
+
     """
     Deletes project from cloud storage
     """
