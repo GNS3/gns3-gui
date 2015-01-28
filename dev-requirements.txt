@@ -4,3 +4,4 @@ pep8
 pytest
 pytest-pythonpath # useful for running tests outside tox
 pytest-timeout
+pytest-capturelog
