@@ -23,6 +23,7 @@ import json
 import socket
 import urllib.request
 from functools import partial
+from urllib.parse import urlparse
 
 from .version import __version__
 from .qt import QtCore, QtNetwork
@@ -44,9 +45,12 @@ class HTTPClient:
 
         self._url = url
         self._version = ""
-        # TODO: Shoul be extract from URL or change initializer signature
-        self.host = '127.0.0.1'
-        self.port = 8000
+
+        url_settings = urlparse(url)
+        self.scheme = url_settings.scheme
+        self.host = url_settings.netloc.split(":")[0]
+        self.port = url_settings.port
+
         # TODO: Should be False at startup
         self._connected = True
 
@@ -120,25 +124,42 @@ class HTTPClient:
         log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination, params=params))
         # TODO : Remove this method when migration to rest api is done
 
-    def post(self, path, params, callback):
+    def post(self, path, body, callback):
         """
-        Call the remote server
+        HTTP post on the remote server
 
         :param path: Remote path
-        :param params: params to send (dictionary)
+        :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies.
         """
 
-        post_data = json.dumps(params)
-        log.debug("POST http://{host}:{port}{path} {data}".format(host=self.host, port=self.port, path=path, data=post_data))
-        url = QtCore.QUrl("http://{host}:{port}{path}".format(host=self.host, port=self.port, path=path))
+        self._create_http_query("POST", path, body, callback)
+
+
+    def _create_http_query(self, method, path, body, callback):
+        """
+        Call the remote server
+
+        :param method: HTTP method
+        :param path: Remote path
+        :param body: params to send (dictionary)
+        :param callback: callback method to call when the server replies.
+        """
+
+        if len(body):
+            body = json.dumps(body)
+        log.debug("{method} {scheme}://{host}:{port}{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
+        url = QtCore.QUrl("{scheme}://{host}:{port}{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = QtNetwork.QNetworkRequest(url)
         request.setRawHeader("Content-Type", "application/json")
-        request.setRawHeader("Content-Length", str(len(post_data)))
+        request.setRawHeader("Content-Length", str(len(body)))
         request.setRawHeader("User-Agent", "GNS3 QT Client {version}".format(version=__version__))
-        response = self._network_manager.post(request, post_data)
+
+        if method == "POST":
+            response = self._network_manager.post(request, body)
 
         response.finished.connect(partial(self.response_process, response, callback))
+
 
     def response_process(self, response, callback):
         if response.error() != QtNetwork.QNetworkReply.NoError:
