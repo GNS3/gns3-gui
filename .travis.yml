@@ -45,4 +45,4 @@ install:
 
 script:
     - "xvfb-run py.test --verbose" # Run tests in a fake X server
-    - "pep8"
+    - "pep8 --exclude=build,.git"
