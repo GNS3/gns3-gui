@@ -152,7 +152,6 @@ class HTTPClient:
 
         self._create_http_query("POST", path, body, callback)
 
-
     def _create_http_query(self, method, path, body, callback):
         """
         Call the remote server
@@ -176,7 +175,6 @@ class HTTPClient:
             response = self._network_manager.post(request, body)
 
         response.finished.connect(partial(self.response_process, response, callback))
-
 
     def response_process(self, response, callback):
         if response.error() != QtNetwork.QNetworkReply.NoError:
