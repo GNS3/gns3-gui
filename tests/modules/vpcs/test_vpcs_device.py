@@ -17,11 +17,12 @@
 
 import pytest
 import uuid
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.modules.vpcs import VPCS
-
+from gns3.ports.port import Port
+from gns3.nios.nio_udp import NIOUDP
 
 @pytest.fixture
 def vpcs(local_server, project):
@@ -64,3 +65,49 @@ def test_vpcs_device_start(vpcs):
         args, kwargs = mock.call_args
         assert args[0] == "/vpcs/{uuid}/start".format(uuid=vpcs.uuid)
 
+
+def test_allocateUDPPort(vpcs):
+
+    with patch('gns3.http_client.HTTPClient.post') as mock:
+        vpcs.allocateUDPPort(1)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/udp"
+
+        # Connect the signal
+        signal_mock = Mock()
+        vpcs.allocate_udp_nio_signal.connect(signal_mock)
+
+        # Callback
+        args[2]({"udp_port": 4242})
+
+        # Check the signal
+        assert signal_mock.called
+        args, kwargs = signal_mock.call_args
+        assert args[0] == vpcs.id()
+        assert args[1] == 1
+        assert args[2] == 4242
+
+
+def test_addNIO(vpcs):
+
+    with patch('gns3.http_client.HTTPClient.post') as mock:
+        port = Port("Port 1")
+        nio = NIOUDP(4242, "127.0.0.1", 4243)
+        vpcs.addNIO(port, nio)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}/ports/0/nio".format(uuid=vpcs.uuid)
+
+        # Connect the signal
+        signal_mock = Mock()
+        vpcs.nio_signal.connect(signal_mock)
+
+        # Callback
+        args[2]({})
+
+        # Check the signal
+        assert signal_mock.called
+        args, kwargs = signal_mock.call_args
+        assert args[0] == vpcs.id()
+        assert args[1] == port.id()
