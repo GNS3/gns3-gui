@@ -5,6 +5,8 @@ import uuid
 
 from gns3.project import Project
 from gns3.servers import Servers
+from gns3.modules.vpcs.vpcs_device import VPCSDevice
+from gns3.modules.vpcs import VPCS
 
 
 def pytest_addoption(parser):
@@ -35,12 +37,22 @@ def run_instances(request):
 def project():
     project = Project.instance()
     project.uuid = str(uuid.uuid4())
+    project.type = 'local'
+    project.name = 'unsaved'
     return project
 
 
 @pytest.fixture(scope="session")
 def local_server():
     return Servers.instance().localServer()
+
+
+@pytest.fixture
+def vpcs_device(local_server, project):
+    vpcs_device = VPCSDevice(VPCS(), local_server, project)
+    vpcs_device._vpcs_device_id = str(uuid.uuid4())
+    vpcs_device.setInitialized(True)
+    return vpcs_device
 
 
 def pytest_runtest_setup(item):

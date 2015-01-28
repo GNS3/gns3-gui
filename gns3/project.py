@@ -31,6 +31,42 @@ class Project:
         self._temporary = False
 
     @property
+    def name(self):
+        """
+        :returns: Project name (string)
+        """
+
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        """
+        Set project name
+
+        :param name: Project name (string)
+        """
+
+        self._name = name
+
+    @property
+    def type(self):
+        """
+        :returns: Project type (string)
+        """
+
+        return self._type
+
+    @type.setter
+    def type(self, type):
+        """
+        Set project type
+
+        :param type: Project type (string)
+        """
+
+        self._type = type
+
+    @property
     def temporary(self):
         """
         :returns: True if the project is temporary

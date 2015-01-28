@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2015 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@ class HTTPClient:
     :param network_manager: A QT network manager
     """
 
+    _instance_count = 1
+
     def __init__(self, url, network_manager):
 
         self._url = url
@@ -54,8 +56,23 @@ class HTTPClient:
         # TODO: Should be False at startup
         self._connected = True
 
+        self._local = True
+        self._cloud = False
+
         self._network_manager = network_manager
         # self.check_server_version()
+
+        # create an unique ID
+        self._id = HTTPClient._instance_count
+        HTTPClient._instance_count += 1
+
+    def id(self):
+        """
+        Returns this HTTP Client identifier.
+        :returns: HTTP client identifier (string)
+        """
+
+        return self._id
 
     def setLocal(self, value):
         """
@@ -179,3 +196,15 @@ class HTTPClient:
                 callback(params, error=True)
             else:
                 callback(params)
+
+    def dump(self):
+        """
+        Returns a representation of this server.
+        :returns: dictionary
+        """
+
+        return {"id": self._id,
+                "host": self.host,
+                "port": self.port,
+                "local": self._local,
+                "cloud": self._cloud}

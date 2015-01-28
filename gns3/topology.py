@@ -91,6 +91,28 @@ class Topology(object):
         self._resources_type = "local"
         self._instances = []
         self._auto_start = False
+        self._project = None
+
+    @property
+    def project(self, project):
+        """
+        Get topology project
+
+        :returns: Project instance
+        """
+
+        return self._project
+
+    @project.setter
+    def project(self, project):
+        """
+        Set topology project
+
+        :params project: Project
+        """
+
+        self._project = project
+
 
     def addNode(self, node):
         """
@@ -422,17 +444,19 @@ class Topology(object):
 
         log.info("starting to save the topology (version {})".format(__version__))
 
-        from .main_window import MainWindow
-        project_settings = MainWindow.instance().projectSettings()
-        topology = {"name": project_settings["project_name"],
+        # from .main_window import MainWindow
+        # project_settings = MainWindow.instance().projectSettings()
+
+
+        topology = {"name": self._project.name,
                     "version": __version__,
                     "type": "topology",
                     "topology": {},
                     "auto_start": False,
-                    "resources_type": project_settings["project_type"],
+                    "resources_type": self._project.type,
                     }
 
-        self._resources_type = project_settings["project_type"]
+        self._resources_type = self._project.type
 
         servers = {}
 
