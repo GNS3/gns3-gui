@@ -511,9 +511,11 @@ class Topology(object):
         :param topology: topology representation
         """
 
+        log.debug("Start loading topology")
         self._project = Project()
         self._project.setName(topology["name"])
         self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
+        self._project.create()
 
     def _project_created_finish_load(self, topology):
         """
@@ -521,6 +523,8 @@ class Topology(object):
 
         :param topology: topology representation
         """
+
+        log.debug("Project created, continue loading of topology")
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
@@ -718,6 +722,7 @@ class Topology(object):
         if topology_file_errors:
             errors = "\n".join(topology_file_errors)
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
+        log.debug("Finish loading topology")
 
     def _nodeCreatedSlot(self, node_id):
         """

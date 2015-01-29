@@ -155,7 +155,7 @@ class HTTPClient:
         :param body: params to send (dictionary)
         """
 
-        self._create_http_query("PUT", path, callback, body)
+        self._create_http_query("PUT", path, callback, body=body)
 
     def post(self, path, callback, body={}):
         """
@@ -166,7 +166,7 @@ class HTTPClient:
         :param body: params to send (dictionary)
         """
 
-        self._create_http_query("POST", path, callback, body)
+        self._create_http_query("POST", path, callback, body=body)
 
     def delete(self, path, callback):
         """
@@ -202,13 +202,13 @@ class HTTPClient:
             body = json.dumps(body)
             request.setRawHeader("Content-Type", "application/json")
             request.setRawHeader("Content-Length", str(len(body)))
-            response = self._network_manager.put(request, json.dumps(body))
+            response = self._network_manager.put(request, body)
 
         if method == "POST":
             body = json.dumps(body)
             request.setRawHeader("Content-Type", "application/json")
             request.setRawHeader("Content-Length", str(len(body)))
-            response = self._network_manager.post(request, json.dumps(body))
+            response = self._network_manager.post(request, body)
 
         if method == "DELETE":
             response = self._network_manager.deleteResource(request)

@@ -192,5 +192,12 @@ def test_project_created_finish_load(project, main_window):
         topology = Topology()
         topology.project = project
         topology._project_created_finish_load(topo)
+
+        # Manually call the callback
+        topology.getNode(1).setInitialized(True)
+        topology._nodeCreatedSlot(1)
+        topology.getNode(2).setInitialized(True)
+        topology._nodeCreatedSlot(2)
+
         assert len(topology.nodes()) == 2
         assert len(topology.links()) == 1

@@ -1686,7 +1686,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         log.debug("Cloud server {} created".format(name))
         return instance, keypair
 
-    def run_later(counter, callback):
+    def run_later(self, counter, callback):
         """
         Run a function after X milliseconds
 
