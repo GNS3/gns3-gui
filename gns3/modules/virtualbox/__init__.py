@@ -21,7 +21,6 @@ VirtualBox module implementation.
 
 import os
 from gns3.qt import QtCore, QtGui
-from gns3.node import Node
 from ..module import Module
 from ..module_error import ModuleError
 from .virtualbox_vm import VirtualBoxVM
@@ -274,12 +273,13 @@ class VirtualBox(Module):
             params.update({"project_name": project_name})
         server.send_notification("virtualbox.settings", params)
 
-    def createNode(self, node_class, server):
+    def createNode(self, node_class, server, project):
         """
         Creates a new node.
 
         :param node_class: Node object
         :param server: WebSocketClient instance
+        :param project: Project instance
         """
 
         log.info("creating node {}".format(node_class))
@@ -296,7 +296,7 @@ class VirtualBox(Module):
             self.addServer(server)
 
         # create an instance of the node class
-        return node_class(self, server)
+        return node_class(self, server, project)
 
     def setupNode(self, node, node_name):
         """
