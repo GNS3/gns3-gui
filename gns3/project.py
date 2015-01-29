@@ -118,7 +118,7 @@ class Project:
         Create project on all servers
         """
 
-        self._servers.localServer().post("/project", {"temporary": self.temporary}, self._project_created)
+        self._servers.localServer().post("/project", self._project_created, {"temporary": self.temporary})
 
     def _project_created(self, params):
         # TODO: Manage errors

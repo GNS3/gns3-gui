@@ -21,6 +21,7 @@ VPCS device implementation.
 
 import os
 import base64
+from functools import partial
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
@@ -37,6 +38,7 @@ class VPCSDevice(Node):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
     def __init__(self, module, server, project):
@@ -44,7 +46,7 @@ class VPCSDevice(Node):
 
         log.info("VPCS instance is being created")
         self._project = project
-        self._vpcs_id = None
+        self._uuid = None
         self._defaults = {}
         self._inital_settings = None
         self._export_directory = None
@@ -66,7 +68,7 @@ class VPCSDevice(Node):
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def setup(self, name=None, console=None, vpcs_id=None, initial_settings={}):
+    def setup(self, name=None, console=None, identifier=None, initial_settings={}):
         """
         Setups this VPCS device.
 
@@ -85,8 +87,11 @@ class VPCSDevice(Node):
         if console:
             params["console"] = self._settings["console"] = console
 
-        if vpcs_id:
-            params["vpcs_id"] = vpcs_id
+        if identifier:
+            if isinstance(identifier, int):
+                params["vpcs_id"] = identifier
+            else:
+                params["uuid"] = identifier
 
         # other initial settings will be applied when the router has been created
         # TODO: COMMENTED during REST api migration
@@ -94,7 +99,7 @@ class VPCSDevice(Node):
         #    self._inital_settings = initial_settings
 
         params["project_uuid"] = self._project.uuid
-        self._server.post("/vpcs", params, self._setupCallback)
+        self._server.post("/vpcs", self._setupCallback, params)
 
     def _setupCallback(self, result, error=False):
         """
@@ -106,15 +111,11 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
             return
 
         # TODO: Manage id / uuid conversion
-        self._vpcs_id = result["uuid"]
-        if not self._vpcs_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return
-
+        self._uuid = result["uuid"]
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
@@ -140,8 +141,8 @@ class VPCSDevice(Node):
         log.debug("VPCS device {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._vpcs_id:
-            self._server.send_message("vpcs.delete", {"id": self._vpcs_id}, self._deleteCallback)
+        if self._uuid:
+            self._server.delete("/vpcs/{uuid}".format(uuid=self._uuid), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -156,7 +157,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -247,7 +248,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.post("/vpcs/{uuid}/start".format(uuid=self._vpcs_id), {}, self._startCallback)
+        self._server.post("/vpcs/{uuid}/start".format(uuid=self._uuid), self._startCallback)
 
     def _startCallback(self, result, error=False):
         """
@@ -259,7 +260,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
@@ -278,7 +279,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.send_message("vpcs.stop", {"id": self._vpcs_id}, self._stopCallback)
+        self._server.post("/vpcs/{uuid}/stop".format(uuid=self._uuid), self._stopCallback)
 
     def _stopCallback(self, result, error=False):
         """
@@ -290,7 +291,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -305,7 +306,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.send_message("vpcs.reload", {"id": self._vpcs_id}, self._reloadCallback)
+        self._server.post("/vpcs/{uuid}/reload".format(uuid=self._uuid), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False):
         """
@@ -317,7 +318,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
 
@@ -329,7 +330,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.post("/udp", {}, (lambda *args, **kwargs: self._allocateUDPPortCallback(port_id, *args, **kwargs)))
+        self._server.post("/udp", partial(self._allocateUDPPortCallback, port_id))
 
     def _allocateUDPPortCallback(self, port_id, result, error=False):
         """
@@ -341,7 +342,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
         else:
             lport = result["udp_port"]
             log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
@@ -357,7 +358,7 @@ class VPCSDevice(Node):
 
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.post("/vpcs/{uuid}/ports/0/nio".format(uuid=self._vpcs_id), params, (lambda *args, **kwargs: self._addNIOCallback(port.id(), *args, **kwargs)))
+        self._server.post("/vpcs/{uuid}/ports/0/nio".format(uuid=self._uuid), partial(self._addNIOCallback, port.id()), params)
 
     def _addNIOCallback(self, port_id, result, error=False):
         """
@@ -369,7 +370,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
             self.nio_cancel_signal.emit(self.id())
         else:
             self.nio_signal.emit(self.id(), port_id)
@@ -385,6 +386,7 @@ class VPCSDevice(Node):
                   "port": port.portNumber()}
 
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
+        # TODO: delete NIO
         self._server.send_message("vpcs.delete_nio", params, self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
@@ -397,7 +399,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["status"], result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
@@ -415,11 +417,12 @@ class VPCSDevice(Node):
             state = "stopped"
 
         info = """Device {name} is {state}
-  Node ID is {id}, server's VPCS device ID is {vpcs_id}
+  Local node ID is {id}
+  Server's VPCS device UUID is {uuid}
   console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
-           vpcs_id=self._vpcs_id,
+           uuid=self._uuid,
            state=state,
            console=self._settings["console"])
 
@@ -442,7 +445,7 @@ class VPCSDevice(Node):
         """
 
         vpcs_device = {"id": self.id(),
-                       "vpcs_id": self._vpcs_id,
+                       "uuid": self._uuid,
                        "type": self.__class__.__name__,
                        "description": str(self),
                        "properties": {},
@@ -459,9 +462,6 @@ class VPCSDevice(Node):
             for port in self._ports:
                 ports.append(port.dump())
 
-        # TODO: handle the image path
-        # vpcs_device["properties"]["image"]
-
         return vpcs_device
 
     def load(self, node_info):
@@ -473,7 +473,9 @@ class VPCSDevice(Node):
         """
 
         self.node_info = node_info
-        vpcs_id = node_info.get("vpcs_id")
+        identifier = node_info.get("vpcs_id")
+        if not identifier:
+            identifier = node_info["uuid"]
         settings = node_info["properties"]
         name = settings.pop("name")
         console = settings.pop("console")
@@ -482,7 +484,7 @@ class VPCSDevice(Node):
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
-        self.setup(name, console, vpcs_id, settings)
+        self.setup(name, console, identifier, settings)
 
     def _updatePortSettings(self):
         """
