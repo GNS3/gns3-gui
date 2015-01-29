@@ -2,6 +2,7 @@
 import pytest
 import os
 import uuid
+import unittest
 
 from gns3.project import Project
 from gns3.servers import Servers
@@ -36,9 +37,9 @@ def run_instances(request):
 @pytest.fixture(scope="session")
 def project():
     project = Project.instance()
-    project.uuid = str(uuid.uuid4())
-    project.type = 'local'
-    project.name = 'unsaved'
+    project.setUuid(str(uuid.uuid4()))
+    project.setType("local")
+    project.setName("unsaved")
     return project
 
 
@@ -53,6 +54,23 @@ def vpcs_device(local_server, project):
     vpcs_device._vpcs_device_id = str(uuid.uuid4())
     vpcs_device.setInitialized(True)
     return vpcs_device
+
+
+@pytest.fixture
+def main_window():
+    """
+    Get a mocked main window
+    """
+    window = unittest.mock.MagicMock()
+
+    uiGraphicsView = unittest.mock.MagicMock()
+    uiGraphicsView.settings.return_value = {
+        "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+        "default_label_color": "#000000"
+    }
+
+    window.uiGraphicsView = uiGraphicsView
+    return window
 
 
 def pytest_runtest_setup(item):

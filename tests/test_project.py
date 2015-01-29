@@ -31,7 +31,7 @@ def test_project_create():
         project.create()
         args, kwargs = mock.call_args
         assert args[0] == "/project"
-        assert args[1] == {"temporary": False}
+        assert kwargs["body"] == {"temporary": False}
         # Call the project creation callback
-        args[2]({"uuid": uuid})
-        assert project.uuid == uuid
+        args[1]({"uuid": uuid})
+        assert project.getUuid() == uuid

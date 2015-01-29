@@ -21,8 +21,10 @@ Handles the saving and loading of a topology.
 """
 
 import os
-
+from functools import partial
 from .qt import QtCore, QtGui, QtSvg
+
+
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
@@ -34,6 +36,7 @@ from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
 from .version import __version__
+from .project import Project
 
 import logging
 log = logging.getLogger(__name__)
@@ -112,7 +115,6 @@ class Topology(object):
         """
 
         self._project = project
-
 
     def addNode(self, node):
         """
@@ -447,16 +449,15 @@ class Topology(object):
         # from .main_window import MainWindow
         # project_settings = MainWindow.instance().projectSettings()
 
-
-        topology = {"name": self._project.name,
+        topology = {"name": self._project.getName(),
                     "version": __version__,
                     "type": "topology",
                     "topology": {},
                     "auto_start": False,
-                    "resources_type": self._project.type,
+                    "resources_type": self._project.getType(),
                     }
 
-        self._resources_type = self._project.type
+        self._resources_type = self._project.getType()
 
         servers = {}
 
@@ -510,6 +511,17 @@ class Topology(object):
         :param topology: topology representation
         """
 
+        self._project = Project()
+        self._project.setName(topology["name"])
+        self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
+
+    def _project_created_finish_load(self, topology):
+        """
+        Finish loading of a topology. After project creation
+
+        :param topology: topology representation
+        """
+
         from .main_window import MainWindow
         main_window = MainWindow.instance()
         view = main_window.uiGraphicsView
@@ -525,7 +537,7 @@ class Topology(object):
         # deactivate the unsaved state support
         main_window.ignoreUnsavedState(True)
         # trick: no matter what, reactivate the unsaved state support after 3 seconds
-        QtCore.QTimer.singleShot(3000, self._reactivateUnsavedState)
+        main_window.run_later(3000, self._reactivateUnsavedState)
 
         self._node_to_links_mapping = {}
         # create a mapping node ID to links
@@ -591,7 +603,7 @@ class Topology(object):
                         topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
                         continue
 
-                    node = node_module.createNode(node_class, server)
+                    node = node_module.createNode(node_class, server, self._project)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
                     node.warning_signal.connect(main_window.uiConsoleTextEdit.writeWarning)
                     node.server_error_signal.connect(main_window.uiConsoleTextEdit.writeServerError)

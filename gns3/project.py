@@ -15,31 +15,33 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from PyQt4 import QtCore
 from gns3.servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class Project:
+class Project(QtCore.QObject):
 
     """Current project"""
 
+    project_created_signal = QtCore.Signal()
+
     def __init__(self):
 
+        super().__init__()
         self._servers = Servers.instance()
         self._temporary = False
 
-    @property
-    def name(self):
+    def getName(self):
         """
         :returns: Project name (string)
         """
 
         return self._name
 
-    @name.setter
-    def name(self, name):
+    def setName(self, name):
         """
         Set project name
 
@@ -48,16 +50,14 @@ class Project:
 
         self._name = name
 
-    @property
-    def type(self):
+    def getType(self):
         """
         :returns: Project type (string)
         """
 
         return self._type
 
-    @type.setter
-    def type(self, type):
+    def setType(self, type):
         """
         Set project type
 
@@ -66,16 +66,14 @@ class Project:
 
         self._type = type
 
-    @property
-    def temporary(self):
+    def getTemporary(self):
         """
         :returns: True if the project is temporary
         """
 
         return self._temporary
 
-    @temporary.setter
-    def temporary(self, temporary):
+    def setTemporary(self, temporary):
         """
         Set the temporary flag for a project. And update
         it on the server.
@@ -85,16 +83,14 @@ class Project:
 
         self._temporary = temporary
 
-    @property
-    def uuid(self):
+    def getUuid(self):
         """
         Get project UUID
         """
 
         return self._uuid
 
-    @uuid.setter
-    def uuid(self, uuid):
+    def setUuid(self, uuid):
         """
         Set project UUID
         """
@@ -118,7 +114,7 @@ class Project:
         Create project on all servers
         """
 
-        self._servers.localServer().post("/project", self._project_created, {"temporary": self.temporary})
+        self._servers.localServer().post("/project", self._project_created, body={"temporary": self.getTemporary()})
 
     def _project_created(self, params, error=False):
         if error:
@@ -128,3 +124,5 @@ class Project:
         self._uuid = params["uuid"]
         log.info("Project {} created".format(self._uuid))
         # TODO: call all server when we got uuid
+
+        self.project_created_signal.emit()

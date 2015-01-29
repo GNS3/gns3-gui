@@ -98,7 +98,7 @@ class VPCSDevice(Node):
         # if initial_settings:
         #    self._inital_settings = initial_settings
 
-        params["project_uuid"] = self._project.uuid
+        params["project_uuid"] = self._project.getUuid()
         self._server.post("/vpcs", self._setupCallback, params)
 
     def _setupCallback(self, result, error=False):
@@ -603,7 +603,6 @@ class VPCSDevice(Node):
         if new_settings:
             self.update(new_settings)
 
-    @property
     def uuid(self):
         """
         Return the UUID of this VPCS device
@@ -611,7 +610,7 @@ class VPCSDevice(Node):
         :returns: uuid (string)
         """
 
-        return self._vpcs_id
+        return self._uuid
 
     def name(self):
         """

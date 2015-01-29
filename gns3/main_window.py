@@ -100,7 +100,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # TODO: Temporary not True if project from command line
         self._project = Project.instance()
         self._project.temporary = True
+        self._project.name = "unsaved"
+        self._project.type = "local"
         self._project.create()
+
         self._project_from_cmdline = project
         self._cloud_settings = {}
         self._loadSettings()
@@ -169,7 +172,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._network_manager = QtNetwork.QNetworkAccessManager(self)
 
         # load initial stuff once the event loop isn't busy
-        QtCore.QTimer.singleShot(0, self.startupLoading)
+        self.run_later(0, self.startupLoading)
 
     @property
     def cloudProvider(self):
@@ -414,6 +417,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
         topology = Topology.instance()
+        topology.project = self._project
         for instance in CloudInstances.instance().instances:
             topology.addInstance2(instance)
 
@@ -744,7 +748,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized() and item.node().status() == Node.started:
                 callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node(), aux=True)
-                QtCore.QTimer.singleShot(counter, callback)
+                self.run_later(counter, callback)
                 counter += delay
 
     def _consoleAllActionSlot(self):
@@ -757,7 +761,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                 callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node())
-                QtCore.QTimer.singleShot(counter, callback)
+                self.run_later(counter, callback)
                 counter += delay
 
     def _vpcsActionSlot(self):
@@ -1081,6 +1085,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             # check if any node is running
             topology = Topology.instance()
+            topology.project = self._project
             running_node = False
             for node in topology.nodes():
                 if hasattr(node, "start") and node.status() == Node.started:
@@ -1203,6 +1208,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # first check if any node that can be started is running
         topology = Topology.instance()
+        topology.project = self._project
         running_nodes = []
         for node in topology.nodes():
             if hasattr(node, "start") and node.status() == Node.started:
@@ -1303,6 +1309,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         topology = Topology.instance()
+        topology.project = self._project
         try:
             with open(path, "w") as f:
                 log.info("saving project: {}".format(path))
@@ -1678,6 +1685,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
         log.debug("Cloud server {} created".format(name))
         return instance, keypair
+
+    def run_later(counter, callback):
+        """
+        Run a function after X milliseconds
+
+        :params counter: Time to wait before fire the callback (in milliseconds)
+        :params callback: Function to run
+        """
+        QtCore.QTimer.singleShot(counter, callback)
 
     def _exportProjectActionSlot(self):
         if self._temporary_project:

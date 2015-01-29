@@ -19,8 +19,8 @@ import pytest
 import uuid
 from unittest.mock import patch, Mock
 
-from gns3.modules.vpcs_device.vpcs_device_device import VPCSDevice
-from gns3.modules.vpcs_device import VPCS
+from gns3.modules.vpcs.vpcs_device import VPCSDevice
+from gns3.modules.vpcs import VPCS
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 
@@ -36,7 +36,7 @@ def test_vpcs_device_device_setup(vpcs_device):
         vpcs_device.setup()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs_device"
+        assert args[0] == "/vpcs"
 
         # Callback
         params = {
@@ -47,9 +47,9 @@ def test_vpcs_device_device_setup(vpcs_device):
             "startup_script": None,
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
-        args[2](params)
+        args[1](params)
 
-        assert vpcs_device.uuid == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.uuid() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_vpcs_device_device_start(vpcs_device):
@@ -58,7 +58,7 @@ def test_vpcs_device_device_start(vpcs_device):
         vpcs_device.start()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs_device/{uuid}/start".format(uuid=vpcs_device.uuid)
+        assert args[0] == "/vpcs/{uuid}/start".format(uuid=vpcs_device.uuid())
 
 
 def test_allocateUDPPort(vpcs_device):
@@ -74,7 +74,7 @@ def test_allocateUDPPort(vpcs_device):
         vpcs_device.allocate_udp_nio_signal.connect(signal_mock)
 
         # Callback
-        args[2]({"udp_port": 4242})
+        args[1]({"udp_port": 4242})
 
         # Check the signal
         assert signal_mock.called
@@ -92,14 +92,14 @@ def test_addNIO(vpcs_device):
         vpcs_device.addNIO(port, nio)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs_device/{uuid}/ports/0/nio".format(uuid=vpcs_device.uuid)
+        assert args[0] == "/vpcs/{uuid}/ports/0/nio".format(uuid=vpcs_device.uuid())
 
         # Connect the signal
         signal_mock = Mock()
         vpcs_device.nio_signal.connect(signal_mock)
 
         # Callback
-        args[2]({})
+        args[1]({})
 
         # Check the signal
         assert signal_mock.called
