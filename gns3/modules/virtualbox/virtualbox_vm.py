@@ -565,7 +565,7 @@ class VirtualBoxVM(Node):
         """
 
         vbox_vm = {"id": self.id(),
-                   "vbox_id": self._vbox_id,
+                   "uuid": self._uuid,
                    "linked_clone": self._linked_clone,
                    "type": self.__class__.__name__,
                    "description": str(self),

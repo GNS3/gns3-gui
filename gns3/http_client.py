@@ -136,18 +136,49 @@ class HTTPClient:
         log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination, params=params))
         # TODO : Remove this method when migration to rest api is done
 
-    def post(self, path, callback, body={}):
+    def get(self, path, callback):
         """
-        HTTP post on the remote server
+        HTTP GET on the remote server
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies.
+        """
+
+        self._create_http_query("GET", path, callback)
+
+    def put(self, path, callback, body={}):
+        """
+        HTTP PUT on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies.
         :param body: params to send (dictionary)
         """
 
-        self._create_http_query("POST", path, body, callback)
+        self._create_http_query("PUT", path, callback, body)
 
-    def _create_http_query(self, method, path, body, callback):
+    def post(self, path, callback, body={}):
+        """
+        HTTP POST on the remote server
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies.
+        :param body: params to send (dictionary)
+        """
+
+        self._create_http_query("POST", path, callback, body)
+
+    def delete(self, path, callback):
+        """
+        HTTP DELETE on the remote server
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies.
+        """
+
+        self._create_http_query("DELETE", path, callback)
+
+    def _create_http_query(self, method, path, callback, body={}):
         """
         Call the remote server
 
@@ -157,7 +188,6 @@ class HTTPClient:
         :param callback: callback method to call when the server replies.
         """
 
-        body = json.dumps(body)
         log.debug("{method} {scheme}://{host}:{port}{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = QtNetwork.QNetworkRequest(url)
@@ -165,8 +195,23 @@ class HTTPClient:
         request.setRawHeader("Content-Length", str(len(body)))
         request.setRawHeader("User-Agent", "GNS3 QT Client {version}".format(version=__version__))
 
+        if method == "GET":
+            response = self._network_manager.get(request)
+
+        if method == "PUT":
+            body = json.dumps(body)
+            request.setRawHeader("Content-Type", "application/json")
+            request.setRawHeader("Content-Length", str(len(body)))
+            response = self._network_manager.put(request, json.dumps(body))
+
         if method == "POST":
-            response = self._network_manager.post(request, body)
+            body = json.dumps(body)
+            request.setRawHeader("Content-Type", "application/json")
+            request.setRawHeader("Content-Length", str(len(body)))
+            response = self._network_manager.post(request, json.dumps(body))
+
+        if method == "DELETE":
+            response = self._network_manager.deleteResource(request)
 
         response.finished.connect(partial(self.response_process, response, callback))
 

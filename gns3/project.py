@@ -120,7 +120,10 @@ class Project:
 
         self._servers.localServer().post("/project", self._project_created, {"temporary": self.temporary})
 
-    def _project_created(self, params):
+    def _project_created(self, params, error=False):
+        if error:
+            print(params)
+            return
         # TODO: Manage errors
         self._uuid = params["uuid"]
         log.info("Project {} created".format(self._uuid))
