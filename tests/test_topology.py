@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
 from unittest.mock import patch
 
 from gns3.topology import Topology
@@ -77,23 +78,7 @@ def test_dump(vpcs_device, project):
     }
 
 
-def test_load():
-    topology = Topology()
-    topo = {
-        "auto_start": False,
-        "name": "Test",
-        "resources_type": "local",
-        "version": __version__,
-        "topology": {
-        },
-        "type": "topology"
-    }
-    with patch("gns3.main_window.MainWindow"):
-        topology.load(topo)
-        assert topology._project.getName() == "Test"
-
-
-def test_project_created_finish_load(project, main_window):
+def test_load(project, main_window):
 
     topo = {
         "auto_start": False,
@@ -189,15 +174,18 @@ def test_project_created_finish_load(project, main_window):
     }
 
     with patch("gns3.main_window.MainWindow.instance", return_value=main_window):
-        topology = Topology()
-        topology.project = project
-        topology._project_created_finish_load(topo)
 
-        # Manually call the callback
-        topology.getNode(1).setInitialized(True)
-        topology._nodeCreatedSlot(1)
-        topology.getNode(2).setInitialized(True)
-        topology._nodeCreatedSlot(2)
+        # We return an uuid for each HTTP post
+        def http_loader(method, path, callback, body={}):
+            callback({"uuid": uuid.uuid4()})
+        with patch("gns3.http_client.HTTPClient._create_http_query", side_effect=http_loader):
 
-        assert len(topology.nodes()) == 2
-        assert len(topology.links()) == 1
+            topology = Topology()
+            topology.project = project
+            topology.load(topo)
+
+            assert topology._project.getName() == "twovpcs"
+            assert len(topology.nodes()) == 2
+            assert topology.getNode(1).initialized()
+            assert topology.getNode(2).initialized()
+            assert main_window.uiGraphicsView.addLink.called

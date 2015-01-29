@@ -621,6 +621,8 @@ class Topology(object):
                 # we want to know when the node has been created
                 node.created_signal.connect(self._nodeCreatedSlot)
 
+                self.addNode(node)
+
                 # load the settings
                 node.load(topology_node)
 
@@ -655,7 +657,6 @@ class Topology(object):
                         node_item.setHoverRenderer(hover_renderer)
 
                 view.scene().addItem(node_item)
-                self.addNode(node)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)
 
         self._resources_type = topology.get("resources_type")
@@ -734,7 +735,7 @@ class Topology(object):
 
         node = self.getNode(node_id)
         if not node or not node.initialized():
-            log.warn("cannot find node or node not initialized")
+            log.warn("Cannot find node {node_id} or node not initialized".format(node_id=node_id))
             return
 
         from .main_window import MainWindow

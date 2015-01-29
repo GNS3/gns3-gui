@@ -27,11 +27,18 @@ def test_project_create():
     mock = MagicMock
     with patch("gns3.http_client.HTTPClient.post") as mock:
 
+        signal = MagicMock()
+
         project = Project()
+        project.project_created_signal.connect(signal)
         project.create()
+
         args, kwargs = mock.call_args
+
         assert args[0] == "/project"
         assert kwargs["body"] == {"temporary": False}
         # Call the project creation callback
         args[1]({"uuid": uuid})
         assert project.getUuid() == uuid
+
+        assert signal.called

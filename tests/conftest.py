@@ -3,11 +3,7 @@ import pytest
 import os
 import uuid
 import unittest
-
-from gns3.project import Project
-from gns3.servers import Servers
-from gns3.modules.vpcs.vpcs_device import VPCSDevice
-from gns3.modules.vpcs import VPCS
+import sys
 
 
 def pytest_addoption(parser):
@@ -36,6 +32,9 @@ def run_instances(request):
 
 @pytest.fixture(scope="session")
 def project():
+
+    from gns3.project import Project
+
     project = Project.instance()
     project.setUuid(str(uuid.uuid4()))
     project.setType("local")
@@ -45,11 +44,18 @@ def project():
 
 @pytest.fixture(scope="session")
 def local_server():
+
+    from gns3.servers import Servers
+
     return Servers.instance().localServer()
 
 
 @pytest.fixture
 def vpcs_device(local_server, project):
+
+    from gns3.modules.vpcs.vpcs_device import VPCSDevice
+    from gns3.modules.vpcs import VPCS
+
     vpcs_device = VPCSDevice(VPCS(), local_server, project)
     vpcs_device._vpcs_device_id = str(uuid.uuid4())
     vpcs_device.setInitialized(True)
@@ -71,6 +77,20 @@ def main_window():
 
     window.uiGraphicsView = uiGraphicsView
     return window
+
+
+def pytest_configure(config):
+    """
+    Use to detect in code if we are running from pytest
+
+    http://pytest.org/latest/example/simple.html#detect-if-running-from-within-a-pytest-run
+    """
+    import sys
+    sys._called_from_test = True
+
+
+def pytest_unconfigure(config):
+    del sys._called_from_test
 
 
 def pytest_runtest_setup(item):

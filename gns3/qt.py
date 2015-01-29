@@ -72,3 +72,26 @@ elif DEFAULT_BINDING == 'PySide':
 
 else:
     raise ImportError("Python binding not specified.")
+
+
+# If we run from a test we replace the signal by a synchronous version
+if hasattr(sys, '_called_from_test'):
+    import logging
+    log = logging.getLogger(__name__)
+
+    class FakeQtSignal:
+        def __init__(self, *args):
+            self._callbacks = set()
+
+        def connect(self, func):
+            self._callbacks.add(func)
+
+        def disconnect(self, func):
+            self._callbacks.remove(func)
+
+        def emit(self, *args):
+            for callback in list(self._callbacks):
+                callback(*args)
+
+    QtCore.Signal = FakeQtSignal
+    QtCore.pyqtSignal = FakeQtSignal
