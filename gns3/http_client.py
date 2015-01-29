@@ -15,13 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Non-blocking HTTP client with JSON support to connect to GNS3 servers.
-"""
 
 import json
-import socket
-import urllib.request
 from functools import partial
 from urllib.parse import urlparse
 
@@ -141,13 +136,13 @@ class HTTPClient:
         log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination, params=params))
         # TODO : Remove this method when migration to rest api is done
 
-    def post(self, path, body, callback):
+    def post(self, path, callback, body={}):
         """
         HTTP post on the remote server
 
         :param path: Remote path
-        :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies.
+        :param body: params to send (dictionary)
         """
 
         self._create_http_query("POST", path, body, callback)
@@ -162,8 +157,7 @@ class HTTPClient:
         :param callback: callback method to call when the server replies.
         """
 
-        if len(body):
-            body = json.dumps(body)
+        body = json.dumps(body)
         log.debug("{method} {scheme}://{host}:{port}{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = QtNetwork.QNetworkRequest(url)
@@ -177,16 +171,18 @@ class HTTPClient:
         response.finished.connect(partial(self.response_process, response, callback))
 
     def response_process(self, response, callback):
+
         if response.error() != QtNetwork.QNetworkReply.NoError:
             log.debug("Response error: {}".format(response.errorString()))
             body = bytes(response.readAll()).decode()
             log.debug(body)
+            callback(json.loads(body), error=True)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
             body = bytes(response.readAll()).decode()
             log.debug(body)
-            if len(body):
+            if body:
                 params = json.loads(body)
             else:
                 params = {}
