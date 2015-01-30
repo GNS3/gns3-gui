@@ -1038,11 +1038,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
-        if self.checkForUnsavedChanges():
-            if not self._project.closed():
-                self._project.project_closed_signal.connect(self._finish_application_closing)
-                self._project.close()
-                event.ignore()
+        if self._project.closed():
+            event.accept()
+        elif self.checkForUnsavedChanges():
+            self._project.project_closed_signal.connect(self._finish_application_closing)
+            self._project.close()
+            event.ignore()
         else:
             event.ignore()
 
