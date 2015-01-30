@@ -45,7 +45,6 @@ setup(
     description="GNS3 graphical interface for the GNS3 server.",
     long_description=open("README.rst", "r").read(),
     install_requires=[
-        "ws4py>=0.3.4",
         "apache-libcloud>=0.14.1",
         "requests",
         "paramiko",

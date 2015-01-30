@@ -235,6 +235,7 @@ class HTTPClient:
                 callback(params, error=True)
             else:
                 callback(params)
+        response.deleteLater()
 
     def dump(self):
         """
