@@ -186,6 +186,7 @@ def test_load(project, main_window):
 
             assert topology._project.getName() == "twovpcs"
             assert len(topology.nodes()) == 2
+            assert len(topology._node_to_links_mapping) == 2
             assert topology.getNode(1).initialized()
             assert topology.getNode(2).initialized()
             assert main_window.uiGraphicsView.addLink.called

@@ -382,12 +382,8 @@ class VPCSDevice(Node):
         :param port: Port instance
         """
 
-        params = {"id": self._vpcs_id,
-                  "port": port.portNumber()}
-
-        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        # TODO: delete NIO
-        self._server.send_message("vpcs.delete_nio", params, self._deleteNIOCallback)
+        log.debug("{} is deleting an NIO".format(self.name()))
+        self._server.delete("/vpcs/{uuid}/ports/0/nio".format(uuid=self._uuid), self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
         """

@@ -23,6 +23,7 @@ from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.modules.vpcs import VPCS
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
+from gns3.node import Node
 
 
 def test_vpcs_device_device_init(local_server, project):
@@ -59,6 +60,25 @@ def test_vpcs_device_device_start(vpcs_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/vpcs/{uuid}/start".format(uuid=vpcs_device.uuid())
+
+
+def test_vpcs_device_device_stop(vpcs_device):
+
+    with patch('gns3.http_client.HTTPClient.post') as mock:
+        vpcs_device.setStatus(Node.started)
+        vpcs_device.stop()
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}/stop".format(uuid=vpcs_device.uuid())
+
+
+def test_vpcs_device_device_reload(vpcs_device):
+
+    with patch('gns3.http_client.HTTPClient.post') as mock:
+        vpcs_device.reload()
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}/reload".format(uuid=vpcs_device.uuid())
 
 
 def test_allocateUDPPort(vpcs_device):
@@ -106,3 +126,18 @@ def test_addNIO(vpcs_device):
         args, kwargs = signal_mock.call_args
         assert args[0] == vpcs_device.id()
         assert args[1] == port.id()
+
+
+def test_deleteNIO(vpcs_device):
+
+    with patch('gns3.http_client.HTTPClient.post') as mock_post:
+        with patch('gns3.http_client.HTTPClient.delete') as mock_delete:
+            port = Port("Port 1")
+            nio = NIOUDP(4242, "127.0.0.1", 4243)
+            vpcs_device.addNIO(port, nio)
+
+            vpcs_device.deleteNIO(port)
+            assert mock_delete.called
+
+            args, kwargs = mock_delete.call_args
+            assert args[0] == "/vpcs/{uuid}/ports/0/nio".format(uuid=vpcs_device.uuid())
