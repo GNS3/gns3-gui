@@ -85,8 +85,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     # signal to tell the view if the user is adding a link or not
     adding_link_signal = QtCore.Signal(bool)
 
-    # signal to tell a project was closed
-    project_about_to_close_signal = QtCore.pyqtSignal(str)
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
 
@@ -99,9 +97,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._settings = {}
         # TODO: Temporary not True if project from command line
         self._project = Project.instance()
-        self._project.temporary = True
-        self._project.name = "unsaved"
-        self._project.type = "local"
+        self._project.setTemporary(True)
+        self._project.setName("unsaved")
+        self._project.setType("local")
         self._project.create()
 
         self._project_from_cmdline = project
@@ -354,7 +352,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
 
         # project
-        self.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
+        self._project.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
         self.project_new_signal.connect(self.project_created)
 
         # cloud inspector
@@ -403,6 +401,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param new_project_settings: project settings (dict)
         """
 
+        self._project.close()
         self.uiGraphicsView.reset()
         # create the destination directory for project files
         try:
@@ -438,8 +437,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.uiNodesDockWidget.setVisible(False)
             self.uiNodesDockWidget.setWindowTitle("")
 
-            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
-
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
@@ -459,7 +456,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
-            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+            self._project.close()
             if self.loadProject(path):
                 self.project_new_signal.emit(path)
 
@@ -475,7 +472,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
             if self.checkForUnsavedChanges():
-                self.project_about_to_close_signal.emit(self._project_settings["project_path"])
+                self._project.close()
                 if self.loadProject(path):
                     self.project_new_signal.emit(path)
 
@@ -1042,25 +1039,36 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self.checkForUnsavedChanges():
-            self.project_about_to_close_signal.emit(self._project_settings["project_path"])
-            VPCS.instance().stopMultiHostVPCS()
-
-            # save the geometry and state of the main window.
-            settings = QtCore.QSettings()
-            settings.setValue("GUI/geometry", self.saveGeometry())
-            settings.setValue("GUI/state", self.saveState())
-            event.accept()
-
-            servers = Servers.instance()
-            servers.stopLocalServer(wait=True)
-
-            for cs in servers.cloud_servers.values():
-                cs.close_connection()
-
-            time_spent = "{:.0f}".format(time.time() - self._start_time)
-            AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
+            if not self._project.closed():
+                self._project.project_closed_signal.connect(self._finish_application_closing)
+                self._project.close()
+                event.ignore()
         else:
             event.ignore()
+
+    def _finish_application_closing(self):
+        """
+        Handles the event when the main window is closed.
+        And project closed.
+        """
+
+        VPCS.instance().stopMultiHostVPCS()
+
+        # save the geometry and state of the main window.
+        settings = QtCore.QSettings()
+        settings.setValue("GUI/geometry", self.saveGeometry())
+        settings.setValue("GUI/state", self.saveState())
+
+        servers = Servers.instance()
+        servers.stopLocalServer(wait=True)
+
+        for cs in servers.cloud_servers.values():
+            cs.close_connection()
+
+        time_spent = "{:.0f}".format(time.time() - self._start_time)
+        AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
+
+        self.close()
 
     def checkForUnsavedChanges(self):
         """
@@ -1455,6 +1463,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Creates a temporary project.
         """
 
+        self._project.close()
         self.uiGraphicsView.reset()
         try:
             with tempfile.NamedTemporaryFile(prefix="gns3-", delete=False) as f:
@@ -1592,7 +1601,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             MainWindow._instance = MainWindow()
         return MainWindow._instance
 
-    def shutdown_cloud_instances(self, project):
+    def shutdown_cloud_instances(self):
         """
         This slot is invoked before a project is closed, when:
          * a new project is created
@@ -1600,7 +1609,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          * a project is opened from file
          * program exits
 
-        :param project: path to gns3 project file
         """
 
         if self._temporary_project:

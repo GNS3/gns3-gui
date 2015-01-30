@@ -28,11 +28,19 @@ class Project(QtCore.QObject):
 
     project_created_signal = QtCore.Signal()
 
+    # Called before project closing
+    project_about_to_close_signal = QtCore.Signal()
+
+    # Called when the project is closed on all servers
+    project_closed_signal = QtCore.Signal()
+
     def __init__(self):
 
         super().__init__()
+        self._uuid = None
         self._servers = Servers.instance()
         self._temporary = False
+        self._closed = False
 
     def name(self):
         """
@@ -49,6 +57,13 @@ class Project(QtCore.QObject):
         """
 
         self._name = name
+
+    def closed(self):
+        """
+        :returns: True if project is closed
+        """
+
+        return self._closed
 
     def type(self):
         """
@@ -116,6 +131,19 @@ class Project(QtCore.QObject):
 
         self._servers.localServer().post("/project", self._project_created, body={"temporary": self._temporary})
 
+    def close(self):
+        """Close project"""
+
+        # TODO: call all server
+        if self._uuid:
+            self.project_about_to_close_signal.emit()
+            self._servers.localServer().post("/project/{uuid}/close".format(uuid=self._uuid), self._project_closed, body={})
+        else:
+            # The project is not initialized when can close it
+            self.project_about_to_close_signal.emit()
+            self.project_closed_signal.emit()
+            self._closed = True
+
     def _project_created(self, params, error=False):
         if error:
             print(params)
@@ -124,5 +152,15 @@ class Project(QtCore.QObject):
         self._uuid = params["uuid"]
         log.info("Project {} created".format(self._uuid))
         # TODO: call all server when we got uuid
+        self._closed = False
 
         self.project_created_signal.emit()
+
+    def _project_closed(self, params, error=False):
+        if error:
+            print(params)
+            return
+        # TODO: Manage errors
+        log.info("Project {} closed".format(self._uuid))
+        self._closed = True
+        self.project_closed_signal.emit()
