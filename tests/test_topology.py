@@ -58,7 +58,9 @@ def test_dump(vpcs_device, project):
                             "port_number": 0
                         }
                     ],
-                    "properties": {},
+                    "properties": {
+                        "name": vpcs_device.name()
+                    },
                     "server_id": 1,
                     "type": "VPCSDevice",
                     "uuid": None

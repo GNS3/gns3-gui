@@ -25,6 +25,10 @@ vice-versa. Possibility to add PyQt5 in the future as well. Current default is P
 import sys
 import sip
 
+import logging
+log = logging.getLogger(__name__)
+
+
 DEFAULT_BINDING = 'PyQt'
 
 if DEFAULT_BINDING == 'PyQt':
@@ -76,22 +80,30 @@ else:
 
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):
-    import logging
-    log = logging.getLogger(__name__)
-
     class FakeQtSignal:
+        _instances = set()
+
         def __init__(self, *args):
             self._callbacks = set()
+            self._instances.add(self)
 
         def connect(self, func):
+            log.debug("{caller} connect to signal".format(caller=sys._getframe(1).f_code.co_name))
             self._callbacks.add(func)
 
         def disconnect(self, func):
             self._callbacks.remove(func)
 
         def emit(self, *args):
+            log.debug("{caller} emit signal".format(caller=sys._getframe(1).f_code.co_name))
             for callback in list(self._callbacks):
                 callback(*args)
+
+        @classmethod
+        def reset(cls):
+            """Use to clean the listening signals between tests"""
+            for instance in cls._instances:
+                instance._callbacks = set()
 
     QtCore.Signal = FakeQtSignal
     QtCore.pyqtSignal = FakeQtSignal

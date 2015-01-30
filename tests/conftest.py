@@ -15,6 +15,18 @@ def pytest_addoption(parser):
                      help="wait for instances to run while testing")
 
 
+@pytest.fixture(autouse=True)
+def reset_qt_signal():
+    """
+    Reset the QT signals between tests. Otherwise
+    you can get callback on code from previous test.
+    """
+
+    from gns3.qt import FakeQtSignal
+
+    FakeQtSignal.reset()
+
+
 @pytest.fixture(scope="class")
 def username(request):
     request.cls.username = request.config.getoption("--username") or os.environ.get('RACKSPACE_USERNAME')
@@ -58,6 +70,7 @@ def vpcs_device(local_server, project):
 
     vpcs_device = VPCSDevice(VPCS(), local_server, project)
     vpcs_device._vpcs_device_id = str(uuid.uuid4())
+    vpcs_device._settings = {"name": "VPCS 1", "script_file": ""}
     vpcs_device.setInitialized(True)
     return vpcs_device
 

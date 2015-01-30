@@ -20,7 +20,6 @@ VPCS device implementation.
 """
 
 import os
-import base64
 from functools import partial
 from gns3.node import Node
 from gns3.ports.port import Port
@@ -162,26 +161,6 @@ class VPCSDevice(Node):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def _base64Config(self, config_path):
-        """
-        Get the base64 encoded config from a file.
-
-        :param config_path: path to the configuration file.
-
-        :returns: base64 encoded string
-        """
-
-        try:
-            with open(config_path, "r", errors="replace") as f:
-                log.info("opening configuration file: {}".format(config_path))
-                config = f.read()
-                config = config.replace('\r', "")
-                encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-                return encoded
-        except OSError as e:
-            log.warn("could not base64 encode {}: {}".format(config_path, e))
-            return ""
-
     def update(self, new_settings):
         """
         Updates the settings for this VPCS device.
@@ -193,17 +172,13 @@ class VPCSDevice(Node):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
-        params = {"id": self._vpcs_id}
+        params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "script_file" in new_settings and self._settings["script_file"] != new_settings["script_file"] \
-                and not self.server().isLocal() and os.path.isfile(new_settings["script_file"]):
-            params["script_file_base64"] = self._base64Config(new_settings["script_file"])
-
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.send_message("vpcs.update", params, self._updateCallback)
+        self._server.put("/vpcs/{uuid}".format(uuid=self._uuid), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False):
         """
@@ -513,7 +488,7 @@ class VPCSDevice(Node):
         """
 
         self._config_export_path = config_export_path
-        self._server.send_message("vpcs.export_config", {"id": self._vpcs_id}, self._exportConfigCallback)
+        self._server.get("/vpcs/{uuid}".format(uuid=self._uuid), self._exportConfigCallback)
 
     def _exportConfigCallback(self, result, error=False):
         """
@@ -528,12 +503,11 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
 
-            if "script_file_base64" in result and self._config_export_path:
-                config = base64.decodebytes(result["script_file_base64"].encode("utf-8"))
+            if "startup_script" in result and self._config_export_path:
                 try:
                     with open(self._config_export_path, "wb") as f:
                         log.info("saving {} script file to {}".format(self.name(), self._config_export_path))
-                        f.write(config)
+                        f.write(result["startup_script"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(self._config_export_path, e))
 
@@ -545,7 +519,7 @@ class VPCSDevice(Node):
         """
 
         self._export_directory = directory
-        self._server.send_message("vpcs.export_config", {"id": self._vpcs_id}, self._exportConfigToDirectoryCallback)
+        self._server.get("/vpcs/{uuid}".format(uuid=self._uuid), self._exportConfigToDirectoryCallback)
 
     def _exportConfigToDirectoryCallback(self, result, error=False):
         """
@@ -560,9 +534,9 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["code"], result["message"])
         else:
 
-            if "script_file_base64" in result:
+            if "startup_script" in result:
                 config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_startup.vpc"
-                config = base64.decodebytes(result["script_file_base64"].encode("utf-8"))
+                config = result["startup_script"].encode("utf-8")
                 try:
                     with open(config_path, "wb") as f:
                         log.info("saving {} script file to {}".format(self.name(), config_path))

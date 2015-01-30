@@ -24,6 +24,7 @@ from gns3.modules.vpcs import VPCS
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 from gns3.node import Node
+from gns3.utils.normalize_filename import normalize_filename
 
 
 def test_vpcs_device_device_init(local_server, project):
@@ -141,3 +142,62 @@ def test_deleteNIO(vpcs_device):
 
             args, kwargs = mock_delete.call_args
             assert args[0] == "/vpcs/{uuid}/ports/0/nio".format(uuid=vpcs_device.uuid())
+
+
+def test_exportConfig(tmpdir, vpcs_device):
+
+    path = tmpdir / 'startup.vpcs'
+
+    with patch('gns3.http_client.HTTPClient.get') as mock:
+        vpcs_device.exportConfig(str(path))
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+
+        # Callback
+        args[1]({"startup_script": "echo TEST"})
+
+        assert path.exists()
+
+        with open(str(path)) as f:
+            assert f.read() == "echo TEST"
+
+
+def test_exportConfigToDirectory(tmpdir, vpcs_device):
+
+    path = tmpdir / normalize_filename(vpcs_device.name()) + '_startup.vpc'
+
+    with patch('gns3.http_client.HTTPClient.get') as mock:
+        vpcs_device.exportConfigToDirectory(str(tmpdir))
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+
+        # Callback
+        args[1]({"startup_script": "echo TEST"})
+
+        assert path.exists()
+
+        with open(str(path)) as f:
+            assert f.read() == "echo TEST"
+
+
+def test_update(vpcs_device):
+
+    new_settings = {
+        "name": "Unreal VPCS",
+        "script_file": "echo TEST"
+    }
+
+    with patch('gns3.http_client.HTTPClient.put') as mock:
+        vpcs_device.update(new_settings)
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+        assert kwargs["body"] == new_settings
+
+        # Callback
+        args[1]({"startup_script": "echo TEST", "name": "Unreal VPCS"})
