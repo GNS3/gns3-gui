@@ -70,7 +70,7 @@ def vpcs_device(local_server, project):
 
     vpcs_device = VPCSDevice(VPCS(), local_server, project)
     vpcs_device._vpcs_device_id = str(uuid.uuid4())
-    vpcs_device._settings = {"name": "VPCS 1", "script_file": ""}
+    vpcs_device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
     vpcs_device.setInitialized(True)
     return vpcs_device
 

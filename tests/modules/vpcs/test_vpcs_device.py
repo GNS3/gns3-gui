@@ -201,3 +201,20 @@ def test_update(vpcs_device):
 
         # Callback
         args[1]({"startup_script": "echo TEST", "name": "Unreal VPCS"})
+
+
+def test_importConfig(vpcs_device, tmpdir):
+
+    path = str(tmpdir / 'startup.vpcs')
+    content = "echo TEST"
+
+    with open(path, 'w+') as f:
+        f.write(content)
+
+    with patch('gns3.http_client.HTTPClient.put') as mock:
+        vpcs_device.importConfig(path)
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+        assert kwargs["body"] == {"startup_script": content}

@@ -54,6 +54,7 @@ class VPCSDevice(Node):
         self._ports = []
         self._settings = {"name": "",
                           "script_file": "",
+                          "startup_script": None,
                           "console": None}
 
         port_name = EthernetPort.longNameType() + str(0)
@@ -553,7 +554,8 @@ class VPCSDevice(Node):
         :param path: path to the script file
         """
 
-        new_settings = {"script_file": path}
+        with open(path) as f:
+            new_settings = {"startup_script": f.read()}
         self.update(new_settings)
 
     def importConfigFromDirectory(self, directory):
