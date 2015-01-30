@@ -449,15 +449,15 @@ class Topology(object):
         # from .main_window import MainWindow
         # project_settings = MainWindow.instance().projectSettings()
 
-        topology = {"name": self._project.getName(),
+        topology = {"name": self._project.name(),
                     "version": __version__,
                     "type": "topology",
                     "topology": {},
                     "auto_start": False,
-                    "resources_type": self._project.getType(),
+                    "resources_type": self._project.type(),
                     }
 
-        self._resources_type = self._project.getType()
+        self._resources_type = self._project.type()
 
         servers = {}
 

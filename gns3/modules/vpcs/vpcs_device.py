@@ -98,7 +98,7 @@ class VPCSDevice(Node):
         # if initial_settings:
         #    self._inital_settings = initial_settings
 
-        params["project_uuid"] = self._project.getUuid()
+        params["project_uuid"] = self._project.uuid()
         self._server.post("/vpcs", self._setupCallback, params)
 
     def _setupCallback(self, result, error=False):

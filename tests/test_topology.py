@@ -43,7 +43,7 @@ def test_dump(vpcs_device, project):
     dump = topology.dump(include_gui_data=False)
     assert dict(dump) == {
         "auto_start": False,
-        "name": project.getName(),
+        "name": project.name(),
         "resources_type": "local",
         "version": __version__,
         "topology": {
@@ -186,7 +186,7 @@ def test_load(project, main_window):
             topology.project = project
             topology.load(topo)
 
-            assert topology._project.getName() == "twovpcs"
+            assert topology._project.name() == "twovpcs"
             assert len(topology.nodes()) == 2
             assert len(topology._node_to_links_mapping) == 2
             assert topology.getNode(1).initialized()

@@ -34,7 +34,7 @@ class Project(QtCore.QObject):
         self._servers = Servers.instance()
         self._temporary = False
 
-    def getName(self):
+    def name(self):
         """
         :returns: Project name (string)
         """
@@ -50,7 +50,7 @@ class Project(QtCore.QObject):
 
         self._name = name
 
-    def getType(self):
+    def type(self):
         """
         :returns: Project type (string)
         """
@@ -66,7 +66,7 @@ class Project(QtCore.QObject):
 
         self._type = type
 
-    def getTemporary(self):
+    def temporary(self):
         """
         :returns: True if the project is temporary
         """
@@ -83,7 +83,7 @@ class Project(QtCore.QObject):
 
         self._temporary = temporary
 
-    def getUuid(self):
+    def uuid(self):
         """
         Get project UUID
         """
@@ -114,7 +114,7 @@ class Project(QtCore.QObject):
         Create project on all servers
         """
 
-        self._servers.localServer().post("/project", self._project_created, body={"temporary": self.getTemporary()})
+        self._servers.localServer().post("/project", self._project_created, body={"temporary": self._temporary})
 
     def _project_created(self, params, error=False):
         if error:

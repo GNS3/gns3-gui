@@ -39,6 +39,6 @@ def test_project_create():
         assert kwargs["body"] == {"temporary": False}
         # Call the project creation callback
         args[1]({"uuid": uuid})
-        assert project.getUuid() == uuid
+        assert project.uuid() == uuid
 
         assert signal.called
