@@ -70,7 +70,8 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
             self._vbox_vms_progress_dialog.setWindowTitle("VirtualBox VMs")
             self._vbox_vms_progress_dialog.show()
             try:
-                VirtualBox.instance().getVirtualBoxVMsFromServer(self._server, self._getVirtualBoxVMsFromServerCallback)
+                server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
+                #FIXME: Catch exception
             except ModuleError as e:
                 self._vbox_vms_progress_dialog.reject()
                 QtGui.QMessageBox.critical(self, "VirtualBox VMs", "Error while getting the VirtualBox VMs: {}".format(e))

@@ -68,12 +68,30 @@ def vpcs_device(local_server, project):
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.vpcs import VPCS
 
-    vpcs_device = VPCSDevice(VPCS(), local_server, project)
-    vpcs_device._vpcs_device_id = str(uuid.uuid4())
-    vpcs_device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
-    vpcs_device.setInitialized(True)
-    return vpcs_device
+    device = VPCSDevice(VPCS(), local_server, project)
+    device._vpcs_device_id = str(uuid.uuid4())
+    device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
+    device.setInitialized(True)
+    return device
 
+@pytest.fixture
+def virtualbox_vm(local_server, project):
+
+    from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
+    from gns3.modules.virtualbox import VirtualBox
+
+    vm = VirtualBoxVM(VirtualBox(), local_server, project)
+    vm._virtualbox_vm_id = str(uuid.uuid4())
+    vm._settings = {"name": "VBOX1",
+                    "vmname": "VBOX1",
+                    "console": None,
+                    "adapters": 0,
+                    "adapter_start_index": 0,
+                    "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
+                    "headless": False,
+                    "enable_remote_console": False}
+    vm.setInitialized(True)
+    return vm
 
 @pytest.fixture
 def main_window():

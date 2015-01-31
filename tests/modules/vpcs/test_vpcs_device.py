@@ -15,24 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pytest
-import uuid
-from unittest.mock import patch, Mock
 
+from unittest.mock import patch, Mock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
-from gns3.modules.vpcs import VPCS
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
 
 
-def test_vpcs_device_device_init(local_server, project):
+def test_vpcs_device_init(local_server, project):
 
     vpcs_device = VPCSDevice(None, local_server, project)
 
 
-def test_vpcs_device_device_setup(vpcs_device):
+def test_vpcs_device_setup(vpcs_device):
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
         vpcs_device.setup()
@@ -54,7 +51,7 @@ def test_vpcs_device_device_setup(vpcs_device):
         assert vpcs_device.uuid() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_vpcs_device_device_start(vpcs_device):
+def test_vpcs_device_start(vpcs_device):
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
         vpcs_device.start()
@@ -63,7 +60,7 @@ def test_vpcs_device_device_start(vpcs_device):
         assert args[0] == "/vpcs/{uuid}/start".format(uuid=vpcs_device.uuid())
 
 
-def test_vpcs_device_device_stop(vpcs_device):
+def test_vpcs_device_stop(vpcs_device):
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
         vpcs_device.setStatus(Node.started)
@@ -73,7 +70,7 @@ def test_vpcs_device_device_stop(vpcs_device):
         assert args[0] == "/vpcs/{uuid}/stop".format(uuid=vpcs_device.uuid())
 
 
-def test_vpcs_device_device_reload(vpcs_device):
+def test_vpcs_device_reload(vpcs_device):
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
         vpcs_device.reload()
@@ -88,7 +85,7 @@ def test_allocateUDPPort(vpcs_device):
         vpcs_device.allocateUDPPort(1)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/udp"
+        assert args[0] == "/ports/udp"
 
         # Connect the signal
         signal_mock = Mock()

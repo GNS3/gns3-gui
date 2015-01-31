@@ -306,7 +306,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.post("/udp", partial(self._allocateUDPPortCallback, port_id))
+        self._server.post("/ports/udp", partial(self._allocateUDPPortCallback, port_id))
 
     def _allocateUDPPortCallback(self, port_id, result, error=False):
         """

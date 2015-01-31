@@ -40,14 +40,12 @@ class VirtualBoxVM(Node):
     """
 
     def __init__(self, module, server, project):
-        Node.__init__(self, server)
 
+        Node.__init__(self, server)
         log.info("VirtualBox VM instance is being created")
         self._project = project
         self._uuid = None
         self._linked_clone = False
-        #self._defaults = {}
-        #self._inital_settings = None
         self._export_directory = None
         self._loading = False
         self._module = module
@@ -60,20 +58,6 @@ class VirtualBoxVM(Node):
                           "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
                           "headless": VBOX_VM_SETTINGS["headless"],
                           "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
-
-        #self._addAdapters(2)
-
-        # save the default settings
-        #self._defaults = self._settings.copy()
-
-    def settings(self):
-        """
-        Returns the VM settings
-
-        :returns: VM settings (dictionary)
-        """
-
-        return self._settings
 
     def _addAdapters(self, adapters):
         """
@@ -94,14 +78,16 @@ class VirtualBoxVM(Node):
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, vmname, name=None, identifier=None, linked_clone=False, initial_settings={}):
+    def setup(self, vmname, name=None, identifier=None, linked_clone=False, additional_settings={}):
         """
         Setups this VirtualBox VM.
 
+        :param vmname: VM name in VirtualBox
         :param name: optional name
+        :param identifier: VM identifier (ID or UUID)
+        :param linked_clone: either the VM is a linked clone
+        :param additional_settings: additional settings for this VM
         """
-
-        self._linked_clone = linked_clone
 
         # let's create a unique name if none has been chosen
         if not name:
@@ -115,9 +101,10 @@ class VirtualBoxVM(Node):
             self.error_signal.emit(self.id(), "could not allocate a name for this VirtualBox VM")
             return
 
+        self._linked_clone = linked_clone
         params = {"name": name,
-                  "linked_clone": linked_clone}
-        params.update(initial_settings)
+                  "linked_clone": linked_clone,
+                  "project_uuid": self._project.uuid()}
 
         if identifier:
             if isinstance(identifier, int):
@@ -125,14 +112,14 @@ class VirtualBoxVM(Node):
             else:
                 params["uuid"]
 
-        params["project_uuid"] = self._project.uuid()
+        params.update(additional_settings)
         self._server.post("/virtualbox", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False):
         """
         Callback for setup.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -151,10 +138,13 @@ class VirtualBoxVM(Node):
         if self._settings["adapters"] != 0:
             self._addAdapters(self._settings["adapters"])
 
-        self.setInitialized(True)
-        log.info("VirtualBox VM instance {} has been created".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
+        if self._loading:
+            self.updated_signal.emit()
+        else:
+            self.setInitialized(True)
+            log.info("VirtualBox VM instance {} has been created".format(self.name()))
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def delete(self):
         """
@@ -174,7 +164,7 @@ class VirtualBoxVM(Node):
         """
         Callback for delete.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -189,7 +179,7 @@ class VirtualBoxVM(Node):
         """
         Updates the settings for this VirtualBox VM.
 
-        :param new_settings: settings dictionary
+        :param new_settings: settings (dict)
         """
 
         if "name" in new_settings and new_settings["name"] != self.name():
@@ -212,7 +202,7 @@ class VirtualBoxVM(Node):
         """
         Callback for update.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -240,7 +230,7 @@ class VirtualBoxVM(Node):
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
 
-        if updated:
+        if updated or self._loading:
             log.info("VirtualBox VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -260,7 +250,7 @@ class VirtualBoxVM(Node):
         """
         Callback for start.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -291,7 +281,7 @@ class VirtualBoxVM(Node):
         """
         Callback for stop.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -322,7 +312,7 @@ class VirtualBoxVM(Node):
         """
         Callback for suspend.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -349,7 +339,7 @@ class VirtualBoxVM(Node):
         """
         Callback for reload.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -367,7 +357,7 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.post("/udp", partial(self._allocateUDPPortCallback, port_id))
+        self._server.post("/ports/udp", partial(self._allocateUDPPortCallback, port_id))
 
     def _allocateUDPPortCallback(self, port_id, result, error=False):
         """
@@ -382,7 +372,7 @@ class VirtualBoxVM(Node):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             lport = result["udp_port"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
+            log.debug("{} has allocated UDP port {}".format(self.name(), lport))
             self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
 
     def addNIO(self, port, nio):
@@ -396,7 +386,7 @@ class VirtualBoxVM(Node):
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
 
-        self._server.post("/virtualbox/{uuid}/ports/{port_number}/nio".format(uuid=self._uuid, port_number=port.portNumber()),
+        self._server.post("/virtualbox/{uuid}/adapters/{adapter_id}/nio".format(uuid=self._uuid, adapter_id=port.portNumber()),
                           partial(self._addNIOCallback, port.id()), body=params)
 
     def _addNIOCallback(self, port_id, result, error=False):
@@ -422,8 +412,9 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is deleting an NIO on port {}".format(self.name(), port.portNumber()))
-        self._server.delete("/vpcs/{uuid}/ports/{port_number}/nio".format(uuid=self._uuid,
-                                                                          port_number=port.portNumber()), self._deleteNIOCallback)
+        self._server.delete("/virtualbox/{uuid}/adapters/{adapter_id}/nio".format(uuid=self._uuid,
+                                                                                  adapter_id=port.portNumber()),
+                            self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
         """
@@ -616,6 +607,15 @@ class VirtualBoxVM(Node):
         self._module.addNode(self)
         self._inital_settings = None
         self._loading = False
+
+    def uuid(self):
+        """
+        Return the UUID of this VirtualBox VM instance.
+
+        :returns: uuid (string)
+        """
+
+        return self._uuid
 
     def name(self):
         """
