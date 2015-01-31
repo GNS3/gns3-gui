@@ -337,18 +337,22 @@ class VirtualBox(Module):
                 vm = selected_vms[0]
 
         linked_base = self._virtualbox_vms[vm]["linked_base"]
-
         if not linked_base:
             for other_node in self._nodes:
                 if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
                         (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
                     raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
 
-        settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
-                    "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
-                    "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
-                    "headless": self._virtualbox_vms[vm]["headless"],
-                    "enable_remote_console": self._virtualbox_vms[vm]["enable_remote_console"]}
+        # settings = {"adapters": self._virtualbox_vms[vm]["adapters"],
+        #             "adapter_start_index": self._virtualbox_vms[vm]["adapter_start_index"],
+        #             "adapter_type": self._virtualbox_vms[vm]["adapter_type"],
+        #             "headless": self._virtualbox_vms[vm]["headless"],
+        #             "enable_remote_console": self._virtualbox_vms[vm]["enable_remote_console"]}
+
+        settings = {}
+        for setting_name, value in self._virtualbox_vms[vm].items():
+            if setting_name in node.settings():
+                settings[setting_name] = value
 
         vmname = self._virtualbox_vms[vm]["vmname"]
         node.setup(vmname, linked_clone=linked_base, initial_settings=settings)
@@ -388,6 +392,7 @@ class VirtualBox(Module):
         :param callback: callback for the reply from the server
         """
 
+        # TODO: clean
         if not server.connected():
             try:
                 log.info("reconnecting to server {}:{}".format(server.host, server.port))
@@ -396,11 +401,13 @@ class VirtualBox(Module):
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
                                                                                  e))
-        params = {}
-        if server.isLocal():
-            params["vboxmanage_path"] = self._settings["vboxmanage_path"]
-            params["vbox_user"] = self._settings["vbox_user"]
-        server.send_message("virtualbox.vm_list", params, callback)
+        #params = {}
+        #if server.isLocal():
+        #    params["vboxmanage_path"] = self._settings["vboxmanage_path"]
+        #    params["vbox_user"] = self._settings["vbox_user"]
+        #server.send_message("virtualbox.vm_list", params, callback)
+
+        server.get("/virtualbox/vms", callback)
 
     def getVirtualBoxVMList(self):
         """

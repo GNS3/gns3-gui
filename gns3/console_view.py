@@ -170,7 +170,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self.write(text, warning=True)
         self.write("\n")
 
-    def writeServerError(self, node_id, code, message):
+    def writeServerError(self, node_id, message):
         """
         Write server error messages coming from the server.
 
@@ -181,15 +181,15 @@ class ConsoleView(PyCutExt, ConsoleCmd):
 
         node = Topology.instance().getNode(node_id)
         server = name = ""
-        if node and node.name():
-            name = " {}:".format(node.name())
+        if node:
+            if node.name():
+                name = " {}:".format(node.name())
             server = "from {}:{}".format(node.server().host,
                                          node.server().port)
 
-        text = "Server error [{code}] {server}:{name} {message}".format(code=code,
-                                                                        server=server,
-                                                                        name=name,
-                                                                        message=message)
+        text = "Server error {server}:{name} {message}".format(server=server,
+                                                               name=name,
+                                                               message=message)
         self.write(text, error=True)
         self.write("\n")
 

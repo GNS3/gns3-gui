@@ -95,7 +95,7 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
             for existing_vm in self._virtualbox_vms.values():
                 existing_vms.append(existing_vm["vmname"])
 
-            for vm in result["vms"]:
+            for vm in result:
                 if vm not in existing_vms:
                     self.uiVMListComboBox.addItem(vm)
 

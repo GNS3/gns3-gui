@@ -193,7 +193,7 @@ class HTTPClient:
         request = QtNetwork.QNetworkRequest(url)
         request.setRawHeader("Content-Type", "application/json")
         request.setRawHeader("Content-Length", str(len(body)))
-        request.setRawHeader("User-Agent", "GNS3 QT Client {version}".format(version=__version__))
+        request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
 
         if method == "GET":
             response = self._network_manager.get(request)
@@ -218,16 +218,22 @@ class HTTPClient:
     def response_process(self, response, callback):
 
         if response.error() != QtNetwork.QNetworkReply.NoError:
-            log.debug("Response error: {}".format(response.errorString()))
+            error_message = response.errorString()
+            log.info("Response error: {}".format(error_message))
             body = bytes(response.readAll()).decode()
-            log.debug(body)
-            callback(json.loads(body), error=True)
+            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+            if not body or content_type != "application/json":
+                callback({"message": error_message}, error=True)
+            else:
+                log.debug(body)
+                callback(json.loads(body), error=True)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
             body = bytes(response.readAll()).decode()
+            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             log.debug(body)
-            if body:
+            if body and content_type == "application/json":
                 params = json.loads(body)
             else:
                 params = {}

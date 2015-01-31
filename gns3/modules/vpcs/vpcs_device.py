@@ -111,7 +111,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
         # TODO: Manage id / uuid conversion
@@ -157,7 +157,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -236,7 +236,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
@@ -267,7 +267,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -294,7 +294,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
 
@@ -318,7 +318,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             lport = result["udp_port"]
             log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
@@ -346,7 +346,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             self.nio_cancel_signal.emit(self.id())
         else:
             self.nio_signal.emit(self.id(), port_id)
@@ -371,7 +371,7 @@ class VPCSDevice(Node):
 
         if error:
             log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["status"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
