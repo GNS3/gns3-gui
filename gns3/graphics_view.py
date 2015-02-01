@@ -126,34 +126,6 @@ class GraphicsView(QtGui.QGraphicsView):
         # clear all objects on the scene
         self.scene().clear()
 
-    def updateProjectFilesDir(self, path):
-        """
-        Updates the project files directory path for all modules.
-
-        :param path: path to the local project files directory.
-        """
-
-        try:
-            for module in MODULES:
-                instance = module.instance()
-                instance.setProjectFilesDir(path)
-        except ModuleError as e:
-            QtGui.QMessageBox.critical(self, "Local projects directory", "{}".format(e))
-
-    def updateImageFilesDir(self, path):
-        """
-        Updates the image files directory path for all modules.
-
-        :param path: path to the local images files directory.
-        """
-
-        try:
-            for module in MODULES:
-                instance = module.instance()
-                instance.setImageFilesDir(path)
-        except ModuleError as e:
-            QtGui.QMessageBox.critical(self, "Local images directory", "{}".format(e))
-
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.

@@ -22,6 +22,7 @@ Configuration page for VirtualBox preferences.
 import os
 from gns3.qt import QtGui
 from gns3.servers import Servers
+
 from .. import VirtualBox
 from ..ui.virtualbox_preferences_page_ui import Ui_VirtualBoxPreferencesPageWidget
 from ..settings import VBOX_SETTINGS
@@ -88,10 +89,6 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         self.uiVboxManagePathLineEdit.setText(settings["vboxmanage_path"])
         self.uiVboxManageUserLineEdit.setText(settings["vbox_user"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
-        self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
-        self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
-        self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
-        self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
     def _updateRemoteServersSlot(self):
         """
@@ -116,7 +113,6 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
 
         vbox_settings = VirtualBox.instance().settings()
         self._populateWidgets(vbox_settings)
-
         servers = Servers.instance()
         servers.updated_signal.connect(self._updateRemoteServersSlot)
         self._updateRemoteServersSlot()
@@ -130,8 +126,4 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         new_settings["vboxmanage_path"] = self.uiVboxManagePathLineEdit.text()
         new_settings["vbox_user"] = self.uiVboxManageUserLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
-        new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
-        new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
-        new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
-        new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         VirtualBox.instance().setSettings(new_settings)

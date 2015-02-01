@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Sun Oct 19 16:18:52 2014
+# Created: Sat Jan 31 19:00:41 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_VPCSPreferencesPageWidget(object):
-
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName(_fromUtf8("VPCSPreferencesPageWidget"))
         VPCSPreferencesPageWidget.resize(430, 545)
@@ -87,62 +84,11 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.horizontalLayout_11.addWidget(self.uiRemoteServersTreeWidget)
         self.verticalLayout_3.addWidget(self.uiRemoteServersGroupBox)
         self.uiTabWidget.addTab(self.uiServerSettingsTabWidget, _fromUtf8(""))
-        self.uiAdvancedSettingsTabWidget = QtGui.QWidget()
-        self.uiAdvancedSettingsTabWidget.setObjectName(_fromUtf8("uiAdvancedSettingsTabWidget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.uiAdvancedSettingsTabWidget)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.uiConsolePortRangeGroupBox = QtGui.QGroupBox(self.uiAdvancedSettingsTabWidget)
-        self.uiConsolePortRangeGroupBox.setObjectName(_fromUtf8("uiConsolePortRangeGroupBox"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.uiConsolePortRangeGroupBox)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.uiConsoleStartPortSpinBox = QtGui.QSpinBox(self.uiConsolePortRangeGroupBox)
-        self.uiConsoleStartPortSpinBox.setSuffix(_fromUtf8(" TCP"))
-        self.uiConsoleStartPortSpinBox.setMaximum(65535)
-        self.uiConsoleStartPortSpinBox.setProperty("value", 4501)
-        self.uiConsoleStartPortSpinBox.setObjectName(_fromUtf8("uiConsoleStartPortSpinBox"))
-        self.horizontalLayout.addWidget(self.uiConsoleStartPortSpinBox)
-        self.uiConsolePortRangeLabel = QtGui.QLabel(self.uiConsolePortRangeGroupBox)
-        self.uiConsolePortRangeLabel.setObjectName(_fromUtf8("uiConsolePortRangeLabel"))
-        self.horizontalLayout.addWidget(self.uiConsolePortRangeLabel)
-        self.uiConsoleEndPortSpinBox = QtGui.QSpinBox(self.uiConsolePortRangeGroupBox)
-        self.uiConsoleEndPortSpinBox.setSuffix(_fromUtf8(" TCP"))
-        self.uiConsoleEndPortSpinBox.setMaximum(65535)
-        self.uiConsoleEndPortSpinBox.setProperty("value", 5000)
-        self.uiConsoleEndPortSpinBox.setObjectName(_fromUtf8("uiConsoleEndPortSpinBox"))
-        self.horizontalLayout.addWidget(self.uiConsoleEndPortSpinBox)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.verticalLayout.addWidget(self.uiConsolePortRangeGroupBox)
-        self.uiUDPPortRangeGroupBox = QtGui.QGroupBox(self.uiAdvancedSettingsTabWidget)
-        self.uiUDPPortRangeGroupBox.setObjectName(_fromUtf8("uiUDPPortRangeGroupBox"))
-        self.horizontalLayout_4 = QtGui.QHBoxLayout(self.uiUDPPortRangeGroupBox)
-        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.uiUDPStartPortSpinBox = QtGui.QSpinBox(self.uiUDPPortRangeGroupBox)
-        self.uiUDPStartPortSpinBox.setSuffix(_fromUtf8(" UDP"))
-        self.uiUDPStartPortSpinBox.setMaximum(65535)
-        self.uiUDPStartPortSpinBox.setProperty("value", 20001)
-        self.uiUDPStartPortSpinBox.setObjectName(_fromUtf8("uiUDPStartPortSpinBox"))
-        self.horizontalLayout_4.addWidget(self.uiUDPStartPortSpinBox)
-        self.uiUDPPortRangeLabel = QtGui.QLabel(self.uiUDPPortRangeGroupBox)
-        self.uiUDPPortRangeLabel.setObjectName(_fromUtf8("uiUDPPortRangeLabel"))
-        self.horizontalLayout_4.addWidget(self.uiUDPPortRangeLabel)
-        self.uiUDPEndPortSpinBox = QtGui.QSpinBox(self.uiUDPPortRangeGroupBox)
-        self.uiUDPEndPortSpinBox.setSuffix(_fromUtf8(" UDP"))
-        self.uiUDPEndPortSpinBox.setMaximum(65535)
-        self.uiUDPEndPortSpinBox.setProperty("value", 20512)
-        self.uiUDPEndPortSpinBox.setObjectName(_fromUtf8("uiUDPEndPortSpinBox"))
-        self.horizontalLayout_4.addWidget(self.uiUDPEndPortSpinBox)
-        spacerItem2 = QtGui.QSpacerItem(147, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem2)
-        self.verticalLayout.addWidget(self.uiUDPPortRangeGroupBox)
-        spacerItem3 = QtGui.QSpacerItem(20, 304, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem3)
-        self.uiTabWidget.addTab(self.uiAdvancedSettingsTabWidget, _fromUtf8(""))
         self.verticalLayout_2.addWidget(self.uiTabWidget)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        spacerItem4 = QtGui.QSpacerItem(138, 17, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem4)
+        spacerItem1 = QtGui.QSpacerItem(138, 17, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.uiTestSettingsPushButton = QtGui.QPushButton(VPCSPreferencesPageWidget)
         self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
         self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
@@ -167,10 +113,6 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("VPCSPreferencesPageWidget", "Host", None))
         self.uiRemoteServersTreeWidget.headerItem().setText(1, _translate("VPCSPreferencesPageWidget", "Port", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "Server settings", None))
-        self.uiConsolePortRangeGroupBox.setTitle(_translate("VPCSPreferencesPageWidget", "Console port range", None))
-        self.uiConsolePortRangeLabel.setText(_translate("VPCSPreferencesPageWidget", "to", None))
-        self.uiUDPPortRangeGroupBox.setTitle(_translate("VPCSPreferencesPageWidget", "UDP tunneling port range", None))
-        self.uiUDPPortRangeLabel.setText(_translate("VPCSPreferencesPageWidget", "to", None))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "Advanced settings", None))
         self.uiTestSettingsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults", None))
+

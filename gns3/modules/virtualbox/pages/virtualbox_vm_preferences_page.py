@@ -22,7 +22,6 @@ Configuration page for VirtualBox VM preferences.
 import copy
 
 from gns3.qt import QtCore, QtGui
-from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -30,7 +29,7 @@ from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from .. import VirtualBox
 from ..settings import VBOX_VM_SETTINGS
 from ..ui.virtualbox_vm_preferences_page_ui import Ui_VirtualBoxVMPreferencesPageWidget
-from ..pages.virtualbox_vm_configuration_page import virtualBoxVMConfigurationPage
+from ..pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPage
 from ..dialogs.virtualbox_vm_wizard import VirtualBoxVMWizard
 
 
@@ -133,7 +132,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             vbox_vm = self._virtualbox_vms[key]
-            dialog = ConfigurationDialog(vbox_vm["vmname"], vbox_vm, virtualBoxVMConfigurationPage(), parent=self)
+            dialog = ConfigurationDialog(vbox_vm["vmname"], vbox_vm, VirtualBoxVMConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
                 if vbox_vm["vmname"] != item.text(0):

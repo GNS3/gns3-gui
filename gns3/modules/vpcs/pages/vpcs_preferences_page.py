@@ -116,10 +116,6 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiVPCSPathLineEdit.setText(settings["path"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
-        self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
-        self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
-        self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
-        self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
     def _updateRemoteServersSlot(self):
         """
@@ -158,8 +154,4 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         new_settings["path"] = self.uiVPCSPathLineEdit.text()
         new_settings["base_script_file"] = self.uiScriptFileEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
-        new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
-        new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
-        new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
-        new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         VPCS.instance().setSettings(new_settings)

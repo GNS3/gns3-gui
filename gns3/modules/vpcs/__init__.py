@@ -27,10 +27,10 @@ import socket
 import re
 import pkg_resources
 
-from gns3.qt import QtCore
 from gns3.servers import Servers
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
+from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -53,7 +53,6 @@ class VPCS(Module):
 
         self._settings = {}
         self._nodes = []
-        self._servers = []
         self._working_dir = ""
 
         self._vpcs_multi_host_process = None
@@ -68,14 +67,13 @@ class VPCS(Module):
         """
 
         # load the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in VPCS_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=VPCS_SETTING_TYPES[name])
-        settings.endGroup()
+        config = LocalServerConfig.instance()
+        self._settings = config.loadSettings(self.__class__.__name__, VPCS_SETTINGS, VPCS_SETTING_TYPES)
 
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
+        # special case: sync the last change
+        config.saveSettings(self.__class__.__name__, self._settings)
 
     def _saveSettings(self):
         """
@@ -83,65 +81,8 @@ class VPCS(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
-
-    def setProjectFilesDir(self, path):
-        """
-        Sets the project files directory path this module.
-
-        :param path: path to the local project files directory
-        """
-
-        self._working_dir = path
-        log.info("local working directory for VPCS module: {}".format(self._working_dir))
-
-        # update the server with the new working directory / project name
-        for server in self._servers:
-            if server.connected():
-                self._sendSettings(server)
-
-    def setImageFilesDir(self, path):
-        """
-        Sets the image files directory path this module.
-
-        :param path: path to the local image files directory
-        """
-
-        pass  # not used by this module
-
-    def addServer(self, server):
-        """
-        Adds a server to be used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("adding server {}:{} to VPCS module".format(server.host, server.port))
-        self._servers.append(server)
-        self._sendSettings(server)
-
-    def removeServer(self, server):
-        """
-        Removes a server from being used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("removing server {}:{} from VPCS module".format(server.host, server.port))
-        self._servers.remove(server)
-
-    def servers(self):
-        """
-        Returns all the servers used by this module.
-
-        :returns: list of WebSocketClient instances
-        """
-
-        return self._servers
+        config = LocalServerConfig.instance()
+        config.saveSettings(self.__class__.__name__, self._settings)
 
     def addNode(self, node):
         """
@@ -178,52 +119,8 @@ class VPCS(Module):
         :param settings: module settings (dictionary)
         """
 
-        params = {}
-        for name, value in settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            for server in self._servers:
-                # send the local working directory only if this is a local server
-                if server.isLocal():
-                    params.update({"working_dir": self._working_dir})
-                else:
-                    if "path" in params:
-                        del params["path"]  # do not send VPCS path to remote servers
-                    project_name = os.path.basename(self._working_dir)
-                    if project_name.endswith("-files"):
-                        project_name = project_name[:-6]
-                    params.update({"project_name": project_name})
-                server.send_notification("vpcs.settings", params)
-
         self._settings.update(settings)
         self._saveSettings()
-
-    def _sendSettings(self, server):
-        """
-        Sends the module settings to the server.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("sending VPCS settings to server {}:{}".format(server.host, server.port))
-        params = self._settings.copy()
-
-        # do not send the base script file path.
-        del params["base_script_file"]
-
-        # send the local working directory only if this is a local server
-        if server.isLocal():
-            params.update({"working_dir": self._working_dir})
-        else:
-            if "path" in params:
-                del params["path"]  # do not send VPCS path to remote servers
-            project_name = os.path.basename(self._working_dir)
-            if project_name.endswith("-files"):
-                project_name = project_name[:-6]
-            params.update({"project_name": project_name})
-        server.send_notification("vpcs.settings", params)
 
     def createNode(self, node_class, server, project):
         """
@@ -244,8 +141,6 @@ class VPCS(Module):
                 raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
                                                                                  server.port,
                                                                                  e))
-        if server not in self._servers:
-            self.addServer(server)
 
         # create an instance of the node class
         return node_class(self, server, project)
@@ -269,31 +164,11 @@ class VPCS(Module):
 
     def reset(self):
         """
-        Resets the servers.
+        Resets the module.
         """
 
         log.info("vpcs module reset")
-        self.stopMultiHostVPCS()
-        for server in self._servers:
-            if server.connected():
-                server.send_notification("vpcs.reset")
-        self._servers.clear()
         self._nodes.clear()
-
-    def notification(self, destination, params):
-        """
-        To received notifications from the server.
-
-        :param destination: JSON-RPC method
-        :param params: JSON-RPC params
-        """
-
-        if "id" in params:
-            for node in self._nodes:
-                if node.id() == params["id"]:
-                    message = "node {}: {}".format(node.name(), params["message"])
-                    self.notification_signal.emit(message, params["details"])
-                    node.stop()
 
     def exportConfigs(self, directory):
         """

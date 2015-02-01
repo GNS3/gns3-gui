@@ -41,20 +41,12 @@ else:
 
 VPCS_SETTINGS = {
     "path": DEFAULT_VPCS_PATH,
-    "console_start_port_range": 4501,
-    "console_end_port_range": 5000,
-    "udp_start_port_range": 20501,
-    "udp_end_port_range": 21000,
     "use_local_server": True,
     "base_script_file": "",
 }
 
 VPCS_SETTING_TYPES = {
     "path": str,
-    "console_start_port_range": int,
-    "console_end_port_range": int,
-    "udp_start_port_range": int,
-    "udp_end_port_range": int,
     "use_local_server": bool,
     "base_script_file": str,
 }

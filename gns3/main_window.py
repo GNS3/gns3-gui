@@ -146,7 +146,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 
         # set the images directory
-        self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
+        # self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
         # add recent file actions to the File menu
         for i in range(0, self._max_recent_files):
@@ -240,8 +240,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         # set a new images directory
-        if new_settings.get("images_path", '') != self.imagesDirPath():
-            self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
+        # if new_settings.get("images_path", '') != self.imagesDirPath():
+        #    self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
 
         style = new_settings.get("style")
         if style and new_settings["style"] != self._settings["style"]:
@@ -413,7 +413,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         # let all modules know about the new project files directory
-        self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
+        # self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
         topology = Topology.instance()
         topology.project = self._project
@@ -1285,7 +1285,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     return
 
         # let all modules know about the new project files directory
-        self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
+        # self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
 
         if self._temporary_project:
             # move files if saving from a temporary project
@@ -1417,7 +1417,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.critical(self, "Load project", "Could not create project sub-directory {}: {}".format(self._project_settings["project_files_dir"], e))
                     return
 
-                self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+                # self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
 
                 # if we're opening a cloud project, defer topology load operations
                 if json_topology["resources_type"] == "cloud":
@@ -1480,7 +1480,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
 
-        self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+        # self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
         self._setCurrentFile()
 
     def isTemporaryProject(self):

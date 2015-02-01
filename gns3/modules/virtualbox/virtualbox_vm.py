@@ -671,8 +671,8 @@ class VirtualBoxVM(Node):
         :returns: QWidget object
         """
 
-        from .pages.virtualbox_vm_configuration_page import virtualBoxVMConfigurationPage
-        return virtualBoxVMConfigurationPage
+        from .pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPage
+        return VirtualBoxVMConfigurationPage
 
     @staticmethod
     def defaultSymbol():

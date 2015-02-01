@@ -59,6 +59,8 @@ class VPCSDevice(Node):
 
         port_name = EthernetPort.longNameType() + str(0)
         short_name = EthernetPort.shortNameType() + str(0)
+
+        # VPCS devices have only one Ethernet port
         port = EthernetPort(port_name)
         port.setShortName(short_name)
         port.setPortNumber(0)
@@ -68,11 +70,13 @@ class VPCSDevice(Node):
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def setup(self, name=None, console=None, identifier=None, initial_settings={}):
+    def setup(self, name=None, identifier=None, additional_settings={}):
         """
         Setups this VPCS device.
 
         :param name: optional name
+        :param identifier: VM identifier (ID or UUID)
+        :param additional_settings: additional settings for this device
         """
 
         # let's create a unique name if none has been chosen
@@ -83,9 +87,9 @@ class VPCSDevice(Node):
             self.error_signal.emit(self.id(), "could not allocate a name for this VPCS device")
             return
 
-        params = {"name": name}
-        if console:
-            params["console"] = self._settings["console"] = console
+        params = {"name": name,
+                  "project_uuid": self._project.uuid()}
+
 
         if identifier:
             if isinstance(identifier, int):
@@ -93,19 +97,14 @@ class VPCSDevice(Node):
             else:
                 params["uuid"] = identifier
 
-        # other initial settings will be applied when the router has been created
-        # TODO: COMMENTED during REST api migration
-        # if initial_settings:
-        #    self._inital_settings = initial_settings
-
-        params["project_uuid"] = self._project.uuid()
-        self._server.post("/vpcs", self._setupCallback, params)
+        params.update(additional_settings)
+        self._server.post("/vpcs", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False):
         """
         Callback for setup.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -114,7 +113,6 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["message"])
             return
 
-        # TODO: Manage id / uuid conversion
         self._uuid = result["uuid"]
         # update the settings using the defaults sent by the server
         for name, value in result.items():
@@ -122,10 +120,7 @@ class VPCSDevice(Node):
                 log.info("VPCS instance setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
                 self._settings[name] = value
 
-        # update the node with setup initial settings if any
-        if self._inital_settings:
-            self.update(self._inital_settings)
-        elif self._loading:
+        if self._loading:
             self.updated_signal.emit()
         else:
             self.setInitialized(True)
@@ -151,7 +146,7 @@ class VPCSDevice(Node):
         """
         Callback for delete.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -185,7 +180,7 @@ class VPCSDevice(Node):
         """
         Callback for update.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -204,13 +199,7 @@ class VPCSDevice(Node):
                     self.updateAllocatedName(value)
                 self._settings[name] = value
 
-        if self._inital_settings and not self._loading:
-            self.setInitialized(True)
-            log.info("VPCS device {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-            self._inital_settings = None
-        elif updated or self._loading:
+        if updated or self._loading:
             log.info("VPCS device {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -230,7 +219,7 @@ class VPCSDevice(Node):
         """
         Callback for start.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -261,7 +250,7 @@ class VPCSDevice(Node):
         """
         Callback for stop.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -288,7 +277,7 @@ class VPCSDevice(Node):
         """
         Callback for reload.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -312,7 +301,7 @@ class VPCSDevice(Node):
         """
         Callback for allocateUDPPort.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -340,7 +329,7 @@ class VPCSDevice(Node):
         """
         Callback for addNIO.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -365,7 +354,7 @@ class VPCSDevice(Node):
         """
         Callback for deleteNIO.
 
-        :param result: server response
+        :param result: server response (dict)
         :param error: indicates an error (boolean)
         """
 
@@ -450,13 +439,12 @@ class VPCSDevice(Node):
             identifier = node_info["uuid"]
         settings = node_info["properties"]
         name = settings.pop("name")
-        console = settings.pop("console")
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
-        self.setup(name, console, identifier, settings)
+        self.setup(name, identifier, settings)
 
     def _updatePortSettings(self):
         """

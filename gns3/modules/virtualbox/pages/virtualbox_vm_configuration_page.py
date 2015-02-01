@@ -25,7 +25,7 @@ from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from ..ui.virtualbox_vm_configuration_page_ui import Ui_virtualBoxVMConfigPageWidget
 
 
-class virtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidget):
+class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidget):
 
     """
     QWidget configuration page for VirtualBox VMs.
