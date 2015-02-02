@@ -56,8 +56,14 @@ class VirtualBox(Module):
         """
 
         # load the settings
-        config = LocalServerConfig.instance()
-        self._settings = config.loadSettings(self.__class__.__name__, VBOX_SETTINGS, VBOX_SETTING_TYPES)
+        settings = QtCore.QSettings()
+        settings.beginGroup(self.__class__.__name__)
+        for name, value in VBOX_SETTINGS.items():
+            self._settings[name] = settings.value(name, value, type=VBOX_SETTING_TYPES[name])
+        settings.endGroup()
+
+        # keep the config file sync
+        self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -65,8 +71,19 @@ class VirtualBox(Module):
         """
 
         # save the settings
+        settings = QtCore.QSettings()
+        settings.beginGroup(self.__class__.__name__)
+        for name, value in self._settings.items():
+            settings.setValue(name, value)
+        settings.endGroup()
+
+        # save some settings to the server config files
+        server_settings = {
+            "vboxmanage_path": self._settings["vboxmanage_path"],
+            "vbox_user": self._settings["vbox_user"],
+        }
         config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, self._settings)
+        config.saveSettings(self.__class__.__name__, server_settings)
 
     def _loadVirtualBoxVMs(self):
         """

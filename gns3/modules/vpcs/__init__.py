@@ -31,6 +31,7 @@ from gns3.servers import Servers
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.local_server_config import LocalServerConfig
+from gns3.qt import QtCore
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -67,13 +68,17 @@ class VPCS(Module):
         """
 
         # load the settings
-        config = LocalServerConfig.instance()
-        self._settings = config.loadSettings(self.__class__.__name__, VPCS_SETTINGS, VPCS_SETTING_TYPES)
+        settings = QtCore.QSettings()
+        settings.beginGroup(self.__class__.__name__)
+        for name, value in VPCS_SETTINGS.items():
+            self._settings[name] = settings.value(name, value, type=VPCS_SETTING_TYPES[name])
+        settings.endGroup()
 
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
-        # special case: sync the last change
-        config.saveSettings(self.__class__.__name__, self._settings)
+
+        # keep the config file sync
+        self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -81,8 +86,18 @@ class VPCS(Module):
         """
 
         # save the settings
+        settings = QtCore.QSettings()
+        settings.beginGroup(self.__class__.__name__)
+        for name, value in self._settings.items():
+            settings.setValue(name, value)
+        settings.endGroup()
+
+        # save some settings to the server config files
+        server_settings = {
+            "vpcs_path": self._settings["vpcs_path"],
+        }
         config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, self._settings)
+        config.saveSettings(self.__class__.__name__, server_settings)
 
     def addNode(self, node):
         """
@@ -191,14 +206,14 @@ class VPCS(Module):
         """
 
         try:
-            output = subprocess.check_output([self._settings["path"], "-v"], cwd=working_dir)
+            output = subprocess.check_output([self._settings["vpcs_path"], "-v"], cwd=working_dir)
             match = re.search("Welcome to Virtual PC Simulator, version ([0-9a-z\.]+)", output.decode("utf-8"))
             if match:
                 version = match.group(1)
                 if pkg_resources.parse_version(version) < pkg_resources.parse_version("0.5b1"):
                     raise ModuleError("VPCS executable version must be >= 0.5b1")
             else:
-                raise ModuleError("Could not determine the VPCS version for {}".format(self._settings["path"]))
+                raise ModuleError("Could not determine the VPCS version for {}".format(self._settings["vpcs_path"]))
         except (OSError, subprocess.SubprocessError) as e:
             raise ModuleError("Error while looking for the VPCS version: {}".format(e))
 
@@ -213,14 +228,14 @@ class VPCS(Module):
         if self._vpcs_multi_host_process and self._vpcs_multi_host_process.poll() is None:
             return self._vpcs_multi_host_port
 
-        if not self._settings["path"]:
+        if not self._settings["vpcs_path"]:
             raise ModuleError("No path to a VPCS executable has been set")
 
-        if not os.path.isfile(self._settings["path"]):
-            raise ModuleError("VPCS program '{}' is not accessible".format(self._settings["path"]))
+        if not os.path.isfile(self._settings["vpcs_path"]):
+            raise ModuleError("VPCS program '{}' is not accessible".format(self._settings["vpcs_path"]))
 
-        if not os.access(self._settings["path"], os.X_OK):
-            raise ModuleError("VPCS program '{}' is not executable".format(self._settings["path"]))
+        if not os.access(self._settings["vpcs_path"], os.X_OK):
+            raise ModuleError("VPCS program '{}' is not executable".format(self._settings["vpcs_path"]))
 
         self._check_vpcs_version(working_dir)
 
@@ -235,7 +250,7 @@ class VPCS(Module):
         if sys.platform.startswith("win32"):
             flags = subprocess.CREATE_NEW_PROCESS_GROUP
         try:
-            vpcs_command = [self._settings["path"], "-p", str(self._vpcs_multi_host_port), "-F"]
+            vpcs_command = [self._settings["vpcs_path"], "-p", str(self._vpcs_multi_host_port), "-F"]
             self._vpcs_multi_host_process = subprocess.Popen(vpcs_command, cwd=working_dir, creationflags=flags)
         except (OSError, subprocess.SubprocessError) as e:
             raise ModuleError("Could not start VPCS {}".format(e))

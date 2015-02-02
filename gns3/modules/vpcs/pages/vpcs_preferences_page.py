@@ -113,7 +113,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         :param settings: VPCS settings
         """
 
-        self.uiVPCSPathLineEdit.setText(settings["path"])
+        self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
@@ -151,7 +151,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         """
 
         new_settings = {}
-        new_settings["path"] = self.uiVPCSPathLineEdit.text()
+        new_settings["vpcs_path"] = self.uiVPCSPathLineEdit.text()
         new_settings["base_script_file"] = self.uiScriptFileEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         VPCS.instance().setSettings(new_settings)

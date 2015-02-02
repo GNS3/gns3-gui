@@ -40,13 +40,13 @@ else:
             continue
 
 VPCS_SETTINGS = {
-    "path": DEFAULT_VPCS_PATH,
+    "vpcs_path": DEFAULT_VPCS_PATH,
     "use_local_server": True,
     "base_script_file": "",
 }
 
 VPCS_SETTING_TYPES = {
-    "path": str,
+    "vpcs_path": str,
     "use_local_server": bool,
     "base_script_file": str,
 }
