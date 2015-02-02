@@ -27,6 +27,7 @@ import subprocess
 from .qt import QtCore, QtNetwork
 from .http_client import HTTPClient
 from .settings import LOCAL_SERVER_SETTINGS, LOCAL_SERVER_SETTING_TYPES
+from .local_server_config import LocalServerConfig
 
 
 import logging
@@ -101,6 +102,16 @@ class Servers(QtCore.QObject):
         # save the local server settings
         for name, value in self._local_server_settings.items():
             settings.setValue(name, value)
+
+        # add some settings to the server config files
+        server_settings = {
+            "console_start_port_range": self._local_server_settings["local_server_console_start_port_range"],
+            "console_end_port_range": self._local_server_settings["local_server_console_end_port_range"],
+            "udp_start_port_range": self._local_server_settings["local_server_udp_start_port_range"],
+            "udp_end_port_range": self._local_server_settings["local_server_udp_end_port_range"],
+        }
+        config = LocalServerConfig.instance()
+        config.saveSettings("Server", server_settings)
 
         # save the remote servers
         settings.beginWriteArray("remote", len(self._remote_servers))

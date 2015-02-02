@@ -104,6 +104,9 @@ class LocalServerConfig:
         :param settings: settings to save (dict)
         """
 
+        if section not in self._config:
+            self._config[section] = {}
+
         for name, value in settings.items():
             self._config[section][name] = str(value)
         self.writeConfig()

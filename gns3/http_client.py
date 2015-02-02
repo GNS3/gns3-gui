@@ -133,7 +133,7 @@ class HTTPClient(QtCore.QObject):
         """
 
         client_version = {"version": __version__}
-        self.post("/version", self._connectCallback, body=client_version)
+        self.post("/version", self._connectCallback, body=client_version, connecting=True)
 
     def _connectCallback(self, result, error=False):
         """
@@ -177,7 +177,7 @@ class HTTPClient(QtCore.QObject):
         HTTP GET on the remote server
 
         :param path: Remote path
-        :param callback: callback method to call when the server replies.
+        :param callback: callback method to call when the server replies
         """
 
         self._createHTTPQuery("GET", path, callback)
@@ -187,42 +187,49 @@ class HTTPClient(QtCore.QObject):
         HTTP PUT on the remote server
 
         :param path: Remote path
-        :param callback: callback method to call when the server replies.
+        :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param check_connected: check if connected to a server
         """
 
         self._createHTTPQuery("PUT", path, callback, body=body)
 
-    def post(self, path, callback, body={}):
+    def post(self, path, callback, body={}, connecting=False):
         """
         HTTP POST on the remote server
 
         :param path: Remote path
-        :param callback: callback method to call when the server replies.
+        :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param connecting: indicates this is an initial connection to the server
         """
 
-        self._createHTTPQuery("POST", path, callback, body=body)
+        self._createHTTPQuery("POST", path, callback, body=body, connecting=connecting)
 
     def delete(self, path, callback):
         """
         HTTP DELETE on the remote server
 
         :param path: Remote path
-        :param callback: callback method to call when the server replies.
+        :param callback: callback method to call when the server replies
         """
 
         self._createHTTPQuery("DELETE", path, callback)
 
-    def _createHTTPQuery(self, method, path, callback, body={}):
+    def _createHTTPQuery(self, method, path, callback, body={}, connecting=False):
         """
         Call the remote server
 
         :param method: HTTP method
         :param path: Remote path
         :param body: params to send (dictionary)
-        :param callback: callback method to call when the server replies.
+        :param callback: callback method to call when the server replies
+        :param connecting: indicates this is an initial connection to the server
         """
+
+        if not connecting and not self._connected:
+            log.error("Not connected to {}:{}".format(self.host, self.port))
+            return
 
         log.debug("{method} {scheme}://{host}:{port}{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
