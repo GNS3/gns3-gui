@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from gns3.topology import Topology
 from gns3.version import __version__
@@ -80,7 +80,7 @@ def test_dump(vpcs_device, project):
     }
 
 
-def test_load(project, main_window):
+def test_load(project, monkeypatch, main_window):
 
     topo = {
         "auto_start": False,
@@ -175,20 +175,22 @@ def test_load(project, main_window):
         "version": "1.2.3"
     }
 
-    with patch("gns3.main_window.MainWindow.instance", return_value=main_window):
+    monkeypatch.setattr('gns3.main_window.MainWindow.instance', lambda: main_window)
 
-        # We return an uuid for each HTTP post
-        def http_loader(method, path, callback, body={}):
-            callback({"uuid": uuid.uuid4()})
-        with patch("gns3.http_client.HTTPClient._create_http_query", side_effect=http_loader):
+    # We return an uuid for each HTTP post
+    def http_loader(self, method, path, callback, body={}, connecting=False):
+        callback({"uuid": uuid.uuid4()})
+    monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
 
-            topology = Topology()
-            topology.project = project
-            topology.load(topo)
+    monkeypatch.setattr("gns3.http_client.HTTPClient.connected", lambda self: True)
 
-            assert topology._project.name() == "twovpcs"
-            assert len(topology.nodes()) == 2
-            assert len(topology._node_to_links_mapping) == 2
-            assert topology.getNode(1).initialized()
-            assert topology.getNode(2).initialized()
-            assert main_window.uiGraphicsView.addLink.called
+    topology = Topology()
+    topology.project = project
+    topology.load(topo)
+
+    assert topology._project.name() == "twovpcs"
+    assert len(topology.nodes()) == 2
+    assert len(topology._node_to_links_mapping) == 2
+    assert topology.getNode(1).initialized()
+    assert topology.getNode(2).initialized()
+    assert main_window.uiGraphicsView.addLink.called

@@ -42,6 +42,7 @@ class ConnectToServerProgressDialog(QtGui.QProgressDialog):
         self._server = server
         host = self._server.host
         port = self._server.port
+
         QtGui.QProgressDialog.__init__(self, "Connecting to server {}:{}".format(host, port), "Cancel", 0, 0, parent)
         self.setModal(True)
         self.setWindowTitle("Server connection")
