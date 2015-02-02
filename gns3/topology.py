@@ -447,9 +447,6 @@ class Topology(object):
 
         log.info("starting to save the topology (version {})".format(__version__))
 
-        # from .main_window import MainWindow
-        # project_settings = MainWindow.instance().projectSettings()
-
         topology = {"name": self._project.name(),
                     "version": __version__,
                     "type": "topology",
@@ -700,7 +697,7 @@ class Topology(object):
             images = topology["topology"]["images"]
             for topology_image in images:
 
-                updated_image_path = os.path.join(main_window.projectSettings()["project_files_dir"], topology_image["path"])
+                updated_image_path = os.path.join(self._project.filesDir(), topology_image["path"])
                 if os.path.isfile(updated_image_path):
                     image_path = updated_image_path
                 else:

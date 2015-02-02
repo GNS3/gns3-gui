@@ -114,13 +114,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._start_time = time.time()
         self.loading_cloud_project = False
 
-        self._project_settings = {
-            "project_name": "unsaved",
-            "project_path": None,
-            "project_files_dir": None,
-            "project_type": "local",
-        }
-
         self._uiNewsDockWidget = None
         if not self._settings["hide_news_dock_widget"]:
             try:
@@ -214,15 +207,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         return self._settings
-
-    def projectSettings(self):
-        """
-        Returns the project settings.
-
-        :returns: project settings dictionary
-        """
-
-        return self._project_settings
 
     def cloudSettings(self):
         """
@@ -359,6 +343,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # cloud inspector
         self.CloudInspectorView.instanceSelected.connect(self._cloud_instance_selected)
 
+    def project(self):
+        """
+        Return current project
+        """
+
+        return self._project
+
     def telnetConsoleCommand(self):
         """
         Returns the Telnet console command line.
@@ -444,7 +435,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             else:
                 self._createTemporaryProject()
 
-            self.project_new_signal.emit(self._project_settings["project_path"])
+            self.project_new_signal.emit(self._project.path())
 
     def openProjectActionSlot(self):
         """
@@ -485,7 +476,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._temporary_project:
             return self.saveProjectAs()
         else:
-            return self.saveProject(self._project_settings["project_path"])
+            return self.saveProject(self._project.path())
 
     def _saveProjectAsActionSlot(self):
         """
@@ -586,8 +577,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
         dialog = SnapshotsDialog(self,
-                                 self._project_settings["project_path"],
-                                 self._project_settings["project_files_dir"])
+                                 self._project.path(),
+                                 self._project.filesDir())
         dialog.show()
         dialog.exec_()
 
@@ -769,7 +760,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         vpcs_module = VPCS.instance()
         try:
-            working_dir = os.path.join(self._project_settings["project_files_dir"], "vpcs", "multi-host")
+            working_dir = os.path.join(self._project.filesDir(), "vpcs", "multi-host")
             os.makedirs(working_dir)
         except FileExistsError:
             pass
@@ -813,7 +804,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.critical(self, "Image", "Image file format not supported")
             return
 
-        destination_dir = os.path.join(self._project_settings["project_files_dir"], "images")
+        destination_dir = os.path.join(self._project.filesDir(), "images")
         try:
             os.makedirs(destination_dir)
         except FileExistsError:
@@ -916,7 +907,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot to open lab instructions.
         """
 
-        project_dir = os.path.dirname(self._project_settings["project_path"])
+        project_dir = os.path.dirname(self._project.path())
         instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
         if len(instructions_files):
@@ -959,7 +950,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.uiNodesDockWidget.setWindowTitle(title)
             self.uiNodesDockWidget.setVisible(True)
             self.uiNodesView.clear()
-            self.uiNodesView.populateNodesView(category, self._project_settings["project_type"])
+            self.uiNodesView.populateNodesView(category, self._project.type())
 
     def _browseRoutersActionSlot(self):
         """
@@ -1084,13 +1075,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if self._temporary_project:
                 destination_file = "untitled.gns3"
             else:
-                destination_file = os.path.basename(self._project_settings["project_path"])
+                destination_file = os.path.basename(self._project.path())
             reply = QtGui.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                               QtGui.QMessageBox.Discard | QtGui.QMessageBox.Save | QtGui.QMessageBox.Cancel)
             if reply == QtGui.QMessageBox.Save:
                 if self._temporary_project:
                     return self.saveProjectAs()
-                return self.saveProject(self._project_settings["project_path"])
+                return self.saveProject(self._project.path())
             elif reply == QtGui.QMessageBox.Cancel:
                 return False
         else:
@@ -1190,7 +1181,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
-                self.project_new_signal.emit(self._project_settings["project_path"])
+                self.project_new_signal.emit(self._project.path())
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
@@ -1224,7 +1215,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._temporary_project:
             default_project_name = "untitled"
         else:
-            default_project_name = os.path.basename(self._project_settings["project_path"])
+            default_project_name = os.path.basename(self._project.path())
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
 
@@ -1265,8 +1256,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # create the sub-directories to avoid race conditions when setting the new working
         # directory to modules (modules could create directories with different ownership)
-        for curpath, dirs, _ in os.walk(self._project_settings["project_files_dir"]):
-            base_dir = curpath.replace(self._project_settings["project_files_dir"], new_project_files_dir)
+        for curpath, dirs, _ in os.walk(self._project.filesDir()):
+            base_dir = curpath.replace(self._project.filesDir(), new_project_files_dir)
             for directory in dirs:
                 try:
                     destination_dir = os.path.join(base_dir, directory)
@@ -1282,13 +1273,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if self._temporary_project:
             # move files if saving from a temporary project
-            log.info("moving project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir, move=True)
+            log.info("moving project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
+            self._thread = ProcessFilesThread(self._project.filesDir(), new_project_files_dir, move=True)
             progress_dialog = ProgressDialog(self._thread, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
-            log.info("copying project files from {} to {}".format(self._project_settings["project_files_dir"], new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project_settings["project_files_dir"], new_project_files_dir)
+            log.info("copying project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
+            self._thread = ProcessFilesThread(self._project.filesDir(), new_project_files_dir)
             progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
@@ -1299,8 +1290,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
         self._deleteTemporaryProject()
-        self._project_settings["project_files_dir"] = new_project_files_dir
-        self._project_settings["project_name"] = project_name
+        self._project.setfilesDir(new_project_files_dir)
+        self._project.setName(project_name)
         return self.saveProject(topology_file_path)
 
     def saveProject(self, path):
@@ -1323,7 +1314,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not self._temporary_project:
             self._createScreenshot(os.path.join(os.path.dirname(path), "screenshot.png"))
         self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
-        self._project_settings["project_path"] = path
+        self._project.setPath(path)
         self._setCurrentFile(path)
         return True
 
@@ -1400,24 +1391,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     project_files_dir = path[:-5]
                 elif path.endswith(".net"):
                     project_files_dir = path[:-4]
-                self._project_settings["project_files_dir"] = project_files_dir + "-files"
+                self._project.setFilesDir(project_files_dir + "-files")
 
                 try:
-                    os.makedirs(self._project_settings["project_files_dir"])
+                    os.makedirs(self._project.filesDir())
                 except FileExistsError:
                     pass
                 except OSError as e:
-                    QtGui.QMessageBox.critical(self, "Load project", "Could not create project sub-directory {}: {}".format(self._project_settings["project_files_dir"], e))
+                    QtGui.QMessageBox.critical(self, "Load project", "Could not create project sub-directory {}: {}".format(self._project.filesDir(), e))
                     return
 
-                # self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+                # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
 
                 # if we're opening a cloud project, defer topology load operations
                 if json_topology["resources_type"] == "cloud":
-                    self._project_settings["project_type"] = "cloud"
+                    self._project.setType("cloud")
                     self.loading_cloud_project = True
                 else:
-                    self._project_settings["project_type"] = "local"
+                    self._project.setType("local")
                     topology.load(json_topology)
 
         except OSError as e:
@@ -1431,7 +1422,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QApplication.restoreOverrideCursor()
 
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
-        self._project_settings["project_path"] = path
+        self._project.setPath(path)
         self._setCurrentFile(path)
         self._labInstructionsActionSlot(silent=True)
 
@@ -1442,15 +1433,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Deletes a temporary project.
         """
 
-        if self._temporary_project and self._project_settings["project_path"]:
+        if self._temporary_project and self._project.path():
             # delete the temporary project files
-            log.info("deleting temporary project files directory: {}".format(self._project_settings["project_files_dir"]))
-            shutil.rmtree(self._project_settings["project_files_dir"], ignore_errors=True)
+            log.info("deleting temporary project files directory: {}".format(self._project.filesDir()))
+            shutil.rmtree(self._project.filesDir(), ignore_errors=True)
             try:
-                log.info("deleting temporary topology file: {}".format(self._project_settings["project_path"]))
-                os.remove(self._project_settings["project_path"])
+                log.info("deleting temporary topology file: {}".format(self._project.path()))
+                os.remove(self._project.path())
             except OSError as e:
-                log.warning("could not delete temporary topology file: {}: {}".format(self._project_settings["project_path"], e))
+                log.warning("could not delete temporary topology file: {}: {}".format(self._project.path(), e))
 
     def _createTemporaryProject(self):
         """
@@ -1467,13 +1458,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     log.info("creating temporary project files directory: {}".format(project_files_dir))
                     os.mkdir(project_files_dir)
 
-                self._project_settings["project_files_dir"] = project_files_dir
-                self._project_settings["project_path"] = f.name
+                self._project.setFilesDir(project_files_dir)
+                self._project.setPath(f.name)
 
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
 
-        # self.uiGraphicsView.updateProjectFilesDir(self._project_settings["project_files_dir"])
+        # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
         self._setCurrentFile()
 
     def isTemporaryProject(self):
@@ -1652,7 +1643,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # persist infos saving current project
         if not self.loading_cloud_project:
-            self.saveProject(self._project_settings["project_path"])
+            self.saveProject(self._project.path())
 
     def remove_instance_from_project(self, instance):
         """
@@ -1663,7 +1654,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.removeInstance(instance.id)
         # persist infos saving current project
-        self.saveProject(self._project_settings["project_path"])
+        self.saveProject(self._project.path())
 
     def _create_instance(self, name, flavor, image_id):
         """
@@ -1707,12 +1698,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             )
             return
         if self.checkForUnsavedChanges():
-            self.saveProject(self._project_settings["project_path"])
+            self.saveProject(self._project.path())
 
         upload_thread = UploadProjectThread(
             self,
             self._cloud_settings,
-            self._project_settings['project_path'],
+            self._project.path(),
             self._settings['images_path']
         )
         progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
@@ -1739,7 +1730,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 "Move project to Cloud",
                 "Cannot move temporary projects, please save current project first.")
             return
-        if self._project_settings["project_type"] == "cloud":
+        if self._project.type() == "cloud":
             # do nothing if project is already a cloud project
             QtGui.QMessageBox.critical(
                 self,
@@ -1784,12 +1775,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 sftp = client.open_sftp()
 
                 project_files_dir = os.path.join(
-                    os.path.dirname(self._project_settings['project_path']),
-                    os.path.basename(os.path.dirname(self._project_settings['project_path'])) + '-files'
+                    os.path.dirname(self._project.path()),
+                    os.path.basename(os.path.dirname(self._project.path())) + '-files'
                 )
                 dest_project_path = posixpath.join(
                     '/root/GNS3/projects',
-                    os.path.basename(os.path.dirname(self._project_settings['project_path']))
+                    os.path.basename(os.path.dirname(self._project.path()))
                 )
 
                 for root, dirs, files in os.walk(project_files_dir):
@@ -1809,7 +1800,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 sftp.close()
 
-            self._project_settings["project_type"] = "cloud"
+            self._project.setType("cloud")
 
             # switch server on all nodes to cloud instance
             server = Servers.instance().anyCloudServer()
@@ -1818,9 +1809,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 node._server = server
 
             # reload project
-            self.saveProject(self._project_settings["project_path"])
+            self.saveProject(self._project.path())
             topology.reset()
-            self.loadProject(self._project_settings["project_path"])
+            self.loadProject(self._project.path())
             progress_dialog.accept()
 
         instances = CloudInstances.instance().instances
@@ -1830,7 +1821,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Create a new instance.  At some point we could reuse an existing instance.
         builder = self.CloudInspectorView.createInstance(
-            self._project_settings["project_name"],
+            self._project.name(),
             self.cloudSettings()['default_flavor'],
             self.cloudSettings()['default_image']
         )
@@ -1844,7 +1835,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 "Move project to local machine",
                 "Cannot move temporary projects, please save current project first.")
             return
-        if self._project_settings["project_type"] == "local":
+        if self._project.type() == "local":
             # do nothing if project is already a cloud project
             QtGui.QMessageBox.critical(
                 self,
@@ -1876,11 +1867,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # copy device files from cloud instances
         src_project_path = posixpath.join(
             '/root/GNS3/projects',
-            os.path.basename(os.path.dirname(self._project_settings['project_path']))
+            os.path.basename(os.path.dirname(self._project.path()))
         )
         project_files_dir = os.path.join(
-            os.path.dirname(self._project_settings['project_path']),
-            os.path.basename(os.path.dirname(self._project_settings['project_path'])) + '-files'
+            os.path.dirname(self._project.path()),
+            os.path.basename(os.path.dirname(self._project.path())) + '-files'
         )
 
         for topology_instance in topology.instances():
@@ -1919,10 +1910,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 node.settings()["image"] = os.path.basename(node.settings()["image"])
 
         # reload project
-        self._project_settings["project_type"] = "local"
-        self.saveProject(self._project_settings["project_path"])
+        self._project.setType("local")
+        self.saveProject(self._project.path())
         topology.reset()
-        self.loadProject(self._project_settings["project_path"])
+        self.loadProject(self._project.path())
 
     @staticmethod
     def _should_exclude_copying_file(filename):

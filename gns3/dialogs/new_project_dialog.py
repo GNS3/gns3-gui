@@ -38,7 +38,7 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
         self.setupUi(self)
 
         self._main_window = parent
-        self._project_settings = parent.projectSettings().copy()
+        self._project_settings = {}
         default_project_name = "untitled"
         self.uiNameLineEdit.setText(default_project_name)
         self.uiLocationLineEdit.setText(os.path.join(self._main_window.projectsDirPath(), default_project_name))

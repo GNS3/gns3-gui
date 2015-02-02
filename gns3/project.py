@@ -37,10 +37,12 @@ class Project(QtCore.QObject):
     def __init__(self):
 
         super().__init__()
-        self._uuid = None
         self._servers = Servers.instance()
+        self._uuid = None
         self._temporary = False
         self._closed = False
+        self._files_dir = None
+        self._path = None
 
     def name(self):
         """
@@ -111,6 +113,22 @@ class Project(QtCore.QObject):
         """
 
         self._uuid = uuid
+
+    def filesDir(self):
+
+        return self._files_dir
+
+    def setFilesDir(self, files_dir):
+
+        self._files_dir = files_dir
+
+    def path(self):
+
+        return self._path
+
+    def setPath(self, path):
+
+        self._path = path
 
     @staticmethod
     def instance():
