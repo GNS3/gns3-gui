@@ -17,8 +17,9 @@
 
 
 import json
+import urllib.parse
+import urllib.request
 from functools import partial
-from urllib.parse import urlparse
 
 from .version import __version__
 from .qt import QtCore, QtNetwork
@@ -27,7 +28,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class HTTPClient:
+class HTTPClient(QtCore.QObject):
 
     """
     HTTP client.
@@ -37,20 +38,23 @@ class HTTPClient:
     """
 
     _instance_count = 1
+    connected_signal = QtCore.Signal()
+    connection_error_signal = QtCore.Signal(str)
 
     def __init__(self, url, network_manager):
 
+        super().__init__()
         self._url = url
         self._version = ""
 
-        url_settings = urlparse(url)
+        url_settings = urllib.parse.urlparse(url)
+
+        # TODO: move this to properties?
         self.scheme = url_settings.scheme
         self.host = url_settings.netloc.split(":")[0]
         self.port = url_settings.port
 
-        # TODO: Should be False at startup
-        self._connected = True
-
+        self._connected = False
         self._local = True
         self._cloud = False
 
@@ -93,26 +97,44 @@ class HTTPClient:
 
         return self._connected
 
-    def check_server_version(self):
+    def close(self):
         """
-        Check for a version match with the GNS3 server.
+        Closes the connection with the server.
+        """
 
-        This is an http (or https) request.
-        """
-        content = self.opener.open(self.version_url).read()
+        self._connected = False
+
+    def isServerRunning(self):
+
         try:
-            json_data = json.loads(content.decode("utf-8"))
-            self._version = json_data.get("version")
-        except ValueError as e:
-            log.error("could not get the server version: {}".format(e))
+            url = "{scheme}://{host}:{port}/version".format(scheme=self.scheme, host=self.host, port=self.port)
+            response = urllib.request.urlopen(url, timeout=2)
+            content_type = response.getheader("CONTENT-TYPE")
+            if response.status == 200 and content_type == "application/json":
+                content = response.read()
+                json_data = json.loads(content.decode("utf-8"))
+                version = json_data.get("version")
+                if version != __version__:
+                    log.debug("Client version {} differs with server version {}".format(__version__, version))
+                    return False
+                return True
+        except urllib.request.URLError as e:
+            log.debug("No server is already running: {}".format(e))
+        return False
 
-        # FIXME: temporary version check
-        if self._version != __version__:
-            if not self._version:
-                raise OSError("Could not determine the server version")
-            else:
-                raise OSError("GUI version {} differs with the server version: {}".format(__version__, self._version))
-            self.close_connection()
+    def connect(self):
+
+        client_version = {"version": __version__}
+        self.post("/version", self._connectCallback, body=client_version)
+
+    def _connectCallback(self, result, error=False):
+
+        if error:
+            self.connection_error_signal.emit(result["message"])
+        else:
+            self._version = result["version"]
+            self._connected = True
+            self.connected_signal.emit()
 
     def send_message(self, destination, params, callback):
         """
@@ -144,7 +166,7 @@ class HTTPClient:
         :param callback: callback method to call when the server replies.
         """
 
-        self._create_http_query("GET", path, callback)
+        self._createHTTPQuery("GET", path, callback)
 
     def put(self, path, callback, body={}):
         """
@@ -155,7 +177,7 @@ class HTTPClient:
         :param body: params to send (dictionary)
         """
 
-        self._create_http_query("PUT", path, callback, body=body)
+        self._createHTTPQuery("PUT", path, callback, body=body)
 
     def post(self, path, callback, body={}):
         """
@@ -166,7 +188,7 @@ class HTTPClient:
         :param body: params to send (dictionary)
         """
 
-        self._create_http_query("POST", path, callback, body=body)
+        self._createHTTPQuery("POST", path, callback, body=body)
 
     def delete(self, path, callback):
         """
@@ -176,9 +198,9 @@ class HTTPClient:
         :param callback: callback method to call when the server replies.
         """
 
-        self._create_http_query("DELETE", path, callback)
+        self._createHTTPQuery("DELETE", path, callback)
 
-    def _create_http_query(self, method, path, callback, body={}):
+    def _createHTTPQuery(self, method, path, callback, body={}):
         """
         Call the remote server
 
@@ -213,11 +235,14 @@ class HTTPClient:
         if method == "DELETE":
             response = self._network_manager.deleteResource(request)
 
-        response.finished.connect(partial(self.response_process, response, callback))
+        response.finished.connect(partial(self._processResponse, response, callback))
 
-    def response_process(self, response, callback):
+    def _processResponse(self, response, callback):
 
         if response.error() != QtNetwork.QNetworkReply.NoError:
+            error_code = response.error()
+            if error_code < 200:
+                self._connected = False
             error_message = response.errorString()
             log.info("Response error: {}".format(error_message))
             body = bytes(response.readAll()).decode()

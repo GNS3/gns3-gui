@@ -41,6 +41,7 @@ class WaitForConnectionThread(QtCore.QThread):
     def __init__(self, host, port):
 
         QtCore.QThread.__init__(self)
+        self._is_running = False
         self._host = host
         self._port = port
 
@@ -54,7 +55,7 @@ class WaitForConnectionThread(QtCore.QThread):
         begin = time.time()
 
         # try to connect for 30 seconds
-        while (time.time() - begin < 30.0):
+        while time.time() - begin < 30.0:
             if not self._is_running:
                 return
             time.sleep(0.01)

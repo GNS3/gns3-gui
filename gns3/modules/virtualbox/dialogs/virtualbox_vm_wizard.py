@@ -119,7 +119,7 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
                     QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in VirtualBox preferences")
                     return False
                 server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
-            if not server.connected() and ConnectToServer(self, server) is False:
+            if not server.connected() and ConnectToServer(server, parent=self) is False:
                 return False
             self._server = server
         if self.currentPage() == self.uiVirtualBoxWizardPage:

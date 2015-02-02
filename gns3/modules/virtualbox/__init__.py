@@ -181,15 +181,8 @@ class VirtualBox(Module):
         """
 
         log.info("creating node {}".format(node_class))
-
         if not server.connected():
-            try:
-                log.info("reconnecting to server {}:{}".format(server.host, server.port))
-                server.reconnect()
-            except OSError as e:
-                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
-                                                                                 server.port,
-                                                                                 e))
+            raise ModuleError("Not connected to server {}:{}: {}".format(server.host, server.port))
 
         # create an instance of the node class
         return node_class(self, server, project)
