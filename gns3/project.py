@@ -179,6 +179,7 @@ class Project(QtCore.QObject):
             print(params)
             return
         # TODO: Manage errors
-        log.info("Project {} closed".format(self._uuid))
+        if self._uuid:
+            log.info("Project {} closed".format(self._uuid))
         self._closed = True
         self.project_closed_signal.emit()

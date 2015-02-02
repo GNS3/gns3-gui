@@ -1254,7 +1254,7 @@ class GraphicsView(QtGui.QGraphicsView):
             if not server.connected() and ConnectToServer(server, parent=self) is False:
                 return
 
-            node = node_module.createNode(node_class, server, Project.instance())
+            node = node_module.createNode(node_class, server, self._main_window.project())
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)

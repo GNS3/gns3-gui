@@ -98,7 +98,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._settings = {}
 
         # TODO: Temporary not True if project from command line
-        self._project = Project.instance()
+        self._project = Project()
         self._project.setTemporary(True)
         self._project.setName("unsaved")
         self._project.setType("local")
@@ -165,6 +165,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
+
+    def project(self):
+        """
+        :returns: Return project instance
+        """
+
+        return self._project
 
     @property
     def cloudProvider(self):
@@ -394,6 +401,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._project.close()
+        self._project = Project()
         self.uiGraphicsView.reset()
         # create the destination directory for project files
         try:
@@ -412,7 +420,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for instance in CloudInstances.instance().instances:
             topology.addInstance2(instance)
 
-        self._project_settings.update(new_project_settings)
+        self._project.setName(new_project_settings["project_name"])
+        self._project.setPath(new_project_settings["project_path"])
+        self._project.setFilesDir(new_project_settings["project_files_dir"])
+        self._project.setType(new_project_settings["project_type"])
+        self._project.create()
         self.saveProject(new_project_settings["project_path"])
 
     def _newProjectActionSlot(self):
@@ -449,6 +461,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
             self._project.close()
+            self._project = Project()
             if self.loadProject(path):
                 self.project_new_signal.emit(path)
 
@@ -465,6 +478,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
             if self.checkForUnsavedChanges():
                 self._project.close()
+                self._project = Project()
                 if self.loadProject(path):
                     self.project_new_signal.emit(path)
 
@@ -1423,8 +1437,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._project.setPath(path)
+        self._project.setName(json_topology["name"])
         self._setCurrentFile(path)
         self._labInstructionsActionSlot(silent=True)
+        self._project.create()
 
         return True
 
@@ -1449,6 +1465,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._project.close()
+        self._project = Project()
+        self._project.setTemporary(True)
         self.uiGraphicsView.reset()
         try:
             with tempfile.NamedTemporaryFile(prefix="gns3-", delete=False) as f:
@@ -1466,6 +1484,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
         self._setCurrentFile()
+        self._project.create()
 
     def isTemporaryProject(self):
         """
@@ -1474,7 +1493,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :returns: boolean
         """
 
-        return self._temporary_project
+        return self._project.temporary()
 
     def _setCurrentFile(self, path=None):
         """
@@ -1689,7 +1708,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtCore.QTimer.singleShot(counter, callback)
 
     def _exportProjectActionSlot(self):
-        if self._temporary_project:
+        if self.isTemporaryProject():
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
                 self,
@@ -1723,7 +1742,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dialog.exec_()
 
     def _moveLocalProjectToCloudActionSlot(self):
-        if self._temporary_project:
+        if self.isTemporaryProject():
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
                 self,
@@ -1828,7 +1847,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         builder.buildComplete.connect(buildComplete)
 
     def _moveCloudProjectToLocalActionSlot(self):
-        if self._temporary_project:
+        if self.isTemporaryProject():
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
                 self,
