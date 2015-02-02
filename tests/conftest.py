@@ -27,6 +27,19 @@ def reset_qt_signal():
     FakeQtSignal.reset()
 
 
+@pytest.fixture(autouse=True)
+def reset_modules():
+    """
+    Reset modules (VPCS, VirtualBox...) internal variables.
+    """
+
+    from gns3.modules.vpcs.vpcs_device import VPCSDevice
+    from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
+
+    VPCSDevice.reset()
+    VirtualBoxVM.reset()
+
+
 @pytest.fixture(scope="class")
 def username(request):
     request.cls.username = request.config.getoption("--username") or os.environ.get('RACKSPACE_USERNAME')
@@ -74,6 +87,7 @@ def vpcs_device(local_server, project):
     device.setInitialized(True)
     return device
 
+
 @pytest.fixture
 def virtualbox_vm(local_server, project):
 
@@ -92,6 +106,7 @@ def virtualbox_vm(local_server, project):
                     "enable_remote_console": False}
     vm.setInitialized(True)
     return vm
+
 
 @pytest.fixture
 def main_window():

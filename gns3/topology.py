@@ -447,7 +447,8 @@ class Topology(object):
 
         log.info("starting to save the topology (version {})".format(__version__))
 
-        topology = {"name": self._project.name(),
+        topology = {"uuid": self._project.uuid(),
+                    "name": self._project.name(),
                     "version": __version__,
                     "type": "topology",
                     "topology": {},
@@ -511,6 +512,8 @@ class Topology(object):
 
         log.debug("Start loading topology")
         self._project = Project()
+        if "uuid" in topology:
+            self._project.setUuid(topology["uuid"])
         self._project.setName(topology["name"])
         self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
         self._project.create()
