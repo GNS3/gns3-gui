@@ -26,10 +26,8 @@ import subprocess
 
 from .qt import QtCore, QtNetwork
 from .http_client import HTTPClient
-from .settings import DEFAULT_LOCAL_SERVER_PATH
-from .settings import DEFAULT_LOCAL_SERVER_HOST
-from .settings import DEFAULT_LOCAL_SERVER_PORT
-from .settings import DEFAULT_HEARTBEAT_FREQ
+from .settings import LOCAL_SERVER_SETTINGS, LOCAL_SERVER_SETTING_TYPES
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -55,37 +53,28 @@ class Servers(QtCore.QObject):
         self._local_server_allow_console_from_anywhere = False
         self._local_server_proccess = None
         self._network_manager = QtNetwork.QNetworkAccessManager(self)
-        self._settings = self._loadSettings()
+        self._local_server_settings = {}
         self._remote_server_iter_pos = 0
+        self._loadSettings()
+
+        host = self._local_server_settings["local_server_host"]
+        port = self._local_server_settings["local_server_port"]
+        url = "http://{host}:{port}".format(host=host, port=port)
+        self._local_server = HTTPClient(url, self._network_manager)
+        self._local_server.setLocal(True)
+        log.info("New local server connection {} registered".format(url))
 
     def _loadSettings(self):
         """
         Loads the server settings from the persistent settings file.
         """
 
-        # load the settings
+        # load the local server settings
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
 
-        # set the local server
-        default_local_server_host = DEFAULT_LOCAL_SERVER_HOST
-        # try:
-        #    address = socket.gethostbyname(socket.gethostname())
-        #    if not address.startswith("127") and address != "::1":
-        #        default_local_server_host = address
-        # except OSError as e:
-        #    log.warn("could not determine a default local server address other than 127.0.0.1: {}".format(e))
-        local_server_host = settings.value("local_server_host", default_local_server_host)
-        local_server_port = settings.value("local_server_port", DEFAULT_LOCAL_SERVER_PORT, type=int)
-        local_server_path = settings.value("local_server_path", DEFAULT_LOCAL_SERVER_PATH)
-        local_server_auto_start = settings.value("local_server_auto_start", True, type=bool)
-        local_server_allow_console_from_anywhere = settings.value("local_server_allow_console_from_anywhere", False, type=bool)
-
-        self.setLocalServer(local_server_path,
-                            local_server_host,
-                            local_server_port,
-                            local_server_auto_start,
-                            local_server_allow_console_from_anywhere)
+        for name, value in LOCAL_SERVER_SETTINGS.items():
+            self._local_server_settings[name] = settings.value(name, value, type=LOCAL_SERVER_SETTING_TYPES[name])
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -109,13 +98,9 @@ class Servers(QtCore.QObject):
         settings.beginGroup(self.__class__.__name__)
         settings.remove("")
 
-        # save the local server
-        if self._local_server:
-            settings.setValue("local_server_host", self._local_server.host)
-            settings.setValue("local_server_port", self._local_server.port)
-            settings.setValue("local_server_path", self._local_server_path)
-            settings.setValue("local_server_auto_start", self._local_server_auto_start)
-            settings.setValue("local_server_allow_console_from_anywhere", self._local_server_allow_console_from_anywhere)
+        # save the local server settings
+        for name, value in self._local_server_settings.items():
+            settings.setValue(name, value)
 
         # save the remote servers
         settings.beginWriteArray("remote", len(self._remote_servers))
@@ -128,6 +113,22 @@ class Servers(QtCore.QObject):
         settings.endArray()
         settings.endGroup()
 
+    def localServerSettings(self):
+
+        return self._local_server_settings
+
+    def setLocalServerSettings(self, settings):
+
+        self._local_server_settings.update(settings)
+        self._saveSettings()
+
+        host = self._local_server_settings["local_server_host"]
+        port = self._local_server_settings["local_server_port"]
+        url = "http://{host}:{port}".format(host=host, port=port)
+        self._local_server = HTTPClient(url, self._network_manager)
+        self._local_server.setLocal(True)
+        log.info("New local server connection {} registered".format(url))
+
     def localServerAutoStart(self):
         """
         Returns either the local server
@@ -136,17 +137,7 @@ class Servers(QtCore.QObject):
         :returns: boolean
         """
 
-        return self._local_server_auto_start
-
-    def localServerAllowConsoleFromAnywhere(self):
-        """
-        Returns either the local server
-        is allows console connections to any local IP address.
-
-        :returns: boolean
-        """
-
-        return self._local_server_allow_console_from_anywhere
+        return self._local_server_settings["local_server_auto_start"]
 
     def localServerPath(self):
         """
@@ -155,35 +146,25 @@ class Servers(QtCore.QObject):
         :returns: path to local server program.
         """
 
-        return self._local_server_path
+        return self._local_server_settings["local_server_path"]
 
-    def startLocalServer(self, path, host, port):
+    def startLocalServer(self):
         """
         Starts the local server process.
         """
 
-        command = '"{executable}" --host={host} --port={port} --console_bind_to_any={bind}'.format(executable=path,
-                                                                                                   host=host,
-                                                                                                   port=port,
-                                                                                                   bind=self._local_server_allow_console_from_anywhere)
+        path = self.localServerPath()
+        host = self._local_server.host
+        port = self._local_server.port
+        command = '"{executable}" --host={host} --port={port} --local'.format(executable=path,
+                                                                              host=host,
+                                                                              port=port)
 
-        # settings_dir = os.path.dirname(QtCore.QSettings().fileName())
-        # if os.path.isdir(settings_dir):
-        #     # save server logging info to a file in the settings directory
-        #     logpath = os.path.join(settings_dir, "GNS3_server.log")
-        #     if os.path.isfile(logpath):
-        #         # delete the previous log file
-        #         try:
-        #             os.remove(logpath)
-        #         except FileNotFoundError:
-        #             pass
-        #         except OSError as e:
-        #             log.warn("could not delete server log file {}: {}".format(logpath, e))
-        #
-        #     command += " --log_file_prefix={logpath} --log_file_num_backups=0 --log_to_stderr".format(logpath=logpath)
+        if self._local_server_settings["local_server_allow_console_from_anywhere"]:
+            # allow connections to console from remote addresses
+            command += " --allow"
 
-        log.info("starting local server process with {}".format(command))
-
+        log.info("Starting local server process with {}".format(command))
         try:
             if sys.platform.startswith("win"):
                 # use the string on Windows
@@ -193,50 +174,29 @@ class Servers(QtCore.QObject):
                 args = shlex.split(command)
                 self._local_server_proccess = subprocess.Popen(args)
         except (OSError, subprocess.SubprocessError) as e:
-            log.warning('could not start local server "{}": {}'.format(command, e))
+            log.warning('Could not start local server "{}": {}'.format(command, e))
             return False
 
+        log.info("Local server process has started (PID={})".format(self._local_server_proccess.pid))
         return True
 
     def stopLocalServer(self, wait=False):
+        """
+        Stops the local server.
 
-        # if self._local_server and self._local_server.connected() and not sys.platform.startswith('win'):
-        #    # only gracefully disconnect if we are not on Windows
-        #    self._local_server.close_connection()
+        :param wait: wait for the server to stop
+        """
+
         if self._local_server_proccess and self._local_server_proccess.poll() is None:
+            log.info("Stopping local server (PID={})".format(self._local_server_proccess.pid))
+            # local server is running, let's stop it
             if sys.platform.startswith("win"):
                 self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
             else:
                 self._local_server_proccess.send_signal(signal.SIGINT)
             if wait:
+                # wait for the server to stop for maximum 3 seconds
                 self._local_server_proccess.wait(timeout=3000)
-
-    def setLocalServer(self, path, host, port, auto_start, allow_console_from_anywhere):
-        """
-        Sets the local server.
-
-        :param path: path to the local server
-        :param host: host or address of the server
-        :param port: port of the server (integer)
-        :param auto_start: either the local server should be
-        automatically started on startup (boolean)
-        :param allow_console_from_anywhere: allow console connections to any local IP address
-        """
-
-        self._local_server_path = path
-        self._local_server_auto_start = auto_start
-        self._local_server_allow_console_from_anywhere = allow_console_from_anywhere
-        if self._local_server:
-            if self._local_server.host == host and self._local_server.port == port:
-                return
-            if self._local_server.connected():
-                self._local_server.close_connection()
-            log.info("local server connection {} unregistered".format(self._local_server.url))
-
-        url = "http://{host}:{port}".format(host=host, port=port)
-        self._local_server = HTTPClient(url, self._network_manager)
-        self._local_server.setLocal(True)
-        log.info("New local server connection {} registered".format(url))
 
     def localServer(self):
         """
@@ -253,7 +213,6 @@ class Servers(QtCore.QObject):
 
         :param host: host or address of the server
         :param port: port of the server (integer)
-        :param heartbeat_freq: The interval to send heartbeats to the server
 
         :returns: the new remote server
         """
@@ -262,7 +221,7 @@ class Servers(QtCore.QObject):
         url = "http://{server_socket}".format(server_socket=server_socket)
         server = HTTPClient(url, self._network_manager)
         self._remote_servers[server_socket] = server
-        log.info("new remote server connection {} registered".format(url))
+        log.info("New remote server connection {} registered".format(url))
         return server
 
     def getRemoteServer(self, host, port):
@@ -304,7 +263,7 @@ class Servers(QtCore.QObject):
             url = "http://{host}:{port}".format(host=host, port=port)
             new_server = HTTPClient(url, self._network_manager)
             self._remote_servers[server_id] = new_server
-            log.info("new remote server connection {} registered".format(url))
+            log.info("New remote server connection {} registered".format(url))
 
         self.updated_signal.emit()
 
@@ -317,76 +276,76 @@ class Servers(QtCore.QObject):
 
         return self._remote_servers
 
-    def getCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey, instance_id):
-        """
-        Return a websocket connection to the cloud server, creating one if none exists.
-
-        :param host: host ip address of the cloud server
-        :param port: port the gns3server process is listening on
-        :param ca_file: Path to the SSL cert that the server must present
-        :returns: a websocket connection to the cloud server
-        """
-
-        for server in self._remote_servers.values():
-            if server.host == host and int(server.port) == int(port):
-                return server
-
-        heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
-        return self._addCloudServer(host, port, ca_file, auth_user, auth_password, ssh_pkey,
-                                    heartbeat_freq, instance_id)
-
-    def _addCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey,
-                        heartbeat_freq, instance_id):
-        """
-        Create a websocket connection to the specified cloud server
-
-        :param host: host ip address of the server
-        :param port: port the gns3server process is listening on
-        :param ca_file: Path to the SSL cert that the server must present
-        :param heartbeat_freq: The interval to send heartbeats to the server
-
-        :returns: a websocket connection to the cloud server
-        """
-
-        url = "wss://{host}:{port}".format(host=host, port=port)
-        log.debug('Starting SecureWebSocketClient url={}'.format(url))
-        log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
-        log.debug('Starting SecureWebSocketClient ssh_pkey={}'.format(ssh_pkey))
-        server = SecureWebSocketClient(url, instance_id=instance_id)
-        server.setSecureOptions(ca_file, auth_user, auth_password, ssh_pkey)
-        server.setCloud(True)
-        server.enableHeartbeatsAt(heartbeat_freq)
-        self._cloud_servers[host] = server
-        log.info("new remote server connection {} registered".format(url))
-        return server
-
-    def anyCloudServer(self):
-        # Return the first server for now
-        for key, value in self._cloud_servers.items():
-            return value
-        return None
-
-    def cloudServerById(self, instance_id):
-        """
-        Return the server with the specified instance id, or None.
-        """
-        for cs in self.cloud_servers.values():
-            if cs.instance_id == instance_id:
-                return cs
-        return None
-
-    def removeCloudServer(self, server):
-        try:
-            cs = self.cloud_servers[server.host]
-            cs.close_connection()
-            del self.cloud_servers[server.host]
-            return True
-        except KeyError:
-            return False
-
-    @property
-    def cloud_servers(self):
-        return self._cloud_servers
+    # def getCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey, instance_id):
+    #     """
+    #     Return a websocket connection to the cloud server, creating one if none exists.
+    #
+    #     :param host: host ip address of the cloud server
+    #     :param port: port the gns3server process is listening on
+    #     :param ca_file: Path to the SSL cert that the server must present
+    #     :returns: a websocket connection to the cloud server
+    #     """
+    #
+    #     for server in self._remote_servers.values():
+    #         if server.host == host and int(server.port) == int(port):
+    #             return server
+    #
+    #     heartbeat_freq = self._settings.value("heartbeat_freq", DEFAULT_HEARTBEAT_FREQ)
+    #     return self._addCloudServer(host, port, ca_file, auth_user, auth_password, ssh_pkey,
+    #                                 heartbeat_freq, instance_id)
+    #
+    # def _addCloudServer(self, host, port, ca_file, auth_user, auth_password, ssh_pkey,
+    #                     heartbeat_freq, instance_id):
+    #     """
+    #     Create a websocket connection to the specified cloud server
+    #
+    #     :param host: host ip address of the server
+    #     :param port: port the gns3server process is listening on
+    #     :param ca_file: Path to the SSL cert that the server must present
+    #     :param heartbeat_freq: The interval to send heartbeats to the server
+    #
+    #     :returns: a websocket connection to the cloud server
+    #     """
+    #
+    #     url = "wss://{host}:{port}".format(host=host, port=port)
+    #     log.debug('Starting SecureWebSocketClient url={}'.format(url))
+    #     log.debug('Starting SecureWebSocketClient ca_file={}'.format(ca_file))
+    #     log.debug('Starting SecureWebSocketClient ssh_pkey={}'.format(ssh_pkey))
+    #     server = SecureWebSocketClient(url, instance_id=instance_id)
+    #     server.setSecureOptions(ca_file, auth_user, auth_password, ssh_pkey)
+    #     server.setCloud(True)
+    #     server.enableHeartbeatsAt(heartbeat_freq)
+    #     self._cloud_servers[host] = server
+    #     log.info("new remote server connection {} registered".format(url))
+    #     return server
+    #
+    # def anyCloudServer(self):
+    #     # Return the first server for now
+    #     for key, value in self._cloud_servers.items():
+    #         return value
+    #     return None
+    #
+    # def cloudServerById(self, instance_id):
+    #     """
+    #     Return the server with the specified instance id, or None.
+    #     """
+    #     for cs in self.cloud_servers.values():
+    #         if cs.instance_id == instance_id:
+    #             return cs
+    #     return None
+    #
+    # def removeCloudServer(self, server):
+    #     try:
+    #         cs = self.cloud_servers[server.host]
+    #         cs.close_connection()
+    #         del self.cloud_servers[server.host]
+    #         return True
+    #     except KeyError:
+    #         return False
+    #
+    # @property
+    # def cloud_servers(self):
+    #     return self._cloud_servers
 
     def __iter__(self):
         """

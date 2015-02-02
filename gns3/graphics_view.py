@@ -1224,7 +1224,6 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         try:
-            log.debug('In createNode')
             node_module = None
             for module in MODULES:
                 instance = module.instance()
@@ -1252,7 +1251,7 @@ class GraphicsView(QtGui.QGraphicsView):
             if server is None:
                 return
 
-            if not server.connected() and ConnectToServer(self, server) is False:
+            if not server.connected() and ConnectToServer(server, parent=self) is False:
                 return
 
             node = node_module.createNode(node_class, server, Project.instance())

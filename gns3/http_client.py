@@ -49,7 +49,7 @@ class HTTPClient(QtCore.QObject):
 
         url_settings = urllib.parse.urlparse(url)
 
-        # TODO: move this to properties?
+        # TODO: move this to properties? (many references to .host and .port in the code)
         self.scheme = url_settings.scheme
         self.host = url_settings.netloc.split(":")[0]
         self.port = url_settings.port
@@ -105,6 +105,11 @@ class HTTPClient(QtCore.QObject):
         self._connected = False
 
     def isServerRunning(self):
+        """
+        Check if a server is already running on this host.
+
+        :returns: boolean
+        """
 
         try:
             url = "{scheme}://{host}:{port}/version".format(scheme=self.scheme, host=self.host, port=self.port)
@@ -123,11 +128,20 @@ class HTTPClient(QtCore.QObject):
         return False
 
     def connect(self):
+        """
+        Connects to the server.
+        """
 
         client_version = {"version": __version__}
         self.post("/version", self._connectCallback, body=client_version)
 
     def _connectCallback(self, result, error=False):
+        """
+        Callback for the connection.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
 
         if error:
             self.connection_error_signal.emit(result["message"])

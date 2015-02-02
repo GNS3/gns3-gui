@@ -248,6 +248,30 @@ GRAPHICS_VIEW_SETTING_TYPES = {
     "default_label_color": str,
 }
 
+LOCAL_SERVER_SETTINGS = {
+    "local_server_path": DEFAULT_LOCAL_SERVER_PATH,
+    "local_server_host": DEFAULT_LOCAL_SERVER_HOST,
+    "local_server_port": DEFAULT_LOCAL_SERVER_PORT,
+    "local_server_auto_start": False,
+    "local_server_allow_console_from_anywhere": False,
+    "local_server_console_start_port_range": 2000,
+    "local_server_console_end_port_range": 5000,
+    "local_server_udp_start_port_range": 10000,
+    "local_server_udp_end_port_range": 20000,
+}
+
+LOCAL_SERVER_SETTING_TYPES = {
+    "local_server_path": str,
+    "local_server_host": str,
+    "local_server_port": int,
+    "local_server_auto_start": bool,
+    "local_server_allow_console_from_anywhere": bool,
+    "local_server_console_start_port_range": int,
+    "local_server_console_end_port_range": int,
+    "local_server_udp_start_port_range": int,
+    "local_server_udp_end_port_range": int,
+}
+
 PACKET_CAPTURE_SETTINGS = {
     "packet_capture_reader_command": DEFAULT_PACKET_CAPTURE_READER_COMMAND,
     "command_auto_start": True,
