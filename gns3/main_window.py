@@ -53,6 +53,7 @@ from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, C
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
+from .utils.connect_to_server import ConnectToServer
 from .utils.message_box import MessageBox
 from .utils.analytics import AnalyticsClient
 from .ports.port import Port
@@ -95,12 +96,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         MainWindow._instance = self
 
         self._settings = {}
+
         # TODO: Temporary not True if project from command line
         self._project = Project.instance()
         self._project.setTemporary(True)
         self._project.setName("unsaved")
         self._project.setType("local")
-        self._project.create()
 
         self._project_from_cmdline = project
         self._cloud_settings = {}
@@ -1063,8 +1064,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         servers.stopLocalServer(wait=True)
 
-        for cs in servers.cloud_servers.values():
-            cs.close_connection()
+        # FIXME: shutting down cloud servers
+        # for cs in servers.cloud_servers.values():
+        #     cs.close_connection()
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
@@ -1126,7 +1128,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         server = servers.localServer()
 
-        if not server.connected():
+        wait_for_connection = False
+        if server.isServerRunning():
+            log.info("Connecting to a server already running on this host")
+            wait_for_connection = True
+        elif servers.localServerAutoStart():
 
             try:
                 # check if the local address still exists
@@ -1136,57 +1142,44 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {host}: {error} (please check your host binding setting in the preferences)".format(host=server.host, error=e))
                 return
 
-            try:
-                server.connect()
-                log.info("use an already started local server on {}:{}".format(server.host, server.port))
-            except OSError as e:
+            # check the local server path
+            local_server_path = servers.localServerPath()
+            if not local_server_path:
+                log.warn("No local server is configured")
+                return
+            if not os.path.isfile(local_server_path):
+                QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(local_server_path))
+                return
+            elif not os.access(local_server_path, os.X_OK):
+                QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
+                return
 
-                if not e.errno:
-                    # not a normal OSError, thrown from the Websocket client.
-                    MessageBox(self, "Local server", "Something other than a GNS3 server is already running on {} port {}, please adjust the local server port setting".format(server.host,
-                                                                                                                                                                               server.port),
-                               e)
+            if servers.startLocalServer():
+                thread = WaitForConnectionThread(server.host, server.port)
+                thread.deleteLater()
+                progress_dialog = ProgressDialog(thread,
+                                                 "Local server",
+                                                 "Connecting to server {} on port {}...".format(server.host, server.port),
+                                                 "Cancel", busy=True, parent=self)
+                progress_dialog.show()
+                if not progress_dialog.exec_():
                     return
+                wait_for_connection = True
+            else:
+                QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
+                return
 
-                if not servers.localServerAutoStart():
-                    return
-
-                log.info("starting local server {} on {}:{}".format(servers.localServerPath(), server.host, server.port))
-
-                local_server_path = servers.localServerPath()
-
-                if not local_server_path:
-                    log.info("no local server is configured")
-                    return
-
-                if not os.path.isfile(local_server_path):
-                    QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(local_server_path))
-                    return
-
-                elif not os.access(local_server_path, os.X_OK):
-                    QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
-                    return
-
-                if servers.startLocalServer(servers.localServerPath(), server.host, server.port):
-                    self._thread = WaitForConnectionThread(server.host, server.port)
-                    progress_dialog = ProgressDialog(self._thread,
-                                                     "Local server",
-                                                     "Connecting to server {} on port {}...".format(server.host, server.port),
-                                                     "Cancel", busy=True, parent=self)
-                    progress_dialog.show()
-                    if not progress_dialog.exec_():
-                        return
-                else:
-                    QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
-                    return
-                try:
-                    servers.localServer().reconnect()
-                except OSError as e:
-                    QtGui.QMessageBox.critical(self, "Local server", "Could not connect to the local server {host} on port {port}: {error}".format(host=server.host,
-                                                                                                                                                   port=server.port,
-                                                                                                                                                   error=e))
+        if wait_for_connection:
+            if ConnectToServer(server, parent=self):
+                log.info("Connected to local server {}:{}".format(server.host, server.port))
+            else:
+                log.error("Could not connect to local server {}:{}".format(server.host, server.port))
 
         self._createTemporaryProject()
+
+        # FIXME: temp location to create project (must be created after the connection to the local server is complete though.
+        self._project.create()
+
         if self._project_from_cmdline:
             time.sleep(0.5)  # give so time to the server to initialize
             self.loadProject(self._project_from_cmdline)
