@@ -17,13 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_VPCSPreferencesPageWidget(object):
+
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName(_fromUtf8("VPCSPreferencesPageWidget"))
         VPCSPreferencesPageWidget.resize(430, 545)
@@ -115,4 +118,3 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "Server settings", None))
         self.uiTestSettingsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults", None))
-

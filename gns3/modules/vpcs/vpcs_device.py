@@ -90,7 +90,6 @@ class VPCSDevice(Node):
         params = {"name": name,
                   "project_uuid": self._project.uuid()}
 
-
         if identifier:
             if isinstance(identifier, int):
                 params["vpcs_id"] = identifier
