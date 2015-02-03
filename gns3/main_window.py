@@ -35,7 +35,6 @@ import posixpath
 import stat
 
 from pkg_resources import parse_version
-
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .modules.vpcs import VPCS
@@ -165,13 +164,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
-
-    def project(self):
-        """
-        :returns: Return project instance
-        """
-
-        return self._project
 
     @property
     def cloudProvider(self):

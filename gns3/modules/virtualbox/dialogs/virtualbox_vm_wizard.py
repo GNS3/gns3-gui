@@ -21,10 +21,10 @@ Wizard for VirtualBox VMs.
 
 import sys
 
+from functools import partial
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.utils.connect_to_server import ConnectToServer
-from gns3.modules.module_error import ModuleError
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
 from .. import VirtualBox
@@ -65,29 +65,29 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
-            self._vbox_vms_progress_dialog = QtGui.QProgressDialog("Loading VirtualBox VMs", "Cancel", 0, 0, parent=self)
-            self._vbox_vms_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-            self._vbox_vms_progress_dialog.setWindowTitle("VirtualBox VMs")
-            self._vbox_vms_progress_dialog.show()
-            try:
-                server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
-                #FIXME: Catch exception
-            except ModuleError as e:
-                self._vbox_vms_progress_dialog.reject()
-                QtGui.QMessageBox.critical(self, "VirtualBox VMs", "Error while getting the VirtualBox VMs: {}".format(e))
+            progress_dialog = QtGui.QProgressDialog("Loading VirtualBox VMs", "Cancel", 0, 0, parent=self)
+            progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
+            progress_dialog.setWindowTitle("VirtualBox VMs")
+            progress_dialog.show()
+            self._server.get("/virtualbox/vms", partial(self._getVirtualBoxVMsFromServerCallback, progress_dialog))
 
-    def _getVirtualBoxVMsFromServerCallback(self, result, error=False):
+    def _getVirtualBoxVMsFromServerCallback(self, progress_dialog, result, error=False):
         """
         Callback for getVirtualBoxVMsFromServer.
 
+        :param progress_dialog: QProgressDialog instance
         :param result: server response
         :param error: indicates an error (boolean)
         """
 
-        if self._vbox_vms_progress_dialog.wasCanceled():
+        if progress_dialog.wasCanceled():
             return
-        self._vbox_vms_progress_dialog.accept()
+        if error:
+            progress_dialog.reject()
+            QtGui.QMessageBox.critical(self, "VirtualBox VMs", "Error while getting the VirtualBox VMs: {}".format(result["message"]))
+            return
 
+        progress_dialog.accept()
         if error:
             QtGui.QMessageBox.critical(self, "VirtualBox VMs", "{}".format(result["message"]))
         else:

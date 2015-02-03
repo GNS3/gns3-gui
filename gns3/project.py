@@ -43,6 +43,7 @@ class Project(QtCore.QObject):
         self._closed = False
         self._files_dir = None
         self._path = None
+        self._type = None
 
     def name(self):
         """
