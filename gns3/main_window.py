@@ -1100,7 +1100,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
                 if reply == QtGui.QMessageBox.No:
                     return False
-        self._deleteTemporaryProject()
         return True
 
     def startupLoading(self):
@@ -1273,6 +1272,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # let all modules know about the new project files directory
         # self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
 
+        # TODO: Move this on server side
         if self._temporary_project:
             # move files if saving from a temporary project
             log.info("moving project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
@@ -1291,7 +1291,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             errors = "\n".join(errors)
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
-        self._deleteTemporaryProject()
         self._project.setfilesDir(new_project_files_dir)
         self._project.setName(project_name)
         return self.saveProject(topology_file_path)
@@ -1414,21 +1413,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return True
 
-    def _deleteTemporaryProject(self):
-        """
-        Deletes a temporary project.
-        """
-
-        if self._temporary_project and self._project.path():
-            # delete the temporary project files
-            log.info("deleting temporary project files directory: {}".format(self._project.filesDir()))
-            shutil.rmtree(self._project.filesDir(), ignore_errors=True)
-            try:
-                log.info("deleting temporary topology file: {}".format(self._project.path()))
-                os.remove(self._project.path())
-            except OSError as e:
-                log.warning("could not delete temporary topology file: {}: {}".format(self._project.path(), e))
-
     def _createTemporaryProject(self):
         """
         Creates a temporary project.
@@ -1438,19 +1422,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project = Project()
         self._project.setTemporary(True)
         self.uiGraphicsView.reset()
-        try:
-            with tempfile.NamedTemporaryFile(prefix="gns3-", delete=False) as f:
-                log.info("creating temporary topology file: {}".format(f.name))
-                project_files_dir = f.name + "-files"
-                if not os.path.isdir(project_files_dir):
-                    log.info("creating temporary project files directory: {}".format(project_files_dir))
-                    os.mkdir(project_files_dir)
-
-                self._project.setFilesDir(project_files_dir)
-                self._project.setPath(f.name)
-
-        except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save", "Could not create project: {}".format(e))
 
         # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
         self._setCurrentFile()
