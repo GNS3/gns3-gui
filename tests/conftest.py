@@ -65,7 +65,7 @@ def project():
 
     from gns3.project import Project
 
-    project = Project.instance()
+    project = Project()
     project.setUuid(str(uuid.uuid4()))
     project.setType("local")
     project.setName("unsaved")

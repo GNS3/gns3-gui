@@ -96,6 +96,18 @@ class VPCSDevice(Node):
             else:
                 params["uuid"] = identifier
 
+        if "script_file" in additional_settings:
+            try:
+                with open(additional_settings["script_file"]) as f:
+                    additional_settings["startup_script"] = f.read()
+            except (OSError) as e:
+                log.error("Could not load the script file to {}".format(additional_settings["script_file"], e))
+            del additional_settings["script_file"]
+
+        # If we have an uuid that mean the VM already exits and we should not send startup_script
+        if "startup_script" in additional_settings and identifier is not None:
+            del additional_settings["startup_script"]
+
         params.update(additional_settings)
         self._server.post("/vpcs", self._setupCallback, body=params)
 

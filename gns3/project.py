@@ -34,6 +34,9 @@ class Project(QtCore.QObject):
     # Called when the project is closed on all servers
     project_closed_signal = QtCore.Signal()
 
+    # List of non closed project instance
+    _project_instances = set()
+
     def __init__(self):
 
         self._servers = Servers.instance()
@@ -43,6 +46,7 @@ class Project(QtCore.QObject):
         self._files_dir = None
         self._path = None
         self._type = None
+        self._project_instances.add(self)
 
         super().__init__()
 
@@ -133,18 +137,6 @@ class Project(QtCore.QObject):
         log.debug("SET PATH {}".format(path))
         self._path = path
 
-    @staticmethod
-    def instance():
-        """
-        Singleton to return only on instance of Project.
-
-        :returns: instance of Project
-        """
-
-        if not hasattr(Project, "_instance"):
-            Project._instance = Project()
-        return Project._instance
-
     def create(self):
         """
         Create project on all servers
@@ -188,3 +180,4 @@ class Project(QtCore.QObject):
                 log.info("Project {} closed".format(self._uuid))
         self._closed = True
         self.project_closed_signal.emit()
+        self._project_instances.remove(self)
