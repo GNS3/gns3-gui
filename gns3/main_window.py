@@ -349,6 +349,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return self._project
 
+    def setProject(self, project):
+        """
+        Set current project
+
+        :params project: Project instance
+        """
+
+        self._project = project
+
     def telnetConsoleCommand(self):
         """
         Returns the Telnet console command line.
@@ -1305,9 +1314,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.project = self._project
         try:
+            topo = topology.dump()
             with open(path, "w") as f:
-                log.info("saving project: {}".format(path))
-                json.dump(topology.dump(), f, sort_keys=True, indent=4)
+                log.info("Saving project: {}".format(path))
+                json.dump(topo, f, sort_keys=True, indent=4)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
             return False

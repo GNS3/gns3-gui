@@ -438,6 +438,7 @@ class Topology(object):
                 topology_images.append(image_info)
 
     def dump(self, include_gui_data=True):
+
         """
         Creates a complete representation of the topology.
 
@@ -540,6 +541,7 @@ class Topology(object):
         self._project.setName(topology["name"])
         self._project.setType(topology["resources_type"])
         self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
+
         self._project.create()
 
     def _project_created_finish_load(self, topology):
@@ -549,10 +551,12 @@ class Topology(object):
         :param topology: topology representation
         """
 
-        log.debug("Project created, continue loading of topology")
+        log.debug("Project {name} created, continue loading of topology".format(name=self._project.name()))
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
+        main_window.setProject(self._project)
+
         view = main_window.uiGraphicsView
 
         topology_file_errors = []

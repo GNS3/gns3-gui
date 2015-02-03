@@ -46,6 +46,7 @@ class Project(QtCore.QObject):
         self._files_dir = None
         self._path = None
         self._type = None
+        self._name = None
         self._project_instances.add(self)
 
         super().__init__()
@@ -64,6 +65,7 @@ class Project(QtCore.QObject):
         :param name: Project name (string)
         """
 
+        assert name is not None
         self._name = name
 
     def closed(self):
@@ -134,7 +136,6 @@ class Project(QtCore.QObject):
 
     def setPath(self, path):
 
-        log.debug("SET PATH {}".format(path))
         self._path = path
 
     def create(self):
