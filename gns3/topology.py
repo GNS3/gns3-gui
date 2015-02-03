@@ -21,6 +21,7 @@ Handles the saving and loading of a topology.
 """
 
 import os
+import json
 from functools import partial
 from .qt import QtGui, QtSvg
 
@@ -503,18 +504,41 @@ class Topology(object):
 
         return topology
 
-    def load(self, topology):
+    def loadFile(self, path):
+        """
+        Load a topology file
+
+        :param path: Path to topology directory
+        """
+
+        log.debug("Start loading topology")
+        self._project = Project()
+        self._project.setPath(path)
+
+        project_files_dir = path
+        if path.endswith(".gns3"):
+            project_files_dir = path[:-5]
+        elif path.endswith(".net"):
+            project_files_dir = path[:-4]
+        self._project.setFilesDir(project_files_dir + "-files")
+
+        with open(path, "r") as f:
+            log.info("loading project: {}".format(path))
+            json_topology = json.load(f)
+
+        self._load(json_topology)
+
+    def _load(self, topology):
         """
         Loads a topology.
 
         :param topology: topology representation
         """
 
-        log.debug("Start loading topology")
-        self._project = Project()
         if "uuid" in topology:
             self._project.setUuid(topology["uuid"])
         self._project.setName(topology["name"])
+        self._project.setType(topology["resources_type"])
         self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
         self._project.create()
 

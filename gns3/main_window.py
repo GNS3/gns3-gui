@@ -452,8 +452,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
                                                              "GNS3 project files (*.gns3)")
         if path and self.checkForUnsavedChanges():
-            self._project.close()
-            self._project = Project()
             if self.loadProject(path):
                 self.project_new_signal.emit(path)
 
@@ -469,8 +467,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
             if self.checkForUnsavedChanges():
-                self._project.close()
-                self._project = Project()
                 if self.loadProject(path):
                     self.project_new_signal.emit(path)
 
@@ -1378,44 +1374,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param path: path to project file
         """
 
+        self._project.close()
+        self._project = Project()
+        self._project.setPath(path)
+
         self.uiGraphicsView.reset()
         topology = Topology.instance()
         try:
+            QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
 
             extension = os.path.splitext(path)[1]
             if extension == ".net":
                 self._convertOldProject(path)
                 return
 
-            QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-            with open(path, "r") as f:
-                log.info("loading project: {}".format(path))
-                json_topology = json.load(f)
+            topology.loadFile(path)
 
-                project_files_dir = path
-                if path.endswith(".gns3"):
-                    project_files_dir = path[:-5]
-                elif path.endswith(".net"):
-                    project_files_dir = path[:-4]
-                self._project.setFilesDir(project_files_dir + "-files")
-
-                try:
-                    os.makedirs(self._project.filesDir())
-                except FileExistsError:
-                    pass
-                except OSError as e:
-                    QtGui.QMessageBox.critical(self, "Load project", "Could not create project sub-directory {}: {}".format(self._project.filesDir(), e))
-                    return
-
-                # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
-
-                # if we're opening a cloud project, defer topology load operations
-                if json_topology["resources_type"] == "cloud":
-                    self._project.setType("cloud")
-                    self.loading_cloud_project = True
-                else:
-                    self._project.setType("local")
-                    topology.load(json_topology)
+            # if we're opening a cloud project, defer topology load operations
+            # if json_topology["resources_type"] == "cloud":
+            #     self._project.setType("cloud")
+            #     self.loading_cloud_project = True
+            # else:
+            #     self._project.setType("local")
+            #     topology.load(json_topology)
 
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
@@ -1428,11 +1409,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QApplication.restoreOverrideCursor()
 
         self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
-        self._project.setPath(path)
-        self._project.setName(json_topology["name"])
         self._setCurrentFile(path)
         self._labInstructionsActionSlot(silent=True)
-        self._project.create()
 
         return True
 

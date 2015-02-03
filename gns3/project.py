@@ -36,7 +36,6 @@ class Project(QtCore.QObject):
 
     def __init__(self):
 
-        super().__init__()
         self._servers = Servers.instance()
         self._uuid = None
         self._temporary = False
@@ -44,6 +43,8 @@ class Project(QtCore.QObject):
         self._files_dir = None
         self._path = None
         self._type = None
+
+        super().__init__()
 
     def name(self):
         """
@@ -129,6 +130,7 @@ class Project(QtCore.QObject):
 
     def setPath(self, path):
 
+        log.debug("SET PATH {}".format(path))
         self._path = path
 
     @staticmethod
@@ -148,7 +150,10 @@ class Project(QtCore.QObject):
         Create project on all servers
         """
 
-        self._servers.localServer().post("/project", self._project_created, body={"temporary": self._temporary})
+        self._servers.localServer().post("/project", self._project_created, body={
+            "temporary": self._temporary,
+            "uuid": self._uuid
+        })
 
     def close(self):
         """Close project"""

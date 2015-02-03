@@ -188,10 +188,11 @@ def test_load(project, monkeypatch, main_window):
 
     topology = Topology()
     topology.project = project
-    topology.load(topo)
+    topology._load(topo)
 
     assert topology._project.uuid() == project.uuid()
     assert topology._project.name() == "twovpcs"
+    assert topology._project.type() == "local"
     assert len(topology.nodes()) == 2
     assert len(topology._node_to_links_mapping) == 2
     assert topology.getNode(1).initialized()
@@ -204,7 +205,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window):
     topo = {
         "auto_start": False,
         "name": "twovpcs",
-        "resources_type": "local",
+        "resources_type": "cloud",
         "topology": {
             "links": [
                 {
@@ -305,10 +306,11 @@ def test_load_1_2_topology(project, monkeypatch, main_window):
 
     topology = Topology()
     topology.project = project
-    topology.load(topo)
+    topology._load(topo)
 
     assert topology._project.name() == "twovpcs"
     assert topology._project.uuid() is not None
+    assert topology._project.type() == "cloud"
     assert len(topology.nodes()) == 2
     assert len(topology._node_to_links_mapping) == 2
     assert topology.getNode(1).initialized()
