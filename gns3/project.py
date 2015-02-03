@@ -183,9 +183,8 @@ class Project(QtCore.QObject):
     def _project_closed(self, params, error=False):
         if error:
             print(params)
-            return
-        # TODO: Manage errors
-        if self._uuid:
-            log.info("Project {} closed".format(self._uuid))
+        else:
+            if self._uuid:
+                log.info("Project {} closed".format(self._uuid))
         self._closed = True
         self.project_closed_signal.emit()

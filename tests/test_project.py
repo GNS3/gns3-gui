@@ -75,3 +75,36 @@ def test_project_close():
         assert mock_signal_closed.called
 
         assert project.closed()
+
+
+def test_project_close_error():
+
+    uuid = uuid4()
+    mock = MagicMock
+    with patch("gns3.http_client.HTTPClient.post") as mock:
+
+        signal = MagicMock()
+
+        project = Project()
+        project.setUuid(uuid)
+
+        mock_signal = MagicMock()
+        mock_signal_closed = MagicMock()
+        project.project_about_to_close_signal.connect(mock_signal)
+        project.project_closed_signal.connect(mock_signal_closed)
+
+        project.close()
+
+        assert mock_signal.called
+        assert not mock_signal_closed.called
+
+        args, kwargs = mock.call_args
+
+        assert args[0] == "/project/{uuid}/close".format(uuid=uuid)
+        assert kwargs["body"] == {}
+
+        # Call the project close callback
+        args[1]({"message": "Can't connect"}, error=True)
+        assert mock_signal_closed.called
+
+        assert project.closed()
