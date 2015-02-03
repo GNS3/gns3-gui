@@ -6,6 +6,11 @@ import unittest
 import sys
 
 
+# If the QT application is not initialized we can got segfault
+from PyQt4.QtGui import QApplication
+app = QApplication([])
+
+
 def pytest_addoption(parser):
     parser.addoption("--username", action="store",
                      help="rackspace username for integration tests")
