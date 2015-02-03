@@ -24,7 +24,7 @@ before_install:
   - cd $TRAVIS_BUILD_DIR/build
   - wget --quiet --output-document=pyqt.tar.gz http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-4.11.3/PyQt-x11-gpl-4.11.3.tar.gz
   - tar -xf pyqt.tar.gz
-  - cd PyQt-x11-gpl-4.12.3
+  - cd PyQt-x11-gpl-4.11.3
   - python -B configure.py --confirm-license
   - make
   - sudo make install
