@@ -11,12 +11,8 @@ import sys
 class TestChoicesSpinBox(TestCase):
 
     def setUp(self):
-        self.app = QApplication(sys.argv)
         self.choices = [-1, 0, 1, 2, 3, 5, 8, 13]
         self.sb = ChoicesSpinBox(choices=self.choices)
-
-    def tearDown(self):
-        del self.app
 
     def test_steps(self):
         self.sb.setValue(0)
