@@ -143,9 +143,9 @@ class Project(QtCore.QObject):
         Create project on all servers
         """
 
-        self._servers.localServer().post("/project", self._project_created, body={
+        self._servers.localServer().post("/projects", self._project_created, body={
             "temporary": self._temporary,
-            "uuid": self._uuid
+            "project_id": self._uuid
         })
 
     def close(self):
@@ -154,7 +154,7 @@ class Project(QtCore.QObject):
         # TODO: call all server
         if self._uuid:
             self.project_about_to_close_signal.emit()
-            self._servers.localServer().post("/project/{uuid}/close".format(uuid=self._uuid), self._project_closed, body={})
+            self._servers.localServer().post("/projects/{project_id}/close".format(project_id=self._uuid), self._project_closed, body={})
         else:
             # The project is not initialized when can close it
             self.project_about_to_close_signal.emit()
@@ -166,7 +166,7 @@ class Project(QtCore.QObject):
             print(params)
             return
         # TODO: Manage errors
-        self._uuid = params["uuid"]
+        self._uuid = params["project_id"]
         log.info("Project {} created".format(self._uuid))
         # TODO: call all server when we got uuid
         self._closed = False

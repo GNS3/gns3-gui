@@ -35,10 +35,10 @@ def test_project_create():
 
         args, kwargs = mock.call_args
 
-        assert args[0] == "/project"
-        assert kwargs["body"] == {"temporary": False, "uuid": None}
+        assert args[0] == "/projects"
+        assert kwargs["body"] == {"temporary": False, "project_id": None}
         # Call the project creation callback
-        args[1]({"uuid": uuid})
+        args[1]({"project_id": uuid})
         assert project.uuid() == uuid
 
         assert signal.called
@@ -67,11 +67,11 @@ def test_project_close():
 
         args, kwargs = mock.call_args
 
-        assert args[0] == "/project/{uuid}/close".format(uuid=uuid)
+        assert args[0] == "/projects/{project_id}/close".format(project_id=uuid)
         assert kwargs["body"] == {}
 
         # Call the project close callback
-        args[1]({"uuid": uuid})
+        args[1]({"project_id": uuid})
         assert mock_signal_closed.called
 
         assert project.closed()
@@ -100,7 +100,7 @@ def test_project_close_error():
 
         args, kwargs = mock.call_args
 
-        assert args[0] == "/project/{uuid}/close".format(uuid=uuid)
+        assert args[0] == "/projects/{project_id}/close".format(project_id=uuid)
         assert kwargs["body"] == {}
 
         # Call the project close callback
