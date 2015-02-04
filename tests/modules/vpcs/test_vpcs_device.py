@@ -38,7 +38,7 @@ def test_vpcs_device_setup(vpcs_device, project):
         assert args[0] == "/vpcs"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "project_uuid": project.uuid(),
+            "project_id": project.uuid(),
             "startup_script": "echo TEST"
         }
 
@@ -46,7 +46,7 @@ def test_vpcs_device_setup(vpcs_device, project):
         params = {
             "console": 2000,
             "name": "PC1",
-            "project_uuid": "f91bd115-3b5c-402e-b411-e5919723cf4b",
+            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "script_file": None,
             "startup_script": None,
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -69,14 +69,14 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project):
         assert kwargs["body"] == {
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "project_uuid": project.uuid(),
+            "project_id": project.uuid(),
         }
 
         # Callback
         params = {
             "console": 2000,
             "name": "PC1",
-            "project_uuid": "f91bd115-3b5c-402e-b411-e5919723cf4b",
+            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "script_file": None,
             "startup_script": None,
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -104,14 +104,14 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
         assert kwargs["body"] == {
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "project_uuid": project.uuid(),
+            "project_id": project.uuid(),
         }
 
         # Callback
         params = {
             "console": 2000,
             "name": "PC1",
-            "project_uuid": "f91bd115-3b5c-402e-b411-e5919723cf4b",
+            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "script_file": None,
             "startup_script": "echo TEST",
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"

@@ -42,7 +42,7 @@ def test_virtualbox_vm_setup(virtualbox_vm):
             "vmname": "VMNAME",
             "linked_clone": False,
             "adapters": 0,
-            "project_uuid": "f91bd115-3b5c-402e-b411-e5919723cf4b",
+            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
         args[1](params)

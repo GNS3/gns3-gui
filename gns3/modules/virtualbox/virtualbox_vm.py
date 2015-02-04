@@ -104,7 +104,7 @@ class VirtualBoxVM(Node):
         self._linked_clone = linked_clone
         params = {"name": name,
                   "linked_clone": linked_clone,
-                  "project_uuid": self._project.uuid()}
+                  "project_id": self._project.uuid()}
 
         if identifier:
             if isinstance(identifier, int):

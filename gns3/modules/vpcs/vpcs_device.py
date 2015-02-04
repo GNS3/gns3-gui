@@ -88,7 +88,7 @@ class VPCSDevice(Node):
             return
 
         params = {"name": name,
-                  "project_uuid": self._project.uuid()}
+                  "project_id": self._project.uuid()}
 
         if identifier:
             if isinstance(identifier, int):
