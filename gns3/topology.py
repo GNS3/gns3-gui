@@ -447,7 +447,9 @@ class Topology(object):
         :returns: topology representation
         """
 
-        log.info("starting to save the topology (version {})".format(__version__))
+        log.info("Starting to save the topology (version {})".format(__version__))
+
+        self._project.commit()
 
         topology = {"uuid": self._project.uuid(),
                     "name": self._project.name(),

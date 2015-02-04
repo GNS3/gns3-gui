@@ -148,6 +148,12 @@ class Project(QtCore.QObject):
             "project_id": self._uuid
         })
 
+    def commit(self):
+        """Save projet on remote servers"""
+
+        # TODO: call all server
+        self._servers.localServer().post("/projects/{project_id}/commit".format(project_id=self._uuid), None, body={})
+
     def close(self):
         """Close project"""
 

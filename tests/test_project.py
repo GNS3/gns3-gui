@@ -108,3 +108,15 @@ def test_project_close_error():
         assert mock_signal_closed.called
 
         assert project.closed()
+
+
+def test_project_commit():
+
+    with patch("gns3.http_client.HTTPClient.post") as mock:
+
+        project = Project()
+        project.commit()
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/projects/{project_id}/commit".format(project_id=project.uuid())

@@ -1229,15 +1229,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
 
-        try:
-            projects_dir_path = self.projectsDirPath()
-            os.makedirs(projects_dir_path)
-        except FileExistsError:
-            pass
-        except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save project", "Could not create the projects directory {}: {}".format(projects_dir_path, e))
-            return
-
         file_dialog = QtGui.QFileDialog(self)
         file_dialog.setWindowTitle("Save project")
         file_dialog.setNameFilters(["Directories"])
@@ -1253,7 +1244,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         project_dir = file_dialog.selectedFiles()[0]
         project_name = os.path.basename(project_dir)
         topology_file_path = os.path.join(project_dir, project_name + ".gns3")
-        new_project_files_dir = os.path.join(project_dir, project_name + "-files")
 
         # create the destination directory for project files
         try:
@@ -1263,20 +1253,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(new_project_files_dir), e)
             return
-
-        # create the sub-directories to avoid race conditions when setting the new working
-        # directory to modules (modules could create directories with different ownership)
-        for curpath, dirs, _ in os.walk(self._project.filesDir()):
-            base_dir = curpath.replace(self._project.filesDir(), new_project_files_dir)
-            for directory in dirs:
-                try:
-                    destination_dir = os.path.join(base_dir, directory)
-                    os.makedirs(destination_dir)
-                except FileExistsError:
-                    pass
-                except OSError as e:
-                    QtGui.QMessageBox.critical(self, "Save project", "Could not create project sub-directory {}: {}".format(destination_dir, e))
-                    return
 
         # let all modules know about the new project files directory
         # self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
