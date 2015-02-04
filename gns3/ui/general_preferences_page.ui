@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>467</width>
-    <height>639</height>
+    <width>510</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,34 +76,6 @@
             </item>
             <item>
              <widget class="QToolButton" name="uiImagesPathToolButton">
-              <property name="text">
-               <string>&amp;Browse...</string>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextOnly</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="uiTemporaryFilesPathLabel">
-            <property name="text">
-             <string>Temporary files:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLineEdit" name="uiTemporaryFilesPathLineEdit">
-              <property name="toolTip">
-               <string>Directory where temporary files are stored</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiTemporaryFilesPathToolButton">
               <property name="text">
                <string>&amp;Browse...</string>
               </property>

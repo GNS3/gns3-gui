@@ -67,3 +67,13 @@ Finally, install both the GUI & server from the source.
    python3 setup.py install
 
 Or follow this `HOWTO that uses MacPorts <http://binarynature.blogspot.ca/2014/05/install-gns3-early-release-on-mac-os-x.html>`_.
+
+Developement
+-------------
+
+If you want to update the interface modify the .ui files using QT tools. And:
+
+.. code:: bash
+
+    cd scripts
+    python build_pyqt.py

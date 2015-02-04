@@ -50,7 +50,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         self.uiProjectsPathToolButton.clicked.connect(self._projectsPathSlot)
         self.uiImagesPathToolButton.clicked.connect(self._imagesPathSlot)
-        self.uiTemporaryFilesPathToolButton.clicked.connect(self._temporaryFilesPathSlot)
         self.uiImportConfigurationFilePushButton.clicked.connect(self._importConfigurationFileSlot)
         self.uiExportConfigurationFilePushButton.clicked.connect(self._exportConfigurationFileSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
@@ -82,17 +81,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         if path:
             self.uiImagesPathLineEdit.setText(path)
             self.uiImagesPathLineEdit.setCursorPosition(0)
-
-    def _temporaryFilesPathSlot(self):
-        """
-        Slot to select the temporary files directory path.
-        """
-
-        directory = self._general_settings["temporary_files_path"]
-        path = QtGui.QFileDialog.getExistingDirectory(self, "Temporary files directory", directory, QtGui.QFileDialog.ShowDirsOnly)
-        if path:
-            self.uiTemporaryFilesPathLineEdit.setText(path)
-            self.uiTemporaryFilesPathLineEdit.setCursorPosition(0)
 
     def _restoreDefaultsSlot(self):
         """
@@ -194,7 +182,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         self.uiProjectsPathLineEdit.setText(settings["projects_path"])
         self.uiImagesPathLineEdit.setText(settings["images_path"])
-        self.uiTemporaryFilesPathLineEdit.setText(settings["temporary_files_path"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
@@ -256,7 +243,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         new_settings = {}
         new_settings["projects_path"] = self.uiProjectsPathLineEdit.text()
         new_settings["images_path"] = self.uiImagesPathLineEdit.text()
-        new_settings["temporary_files_path"] = self.uiTemporaryFilesPathLineEdit.text()
         new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()
         new_settings["style"] = self.uiStyleComboBox.currentText()
         new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()

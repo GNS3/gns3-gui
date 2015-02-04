@@ -30,9 +30,6 @@ DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 # Images directory location
 DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
-# Temporary files location
-DEFAULT_TEMPORARY_FILES_PATH = tempfile.gettempdir()
-
 # Default path to the local GNS3 server executable
 if sys.platform.startswith("win"):
     DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
@@ -193,7 +190,6 @@ STYLES = ["Charcoal (default)", "Classic", "Legacy"]
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,
     "images_path": DEFAULT_IMAGES_PATH,
-    "temporary_files_path": DEFAULT_TEMPORARY_FILES_PATH,
     "style": STYLES[0],
     "auto_launch_project_dialog": True,
     "check_for_update": True,
@@ -213,7 +209,6 @@ GENERAL_SETTINGS = {
 GENERAL_SETTING_TYPES = {
     "projects_path": str,
     "images_path": str,
-    "temporary_files_path": str,
     "style": str,
     "auto_launch_project_dialog": bool,
     "check_for_update": bool,

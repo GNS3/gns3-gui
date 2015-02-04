@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Mon Nov 17 18:55:08 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Wed Feb  4 18:17:33 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,19 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_GeneralPreferencesPageWidget(object):
-
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName(_fromUtf8("GeneralPreferencesPageWidget"))
-        GeneralPreferencesPageWidget.resize(467, 639)
+        GeneralPreferencesPageWidget.resize(510, 687)
         self.verticalLayout = QtGui.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiTabWidget = QtGui.QTabWidget(GeneralPreferencesPageWidget)
@@ -68,19 +65,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiImagesPathToolButton.setObjectName(_fromUtf8("uiImagesPathToolButton"))
         self.horizontalLayout_4.addWidget(self.uiImagesPathToolButton)
         self.gridLayout_3.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
-        self.uiTemporaryFilesPathLabel = QtGui.QLabel(self.uiLocalPathsGroupBox)
-        self.uiTemporaryFilesPathLabel.setObjectName(_fromUtf8("uiTemporaryFilesPathLabel"))
-        self.gridLayout_3.addWidget(self.uiTemporaryFilesPathLabel, 4, 0, 1, 1)
-        self.horizontalLayout_3 = QtGui.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.uiTemporaryFilesPathLineEdit = QtGui.QLineEdit(self.uiLocalPathsGroupBox)
-        self.uiTemporaryFilesPathLineEdit.setObjectName(_fromUtf8("uiTemporaryFilesPathLineEdit"))
-        self.horizontalLayout_3.addWidget(self.uiTemporaryFilesPathLineEdit)
-        self.uiTemporaryFilesPathToolButton = QtGui.QToolButton(self.uiLocalPathsGroupBox)
-        self.uiTemporaryFilesPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-        self.uiTemporaryFilesPathToolButton.setObjectName(_fromUtf8("uiTemporaryFilesPathToolButton"))
-        self.horizontalLayout_3.addWidget(self.uiTemporaryFilesPathToolButton)
-        self.gridLayout_3.addLayout(self.horizontalLayout_3, 5, 0, 1, 1)
         self.verticalLayout_5.addWidget(self.uiLocalPathsGroupBox)
         self.uiStyleGroupBox = QtGui.QGroupBox(self.uiGeneralTab)
         self.uiStyleGroupBox.setObjectName(_fromUtf8("uiStyleGroupBox"))
@@ -291,9 +275,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiImagesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My binary images:", None))
         self.uiImagesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored", None))
         self.uiImagesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse...", None))
-        self.uiTemporaryFilesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "Temporary files:", None))
-        self.uiTemporaryFilesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where temporary files are stored", None))
-        self.uiTemporaryFilesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse...", None))
         self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style", None))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file", None))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import", None))
@@ -335,3 +316,4 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultLabelColorPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default color", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults", None))
+
