@@ -112,7 +112,7 @@ class HTTPClient(QtCore.QObject):
         """
 
         try:
-            url = "{scheme}://{host}:{port}/version".format(scheme=self.scheme, host=self.host, port=self.port)
+            url = "{scheme}://{host}:{port}/v1/version".format(scheme=self.scheme, host=self.host, port=self.port)
             response = urllib.request.urlopen(url, timeout=2)
             content_type = response.getheader("CONTENT-TYPE")
             if response.status == 200 and content_type == "application/json":
@@ -231,8 +231,8 @@ class HTTPClient(QtCore.QObject):
             log.error("Not connected to {}:{}".format(self.host, self.port))
             return
 
-        log.debug("{method} {scheme}://{host}:{port}{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
-        url = QtCore.QUrl("{scheme}://{host}:{port}{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
+        log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
+        url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = QtNetwork.QNetworkRequest(url)
         request.setRawHeader("Content-Type", "application/json")
         request.setRawHeader("Content-Length", str(len(body)))
