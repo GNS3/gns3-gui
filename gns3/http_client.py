@@ -272,7 +272,8 @@ class HTTPClient(QtCore.QObject):
                 callback({"message": error_message}, error=True)
             else:
                 log.debug(body)
-                callback(json.loads(body), error=True)
+                if callback is not None:
+                    callback(json.loads(body), error=True)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))

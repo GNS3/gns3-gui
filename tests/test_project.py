@@ -115,6 +115,7 @@ def test_project_commit():
     with patch("gns3.http_client.HTTPClient.post") as mock:
 
         project = Project()
+        project.setUuid(str(uuid4()))
         project.commit()
 
         assert mock.called
