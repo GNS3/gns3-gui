@@ -39,7 +39,7 @@ def test_project_create():
         assert kwargs["body"] == {"temporary": False, "project_id": None}
         # Call the project creation callback
         args[1]({"project_id": uuid})
-        assert project.uuid() == uuid
+        assert project.id() == uuid
 
         assert signal.called
 
@@ -53,7 +53,7 @@ def test_project_close():
         signal = MagicMock()
 
         project = Project()
-        project.setUuid(uuid)
+        project.setId(uuid)
 
         mock_signal = MagicMock()
         mock_signal_closed = MagicMock()
@@ -86,7 +86,7 @@ def test_project_close_error():
         signal = MagicMock()
 
         project = Project()
-        project.setUuid(uuid)
+        project.setId(uuid)
 
         mock_signal = MagicMock()
         mock_signal_closed = MagicMock()
@@ -119,4 +119,4 @@ def test_project_commit():
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/projects/{project_id}/commit".format(project_id=project.uuid())
+        assert args[0] == "/projects/{project_id}/commit".format(project_id=project.id())

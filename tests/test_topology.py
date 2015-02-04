@@ -42,7 +42,7 @@ def test_dump(vpcs_device, project):
 
     dump = topology.dump(include_gui_data=False)
     assert dict(dump) == {
-        "uuid": project.uuid(),
+        "project_id": project.id(),
         "auto_start": False,
         "name": project.name(),
         "resources_type": "local",
@@ -64,7 +64,7 @@ def test_dump(vpcs_device, project):
                     },
                     "server_id": 1,
                     "type": "VPCSDevice",
-                    "uuid": None
+                    "vm_id": None
                 }
             ],
             "servers": [
@@ -84,7 +84,7 @@ def test_dump(vpcs_device, project):
 def test_load(project, monkeypatch, main_window):
 
     topo = {
-        "uuid": project.uuid(),
+        "project_id": project.id(),
         "auto_start": False,
         "name": "twovpcs",
         "resources_type": "local",
@@ -184,7 +184,7 @@ def test_load(project, monkeypatch, main_window):
         if path == "/projects":
             callback({"project_id": uuid.uuid4()})
         else:
-            callback({"uuid": uuid.uuid4()})
+            callback({"vm_id": uuid.uuid4()})
 
     monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
 
@@ -194,7 +194,7 @@ def test_load(project, monkeypatch, main_window):
     topology.project = project
     topology._load(topo)
 
-    assert topology._project.uuid() == project.uuid()
+    assert topology._project.id() == project.id()
     assert topology._project.name() == "twovpcs"
     assert topology._project.type() == "local"
     assert len(topology.nodes()) == 2
@@ -306,7 +306,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window):
         if path == "/projects":
             callback({"project_id": uuid.uuid4()})
         else:
-            callback({"uuid": uuid.uuid4()})
+            callback({"vm_id": uuid.uuid4()})
 
     monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
 
@@ -317,7 +317,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window):
     topology._load(topo)
 
     assert topology._project.name() == "twovpcs"
-    assert topology._project.uuid() is not None
+    assert topology._project.id() is not None
     assert topology._project.type() == "cloud"
     assert len(topology.nodes()) == 2
     assert len(topology._node_to_links_mapping) == 2

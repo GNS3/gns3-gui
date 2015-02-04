@@ -34,7 +34,7 @@ def test_virtualbox_vm_setup(virtualbox_vm):
         virtualbox_vm.setup("VMNAME")
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox"
+        assert args[0] == "/virtualbox/vms"
 
         # Callback
         params = {
@@ -43,10 +43,10 @@ def test_virtualbox_vm_setup(virtualbox_vm):
             "linked_clone": False,
             "adapters": 0,
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
         args[1](params)
-        assert virtualbox_vm.uuid() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert virtualbox_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_virtualbox_vm_start(virtualbox_vm):
@@ -55,7 +55,7 @@ def test_virtualbox_vm_start(virtualbox_vm):
         virtualbox_vm.start()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/{uuid}/start".format(uuid=virtualbox_vm.uuid())
+        assert args[0] == "/virtualbox/vms/{vm_id}/start".format(vm_id=virtualbox_vm.vm_id())
 
 
 def test_virtualbox_vm_stop(virtualbox_vm):
@@ -65,7 +65,7 @@ def test_virtualbox_vm_stop(virtualbox_vm):
         virtualbox_vm.stop()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/{uuid}/stop".format(uuid=virtualbox_vm.uuid())
+        assert args[0] == "/virtualbox/vms/{vm_id}/stop".format(vm_id=virtualbox_vm.vm_id())
 
 
 def test_virtualbox_vm_reload(virtualbox_vm):
@@ -74,7 +74,7 @@ def test_virtualbox_vm_reload(virtualbox_vm):
         virtualbox_vm.reload()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/{uuid}/reload".format(uuid=virtualbox_vm.uuid())
+        assert args[0] == "/virtualbox/vms/{vm_id}/reload".format(vm_id=virtualbox_vm.vm_id())
 
 
 def test_allocateUDPPort(virtualbox_vm):
@@ -109,7 +109,7 @@ def test_addNIO(virtualbox_vm):
         virtualbox_vm.addNIO(port, nio)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/{uuid}/adapters/0/nio".format(uuid=virtualbox_vm.uuid())
+        assert args[0] == "/virtualbox/vms/{vm_id}/adapters/0/nio".format(vm_id=virtualbox_vm.vm_id())
 
         # Connect the signal
         signal_mock = Mock()
@@ -138,7 +138,7 @@ def test_deleteNIO(virtualbox_vm):
             assert mock_delete.called
 
             args, kwargs = mock_delete.call_args
-            assert args[0] == "/virtualbox/{uuid}/adapters/0/nio".format(uuid=virtualbox_vm.uuid())
+            assert args[0] == "/virtualbox/vms/{vm_id}/adapters/0/nio".format(vm_id=virtualbox_vm.vm_id())
 
 
 def test_update(virtualbox_vm):
@@ -152,7 +152,7 @@ def test_update(virtualbox_vm):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/{uuid}".format(uuid=virtualbox_vm.uuid())
+        assert args[0] == "/virtualbox/vms/{vm_id}".format(vm_id=virtualbox_vm.vm_id())
         assert kwargs["body"] == new_settings
 
         # Callback

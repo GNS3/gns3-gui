@@ -45,7 +45,7 @@ class VPCSDevice(Node):
 
         log.info("VPCS instance is being created")
         self._project = project
-        self._uuid = None
+        self._vm_id = None
         self._defaults = {}
         self._inital_settings = None
         self._export_directory = None
@@ -70,12 +70,12 @@ class VPCSDevice(Node):
         # save the default settings
         self._defaults = self._settings.copy()
 
-    def setup(self, name=None, identifier=None, additional_settings={}):
+    def setup(self, name=None, vm_id=None, additional_settings={}):
         """
         Setups this VPCS device.
 
         :param name: optional name
-        :param identifier: VM identifier (ID or UUID)
+        :param vm_id: VM identifier
         :param additional_settings: additional settings for this device
         """
 
@@ -88,13 +88,10 @@ class VPCSDevice(Node):
             return
 
         params = {"name": name,
-                  "project_id": self._project.uuid()}
+                  "project_id": self._project.id()}
 
-        if identifier:
-            if isinstance(identifier, int):
-                params["vpcs_id"] = identifier
-            else:
-                params["uuid"] = identifier
+        if vm_id:
+            params["vm_id"] = vm_id
 
         if "script_file" in additional_settings:
             try:
@@ -104,12 +101,12 @@ class VPCSDevice(Node):
                 log.error("Could not load the script file to {}".format(additional_settings["script_file"], e))
             del additional_settings["script_file"]
 
-        # If we have an uuid that mean the VM already exits and we should not send startup_script
-        if "startup_script" in additional_settings and identifier is not None:
+        # If we have an vm id that mean the VM already exits and we should not send startup_script
+        if "startup_script" in additional_settings and vm_id is not None:
             del additional_settings["startup_script"]
 
         params.update(additional_settings)
-        self._server.post("/vpcs", self._setupCallback, body=params)
+        self._server.post("/vpcs/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False):
         """
@@ -124,7 +121,7 @@ class VPCSDevice(Node):
             self.server_error_signal.emit(self.id(), result["message"])
             return
 
-        self._uuid = result["uuid"]
+        self._vm_id = result["vm_id"]
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
@@ -147,8 +144,8 @@ class VPCSDevice(Node):
         log.debug("VPCS device {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._uuid:
-            self._server.delete("/vpcs/{uuid}".format(uuid=self._uuid), self._deleteCallback)
+        if self._vm_id:
+            self._server.delete("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -185,7 +182,7 @@ class VPCSDevice(Node):
                 params[name] = value
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.put("/vpcs/{uuid}".format(uuid=self._uuid), self._updateCallback, body=params)
+        self._server.put("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False):
         """
@@ -224,7 +221,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.post("/vpcs/{uuid}/start".format(uuid=self._uuid), self._startCallback)
+        self._server.post("/vpcs/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
     def _startCallback(self, result, error=False):
         """
@@ -255,7 +252,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.post("/vpcs/{uuid}/stop".format(uuid=self._uuid), self._stopCallback)
+        self._server.post("/vpcs/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
     def _stopCallback(self, result, error=False):
         """
@@ -282,7 +279,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.post("/vpcs/{uuid}/reload".format(uuid=self._uuid), self._reloadCallback)
+        self._server.post("/vpcs/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False):
         """
@@ -334,7 +331,7 @@ class VPCSDevice(Node):
 
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.post("/vpcs/{uuid}/ports/0/nio".format(uuid=self._uuid), partial(self._addNIOCallback, port.id()), params)
+        self._server.post("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id), partial(self._addNIOCallback, port.id()), params)
 
     def _addNIOCallback(self, port_id, result, error=False):
         """
@@ -359,7 +356,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is deleting an NIO".format(self.name()))
-        self._server.delete("/vpcs/{uuid}/ports/0/nio".format(uuid=self._uuid), self._deleteNIOCallback)
+        self._server.delete("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id), self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
         """
@@ -390,11 +387,11 @@ class VPCSDevice(Node):
 
         info = """Device {name} is {state}
   Local node ID is {id}
-  Server's VPCS device UUID is {uuid}
+  Server's VPCS device ID is {vm_id}
   console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
-           uuid=self._uuid,
+           vm_id=self._vm_id,
            state=state,
            console=self._settings["console"])
 
@@ -417,7 +414,7 @@ class VPCSDevice(Node):
         """
 
         vpcs_device = {"id": self.id(),
-                       "uuid": self._uuid,
+                       "vm_id": self._vm_id,
                        "type": self.__class__.__name__,
                        "description": str(self),
                        "properties": {},
@@ -445,9 +442,10 @@ class VPCSDevice(Node):
         """
 
         self.node_info = node_info
-        identifier = node_info.get("vpcs_id")
-        if not identifier:
-            identifier = node_info["uuid"]
+        # for backward compatibility
+        vm_id = node_info.get("vpcs_id")
+        if not vm_id:
+            vm_id = node_info["vm_id"]
         settings = node_info["properties"]
         name = settings.pop("name")
         self.updated_signal.connect(self._updatePortSettings)
@@ -455,7 +453,7 @@ class VPCSDevice(Node):
         self._loading = True
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
-        self.setup(name, identifier, settings)
+        self.setup(name, vm_id, settings)
 
     def _updatePortSettings(self):
         """
@@ -488,7 +486,7 @@ class VPCSDevice(Node):
         """
 
         self._config_export_path = config_export_path
-        self._server.get("/vpcs/{uuid}".format(uuid=self._uuid), self._exportConfigCallback)
+        self._server.get("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._exportConfigCallback)
 
     def _exportConfigCallback(self, result, error=False):
         """
@@ -519,7 +517,7 @@ class VPCSDevice(Node):
         """
 
         self._export_directory = directory
-        self._server.get("/vpcs/{uuid}".format(uuid=self._uuid), self._exportConfigToDirectoryCallback)
+        self._server.get("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._exportConfigToDirectoryCallback)
 
     def _exportConfigToDirectoryCallback(self, result, error=False):
         """
@@ -574,14 +572,14 @@ class VPCSDevice(Node):
         if new_settings:
             self.update(new_settings)
 
-    def uuid(self):
+    def vm_id(self):
         """
-        Return the UUID of this VPCS device
+        Return the ID of this VPCS device
 
-        :returns: uuid (string)
+        :returns: identifier (string)
         """
 
-        return self._uuid
+        return self._vm_id
 
     def name(self):
         """

@@ -35,10 +35,10 @@ def test_vpcs_device_setup(vpcs_device, project):
         vpcs_device.setup(name="PC 1", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs"
+        assert args[0] == "/vpcs/vms"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "project_id": project.uuid(),
+            "project_id": project.id(),
             "startup_script": "echo TEST"
         }
 
@@ -49,27 +49,27 @@ def test_vpcs_device_setup(vpcs_device, project):
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "script_file": None,
             "startup_script": None,
-            "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
         args[1](params)
 
-        assert vpcs_device.uuid() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_vpcs_device_setup_with_uuid(vpcs_device, project):
     """
-    If we have an uuid that mean the VM already exits and we should not send startup_script
+    If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
-        vpcs_device.setup(name="PC 1", identifier="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
+        vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs"
+        assert args[0] == "/vpcs/vms"
         assert kwargs["body"] == {
-            "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "project_id": project.uuid(),
+            "project_id": project.id(),
         }
 
         # Callback
@@ -79,11 +79,11 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project):
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "script_file": None,
             "startup_script": None,
-            "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
         args[1](params)
 
-        assert vpcs_device.uuid() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
@@ -97,14 +97,14 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
         f.write("echo TEST")
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
-        vpcs_device.setup(name="PC 1", identifier="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
+        vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs"
+        assert args[0] == "/vpcs/vms"
         assert kwargs["body"] == {
-            "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "project_id": project.uuid(),
+            "project_id": project.id(),
         }
 
         # Callback
@@ -114,11 +114,11 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "script_file": None,
             "startup_script": "echo TEST",
-            "uuid": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
         args[1](params)
 
-        assert vpcs_device.uuid() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_vpcs_device_start(vpcs_device):
@@ -127,7 +127,7 @@ def test_vpcs_device_start(vpcs_device):
         vpcs_device.start()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}/start".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}/start".format(vm_id=vpcs_device.vm_id())
 
 
 def test_vpcs_device_stop(vpcs_device):
@@ -137,7 +137,7 @@ def test_vpcs_device_stop(vpcs_device):
         vpcs_device.stop()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}/stop".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}/stop".format(vm_id=vpcs_device.vm_id())
 
 
 def test_vpcs_device_reload(vpcs_device):
@@ -146,7 +146,7 @@ def test_vpcs_device_reload(vpcs_device):
         vpcs_device.reload()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}/reload".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}/reload".format(vm_id=vpcs_device.vm_id())
 
 
 def test_allocateUDPPort(vpcs_device):
@@ -180,7 +180,7 @@ def test_addNIO(vpcs_device):
         vpcs_device.addNIO(port, nio)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}/ports/0/nio".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=vpcs_device.vm_id())
 
         # Connect the signal
         signal_mock = Mock()
@@ -208,7 +208,7 @@ def test_deleteNIO(vpcs_device):
             assert mock_delete.called
 
             args, kwargs = mock_delete.call_args
-            assert args[0] == "/vpcs/{uuid}/ports/0/nio".format(uuid=vpcs_device.uuid())
+            assert args[0] == "/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=vpcs_device.vm_id())
 
 
 def test_exportConfig(tmpdir, vpcs_device):
@@ -220,7 +220,7 @@ def test_exportConfig(tmpdir, vpcs_device):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
 
         # Callback
         args[1]({"startup_script": "echo TEST"})
@@ -240,7 +240,7 @@ def test_exportConfigToDirectory(tmpdir, vpcs_device):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
 
         # Callback
         args[1]({"startup_script": "echo TEST"})
@@ -263,7 +263,7 @@ def test_update(vpcs_device):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
         assert kwargs["body"] == new_settings
 
         # Callback
@@ -283,5 +283,5 @@ def test_importConfig(vpcs_device, tmpdir):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/{uuid}".format(uuid=vpcs_device.uuid())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
         assert kwargs["body"] == {"startup_script": content}

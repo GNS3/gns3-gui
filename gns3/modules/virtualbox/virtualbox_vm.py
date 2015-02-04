@@ -44,7 +44,7 @@ class VirtualBoxVM(Node):
         Node.__init__(self, server)
         log.info("VirtualBox VM instance is being created")
         self._project = project
-        self._uuid = None
+        self._vm_id = None
         self._linked_clone = False
         self._export_directory = None
         self._loading = False
@@ -78,13 +78,13 @@ class VirtualBoxVM(Node):
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, vmname, name=None, identifier=None, linked_clone=False, additional_settings={}):
+    def setup(self, vmname, name=None, vm_id=None, linked_clone=False, additional_settings={}):
         """
         Setups this VirtualBox VM.
 
         :param vmname: VM name in VirtualBox
         :param name: optional name
-        :param identifier: VM identifier (ID or UUID)
+        :param vm_id: VM identifier
         :param linked_clone: either the VM is a linked clone
         :param additional_settings: additional settings for this VM
         """
@@ -104,16 +104,13 @@ class VirtualBoxVM(Node):
         self._linked_clone = linked_clone
         params = {"name": name,
                   "linked_clone": linked_clone,
-                  "project_id": self._project.uuid()}
+                  "project_id": self._project.id()}
 
-        if identifier:
-            if isinstance(identifier, int):
-                params["vbox_id"] = identifier
-            else:
-                params["uuid"]
+        if vm_id:
+            params["vm_id"] = vm_id
 
         params.update(additional_settings)
-        self._server.post("/virtualbox", self._setupCallback, body=params)
+        self._server.post("/virtualbox/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False):
         """
@@ -128,7 +125,7 @@ class VirtualBoxVM(Node):
             self.server_error_signal.emit(self.id(), result["message"])
             return
 
-        self._uuid = result["uuid"]
+        self._vm_id = result["vm_id"]
         # update the settings with what has been sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
@@ -154,8 +151,8 @@ class VirtualBoxVM(Node):
         log.debug("VirtualBox VM instance {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._uuid:
-            self._server.delete("/virtualbox/{uuid}".format(uuid=self._uuid), self._deleteCallback)
+        if self._vm_id:
+            self._server.delete("/virtualbox/vms/{vm_id}".format(vm_id=self._vm_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -196,7 +193,7 @@ class VirtualBoxVM(Node):
                 params[name] = value
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.put("/virtualbox/{uuid}".format(uuid=self._uuid), self._updateCallback, body=params)
+        self._server.put("/virtualbox/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False):
         """
@@ -244,7 +241,7 @@ class VirtualBoxVM(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.post("/virtualbox/{uuid}/start".format(uuid=self._uuid), self._startCallback)
+        self._server.post("/virtualbox/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
     def _startCallback(self, result, error=False):
         """
@@ -275,7 +272,7 @@ class VirtualBoxVM(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.post("/virtualbox/{uuid}/stop".format(uuid=self._uuid), self._stopCallback)
+        self._server.post("/virtualbox/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
     def _stopCallback(self, result, error=False):
         """
@@ -306,7 +303,7 @@ class VirtualBoxVM(Node):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self._server.post("/virtualbox/{uuid}/suspend".format(uuid=self._uuid), self._suspendCallback)
+        self._server.post("/virtualbox/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
 
     def _suspendCallback(self, result, error=False):
         """
@@ -333,7 +330,7 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.post("/virtualbox/{uuid}/reload".format(uuid=self._uuid), self._reloadCallback)
+        self._server.post("/virtualbox/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False):
         """
@@ -386,7 +383,7 @@ class VirtualBoxVM(Node):
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
 
-        self._server.post("/virtualbox/{uuid}/adapters/{adapter_id}/nio".format(uuid=self._uuid, adapter_id=port.portNumber()),
+        self._server.post("/virtualbox/vms/{vm_id}/adapters/{adapter_id}/nio".format(vm_id=self._vm_id, adapter_id=port.portNumber()),
                           partial(self._addNIOCallback, port.id()), body=params)
 
     def _addNIOCallback(self, port_id, result, error=False):
@@ -412,8 +409,8 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is deleting an NIO on port {}".format(self.name(), port.portNumber()))
-        self._server.delete("/virtualbox/{uuid}/adapters/{adapter_id}/nio".format(uuid=self._uuid,
-                                                                                  adapter_id=port.portNumber()),
+        self._server.delete("/virtualbox/vms/{vm_id}/adapters/{adapter_id}/nio".format(vm_id=self._vm_id,
+                                                                                       adapter_id=port.portNumber()),
                             self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
@@ -442,7 +439,7 @@ class VirtualBoxVM(Node):
 
         params = {"capture_file_name": capture_file_name}
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.post("/virtualbox/{uuid}/capture/{port_number}/start".format(uuid=self._uuid, port_number=port.portNumber()),
+        self._server.post("/virtualbox/vms/{vm_id}/capture/{port_number}/start".format(vm_id=self._vm_id, port_number=port.portNumber()),
                           partial(self._startPacketCaptureCallback, port.id()), body=params)
 
         self._server.send_message("virtualbox.start_capture", params, self._startPacketCaptureCallback)
@@ -477,7 +474,7 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self._server.post("/virtualbox/{uuid}/capture/{port_number}/stop".format(uuid=self._uuid, port_number=port.portNumber()),
+        self._server.post("/virtualbox/vms/{vm_id}/capture/{port_number}/stop".format(vm_id=self._vm_id, port_number=port.portNumber()),
                           partial(self._stopPacketCaptureCallback, port.id()))
 
     def _stopPacketCaptureCallback(self, port_id, result, error=False):
@@ -513,12 +510,12 @@ class VirtualBoxVM(Node):
 
         info = """VirtualBox VM {name} is {state}
   Local node ID is {id}
-  Server's VirtualBox VM UUID is {uuid}
+  Server's VirtualBox VM ID is {vm_id}
   VirtualBox name is "{vmname}"
   console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
-           uuid=self._uuid,
+           vm_id=self._vm_id,
            state=state,
            vmname=self._settings["vmname"],
            console=self._settings["console"])
@@ -542,7 +539,7 @@ class VirtualBoxVM(Node):
         """
 
         vbox_vm = {"id": self.id(),
-                   "uuid": self._uuid,
+                   "vm_id": self._vm_id,
                    "linked_clone": self._linked_clone,
                    "type": self.__class__.__name__,
                    "description": str(self),
@@ -571,9 +568,10 @@ class VirtualBoxVM(Node):
         """
 
         self.node_info = node_info
-        identifier = node_info.get("vbox_id")
-        if not identifier:
-            identifier = node_info["uuid"]
+        # for backward compatibility
+        vm_id = node_info.get("vbox_id")
+        if not vm_id:
+            vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)
         settings = node_info["properties"]
         name = settings.pop("name")
@@ -583,7 +581,7 @@ class VirtualBoxVM(Node):
         self._loading = True
         log.info("VirtualBox VM {} is loading".format(name))
         self.setName(name)
-        self.setup(vmname, name, identifier, linked_clone, settings)
+        self.setup(vmname, name, vm_id, linked_clone, settings)
 
     def _updatePortSettings(self):
         """
@@ -608,14 +606,14 @@ class VirtualBoxVM(Node):
         self._inital_settings = None
         self._loading = False
 
-    def uuid(self):
+    def vm_id(self):
         """
-        Return the UUID of this VirtualBox VM instance.
+        Return the ID of this VirtualBox VM instance.
 
-        :returns: uuid (string)
+        :returns: identifier (string)
         """
 
-        return self._uuid
+        return self._vm_id
 
     def name(self):
         """

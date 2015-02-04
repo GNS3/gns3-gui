@@ -40,7 +40,7 @@ class Project(QtCore.QObject):
     def __init__(self):
 
         self._servers = Servers.instance()
-        self._uuid = None
+        self._id = None
         self._temporary = False
         self._closed = False
         self._files_dir = None
@@ -108,19 +108,19 @@ class Project(QtCore.QObject):
 
         self._temporary = temporary
 
-    def uuid(self):
+    def id(self):
         """
-        Get project UUID
-        """
-
-        return self._uuid
-
-    def setUuid(self, uuid):
-        """
-        Set project UUID
+        Get project identifier
         """
 
-        self._uuid = uuid
+        return self._id
+
+    def setId(self, project_id):
+        """
+        Set project identifier
+        """
+
+        self._id = project_id
 
     def filesDir(self):
 
@@ -145,22 +145,22 @@ class Project(QtCore.QObject):
 
         self._servers.localServer().post("/projects", self._project_created, body={
             "temporary": self._temporary,
-            "project_id": self._uuid
+            "project_id": self._id
         })
 
     def commit(self):
         """Save projet on remote servers"""
 
         # TODO: call all server
-        self._servers.localServer().post("/projects/{project_id}/commit".format(project_id=self._uuid), None, body={})
+        self._servers.localServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
     def close(self):
         """Close project"""
 
         # TODO: call all server
-        if self._uuid:
+        if self._id:
             self.project_about_to_close_signal.emit()
-            self._servers.localServer().post("/projects/{project_id}/close".format(project_id=self._uuid), self._project_closed, body={})
+            self._servers.localServer().post("/projects/{project_id}/close".format(project_id=self._id), self._project_closed, body={})
         else:
             # The project is not initialized when can close it
             self.project_about_to_close_signal.emit()
@@ -172,9 +172,9 @@ class Project(QtCore.QObject):
             print(params)
             return
         # TODO: Manage errors
-        self._uuid = params["project_id"]
-        log.info("Project {} created".format(self._uuid))
-        # TODO: call all server when we got uuid
+        self._id = params["project_id"]
+        log.info("Project {} created".format(self._id))
+        # TODO: call all server when we get the id
         self._closed = False
 
         self.project_created_signal.emit()
@@ -183,8 +183,8 @@ class Project(QtCore.QObject):
         if error:
             print(params)
         else:
-            if self._uuid:
-                log.info("Project {} closed".format(self._uuid))
+            if self._id:
+                log.info("Project {} closed".format(self._id))
         self._closed = True
         self.project_closed_signal.emit()
         self._project_instances.remove(self)

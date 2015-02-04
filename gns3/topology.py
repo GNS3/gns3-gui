@@ -451,7 +451,7 @@ class Topology(object):
 
         self._project.commit()
 
-        topology = {"uuid": self._project.uuid(),
+        topology = {"project_id": self._project.id(),
                     "name": self._project.name(),
                     "version": __version__,
                     "type": "topology",
@@ -538,8 +538,8 @@ class Topology(object):
         :param topology: topology representation
         """
 
-        if "uuid" in topology:
-            self._project.setUuid(topology["uuid"])
+        if "project_id" in topology:
+            self._project.setId(topology["project_id"])
         self._project.setName(topology["name"])
         self._project.setType(topology["resources_type"])
         self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
