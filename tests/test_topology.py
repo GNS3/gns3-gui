@@ -181,7 +181,11 @@ def test_load(project, monkeypatch, main_window):
 
     # We return an uuid for each HTTP post
     def http_loader(self, method, path, callback, body={}, connecting=False):
-        callback({"uuid": project.uuid()})
+        if path == "/projects":
+            callback({"project_id": uuid.uuid4()})
+        else:
+            callback({"uuid": uuid.uuid4()})
+
     monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.connected", lambda self: True)
@@ -299,7 +303,11 @@ def test_load_1_2_topology(project, monkeypatch, main_window):
 
     # We return an uuid for each HTTP post
     def http_loader(self, method, path, callback, body={}, connecting=False):
-        callback({"uuid": uuid.uuid4()})
+        if path == "/projects":
+            callback({"project_id": uuid.uuid4()})
+        else:
+            callback({"uuid": uuid.uuid4()})
+
     monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.connected", lambda self: True)
