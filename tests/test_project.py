@@ -21,7 +21,7 @@ from uuid import uuid4
 from gns3.project import Project
 
 
-def test_project_create():
+def test_project_create(tmpdir):
 
     uuid = uuid4()
     mock = MagicMock
@@ -38,8 +38,9 @@ def test_project_create():
         assert args[0] == "/projects"
         assert kwargs["body"] == {"temporary": False, "project_id": None}
         # Call the project creation callback
-        args[1]({"project_id": uuid})
+        args[1]({"project_id": uuid, "path": str(tmpdir)})
         assert project.id() == uuid
+        assert project.filesDir() == str(tmpdir)
 
         assert signal.called
 
@@ -120,4 +121,23 @@ def test_project_commit():
 
         assert mock.called
         args, kwargs = mock.call_args
+
         assert args[0] == "/projects/{project_id}/commit".format(project_id=project.id())
+
+
+def test_project_moveFromTemporaryToPath(tmpdir):
+
+    project = Project()
+    project.setId(str(uuid4()))
+    project._temporary = True
+
+    with patch("gns3.http_client.HTTPClient.put") as mock:
+        project.moveFromTemporaryToPath(str(tmpdir))
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/projects/{project_id}".format(project_id=project.id())
+        assert kwargs["body"] == {"path": str(tmpdir), "temporary": False}
+
+    assert project.temporary() is False
+    assert project.filesDir() == str(tmpdir)

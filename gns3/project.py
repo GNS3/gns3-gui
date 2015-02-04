@@ -175,7 +175,8 @@ class Project(QtCore.QObject):
         # TODO: Manage errors
         self._id = params["project_id"]
         log.info("Project {} created".format(self._id))
-        # TODO: call all server when we get the id
+        # Only for local server
+        self._files_dir = params["path"]
         self._closed = False
 
         self.project_created_signal.emit()
@@ -189,3 +190,15 @@ class Project(QtCore.QObject):
         self._closed = True
         self.project_closed_signal.emit()
         self._project_instances.remove(self)
+
+    def moveFromTemporaryToPath(self, path):
+        """
+        Inform the server that a project is no longer
+        temporary and as a new location.
+
+        :params path: New path of the project
+        """
+
+        self._files_dir = path
+        self._temporary = False
+        self._servers.localServer().put("/projects/{project_id}".format(project_id=self._id), None, body={"path": path, "temporary": False})

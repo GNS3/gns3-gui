@@ -107,7 +107,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
-        self._temporary_project = True
         self._max_recent_files = 5
         self._recent_file_actions = []
         self._start_time = time.time()
@@ -477,7 +476,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to save a project.
         """
 
-        if self._temporary_project:
+        if self._project.temporary():
             return self.saveProjectAs()
         else:
             return self.saveProject(self._project.path())
@@ -1076,14 +1075,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            if self._temporary_project:
+            if self._project.temporary():
                 destination_file = "untitled.gns3"
             else:
                 destination_file = os.path.basename(self._project.path())
             reply = QtGui.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                               QtGui.QMessageBox.Discard | QtGui.QMessageBox.Save | QtGui.QMessageBox.Cancel)
             if reply == QtGui.QMessageBox.Save:
-                if self._temporary_project:
+                if self._project.temporary():
                     return self.saveProjectAs()
                 return self.saveProject(self._project.path())
             elif reply == QtGui.QMessageBox.Cancel:
@@ -1215,12 +1214,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
             return
 
-        if self._temporary_project:
+        if self._project.temporary():
             default_project_name = "untitled"
         else:
             default_project_name = os.path.basename(self._project.path())
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
+
+        projects_dir_path = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 
         file_dialog = QtGui.QFileDialog(self)
         file_dialog.setWindowTitle("Save project")
@@ -1240,26 +1241,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # create the destination directory for project files
         try:
-            os.makedirs(new_project_files_dir)
+            os.makedirs(project_dir)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(new_project_files_dir), e)
+            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(project_dir), e)
             return
 
-        # let all modules know about the new project files directory
-        # self.uiGraphicsView.updateProjectFilesDir(new_project_files_dir)
-
-        # TODO: Move this on server side
-        if self._temporary_project:
+        if self._project.temporary():
             # move files if saving from a temporary project
-            log.info("moving project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project.filesDir(), new_project_files_dir, move=True)
+            log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
+            self._thread = ProcessFilesThread(self._project.filesDir(), project_dir, move=True)
             progress_dialog = ProgressDialog(self._thread, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
             log.info("copying project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project.filesDir(), new_project_files_dir)
+            self._thread = ProcessFilesThread(self._project.filesDir(), project_dir)
             progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
@@ -1269,7 +1266,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             errors = "\n".join(errors)
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
-        self._project.setfilesDir(new_project_files_dir)
+        self._project.moveFromTemporaryToPath(project_dir)
         self._project.setName(project_name)
         return self.saveProject(topology_file_path)
 
@@ -1291,8 +1288,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
             return False
 
-        if not self._temporary_project:
-            self._createScreenshot(os.path.join(os.path.dirname(path), "screenshot.png"))
+        self._createScreenshot(os.path.join(os.path.dirname(path), "screenshot.png"))
         self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
         self._project.setPath(path)
         self._setCurrentFile(path)
@@ -1423,10 +1419,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         if not path:
-            self._temporary_project = True
             self.setWindowFilePath("Unsaved project")
         else:
-            self._temporary_project = False
             self.setWindowFilePath(path)
             self._updateRecentFileSettings(path)
             self._updateRecentFileActions()
@@ -1535,7 +1529,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         """
 
-        if self._temporary_project:
+        if self._project.temporary():
             # do nothing if previous project was temporary
             return
 
@@ -1547,7 +1541,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         :param project: path to gns3 project file currently opened
         """
-        if self._temporary_project:
+        if self._project.temporary():
             # do nothing if project is temporary
             return
 

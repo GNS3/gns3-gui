@@ -284,10 +284,11 @@ class HTTPClient(QtCore.QObject):
                 params = json.loads(body)
             else:
                 params = {}
-            if status >= 400:
-                callback(params, error=True)
-            else:
-                callback(params)
+            if callback is not None:
+                if status >= 400:
+                    callback(params, error=True)
+                else:
+                    callback(params)
         response.deleteLater()
 
     def dump(self):

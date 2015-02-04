@@ -81,7 +81,7 @@ def test_dump(vpcs_device, project):
     }
 
 
-def test_load(project, monkeypatch, main_window):
+def test_load(project, monkeypatch, main_window, tmpdir):
 
     topo = {
         "project_id": project.id(),
@@ -182,7 +182,7 @@ def test_load(project, monkeypatch, main_window):
     # We return an uuid for each HTTP post
     def http_loader(self, method, path, callback, body={}, connecting=False):
         if path == "/projects":
-            callback({"project_id": uuid.uuid4()})
+            callback({"project_id": uuid.uuid4(), "path": str(tmpdir)})
         else:
             callback({"vm_id": uuid.uuid4()})
 
@@ -204,7 +204,7 @@ def test_load(project, monkeypatch, main_window):
     assert main_window.uiGraphicsView.addLink.called
 
 
-def test_load_1_2_topology(project, monkeypatch, main_window):
+def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
 
     topo = {
         "auto_start": False,
@@ -304,7 +304,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window):
     # We return an uuid for each HTTP post
     def http_loader(self, method, path, callback, body={}, connecting=False):
         if path == "/projects":
-            callback({"project_id": uuid.uuid4()})
+            callback({"project_id": uuid.uuid4(), "path": str(tmpdir)})
         else:
             callback({"vm_id": uuid.uuid4()})
 
