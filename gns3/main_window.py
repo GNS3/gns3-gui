@@ -1251,13 +1251,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             # move files if saving from a temporary project
             log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
-            self._thread = ProcessFilesThread(self._project.filesDir(), project_dir, move=True)
-            progress_dialog = ProgressDialog(self._thread, "Project", "Moving project files...", "Cancel", parent=self)
+            thread = ProcessFilesThread(self._project.filesDir(), project_dir, move=True)
+            progress_dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
+            thread.deleteLater()
         else:
             # else, just copy the files
+            # FIXME: no ref to new_project_files_dir
             log.info("copying project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
-            self._thread = ProcessFilesThread(self._project.filesDir(), project_dir)
-            progress_dialog = ProgressDialog(self._thread, "Project", "Copying project files...", "Cancel", parent=self)
+            thread = ProcessFilesThread(self._project.filesDir(), project_dir)
+            progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
+            thread.deleteLater()
         progress_dialog.show()
         progress_dialog.exec_()
 
