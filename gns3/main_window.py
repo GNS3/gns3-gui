@@ -1170,9 +1170,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._createTemporaryProject()
 
-        # FIXME: temp location to create project (must be created after the connection to the local server is complete though.
-        self._project.create()
-
         if self._project_from_cmdline:
             time.sleep(0.5)  # give so time to the server to initialize
             self.loadProject(self._project_from_cmdline)

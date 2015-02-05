@@ -143,6 +143,7 @@ class Project(QtCore.QObject):
         Create project on all servers
         """
 
+        assert self._id is None
         self._servers.localServer().post("/projects", self._project_created, body={
             "temporary": self._temporary,
             "project_id": self._id
