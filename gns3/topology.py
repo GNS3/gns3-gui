@@ -516,14 +516,13 @@ class Topology(object):
 
         log.debug("Start loading topology")
         self._project = Project()
-        self._project.setPath(path)
 
         project_files_dir = path
         if path.endswith(".gns3"):
             project_files_dir = path[:-5]
         elif path.endswith(".net"):
             project_files_dir = path[:-4]
-        self._project.setFilesDir(project_files_dir + "-files")
+        self._project.setFilesDir(project_files_dir)
 
         with open(path, "r") as f:
             log.info("loading project: {}".format(path))

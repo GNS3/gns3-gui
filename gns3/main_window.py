@@ -414,8 +414,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             topology.addInstance2(instance)
 
         self._project.setName(new_project_settings["project_name"])
-        self._project.setPath(new_project_settings["project_path"])
-        self._project.setFilesDir(new_project_settings["project_files_dir"])
+        self._project.setTopologyFile(new_project_settings["project_path"])
         self._project.setType(new_project_settings["project_type"])
         self._project.create()
         self.saveProject(new_project_settings["project_path"])
@@ -440,7 +439,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             else:
                 self._createTemporaryProject()
 
-            self.project_new_signal.emit(self._project.path())
+            self.project_new_signal.emit(self._project.topologyFile())
 
     def openProjectActionSlot(self):
         """
@@ -479,7 +478,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             return self.saveProjectAs()
         else:
-            return self.saveProject(self._project.path())
+            return self.saveProject(self._project.topologyFile())
 
     def _saveProjectAsActionSlot(self):
         """
@@ -580,7 +579,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
         dialog = SnapshotsDialog(self,
-                                 self._project.path(),
+                                 self._project.topologyFile(),
                                  self._project.filesDir())
         dialog.show()
         dialog.exec_()
@@ -910,7 +909,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot to open lab instructions.
         """
 
-        project_dir = os.path.dirname(self._project.path())
+        project_dir = os.path.dirname(self._project.topologyFile())
         instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
         if len(instructions_files):
@@ -1078,13 +1077,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if self._project.temporary():
                 destination_file = "untitled.gns3"
             else:
-                destination_file = os.path.basename(self._project.path())
+                destination_file = os.path.basename(self._project.topologyFile())
             reply = QtGui.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                               QtGui.QMessageBox.Discard | QtGui.QMessageBox.Save | QtGui.QMessageBox.Cancel)
             if reply == QtGui.QMessageBox.Save:
                 if self._project.temporary():
                     return self.saveProjectAs()
-                return self.saveProject(self._project.path())
+                return self.saveProject(self._project.topologyFile())
             elif reply == QtGui.QMessageBox.Cancel:
                 return False
         else:
@@ -1180,7 +1179,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
-                self.project_new_signal.emit(self._project.path())
+                self.project_new_signal.emit(self._project.topologyFile())
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
@@ -1214,7 +1213,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             default_project_name = "untitled"
         else:
-            default_project_name = os.path.basename(self._project.path())
+            default_project_name = os.path.basename(self._project.topologyFile())
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
 
@@ -1253,8 +1252,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             thread.deleteLater()
         else:
             # else, just copy the files
-            # FIXME: no ref to new_project_files_dir
-            log.info("copying project files from {} to {}".format(self._project.filesDir(), new_project_files_dir))
+            log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
             thread = ProcessFilesThread(self._project.filesDir(), project_dir)
             progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
             thread.deleteLater()
@@ -1266,9 +1264,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             errors = "\n".join(errors)
             MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtGui.QMessageBox.Warning)
 
-        self._project.moveFromTemporaryToPath(project_dir)
         self._project.setName(project_name)
-        return self.saveProject(topology_file_path)
+        if self._project.temporary():
+            self._project.moveFromTemporaryToPath(project_dir)
+            return self.saveProject(topology_file_path)
+        else:
+            # We save the topology and use the standard restore process
+            self._project.setId(None)
+            self._project.setTopologyFile(topology_file_path)
+            self.saveProject(topology_file_path)
+            return self.loadProject(topology_file_path)
 
     def saveProject(self, path):
         """
@@ -1290,7 +1295,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._createScreenshot(os.path.join(os.path.dirname(path), "screenshot.png"))
         self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
-        self._project.setPath(path)
+        self._project.setTopologyFile(path)
         self._setCurrentFile(path)
         return True
 
@@ -1350,7 +1355,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._project.close()
         self._project = Project()
-        self._project.setPath(path)
+        self._project.setTopologyFile(path)
 
         self.uiGraphicsView.reset()
         topology = Topology.instance()
@@ -1576,7 +1581,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # persist infos saving current project
         if not self.loading_cloud_project:
-            self.saveProject(self._project.path())
+            self.saveProject(self._project.topologyFile())
 
     def remove_instance_from_project(self, instance):
         """
@@ -1587,7 +1592,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.removeInstance(instance.id)
         # persist infos saving current project
-        self.saveProject(self._project.path())
+        self.saveProject(self._project.topologyFile())
 
     def _create_instance(self, name, flavor, image_id):
         """
@@ -1631,12 +1636,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             )
             return
         if self.checkForUnsavedChanges():
-            self.saveProject(self._project.path())
+            self.saveProject(self._project.topologyFile())
 
         upload_thread = UploadProjectThread(
             self,
             self._cloud_settings,
-            self._project.path(),
+            self._project.topologyFile(),
             self._settings['images_path']
         )
         progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
@@ -1708,12 +1713,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 sftp = client.open_sftp()
 
                 project_files_dir = os.path.join(
-                    os.path.dirname(self._project.path()),
-                    os.path.basename(os.path.dirname(self._project.path())) + '-files'
+                    os.path.dirname(self._project.topologyFile()),
+                    os.path.basename(os.path.dirname(self._project.topologyFile())) + '-files'
                 )
                 dest_project_path = posixpath.join(
                     '/root/GNS3/projects',
-                    os.path.basename(os.path.dirname(self._project.path()))
+                    os.path.basename(os.path.dirname(self._project.topologyFile()))
                 )
 
                 for root, dirs, files in os.walk(project_files_dir):
@@ -1742,9 +1747,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 node._server = server
 
             # reload project
-            self.saveProject(self._project.path())
+            self.saveProject(self._project.topologyFile())
             topology.reset()
-            self.loadProject(self._project.path())
+            self.loadProject(self._project.topologyFile())
             progress_dialog.accept()
 
         instances = CloudInstances.instance().instances
@@ -1800,11 +1805,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # copy device files from cloud instances
         src_project_path = posixpath.join(
             '/root/GNS3/projects',
-            os.path.basename(os.path.dirname(self._project.path()))
+            os.path.basename(os.path.dirname(self._project.topologyFile()))
         )
         project_files_dir = os.path.join(
-            os.path.dirname(self._project.path()),
-            os.path.basename(os.path.dirname(self._project.path())) + '-files'
+            os.path.dirname(self._project.topologyFile()),
+            os.path.basename(os.path.dirname(self._project.topologyFile())) + '-files'
         )
 
         for topology_instance in topology.instances():
@@ -1844,9 +1849,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # reload project
         self._project.setType("local")
-        self.saveProject(self._project.path())
+        self.saveProject(self._project.topologyFile())
         topology.reset()
-        self.loadProject(self._project.path())
+        self.loadProject(self._project.topologyFile())
 
     @staticmethod
     def _should_exclude_copying_file(filename):

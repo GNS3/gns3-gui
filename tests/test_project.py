@@ -36,7 +36,7 @@ def test_project_create(tmpdir):
         args, kwargs = mock.call_args
 
         assert args[0] == "/projects"
-        assert kwargs["body"] == {"temporary": False, "project_id": None}
+        assert kwargs["body"] == {"temporary": False, "project_id": None, "path": None}
         # Call the project creation callback
         args[1]({"project_id": uuid, "path": str(tmpdir)})
         assert project.id() == uuid
@@ -141,3 +141,19 @@ def test_project_moveFromTemporaryToPath(tmpdir):
 
     assert project.temporary() is False
     assert project.filesDir() == str(tmpdir)
+
+
+def test_topology_file(tmpdir):
+
+    project = Project()
+    project.setName("test")
+    project.setFilesDir(str(tmpdir))
+    assert project.topologyFile() == str(tmpdir / "test.gns3")
+
+
+def test_set_topology_file(tmpdir):
+
+    project = Project()
+    project.setTopologyFile(str(tmpdir / "test.gns3"))
+    assert project.filesDir() == str(tmpdir)
+    assert project.name() == "test"

@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 from .qt import QtCore
+
 from gns3.servers import Servers
 
 import logging
@@ -44,7 +46,6 @@ class Project(QtCore.QObject):
         self._temporary = False
         self._closed = False
         self._files_dir = None
-        self._path = None
         self._type = None
         self._name = None
         self._project_instances.add(self)
@@ -123,6 +124,9 @@ class Project(QtCore.QObject):
         self._id = project_id
 
     def filesDir(self):
+        """
+        Project directory on the local server
+        """
 
         return self._files_dir
 
@@ -130,23 +134,32 @@ class Project(QtCore.QObject):
 
         self._files_dir = files_dir
 
-    def path(self):
+    def topologyFile(self):
+        """
+        Path to the topology file
+        """
 
-        return self._path
+        return os.path.join(self._files_dir, self._name + ".gns3")
 
-    def setPath(self, path):
+    def setTopologyFile(self, topology_file):
+        """
+        Set path to the topology file and by extension the project directory.
 
-        self._path = path
+        :params topology_file: Path to a .gns3 file
+        """
+
+        self._files_dir = os.path.dirname(topology_file)
+        self._name = os.path.basename(topology_file).replace('.gns3', '')
 
     def create(self):
         """
         Create project on all servers
         """
 
-        assert self._id is None
         self._servers.localServer().post("/projects", self._project_created, body={
             "temporary": self._temporary,
-            "project_id": self._id
+            "project_id": self._id,
+            "path": self._files_dir
         })
 
     def commit(self):

@@ -327,7 +327,7 @@ class CloudInspectorView(QtGui.QWidget, Ui_CloudInspectorView):
 
         if self._main_window.loading_cloud_project:
             project = self._main_window.project()
-            path = project.path()
+            path = project.topologyPath()
             with open(path, "r") as f:
                 json_topology = json.load(f)
                 topology = Topology.instance()
