@@ -113,6 +113,9 @@ class ProcessFilesThread(QtCore.QThread):
                 progress = float(copied) / file_count * 100
                 self.update.emit(progress)
 
+        if self._move:
+            shutil.rmtree(self._source)
+
         # everything has been copied or moved, let's inform the GUI before the thread exits
         self.completed.emit()
 
