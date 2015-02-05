@@ -1,6 +1,13 @@
 GNS3-gui
 ========
 
+.. image:: https://travis-ci.org/GNS3/gns3-gui.svg?branch=master
+    :target: https://travis-ci.org/GNS3/gns3-gui
+
+.. image:: https://img.shields.io/pypi/v/gns3-gui.svg
+    :target: https://pypi.python.org/pypi/gns3-gui
+
+
 GNS3 GUI repository (beta stage).
 
 Linux (Debian based)
