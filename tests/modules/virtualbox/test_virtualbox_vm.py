@@ -28,13 +28,13 @@ def test_virtualbox_vm_init(local_server, project):
     vm = VirtualBoxVM(None, local_server, project)
 
 
-def test_virtualbox_vm_setup(virtualbox_vm):
+def test_virtualbox_vm_setup(virtualbox_vm, project):
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
         virtualbox_vm.setup("VMNAME")
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms"
+        assert args[0] == "/{project_id}/virtualbox/vms".format(project_id=project.id())
 
         # Callback
         params = {
@@ -55,7 +55,8 @@ def test_virtualbox_vm_start(virtualbox_vm):
         virtualbox_vm.start()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms/{vm_id}/start".format(vm_id=virtualbox_vm.vm_id())
+        assert args[0] == "/{project_id}/virtualbox/vms/{vm_id}/start".format(project_id=virtualbox_vm.project().id(),
+                                                                              vm_id=virtualbox_vm.vm_id())
 
 
 def test_virtualbox_vm_stop(virtualbox_vm):
@@ -65,7 +66,8 @@ def test_virtualbox_vm_stop(virtualbox_vm):
         virtualbox_vm.stop()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms/{vm_id}/stop".format(vm_id=virtualbox_vm.vm_id())
+        assert args[0] == "/{project_id}/virtualbox/vms/{vm_id}/stop".format(project_id=virtualbox_vm.project().id(),
+                                                                             vm_id=virtualbox_vm.vm_id())
 
 
 def test_virtualbox_vm_reload(virtualbox_vm):
@@ -74,7 +76,8 @@ def test_virtualbox_vm_reload(virtualbox_vm):
         virtualbox_vm.reload()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms/{vm_id}/reload".format(vm_id=virtualbox_vm.vm_id())
+        assert args[0] == "/{project_id}/virtualbox/vms/{vm_id}/reload".format(project_id=virtualbox_vm.project().id(),
+                                                                               vm_id=virtualbox_vm.vm_id())
 
 
 def test_allocateUDPPort(virtualbox_vm):
@@ -109,7 +112,8 @@ def test_addNIO(virtualbox_vm):
         virtualbox_vm.addNIO(port, nio)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms/{vm_id}/adapters/0/nio".format(vm_id=virtualbox_vm.vm_id())
+        assert args[0] == "/{project_id}/virtualbox/vms/{vm_id}/adapters/0/nio".format(project_id=virtualbox_vm.project().id(),
+                                                                                       vm_id=virtualbox_vm.vm_id())
 
         # Connect the signal
         signal_mock = Mock()
@@ -138,7 +142,8 @@ def test_deleteNIO(virtualbox_vm):
             assert mock_delete.called
 
             args, kwargs = mock_delete.call_args
-            assert args[0] == "/virtualbox/vms/{vm_id}/adapters/0/nio".format(vm_id=virtualbox_vm.vm_id())
+            assert args[0] == "/{project_id}/virtualbox/vms/{vm_id}/adapters/0/nio".format(project_id=virtualbox_vm.project().id(),
+                                                                                           vm_id=virtualbox_vm.vm_id())
 
 
 def test_update(virtualbox_vm):
@@ -152,7 +157,8 @@ def test_update(virtualbox_vm):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms/{vm_id}".format(vm_id=virtualbox_vm.vm_id())
+        assert args[0] == "/{project_id}/virtualbox/vms/{vm_id}".format(project_id=virtualbox_vm.project().id(),
+                                                                        vm_id=virtualbox_vm.vm_id())
         assert kwargs["body"] == new_settings
 
         # Callback

@@ -30,7 +30,9 @@ class Node(QtCore.QObject):
     """
     Node implementation.
 
+    :param module: Module instance
     :param server: client connection to a server
+    :param project: Project instance
     """
 
     # signals used to let the GUI know about some events.
@@ -63,7 +65,7 @@ class Node(QtCore.QObject):
     end_devices = 2
     security_devices = 3
 
-    def __init__(self, server=None):
+    def __init__(self, module, server, project):
 
         super(Node, self).__init__()
 
@@ -71,7 +73,9 @@ class Node(QtCore.QObject):
         self._id = Node._instance_count
         Node._instance_count += 1
 
+        self._module = module
         self._server = server
+        self._project = project
         self._initialized = False
         self._status = 0
 
@@ -142,6 +146,15 @@ class Node(QtCore.QObject):
             return True
         return False
 
+    def module(self):
+        """
+        Returns this node module.
+
+        :returns: Module instance
+        """
+
+        return self._module
+
     def server(self):
         """
         Returns this node server.
@@ -150,6 +163,15 @@ class Node(QtCore.QObject):
         """
 
         return self._server
+
+    def project(self):
+        """
+        Returns this node project.
+
+        :returns: Project instance
+        """
+
+        return self._project
 
     def id(self):
         """
