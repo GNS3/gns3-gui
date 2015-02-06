@@ -440,3 +440,45 @@ class Node(QtCore.QObject):
         """
 
         raise NotImplementedError()
+
+    def httpPost(self, path, callback, body={}):
+        """
+        POST on current server / project
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        """
+
+        self._project.post(self._server, path, callback, body=body)
+
+    def httpPut(self, path, callback, body={}):
+        """
+        PUT on current server / project
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        """
+
+        self._project.put(self._server, path, callback, body=body)
+
+    def httpGet(self, path, callback, body={}):
+        """
+        GET on current server / project
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        """
+
+        self._project.get(self._server, path, callback)
+
+    def httpDelete(self, path, callback):
+        """
+        DELETE on current server / project
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        """
+
+        self._project.delete(self._server, path, callback)

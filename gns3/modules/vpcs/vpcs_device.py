@@ -103,7 +103,7 @@ class VPCSDevice(Node):
             del additional_settings["startup_script"]
 
         params.update(additional_settings)
-        self._server.post("/{project_id}/vpcs/vms".format(project_id=self._project.id()), self._setupCallback, body=params)
+        self.httpPost("/vpcs/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False):
         """
@@ -142,7 +142,7 @@ class VPCSDevice(Node):
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         if self._vm_id:
-            self._server.delete("/{project_id}/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._deleteCallback)
+            self.httpDelete("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -179,7 +179,7 @@ class VPCSDevice(Node):
                 params[name] = value
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.put("/{project_id}/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
+        self.httpPut("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False):
         """
@@ -218,7 +218,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.post("/{project_id}/vpcs/vms/{vm_id}/start".format(project_id=self._project.id(), vm_id=self._vm_id), self._startCallback)
+        self.httpPost("/vpcs/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
     def _startCallback(self, result, error=False):
         """
@@ -249,7 +249,7 @@ class VPCSDevice(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.post("/{project_id}/vpcs/vms/{vm_id}/stop".format(project_id=self._project.id(), vm_id=self._vm_id), self._stopCallback)
+        self.httpPost("/vpcs/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
     def _stopCallback(self, result, error=False):
         """
@@ -276,7 +276,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.post("/{project_id}/vpcs/vms/{vm_id}/reload".format(project_id=self._project.id(), vm_id=self._vm_id), self._reloadCallback)
+        self.httpPost("/vpcs/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False):
         """
@@ -328,7 +328,7 @@ class VPCSDevice(Node):
 
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.post("/{project_id}/vpcs/vms/{vm_id}/ports/0/nio".format(project_id=self._project.id(), vm_id=self._vm_id),
+        self.httpPost("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id),
                           partial(self._addNIOCallback, port.id()), params)
 
     def _addNIOCallback(self, port_id, result, error=False):
@@ -354,7 +354,7 @@ class VPCSDevice(Node):
         """
 
         log.debug("{} is deleting an NIO".format(self.name()))
-        self._server.delete("/{project_id}/vpcs/vms/{vm_id}/ports/0/nio".format(project_id=self._project.id(), vm_id=self._vm_id),
+        self.httpDelete("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id),
                             self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
@@ -485,7 +485,7 @@ class VPCSDevice(Node):
         """
 
         self._config_export_path = config_export_path
-        self._server.get("/{project_id}/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._exportConfigCallback)
+        self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._exportConfigCallback)
 
     def _exportConfigCallback(self, result, error=False):
         """
@@ -516,7 +516,7 @@ class VPCSDevice(Node):
         """
 
         self._export_directory = directory
-        self._server.get("/{project_id}/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id),
+        self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
                          self._exportConfigToDirectoryCallback)
 
     def _exportConfigToDirectoryCallback(self, result, error=False):

@@ -31,11 +31,11 @@ def test_vpcs_device_init(local_server, project):
 
 def test_vpcs_device_setup(vpcs_device, project):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.setup(name="PC 1", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms".format(project_id=project.id())
+        assert args[0] == "/vpcs/vms"
         assert kwargs["body"] == {
             "name": "PC 1",
             "startup_script": "echo TEST"
@@ -60,11 +60,11 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project):
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms".format(project_id=project.id())
+        assert args[0] == "/vpcs/vms"
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
@@ -94,11 +94,11 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
     with open(path, 'w+') as f:
         f.write("echo TEST")
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms".format(project_id=project.id())
+        assert args[0] == "/vpcs/vms"
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
@@ -120,33 +120,30 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
 
 def test_vpcs_device_start(vpcs_device):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.start()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}/start".format(project_id=vpcs_device.project().id(),
-                                                                        vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}/start".format(vm_id=vpcs_device.vm_id())
 
 
 def test_vpcs_device_stop(vpcs_device):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.setStatus(Node.started)
         vpcs_device.stop()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}/stop".format(project_id=vpcs_device.project().id(),
-                                                                       vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}/stop".format(vm_id=vpcs_device.vm_id())
 
 
 def test_vpcs_device_reload(vpcs_device):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.reload()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}/reload".format(project_id=vpcs_device.project().id(),
-                                                                         vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}/reload".format(vm_id=vpcs_device.vm_id())
 
 
 def test_allocateUDPPort(vpcs_device):
@@ -174,14 +171,13 @@ def test_allocateUDPPort(vpcs_device):
 
 def test_addNIO(vpcs_device):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         port = Port("Port 1")
         nio = NIOUDP(4242, "127.0.0.1", 4243)
         vpcs_device.addNIO(port, nio)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}/ports/0/nio".format(project_id=vpcs_device.project().id(),
-                                                                              vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=vpcs_device.vm_id())
 
         # Connect the signal
         signal_mock = Mock()
@@ -199,8 +195,8 @@ def test_addNIO(vpcs_device):
 
 def test_deleteNIO(vpcs_device):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock_post:
-        with patch('gns3.http_client.HTTPClient.delete') as mock_delete:
+    with patch('gns3.node.Node.httpPost') as mock_post:
+        with patch('gns3.node.Node.httpDelete') as mock_delete:
             port = Port("Port 1")
             nio = NIOUDP(4242, "127.0.0.1", 4243)
             vpcs_device.addNIO(port, nio)
@@ -209,21 +205,19 @@ def test_deleteNIO(vpcs_device):
             assert mock_delete.called
 
             args, kwargs = mock_delete.call_args
-            assert args[0] == "/{project_id}/vpcs/vms/{vm_id}/ports/0/nio".format(project_id=vpcs_device.project().id(),
-                                                                                  vm_id=vpcs_device.vm_id())
+            assert args[0] == "/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=vpcs_device.vm_id())
 
 
 def test_exportConfig(tmpdir, vpcs_device):
 
     path = tmpdir / 'startup.vpcs'
 
-    with patch('gns3.http_client.HTTPClient.get') as mock:
+    with patch('gns3.node.Node.httpGet') as mock:
         vpcs_device.exportConfig(str(path))
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}".format(project_id=vpcs_device.project().id(),
-                                                                  vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
 
         # Callback
         args[1]({"startup_script": "echo TEST"})
@@ -238,13 +232,12 @@ def test_exportConfigToDirectory(tmpdir, vpcs_device):
 
     path = tmpdir / normalize_filename(vpcs_device.name()) + '_startup.vpc'
 
-    with patch('gns3.http_client.HTTPClient.get') as mock:
+    with patch('gns3.node.Node.httpGet') as mock:
         vpcs_device.exportConfigToDirectory(str(tmpdir))
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}".format(project_id=vpcs_device.project().id(),
-                                                                  vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
 
         # Callback
         args[1]({"startup_script": "echo TEST"})
@@ -262,13 +255,12 @@ def test_update(vpcs_device):
         "script_file": "echo TEST"
     }
 
-    with patch('gns3.http_client.HTTPClient.put') as mock:
+    with patch('gns3.node.Node.httpPut') as mock:
         vpcs_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}".format(project_id=vpcs_device.project().id(),
-                                                                  vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
         assert kwargs["body"] == new_settings
 
         # Callback
@@ -283,11 +275,10 @@ def test_importConfig(vpcs_device, tmpdir):
     with open(path, 'w+') as f:
         f.write(content)
 
-    with patch('gns3.http_client.HTTPClient.put') as mock:
+    with patch('gns3.node.Node.httpPut') as mock:
         vpcs_device.importConfig(path)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/{project_id}/vpcs/vms/{vm_id}".format(project_id=vpcs_device.project().id(),
-                                                                  vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
         assert kwargs["body"] == {"startup_script": content}

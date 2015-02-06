@@ -239,7 +239,7 @@ class Project(QtCore.QObject):
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         if server not in self._created_servers:
-            func =  functools.partial(self._projectOnServerCreated, server, method, path, callback, body)
+            func = functools.partial(self._projectOnServerCreated, server, method, path, callback, body)
             server.post("/projects", func, body={
                 "temporary": self._temporary,
                 "project_id": self._id
