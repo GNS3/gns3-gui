@@ -111,7 +111,7 @@ class Servers(QtCore.QObject):
             ("host", self._local_server_settings["local_server_host"]),
             ("port", self._local_server_settings["local_server_port"]),
             ("console_start_port_range", self._local_server_settings["local_server_console_start_port_range"]),
-            ("console_start_end_range", self._local_server_settings["local_server_console_end_port_range"]),
+            ("console_end_port_range", self._local_server_settings["local_server_console_end_port_range"]),
             ("udp_start_port_range", self._local_server_settings["local_server_udp_start_port_range"]),
             ("udp_start_end_range", self._local_server_settings["local_server_udp_end_port_range"]),
         ])
@@ -279,7 +279,7 @@ class Servers(QtCore.QObject):
             if server_id not in servers:
                 if server.connected():
                     server.close()
-                log.info("remote server connection {} unregistered".format(server.url))
+                log.info("Remote server connection {} unregistered".format(server.url()))
                 del self._remote_servers[server_id]
 
         for server_id, server in servers.items():
