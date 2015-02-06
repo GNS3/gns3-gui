@@ -438,7 +438,6 @@ class Topology(object):
                 topology_images.append(image_info)
 
     def dump(self, include_gui_data=True):
-
         """
         Creates a complete representation of the topology.
 
