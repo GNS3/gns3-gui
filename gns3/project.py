@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import functools
 from .qt import QtCore
 
 from gns3.servers import Servers
@@ -49,6 +50,7 @@ class Project(QtCore.QObject):
         self._type = None
         self._name = None
         self._project_instances.add(self)
+        self._created_servers = set()
 
         super().__init__()
 
@@ -182,6 +184,84 @@ class Project(QtCore.QObject):
             self.project_closed_signal.emit()
             self._closed = True
 
+    def get(self, server, path, callback):
+        """
+        HTTP GET on the remote server
+
+        :param server: Server instance
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        """
+        self._projectHTTPQuery(server, "GET", path, callback)
+
+    def post(self, server, path, callback, body={}):
+        """
+        HTTP POST on the remote server
+
+        :param server: Server instance
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        """
+        self._projectHTTPQuery(server, "POST", path, callback, body=body)
+
+    def put(self, server, path, callback, body={}):
+        """
+        HTTP PUT on the remote server
+
+        :param server: Server instance
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        """
+        self._projectHTTPQuery(server, "PUT", path, callback, body=body)
+
+    def delete(self, server, path, callback):
+        """
+        HTTP DELETE on the remote server
+
+        :param server: Server instance
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        """
+        self._projectHTTPQuery(server, "DELETE", path, callback)
+
+    def _projectHTTPQuery(self, server, method, path, callback, body={}):
+        """
+        HTTP query on the remote server
+
+        :param server: Server instance
+        :param method: HTTP method (string)
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        """
+
+        path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
+        if server not in self._created_servers:
+            func =  functools.partial(self._projectOnServerCreated, server, method, path, callback, body)
+            server.post("/projects", func, body={
+                "temporary": self._temporary,
+                "project_id": self._id
+            })
+        else:
+            self._projectOnServerCreated(server, method, path, callback, body)
+
+    def _projectOnServerCreated(self, server, method, path, callback, body, *args):
+        """
+        The project is created on the server continue
+        the query
+
+        :param method: HTTP Method type (string)
+        :param server: Server instance
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        """
+
+        self._created_servers.add(server)
+        server.createHTTPQuery(method, path, callback, body=body)
+
     def _project_created(self, params, error=False):
         if error:
             print(params)
@@ -193,6 +273,7 @@ class Project(QtCore.QObject):
         self._files_dir = params["path"]
         self._closed = False
 
+        self._created_servers.add(self._servers.localServer())
         self.project_created_signal.emit()
 
     def _project_closed(self, params, error=False):

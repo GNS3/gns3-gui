@@ -65,6 +65,11 @@ class HTTPClient(QtCore.QObject):
         self._id = HTTPClient._instance_count
         HTTPClient._instance_count += 1
 
+    def url(self):
+        """Returns current server url"""
+
+        return "{scheme}://{host}:{port}".format(scheme=self.scheme, host=self.host, port=self.port)
+
     def id(self):
         """
         Returns this HTTP Client identifier.
@@ -180,7 +185,7 @@ class HTTPClient(QtCore.QObject):
         :param callback: callback method to call when the server replies
         """
 
-        self._createHTTPQuery("GET", path, callback)
+        self.createHTTPQuery("GET", path, callback)
 
     def put(self, path, callback, body={}):
         """
@@ -192,7 +197,7 @@ class HTTPClient(QtCore.QObject):
         :param check_connected: check if connected to a server
         """
 
-        self._createHTTPQuery("PUT", path, callback, body=body)
+        self.createHTTPQuery("PUT", path, callback, body=body)
 
     def post(self, path, callback, body={}, connecting=False):
         """
@@ -204,7 +209,7 @@ class HTTPClient(QtCore.QObject):
         :param connecting: indicates this is an initial connection to the server
         """
 
-        self._createHTTPQuery("POST", path, callback, body=body, connecting=connecting)
+        self.createHTTPQuery("POST", path, callback, body=body, connecting=connecting)
 
     def delete(self, path, callback):
         """
@@ -214,9 +219,9 @@ class HTTPClient(QtCore.QObject):
         :param callback: callback method to call when the server replies
         """
 
-        self._createHTTPQuery("DELETE", path, callback)
+        self.createHTTPQuery("DELETE", path, callback)
 
-    def _createHTTPQuery(self, method, path, callback, body={}, connecting=False):
+    def createHTTPQuery(self, method, path, callback, body={}, connecting=False):
         """
         Call the remote server
 

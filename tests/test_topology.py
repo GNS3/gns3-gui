@@ -186,7 +186,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
         else:
             callback({"vm_id": uuid.uuid4()})
 
-    monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
+    monkeypatch.setattr("gns3.http_client.HTTPClient.createHTTPQuery", http_loader)
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.connected", lambda self: True)
 
@@ -308,7 +308,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
         else:
             callback({"vm_id": uuid.uuid4()})
 
-    monkeypatch.setattr("gns3.http_client.HTTPClient._createHTTPQuery", http_loader)
+    monkeypatch.setattr("gns3.http_client.HTTPClient.createHTTPQuery", http_loader)
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.connected", lambda self: True)
 

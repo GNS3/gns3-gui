@@ -19,6 +19,7 @@ from unittest.mock import patch, MagicMock
 from uuid import uuid4
 
 from gns3.project import Project
+from gns3.http_client import HTTPClient
 
 
 def test_project_create(tmpdir):
@@ -42,7 +43,115 @@ def test_project_create(tmpdir):
         assert project.id() == uuid
         assert project.filesDir() == str(tmpdir)
 
+        assert len(project._created_servers) == 1
         assert signal.called
+
+
+def test_project_post_non_created_project(local_server):
+    """
+    Test a post on a remote servers. The project
+    is not created on the server and should be created automaticaly.
+    And after make the call
+    """
+
+    uuid = uuid4()
+    project = Project()
+    project.setId(uuid)
+
+    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
+        project.post(local_server, "/test", lambda: 0, body={"test": "test"})
+
+        args, kwargs = mock.call_args
+        assert args[0] == "POST"
+        assert args[1] == "/projects".format(uuid=uuid)
+        assert kwargs["body"] == {"temporary": False, "project_id": uuid}
+
+        args[2]({})
+
+        assert len(project._created_servers) == 1
+
+        args, kwargs = mock.call_args
+        assert args[0] == "POST"
+        assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
+        assert kwargs["body"] == {"test": "test"}
+
+
+def test_project_post_on_created_project(local_server):
+    """
+    Test a post on a remote servers.
+    The project is already created on the server
+    """
+
+    uuid = uuid4()
+    project = Project()
+    project.setId(uuid)
+    project._created_servers.add(local_server)
+
+    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
+        project.post(local_server, "/test", lambda: 0, body={"test": "test"})
+
+        args, kwargs = mock.call_args
+        assert args[0] == "POST"
+        assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
+        assert kwargs["body"] == {"test": "test"}
+
+
+def test_project_get_on_created_project(local_server):
+    """
+    Test a get on a remote servers.
+    The project is already created on the server
+    """
+
+    uuid = uuid4()
+    project = Project()
+    project.setId(uuid)
+    project._created_servers.add(local_server)
+
+    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
+        project.get(local_server, "/test", lambda: 0)
+
+        args, kwargs = mock.call_args
+        assert args[0] == "GET"
+        assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
+
+
+def test_project_put_on_created_project(local_server):
+    """
+    Test a put on a remote servers.
+    The project is already created on the server
+    """
+
+    uuid = uuid4()
+    project = Project()
+    project.setId(uuid)
+    project._created_servers.add(local_server)
+
+    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
+        project.put(local_server, "/test", lambda: 0, body={"test": "test"})
+
+        args, kwargs = mock.call_args
+        assert args[0] == "PUT"
+        assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
+        assert kwargs["body"] == {"test": "test"}
+
+
+def test_project_delete_on_created_project(local_server):
+    """
+    Test a delete on a remote servers.
+    The project is already created on the server
+    """
+
+    uuid = uuid4()
+    project = Project()
+    project.setId(uuid)
+    project._created_servers.add(local_server)
+
+    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
+        project.delete(local_server, "/test", lambda: 0)
+
+        args, kwargs = mock.call_args
+        assert args[0] == "DELETE"
+        assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
 
 
 def test_project_close():
