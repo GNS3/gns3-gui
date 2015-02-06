@@ -1714,7 +1714,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 project_files_dir = os.path.join(
                     os.path.dirname(self._project.topologyFile()),
-                    os.path.basename(os.path.dirname(self._project.topologyFile())) + '-files'
+                    os.path.basename(os.path.dirname(self._project.topologyFile()))
                 )
                 dest_project_path = posixpath.join(
                     '/root/GNS3/projects',
@@ -1809,7 +1809,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
         project_files_dir = os.path.join(
             os.path.dirname(self._project.topologyFile()),
-            os.path.basename(os.path.dirname(self._project.topologyFile())) + '-files'
+            os.path.basename(os.path.dirname(self._project.topologyFile()))
         )
 
         for topology_instance in topology.instances():

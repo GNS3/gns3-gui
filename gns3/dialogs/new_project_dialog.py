@@ -139,7 +139,7 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
 
             self._project_settings["project_name"] = project_name
             self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
-            self._project_settings["project_files_dir"] = os.path.join(project_location, project_name + "-files")
+            self._project_settings["project_files_dir"] = project_location
             self._project_settings["project_type"] = project_type
 
         QtGui.QDialog.done(self, result)
