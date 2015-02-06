@@ -80,6 +80,21 @@ def local_server():
     return Servers.instance().localServer()
 
 
+@pytest.fixture(scope="session")
+def remote_server():
+
+    from gns3.servers import Servers
+
+    return Servers.instance().localServer()
+
+
+@pytest.fixture(scope="session")
+def remote_server():
+
+    from gns3.servers import Servers
+
+    return Servers.instance().getRemoteServer("127.0.0.1", 8001)
+
 @pytest.fixture
 def vpcs_device(local_server, project):
 

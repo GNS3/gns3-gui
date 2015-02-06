@@ -147,7 +147,7 @@ class IOUDevice(Node):
 
         self._server.send_message("iou.create", params, self._setupCallback)
 
-    def _setupCallback(self, result, error=False):
+    def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 
@@ -196,7 +196,7 @@ class IOUDevice(Node):
             self.deleted_signal.emit()
             self._module.removeNode(self)
 
-    def _deleteCallback(self, result, error=False):
+    def _deleteCallback(self, result, error=False, **kwargs):
         """
         Callback for delete.
 
@@ -254,7 +254,7 @@ class IOUDevice(Node):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("iou.update", params, self._updateCallback)
 
-    def _updateCallback(self, result, error=False):
+    def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -308,7 +308,7 @@ class IOUDevice(Node):
         log.debug("{} is starting".format(self.name()))
         self._server.send_message("iou.start", {"id": self._iou_id}, self._startCallback)
 
-    def _startCallback(self, result, error=False):
+    def _startCallback(self, result, error=False, **kwargs):
         """
         Callback for start.
 
@@ -339,7 +339,7 @@ class IOUDevice(Node):
         log.debug("{} is stopping".format(self.name()))
         self._server.send_message("iou.stop", {"id": self._iou_id}, self._stopCallback)
 
-    def _stopCallback(self, result, error=False):
+    def _stopCallback(self, result, error=False, **kwargs):
         """
         Callback for stop.
 
@@ -366,7 +366,7 @@ class IOUDevice(Node):
         log.debug("{} is being reloaded".format(self.name()))
         self._server.send_message("iou.reload", {"id": self._iou_id}, self._reloadCallback)
 
-    def _reloadCallback(self, result, error=False):
+    def _reloadCallback(self, result, error=False, **kwargs):
         """
         Callback for reload.
 
@@ -390,7 +390,7 @@ class IOUDevice(Node):
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self._server.send_message("iou.allocate_udp_port", {"id": self._iou_id, "port_id": port_id}, self._allocateUDPPortCallback)
 
-    def _allocateUDPPortCallback(self, result, error=False):
+    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
         """
         Callback for allocateUDPPort.
 
@@ -424,7 +424,7 @@ class IOUDevice(Node):
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("iou.add_nio", params, self._addNIOCallback)
 
-    def _addNIOCallback(self, result, error=False):
+    def _addNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for addNIO.
 
@@ -453,7 +453,7 @@ class IOUDevice(Node):
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
         self._server.send_message("iou.delete_nio", params, self._deleteNIOCallback)
 
-    def _deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for deleteNIO.
 
@@ -487,7 +487,7 @@ class IOUDevice(Node):
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
         self._server.send_message("iou.start_capture", params, self._startPacketCaptureCallback)
 
-    def _startPacketCaptureCallback(self, result, error=False):
+    def _startPacketCaptureCallback(self, result, error=False, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -524,7 +524,7 @@ class IOUDevice(Node):
         log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
         self._server.send_message("iou.stop_capture", params, self._stopPacketCaptureCallback)
 
-    def _stopPacketCaptureCallback(self, result, error=False):
+    def _stopPacketCaptureCallback(self, result, error=False, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -689,7 +689,7 @@ class IOUDevice(Node):
         self._config_export_path = config_export_path
         self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigCallback)
 
-    def _exportConfigCallback(self, result, error=False):
+    def _exportConfigCallback(self, result, error=False, **kwargs):
         """
         Callback for exportConfig.
 
@@ -721,7 +721,7 @@ class IOUDevice(Node):
         self._export_directory = directory
         self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigToDirectoryCallback)
 
-    def _exportConfigToDirectoryCallback(self, result, error=False):
+    def _exportConfigToDirectoryCallback(self, result, error=False, **kwargs):
         """
         Callback for exportConfigToDirectory.
 

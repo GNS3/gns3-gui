@@ -105,7 +105,7 @@ class VPCSDevice(Node):
         params.update(additional_settings)
         self.httpPost("/vpcs/vms", self._setupCallback, body=params)
 
-    def _setupCallback(self, result, error=False):
+    def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 
@@ -147,7 +147,7 @@ class VPCSDevice(Node):
             self.deleted_signal.emit()
             self._module.removeNode(self)
 
-    def _deleteCallback(self, result, error=False):
+    def _deleteCallback(self, result, error=False, **kwargs):
         """
         Callback for delete.
 
@@ -181,7 +181,7 @@ class VPCSDevice(Node):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
 
-    def _updateCallback(self, result, error=False):
+    def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -220,7 +220,7 @@ class VPCSDevice(Node):
         log.debug("{} is starting".format(self.name()))
         self.httpPost("/vpcs/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
-    def _startCallback(self, result, error=False):
+    def _startCallback(self, result, error=False, **kwargs):
         """
         Callback for start.
 
@@ -251,7 +251,7 @@ class VPCSDevice(Node):
         log.debug("{} is stopping".format(self.name()))
         self.httpPost("/vpcs/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
-    def _stopCallback(self, result, error=False):
+    def _stopCallback(self, result, error=False, **kwargs):
         """
         Callback for stop.
 
@@ -278,7 +278,7 @@ class VPCSDevice(Node):
         log.debug("{} is being reloaded".format(self.name()))
         self.httpPost("/vpcs/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
-    def _reloadCallback(self, result, error=False):
+    def _reloadCallback(self, result, error=False, **kwargs):
         """
         Callback for reload.
 
@@ -302,7 +302,7 @@ class VPCSDevice(Node):
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self._server.post("/ports/udp", partial(self._allocateUDPPortCallback, port_id))
 
-    def _allocateUDPPortCallback(self, port_id, result, error=False):
+    def _allocateUDPPortCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for allocateUDPPort.
 
@@ -331,7 +331,7 @@ class VPCSDevice(Node):
         self.httpPost("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id),
                       partial(self._addNIOCallback, port.id()), params)
 
-    def _addNIOCallback(self, port_id, result, error=False):
+    def _addNIOCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for addNIO.
 
@@ -357,7 +357,7 @@ class VPCSDevice(Node):
         self.httpDelete("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id),
                         self._deleteNIOCallback)
 
-    def _deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for deleteNIO.
 
@@ -487,7 +487,7 @@ class VPCSDevice(Node):
         self._config_export_path = config_export_path
         self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._exportConfigCallback)
 
-    def _exportConfigCallback(self, result, error=False):
+    def _exportConfigCallback(self, result, error=False, **kwargs):
         """
         Callback for exportConfig.
 
@@ -519,7 +519,7 @@ class VPCSDevice(Node):
         self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
                      self._exportConfigToDirectoryCallback)
 
-    def _exportConfigToDirectoryCallback(self, result, error=False):
+    def _exportConfigToDirectoryCallback(self, result, error=False, **kwargs):
         """
         Callback for exportConfigToDirectory.
 

@@ -153,17 +153,6 @@ class Project(QtCore.QObject):
         self._files_dir = os.path.dirname(topology_file)
         self._name = os.path.basename(topology_file).replace('.gns3', '')
 
-    def create(self):
-        """
-        Create project on all servers
-        """
-
-        self._servers.localServer().post("/projects", self._project_created, body={
-            "temporary": self._temporary,
-            "project_id": self._id,
-            "path": self._files_dir
-        })
-
     def commit(self):
         """Save projet on remote servers"""
 
@@ -171,18 +160,6 @@ class Project(QtCore.QObject):
         if self._id is not None:
             self._servers.localServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
-    def close(self):
-        """Close project"""
-
-        # TODO: call all server
-        if self._id:
-            self.project_about_to_close_signal.emit()
-            self._servers.localServer().post("/projects/{project_id}/close".format(project_id=self._id), self._project_closed, body={})
-        else:
-            # The project is not initialized when can close it
-            self.project_about_to_close_signal.emit()
-            self.project_closed_signal.emit()
-            self._closed = True
 
     def get(self, server, path, callback):
         """
@@ -262,7 +239,18 @@ class Project(QtCore.QObject):
         self._created_servers.add(server)
         server.createHTTPQuery(method, path, callback, body=body)
 
-    def _project_created(self, params, error=False):
+    def create(self):
+        """
+        Create project on all servers
+        """
+
+        self._servers.localServer().post("/projects", self._project_created, body={
+            "temporary": self._temporary,
+            "project_id": self._id,
+            "path": self._files_dir
+        })
+
+    def _project_created(self, params, error=False, **kwargs):
         if error:
             print(params)
             return
@@ -276,15 +264,33 @@ class Project(QtCore.QObject):
         self._created_servers.add(self._servers.localServer())
         self.project_created_signal.emit()
 
-    def _project_closed(self, params, error=False):
+    def close(self):
+        """Close project"""
+
+        if self._id:
+            self.project_about_to_close_signal.emit()
+
+            server = self._servers.localServer()
+            for server in list(self._created_servers):
+                server.post("/projects/{project_id}/close".format(project_id=self._id), self._project_closed, body={})
+        else:
+            # The project is not initialized when can close it
+            self.project_about_to_close_signal.emit()
+            self.project_closed_signal.emit()
+            self._closed = True
+
+    def _project_closed(self, params, error=False, server=None, **kwargs):
         if error:
             print(params)
         else:
             if self._id:
                 log.info("Project {} closed".format(self._id))
-        self._closed = True
-        self.project_closed_signal.emit()
-        self._project_instances.remove(self)
+
+        self._created_servers.remove(server)
+        if len(self._created_servers) == 0:
+            self._closed = True
+            self.project_closed_signal.emit()
+            self._project_instances.remove(self)
 
     def moveFromTemporaryToPath(self, path):
         """

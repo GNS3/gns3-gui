@@ -84,7 +84,7 @@ class EthernetHub(Node):
         params = {"name": name}
         self._server.send_message("dynamips.ethhub.create", params, self._setupCallback)
 
-    def _setupCallback(self, result, error=False):
+    def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 
@@ -122,7 +122,7 @@ class EthernetHub(Node):
             self.deleted_signal.emit()
             self._module.removeNode(self)
 
-    def _deleteCallback(self, result, error=False):
+    def _deleteCallback(self, result, error=False, **kwargs):
         """
         Callback for delete.
 
@@ -188,7 +188,7 @@ class EthernetHub(Node):
                 log.info("{} has been updated".format(self.name()))
                 self.updated_signal.emit()
 
-    def _updateCallback(self, result, error=False):
+    def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -216,7 +216,7 @@ class EthernetHub(Node):
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self._server.send_message("dynamips.ethhub.allocate_udp_port", {"id": self._ethhub_id, "port_id": port_id}, self._allocateUDPPortCallback)
 
-    def _allocateUDPPortCallback(self, result, error=False):
+    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
         """
         Callback for allocateUDPPort.
 
@@ -249,7 +249,7 @@ class EthernetHub(Node):
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("dynamips.ethhub.add_nio", params, self._addNIOCallback)
 
-    def _addNIOCallback(self, result, error=False):
+    def _addNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for addNIO.
 
@@ -277,7 +277,7 @@ class EthernetHub(Node):
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
         self._server.send_message("dynamips.ethhub.delete_nio", params, self._deleteNIOCallback)
 
-    def _deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for deleteNIO.
 
@@ -310,7 +310,7 @@ class EthernetHub(Node):
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
         self._server.send_message("dynamips.ethhub.start_capture", params, self._startPacketCaptureCallback)
 
-    def _startPacketCaptureCallback(self, result, error=False):
+    def _startPacketCaptureCallback(self, result, error=False, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -346,7 +346,7 @@ class EthernetHub(Node):
         log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
         self._server.send_message("dynamips.ethhub.stop_capture", params, self._stopPacketCaptureCallback)
 
-    def _stopPacketCaptureCallback(self, result, error=False):
+    def _stopPacketCaptureCallback(self, result, error=False, **kwargs):
         """
         Callback for stopping a packet capture.
 

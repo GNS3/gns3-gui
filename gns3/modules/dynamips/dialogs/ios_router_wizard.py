@@ -245,7 +245,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self._auto_idlepc_progress_dialog.setWindowTitle("Idle-PC finder")
         self._auto_idlepc_progress_dialog.show()
 
-    def _computeAutoIdlepcCallback(self, result, error=False):
+    def _computeAutoIdlepcCallback(self, result, error=False, **kwargs):
         """
         Callback for computeAutoIdlepc.
 

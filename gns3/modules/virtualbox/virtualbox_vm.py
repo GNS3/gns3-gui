@@ -109,7 +109,7 @@ class VirtualBoxVM(Node):
         params.update(additional_settings)
         self.httpPost("/virtualbox/vms", self._setupCallback, body=params)
 
-    def _setupCallback(self, result, error=False):
+    def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 
@@ -155,7 +155,7 @@ class VirtualBoxVM(Node):
             self.httpDeleted_signal.emit()
             self._module.removeNode(self)
 
-    def _deleteCallback(self, result, error=False):
+    def _deleteCallback(self, result, error=False, **kwargs):
         """
         Callback for delete.
 
@@ -193,7 +193,7 @@ class VirtualBoxVM(Node):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/virtualbox/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
-    def _updateCallback(self, result, error=False):
+    def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -241,7 +241,7 @@ class VirtualBoxVM(Node):
         log.debug("{} is starting".format(self.name()))
         self.httpPost("/virtualbox/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
-    def _startCallback(self, result, error=False):
+    def _startCallback(self, result, error=False, **kwargs):
         """
         Callback for start.
 
@@ -272,7 +272,7 @@ class VirtualBoxVM(Node):
         log.debug("{} is stopping".format(self.name()))
         self.httpPost("/virtualbox/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
-    def _stopCallback(self, result, error=False):
+    def _stopCallback(self, result, error=False, **kwargs):
         """
         Callback for stop.
 
@@ -303,7 +303,7 @@ class VirtualBoxVM(Node):
         log.debug("{} is being suspended".format(self.name()))
         self.httpPost("/virtualbox/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
 
-    def _suspendCallback(self, result, error=False):
+    def _suspendCallback(self, result, error=False, **kwargs):
         """
         Callback for suspend.
 
@@ -330,7 +330,7 @@ class VirtualBoxVM(Node):
         log.debug("{} is being reloaded".format(self.name()))
         self.httpPost("/virtualbox/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
-    def _reloadCallback(self, result, error=False):
+    def _reloadCallback(self, result, error=False, **kwargs):
         """
         Callback for reload.
 
@@ -354,7 +354,7 @@ class VirtualBoxVM(Node):
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self._server.post("/ports/udp", partial(self._allocateUDPPortCallback, port_id))
 
-    def _allocateUDPPortCallback(self, port_id, result, error=False):
+    def _allocateUDPPortCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for allocateUDPPort.
 
@@ -385,7 +385,7 @@ class VirtualBoxVM(Node):
                                                                                  adapter_id=port.portNumber()),
                       partial(self._addNIOCallback, port.id()), body=params)
 
-    def _addNIOCallback(self, port_id, result, error=False):
+    def _addNIOCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for addNIO.
 
@@ -412,7 +412,7 @@ class VirtualBoxVM(Node):
                                                                                    adapter_id=port.portNumber()),
                         self._deleteNIOCallback)
 
-    def _deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for deleteNIO.
 
@@ -444,7 +444,7 @@ class VirtualBoxVM(Node):
 
         self._server.send_message("virtualbox.start_capture", params, self._startPacketCaptureCallback)
 
-    def _startPacketCaptureCallback(self, port_id, result, error=False):
+    def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -478,7 +478,7 @@ class VirtualBoxVM(Node):
                                                                                   port_number=port.portNumber()),
                       partial(self._stopPacketCaptureCallback, port.id()))
 
-    def _stopPacketCaptureCallback(self, port_id, result, error=False):
+    def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for stopping a packet capture.
 
