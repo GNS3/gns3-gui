@@ -329,7 +329,7 @@ class VPCSDevice(Node):
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self.httpPost("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id),
-                          partial(self._addNIOCallback, port.id()), params)
+                      partial(self._addNIOCallback, port.id()), params)
 
     def _addNIOCallback(self, port_id, result, error=False):
         """
@@ -355,7 +355,7 @@ class VPCSDevice(Node):
 
         log.debug("{} is deleting an NIO".format(self.name()))
         self.httpDelete("/vpcs/vms/{vm_id}/ports/0/nio".format(vm_id=self._vm_id),
-                            self._deleteNIOCallback)
+                        self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
         """
@@ -517,7 +517,7 @@ class VPCSDevice(Node):
 
         self._export_directory = directory
         self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
-                         self._exportConfigToDirectoryCallback)
+                     self._exportConfigToDirectoryCallback)
 
     def _exportConfigToDirectoryCallback(self, result, error=False):
         """

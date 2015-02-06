@@ -107,7 +107,7 @@ class VirtualBoxVM(Node):
             params["vm_id"] = vm_id
 
         params.update(additional_settings)
-        self._server.post("/{project_id}/virtualbox/vms".format(project_id=self._project.id()), self._setupCallback, body=params)
+        self.httpPost("/virtualbox/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False):
         """
@@ -147,12 +147,12 @@ class VirtualBoxVM(Node):
 
         log.debug("VirtualBox VM instance {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
-        self.delete_links_signal.emit()
+        self.httpDelete_links_signal.emit()
         if self._vm_id:
-            self._server.delete("/{project_id}/virtualbox/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id),
-                                self._deleteCallback)
+            self.httpDelete("/virtualbox/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id),
+                            self._deleteCallback)
         else:
-            self.deleted_signal.emit()
+            self.httpDeleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -167,7 +167,7 @@ class VirtualBoxVM(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         log.info("{} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
+        self.httpDeleted_signal.emit()
         self._module.removeNode(self)
 
     def update(self, new_settings):
@@ -191,8 +191,7 @@ class VirtualBoxVM(Node):
                 params[name] = value
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.put("/{project_id}/virtualbox/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id),
-                         self._updateCallback, body=params)
+        self.httpPut("/virtualbox/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False):
         """
@@ -240,8 +239,7 @@ class VirtualBoxVM(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/start".format(project_id=self._project.id(), vm_id=self._vm_id),
-                          self._startCallback)
+        self.httpPost("/virtualbox/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
     def _startCallback(self, result, error=False):
         """
@@ -272,8 +270,7 @@ class VirtualBoxVM(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/stop".format(project_id=self._project.id(), vm_id=self._vm_id),
-                          self._stopCallback)
+        self.httpPost("/virtualbox/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
     def _stopCallback(self, result, error=False):
         """
@@ -304,8 +301,7 @@ class VirtualBoxVM(Node):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/suspend".format(project_id=self._project.id(), vm_id=self._vm_id),
-                          self._suspendCallback)
+        self.httpPost("/virtualbox/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
 
     def _suspendCallback(self, result, error=False):
         """
@@ -332,8 +328,7 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/reload".format(project_id=self._project.id(), vm_id=self._vm_id),
-                          self._reloadCallback)
+        self.httpPost("/virtualbox/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False):
         """
@@ -386,10 +381,9 @@ class VirtualBoxVM(Node):
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
 
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/adapters/{adapter_id}/nio".format(project_id=self._project.id(),
-                                                                                                  vm_id=self._vm_id,
-                                                                                                  adapter_id=port.portNumber()),
-                          partial(self._addNIOCallback, port.id()), body=params)
+        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_id}/nio".format(vm_id=self._vm_id,
+                                                                                 adapter_id=port.portNumber()),
+                      partial(self._addNIOCallback, port.id()), body=params)
 
     def _addNIOCallback(self, port_id, result, error=False):
         """
@@ -414,10 +408,9 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is deleting an NIO on port {}".format(self.name(), port.portNumber()))
-        self._server.delete("/{project_id}/virtualbox/vms/{vm_id}/adapters/{adapter_id}/nio".format(project_id=self._project.id(),
-                                                                                                    vm_id=self._vm_id,
-                                                                                                    adapter_id=port.portNumber()),
-                            self._deleteNIOCallback)
+        self.httpDelete("/virtualbox/vms/{vm_id}/adapters/{adapter_id}/nio".format(vm_id=self._vm_id,
+                                                                                   adapter_id=port.portNumber()),
+                        self._deleteNIOCallback)
 
     def _deleteNIOCallback(self, result, error=False):
         """
@@ -445,10 +438,9 @@ class VirtualBoxVM(Node):
 
         params = {"capture_file_name": capture_file_name}
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/capture/{port_number}/start".format(project_id=self._project.id(),
-                                                                                                    vm_id=self._vm_id,
-                                                                                                    port_number=port.portNumber()),
-                          partial(self._startPacketCaptureCallback, port.id()), body=params)
+        self.httpPost("/virtualbox/vms/{vm_id}/capture/{port_number}/start".format(vm_id=self._vm_id,
+                                                                                   port_number=port.portNumber()),
+                      partial(self._startPacketCaptureCallback, port.id()), body=params)
 
         self._server.send_message("virtualbox.start_capture", params, self._startPacketCaptureCallback)
 
@@ -482,10 +474,9 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self._server.post("/{project_id}/virtualbox/vms/{vm_id}/capture/{port_number}/stop".format(project_id=self._project.id(),
-                                                                                                   vm_id=self._vm_id,
-                                                                                                   port_number=port.portNumber()),
-                          partial(self._stopPacketCaptureCallback, port.id()))
+        self.httpPost("/virtualbox/vms/{vm_id}/capture/{port_number}/stop".format(vm_id=self._vm_id,
+                                                                                  port_number=port.portNumber()),
+                      partial(self._stopPacketCaptureCallback, port.id()))
 
     def _stopPacketCaptureCallback(self, port_id, result, error=False):
         """
