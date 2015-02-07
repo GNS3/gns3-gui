@@ -154,7 +154,7 @@ def test_project_delete_on_created_project(local_server):
         assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
 
 
-def test_project_close():
+def test_project_close(local_server):
 
     uuid = uuid4()
     mock = MagicMock
@@ -164,6 +164,7 @@ def test_project_close():
 
         project = Project()
         project.setId(uuid)
+        project._created_servers.add(local_server)
 
         mock_signal = MagicMock()
         mock_signal_closed = MagicMock()
@@ -181,13 +182,14 @@ def test_project_close():
         assert kwargs["body"] == {}
 
         # Call the project close callback
-        args[1]({"project_id": uuid})
+        args[1]({"project_id": uuid}, server=local_server)
+
         assert mock_signal_closed.called
 
         assert project.closed()
 
 
-def test_project_close_error():
+def test_project_close_multiple_servers(local_server, remote_server):
 
     uuid = uuid4()
     mock = MagicMock
@@ -196,6 +198,45 @@ def test_project_close_error():
         signal = MagicMock()
 
         project = Project()
+        project._created_servers.add(local_server)
+        project._created_servers.add(remote_server)
+        project.setId(uuid)
+
+        mock_signal = MagicMock()
+        mock_signal_closed = MagicMock()
+        project.project_about_to_close_signal.connect(mock_signal)
+        project.project_closed_signal.connect(mock_signal_closed)
+
+        project.close()
+
+        assert mock_signal.call_count == 1
+        assert not mock_signal_closed.called
+
+        assert mock.call_count == 2
+
+        args, kwargs = mock.call_args
+
+        assert args[0] == "/projects/{project_id}/close".format(project_id=uuid)
+        assert kwargs["body"] == {}
+
+        # Call the project close callback
+        args[1]({"project_id": uuid}, server=local_server)
+        args[1]({"project_id": uuid}, server=remote_server)
+
+        assert mock_signal_closed.call_count == 1
+        assert project.closed()
+
+
+def test_project_close_error(local_server):
+
+    uuid = uuid4()
+    mock = MagicMock
+    with patch("gns3.http_client.HTTPClient.post") as mock:
+
+        signal = MagicMock()
+
+        project = Project()
+        project._created_servers.add(local_server)
         project.setId(uuid)
 
         mock_signal = MagicMock()
@@ -214,7 +255,7 @@ def test_project_close_error():
         assert kwargs["body"] == {}
 
         # Call the project close callback
-        args[1]({"message": "Can't connect"}, error=True)
+        args[1]({"message": "Can't connect"}, error=True, server=local_server)
         assert mock_signal_closed.called
 
         assert project.closed()

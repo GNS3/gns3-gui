@@ -218,7 +218,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                     self._qemu_binaries_progress_dialog.reject()
                     QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
 
-    def _getQemuBinariesFromServerCallback(self, result, error=False):
+    def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
         Callback for getQemuBinariesFromServer.
 

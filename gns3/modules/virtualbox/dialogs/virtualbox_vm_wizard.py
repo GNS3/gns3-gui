@@ -71,7 +71,7 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
             progress_dialog.show()
             self._server.get("/virtualbox/vms", partial(self._getVirtualBoxVMsFromServerCallback, progress_dialog))
 
-    def _getVirtualBoxVMsFromServerCallback(self, progress_dialog, result, error=False):
+    def _getVirtualBoxVMsFromServerCallback(self, progress_dialog, result, error=False, **kwargs):
         """
         Callback for getVirtualBoxVMsFromServer.
 

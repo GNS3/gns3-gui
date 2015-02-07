@@ -140,7 +140,7 @@ class HTTPClient(QtCore.QObject):
         client_version = {"version": __version__}
         self.post("/version", self._connectCallback, body=client_version, connecting=True)
 
-    def _connectCallback(self, result, error=False):
+    def _connectCallback(self, result, error=False, **kwargs):
         """
         Callback for the connection.
 
@@ -274,11 +274,11 @@ class HTTPClient(QtCore.QObject):
             body = bytes(response.readAll()).decode()
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if not body or content_type != "application/json":
-                callback({"message": error_message}, error=True)
+                callback({"message": error_message}, error=True, server=self)
             else:
                 log.debug(body)
                 if callback is not None:
-                    callback(json.loads(body), error=True)
+                    callback(json.loads(body), error=True, server=self)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
@@ -291,9 +291,9 @@ class HTTPClient(QtCore.QObject):
                 params = {}
             if callback is not None:
                 if status >= 400:
-                    callback(params, error=True)
+                    callback(params, error=True, server=self)
                 else:
-                    callback(params)
+                    callback(params, server=self)
         response.deleteLater()
 
     def dump(self):

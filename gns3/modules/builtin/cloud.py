@@ -87,7 +87,7 @@ class Cloud(Node):
             self._initial_settings = initial_settings
         self._server.send_message("builtin.interfaces", None, self._setupCallback)
 
-    def _setupCallback(self, result, error=False):
+    def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 

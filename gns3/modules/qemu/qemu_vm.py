@@ -120,7 +120,7 @@ class QemuVM(Node):
 
         self._server.send_message("qemu.create", params, self._setupCallback)
 
-    def _setupCallback(self, result, error=False):
+    def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 
@@ -169,7 +169,7 @@ class QemuVM(Node):
             self.deleted_signal.emit()
             self._module.removeNode(self)
 
-    def _deleteCallback(self, result, error=False):
+    def _deleteCallback(self, result, error=False, **kwargs):
         """
         Callback for delete.
 
@@ -206,7 +206,7 @@ class QemuVM(Node):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("qemu.update", params, self._updateCallback)
 
-    def _updateCallback(self, result, error=False):
+    def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -260,7 +260,7 @@ class QemuVM(Node):
         log.debug("{} is starting".format(self.name()))
         self._server.send_message("qemu.start", {"id": self._qemu_id}, self._startCallback)
 
-    def _startCallback(self, result, error=False):
+    def _startCallback(self, result, error=False, **kwargs):
         """
         Callback for start.
 
@@ -291,7 +291,7 @@ class QemuVM(Node):
         log.debug("{} is stopping".format(self.name()))
         self._server.send_message("qemu.stop", {"id": self._qemu_id}, self._stopCallback)
 
-    def _stopCallback(self, result, error=False):
+    def _stopCallback(self, result, error=False, **kwargs):
         """
         Callback for stop.
 
@@ -322,7 +322,7 @@ class QemuVM(Node):
         log.debug("{} is being suspended".format(self.name()))
         self._server.send_message("qemu.suspend", {"id": self._qemu_id}, self._suspendCallback)
 
-    def _suspendCallback(self, result, error=False):
+    def _suspendCallback(self, result, error=False, **kwargs):
         """
         Callback for suspend.
 
@@ -349,7 +349,7 @@ class QemuVM(Node):
         log.debug("{} is being reloaded".format(self.name()))
         self._server.send_message("qemu.reload", {"id": self._qemu_id}, self._reloadCallback)
 
-    def _reloadCallback(self, result, error=False):
+    def _reloadCallback(self, result, error=False, **kwargs):
         """
         Callback for reload.
 
@@ -373,7 +373,7 @@ class QemuVM(Node):
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self._server.send_message("qemu.allocate_udp_port", {"id": self._qemu_id, "port_id": port_id}, self._allocateUDPPortCallback)
 
-    def _allocateUDPPortCallback(self, result, error=False):
+    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
         """
         Callback for allocateUDPPort.
 
@@ -406,7 +406,7 @@ class QemuVM(Node):
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self._server.send_message("qemu.add_nio", params, self._addNIOCallback)
 
-    def _addNIOCallback(self, result, error=False):
+    def _addNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for addNIO.
 
@@ -434,7 +434,7 @@ class QemuVM(Node):
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
         self._server.send_message("qemu.delete_nio", params, self._deleteNIOCallback)
 
-    def _deleteNIOCallback(self, result, error=False):
+    def _deleteNIOCallback(self, result, error=False, **kwargs):
         """
         Callback for deleteNIO.
 

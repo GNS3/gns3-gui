@@ -122,7 +122,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             iou_module.removeServer(server)
         server.send_message("iou.test_settings", None, self._testSettingsCallback)
 
-    def _testSettingsCallback(self, result, error=False):
+    def _testSettingsCallback(self, result, error=False, **kwargs):
 
         if self._progress_dialog.wasCanceled():
             print("Was canceled")
