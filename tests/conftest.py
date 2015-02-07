@@ -105,7 +105,7 @@ def virtualbox_vm(local_server, project):
                     "vmname": "VBOX1",
                     "console": None,
                     "adapters": 0,
-                    "adapter_start_index": 0,
+                    "use_any_adapter": False,
                     "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
                     "headless": False,
                     "enable_remote_console": False}

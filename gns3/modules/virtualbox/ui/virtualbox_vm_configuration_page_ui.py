@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created: Tue Dec  2 14:17:34 2014
+# Created: Fri Feb  6 16:34:54 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_virtualBoxVMConfigPageWidget(object):
-
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName(_fromUtf8("virtualBoxVMConfigPageWidget"))
         virtualBoxVMConfigPageWidget.resize(509, 346)
@@ -88,18 +85,11 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiAdaptersSpinBox.setMaximum(36)
         self.uiAdaptersSpinBox.setObjectName(_fromUtf8("uiAdaptersSpinBox"))
         self.gridLayout_3.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
-        self.uiAdapterStartIndexLabel = QtGui.QLabel(self.tab_2)
-        self.uiAdapterStartIndexLabel.setObjectName(_fromUtf8("uiAdapterStartIndexLabel"))
-        self.gridLayout_3.addWidget(self.uiAdapterStartIndexLabel, 1, 0, 1, 1)
-        self.uiAdapterStartIndexSpinBox = QtGui.QSpinBox(self.tab_2)
-        self.uiAdapterStartIndexSpinBox.setMinimum(0)
-        self.uiAdapterStartIndexSpinBox.setMaximum(35)
-        self.uiAdapterStartIndexSpinBox.setProperty("value", 0)
-        self.uiAdapterStartIndexSpinBox.setObjectName(_fromUtf8("uiAdapterStartIndexSpinBox"))
-        self.gridLayout_3.addWidget(self.uiAdapterStartIndexSpinBox, 1, 1, 1, 1)
         self.label = QtGui.QLabel(self.tab_2)
         self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout_3.addWidget(self.label, 2, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.label, 1, 0, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(248, 178, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_3.addItem(spacerItem1, 3, 0, 1, 2)
         self.uiAdapterTypesComboBox = QtGui.QComboBox(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -107,9 +97,10 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiAdapterTypesComboBox.sizePolicy().hasHeightForWidth())
         self.uiAdapterTypesComboBox.setSizePolicy(sizePolicy)
         self.uiAdapterTypesComboBox.setObjectName(_fromUtf8("uiAdapterTypesComboBox"))
-        self.gridLayout_3.addWidget(self.uiAdapterTypesComboBox, 2, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(248, 178, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem1, 3, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.uiAdapterTypesComboBox, 1, 1, 1, 1)
+        self.uiUseAnyAdapterCheckBox = QtGui.QCheckBox(self.tab_2)
+        self.uiUseAnyAdapterCheckBox.setObjectName(_fromUtf8("uiUseAnyAdapterCheckBox"))
+        self.gridLayout_3.addWidget(self.uiUseAnyAdapterCheckBox, 2, 0, 1, 2)
         self.uiTabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.verticalLayout.addWidget(self.uiTabWidget)
 
@@ -127,6 +118,7 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiBaseVMCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Use as a linked base VM (experimental)", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("virtualBoxVMConfigPageWidget", "General settings", None))
         self.uiAdaptersLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Adapters:", None))
-        self.uiAdapterStartIndexLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Start at:", None))
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:", None))
+        self.uiUseAnyAdapterCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Allow GNS3 to use any configured VirtualBox adapter", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network", None))
+

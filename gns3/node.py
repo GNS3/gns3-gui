@@ -463,7 +463,7 @@ class Node(QtCore.QObject):
 
         self._project.put(self._server, path, callback, body=body)
 
-    def httpGet(self, path, callback, body={}):
+    def httpGet(self, path, callback):
         """
         GET on current server / project
 

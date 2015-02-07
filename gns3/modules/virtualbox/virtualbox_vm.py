@@ -52,7 +52,7 @@ class VirtualBoxVM(Node):
                           "vmname": "",
                           "console": None,
                           "adapters": VBOX_VM_SETTINGS["adapters"],
-                          "adapter_start_index": VBOX_VM_SETTINGS["adapter_start_index"],
+                          "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
                           "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
                           "headless": VBOX_VM_SETTINGS["headless"],
                           "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
@@ -64,9 +64,7 @@ class VirtualBoxVM(Node):
         :param adapters: number of adapters
         """
 
-        for port_number in range(0, self._settings["adapter_start_index"] + adapters):
-            if port_number < self._settings["adapter_start_index"]:
-                continue
+        for port_number in range(0, adapters):
             port_name = EthernetPort.longNameType() + str(port_number)
             short_name = EthernetPort.shortNameType() + str(port_number)
             new_port = EthernetPort(port_name)
@@ -147,12 +145,12 @@ class VirtualBoxVM(Node):
 
         log.debug("VirtualBox VM instance {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
-        self.httpDelete_links_signal.emit()
+        self.delete_links_signal.emit()
         if self._vm_id:
             self.httpDelete("/virtualbox/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id),
                             self._deleteCallback)
         else:
-            self.httpDeleted_signal.emit()
+            self.deleted_signal.emit()
             self._module.removeNode(self)
 
     def _deleteCallback(self, result, error=False):
@@ -167,7 +165,7 @@ class VirtualBoxVM(Node):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         log.info("{} has been deleted".format(self.name()))
-        self.httpDeleted_signal.emit()
+        self.deleted_signal.emit()
         self._module.removeNode(self)
 
     def update(self, new_settings):
@@ -215,7 +213,7 @@ class VirtualBoxVM(Node):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
-                if name == "adapters" or name == "adapter_start_index":
+                if name == "adapters":
                     nb_adapters_changed = True
                 self._settings[name] = value
 
