@@ -436,11 +436,9 @@ class VirtualBoxVM(Node):
 
         params = {"capture_file_name": capture_file_name}
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self.httpPost("/virtualbox/vms/{vm_id}/capture/{port_number}/start".format(vm_id=self._vm_id,
-                                                                                   port_number=port.portNumber()),
+        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_id}/start_capture".format(vm_id=self._vm_id,
+                                                                                           adapter_id=port.portNumber()),
                       partial(self._startPacketCaptureCallback, port.id()), body=params)
-
-        self._server.send_message("virtualbox.start_capture", params, self._startPacketCaptureCallback)
 
     def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
@@ -452,13 +450,13 @@ class VirtualBoxVM(Node):
 
         if error:
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
                 if port.id() == port_id:
                     log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
                     try:
-                        port.startPacketCapture(result["capture_file_path"])
+                        port.startPacketCapture(result["pcap_file_path"])
                     except OSError as e:
                         self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
                     self.updated_signal.emit()
@@ -472,8 +470,8 @@ class VirtualBoxVM(Node):
         """
 
         log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self.httpPost("/virtualbox/vms/{vm_id}/capture/{port_number}/stop".format(vm_id=self._vm_id,
-                                                                                  port_number=port.portNumber()),
+        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_id}/stop_capture".format(vm_id=self._vm_id,
+                                                                                          adapter_id=port.portNumber()),
                       partial(self._stopPacketCaptureCallback, port.id()))
 
     def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
@@ -486,7 +484,7 @@ class VirtualBoxVM(Node):
 
         if error:
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
                 if port.id() == port_id:
