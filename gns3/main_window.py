@@ -1434,17 +1434,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         recent_files = []
-        settings = QtCore.QSettings()
-
         # read the recent file list
-        settings.beginGroup("RecentFiles")
-        size = settings.beginReadArray("file")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            file_path = settings.value("path", "")
-            if file_path:
-                recent_files.append(file_path)
-        settings.endArray()
+        local_config = LocalConfig.instance()
+        settings = local_config.settings()
+        if "RecentFiles" in settings:
+            for file_path in settings["RecentFiles"]:
+                if file_path:
+                    recent_files.append(file_path)
 
         # update the recent file list
         if path in recent_files:
@@ -1454,33 +1450,27 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             recent_files.pop()
 
         # write the recent file list
-        settings.beginWriteArray("file", len(recent_files))
-        index = 0
-        for file_path in recent_files:
-            settings.setArrayIndex(index)
-            settings.setValue("path", file_path)
-            index += 1
-        settings.endArray()
-        settings.endGroup()
+        settings["RecentFiles"] = recent_files
+        local_config.setSettings(settings)
 
     def _updateRecentFileActions(self):
         """
         Updates recent file actions.
         """
 
-        settings = QtCore.QSettings()
-        settings.beginGroup("RecentFiles")
-        size = settings.beginReadArray("file")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            file_path = settings.value("path", "")
-            if file_path:
-                action = self._recent_file_actions[index]
-                action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
-                action.setData(file_path)
-                action.setVisible(True)
-                index += 1
-        settings.endArray()
+        local_config = LocalConfig.instance()
+        settings = local_config.settings()
+        size = 0
+        if "RecentFiles" in settings:
+            index = 0
+            size = len(settings["RecentFiles"])
+            for file_path in settings["RecentFiles"]:
+                if file_path:
+                    action = self._recent_file_actions[index]
+                    action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                    action.setData(file_path)
+                    action.setVisible(True)
+                    index += 1
 
         for index in range(size + 1, self._max_recent_files):
             self._recent_file_actions[index].setVisible(False)
