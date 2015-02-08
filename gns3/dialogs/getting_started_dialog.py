@@ -21,6 +21,7 @@ import sys
 from ..qt import QtCore, QtGui, QtWebKit
 from ..ui.getting_started_dialog_ui import Ui_GettingStartedDialog
 from ..utils.get_resource import get_resource
+from ..local_config import LocalConfig
 
 
 class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
@@ -40,7 +41,9 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
-        self.uiCheckBox.setChecked(QtCore.QSettings().value("GUI/hide_getting_started_dialog", False, type=bool))
+        self._local_config = LocalConfig.instance()
+        gui_settings = self._local_config.loadSectionSettings("GUI", {"hide_getting_started_dialog": False})
+        self.uiCheckBox.setChecked(gui_settings["hide_getting_started_dialog"])
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self._loadFinishedSlot)
         self._timer.setSingleShot(True)
@@ -63,7 +66,7 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         :param result: ignored
         """
 
-        QtCore.QSettings().setValue("GUI/hide_getting_started_dialog", self.uiCheckBox.isChecked())
+        self._local_config.saveSectionSettings("GUI", {"hide_getting_started_dialog": self.uiCheckBox.isChecked()})
         QtGui.QDialog.done(self, result)
 
     def _urlClickedSlot(self, url):

@@ -24,7 +24,6 @@ import sys
 import os
 import platform
 import time
-import tempfile
 import socket
 import shutil
 import json
@@ -35,6 +34,7 @@ import posixpath
 import stat
 
 from pkg_resources import parse_version
+from .local_config import LocalConfig
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .modules.vpcs import VPCS
@@ -68,10 +68,7 @@ from .cloud.exceptions import KeyPairExists
 from .cloud_instances import CloudInstances
 from .project import Project
 
-
 log = logging.getLogger(__name__)
-
-CLOUD_SETTINGS_GROUP = "Cloud"
 
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -122,9 +119,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 pass
 
         # restore the geometry and state of the main window.
-        settings = QtCore.QSettings()
-        self.restoreGeometry(settings.value("GUI/geometry", QtCore.QByteArray()))
-        self.restoreState(settings.value("GUI/state", QtCore.QByteArray()))
+        local_config = LocalConfig.instance()
+        gui_settings = local_config.loadSectionSettings("GUI", {"geometry": "",
+                                                                "state": ""})
+        self.restoreGeometry(QtCore.QByteArray().fromBase64(gui_settings["geometry"]))
+        self.restoreState(QtCore.QByteArray().fromBase64(gui_settings["state"]))
 
         # do not show the nodes dock widget my default
         if not ENABLE_CLOUD:
@@ -175,21 +174,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Loads the settings from the persistent settings file.
         """
 
-        # restore the general settings
+        local_config = LocalConfig.instance()
+
+        # restore the general settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in GENERAL_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=GENERAL_SETTING_TYPES[name])
+        for name in GENERAL_SETTINGS.keys():
+            if settings.contains(name):
+                legacy_settings[name] = settings.value(name, type=GENERAL_SETTING_TYPES[name])
+        settings.remove("")
         settings.endGroup()
+        if legacy_settings:
+            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
 
-        # restore cloud settings
-        settings.beginGroup(CLOUD_SETTINGS_GROUP)
-        for name, value in CLOUD_SETTINGS.items():
-            self._cloud_settings[name] = settings.value(name, value, type=CLOUD_SETTINGS_TYPES[name])
-        settings.endGroup()
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, GENERAL_SETTINGS)
+        self._cloud_settings = local_config.loadSectionSettings("Cloud", CLOUD_SETTINGS)
 
         # restore the style
-        self._setStyle(self._settings["style"])
+        self._setStyle(self._settings.get("style"))
 
         # restore packet capture settings
         Port.loadPacketCaptureSettings()
@@ -219,22 +222,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param new_settings: settings dictionary
         """
 
-        # set a new images directory
-        # if new_settings.get("images_path", '') != self.imagesDirPath():
-        #    self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
-
+        # change the GUI style
         style = new_settings.get("style")
         if style and new_settings["style"] != self._settings["style"]:
             if not self._setStyle(style):
                 self._setLegacyStyle()
 
-        # save the settings
         self._settings.update(new_settings)
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        # save the settings
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
     def setCloudSettings(self, new_settings, persist):
         """
@@ -245,14 +241,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._cloud_settings.update(new_settings)
-
-        settings = QtCore.QSettings()
-        settings.beginGroup(CLOUD_SETTINGS_GROUP)
-
         settings_to_persist = self._cloud_settings if persist else CLOUD_SETTINGS
-        for name, value in settings_to_persist.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings("Cloud", settings_to_persist)
 
     def _connections(self):
         """
@@ -1050,9 +1040,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         VPCS.instance().stopMultiHostVPCS()
 
         # save the geometry and state of the main window.
-        settings = QtCore.QSettings()
-        settings.setValue("GUI/geometry", self.saveGeometry())
-        settings.setValue("GUI/state", self.saveState())
+        #settings = QtCore.QSettings()
+        #settings.setValue("GUI/geometry", self.saveGeometry())
+        #settings.setValue("GUI/state", self.saveState())
+
+        local_config = LocalConfig.instance()
+        local_config.saveSectionSettings("GUI", {"geometry": bytes(self.saveGeometry().toBase64()).decode(),
+                                                 "state": bytes(self.saveState().toBase64()).decode()})
 
         servers = Servers.instance()
         servers.stopLocalServer(wait=True)

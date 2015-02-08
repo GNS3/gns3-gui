@@ -40,7 +40,7 @@ from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
 from .utils.connect_to_server import ConnectToServer
-from .project import Project
+from .local_config import LocalConfig
 
 # link items
 from .items.link_item import LinkItem
@@ -131,12 +131,21 @@ class GraphicsView(QtGui.QGraphicsView):
         Loads the settings from the persistent settings file.
         """
 
-        # restore settings
+        local_config = LocalConfig.instance()
+        # restore the graphics view settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in GRAPHICS_VIEW_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=GRAPHICS_VIEW_SETTING_TYPES[name])
+        for name in GRAPHICS_VIEW_SETTINGS.keys():
+            if settings.contains(name):
+                legacy_settings[name] = settings.value(name, type=GRAPHICS_VIEW_SETTING_TYPES[name])
+        settings.remove("")
         settings.endGroup()
+
+        if legacy_settings:
+            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
+
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
 
     def settings(self):
         """
@@ -156,11 +165,7 @@ class GraphicsView(QtGui.QGraphicsView):
 
         # save the settings
         self._settings.update(new_settings)
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
     def addingLinkSlot(self, enabled):
         """

@@ -164,17 +164,17 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         :param settings: Local server settings
         """
 
-        self.uiLocalServerPathLineEdit.setText(settings["local_server_path"])
-        index = self.uiLocalServerHostComboBox.findData(settings["local_server_host"])
+        self.uiLocalServerPathLineEdit.setText(settings["path"])
+        index = self.uiLocalServerHostComboBox.findData(settings["host"])
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
-        self.uiLocalServerPortSpinBox.setValue(settings["local_server_port"])
-        self.uiLocalServerAutoStartCheckBox.setChecked(settings["local_server_auto_start"])
-        self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(settings["local_server_allow_console_from_anywhere"])
-        self.uiConsoleStartPortSpinBox.setValue(settings["local_server_console_start_port_range"])
-        self.uiConsoleEndPortSpinBox.setValue(settings["local_server_console_end_port_range"])
-        self.uiUDPStartPortSpinBox.setValue(settings["local_server_udp_start_port_range"])
-        self.uiUDPEndPortSpinBox.setValue(settings["local_server_udp_end_port_range"])
+        self.uiLocalServerPortSpinBox.setValue(settings["port"])
+        self.uiLocalServerAutoStartCheckBox.setChecked(settings["auto_start"])
+        self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(settings["allow_console_from_anywhere"])
+        self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
+        self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
+        self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
+        self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
     def loadPreferences(self):
         """
@@ -211,22 +211,22 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
         # save the local server preferences
         new_settings = {}
-        new_settings["local_server_path"] = self.uiLocalServerPathLineEdit.text()
-        new_settings["local_server_host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
-        new_settings["local_server_port"] = self.uiLocalServerPortSpinBox.value()
-        new_settings["local_server_auto_start"] = self.uiLocalServerAutoStartCheckBox.isChecked()
-        new_settings["local_server_allow_console_from_anywhere"] = self.uiConsoleConnectionsToAnyIPCheckBox.isChecked()
-        new_settings["local_server_console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
-        new_settings["local_server_console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
-        new_settings["local_server_udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
-        new_settings["local_server_udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
+        new_settings["path"] = self.uiLocalServerPathLineEdit.text()
+        new_settings["host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
+        new_settings["port"] = self.uiLocalServerPortSpinBox.value()
+        new_settings["auto_start"] = self.uiLocalServerAutoStartCheckBox.isChecked()
+        new_settings["allow_console_from_anywhere"] = self.uiConsoleConnectionsToAnyIPCheckBox.isChecked()
+        new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
+        new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
+        new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
+        new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
 
-        if new_settings["local_server_auto_start"]:
-            if not os.path.isfile(new_settings["local_server_path"]):
-                QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_settings["local_server_path"]))
+        if new_settings["auto_start"]:
+            if not os.path.isfile(new_settings["path"]):
+                QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_settings["path"]))
                 return
-            if not os.access(new_settings["local_server_path"], os.X_OK):
-                QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_settings["local_server_path"]))
+            if not os.access(new_settings["path"], os.X_OK):
+                QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_settings["path"]))
 
             current_settings = servers.localServerSettings()
             if new_settings != current_settings:
@@ -253,12 +253,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         if restart_local_server:
             servers.stopLocalServer(wait=True)
             if servers.startLocalServer():
-                host = new_settings["local_server_host"]
-                port = new_settings["local_server_port"]
-                thread = WaitForConnectionThread(host, port)
+                thread = WaitForConnectionThread(new_settings["host"], new_settings["port"])
                 thread.deleteLater()
                 dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
                 dialog.show()
                 dialog.exec_()
             else:
-                QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_settings["local_server_path"]))
+                QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_settings["path"]))

@@ -21,6 +21,7 @@ VirtualBox module implementation.
 
 from gns3.qt import QtCore, QtGui
 from gns3.local_server_config import LocalServerConfig
+from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -55,12 +56,21 @@ class VirtualBox(Module):
         Loads the settings from the server settings file.
         """
 
-        # load the settings
+        local_config = LocalConfig.instance()
+
+        # restore the VirtualBox settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in VBOX_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=VBOX_SETTING_TYPES[name])
+        for name in VBOX_SETTINGS.keys():
+            if settings.contains(name):
+                self._settings[name] = settings.value(name, type=VBOX_SETTING_TYPES[name])
+        settings.remove("")
         settings.endGroup()
+
+        if legacy_settings:
+            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, VBOX_SETTINGS)
 
         # keep the config file sync
         self._saveSettings()
@@ -71,13 +81,9 @@ class VirtualBox(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save some settings to the server config files
+        # save some settings to the server config file
         server_settings = {
             "vboxmanage_path": self._settings["vboxmanage_path"],
             "vbox_user": self._settings["vbox_user"],
@@ -90,25 +96,41 @@ class VirtualBox(Module):
         Load the VirtualBox VMs from the client settings file.
         """
 
+        local_config = LocalConfig.instance()
+
+        # restore the VirtualBox settings from QSettings (for backward compatibility)
+        virtualbox_vms = []
         # load the settings
         settings = QtCore.QSettings()
         settings.beginGroup("VirtualBoxVMs")
-
         # load the VMs
         size = settings.beginReadArray("VM")
         for index in range(0, size):
             settings.setArrayIndex(index)
-            vmname = settings.value("vmname")
-            server = settings.value("server")
-            key = "{server}:{vmname}".format(server=server, vmname=vmname)
-            if key in self._virtualbox_vms or not vmname or not server:
-                continue
-            self._virtualbox_vms[key] = {}
+            vm = {}
             for setting_name, default_value in VBOX_VM_SETTINGS.items():
-                self._virtualbox_vms[key][setting_name] = settings.value(setting_name, default_value, VBOX_VM_SETTING_TYPES[setting_name])
-
+                vm[setting_name] = settings.value(setting_name, default_value, VBOX_VM_SETTING_TYPES[setting_name])
+            virtualbox_vms.append(vm)
         settings.endArray()
+        settings.remove("")
         settings.endGroup()
+
+        if virtualbox_vms:
+            log.info(virtualbox_vms)
+            local_config.saveSectionSettings(self.__class__.__name__, {"vms": virtualbox_vms})
+
+        settings = local_config.settings()
+        if "vms" in settings[self.__class__.__name__]:
+            for vm in settings[self.__class__.__name__]["vms"]:
+                vmname = vm.get("vmname")
+                server = vm.get("server")
+                key = "{server}:{vmname}".format(server=server, vmname=vmname)
+                if key in self._virtualbox_vms or not vmname or not server:
+                    continue
+                self._virtualbox_vms[key] = vm
+
+        # keep things sync
+        self._saveVirtualBoxVMs()
 
     def _saveVirtualBoxVMs(self):
         """
@@ -116,20 +138,7 @@ class VirtualBox(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("VirtualBoxVMs")
-        settings.remove("")
-
-        # save the VirtualBox VMs
-        settings.beginWriteArray("VM", len(self._virtualbox_vms))
-        index = 0
-        for vbox_vm in self._virtualbox_vms.values():
-            settings.setArrayIndex(index)
-            for name, value in vbox_vm.items():
-                settings.setValue(name, value)
-            index += 1
-        settings.endArray()
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"vms": list(self._virtualbox_vms.values())})
 
     def virtualBoxVMs(self):
         """

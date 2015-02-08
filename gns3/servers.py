@@ -26,6 +26,7 @@ import subprocess
 
 from .qt import QtCore, QtNetwork
 from .http_client import HTTPClient
+from .local_config import LocalConfig
 from .settings import LOCAL_SERVER_SETTINGS, LOCAL_SERVER_SETTING_TYPES
 from .local_server_config import LocalServerConfig
 from collections import OrderedDict
@@ -58,8 +59,8 @@ class Servers(QtCore.QObject):
         self._remote_server_iter_pos = 0
         self._loadSettings()
 
-        host = self._local_server_settings["local_server_host"]
-        port = self._local_server_settings["local_server_port"]
+        host = self._local_server_settings["host"]
+        port = self._local_server_settings["port"]
         url = "http://{host}:{port}".format(host=host, port=port)
         self._local_server = HTTPClient(url, self._network_manager)
         self._local_server.setLocal(True)
@@ -70,12 +71,15 @@ class Servers(QtCore.QObject):
         Loads the server settings from the persistent settings file.
         """
 
-        # load the local server settings
+        local_config = LocalConfig.instance()
+
+        # restore the local server settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-
-        for name, value in LOCAL_SERVER_SETTINGS.items():
-            self._local_server_settings[name] = settings.value(name, value, type=LOCAL_SERVER_SETTING_TYPES[name])
+        for name in LOCAL_SERVER_SETTINGS.keys():
+            if settings.contains(name):
+                legacy_settings[name] = settings.value(name, type=LOCAL_SERVER_SETTING_TYPES[name])
 
         # load the remote servers
         size = settings.beginReadArray("remote")
@@ -86,7 +90,17 @@ class Servers(QtCore.QObject):
             if host and port:
                 self._addRemoteServer(host, port)
         settings.endArray()
+        settings.remove("")
         settings.endGroup()
+
+        if legacy_settings:
+            local_config.saveSectionSettings("LocalServer", legacy_settings)
+
+        self._local_server_settings = local_config.loadSectionSettings("LocalServer", LOCAL_SERVER_SETTINGS)
+        settings = local_config.settings()
+        if "RemoteServers" in settings:
+            for remote_server in settings["RemoteServers"]:
+                self._addRemoteServer(remote_server["host"], remote_server["port"])
 
         # keep the config file sync
         self._saveSettings()
@@ -98,36 +112,26 @@ class Servers(QtCore.QObject):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        settings.remove("")
+        LocalConfig.instance().saveSectionSettings("LocalServer", self._local_server_settings)
 
-        # save the local server settings
-        for name, value in self._local_server_settings.items():
-            settings.setValue(name, value)
+        # save the remote servers
+        remote_servers = []
+        for server in self._remote_servers.values():
+            remote_servers.append({"host": server.host,
+                                   "port": server.port})
+        LocalConfig.instance().setSettings({"RemoteServers": remote_servers})
 
-        # save some settings to the server config files
+        # save some settings to the local server config files
         server_settings = OrderedDict([
-            ("host", self._local_server_settings["local_server_host"]),
-            ("port", self._local_server_settings["local_server_port"]),
-            ("console_start_port_range", self._local_server_settings["local_server_console_start_port_range"]),
-            ("console_end_port_range", self._local_server_settings["local_server_console_end_port_range"]),
-            ("udp_start_port_range", self._local_server_settings["local_server_udp_start_port_range"]),
-            ("udp_start_end_range", self._local_server_settings["local_server_udp_end_port_range"]),
+            ("host", self._local_server_settings["host"]),
+            ("port", self._local_server_settings["port"]),
+            ("console_start_port_range", self._local_server_settings["console_start_port_range"]),
+            ("console_end_port_range", self._local_server_settings["console_end_port_range"]),
+            ("udp_start_port_range", self._local_server_settings["udp_start_port_range"]),
+            ("udp_start_end_range", self._local_server_settings["udp_end_port_range"]),
         ])
         config = LocalServerConfig.instance()
         config.saveSettings("Server", server_settings)
-
-        # save the remote servers
-        settings.beginWriteArray("remote", len(self._remote_servers))
-        index = 0
-        for server in self._remote_servers.values():
-            settings.setArrayIndex(index)
-            settings.setValue("host", server.host)
-            settings.setValue("port", server.port)
-            index += 1
-        settings.endArray()
-        settings.endGroup()
 
     def localServerSettings(self):
         """
@@ -145,11 +149,8 @@ class Servers(QtCore.QObject):
         :param settings: local server settings (dict)
         """
 
-        if settings["local_server_host"] != self._local_server_settings["local_server_host"] or \
-           settings["local_server_port"] != self._local_server_settings["local_server_port"]:
-            host = self.settings["local_server_host"]
-            port = self.settings["local_server_port"]
-            url = "http://{host}:{port}".format(host=host, port=port)
+        if settings["host"] != self._local_server_settings["host"] or settings["port"] != self._local_server_settings["port"]:
+            url = "http://{host}:{port}".format(host=self.settings["host"], port=self.settings["port"])
             self._local_server = HTTPClient(url, self._network_manager)
             self._local_server.setLocal(True)
             log.info("New local server connection {} registered".format(url))
@@ -165,7 +166,7 @@ class Servers(QtCore.QObject):
         :returns: boolean
         """
 
-        return self._local_server_settings["local_server_auto_start"]
+        return self._local_server_settings["auto_start"]
 
     def localServerPath(self):
         """
@@ -174,7 +175,7 @@ class Servers(QtCore.QObject):
         :returns: path to local server program.
         """
 
-        return self._local_server_settings["local_server_path"]
+        return self._local_server_settings["path"]
 
     def startLocalServer(self):
         """
@@ -188,7 +189,7 @@ class Servers(QtCore.QObject):
                                                                               host=host,
                                                                               port=port)
 
-        if self._local_server_settings["local_server_allow_console_from_anywhere"]:
+        if self._local_server_settings["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses
             command += " --allow"
 

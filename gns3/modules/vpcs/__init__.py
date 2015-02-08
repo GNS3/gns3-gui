@@ -28,6 +28,7 @@ import re
 import pkg_resources
 
 from gns3.servers import Servers
+from gns3.local_config import LocalConfig
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.local_server_config import LocalServerConfig
@@ -67,12 +68,21 @@ class VPCS(Module):
         Loads the settings from the persistent settings file.
         """
 
-        # load the settings
+        local_config = LocalConfig.instance()
+
+        # restore the VPCS settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in VPCS_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=VPCS_SETTING_TYPES[name])
+        for name in VPCS_SETTINGS.keys():
+            if settings.contains(name):
+                self._settings[name] = settings.value(name, type=VPCS_SETTING_TYPES[name])
+        settings.remove("")
         settings.endGroup()
+
+        if legacy_settings:
+            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, VPCS_SETTINGS)
 
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
@@ -86,13 +96,9 @@ class VPCS(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save some settings to the server config files
+        # save some settings to the server config file
         server_settings = {
             "vpcs_path": self._settings["vpcs_path"],
         }

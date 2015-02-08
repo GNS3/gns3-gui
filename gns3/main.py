@@ -86,7 +86,7 @@ def main():
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
     parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
     options = parser.parse_args()
-    exception_file_path = "exception.log"
+    exception_file_path = "exceptions.log"
 
     if options.project and hasattr(sys, "frozen"):
         os.chdir(os.path.dirname(os.path.abspath(sys.executable)))

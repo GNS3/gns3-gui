@@ -24,6 +24,7 @@ import glob
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
+from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -85,12 +86,20 @@ class Dynamips(Module):
         Loads the settings from the persistent settings file.
         """
 
-        # load the settings
+        local_config = LocalConfig.instance()
+        # restore the Dynamips settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in DYNAMIPS_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=DYNAMIPS_SETTING_TYPES[name])
+        for name in DYNAMIPS_SETTINGS.keys():
+            if settings.contains(name):
+                legacy_settings[name] = settings.value(name, type=DYNAMIPS_SETTING_TYPES[name])
+        settings.remove("")
         settings.endGroup()
+
+        if legacy_settings:
+            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
 
     def _saveSettings(self):
         """
@@ -98,11 +107,7 @@ class Dynamips(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
     def _loadIOSRouters(self):
         """
