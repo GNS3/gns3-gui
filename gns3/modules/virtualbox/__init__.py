@@ -120,7 +120,7 @@ class VirtualBox(Module):
             local_config.saveSectionSettings(self.__class__.__name__, {"vms": virtualbox_vms})
 
         settings = local_config.settings()
-        if "vms" in settings[self.__class__.__name__]:
+        if "vms" in settings.get(self.__class__.__name__, {}):
             for vm in settings[self.__class__.__name__]["vms"]:
                 vmname = vm.get("vmname")
                 server = vm.get("server")
