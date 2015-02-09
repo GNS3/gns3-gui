@@ -152,9 +152,9 @@ class VPCS(Module):
         :param project: Project instance
         """
 
-        log.info("creating node {}".format(node_class))
+        log.info("Creating node {}".format(node_class))
         if not server.connected():
-            raise ModuleError("Not connected to server {}:{}: {}".format(server.host, server.port))
+            raise ModuleError("Not connected to server {}:{}".format(server.host, server.port))
 
         # create an instance of the node class
         return node_class(self, server, project)

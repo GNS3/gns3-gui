@@ -539,18 +539,6 @@ class Topology(object):
             self._project.setId(topology["project_id"])
         self._project.setName(topology["name"])
         self._project.setType(topology["resources_type"])
-        self._project.project_created_signal.connect(partial(self._project_created_finish_load, topology))
-
-        self._project.create()
-
-    def _project_created_finish_load(self, topology):
-        """
-        Finish loading of a topology. After project creation
-
-        :param topology: topology representation
-        """
-
-        log.debug("Project {name} created, continue loading of topology".format(name=self._project.name()))
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()

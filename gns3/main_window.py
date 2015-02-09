@@ -406,7 +406,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project.setName(new_project_settings["project_name"])
         self._project.setTopologyFile(new_project_settings["project_path"])
         self._project.setType(new_project_settings["project_type"])
-        self._project.create()
         self.saveProject(new_project_settings["project_path"])
 
     def _newProjectActionSlot(self):
@@ -1399,7 +1398,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
         self._setCurrentFile()
-        self._project.create()
 
     def isTemporaryProject(self):
         """
