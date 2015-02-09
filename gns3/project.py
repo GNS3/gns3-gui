@@ -150,7 +150,7 @@ class Project(QtCore.QObject):
         :params topology_file: Path to a .gns3 file
         """
 
-        self._files_dir = os.path.dirname(topology_file)
+        self.setFilesDir(os.path.dirname(topology_file))
         self._name = os.path.basename(topology_file).replace('.gns3', '')
 
     def commit(self):
@@ -159,7 +159,6 @@ class Project(QtCore.QObject):
         # TODO: call all server
         if self._id is not None:
             self._servers.localServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
-
 
     def get(self, server, path, callback):
         """

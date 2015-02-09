@@ -517,10 +517,9 @@ class Topology(object):
         self._project = Project()
 
         project_files_dir = path
-        if path.endswith(".gns3"):
-            project_files_dir = path[:-5]
-        elif path.endswith(".net"):
-            project_files_dir = path[:-4]
+        filename = os.path.basename(project_files_dir)
+        project_files_dir = project_files_dir.replace(filename, '')
+        project_files_dir = project_files_dir[:-1]  # Drop final /
         self._project.setFilesDir(project_files_dir)
 
         with open(path, "r") as f:

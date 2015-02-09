@@ -97,6 +97,7 @@ def remote_server():
 
     return Servers.instance().getRemoteServer("127.0.0.1", 8001)
 
+
 @pytest.fixture
 def vpcs_device(local_server, project):
 

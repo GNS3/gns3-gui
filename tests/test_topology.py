@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
+import os
 from unittest.mock import patch, MagicMock
 
 from gns3.topology import Topology
@@ -79,6 +80,23 @@ def test_dump(vpcs_device, project):
         },
         "type": "topology"
     }
+
+
+def test_loadFile(tmpdir):
+    topology = Topology()
+    topo = str(tmpdir / "test" / "test.gns3")
+
+    os.makedirs(str(tmpdir / "test"))
+    with open(topo, 'w+') as f:
+        f.write('{"test": "tutu"}')
+
+    with patch("gns3.topology.Topology._load") as mock:
+        topology.loadFile(topo)
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == {"test": "tutu"}
+        assert topology._project.filesDir() == str(tmpdir / "test")
 
 
 def test_load(project, monkeypatch, main_window, tmpdir):
