@@ -38,11 +38,13 @@ def reset_modules():
     Reset modules (VPCS, VirtualBox...) internal variables.
     """
 
+    from gns3.http_client import HTTPClient
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
 
     VPCSDevice.reset()
     VirtualBoxVM.reset()
+    HTTPClient.reset()
 
 
 @pytest.fixture(scope="class")

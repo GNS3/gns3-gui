@@ -65,6 +65,12 @@ class HTTPClient(QtCore.QObject):
         self._id = HTTPClient._instance_count
         HTTPClient._instance_count += 1
 
+    @staticmethod
+    def reset():
+        """Reset HTTP client internal variables"""
+
+        HTTPClient._instance_count = 0
+
     def url(self):
         """Returns current server url"""
 

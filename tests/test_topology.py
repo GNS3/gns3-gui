@@ -62,7 +62,7 @@ def test_dump(vpcs_device, project):
                     "properties": {
                         "name": vpcs_device.name()
                     },
-                    "server_id": 1,
+                    "server_id": 0,
                     "type": "VPCSDevice",
                     "vm_id": None
                 }
@@ -71,7 +71,7 @@ def test_dump(vpcs_device, project):
                 {
                     "cloud": False,
                     "host": "127.0.0.1",
-                    "id": 1,
+                    "id": 0,
                     "local": True,
                     "port": 8000,
                 }
