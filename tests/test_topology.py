@@ -36,7 +36,7 @@ def test_topology_node(vpcs_device):
     assert len(topology.nodes()) == 0
 
 
-def test_dump(vpcs_device, project):
+def test_dump(vpcs_device, project, local_server):
     topology = Topology()
     topology.project = project
     topology.addNode(vpcs_device)
@@ -63,7 +63,7 @@ def test_dump(vpcs_device, project):
                     "properties": {
                         "name": vpcs_device.name()
                     },
-                    "server_id": 0,
+                    "server_id": local_server.id(),
                     "type": "VPCSDevice",
                     "vm_id": None
                 }
@@ -72,7 +72,7 @@ def test_dump(vpcs_device, project):
                 {
                     "cloud": False,
                     "host": "127.0.0.1",
-                    "id": 0,
+                    "id": local_server.id(),
                     "local": True,
                     "port": 8000,
                 }
