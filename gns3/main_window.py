@@ -52,7 +52,6 @@ from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, C
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_thread import ProcessFilesThread
 from .utils.wait_for_connection_thread import WaitForConnectionThread
-from .utils.connect_to_server import ConnectToServer
 from .utils.message_box import MessageBox
 from .utils.analytics import AnalyticsClient
 from .ports.port import Port
@@ -1039,9 +1038,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         VPCS.instance().stopMultiHostVPCS()
 
         # save the geometry and state of the main window.
-        #settings = QtCore.QSettings()
-        #settings.setValue("GUI/geometry", self.saveGeometry())
-        #settings.setValue("GUI/state", self.saveState())
+        # settings = QtCore.QSettings()
+        # settings.setValue("GUI/geometry", self.saveGeometry())
+        # settings.setValue("GUI/state", self.saveState())
 
         local_config = LocalConfig.instance()
         local_config.saveSectionSettings("GUI", {"geometry": bytes(self.saveGeometry().toBase64()).decode(),
@@ -1113,10 +1112,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         server = servers.localServer()
 
-        wait_for_connection = False
         if server.isServerRunning():
             log.info("Connecting to a server already running on this host")
-            wait_for_connection = True
         elif servers.localServerAutoStart():
 
             try:
@@ -1149,16 +1146,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 progress_dialog.show()
                 if not progress_dialog.exec_():
                     return
-                wait_for_connection = True
             else:
                 QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                 return
-
-        if wait_for_connection:
-            if ConnectToServer(server, parent=self):
-                log.info("Connected to local server {}:{}".format(server.host, server.port))
-            else:
-                log.error("Could not connect to local server {}:{}".format(server.host, server.port))
 
         self._createTemporaryProject()
 

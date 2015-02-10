@@ -36,7 +36,6 @@ from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
-from .utils.connect_to_server import ConnectToServer
 from .version import __version__
 from .project import Project
 
@@ -622,12 +621,6 @@ class Topology(object):
                     if not server:
                         topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
                         continue
-
-                    if not server.connected():
-                        if ConnectToServer(server, parent=main_window):
-                            log.info("Connected to local server {}:{}".format(server.host, server.port))
-                        else:
-                            log.error("Could not connect to local server {}:{}".format(server.host, server.port))
 
                     node = node_module.createNode(node_class, server, self._project)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
