@@ -322,7 +322,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
     # We return an uuid for each HTTP post
     def http_loader(self, method, path, callback, body={}, connecting=False):
         if path == "/projects":
-            callback({"project_id": uuid.uuid4(), "path": str(tmpdir)})
+            callback({"project_id": uuid.uuid4(), "path": str(tmpdir)}, error=False, server=local_server)
         else:
             callback({"vm_id": uuid.uuid4()})
 

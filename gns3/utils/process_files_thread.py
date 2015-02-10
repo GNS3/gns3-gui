@@ -60,9 +60,6 @@ class ProcessFilesThread(QtCore.QThread):
 
         self._is_running = True
 
-        # count the number of files in the source directory
-        file_count = self._countFiles(self._source)
-
         try:
             os.makedirs(self._destination)
         except FileExistsError:
@@ -70,6 +67,14 @@ class ProcessFilesThread(QtCore.QThread):
         except OSError as e:
             self.error.emit("Could not create directory {}: {}".format(self._destination, e), True)
             return
+
+        # Source can be None if directory have never been created (temporary project only on remote servers)
+        if self._source is None:
+            self.completed.emit()
+            return
+
+        # count the number of files in the source directory
+        file_count = self._countFiles(self._source)
 
         copied = 0
         # start copying/moving from the source directory

@@ -63,12 +63,13 @@ def run_instances(request):
 
 
 @pytest.fixture(scope="session")
-def project():
+def project(local_server):
 
     from gns3.project import Project
 
     project = Project()
     project.setId(str(uuid.uuid4()))
+    project._created_servers.add(local_server)
     project.setType("local")
     project.setName("unsaved")
     return project

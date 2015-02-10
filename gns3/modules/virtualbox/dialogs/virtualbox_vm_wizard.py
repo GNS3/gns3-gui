@@ -24,7 +24,6 @@ import sys
 from functools import partial
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
-from gns3.utils.connect_to_server import ConnectToServer
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
 from .. import VirtualBox
@@ -119,8 +118,6 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
                     QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in VirtualBox preferences")
                     return False
                 server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
-            if not server.connected() and ConnectToServer(server, parent=self) is False:
-                return False
             self._server = server
         if self.currentPage() == self.uiVirtualBoxWizardPage:
             if not self.uiVMListComboBox.count():

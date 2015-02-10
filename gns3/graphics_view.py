@@ -39,7 +39,6 @@ from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
-from .utils.connect_to_server import ConnectToServer
 from .local_config import LocalConfig
 
 # link items
@@ -1254,9 +1253,6 @@ class GraphicsView(QtGui.QGraphicsView):
                 server = Servers.instance().getRemoteServer(host, port)
 
             if server is None:
-                return
-
-            if not server.connected() and ConnectToServer(server, parent=self) is False:
                 return
 
             node = node_module.createNode(node_class, server, self._main_window.project())

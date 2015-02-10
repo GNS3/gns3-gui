@@ -161,28 +161,6 @@ class HTTPClient(QtCore.QObject):
             self._connected = True
             self.connected_signal.emit()
 
-    def send_message(self, destination, params, callback):
-        """
-        Sends a message to the server.
-
-        :param destination: server destination method
-        :param params: params to send (dictionary)
-        :param callback: callback method to call when the server replies.
-        """
-
-        log.error("OLD Send message. Destination {destination}, {params}".format(destination=destination, params=params))
-        # TODO : Remove this method when migration to rest api is done
-
-    def send_notification(self, destination, params=None):
-        """
-        Sends a notification to the server. No reply is expected from the server.
-
-        :param destination: server destination method
-        :param params: params to send (dictionary)
-        """
-        log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination, params=params))
-        # TODO : Remove this method when migration to rest api is done
-
     def get(self, path, callback):
         """
         HTTP GET on the remote server
@@ -205,7 +183,7 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("PUT", path, callback, body=body)
 
-    def post(self, path, callback, body={}, connecting=False):
+    def post(self, path, callback, body={}):
         """
         HTTP POST on the remote server
 
@@ -215,7 +193,7 @@ class HTTPClient(QtCore.QObject):
         :param connecting: indicates this is an initial connection to the server
         """
 
-        self.createHTTPQuery("POST", path, callback, body=body, connecting=connecting)
+        self.createHTTPQuery("POST", path, callback, body=body)
 
     def delete(self, path, callback):
         """
@@ -227,7 +205,52 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("DELETE", path, callback)
 
-    def createHTTPQuery(self, method, path, callback, body={}, connecting=False):
+    def _request(self, url):
+        """
+        Get a QNetworkRequest object. You can mock this
+        if you want low level mocking.
+
+        :param url: Url of remote ressource (QtCore.QUrl)
+        :returns: QT Network request (QtNetwork.QNetworkRequest)
+        """
+
+        return QtNetwork.QNetworkRequest(url)
+
+    def createHTTPQuery(self, method, path, callback, body={}):
+        """
+        Call the remote server, if not connected, check connection before
+
+        :param method: HTTP method
+        :param path: Remote path
+        :param body: params to send (dictionary)
+        :param callback: callback method to call when the server replies
+        """
+
+        if self._connected:
+            self.executeHTTPQuery(method, path, callback, body)
+        else:
+            log.info("Connection to {}:{}".format(self.host, self.port))
+            self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body), {})
+
+    def _callbackConnect(self, method, path, callback, body, params, error=False, **kwargs):
+        """
+        Callback after /version response. Continue execution of query
+
+        :param method: HTTP method
+        :param path: Remote path
+        :param body: params to send (dictionary)
+        :param callback: callback method to call when the server replies
+        """
+
+        if error is not False:
+            print("Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port))
+            print(params)
+            log.warn("Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port))
+            return
+        self.executeHTTPQuery(method, path, callback, body)
+        self._connected = True
+
+    def executeHTTPQuery(self, method, path, callback, body):
         """
         Call the remote server
 
@@ -235,16 +258,11 @@ class HTTPClient(QtCore.QObject):
         :param path: Remote path
         :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies
-        :param connecting: indicates this is an initial connection to the server
         """
-
-        if not connecting and not self._connected:
-            log.error("Not connected to {}:{}".format(self.host, self.port))
-            return
 
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
-        request = QtNetwork.QNetworkRequest(url)
+        request = self._request(url)
         request.setRawHeader("Content-Type", "application/json")
         request.setRawHeader("Content-Length", str(len(body)))
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))

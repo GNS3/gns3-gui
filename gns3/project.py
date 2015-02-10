@@ -29,8 +29,6 @@ class Project(QtCore.QObject):
 
     """Current project"""
 
-    project_created_signal = QtCore.Signal()
-
     # Called before project closing
     project_about_to_close_signal = QtCore.Signal()
 
@@ -156,9 +154,8 @@ class Project(QtCore.QObject):
     def commit(self):
         """Save projet on remote servers"""
 
-        # TODO: call all server
-        if self._id is not None:
-            self._servers.localServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
+        for server in list(self._created_servers):
+            server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
     def get(self, server, path, callback):
         """
@@ -213,55 +210,49 @@ class Project(QtCore.QObject):
         :param body: params to send (dictionary)
         """
 
-        path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         if server not in self._created_servers:
-            func = functools.partial(self._projectOnServerCreated, server, method, path, callback, body)
-            server.post("/projects", func, body={
+            func = functools.partial(self._projectOnServerCreated, method, path, callback, body)
+
+            body = {
                 "temporary": self._temporary,
                 "project_id": self._id
-            })
-        else:
-            self._projectOnServerCreated(server, method, path, callback, body)
+            }
+            if server == self._servers.localServer():
+                body["path"] = self.filesDir()
 
-    def _projectOnServerCreated(self, server, method, path, callback, body, *args):
+            server.post("/projects", func, body)
+        else:
+            self._projectOnServerCreated(method, path, callback, body, params={}, server=server)
+
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, **kwargs):
         """
         The project is created on the server continue
         the query
 
         :param method: HTTP Method type (string)
-        :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param params: Answer from the creation on server
+        :param server: Server instance
+        :param error: HTTP error
         """
 
-        self._created_servers.add(server)
-        server.createHTTPQuery(method, path, callback, body=body)
-
-    def create(self):
-        """
-        Create project on all servers
-        """
-
-        self._servers.localServer().post("/projects", self._project_created, body={
-            "temporary": self._temporary,
-            "project_id": self._id,
-            "path": self._files_dir
-        })
-
-    def _project_created(self, params, error=False, **kwargs):
         if error:
             print(params)
             return
-        # TODO: Manage errors
-        self._id = params["project_id"]
-        log.info("Project {} created".format(self._id))
-        # Only for local server
-        self._files_dir = params["path"]
-        self._closed = False
 
-        self._created_servers.add(self._servers.localServer())
-        self.project_created_signal.emit()
+        if self._id is None:
+            self._id = params["project_id"]
+
+        if server == self._servers.localServer() and "path" in params:
+            self._files_dir = params["path"]
+
+        self._closed = False
+        self._created_servers.add(server)
+
+        path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
+        server.createHTTPQuery(method, path, callback, body=body)
 
     def close(self):
         """Close project"""
@@ -301,4 +292,5 @@ class Project(QtCore.QObject):
 
         self._files_dir = path
         self._temporary = False
-        self._servers.localServer().put("/projects/{project_id}".format(project_id=self._id), None, body={"path": path, "temporary": False})
+        for server in list(self._created_servers):
+            server.put("/projects/{project_id}".format(project_id=self._id), None, body={"path": path, "temporary": False})
