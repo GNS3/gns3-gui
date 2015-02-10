@@ -68,6 +68,7 @@ class LocalConfig:
         elif not os.path.exists(self._config_file):
             try:
                 # create the config file if it doesn't exist
+                os.makedirs(os.path.dirname(self._config_file), exist_ok=True)
                 with open(self._config_file, "w") as f:
                     json.dump({"version": __version__, "type": "settings"}, f)
             except OSError as e:
