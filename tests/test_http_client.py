@@ -68,7 +68,7 @@ def test_get_connected(http_client, request, network_manager, response):
     request.setRawHeader.assert_any_call("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
     network_manager.get.assert_call_with(request)
 
-    #Trigger the completion
+    # Trigger the completion
     response.finished.emit()
 
     assert callback.called
@@ -83,13 +83,13 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     assert network_manager.get.called
 
-    #Trigger the completion of /version
+    # Trigger the completion of /version
     response.finished.emit()
 
-    #Trigger the completion
+    # Trigger the completion
     response.finished.emit()
 
     assert network_manager.post.called
 
-    assert http_client._connected == True
+    assert http_client._connected
     assert callback.called
