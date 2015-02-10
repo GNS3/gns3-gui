@@ -31,6 +31,7 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
 
     uuid = str(uuid4())
     project = Project()
+    project._created_servers = set()
     project.setFilesDir(str(tmpdir))
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
@@ -43,16 +44,15 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
                                   "path": str(tmpdir),
                                   "project_id": None}
 
-        args[2]({"project_id": uuid})
+        args[2]({"project_id": uuid}, server=local_server)
 
         assert len(project._created_servers) == 1
-        assert project._closed == False
+        assert project._closed is False
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
         assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
-
 
 
 def test_project_post_non_created_project_local_server(tmpdir, local_server):
@@ -77,7 +77,7 @@ def test_project_post_non_created_project_local_server(tmpdir, local_server):
                                   "project_id": uuid,
                                   "path": str(tmpdir)}
 
-        args[2]({})
+        args[2]({}, server=local_server)
 
         assert len(project._created_servers) == 1
 
@@ -96,6 +96,7 @@ def test_project_post_non_created_project_remote_server(remote_server):
 
     uuid = uuid4()
     project = Project()
+    project._created_servers = set()
     project.setId(uuid)
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
@@ -106,7 +107,7 @@ def test_project_post_non_created_project_remote_server(remote_server):
         assert args[1] == "/projects"
         assert kwargs["body"] == {"temporary": False, "project_id": uuid}
 
-        args[2]({})
+        args[2]({}, server=remote_server)
 
         assert len(project._created_servers) == 1
 
@@ -124,8 +125,8 @@ def test_project_post_on_created_project(local_server):
 
     uuid = uuid4()
     project = Project()
+    project._created_servers = set((local_server, ))
     project.setId(uuid)
-    project._created_servers.add(local_server)
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
         project.post(local_server, "/test", lambda: 0, body={"test": "test"})
@@ -144,8 +145,8 @@ def test_project_get_on_created_project(local_server):
 
     uuid = uuid4()
     project = Project()
+    project._created_servers = set((local_server, ))
     project.setId(uuid)
-    project._created_servers.add(local_server)
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
         project.get(local_server, "/test", lambda: 0)
@@ -163,8 +164,8 @@ def test_project_put_on_created_project(local_server):
 
     uuid = uuid4()
     project = Project()
+    project._created_servers = set((local_server, ))
     project.setId(uuid)
-    project._created_servers.add(local_server)
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
         project.put(local_server, "/test", lambda: 0, body={"test": "test"})
@@ -183,8 +184,8 @@ def test_project_delete_on_created_project(local_server):
 
     uuid = uuid4()
     project = Project()
+    project._created_servers = set((local_server, ))
     project.setId(uuid)
-    project._created_servers.add(local_server)
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
         project.delete(local_server, "/test", lambda: 0)
@@ -203,8 +204,8 @@ def test_project_close(local_server):
         signal = MagicMock()
 
         project = Project()
+        project._created_servers = set((local_server, ))
         project.setId(uuid)
-        project._created_servers.add(local_server)
 
         mock_signal = MagicMock()
         mock_signal_closed = MagicMock()
@@ -238,7 +239,7 @@ def test_project_close_multiple_servers(local_server, remote_server):
         signal = MagicMock()
 
         project = Project()
-        project._created_servers.add(local_server)
+        project._created_servers = set((local_server, ))
         project._created_servers.add(remote_server)
         project.setId(uuid)
 
@@ -276,8 +277,8 @@ def test_project_close_error(local_server):
         signal = MagicMock()
 
         project = Project()
-        project._created_servers.add(local_server)
         project.setId(uuid)
+        project._created_servers = set((local_server, ))
 
         mock_signal = MagicMock()
         mock_signal_closed = MagicMock()
@@ -307,7 +308,7 @@ def test_project_commit(local_server):
 
         project = Project()
         project.setId(str(uuid4()))
-        project._created_servers.add(local_server)
+        project._created_servers = set((local_server, ))
         project.commit()
 
         assert mock.called
@@ -320,7 +321,7 @@ def test_project_moveFromTemporaryToPath(tmpdir, local_server):
 
     project = Project()
     project.setId(str(uuid4()))
-    project._created_servers.add(local_server)
+    project._created_servers = set((local_server, ))
     project._temporary = True
 
     with patch("gns3.http_client.HTTPClient.put") as mock:

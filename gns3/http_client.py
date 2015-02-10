@@ -161,28 +161,6 @@ class HTTPClient(QtCore.QObject):
             self._connected = True
             self.connected_signal.emit()
 
-    def send_message(self, destination, params, callback):
-        """
-        Sends a message to the server.
-
-        :param destination: server destination method
-        :param params: params to send (dictionary)
-        :param callback: callback method to call when the server replies.
-        """
-
-        log.error("OLD Send message. Destination {destination}, {params}".format(destination=destination, params=params))
-        # TODO : Remove this method when migration to rest api is done
-
-    def send_notification(self, destination, params=None):
-        """
-        Sends a notification to the server. No reply is expected from the server.
-
-        :param destination: server destination method
-        :param params: params to send (dictionary)
-        """
-        log.error("OLD Send notification. Destination {destination}, {params}".format(destination=destination, params=params))
-        # TODO : Remove this method when migration to rest api is done
-
     def get(self, path, callback):
         """
         HTTP GET on the remote server

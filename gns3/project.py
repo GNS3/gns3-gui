@@ -213,7 +213,7 @@ class Project(QtCore.QObject):
         if server not in self._created_servers:
             func = functools.partial(self._projectOnServerCreated, method, path, callback, body)
 
-            body={
+            body = {
                 "temporary": self._temporary,
                 "project_id": self._id
             }
@@ -222,7 +222,7 @@ class Project(QtCore.QObject):
 
             server.post("/projects", func, body)
         else:
-            self._projectOnServerCreated(method, path, callback, body)
+            self._projectOnServerCreated(method, path, callback, body, params={}, server=server)
 
     def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, **kwargs):
         """
@@ -245,9 +245,8 @@ class Project(QtCore.QObject):
         if self._id is None:
             self._id = params["project_id"]
 
-        if server == self._servers.localServer():
+        if server == self._servers.localServer() and "path" in params:
             self._files_dir = params["path"]
-
 
         self._closed = False
         self._created_servers.add(server)
