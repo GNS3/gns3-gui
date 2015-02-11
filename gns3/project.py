@@ -271,6 +271,7 @@ class Project(QtCore.QObject):
 
     def _project_closed(self, params, error=False, server=None, **kwargs):
         if error:
+            # TODO: handle errors
             print(params)
         else:
             if self._id:

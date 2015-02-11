@@ -92,7 +92,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self._settings = {}
 
-        # TODO: Temporary not True if project from command line
+        # FIXME: Temporary not True if project from command line
         self._project = Project()
         self._project.setTemporary(True)
         self._project.setName("unsaved")

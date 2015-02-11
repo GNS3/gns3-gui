@@ -40,6 +40,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         self._visible = True
         self.visibilityChanged.connect(self._visibilityChangedSlot)
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
         self._refresh_timer = QtCore.QTimer(self)
