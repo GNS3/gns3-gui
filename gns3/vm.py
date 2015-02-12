@@ -20,6 +20,7 @@ Base class for VM classes.
 """
 
 from .node import Node
+from .ports.port import Port
 
 import logging
 log = logging.getLogger(__name__)

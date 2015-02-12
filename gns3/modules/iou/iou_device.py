@@ -22,6 +22,7 @@ IOU device implementation.
 import os
 import re
 import base64
+from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
@@ -33,7 +34,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class IOUDevice(Node):
+class IOUDevice(VM):
 
     """
     IOU device.
@@ -44,9 +45,10 @@ class IOUDevice(Node):
     """
 
     URL_PREFIX = "iou"
+    NIO_URL_PREFIX = "ports"
 
     def __init__(self, module, server, project):
-        Node.__init__(self, server, server, project)
+        VM.__init__(self, server, server, project)
 
         log.info("IOU instance is being created")
         self._vm_id = None
@@ -269,90 +271,6 @@ class IOUDevice(Node):
         elif updated or self._loading:
             log.info("IOU device {} has been updated".format(self.name()))
             self.updated_signal.emit()
-
-    def start(self):
-        """
-        Starts this IOU instance.
-        """
-
-        if self.status() == Node.started:
-            log.debug("{} is already running".format(self.name()))
-            return
-
-        log.debug("{} is starting".format(self.name()))
-        self.httpPost("/iou/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
-
-    def _startCallback(self, result, error=False, **kwargs):
-        """
-        Callback for start.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has started".format(self.name()))
-            self.setStatus(Node.started)
-            for port in self._ports:
-                # set ports as started
-                port.setStatus(Port.started)
-            self.started_signal.emit()
-
-    def stop(self):
-        """
-        Stops this IOU instance.
-        """
-
-        if self.status() == Node.stopped:
-            log.debug("{} is already stopped".format(self.name()))
-            return
-
-        log.debug("{} is stopping".format(self.name()))
-        self.httpPost("/iou/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
-
-    def _stopCallback(self, result, error=False, **kwargs):
-        """
-        Callback for stop.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has stopped".format(self.name()))
-            self.setStatus(Node.stopped)
-            for port in self._ports:
-                # set ports as stopped
-                port.setStatus(Port.stopped)
-            self.stopped_signal.emit()
-
-    def reload(self):
-        """
-        Reloads this IOU instance.
-        """
-
-        log.debug("{} is being reloaded".format(self.name()))
-        self.httpPost("/iou/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._stopCallback)
-
-    def _reloadCallback(self, result, error=False, **kwargs):
-        """
-        Callback for reload.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))
 
     def startPacketCapture(self, port, capture_file_name, data_link_type):
         """
