@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
+    <width>460</width>
     <height>508</height>
    </rect>
   </property>
@@ -51,7 +51,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="uiIOURCPathLabel">
          <property name="text">
-          <string>Path to IOURC (pushed to the server):</string>
+          <string>Path to IOURC (local Linux server only):</string>
          </property>
         </widget>
        </item>
@@ -130,136 +130,6 @@
           </item>
          </layout>
         </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Advanced settings</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QGroupBox" name="uiConsolePortRangeGroupBox">
-         <property name="title">
-          <string>Console port range</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QSpinBox" name="uiConsoleStartPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>4001</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="uiConsolePortRangeLabel">
-            <property name="text">
-             <string>to</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="uiConsoleEndPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>4500</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="uiUDPPortRangeGroupBox">
-         <property name="title">
-          <string>UDP tunneling port range</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QSpinBox" name="uiUDPStartPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> UDP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>30001</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="uiUDPPortRangeLabel">
-            <property name="text">
-             <string>to</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="uiUDPEndPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> UDP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>40000</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>147</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>304</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
