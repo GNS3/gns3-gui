@@ -79,7 +79,6 @@ class Node(QtCore.QObject):
         self._project = project
         self._initialized = False
         self._status = 0
-        self._vm_id = None
 
     @classmethod
     def reset(cls):
@@ -174,15 +173,6 @@ class Node(QtCore.QObject):
         """
 
         return self._project
-
-    def vm_id(self):
-        """
-        Return the ID of this device
-
-        :returns: identifier (string)
-        """
-
-        return self._vm_id
 
     def id(self):
         """
@@ -581,116 +571,3 @@ class Node(QtCore.QObject):
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
-
-    def delete(self):
-        """
-        Deletes this VPCS instance.
-        """
-
-        log.debug("VPCS device {} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        if self._vm_id:
-            self.httpDelete("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._deleteCallback)
-        else:
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-
-    def _deleteCallback(self, result, error=False, **kwargs):
-        """
-        Callback for delete.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        log.info("{} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
-        self._module.removeNode(self)
-
-    def start(self):
-        """
-        Starts this VPCS instance.
-        """
-
-        if self.status() == Node.started:
-            log.debug("{} is already running".format(self.name()))
-            return
-
-        log.debug("{} is starting".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback)
-
-    def _startCallback(self, result, error=False, **kwargs):
-        """
-        Callback for start.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has started".format(self.name()))
-            self.setStatus(Node.started)
-            for port in self._ports:
-                # set ports as started
-                port.setStatus(Port.started)
-            self.started_signal.emit()
-
-    def stop(self):
-        """
-        Stops this VPCS instance.
-        """
-
-        if self.status() == Node.stopped:
-            log.debug("{} is already stopped".format(self.name()))
-            return
-
-        log.debug("{} is stopping".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/stop".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._stopCallback)
-
-    def _stopCallback(self, result, error=False, **kwargs):
-        """
-        Callback for stop.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has stopped".format(self.name()))
-            self.setStatus(Node.stopped)
-            for port in self._ports:
-                # set ports as stopped
-                port.setStatus(Port.stopped)
-            self.stopped_signal.emit()
-
-    def reload(self):
-        """
-        Reloads this VPCS instance.
-        """
-
-        log.debug("{} is being reloaded".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/reload".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._reloadCallback)
-
-    def _reloadCallback(self, result, error=False, **kwargs):
-        """
-        Callback for reload.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))

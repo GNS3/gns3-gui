@@ -21,7 +21,7 @@ VPCS device implementation.
 
 import os
 from functools import partial
-from gns3.node import Node
+from gns3.vm import VM
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.utils.normalize_filename import normalize_filename
@@ -30,7 +30,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class VPCSDevice(Node):
+class VPCSDevice(VM):
 
     """
     VPCS device.
@@ -43,7 +43,7 @@ class VPCSDevice(Node):
     NIO_URL_PREFIX = "ports"
 
     def __init__(self, module, server, project):
-        Node.__init__(self, module, server, project)
+        VM.__init__(self, module, server, project)
 
         log.info("VPCS instance is being created")
         self._vm_id = None

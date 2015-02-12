@@ -17,39 +17,10 @@
 
 
 from unittest.mock import patch, Mock
-from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
-
-
-def test_vpcs_device_start(vpcs_device):
-
-    with patch('gns3.node.Node.httpPost') as mock:
-        vpcs_device.start()
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}/start".format(vm_id=vpcs_device.vm_id())
-
-
-def test_vpcs_device_stop(vpcs_device):
-
-    with patch('gns3.node.Node.httpPost') as mock:
-        vpcs_device.setStatus(Node.started)
-        vpcs_device.stop()
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}/stop".format(vm_id=vpcs_device.vm_id())
-
-
-def test_vpcs_device_reload(vpcs_device):
-
-    with patch('gns3.node.Node.httpPost') as mock:
-        vpcs_device.reload()
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}/reload".format(vm_id=vpcs_device.vm_id())
 
 
 def test_allocateUDPPort(vpcs_device):

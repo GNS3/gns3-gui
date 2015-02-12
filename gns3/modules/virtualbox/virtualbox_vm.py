@@ -20,7 +20,7 @@ VirtualBox VM implementation.
 """
 
 from functools import partial
-from gns3.node import Node
+from gns3.vm import VM
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VBOX_VM_SETTINGS
@@ -29,7 +29,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class VirtualBoxVM(Node):
+class VirtualBoxVM(VM):
 
     """
     VirtualBox VM.
@@ -44,7 +44,7 @@ class VirtualBoxVM(Node):
 
     def __init__(self, module, server, project):
 
-        Node.__init__(self, module, server, project)
+        VM.__init__(self, module, server, project)
         log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
         self._export_directory = None
