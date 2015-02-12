@@ -113,6 +113,21 @@ def vpcs_device(local_server, project):
 
 
 @pytest.fixture
+def iou_device(local_server, project):
+
+    from gns3.modules.iou.iou_device import IOUDevice
+    from gns3.modules.iou import IOU
+
+    device = IOUDevice(IOU(), local_server, project)
+    device._iou_device_id = str(uuid.uuid4())
+    settings = device._settings
+    settings["name"] = "IOU 1"
+    device._settings = settings
+    device.setInitialized(True)
+    return device
+
+
+@pytest.fixture
 def virtualbox_vm(local_server, project):
 
     from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM

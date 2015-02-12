@@ -136,11 +136,6 @@ class IOU(Module):
         self._working_dir = path
         log.info("local working directory for IOU module: {}".format(self._working_dir))
 
-        # update the server with the new working directory / project name
-        for server in self._servers:
-            if server.connected():
-                self._sendSettings(server)
-
     def setImageFilesDir(self, path):
         """
         Sets the image files directory path this module.
@@ -168,7 +163,6 @@ class IOU(Module):
 
         log.info("adding server {}:{} to IOU module".format(server.host, server.port))
         self._servers.append(server)
-        self._sendSettings(server)
 
     def removeServer(self, server):
         """
@@ -290,40 +284,13 @@ class IOU(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def _sendSettings(self, server):
-        """
-        Sends the module settings to the server.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("sending IOU settings to server {}:{}".format(server.host, server.port))
-        params = self._settings.copy()
-
-        if os.path.isfile(params["iourc"]):
-            # encode the iourc file in base64
-            params["iourc"] = self._base64iourc(params["iourc"])
-        else:
-            del params["iourc"]
-
-        # send the local working directory only if this is a local server
-        if server.isLocal():
-            params.update({"working_dir": self._working_dir})
-        else:
-            if "iouyap" in params:
-                del params["iouyap"]  # do not send iouyap path to remote servers
-            project_name = os.path.basename(self._working_dir)
-            if project_name.endswith("-files"):
-                project_name = project_name[:-6]
-            params.update({"project_name": project_name})
-        server.send_notification("iou.settings", params)
-
-    def createNode(self, node_class, server):
+    def createNode(self, node_class, server, project):
         """
         Creates a new node.
 
         :param node_class: Node object
-        :param server: WebSocketClient instance
+        :param server: HTTPClient instance
+        :param project: Project instance
         """
 
         log.info("creating node {}".format(node_class))
@@ -331,19 +298,11 @@ class IOU(Module):
         if server.isLocal() and (not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"])):
             raise ModuleError("The path to IOURC must be configured")
 
-        if not server.connected():
-            try:
-                log.info("reconnecting to server {}:{}".format(server.host, server.port))
-                server.reconnect()
-            except OSError as e:
-                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
-                                                                                 server.port,
-                                                                                 e))
         if server not in self._servers:
             self.addServer(server)
 
         # create an instance of the node class
-        return node_class(self, server)
+        return node_class(self, server, project)
 
     def setupNode(self, node, node_name):
         """

@@ -331,3 +331,6 @@ class HTTPClient(QtCore.QObject):
                 "port": self.port,
                 "local": self._local,
                 "cloud": self._cloud}
+
+    def isCloud(self):
+        return False

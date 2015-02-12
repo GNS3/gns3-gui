@@ -164,10 +164,6 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiIOURCPathLineEdit.setText(settings["iourc"])
         self.uiIouyapPathLineEdit.setText(settings["iouyap"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
-        self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
-        self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
-        self.uiUDPStartPortSpinBox.setValue(settings["udp_start_port_range"])
-        self.uiUDPEndPortSpinBox.setValue(settings["udp_end_port_range"])
 
     def _updateRemoteServersSlot(self):
         """
@@ -206,8 +202,4 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         new_settings["iourc"] = self.uiIOURCPathLineEdit.text()
         new_settings["iouyap"] = self.uiIouyapPathLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
-        new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
-        new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
-        new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
-        new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         IOU.instance().setSettings(new_settings)

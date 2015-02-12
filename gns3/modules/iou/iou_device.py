@@ -40,13 +40,16 @@ class IOUDevice(Node):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server):
-        Node.__init__(self, server)
+    URL_PREFIX = "iou"
+
+    def __init__(self, module, server, project):
+        Node.__init__(self, server, server, project)
 
         log.info("IOU instance is being created")
-        self._iou_id = None
+        self._vm_id = None
         self._defaults = {}
         self._inital_settings = None
         self._loading = False
@@ -112,7 +115,7 @@ class IOUDevice(Node):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, console=None, iou_id=None, initial_settings={}, base_name="IOU"):
+    def setup(self, iou_path, name=None, console=None, vm_id=None, initial_settings={}, base_name="IOU"):
         """
         Setups this IOU device.
 
@@ -132,8 +135,8 @@ class IOUDevice(Node):
         params = {"name": name,
                   "path": iou_path}
 
-        if iou_id:
-            params["iou_id"] = iou_id
+        if vm_id:
+            params["vm_id"] = vm_id
 
         if console:
             params["console"] = self._settings["console"] = console
@@ -145,7 +148,7 @@ class IOUDevice(Node):
         if initial_settings:
             self._inital_settings = initial_settings
 
-        self._server.send_message("iou.create", params, self._setupCallback)
+        self.httpPost("/iou/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -157,11 +160,11 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
-        self._iou_id = result["id"]
-        if not self._iou_id:
+        self._vm_id = result["vm_id"]
+        if not self._vm_id:
             self.error_signal.emit(self.id(), "returned ID from server is null")
             return
 
@@ -181,35 +184,6 @@ class IOUDevice(Node):
             log.info("IOU instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
-
-    def delete(self):
-        """
-        Deletes this IOU instance.
-        """
-
-        log.debug("IOU device {} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        if self._iou_id:
-            self._server.send_message("iou.delete", {"id": self._iou_id}, self._deleteCallback)
-        else:
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-
-    def _deleteCallback(self, result, error=False, **kwargs):
-        """
-        Callback for delete.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        log.info("{} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
-        self._module.removeNode(self)
 
     def _base64Config(self, config_path):
         """
@@ -242,7 +216,7 @@ class IOUDevice(Node):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
-        params = {"id": self._iou_id}
+        params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
@@ -252,7 +226,7 @@ class IOUDevice(Node):
             params["initial_config_base64"] = self._base64Config(new_settings["initial_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.send_message("iou.update", params, self._updateCallback)
+        self.httpPut("/iou/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False, **kwargs):
         """
@@ -264,7 +238,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
         updated = False
@@ -306,7 +280,7 @@ class IOUDevice(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.send_message("iou.start", {"id": self._iou_id}, self._startCallback)
+        self.httpPost("/iou/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -318,7 +292,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
@@ -337,7 +311,7 @@ class IOUDevice(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.send_message("iou.stop", {"id": self._iou_id}, self._stopCallback)
+        self.httpPost("/iou/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
@@ -349,7 +323,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -364,7 +338,7 @@ class IOUDevice(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.send_message("iou.reload", {"id": self._iou_id}, self._reloadCallback)
+        self.httpPost("/iou/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._stopCallback)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """
@@ -376,97 +350,9 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
-
-    def allocateUDPPort(self, port_id):
-        """
-        Requests an UDP port allocation.
-
-        :param port_id: port identifier
-        """
-
-        log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("iou.allocate_udp_port", {"id": self._iou_id, "port_id": port_id}, self._allocateUDPPortCallback)
-
-    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
-        """
-        Callback for allocateUDPPort.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            port_id = result["port_id"]
-            lport = result["lport"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
-
-    def addNIO(self, port, nio):
-        """
-        Adds a new NIO on the specified port for this IOU instance.
-
-        :param port: Port instance
-        :param nio: NIO instance
-        """
-
-        params = {"id": self._iou_id,
-                  "slot": port.slotNumber(),
-                  "port": port.portNumber(),
-                  "port_id": port.id()}
-
-        params["nio"] = self.getNIOInfo(nio)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.send_message("iou.add_nio", params, self._addNIOCallback)
-
-    def _addNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for addNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            self.nio_cancel_signal.emit(self.id())
-        else:
-            self.nio_signal.emit(self.id(), result["port_id"])
-
-    def deleteNIO(self, port):
-        """
-        Deletes an NIO from the specified port on this IOU instance
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._iou_id,
-                  "port": port.portNumber(),
-                  "slot": port.slotNumber()}
-
-        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        self._server.send_message("iou.delete_nio", params, self._deleteNIOCallback)
-
-    def _deleteNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for deleteNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
 
     def startPacketCapture(self, port, capture_file_name, data_link_type):
         """
@@ -477,7 +363,7 @@ class IOUDevice(Node):
         :param data_link_type: PCAP data link type
         """
 
-        params = {"id": self._iou_id,
+        params = {"id": self._vm_id,
                   "port_id": port.id(),
                   "port": port.portNumber(),
                   "slot": port.slotNumber(),
@@ -497,7 +383,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
                 if port.id() == result["port_id"]:
@@ -516,7 +402,7 @@ class IOUDevice(Node):
         :param port: Port instance
         """
 
-        params = {"id": self._iou_id,
+        params = {"id": self._vm_id,
                   "port_id": port.id(),
                   "port": port.portNumber(),
                   "slot": port.slotNumber()}
@@ -534,7 +420,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
                 if port.id() == result["port_id"]:
@@ -562,14 +448,14 @@ class IOUDevice(Node):
                                                                        nvram=self._settings["nvram"])
 
         info = """Device {name} is {state}
-  Node ID is {id}, server's IOU device ID is {iou_id}
+  Node ID is {id}, server's IOU device ID is {vm_id}
   Hardware is Cisco IOU generic device with {memories_info}
   Device's server runs on {host}:{port}, console is on port {console}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
            id=self.id(),
-           iou_id=self._iou_id,
+           vm_id=self._vm_id,
            state=state,
            memories_info=memories_info,
            host=self._server.host,
@@ -598,7 +484,7 @@ class IOUDevice(Node):
         """
 
         iou = {"id": self.id(),
-               "iou_id": self._iou_id,
+               "vm_id": self._vm_id,
                "type": self.__class__.__name__,
                "description": str(self),
                "properties": {},
@@ -635,7 +521,7 @@ class IOUDevice(Node):
         """
 
         self.node_info = node_info
-        iou_id = node_info.get("iou_id")
+        vm_id = node_info.get("vm_id")
         settings = node_info["properties"]
         name = settings.pop("name")
         path = settings.pop("path")
@@ -654,7 +540,7 @@ class IOUDevice(Node):
         self._loading = True
         log.info("iou device {} is loading".format(name))
         self.setName(name)
-        self.setup(path, name, console, iou_id, settings)
+        self.setup(path, name, console, vm_id, settings)
 
     def _updatePortSettings(self):
         """
@@ -687,7 +573,7 @@ class IOUDevice(Node):
         """
 
         self._config_export_path = config_export_path
-        self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigCallback)
+        self._server.send_message("iou.export_config", {"id": self._vm_id}, self._exportConfigCallback)
 
     def _exportConfigCallback(self, result, error=False, **kwargs):
         """
@@ -699,7 +585,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
 
             if "initial_config_base64" in result and self._config_export_path:
@@ -719,7 +605,7 @@ class IOUDevice(Node):
         """
 
         self._export_directory = directory
-        self._server.send_message("iou.export_config", {"id": self._iou_id}, self._exportConfigToDirectoryCallback)
+        self._server.send_message("iou.export_config", {"id": self._vm_id}, self._exportConfigToDirectoryCallback)
 
     def _exportConfigToDirectoryCallback(self, result, error=False, **kwargs):
         """
@@ -731,7 +617,7 @@ class IOUDevice(Node):
 
         if error:
             log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
 
             if "initial_config_base64" in result:
