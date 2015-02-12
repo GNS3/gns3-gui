@@ -19,6 +19,7 @@
 Base class for node classes.
 """
 
+from functools import partial
 from .qt import QtCore
 
 import logging
@@ -78,6 +79,7 @@ class Node(QtCore.QObject):
         self._project = project
         self._initialized = False
         self._status = 0
+        self._vm_id = None
 
     @classmethod
     def reset(cls):
@@ -172,6 +174,15 @@ class Node(QtCore.QObject):
         """
 
         return self._project
+
+    def vm_id(self):
+        """
+        Return the ID of this device
+
+        :returns: identifier (string)
+        """
+
+        return self._vm_id
 
     def id(self):
         """
@@ -482,3 +493,204 @@ class Node(QtCore.QObject):
         """
 
         self._project.delete(self._server, path, callback)
+
+    def allocateUDPPort(self, port_id):
+        """
+        Requests an UDP port allocation.
+
+        :param port_id: port identifier
+        """
+
+        log.debug("{} is requesting an UDP port allocation".format(self.name()))
+        self._server.post("/ports/udp", partial(self._allocateUDPPortCallback, port_id))
+
+    def _allocateUDPPortCallback(self, port_id, result, error=False, **kwargs):
+        """
+        Callback for allocateUDPPort.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            lport = result["udp_port"]
+            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
+            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
+
+    def addNIO(self, port, nio):
+        """
+        Adds a new NIO on the specified port for this VPCS instance.
+
+        :param port: Port instance
+        :param nio: NIO instance
+        """
+
+        params = self.getNIOInfo(nio)
+        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
+        self.httpPost("/{prefix}/vms/{vm_id}/{nio_prefix}/{port}/nio".format(
+            nio_prefix=self.NIO_URL_PREFIX,
+            port=port.portNumber(),
+            prefix=self.URL_PREFIX,
+            vm_id=self._vm_id),
+            partial(self._addNIOCallback, port.id()), params)
+
+    def _addNIOCallback(self, port_id, result, error=False, **kwargs):
+        """
+        Callback for addNIO.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            self.nio_cancel_signal.emit(self.id())
+        else:
+            self.nio_signal.emit(self.id(), port_id)
+
+    def deleteNIO(self, port):
+        """
+        Deletes an NIO from the specified port on this instance
+
+        :param port: Port instance
+        """
+
+        log.debug("{} is deleting an NIO".format(self.name()))
+        self.httpDelete("/{prefix}/vms/{vm_id}/{nio_prefix}/{port}/nio".format(
+            nio_prefix=self.NIO_URL_PREFIX,
+            prefix=self.URL_PREFIX,
+            port=port.portNumber(),
+            vm_id=self._vm_id),
+            self._deleteNIOCallback)
+
+    def _deleteNIOCallback(self, result, error=False, **kwargs):
+        """
+        Callback for deleteNIO.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("Error while deleting NIO {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return
+
+        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
+
+    def delete(self):
+        """
+        Deletes this VPCS instance.
+        """
+
+        log.debug("VPCS device {} is being deleted".format(self.name()))
+        # first delete all the links attached to this node
+        self.delete_links_signal.emit()
+        if self._vm_id:
+            self.httpDelete("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._deleteCallback)
+        else:
+            self.deleted_signal.emit()
+            self._module.removeNode(self)
+
+    def _deleteCallback(self, result, error=False, **kwargs):
+        """
+        Callback for delete.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        log.info("{} has been deleted".format(self.name()))
+        self.deleted_signal.emit()
+        self._module.removeNode(self)
+
+    def start(self):
+        """
+        Starts this VPCS instance.
+        """
+
+        if self.status() == Node.started:
+            log.debug("{} is already running".format(self.name()))
+            return
+
+        log.debug("{} is starting".format(self.name()))
+        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback)
+
+    def _startCallback(self, result, error=False, **kwargs):
+        """
+        Callback for start.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while starting {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            log.info("{} has started".format(self.name()))
+            self.setStatus(Node.started)
+            for port in self._ports:
+                # set ports as started
+                port.setStatus(Port.started)
+            self.started_signal.emit()
+
+    def stop(self):
+        """
+        Stops this VPCS instance.
+        """
+
+        if self.status() == Node.stopped:
+            log.debug("{} is already stopped".format(self.name()))
+            return
+
+        log.debug("{} is stopping".format(self.name()))
+        self.httpPost("/{prefix}/vms/{vm_id}/stop".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._stopCallback)
+
+    def _stopCallback(self, result, error=False, **kwargs):
+        """
+        Callback for stop.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while stopping {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            log.info("{} has stopped".format(self.name()))
+            self.setStatus(Node.stopped)
+            for port in self._ports:
+                # set ports as stopped
+                port.setStatus(Port.stopped)
+            self.stopped_signal.emit()
+
+    def reload(self):
+        """
+        Reloads this VPCS instance.
+        """
+
+        log.debug("{} is being reloaded".format(self.name()))
+        self.httpPost("/{prefix}/vms/{vm_id}/reload".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._reloadCallback)
+
+    def _reloadCallback(self, result, error=False, **kwargs):
+        """
+        Callback for reload.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            log.info("{} has reloaded".format(self.name()))
