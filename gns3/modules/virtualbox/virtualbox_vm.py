@@ -21,6 +21,7 @@ VirtualBox VM implementation.
 
 from functools import partial
 from gns3.vm import VM
+from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VBOX_VM_SETTINGS

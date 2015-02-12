@@ -19,7 +19,6 @@
 Base class for VM classes.
 """
 
-from .qt import QtCore
 from .node import Node
 
 import logging
