@@ -57,7 +57,8 @@ def test_dump(vpcs_device, project, local_server):
                         {
                             "id": vpcs_device.ports()[0].id(),
                             "name": "Ethernet0",
-                            "port_number": 0
+                            "port_number": 0,
+                            "adapter_number": 0
                         }
                     ],
                     "properties": {
@@ -135,7 +136,8 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                             "link_id": 1,
                             "name": "Ethernet0",
                             "nio": "NIO_UDP",
-                            "port_number": 0
+                            "port_number": 0,
+                            "adapter_number": 0
                         }
                     ],
                     "properties": {

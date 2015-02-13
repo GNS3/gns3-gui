@@ -111,7 +111,7 @@ class Router(VM):
             new_port = port(port_name)
             new_port.setShortName(short_name)
             new_port.setPortNumber(port_number)
-            new_port.setSlotNumber(slot_number)
+            new_port.setAdapterNumber(slot_number)
             new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
@@ -124,7 +124,7 @@ class Router(VM):
         """
 
         for port in self._ports.copy():
-            if port.slotNumber() == slot_number:
+            if port.adapterNumber() == slot_number:
                 self._ports.remove(port)
                 log.debug("port {} has been removed".format(port.name()))
 
@@ -147,7 +147,7 @@ class Router(VM):
             new_port.setShortName(short_name)
             new_port.setPortNumber(base + port_number)
             # WICs are always in adapter slot 0.
-            new_port.setSlotNumber(0)
+            new_port.setAdapterNumber(0)
             new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
@@ -165,7 +165,7 @@ class Router(VM):
         for port_number in range(0, nb_ports):
             wic_ports_to_delete.append(base + port_number)
         for port in self._ports.copy():
-            if port.slotNumber() == 0 and port.portNumber() in wic_ports_to_delete:
+            if port.adapterNumber() == 0 and port.portNumber() in wic_ports_to_delete:
                 self._ports.remove(port)
                 log.debug("port {} has been removed".format(port.name()))
 
@@ -185,7 +185,7 @@ class Router(VM):
                 nb_ports = WIC_MATRIX[wic]["nb_ports"]
                 for port_number in range(0, nb_ports):
                     for port in self._ports:
-                        if port.slotNumber() == 0 and port.portNumber() == base + port_number:
+                        if port.adapterNumber() == 0 and port.portNumber() == base + port_number:
                             if port.linkType() == "Serial":
                                 wic_port_number = wic_serial_port_count
                                 wic_serial_port_count += 1
@@ -433,7 +433,7 @@ class Router(VM):
         # TODO: packet capture
         params = {"id": self._router_id,
                   "port_id": port.id(),
-                  "slot": port.slotNumber(),
+                  "slot": port.adapterNumber(),
                   "port": port.portNumber(),
                   "capture_file_name": capture_file_name,
                   "data_link_type": data_link_type}
@@ -474,7 +474,7 @@ class Router(VM):
         # TODO: packet capture
         params = {"id": self._router_id,
                   "port_id": port.id(),
-                  "slot": port.slotNumber(),
+                  "slot": port.adapterNumber(),
                   "port": port.portNumber()}
 
         log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
@@ -574,7 +574,7 @@ class Router(VM):
         """
 
         params = {"id": self._router_id,
-                  "slot": port.slotNumber(),
+                  "slot": port.adapterNumber(),
                   "port": port.portNumber(),
                   "port_id": port.id()}
 
@@ -606,7 +606,7 @@ class Router(VM):
         """
 
         params = {"id": self._router_id,
-                  "slot": port.slotNumber(),
+                  "slot": port.adapterNumber(),
                   "port": port.portNumber()}
 
         log.debug("{} is deleting an NIO: {}".format(self.name(), params))
@@ -662,7 +662,7 @@ class Router(VM):
 
                 port_names = {}
                 for port in self._ports:
-                    if port.slotNumber() == slot_number and port.portNumber() < 16:
+                    if port.adapterNumber() == slot_number and port.portNumber() < 16:
                         port_names[port.name()] = port
                 sorted_ports = sorted(port_names.keys())
 
@@ -692,7 +692,7 @@ class Router(VM):
                 port_names = {}
                 for port_number in range(0, nb_ports):
                     for port in self._ports:
-                        if port.slotNumber() == 0 and port.portNumber() == base + port_number:
+                        if port.adapterNumber() == 0 and port.portNumber() == base + port_number:
                             port_names[port.name()] = port
                 sorted_ports = sorted(port_names.keys())
 
@@ -859,7 +859,7 @@ class Router(VM):
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.slotNumber():
+                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.adapterNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 

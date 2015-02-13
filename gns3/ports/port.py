@@ -60,8 +60,8 @@ class Port(object):
 
         self._name = name
         self._short_name = None
-        self._port_number = None
-        self._slot_number = None
+        self._port_number = 0
+        self._adapter_number = 0
         self._stub = stub
         self._link_id = None
         self._port_label = None
@@ -171,23 +171,23 @@ class Port(object):
 
         self._status = status
 
-    def slotNumber(self):
+    def adapterNumber(self):
         """
         Returns the slot number for this port.
 
         :returns: current slot number (integer)
         """
 
-        return self._slot_number
+        return self._adapter_number
 
-    def setSlotNumber(self, slot_number):
+    def setAdapterNumber(self, adapter_number):
         """
-        Sets the slot number for this port.
+        Sets the adapter number for this port.
 
-        :param slot_number: new slot number (integer)
+        :param adapter_number: new slot number (integer)
         """
 
-        self._slot_number = slot_number
+        self._adapter_number = adapter_number
 
     def portNumber(self):
         """
@@ -585,8 +585,8 @@ class Port(object):
             port["nio"] = str(self._nio)
         if self._port_number is not None:
             port["port_number"] = self._port_number
-        if self._slot_number is not None:
-            port["slot_number"] = self._slot_number
+        if self._adapter_number is not None:
+            port["adapter_number"] = self._adapter_number
         if self._stub:
             port["stub"] = self._stub
         if self.description():

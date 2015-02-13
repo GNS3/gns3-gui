@@ -394,7 +394,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         node_ports = node.ports()
         for node_port in node_ports:
             # ports > 15 are WICs ones.
-            if node_port.slotNumber() == slot_number and node_port.portNumber() <= 15 and not node_port.isFree():
+            if node_port.adapterNumber() == slot_number and node_port.portNumber() <= 15 and not node_port.isFree():
                 adapter = settings["slot" + str(slot_number)]
                 index = self._widget_slots[slot_number].findText(adapter)
                 if index != -1:
@@ -415,7 +415,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         node_ports = node.ports()
         for node_port in node_ports:
             # ports > 15 are WICs ones.
-            if node_port.slotNumber() == wic_number and node_port.portNumber() > 15 and not node_port.isFree():
+            if node_port.adapterNumber() == wic_number and node_port.portNumber() > 15 and not node_port.isFree():
                 wic = settings["wic" + str(wic_number)]
                 index = self._widget_wics[wic_number].findText(wic)
                 if index != -1:

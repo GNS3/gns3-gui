@@ -41,7 +41,6 @@ class VirtualBoxVM(VM):
     """
 
     URL_PREFIX = "virtualbox"
-    NIO_URL_PREFIX = "adapters"
 
     def __init__(self, module, server, project):
 
@@ -67,15 +66,16 @@ class VirtualBoxVM(VM):
         :param adapters: number of adapters
         """
 
-        for port_number in range(0, adapters):
-            port_name = EthernetPort.longNameType() + str(port_number)
-            short_name = EthernetPort.shortNameType() + str(port_number)
-            new_port = EthernetPort(port_name)
+        for adapter_number in range(0, adapters):
+            adapter_name = EthernetPort.longNameType() + str(adapter_number)
+            short_name = EthernetPort.shortNameType() + str(adapter_number)
+            new_port = EthernetPort(adapter_name)
             new_port.setShortName(short_name)
-            new_port.setPortNumber(port_number)
+            new_port.setAdapterNumber(adapter_number)
+            new_port.setPortNumber(0)
             new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
-            log.debug("port {} has been added".format(port_name))
+            log.debug("Adapter {} has been added".format(adapter_name))
 
     def setup(self, vmname, name=None, vm_id=None, linked_clone=False, additional_settings={}):
         """

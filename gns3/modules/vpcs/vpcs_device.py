@@ -39,7 +39,6 @@ class VPCSDevice(VM):
     :param project: Project instance
     """
     URL_PREFIX = "vpcs"
-    NIO_URL_PREFIX = "ports"
 
     def __init__(self, module, server, project):
         VM.__init__(self, module, server, project)
@@ -62,6 +61,7 @@ class VPCSDevice(VM):
         # VPCS devices have only one Ethernet port
         port = EthernetPort(port_name)
         port.setShortName(short_name)
+        port.setAdapterNumber(0)
         port.setPortNumber(0)
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))

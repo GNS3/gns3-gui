@@ -19,7 +19,8 @@
 from unittest.mock import patch, Mock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
+from gns3.ports.port import Port
+from gns3.nios.nio_udp import NIOUDP
 
 
 def test_vpcs_device_start(vpcs_device):
@@ -48,3 +49,46 @@ def test_vpcs_device_reload(vpcs_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/vpcs/vms/{vm_id}/reload".format(vm_id=vpcs_device.vm_id())
+
+
+def test_addNIO(vpcs_device):
+
+    with patch('gns3.node.Node.httpPost') as mock:
+        port = Port("Port 1")
+        port.setPortNumber(0)
+        port.setAdapterNumber(0)
+        nio = NIOUDP(4242, "127.0.0.1", 4243)
+        vpcs_device.addNIO(port, nio)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vpcs/vms/{vm_id}/adapters/0/ports/0/nio".format(vm_id=vpcs_device.vm_id())
+
+        # Connect the signal
+        signal_mock = Mock()
+        vpcs_device.nio_signal.connect(signal_mock)
+
+        # Callback
+        args[1]({})
+
+        # Check the signal
+        assert signal_mock.called
+        args, kwargs = signal_mock.call_args
+        assert args[0] == vpcs_device.id()
+        assert args[1] == port.id()
+
+
+def test_deleteNIO(vpcs_device):
+
+    with patch('gns3.node.Node.httpPost') as mock_post:
+        with patch('gns3.node.Node.httpDelete') as mock_delete:
+            port = Port("Port 1")
+            port.setPortNumber(0)
+            port.setAdapterNumber(0)
+            nio = NIOUDP(4242, "127.0.0.1", 4243)
+            vpcs_device.addNIO(port, nio)
+
+            vpcs_device.deleteNIO(port)
+            assert mock_delete.called
+
+            args, kwargs = mock_delete.call_args
+            assert args[0] == "/vpcs/vms/{vm_id}/adapters/0/ports/0/nio".format(vm_id=vpcs_device.vm_id())

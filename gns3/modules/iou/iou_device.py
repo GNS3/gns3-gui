@@ -45,7 +45,6 @@ class IOUDevice(VM):
     """
 
     URL_PREFIX = "iou"
-    NIO_URL_PREFIX = "ports"
 
     def __init__(self, module, server, project):
         VM.__init__(self, server, server, project)
@@ -97,7 +96,7 @@ class IOUDevice(VM):
                 new_port = port(port_name)
                 new_port.setShortName(short_name)
                 new_port.setPortNumber(port_number)
-                new_port.setSlotNumber(slot_number)
+                new_port.setAdapterNumber(slot_number)
                 new_port.setPacketCaptureSupported(True)
                 # self._occupied_slots.append(slot_number)
                 self._ports.append(new_port)
@@ -111,9 +110,9 @@ class IOUDevice(VM):
         """
 
         for port in self._ports.copy():
-            if (port.slotNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet") or \
-                    (port.slotNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
-                # self._occupied_slots.remove(port.slotNumber())
+            if (port.adapterNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet") or \
+                    (port.adapterNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
+                # self._occupied_slots.remove(port.adapterNumber())
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
@@ -284,7 +283,7 @@ class IOUDevice(VM):
         params = {"id": self._vm_id,
                   "port_id": port.id(),
                   "port": port.portNumber(),
-                  "slot": port.slotNumber(),
+                  "slot": port.adapterNumber(),
                   "capture_file_name": capture_file_name,
                   "data_link_type": data_link_type}
 
@@ -323,7 +322,7 @@ class IOUDevice(VM):
         params = {"id": self._vm_id,
                   "port_id": port.id(),
                   "port": port.portNumber(),
-                  "slot": port.slotNumber()}
+                  "slot": port.adapterNumber()}
 
         log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
         self._server.send_message("iou.stop_capture", params, self._stopPacketCaptureCallback)
@@ -471,7 +470,7 @@ class IOUDevice(VM):
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.slotNumber():
+                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.adapterNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
