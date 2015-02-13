@@ -116,13 +116,14 @@ class IOUDevice(VM):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, console=None, vm_id=None, initial_settings={}, base_name="IOU"):
+    def setup(self, iou_path, name=None, console=None, vm_id=None, initial_settings={}, base_name="IOU", initial_config=None):
         """
         Setups this IOU device.
 
         :param iou_path: path to an IOU image
         :param name: optional name
         :param console: optional TCP console port
+        :param initial_config: path to initial configuration file
         """
 
         # let's create a unique name if none has been chosen
@@ -148,6 +149,13 @@ class IOUDevice(VM):
         # other initial settings will be applied when the router has been created
         if initial_settings:
             self._inital_settings = initial_settings
+
+        if initial_config:
+            try:
+                with open(initial_config) as f:
+                    params["initial_config"] = f.read()
+            except (OSError) as e:
+                log.error("Could not load the initial configuration file to {}".format(initial_config, e))
 
         self.httpPost("/iou/vms", self._setupCallback, body=params)
 
@@ -222,9 +230,12 @@ class IOUDevice(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "initial_config" in new_settings and self._settings["initial_config"] != new_settings["initial_config"] \
-                and not self.server().isLocal() and os.path.isfile(new_settings["initial_config"]):
-            params["initial_config_base64"] = self._base64Config(new_settings["initial_config"])
+        if "initial_config" in new_settings:
+            try:
+                with open(new_settings["initial_config"]) as f:
+                    params["initial_config"] = f.read()
+            except (OSError) as e:
+                log.error("Could not load the initial configuration file to {}".format(initial_config, e))
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/iou/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)

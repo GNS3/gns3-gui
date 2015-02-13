@@ -81,6 +81,28 @@ def test_iou_device_setup_with_uuid(iou_device, project):
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
+def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir):
+    """
+    If we have an ID that mean the VM already exits and we should not send startup_script
+    """
+
+    initial_config = str(tmpdir / "config.cfg")
+    with open(initial_config, "w+") as f:
+        f.write("hostname %h")
+
+    with patch('gns3.node.Node.httpPost') as mock:
+        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", initial_config=initial_config)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms"
+        assert kwargs["body"] == {
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "name": "PC 1",
+            "path": "/tmp/iou.bin",
+            "initial_config": "hostname %h"
+        }
+
+
 def test_update(iou_device):
 
     new_settings = {
@@ -96,4 +118,28 @@ def test_update(iou_device):
         assert kwargs["body"] == new_settings
 
         # Callback
-        # args[1]({"startup_script": "echo TEST", "name": "Unreal IOU"})
+        args[1]({})
+
+
+def test_update_initial_config(iou_device, tmpdir):
+
+    initial_config = str(tmpdir / "config.cfg")
+    with open(initial_config, "w+") as f:
+        f.write("hostname %h")
+
+    new_settings = {
+        "name": "Unreal IOU",
+        "initial_config": initial_config
+    }
+
+    with patch('gns3.node.Node.httpPut') as mock:
+        iou_device.update(new_settings)
+
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms/{vm_id}".format(vm_id=iou_device.vm_id())
+        assert kwargs["body"]["name"] == "Unreal IOU"
+        assert kwargs["body"]["initial_config"] == "hostname %h"
+
+        # Callback
+        args[1]({})
