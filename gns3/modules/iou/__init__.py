@@ -279,7 +279,6 @@ class IOU(Module):
                     if project_name.endswith("-files"):
                         project_name = project_name[:-6]
                     params.update({"project_name": project_name})
-                server.send_notification("iou.settings", params)
 
         self._settings.update(settings)
         self._saveSettings()
@@ -368,9 +367,6 @@ class IOU(Module):
         """
 
         log.info("IOU module reset")
-        for server in self._servers:
-            if server.connected():
-                server.send_notification("iou.reset")
         self._servers.clear()
         self._nodes.clear()
 
