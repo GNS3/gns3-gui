@@ -127,7 +127,8 @@ def main():
     elif sys.version_info[0] == 3 and sys.version_info < (3, 3):
         raise RuntimeError("Python 3.3 or higher is required")
 
-    version = lambda version_string: [int(i) for i in version_string.split('.')]
+    def version(version_string):
+        return [int(i) for i in version_string.split('.')]
 
     if version(QtCore.QT_VERSION_STR) < version("4.6"):
         raise RuntimeError("Requirement is Qt version 4.6 or higher, got version {}".format(QtCore.QT_VERSION_STR))
