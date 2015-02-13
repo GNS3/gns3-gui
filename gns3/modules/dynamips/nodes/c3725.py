@@ -29,24 +29,22 @@ class C3725(Router):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server):
-        Router.__init__(self, module, server, platform="c3725")
+    def __init__(self, module, server, project):
 
-        self._platform_settings = {"ram": 128,
-                                   "nvram": 112,
-                                   "disk0": 16,
-                                   "disk1": 0,
-                                   "iomem": 5,
-                                   "clock_divisor": 8,
-                                   "slot0": "GT96100-FE"}
+        Router.__init__(self, module, server, project, platform="c3725")
+        c3725_settings = {"ram": 128,
+                          "nvram": 112,
+                          "disk0": 16,
+                          "disk1": 0,
+                          "iomem": 5,
+                          "clock_divisor": 8,
+                          "slot0": "GT96100-FE"}
 
         # merge platform settings with the generic ones
-        self._settings.update(self._platform_settings)
-
-        # save the default settings
-        self._defaults = self._settings.copy()
+        self._settings.update(c3725_settings)
 
     def __str__(self):
 

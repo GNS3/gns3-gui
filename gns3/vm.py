@@ -45,14 +45,14 @@ class VM(Node):
 
     def delete(self):
         """
-        Deletes this VPCS instance.
+        Deletes this VM instance.
         """
 
-        log.debug("VPCS device {} is being deleted".format(self.name()))
+        log.debug("{} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._vm_id:
-            self.httpDelete("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._deleteCallback)
+        if self._vm_id and self._server.connected():
+            self.httpDelete("/{prefix}/vms/{vm_id}".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -74,7 +74,7 @@ class VM(Node):
 
     def start(self):
         """
-        Starts this VPCS instance.
+        Starts this VM instance.
         """
 
         if self.status() == Node.started:
@@ -105,7 +105,7 @@ class VM(Node):
 
     def stop(self):
         """
-        Stops this VPCS instance.
+        Stops this VM instance.
         """
 
         if self.status() == Node.stopped:
@@ -136,7 +136,7 @@ class VM(Node):
 
     def reload(self):
         """
-        Reloads this VPCS instance.
+        Reloads this VM instance.
         """
 
         log.debug("{} is being reloaded".format(self.name()))

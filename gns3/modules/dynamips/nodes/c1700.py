@@ -29,29 +29,27 @@ class C1700(Router):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server, chassis="1720"):
-        Router.__init__(self, module, server, platform="c1700")
+    def __init__(self, module, server, project, chassis="1720"):
 
-        self._platform_settings = {"ram": 128,
-                                   "nvram": 32,
-                                   "disk0": 0,
-                                   "disk1": 0,
-                                   "chassis": "1720",
-                                   "iomem": 15,
-                                   "clock_divisor": 8,
-                                   "slot0": "C1700-MB-1FE"}
+        Router.__init__(self, module, server, project, platform="c1700")
+        c1700_settings = {"ram": 128,
+                          "nvram": 32,
+                          "disk0": 0,
+                          "disk1": 0,
+                          "chassis": "1720",
+                          "iomem": 15,
+                          "clock_divisor": 8,
+                          "slot0": "C1700-MB-1FE"}
 
         # set the default adapter for slot 1 for these chassis
         if chassis in ['1751', '1760']:
-            self._platform_settings["slot1"] = "C1700-MB-WIC1"
+            c1700_settings["slot1"] = "C1700-MB-WIC1"
 
         # merge platform settings with the generic ones
-        self._settings.update(self._platform_settings)
-
-        # save the default settings
-        self._defaults = self._settings.copy()
+        self._settings.update(c1700_settings)
 
     def __str__(self):
 

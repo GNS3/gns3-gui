@@ -16,13 +16,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Base class for Dynamips router implementations on the client side.
-Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
+Base class for Dynamips router implementation on the client side.
 """
 
 import os
 import re
 import base64
+from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.utils.normalize_filename import normalize_filename
@@ -35,27 +35,26 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Router(Node):
+class Router(VM):
 
     """
     Dynamips router (client implementation).
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     :param platform: c7200, c3745, c3725, c3600, c2691, c2600 or c1700
     """
 
-    def __init__(self, module, server, platform="c7200"):
-        Node.__init__(self, server)
+    URL_PREFIX = "dynamips"
 
-        log.info("router {} is being created".format(platform))
+    def __init__(self, module, server, project, platform="c7200"):
 
-        self._defaults = {}
+        VM.__init__(self, module, server, project)
+        log.info("Router {} is being created".format(platform))
         self._ports = []
-        self._router_id = None
-        self._inital_settings = None
+        self._dynamips_id = None
         self._idlepcs = []
-        self._module = module
         self._loading = False
         self._export_directory = None
         self._settings = {"name": "",
@@ -203,43 +202,16 @@ class Router(Node):
                                 port.setShortName(port.shortNameType() + "0/" + str(wic_port_number))
                             log.debug("port {} renamed to {}".format(old_name, port.name()))
 
-    def delete(self):
-        """
-        Deletes this router.
-        """
-
-        log.debug("router {} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        if self._router_id and self._server.connected():
-            self._server.send_message("dynamips.vm.delete", {"id": self._router_id}, self._deleteCallback)
-        else:
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-
-    def _deleteCallback(self, result, error=False, **kwargs):
-        """
-        Callback for delete.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        log.info("router {} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
-        self._module.removeNode(self)
-
-    def setup(self, image, ram, name=None, router_id=None, initial_settings={}, base_name="R"):
+    def setup(self, image, ram, name=None, vm_id=None, dynamips_id=None, additional_settings={}, base_name="R"):
         """
         Setups this router.
 
         :param image: IOS image path
         :param ram: amount of RAM
         :param name: optional name for this router
-        :param initial_settings: other additional and not mandatory settings
+        :param vm_id: VM identifier on the server
+        :param dynamips_id: Dynamips identifier on the server
+        :param additional_settings: other additional and not mandatory settings
         """
 
         # let's create a unique name if none has been chosen
@@ -252,37 +224,37 @@ class Router(Node):
 
         platform = self._settings["platform"]
 
-        # Minimum settings to send to the server in order
-        # to create a new router
+        # Minimum settings to send to the server in order to create a new router
         params = {"name": name,
                   "platform": platform,
                   "ram": ram,
                   "image": image}
 
-        if self.server().isCloud():
-            initial_settings["cloud_path"] = "images/IOS"
-            params["image"] = os.path.basename(params["image"])
+        # FIXME: cloud support
+        # if self.server().isCloud():
+        #     initial_settings["cloud_path"] = "images/IOS"
+        #     params["image"] = os.path.basename(params["image"])
 
-        if router_id:
-            params["router_id"] = router_id
+        if vm_id:
+            params["vm_id"] = vm_id
+
+        if dynamips_id:
+            params["dynamips_id"] = dynamips_id
 
         # add some initial settings
-        if "console" in initial_settings:
-            params["console"] = self._settings["console"] = initial_settings.pop("console")
-        if "aux" in initial_settings:
-            params["aux"] = self._settings["aux"] = initial_settings.pop("aux")
-        if "mac_addr" in initial_settings:
-            params["mac_addr"] = self._settings["mac_addr"] = initial_settings.pop("mac_addr")
-        if "chassis" in initial_settings:
-            params["chassis"] = self._settings["chassis"] = initial_settings.pop("chassis")
-        if "cloud_path" in initial_settings:
-            params["cloud_path"] = self._settings["cloud_path"] = initial_settings.pop("cloud_path")
+        # if "console" in initial_settings:
+        #     params["console"] = self._settings["console"] = initial_settings.pop("console")
+        # if "aux" in initial_settings:
+        #     params["aux"] = self._settings["aux"] = initial_settings.pop("aux")
+        # if "mac_addr" in initial_settings:
+        #     params["mac_addr"] = self._settings["mac_addr"] = initial_settings.pop("mac_addr")
+        # if "chassis" in initial_settings:
+        #     params["chassis"] = self._settings["chassis"] = initial_settings.pop("chassis")
+        # if "cloud_path" in initial_settings:
+        #     params["cloud_path"] = self._settings["cloud_path"] = initial_settings.pop("cloud_path")
 
-        # other initial settings will be applied when the router has been created
-        if initial_settings:
-            self._inital_settings = initial_settings
-
-        self._server.send_message("dynamips.vm.create", params, self._setupCallback)
+        params.update(additional_settings)
+        self.httpPost("/dynamips/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -294,13 +266,11 @@ class Router(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
-        self._router_id = result["id"]
-        if not self._router_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return
+        self._vm_id = result["vm_id"]
+        self._dynamips_id = result["dynamips_id"]
 
         # update the settings using the defaults sent by the server
         for name, value in result.items():
@@ -315,10 +285,7 @@ class Router(Node):
                 adapter = value
                 self._addAdapterPorts(adapter, slot_number)
 
-        # update the node with setup initial settings if any
-        if self._inital_settings:
-            self.update(self._inital_settings)
-        elif self._loading:
+        if self._loading:
             self.updated_signal.emit()
         else:
             self.setInitialized(True)
@@ -326,25 +293,25 @@ class Router(Node):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-    def _base64Config(self, config_path):
-        """
-        Get the base64 encoded config from a file.
-
-        :param config_path: path to the configuration file.
-
-        :returns: base64 encoded string
-        """
-
-        try:
-            with open(config_path, "r", errors="replace") as f:
-                log.info("opening configuration file: {}".format(config_path))
-                config = f.read()
-                config = "!\n" + config.replace('\r', "")
-                encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-                return encoded
-        except OSError as e:
-            log.warn("could not base64 encode {}: {}".format(config_path, e))
-            return ""
+    # def _base64Config(self, config_path):
+    #     """
+    #     Get the base64 encoded config from a file.
+    #
+    #     :param config_path: path to the configuration file.
+    #
+    #     :returns: base64 encoded string
+    #     """
+    #
+    #     try:
+    #         with open(config_path, "r", errors="replace") as f:
+    #             log.info("opening configuration file: {}".format(config_path))
+    #             config = f.read()
+    #             config = "!\n" + config.replace('\r', "")
+    #             encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
+    #             return encoded
+    #     except OSError as e:
+    #         log.warn("could not base64 encode {}: {}".format(config_path, e))
+    #         return ""
 
     def update(self, new_settings):
         """
@@ -357,23 +324,23 @@ class Router(Node):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
-        params = {"id": self._router_id}
+        params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        # push the startup-config
-        if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-                and not self.server().isLocal() and os.path.isfile(new_settings["startup_config"]):
-            params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
-
-        # push the private-config
-        if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"] \
-                and not self.server().isLocal() and os.path.isfile(new_settings["private_config"]):
-            params["private_config_base64"] = self._base64Config(new_settings["private_config"])
+        # # push the startup-config
+        # if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
+        #         and not self.server().isLocal() and os.path.isfile(new_settings["startup_config"]):
+        #     params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
+        #
+        # # push the private-config
+        # if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"] \
+        #         and not self.server().isLocal() and os.path.isfile(new_settings["private_config"]):
+        #     params["private_config_base64"] = self._base64Config(new_settings["private_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.send_message("dynamips.vm.update", params, self._updateCallback)
+        self.httpPut("/virtualbox/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False, **kwargs):
         """
@@ -385,7 +352,7 @@ class Router(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
         updated = False
@@ -419,77 +386,9 @@ class Router(Node):
                 self._settings[name] = value
         self._updateWICNumbering()
 
-        if self._inital_settings and not self._loading:
-            self.setInitialized(True)
-            log.info("router {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-            self._inital_settings = None
-        elif updated or self._loading:
+        if updated or self._loading:
             log.info("router {} has been updated".format(self.name()))
             self.updated_signal.emit()
-
-    def start(self):
-        """
-        Starts this router.
-        """
-
-        if self.status() == Node.started:
-            log.debug("{} is already running".format(self.name()))
-            return
-
-        log.debug("{} is starting".format(self.name()))
-        self._server.send_message("dynamips.vm.start", {"id": self._router_id}, self._startCallback)
-
-    def _startCallback(self, result, error=False, **kwargs):
-        """
-        Callback for start.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            log.info("{} has started".format(self.name()))
-            self.setStatus(Node.started)
-            for port in self._ports:
-                # set ports as started
-                port.setStatus(Port.started)
-            self.started_signal.emit()
-
-    def stop(self):
-        """
-        Stops this router.
-        """
-
-        if self.status() == Node.stopped:
-            log.debug("{} is already stopped".format(self.name()))
-            return
-
-        log.debug("{} is stopping".format(self.name()))
-        self._server.send_message("dynamips.vm.stop", {"id": self._router_id}, self._stopCallback)
-
-    def _stopCallback(self, result, error=False, **kwargs):
-        """
-        Callback for stop.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            log.info("{} has stopped".format(self.name()))
-            self.setStatus(Node.stopped)
-            for port in self._ports:
-                # set ports as stopped
-                port.setStatus(Port.stopped)
-            self.stopped_signal.emit()
 
     def suspend(self):
         """
@@ -501,7 +400,7 @@ class Router(Node):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self._server.send_message("dynamips.vm.suspend", {"id": self._router_id}, self._suspendCallback)
+        self.httpPost("/dynamips/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
 
     def _suspendCallback(self, result, error=False, **kwargs):
         """
@@ -513,7 +412,7 @@ class Router(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has suspended".format(self.name()))
             self.setStatus(Node.suspended)
@@ -521,28 +420,6 @@ class Router(Node):
                 # set ports as suspended
                 port.setStatus(Port.suspended)
             self.suspended_signal.emit()
-
-    def reload(self):
-        """
-        Reloads this router.
-        """
-
-        log.debug("{} is being reloaded".format(self.name()))
-        self._server.send_message("dynamips.vm.reload", {"id": self._router_id}, self._reloadCallback)
-
-    def _reloadCallback(self, result, error=False, **kwargs):
-        """
-        Callback for reload.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while reloading {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))
 
     def startPacketCapture(self, port, capture_file_name, data_link_type):
         """
@@ -553,6 +430,7 @@ class Router(Node):
         :param data_link_type: PCAP data link type
         """
 
+        # TODO: packet capture
         params = {"id": self._router_id,
                   "port_id": port.id(),
                   "slot": port.slotNumber(),
@@ -571,9 +449,10 @@ class Router(Node):
         :param error: indicates an error (boolean)
         """
 
+        # TODO: packet capture
         if error:
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
                 if port.id() == result["port_id"]:
@@ -592,6 +471,7 @@ class Router(Node):
         :param port: Port instance
         """
 
+        # TODO: packet capture
         params = {"id": self._router_id,
                   "port_id": port.id(),
                   "slot": port.slotNumber(),
@@ -608,9 +488,10 @@ class Router(Node):
         :param error: indicates an error (boolean)
         """
 
+        # TODO: packet capture
         if error:
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
                 if port.id() == result["port_id"]:
@@ -683,33 +564,6 @@ class Router(Node):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("dynamips.vm.update", params, self._updateCallback)
         self._module.updateImageIdlepc(self._settings["image"], idlepc)
-
-    def allocateUDPPort(self, port_id):
-        """
-        Requests an UDP port allocation.
-
-        :param port_id: port identifier
-        """
-
-        log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("dynamips.vm.allocate_udp_port", {"id": self._router_id, "port_id": port_id}, self._allocateUDPPortCallback)
-
-    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
-        """
-        Callback for allocateUDPPort.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            port_id = result["port_id"]
-            lport = result["lport"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), lport))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
 
     def addNIO(self, port, nio):
         """
@@ -874,11 +728,6 @@ class Router(Node):
 
             router_specific_info = router_specific_info.upper()
 
-        # get info about JIT sharing
-        jitsharing_group_info = "No JIT blocks sharing enabled"
-        if self._settings["jit_sharing_group"] is not None:
-            jitsharing_group_info = "JIT blocks sharing group is {group}".format(group=self._settings["jit_sharing_group"])
-
         # get info about Idle-PC
         idlepc_info = "with no idlepc value"
         if self._settings["idlepc"]:
@@ -887,16 +736,18 @@ class Router(Node):
                                                                                                                        idlesleep=self._settings["idlesleep"])
 
         info = """Router {name} is {state}
-  Node ID is {id}, server's router ID is {router_id}
+  Local node ID is {id}
+  Server's VirtualBox VM ID is {vm_id}
+  Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
   Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}
   Image is {image_name}
   {idlepc_info}
-  {jitsharing_group_info}
   {disk0} MB disk0 size, {disk1} MB disk1 size
 """.format(name=self.name(),
            id=self.id(),
-           router_id=self._router_id,
+           vm_id=self._vm_id,
+           dynamips_id=self._dynamips_id,
            state=state,
            platform=platform,
            specific_info=router_specific_info,
@@ -908,7 +759,6 @@ class Router(Node):
            aux=self._settings["aux"],
            image_name=os.path.basename(self._settings["image"]),
            idlepc_info=idlepc_info,
-           jitsharing_group_info=jitsharing_group_info,
            disk0=self._settings["disk0"],
            disk1=self._settings["disk1"])
 
@@ -929,7 +779,8 @@ class Router(Node):
         self._saveConfig()
 
         router = {"id": self.id(),
-                  "router_id": self._router_id,
+                  "vm_id": self._vm_id,
+                  "dynamips_id": self._dynamips_id,
                   "type": self.__class__.__name__,
                   "description": str(self),
                   "properties": {},
@@ -967,6 +818,11 @@ class Router(Node):
 
         self.node_info = node_info
         router_id = node_info.get("router_id")
+        # for backward compatibility
+        vm_id = dynamips_id = node_info.get("router_id")
+        if not vm_id:
+            vm_id = node_info["vm_id"]
+            dynamips_id = node_info["dynamips_id"]
         settings = node_info["properties"]
         name = settings.pop("name")
         ram = settings.get("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
@@ -990,7 +846,7 @@ class Router(Node):
         self._loading = True
         log.info("router {} is loading".format(name))
         self.setName(name)
-        self.setup(image, ram, name, router_id, settings)
+        self.setup(image, ram, name, vm_id, dynamips_id, settings)
 
     def _updatePortSettings(self):
         """

@@ -29,6 +29,7 @@ class C2600(Router):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
     # get the default slot0 adapter based on the chassis
@@ -43,25 +44,22 @@ class C2600(Router):
                                   "2650XM": "C2600-MB-1FE",
                                   "2651XM": "C2600-MB-2FE"}
 
-    def __init__(self, module, server, chassis="2610"):
-        Router.__init__(self, module, server, platform="c2600")
+    def __init__(self, module, server, project, chassis="2610"):
 
-        self._platform_settings = {"ram": 128,
-                                   "nvram": 128,
-                                   "disk0": 0,
-                                   "disk1": 0,
-                                   "chassis": chassis,
-                                   "iomem": 15,
-                                   "clock_divisor": 8}
+        Router.__init__(self, module, server, project, platform="c2600")
+        c2600_settings = {"ram": 128,
+                          "nvram": 128,
+                          "disk0": 0,
+                          "disk1": 0,
+                          "chassis": chassis,
+                          "iomem": 15,
+                          "clock_divisor": 8}
 
         # set the default adapter for slot 0
-        self._platform_settings["slot0"] = self.chassis_to_default_adapter[chassis]
+        c2600_settings["slot0"] = self.chassis_to_default_adapter[chassis]
 
         # merge platform settings with the generic ones
-        self._settings.update(self._platform_settings)
-
-        # save the default settings
-        self._defaults = self._settings.copy()
+        self._settings.update(c2600_settings)
 
     def __str__(self):
 

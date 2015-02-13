@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 from gns3.modules.builtin import Builtin
 from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
@@ -22,4 +23,8 @@ from gns3.modules.vpcs import VPCS
 from gns3.modules.virtualbox import VirtualBox
 from gns3.modules.qemu import Qemu
 
-MODULES = [VPCS, VirtualBox, IOU]
+MODULES = [VPCS, VirtualBox, Dynamips]
+
+if sys.platform.startswith("linux"):
+    # IOU runs only on Linux
+    MODULES.append(IOU)

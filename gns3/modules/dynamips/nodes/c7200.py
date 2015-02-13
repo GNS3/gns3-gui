@@ -29,32 +29,30 @@ class C7200(Router):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server, npe="npe-400"):
-        Router.__init__(self, module, server, platform="c7200")
+    def __init__(self, module, server, project, npe="npe-400"):
 
-        self._platform_settings = {"ram": 512,
-                                   "nvram": 128,
-                                   "disk0": 64,
-                                   "disk1": 0,
-                                   "npe": npe,
-                                   "midplane": "vxr",
-                                   "clock_divisor": 4,
-                                   "sensors": [22, 22, 22, 22],
-                                   "power_supplies": [1, 1]}
+        Router.__init__(self, module, server, project, platform="c7200")
+        c7200_settings = {"ram": 512,
+                          "nvram": 128,
+                          "disk0": 64,
+                          "disk1": 0,
+                          "npe": npe,
+                          "midplane": "vxr",
+                          "clock_divisor": 4,
+                          "sensors": [22, 22, 22, 22],
+                          "power_supplies": [1, 1]}
 
         # first slot is a mandatory Input/Output controller (based on NPE type)
         if npe == "npe-g2":
-            self._platform_settings["slot0"] = "C7200-IO-GE-E"
+            c7200_settings["slot0"] = "C7200-IO-GE-E"
         else:
-            self._platform_settings["slot0"] = "C7200-IO-FE"
+            c7200_settings["slot0"] = "C7200-IO-FE"
 
         # merge platform settings with the generic ones
-        self._settings.update(self._platform_settings)
-
-        # save the default settings
-        self._defaults = self._settings.copy()
+        self._settings.update(c7200_settings)
 
     def __str__(self):
 
