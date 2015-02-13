@@ -22,6 +22,8 @@ Base class for Dynamips router implementation on the client side.
 import os
 import re
 import base64
+
+from functools import partial
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
@@ -430,18 +432,15 @@ class Router(VM):
         :param data_link_type: PCAP data link type
         """
 
-        # TODO: packet capture
-        params = {"id": self._router_id,
-                  "port_id": port.id(),
-                  "slot": port.adapterNumber(),
-                  "port": port.portNumber(),
-                  "capture_file_name": capture_file_name,
+        params = {"capture_file_name": capture_file_name,
                   "data_link_type": data_link_type}
-
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.vm.start_capture", params, self._startPacketCaptureCallback)
+        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/start_capture".format(vm_id=self._vm_id,
+                                                                                                                 adapter_number=port.adapterNumber(),
+                                                                                                                 port_number=port.portNumber()),
+                      partial(self._startPacketCaptureCallback, port.id()), body=params)
 
-    def _startPacketCaptureCallback(self, result, error=False, **kwargs):
+    def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -449,16 +448,15 @@ class Router(VM):
         :param error: indicates an error (boolean)
         """
 
-        # TODO: packet capture
         if error:
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
-                if port.id() == result["port_id"]:
+                if port.id() == port_id:
                     log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
                     try:
-                        port.startPacketCapture(result["capture_file_path"])
+                        port.startPacketCapture(result["pcap_file_path"])
                     except OSError as e:
                         self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
                     self.updated_signal.emit()
@@ -471,16 +469,13 @@ class Router(VM):
         :param port: Port instance
         """
 
-        # TODO: packet capture
-        params = {"id": self._router_id,
-                  "port_id": port.id(),
-                  "slot": port.adapterNumber(),
-                  "port": port.portNumber()}
+        log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
+        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/stop_capture".format(vm_id=self._vm_id,
+                                                                                                                adapter_number=port.adapterNumber(),
+                                                                                                                port_number=port.portNumber()),
+                      partial(self._stopPacketCaptureCallback, port.id()))
 
-        log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.vm.stop_capture", params, self._stopPacketCaptureCallback)
-
-    def _stopPacketCaptureCallback(self, result, error=False, **kwargs):
+    def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -488,13 +483,12 @@ class Router(VM):
         :param error: indicates an error (boolean)
         """
 
-        # TODO: packet capture
         if error:
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
-                if port.id() == result["port_id"]:
+                if port.id() == port_id:
                     log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
                     port.stopPacketCapture()
                     self.updated_signal.emit()
@@ -564,69 +558,6 @@ class Router(VM):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self._server.send_message("dynamips.vm.update", params, self._updateCallback)
         self._module.updateImageIdlepc(self._settings["image"], idlepc)
-
-    def addNIO(self, port, nio):
-        """
-        Adds a new NIO on the specified port for this router.
-
-        :param port: Port instance
-        :param nio: NIO instance
-        """
-
-        params = {"id": self._router_id,
-                  "slot": port.adapterNumber(),
-                  "port": port.portNumber(),
-                  "port_id": port.id()}
-
-        params["nio"] = self.getNIOInfo(nio)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.send_message("dynamips.vm.add_nio", params, self._addNIOCallback)
-
-    def _addNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for addNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            self.nio_cancel_signal.emit(self.id())
-        else:
-            log.debug("{} has added a new NIO: {}".format(self.name(), result))
-            self.nio_signal.emit(self.id(), result["port_id"])
-
-    def deleteNIO(self, port):
-        """
-        Deletes an NIO from the specified port on this router.
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._router_id,
-                  "slot": port.adapterNumber(),
-                  "port": port.portNumber()}
-
-        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        if self._server.connected():
-            self._server.send_message("dynamips.vm.delete_nio", params, self._deleteNIOCallback)
-
-    def _deleteNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for deleteNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
 
     def _saveConfig(self):
         """
