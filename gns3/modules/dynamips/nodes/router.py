@@ -668,7 +668,7 @@ class Router(VM):
 
         info = """Router {name} is {state}
   Local node ID is {id}
-  Server's VirtualBox VM ID is {vm_id}
+  Server's VM ID is {vm_id}
   Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
   Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}

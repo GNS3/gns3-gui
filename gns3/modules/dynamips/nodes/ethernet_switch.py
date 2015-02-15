@@ -20,29 +20,29 @@ Dynamips ETHSW implementation on the client side.
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
+from functools import partial
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
+from .device import Device
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class EthernetSwitch(Node):
+class EthernetSwitch(Device):
 
     """
     Dynamips Ethernet switch.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server):
-        Node.__init__(self, server)
+    def __init__(self, module, server, project):
 
-        log.info("Ethernet switch is being created")
+        Device.__init__(self, module, server, project)
         self.setStatus(Node.started)  # this is an always-on node
-        self._ethsw_id = None
-        self._module = module
         self._ports = []
         self._settings = {"name": "",
                           "ports": {}}
@@ -84,61 +84,9 @@ class EthernetSwitch(Node):
             self._settings["ports"][port.portNumber()] = {"type": initial_port["type"],
                                                           "vlan": initial_port["vlan"]}
 
-        params = {"name": name}
-        self._server.send_message("dynamips.ethsw.create", params, self._setupCallback)
-
-    def _setupCallback(self, result, error=False, **kwargs):
-        """
-        Callback for setup.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        self._ethsw_id = result["id"]
-        if not self._ethsw_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return
-
-        self._settings["name"] = result["name"]
-        log.info("Ethernet switch {} has been created".format(self.name()))
-        self.setInitialized(True)
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-
-    def delete(self):
-        """
-        Deletes this Ethernet switch.
-        """
-
-        log.debug("Ethernet switch {} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        if self._ethsw_id:
-            self._server.send_message("dynamips.ethsw.delete", {"id": self._ethsw_id}, self._deleteCallback)
-        else:
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-
-    def _deleteCallback(self, result, error=False, **kwargs):
-        """
-        Callback for delete.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        log.info("Ethernet switch {} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
-        self._module.removeNode(self)
+        params = {"name": name,
+                  "device_type": "ethernet_switch"}
+        self.httpPost("/dynamips/devices", self._setupCallback, body=params)
 
     def update(self, new_settings):
         """
@@ -148,7 +96,7 @@ class EthernetSwitch(Node):
         """
 
         updated = False
-        params = {"id": self._ethsw_id}
+        params = {}
         if "ports" in new_settings:
             ports_to_update = {}
             ports = new_settings["ports"]
@@ -170,9 +118,10 @@ class EthernetSwitch(Node):
                 log.debug("port {} has been added".format(port_number))
 
             if ports_to_update:
-                params["ports"] = {}
+                params["ports"] = []
                 for port_number, info in ports_to_update.items():
-                    params["ports"][port_number] = info
+                    info["port"] = port_number
+                    params["ports"].append(info)
                 updated = True
 
             # delete ports that are not configured
@@ -195,7 +144,10 @@ class EthernetSwitch(Node):
 
         if updated:
             log.debug("{} is being updated: {}".format(self.name(), params))
-            self._server.send_message("dynamips.ethsw.update", params, self._updateCallback)
+            self.httpPut("/dynamips/devices/{device_id}".format(device_id=self._device_id), self._updateCallback, body=params)
+        else:
+            log.info("{} has been updated".format(self.name()))
+            self.updated_signal.emit()
 
     def _updateCallback(self, result, error=False, **kwargs):
         """
@@ -215,33 +167,6 @@ class EthernetSwitch(Node):
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
-    def allocateUDPPort(self, port_id):
-        """
-        Requests an UDP port allocation.
-
-        :param port_id: port identifier
-        """
-
-        log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("dynamips.ethsw.allocate_udp_port", {"id": self._ethsw_id, "port_id": port_id}, self._allocateUDPPortCallback)
-
-    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
-        """
-        Callback for allocateUDPPort.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            port_id = result["port_id"]
-            lport = result["lport"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), lport))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
-
     def addNIO(self, port, nio):
         """
         Adds a new NIO on the specified port for this switch.
@@ -250,133 +175,18 @@ class EthernetSwitch(Node):
         :param nio: NIO instance
         """
 
-        port_info = self._settings["ports"][port.portNumber()]
-        params = {"id": self._ethsw_id,
-                  "port": port.portNumber(),
-                  "port_id": port.id(),
-                  "vlan": port_info["vlan"],
-                  "port_type": port_info["type"]}
-
+        params = {}
         params["nio"] = self.getNIOInfo(nio)
+        port_info = self._settings["ports"][port.portNumber()]
+        port_settings = {"vlan": port_info["vlan"],
+                         "type": port_info["type"]}
+        params["port_settings"] = port_settings
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.send_message("dynamips.ethsw.add_nio", params, self._addNIOCallback)
-
-    def _addNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for addNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            self.nio_cancel_signal.emit(self.id())
-        else:
-            log.debug("{} has added a new NIO: {}".format(self.name(), result))
-            self.nio_signal.emit(self.id(), result["port_id"])
-
-    def deleteNIO(self, port):
-        """
-        Deletes an NIO from the specified port on this switch.
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._ethsw_id,
-                  "port": port.portNumber()}
-
-        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        self._server.send_message("dynamips.ethsw.delete_nio", params, self._deleteNIOCallback)
-
-    def _deleteNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for deleteNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
-
-    def startPacketCapture(self, port, capture_file_name, data_link_type):
-        """
-        Starts a packet capture.
-
-        :param port: Port instance
-        :param capture_file_name: PCAP capture file path
-        :param data_link_type: PCAP data link type
-        """
-
-        params = {"id": self._ethsw_id,
-                  "port_id": port.id(),
-                  "port": port.portNumber(),
-                  "capture_file_name": capture_file_name,
-                  "data_link_type": data_link_type}
-
-        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.ethsw.start_capture", params, self._startPacketCaptureCallback)
-
-    def _startPacketCaptureCallback(self, result, error=False, **kwargs):
-        """
-        Callback for starting a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            for port in self._ports:
-                if port.id() == result["port_id"]:
-                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
-                    try:
-                        port.startPacketCapture(result["capture_file_path"])
-                    except OSError as e:
-                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
-                    self.updated_signal.emit()
-                    break
-
-    def stopPacketCapture(self, port):
-        """
-        Stops a packet capture.
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._ethsw_id,
-                  "port_id": port.id(),
-                  "port": port.portNumber()}
-
-        log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.ethsw.stop_capture", params, self._stopPacketCaptureCallback)
-
-    def _stopPacketCaptureCallback(self, result, error=False, **kwargs):
-        """
-        Callback for stopping a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            for port in self._ports:
-                if port.id() == result["port_id"]:
-                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
-                    port.stopPacketCapture()
-                    self.updated_signal.emit()
-                    break
+        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/nio".format(
+            port=port.portNumber(),
+            prefix=self.URL_PREFIX,
+            device_id=self._device_id),
+            partial(self._addNIOCallback, port.id()), params)
 
     def info(self):
         """
@@ -386,12 +196,13 @@ class EthernetSwitch(Node):
         """
 
         info = """Ethernet switch {name} is always-on
-  Node ID is {id}, server's Ethernet switch ID is {ethsw_id}
+  Local node ID is {id}
+  Server's Device ID is {device_id}
   Hardware is Dynamips emulated simple Ethernet switch
   Switch's server runs on {host}:{port}
 """.format(name=self.name(),
            id=self.id(),
-           ethsw_id=self._ethsw_id,
+           device_id=self._device_id,
            host=self._server.host,
            port=self._server.port)
 
@@ -428,8 +239,7 @@ class EthernetSwitch(Node):
                   "type": self.__class__.__name__,
                   "description": str(self),
                   "properties": {"name": self.name()},
-                  "server_id": self._server.id(),
-                  }
+                  "server_id": self._server.id()}
 
         # add the ports
         if self._ports:

@@ -20,30 +20,30 @@ Dynamips FRSW implementation on the client side.
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
+from functools import partial
 from gns3.node import Node
 from gns3.ports.frame_relay_port import FrameRelayPort
+from .device import Device
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class FrameRelaySwitch(Node):
+class FrameRelaySwitch(Device):
 
     """
     Dynamips Frame-Relay switch.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server):
-        Node.__init__(self, server)
+    def __init__(self, module, server, project):
 
-        log.info("Frame-Relay switch is being created")
+        Device.__init__(self, module, server, project)
         self.setStatus(Node.started)  # this is an always-on node
-        self._frsw_id = None
         self._ports = []
-        self._module = module
         self._settings = {"name": "",
                           "mappings": {}}
 
@@ -78,61 +78,9 @@ class FrameRelaySwitch(Node):
             port.setPacketCaptureSupported(True)
             self._ports.append(port)
 
-        params = {"name": name}
-        self._server.send_message("dynamips.frsw.create", params, self._setupCallback)
-
-    def _setupCallback(self, result, error=False, **kwargs):
-        """
-        Callback for setup.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        self._frsw_id = result["id"]
-        if not self._frsw_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return
-
-        self._settings["name"] = result["name"]
-        log.info("Frame Relay switch {} has been created".format(self.name()))
-        self.setInitialized(True)
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-
-    def delete(self):
-        """
-        Deletes this Frame Relay switch.
-        """
-
-        log.debug("Frame Relay switch {} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        if self._frsw_id:
-            self._server.send_message("dynamips.frsw.delete", {"id": self._frsw_id}, self._deleteCallback)
-        else:
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-
-    def _deleteCallback(self, result, error=False, **kwargs):
-        """
-        Callback for the delete method.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        log.info("{} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
-        self._module.removeNode(self)
+        params = {"name": name,
+                  "device_type": "frame_relay_switch"}
+        self.httpPost("/dynamips/devices", self._setupCallback, body=params)
 
     def update(self, new_settings):
         """
@@ -185,7 +133,7 @@ class FrameRelaySwitch(Node):
         if updated:
             if params:
                 log.debug("{} is being updated: {}".format(self.name(), params))
-                self._server.send_message("dynamips.frsw.update", params, self._updateCallback)
+                self.httpPut("/dynamips/devices/{device_id}".format(device_id=self._device_id), self._updateCallback, body=params)
             else:
                 log.info("{} has been updated".format(self.name()))
                 self.updated_signal.emit()
@@ -208,31 +156,6 @@ class FrameRelaySwitch(Node):
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
-    def allocateUDPPort(self, port_id):
-        """
-        Requests an UDP port allocation.
-        """
-
-        log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("dynamips.frsw.allocate_udp_port", {"id": self._frsw_id, "port_id": port_id}, self._allocateUDPPortCallback)
-
-    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
-        """
-        Callback for allocateUDPPort.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            port_id = result["port_id"]
-            lport = result["lport"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), lport))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
-
     def addNIO(self, port, nio):
         """
         Adds a new NIO on the specified port for this Frame Relay switch.
@@ -241,11 +164,7 @@ class FrameRelaySwitch(Node):
         :param nio: NIO instance
         """
 
-        params = {"id": self._frsw_id,
-                  "port": port.portNumber(),
-                  "port_id": port.id()}
-
-        params["nio"] = self.getNIOInfo(nio)
+        params = {"nio": self.getNIOInfo(nio)}
         params["mappings"] = {}
         for source, destination in self._settings["mappings"].items():
             source_port = source.split(":")[0]
@@ -257,124 +176,11 @@ class FrameRelaySwitch(Node):
             log.debug("{} is adding an UDP NIO: {}".format(self.name(), params))
 
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.send_message("dynamips.frsw.add_nio", params, self._addNIOCallback)
-
-    def _addNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for addNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            self.nio_cancel_signal.emit(self.id())
-        else:
-            log.debug("{} has added a new NIO: {}".format(self.name(), result))
-            self.nio_signal.emit(self.id(), result["port_id"])
-
-    def deleteNIO(self, port):
-        """
-        Deletes an NIO from the specified port on this switch.
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._frsw_id,
-                  "port": port.portNumber()}
-
-        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        self._server.send_message("dynamips.frsw.delete_nio", params, self._deleteNIOCallback)
-
-    def _deleteNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for deleteNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
-
-    def startPacketCapture(self, port, capture_file_name, data_link_type):
-        """
-        Starts a packet capture.
-
-        :param port: Port instance
-        :param capture_file_name: PCAP capture file path
-        :param data_link_type: PCAP data link type
-        """
-
-        params = {"id": self._frsw_id,
-                  "port_id": port.id(),
-                  "port": port.portNumber(),
-                  "capture_file_name": capture_file_name,
-                  "data_link_type": data_link_type}
-
-        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.frsw.start_capture", params, self._startPacketCaptureCallback)
-
-    def _startPacketCaptureCallback(self, result, error=False, **kwargs):
-        """
-        Callback for starting a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            for port in self._ports:
-                if port.id() == result["port_id"]:
-                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
-                    try:
-                        port.startPacketCapture(result["capture_file_path"])
-                    except OSError as e:
-                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
-                    self.updated_signal.emit()
-                    break
-
-    def stopPacketCapture(self, port):
-        """
-        Stops a packet capture.
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._frsw_id,
-                  "port_id": port.id(),
-                  "port": port.portNumber()}
-
-        log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.frsw.stop_capture", params, self._stopPacketCaptureCallback)
-
-    def _stopPacketCaptureCallback(self, result, error=False, **kwargs):
-        """
-        Callback for stopping a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            for port in self._ports:
-                if port.id() == result["port_id"]:
-                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
-                    port.stopPacketCapture()
-                    self.updated_signal.emit()
-                    break
+        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/nio".format(
+            port=port.portNumber(),
+            prefix=self.URL_PREFIX,
+            device_id=self._device_id),
+            partial(self._addNIOCallback, port.id()), params)
 
     def info(self):
         """
@@ -384,12 +190,13 @@ class FrameRelaySwitch(Node):
         """
 
         info = """Frame relay switch {name} is always-on
-  Node ID is {id}, server's frame relay switch ID is {frsw_id}
+  Local node ID is {id}
+  Server's Device ID is {device_id}
   Hardware is Dynamips emulated simple Frame relay switch
   Switch's server runs on {host}:{port}
 """.format(name=self.name(),
            id=self.id(),
-           frsw_id=self._frsw_id,
+           device_id=self._device_id,
            host=self._server.host,
            port=self._server.port)
 
