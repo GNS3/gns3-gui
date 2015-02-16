@@ -18,6 +18,7 @@
 
 from unittest.mock import patch, Mock
 
+
 def test_allocateUDPPort(vpcs_device):
 
     with patch('gns3.http_client.HTTPClient.post') as mock:
