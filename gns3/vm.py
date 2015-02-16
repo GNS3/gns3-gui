@@ -219,3 +219,21 @@ class VM(Node):
             return
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
+
+    def _readBaseConfig(self, config_path):
+        """
+        Returns a base config content.
+
+        :param config_path: path to the configuration file.
+
+        :returns: config content
+        """
+
+        try:
+            with open(config_path, "r", errors="replace") as f:
+                log.info("Opening configuration file: {}".format(config_path))
+                config = f.read()
+                return config
+        except OSError as e:
+            log.warn("Could not read base configuration file {}: {}".format(config_path, e))
+            return ""
