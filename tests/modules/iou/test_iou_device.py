@@ -22,7 +22,7 @@ from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
-
+from gns3.modules.iou import IOU
 
 def test_iou_device_init(local_server, project):
 
@@ -143,3 +143,89 @@ def test_update_initial_config(iou_device, tmpdir):
 
         # Callback
         args[1]({})
+
+
+def test_dump(local_server, project):
+
+    iou_device = IOUDevice(IOU(), local_server, project)
+    iou_device._settings["name"] = "IOU 1"
+    iou_device._settings["path"] = "test.bin"
+    iou_device._settings["initial_config"] = "/tmp"
+    assert iou_device.dump() == {
+        "description": "IOU device",
+        "id": iou_device.id(),
+        "ports": [
+            {"adapter_number": 0,
+            "id": 1,
+            "name": "Ethernet0/0",
+            "port_number": 0},
+            {"adapter_number": 0,
+            "id": 2,
+            "name": "Ethernet0/1",
+            "port_number": 1},
+            {"adapter_number": 0,
+            "id": 3,
+            "name": "Ethernet0/2",
+            "port_number": 2},
+            {"adapter_number": 0,
+            "id": 4,
+            "name": "Ethernet0/3",
+            "port_number": 3},
+            {"adapter_number": 1,
+            "id": 5,
+            "name": "Ethernet1/0",
+            "port_number": 0},
+            {"adapter_number": 1,
+            "id": 6,
+            "name": "Ethernet1/1",
+            "port_number": 1},
+            {"adapter_number": 1,
+            "id": 7,
+            "name": "Ethernet1/2",
+            "port_number": 2},
+            {"adapter_number": 1,
+            "id": 8,
+            "name": "Ethernet1/3",
+            "port_number": 3},
+            {"adapter_number": 2,
+            "id": 9,
+            "name": "Serial2/0",
+            "port_number": 0},
+            {"adapter_number": 2,
+            "id": 10,
+            "name": "Serial2/1",
+            "port_number": 1},
+            {"adapter_number": 2,
+            "id": 11,
+            "name": "Serial2/2",
+            "port_number": 2},
+            {"adapter_number": 2,
+            "id": 12,
+            "name": "Serial2/3",
+            "port_number": 3},
+            {"adapter_number": 3,
+            "id": 13,
+            "name": "Serial3/0",
+            "port_number": 0},
+            {"adapter_number": 3,
+            "id": 14,
+            "name": "Serial3/1",
+            "port_number": 1},
+            {"adapter_number": 3,
+            "id": 15,
+            "name": "Serial3/2",
+            "port_number": 2},
+            {"adapter_number": 3,
+            "id": 16,
+            "name": "Serial3/3",
+            "port_number": 3}
+        ],
+        "properties": {
+            "name": "IOU 1",
+            "path": "test.bin",
+            "initial_config": "/tmp"
+        },
+        "server_id": 1,
+        "type": "IOUDevice",
+        "vm_id": None
+    }

@@ -39,12 +39,16 @@ def reset_modules():
     """
 
     from gns3.http_client import HTTPClient
+    from gns3.ports.port import Port
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
+    from gns3.modules.iou.iou_device import IOUDevice
 
+    Port.reset()
     VPCSDevice.reset()
     VirtualBoxVM.reset()
     HTTPClient.reset()
+    IOUDevice.reset()
 
 
 @pytest.fixture(scope="class")

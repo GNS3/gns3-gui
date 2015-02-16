@@ -151,13 +151,24 @@ class IOUDevice(VM):
             self._inital_settings = initial_settings
 
         if initial_config:
-            try:
-                with open(initial_config) as f:
-                    params["initial_config"] = f.read()
-            except (OSError) as e:
-                log.error("Could not load the initial configuration file to {}".format(initial_config, e))
+            params["initial_config"] = self.getInitialConfigFile(initial_config)
 
         self.httpPost("/iou/vms", self._setupCallback, body=params)
+
+    def getInitialConfigFile(self, initial_config):
+        """
+        Read the initial config file
+
+        :params initial_config: Path of initial_config file
+        """
+
+        self._settings["initial_config"] = initial_config
+        try:
+            with open(initial_config) as f:
+                return f.read()
+        except (OSError) as e:
+            log.error("Could not load the initial configuration file to {}".format(initial_config, e))
+        return None
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -194,26 +205,6 @@ class IOUDevice(VM):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-    def _base64Config(self, config_path):
-        """
-        Get the base64 encoded config from a file.
-
-        :param config_path: path to the configuration file.
-
-        :returns: base64 encoded string
-        """
-
-        try:
-            with open(config_path, "r", errors="replace") as f:
-                log.info("opening configuration file: {}".format(config_path))
-                config = f.read()
-                config = '!\n' + config.replace('\r', "")
-                encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-                return encoded
-        except OSError as e:
-            log.warn("could not base64 encode {}: {}".format(config_path, e))
-            return ""
-
     def update(self, new_settings):
         """
         Updates the settings for this IOU device.
@@ -231,11 +222,7 @@ class IOUDevice(VM):
                 params[name] = value
 
         if "initial_config" in new_settings:
-            try:
-                with open(new_settings["initial_config"]) as f:
-                    params["initial_config"] = f.read()
-            except (OSError) as e:
-                log.error("Could not load the initial configuration file to {}".format(initial_config, e))
+            params["initial_config"] = self.getInitialConfigFile(new_settings["initial_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/iou/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
