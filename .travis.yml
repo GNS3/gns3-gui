@@ -29,5 +29,5 @@ install:
   - "pip install -r dev-requirements.txt"
 
 script:
-    - "xvfb-run py.test --verbose" # Run tests in a fake X server
+    - "xvfb-run py.test -vv" # Run tests in a fake X server
     - "pep8 --exclude=build,.git"
