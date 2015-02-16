@@ -233,6 +233,7 @@ class VM(Node):
             with open(config_path, "r", errors="replace") as f:
                 log.info("Opening configuration file: {}".format(config_path))
                 config = f.read()
+                config = "!\n" + config.replace('\r', "")
                 return config
         except OSError as e:
             log.warn("Could not read base configuration file {}: {}".format(config_path, e))

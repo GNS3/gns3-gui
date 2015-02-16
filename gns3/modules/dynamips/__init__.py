@@ -333,42 +333,8 @@ class Dynamips(Module):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if params:
-            for server in self._servers:
-                if server.isLocal():
-                    params.update({"working_dir": self._working_dir})
-                else:
-                    if "path" in params:
-                        del params["path"]  # do not send Dynamips path to remote servers
-                    project_name = os.path.basename(self._working_dir)
-                    if project_name.endswith("-files"):
-                        project_name = project_name[:-6]
-                    params.update({"project_name": project_name})
-                server.send_notification("dynamips.settings", params)
-
         self._settings.update(settings)
         self._saveSettings()
-
-    def _sendSettings(self, server):
-        """
-        Sends the module settings to the server.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("sending Dynamips settings to server {}:{}".format(server.host, server.port))
-        params = self._settings.copy()
-        # send the local working directory only if this is a local server
-        if server.isLocal():
-            params.update({"working_dir": self._working_dir})
-        else:
-            if "path" in params:
-                del params["path"]  # do not send Dynamips path to remote servers
-            project_name = os.path.basename(self._working_dir)
-            if project_name.endswith("-files"):
-                project_name = project_name[:-6]
-            params.update({"project_name": project_name})
-        server.send_notification("dynamips.settings", params)
 
     def allocateServer(self, node_class, use_cloud=False):
         """

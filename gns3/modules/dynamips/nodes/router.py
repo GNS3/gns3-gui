@@ -243,6 +243,14 @@ class Router(VM):
         if dynamips_id:
             params["dynamips_id"] = dynamips_id
 
+        # push the startup-config
+        if not vm_id and "startup_config" in additional_settings and os.path.isfile(additional_settings["startup_config"]):
+            params["startup_config_content"] = self._readBaseConfig(additional_settings["startup_config"])
+
+        # push the private-config
+        if not vm_id and "private_config" in additional_settings and os.path.isfile(additional_settings["private_config"]):
+            params["private_config_content"] = self._readBaseConfig(additional_settings["private_config"])
+
         # add some initial settings
         # if "console" in initial_settings:
         #     params["console"] = self._settings["console"] = initial_settings.pop("console")
@@ -295,26 +303,6 @@ class Router(VM):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-    # def _base64Config(self, config_path):
-    #     """
-    #     Get the base64 encoded config from a file.
-    #
-    #     :param config_path: path to the configuration file.
-    #
-    #     :returns: base64 encoded string
-    #     """
-    #
-    #     try:
-    #         with open(config_path, "r", errors="replace") as f:
-    #             log.info("opening configuration file: {}".format(config_path))
-    #             config = f.read()
-    #             config = "!\n" + config.replace('\r', "")
-    #             encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-    #             return encoded
-    #     except OSError as e:
-    #         log.warn("could not base64 encode {}: {}".format(config_path, e))
-    #         return ""
-
     def update(self, new_settings):
         """
         Updates the settings for this router.
@@ -330,16 +318,6 @@ class Router(VM):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
-        # # push the startup-config
-        # if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"] \
-        #         and not self.server().isLocal() and os.path.isfile(new_settings["startup_config"]):
-        #     params["startup_config_base64"] = self._base64Config(new_settings["startup_config"])
-        #
-        # # push the private-config
-        # if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"] \
-        #         and not self.server().isLocal() and os.path.isfile(new_settings["private_config"]):
-        #     params["private_config_base64"] = self._base64Config(new_settings["private_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/dynamips/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
