@@ -148,16 +148,17 @@ class Device(Node):
         :param data_link_type: PCAP data link type
         """
 
-        params = {"id": self._ethhub_id,
-                  "port_id": port.id(),
-                  "port": port.portNumber(),
-                  "capture_file_name": capture_file_name,
+        params = {"capture_file_name": capture_file_name,
                   "data_link_type": data_link_type}
 
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.ethhub.start_capture", params, self._startPacketCaptureCallback)
+        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/start_capture".format(
+            port=port.portNumber(),
+            prefix=self.URL_PREFIX,
+            device_id=self._device_id),
+            partial(self._startPacketCaptureCallback, port.id()), params)
 
-    def _startPacketCaptureCallback(self, result, error=False, **kwargs):
+    def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -167,13 +168,13 @@ class Device(Node):
 
         if error:
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
-                if port.id() == result["port_id"]:
+                if port.id() == port_id:
                     log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
                     try:
-                        port.startPacketCapture(result["capture_file_path"])
+                        port.startPacketCapture(result["pcap_file_path"])
                     except OSError as e:
                         self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
                     self.updated_signal.emit()
@@ -186,14 +187,14 @@ class Device(Node):
         :param port: Port instance
         """
 
-        params = {"id": self._ethhub_id,
-                  "port_id": port.id(),
-                  "port": port.portNumber()}
+        log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
+        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/stop_capture".format(
+            port=port.portNumber(),
+            prefix=self.URL_PREFIX,
+            device_id=self._device_id),
+            partial(self._stopPacketCaptureCallback, port.id()))
 
-        log.debug("{} is stopping a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self._server.send_message("dynamips.ethhub.stop_capture", params, self._stopPacketCaptureCallback)
-
-    def _stopPacketCaptureCallback(self, result, error=False, **kwargs):
+    def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -203,10 +204,10 @@ class Device(Node):
 
         if error:
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             for port in self._ports:
-                if port.id() == result["port_id"]:
+                if port.id() == port_id:
                     log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
                     port.stopPacketCapture()
                     self.updated_signal.emit()

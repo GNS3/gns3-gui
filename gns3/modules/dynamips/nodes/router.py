@@ -342,7 +342,7 @@ class Router(VM):
         #     params["private_config_base64"] = self._base64Config(new_settings["private_config"])
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self.httpPut("/virtualbox/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
+        self.httpPut("/dynamips/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False, **kwargs):
         """
