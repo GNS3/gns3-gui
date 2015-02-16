@@ -15,14 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import pytest
+from uuid import uuid4
 from unittest.mock import patch, Mock
+
 from gns3.modules.iou.iou_device import IOUDevice
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.modules.iou import IOU
+
+
+@pytest.fixture
+def fake_bin(tmpdir):
+    path = str(tmpdir / "test.bin")
+    with open(path, "w+") as f:
+        f.write("1")
+    return path
 
 
 def test_iou_device_init(local_server, project):
@@ -230,3 +240,79 @@ def test_dump(local_server, project):
         "type": "IOUDevice",
         "vm_id": None
     }
+
+
+def test_load(local_server, project, fake_bin):
+
+    uuid = uuid4()
+    iou_device = IOUDevice(IOU(), local_server, project)
+    nio_node = {
+        "description": "IOU device",
+        "id": 1,
+        "ports": [
+            {
+            "adapter_number": 0,
+             "id": 1,
+             "name": "Hyper Ethernet0/0",
+             "port_number": 0},
+                   ],
+        "properties": {
+            "name": "IOU 1",
+            "path": fake_bin,
+            "initial_config": "/tmp"
+        },
+        "server_id": 1,
+        "type": "IOUDevice",
+        "vm_id": uuid
+    }
+    with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
+        iou_device.load(nio_node)
+
+        assert mock.called
+        (path, name, console, vm_id, settings), kwargs = mock.call_args
+        assert path == fake_bin
+        assert name == "IOU 1"
+        assert console == None
+        assert settings == {"initial_config": "/tmp"}
+        assert vm_id == uuid
+
+    iou_device.updated_signal.emit()
+    assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
+
+
+def test_load_1_2(local_server, project, fake_bin):
+
+    uuid = uuid4()
+    iou_device = IOUDevice(IOU(), local_server, project)
+    nio_node = {
+        "description": "IOU device",
+        "id": 1,
+        "ports": [
+            {
+            "slot_number": 0,
+             "id": 1,
+             "name": "Hyper Ethernet0/0",
+             "port_number": 0},
+                   ],
+        "properties": {
+            "name": "IOU 1",
+            "path": fake_bin,
+            "initial_config": "/tmp"
+        },
+        "server_id": 1,
+        "type": "IOUDevice",
+        "vm_id": uuid
+    }
+    with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
+        iou_device.load(nio_node)
+
+        assert mock.called
+        (path, name, console, vm_id, settings), kwargs = mock.call_args
+        assert path == fake_bin
+        assert name == "IOU 1"
+        assert console == None
+        assert settings == {"initial_config": "/tmp"}
+        assert vm_id == uuid
+
+    iou_device.updated_signal.emit()
+    assert iou_device._ports[0].name() == "Hyper Ethernet0/0"

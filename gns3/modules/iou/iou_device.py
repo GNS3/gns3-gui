@@ -449,7 +449,7 @@ class IOUDevice(VM):
             elif not os.path.isfile(path):
                 path = self._module.findAlternativeIOUImage(path)
 
-        console = settings.pop("console")
+        console = settings.pop("console", None)
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
@@ -461,14 +461,13 @@ class IOUDevice(VM):
         """
         Updates port settings when loading a topology.
         """
-
         self.updated_signal.disconnect(self._updatePortSettings)
         # update the port with the correct names and IDs
         if "ports" in self.node_info:
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.adapterNumber():
+                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
