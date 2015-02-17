@@ -22,22 +22,10 @@ Default QEMU settings.
 from gns3.node import Node
 
 QEMU_SETTINGS = {
-    "console_start_port_range": 5001,
-    "console_end_port_range": 5500,
-    "monitor_start_port_range": 5501,
-    "monitor_end_port_range": 6000,
-    "udp_start_port_range": 40001,
-    "udp_end_port_range": 45500,
     "use_local_server": True,
 }
 
 QEMU_SETTING_TYPES = {
-    "console_start_port_range": int,
-    "console_end_port_range": int,
-    "monitor_start_port_range": int,
-    "monitor_end_port_range": int,
-    "udp_start_port_range": int,
-    "udp_end_port_range": int,
     "use_local_server": bool,
 }
 

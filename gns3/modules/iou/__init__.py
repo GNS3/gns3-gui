@@ -212,9 +212,6 @@ class IOU(Module):
         if server.isLocal() and (not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"])):
             raise ModuleError("The path to IOURC must be configured")
 
-        if server not in self._servers:
-            self.addServer(server)
-
         # create an instance of the node class
         return node_class(self, server, project)
 
