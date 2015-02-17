@@ -209,7 +209,7 @@ class IOU(Module):
 
         log.info("creating node {}".format(node_class))
 
-        if server.isLocal() and (not self._settings["iourc"] or not os.path.isfile(self._settings["iourc"])):
+        if server.isLocal() and (not self._settings["iourc_path"] or not os.path.isfile(self._settings["iourc_path"])):
             raise ModuleError("The path to IOURC must be configured")
 
         # create an instance of the node class

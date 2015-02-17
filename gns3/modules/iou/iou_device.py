@@ -424,12 +424,14 @@ class IOUDevice(VM):
 
         # make the IOU path relative
         image_path = iou["properties"]["path"]
-        if self.server().isLocal():
-            if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
-                # save only the image name if it is stored the images directory
-                iou["properties"]["path"] = os.path.basename(image_path)
-        else:
-            iou["properties"]["path"] = image_path
+        # TODO: It's broken
+        # if self.server().isLocal():
+        #     if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
+        #         # save only the image name if it is stored the images directory
+        #         iou["properties"]["path"] = os.path.basename(image_path)
+        # else:
+        #     iou["properties"]["path"] = image_path
+        iou["properties"]["path"] = image_path
 
         return iou
 
@@ -447,13 +449,14 @@ class IOUDevice(VM):
         name = settings.pop("name")
         path = settings.pop("path")
 
-        if self.server().isLocal():
-            # check and update the path to use the image in the images directory
-            updated_path = os.path.join(self._module.imageFilesDir(), path)
-            if os.path.isfile(updated_path):
-                path = updated_path
-            elif not os.path.isfile(path):
-                path = self._module.findAlternativeIOUImage(path)
+        # TODO: It's broken
+        # if self.server().isLocal():
+        #     # check and update the path to use the image in the images directory
+        #     updated_path = os.path.join(self._module.imageFilesDir(), path)
+        #     if os.path.isfile(updated_path):
+        #         path = updated_path
+        #     elif not os.path.isfile(path):
+        #         path = self._module.findAlternativeIOUImage(path)
 
         console = settings.pop("console", None)
         self.updated_signal.connect(self._updatePortSettings)

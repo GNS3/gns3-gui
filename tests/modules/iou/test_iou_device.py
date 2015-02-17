@@ -236,7 +236,7 @@ def test_dump(local_server, project):
             "path": "test.bin",
             "initial_config": "/tmp"
         },
-        "server_id": 1,
+        "server_id": local_server.id(),
         "type": "IOUDevice",
         "vm_id": None
     }
