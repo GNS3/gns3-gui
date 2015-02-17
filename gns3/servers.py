@@ -249,6 +249,7 @@ class Servers(QtCore.QObject):
         server_socket = "{host}:{port}".format(host=host, port=port)
         url = "http://{server_socket}".format(server_socket=server_socket)
         server = HTTPClient(url, self._network_manager)
+        server.setLocal(False)
         self._remote_servers[server_socket] = server
         log.info("New remote server connection {} registered".format(url))
         return server

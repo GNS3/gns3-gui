@@ -97,7 +97,6 @@ class IOU(Module):
         Load the IOU devices from the persistent settings file.
         """
 
-
         local_config = LocalConfig.instance()
 
         # restore the VirtualBox settings from QSettings (for backward compatibility)
