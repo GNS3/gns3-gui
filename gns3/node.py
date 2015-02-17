@@ -442,27 +442,29 @@ class Node(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def httpPost(self, path, callback, body={}):
+    def httpPost(self, path, callback, body={}, context=None):
         """
         POST on current server / project
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param context: Pass a context to the response callback
         """
 
-        self._project.post(self._server, path, callback, body=body)
+        self._project.post(self._server, path, callback, body=body, context=context)
 
-    def httpPut(self, path, callback, body={}):
+    def httpPut(self, path, callback, body={}, context=None):
         """
         PUT on current server / project
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param context: Pass a context to the response callback
         """
 
-        self._project.put(self._server, path, callback, body=body)
+        self._project.put(self._server, path, callback, body=body, context=context)
 
     def httpGet(self, path, callback):
         """
@@ -470,19 +472,21 @@ class Node(QtCore.QObject):
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
 
-        self._project.get(self._server, path, callback)
+        self._project.get(self._server, path, callback, context=context)
 
-    def httpDelete(self, path, callback):
+    def httpDelete(self, path, callback, context=None):
         """
         DELETE on current server / project
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
 
-        self._project.delete(self._server, path, callback)
+        self._project.delete(self._server, path, callback, context=context)
 
     def allocateUDPPort(self, port_id):
         """

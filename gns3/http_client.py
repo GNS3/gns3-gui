@@ -216,7 +216,7 @@ class HTTPClient(QtCore.QObject):
 
         return QtNetwork.QNetworkRequest(url)
 
-    def createHTTPQuery(self, method, path, callback, body={}):
+    def createHTTPQuery(self, method, path, callback, body={}, context=None):
         """
         Call the remote server, if not connected, check connection before
 
@@ -224,13 +224,14 @@ class HTTPClient(QtCore.QObject):
         :param path: Remote path
         :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
 
         if self._connected:
-            self.executeHTTPQuery(method, path, callback, body)
+            self.executeHTTPQuery(method, path, callback, body, context=context)
         else:
             log.info("Connection to {}:{}".format(self.host, self.port))
-            self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body), {})
+            self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body, context=context), {})
 
     def _callbackConnect(self, method, path, callback, body, params, error=False, **kwargs):
         """
@@ -250,7 +251,7 @@ class HTTPClient(QtCore.QObject):
         self.executeHTTPQuery(method, path, callback, body)
         self._connected = True
 
-    def executeHTTPQuery(self, method, path, callback, body):
+    def executeHTTPQuery(self, method, path, callback, body, context=None):
         """
         Call the remote server
 
@@ -258,6 +259,7 @@ class HTTPClient(QtCore.QObject):
         :param path: Remote path
         :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
 
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
@@ -285,9 +287,9 @@ class HTTPClient(QtCore.QObject):
         if method == "DELETE":
             response = self._network_manager.deleteResource(request)
 
-        response.finished.connect(partial(self._processResponse, response, callback))
+        response.finished.connect(partial(self._processResponse, response, callback, context))
 
-    def _processResponse(self, response, callback):
+    def _processResponse(self, response, callback, context):
 
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
@@ -315,9 +317,9 @@ class HTTPClient(QtCore.QObject):
                 params = {}
             if callback is not None:
                 if status >= 400:
-                    callback(params, error=True, server=self)
+                    callback(params, error=True, server=self, context=context)
                 else:
-                    callback(params, server=self)
+                    callback(params, server=self, context=context)
         response.deleteLater()
 
     def dump(self):

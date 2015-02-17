@@ -157,17 +157,18 @@ class Project(QtCore.QObject):
         for server in list(self._created_servers):
             server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
-    def get(self, server, path, callback):
+    def get(self, server, path, callback, context=None):
         """
         HTTP GET on the remote server
 
         :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
-        self._projectHTTPQuery(server, "GET", path, callback)
+        self._projectHTTPQuery(server, "GET", path, callback, context=context)
 
-    def post(self, server, path, callback, body={}):
+    def post(self, server, path, callback, body={}, context=None):
         """
         HTTP POST on the remote server
 
@@ -175,10 +176,11 @@ class Project(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param context: Pass a context to the response callback
         """
-        self._projectHTTPQuery(server, "POST", path, callback, body=body)
+        self._projectHTTPQuery(server, "POST", path, callback, body=body, context=context)
 
-    def put(self, server, path, callback, body={}):
+    def put(self, server, path, callback, body={}, context=None):
         """
         HTTP PUT on the remote server
 
@@ -186,20 +188,22 @@ class Project(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param context: Pass a context to the response callback
         """
-        self._projectHTTPQuery(server, "PUT", path, callback, body=body)
+        self._projectHTTPQuery(server, "PUT", path, callback, body=body, context=context)
 
-    def delete(self, server, path, callback):
+    def delete(self, server, path, callback, context=None):
         """
         HTTP DELETE on the remote server
 
         :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
-        self._projectHTTPQuery(server, "DELETE", path, callback)
+        self._projectHTTPQuery(server, "DELETE", path, callback, context=context)
 
-    def _projectHTTPQuery(self, server, method, path, callback, body={}):
+    def _projectHTTPQuery(self, server, method, path, callback, body={}, context=None):
         """
         HTTP query on the remote server
 
@@ -208,10 +212,11 @@ class Project(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
+        :param context: Pass a context to the response callback
         """
 
         if server not in self._created_servers:
-            func = functools.partial(self._projectOnServerCreated, method, path, callback, body)
+            func = functools.partial(self._projectOnServerCreated, method, path, callback, body, context=context)
 
             body = {
                 "temporary": self._temporary,
@@ -222,9 +227,9 @@ class Project(QtCore.QObject):
 
             server.post("/projects", func, body)
         else:
-            self._projectOnServerCreated(method, path, callback, body, params={}, server=server)
+            self._projectOnServerCreated(method, path, callback, body, params={}, server=server, context=context)
 
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, **kwargs):
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, context=None, **kwargs):
         """
         The project is created on the server continue
         the query
@@ -236,6 +241,7 @@ class Project(QtCore.QObject):
         :param params: Answer from the creation on server
         :param server: Server instance
         :param error: HTTP error
+        :param context: Pass a context to the response callback
         """
 
         if error:
@@ -252,7 +258,7 @@ class Project(QtCore.QObject):
         self._created_servers.add(server)
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        server.createHTTPQuery(method, path, callback, body=body)
+        server.createHTTPQuery(method, path, callback, body=body, context=context)
 
     def close(self):
         """Close project"""

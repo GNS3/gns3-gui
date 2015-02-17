@@ -251,11 +251,11 @@ def test_load(local_server, project, fake_bin):
         "id": 1,
         "ports": [
             {
-            "adapter_number": 0,
-             "id": 1,
-             "name": "Hyper Ethernet0/0",
-             "port_number": 0},
-                   ],
+                "adapter_number": 0,
+                "id": 1,
+                "name": "Hyper Ethernet0/0",
+                "port_number": 0},
+        ],
         "properties": {
             "name": "IOU 1",
             "path": fake_bin,
@@ -272,7 +272,7 @@ def test_load(local_server, project, fake_bin):
         (path, name, console, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert console == None
+        assert console is None
         assert settings == {"initial_config": "/tmp"}
         assert vm_id == uuid
 
@@ -289,11 +289,11 @@ def test_load_1_2(local_server, project, fake_bin):
         "id": 1,
         "ports": [
             {
-            "slot_number": 0,
-             "id": 1,
-             "name": "Hyper Ethernet0/0",
-             "port_number": 0},
-                   ],
+                "slot_number": 0,
+                "id": 1,
+                "name": "Hyper Ethernet0/0",
+                "port_number": 0},
+        ],
         "properties": {
             "name": "IOU 1",
             "path": fake_bin,
@@ -310,9 +310,53 @@ def test_load_1_2(local_server, project, fake_bin):
         (path, name, console, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert console == None
+        assert console is None
         assert settings == {"initial_config": "/tmp"}
         assert vm_id == uuid
 
     iou_device.updated_signal.emit()
     assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
+
+
+def test_startPacketCapture(iou_device):
+
+    port = Port("test")
+    port.setAdapterNumber(2)
+    port.setPortNumber(1)
+
+    with patch("gns3.node.Node.httpPost") as mock:
+        iou_device.startPacketCapture(port, "test.pcap", "DLT_EN10MB")
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms/{vm_id}/adapters/2/ports/1/start_capture".format(vm_id=iou_device.vm_id())
+        assert kwargs["body"] == {
+            "data_link_type": "DLT_EN10MB",
+            "capture_file_name": "test.pcap"
+        }
+
+        with patch("gns3.ports.port.Port.startPacketCapture") as port_mock:
+
+            # Callback
+            args[1]({"pcap_file_path": "/tmp/test.pcap"}, context=kwargs["context"])
+
+            assert port_mock.called_with("/tmp/test.pcap")
+
+
+def test_stopPacketCapture(iou_device):
+
+    port = Port("test")
+    port.setAdapterNumber(2)
+    port.setPortNumber(1)
+
+    with patch("gns3.node.Node.httpPost") as mock:
+        iou_device.stopPacketCapture(port)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms/{vm_id}/adapters/2/ports/1/stop_capture".format(vm_id=iou_device.vm_id())
+
+        with patch("gns3.ports.port.Port.stopPacketCapture") as port_mock:
+
+            # Callback
+            args[1]({}, context=kwargs["context"])
+
+            assert port_mock.called
