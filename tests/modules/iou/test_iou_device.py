@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import os
 from uuid import uuid4
 from unittest.mock import patch, Mock
 
@@ -110,7 +111,7 @@ def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir):
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
             "path": "/tmp/iou.bin",
-            "initial_config": "hostname %h"
+            "initial_config_content": "hostname %h"
         }
 
 
@@ -150,7 +151,7 @@ def test_update_initial_config(iou_device, tmpdir):
         args, kwargs = mock.call_args
         assert args[0] == "/iou/vms/{vm_id}".format(vm_id=iou_device.vm_id())
         assert kwargs["body"]["name"] == "Unreal IOU"
-        assert kwargs["body"]["initial_config"] == "hostname %h"
+        assert kwargs["body"]["initial_config_content"] == "hostname %h"
 
         # Callback
         args[1]({})
@@ -360,3 +361,38 @@ def test_stopPacketCapture(iou_device):
             args[1]({}, context=kwargs["context"])
 
             assert port_mock.called
+
+
+def test_exportConfig(iou_device, tmpdir):
+
+    path = str(tmpdir / "test.cfg")
+
+    with patch("gns3.node.Node.httpGet") as mock:
+        iou_device.exportConfig(path)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms/{vm_id}/initial_config".format(vm_id=iou_device.vm_id())
+
+        # Callback
+        args[1]({"content": "TEST"}, context=kwargs["context"])
+
+        with open(path) as f:
+            assert f.read() == "TEST"
+
+
+def test_exportConfigToDirectory(iou_device, tmpdir):
+
+    path = str(tmpdir)
+
+    with patch("gns3.node.Node.httpGet") as mock:
+        iou_device.exportConfigToDirectory(path)
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms/{vm_id}/initial_config".format(vm_id=iou_device.vm_id())
+
+        # Callback
+        args[1]({"content": "TEST"}, context=kwargs["context"])
+
+        with open(os.path.join(path, normalize_filename(iou_device.name()) + "_initial-config.cfg"
+                              )) as f:
+            assert f.read() == "TEST"
