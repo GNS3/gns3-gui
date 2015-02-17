@@ -19,11 +19,10 @@
 IOU module implementation.
 """
 
-import base64
 import os
-
 from gns3.qt import QtCore, QtGui
-from gns3.node import Node
+from gns3.local_server_config import LocalServerConfig
+from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -47,9 +46,6 @@ class IOU(Module):
         self._settings = {}
         self._nodes = []
         self._iou_devices = {}
-        self._servers = []
-        self._working_dir = ""
-        self._images_dir = ""
         self._iou_images_cache = {}
 
         # load the settings
@@ -61,12 +57,24 @@ class IOU(Module):
         Loads the settings from the persistent settings file.
         """
 
-        # load the settings
+        local_config = LocalConfig.instance()
+
+        # restore the IOU settings from QSettings (for backward compatibility)
+        legacy_settings = {}
         settings = QtCore.QSettings()
         settings.beginGroup(self.__class__.__name__)
-        for name, value in IOU_SETTINGS.items():
-            self._settings[name] = settings.value(name, value, type=IOU_SETTING_TYPES[name])
+        for name in IOU_SETTINGS.keys():
+            if settings.contains(name):
+                self._settings[name] = settings.value(name, type=IOU_SETTING_TYPES[name])
+        settings.remove("")
         settings.endGroup()
+
+        if legacy_settings:
+            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
+
+        # keep the config file sync
+        self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -74,36 +82,56 @@ class IOU(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name, value in self._settings.items():
-            settings.setValue(name, value)
-        settings.endGroup()
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
+        # save some settings to the local server config file
+        server_settings = {
+            "iourc_path": self._settings["iourc_path"],
+            "iouyap_path": self._settings["iouyap_path"],
+        }
+        config = LocalServerConfig.instance()
+        config.saveSettings(self.__class__.__name__, server_settings)
 
     def _loadIOUDevices(self):
         """
         Load the IOU devices from the persistent settings file.
         """
 
+
+        local_config = LocalConfig.instance()
+
+        # restore the VirtualBox settings from QSettings (for backward compatibility)
+        iou_devices = []
         # load the settings
         settings = QtCore.QSettings()
         settings.beginGroup("IOUDevices")
-
-        # load the IOU images
+        # load the IOU devices
         size = settings.beginReadArray("iou_device")
         for index in range(0, size):
             settings.setArrayIndex(index)
-            name = settings.value("name")
-            server = settings.value("server")
-            key = "{server}:{name}".format(server=server, name=name)
-            if key in self._iou_devices or not name or not server:
-                continue
-            self._iou_devices[key] = {}
+            device = {}
             for setting_name, default_value in IOU_DEVICE_SETTINGS.items():
-                self._iou_devices[key][setting_name] = settings.value(setting_name, default_value, IOU_DEVICE_SETTING_TYPES[setting_name])
-
+                device[setting_name] = settings.value(setting_name, default_value, IOU_DEVICE_SETTING_TYPES[setting_name])
+            iou_devices.append(device)
         settings.endArray()
+        settings.remove("")
         settings.endGroup()
+
+        if iou_devices:
+            local_config.saveSectionSettings(self.__class__.__name__, {"devices": iou_devices})
+
+        settings = local_config.settings()
+        if "devices" in settings.get(self.__class__.__name__, {}):
+            for device in settings[self.__class__.__name__]["devices"]:
+                name = device.get("name")
+                server = device.get("server")
+                key = "{server}:{name}".format(server=server, name=name)
+                if key in self._iou_devices or not name or not server:
+                    continue
+                self._iou_devices[key] = device
+
+        # keep things sync
+        self._saveIOUDevices()
 
     def _saveIOUDevices(self):
         """
@@ -111,77 +139,7 @@ class IOU(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("IOUDevices")
-        settings.remove("")
-
-        # save the IOU images
-        settings.beginWriteArray("iou_device", len(self._iou_devices))
-        index = 0
-        for ios_image in self._iou_devices.values():
-            settings.setArrayIndex(index)
-            for name, value in ios_image.items():
-                settings.setValue(name, value)
-            index += 1
-        settings.endArray()
-        settings.endGroup()
-
-    def setProjectFilesDir(self, path):
-        """
-        Sets the project files directory path this module.
-
-        :param path: path to the local project files directory
-        """
-
-        self._working_dir = path
-        log.info("local working directory for IOU module: {}".format(self._working_dir))
-
-    def setImageFilesDir(self, path):
-        """
-        Sets the image files directory path this module.
-
-        :param path: path to the local image files directory
-        """
-
-        self._images_dir = os.path.join(path, "IOU")
-
-    def imageFilesDir(self):
-        """
-        Returns the files directory path this module.
-
-        :returns: path to the local image files directory
-        """
-
-        return self._images_dir
-
-    def addServer(self, server):
-        """
-        Adds a server to be used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("adding server {}:{} to IOU module".format(server.host, server.port))
-        self._servers.append(server)
-
-    def removeServer(self, server):
-        """
-        Removes a server from being used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("removing server {}:{} from IOU module".format(server.host, server.port))
-        self._servers.remove(server)
-
-    def servers(self):
-        """
-        Returns all the servers used by this module.
-
-        :returns: list of WebSocketClient instances
-        """
-
-        return self._servers
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"devices": list(self._iou_devices.values())})
 
     def addNode(self, node):
         """
@@ -230,55 +188,12 @@ class IOU(Module):
 
         return self._settings
 
-    def _base64iourc(self, iourc_path):
-        """
-        Get the content of the IOURC file base64 encoded.
-
-        :param config_path: path to the iourc file.
-
-        :returns: base64 encoded string
-        """
-
-        try:
-            with open(iourc_path, "r", errors="replace") as f:
-                log.info("opening iourc file: {}".format(iourc_path))
-                config = f.read()
-                encoded = "".join(base64.encodestring(config.encode("utf-8")).decode("utf-8").split())
-                return encoded
-        except OSError as e:
-            log.warn("could not base64 encode {}: {}".format(iourc_path, e))
-            return ""
-
     def setSettings(self, settings):
         """
         Sets the module settings
 
         :param settings: module settings (dictionary)
         """
-
-        params = {}
-        for name, value in settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            if "iourc" in params:
-                if os.path.isfile(params["iourc"]):
-                    # encode the iourc file in base64
-                    params["iourc"] = self._base64iourc(params["iourc"])
-                else:
-                    del params["iourc"]
-            for server in self._servers:
-                # send the local working directory only if this is a local server
-                if server.isLocal():
-                    params.update({"working_dir": self._working_dir})
-                else:
-                    if "iouyap" in params:
-                        del params["iouyap"]  # do not send iouyap path to remote servers
-                    project_name = os.path.basename(self._working_dir)
-                    if project_name.endswith("-files"):
-                        project_name = project_name[:-6]
-                    params.update({"project_name": project_name})
 
         self._settings.update(settings)
         self._saveSettings()
@@ -367,23 +282,7 @@ class IOU(Module):
         """
 
         log.info("IOU module reset")
-        self._servers.clear()
         self._nodes.clear()
-
-    def notification(self, destination, params):
-        """
-        To received notifications from the server.
-
-        :param destination: JSON-RPC method
-        :param params: JSON-RPC params
-        """
-
-        if "id" in params:
-            for node in self._nodes:
-                if node.id() == params["id"]:
-                    message = "node {}: {}".format(node.name(), params["message"])
-                    self.notification_signal.emit(message, params["details"])
-                    node.stop()
 
     def exportConfigs(self, directory):
         """

@@ -103,7 +103,7 @@ class Dynamips(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save settings but "use_local_server" to the server config file
+        # save settings but "use_local_server" to the local server config file
         server_settings = self._settings.copy()
         del server_settings["use_local_server"]
         config = LocalServerConfig.instance()

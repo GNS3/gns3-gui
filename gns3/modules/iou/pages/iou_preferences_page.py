@@ -161,8 +161,8 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         :param settings: IOU settings
         """
 
-        self.uiIOURCPathLineEdit.setText(settings["iourc"])
-        self.uiIouyapPathLineEdit.setText(settings["iouyap"])
+        self.uiIOURCPathLineEdit.setText(settings["iourc_path"])
+        self.uiIouyapPathLineEdit.setText(settings["iouyap_path"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def _updateRemoteServersSlot(self):
@@ -199,7 +199,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         new_settings = {}
-        new_settings["iourc"] = self.uiIOURCPathLineEdit.text()
-        new_settings["iouyap"] = self.uiIouyapPathLineEdit.text()
+        new_settings["iourc_path"] = self.uiIOURCPathLineEdit.text()
+        new_settings["iouyap_path"] = self.uiIouyapPathLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         IOU.instance().setSettings(new_settings)

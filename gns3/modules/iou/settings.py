@@ -40,12 +40,8 @@ else:
     DEFAULT_IOUYAP_PATH = ""
 
 IOU_SETTINGS = {
-    "iourc": "",
-    "iouyap": DEFAULT_IOUYAP_PATH,
-    "console_start_port_range": 4001,
-    "console_end_port_range": 4500,
-    "udp_start_port_range": 30001,
-    "udp_end_port_range": 35000,
+    "iourc_path": "",
+    "iouyap_path": DEFAULT_IOUYAP_PATH,
     "use_local_server": True,
 }
 
@@ -54,12 +50,8 @@ if not sys.platform.startswith("linux"):
     IOU_SETTINGS["use_local_server"] = False
 
 IOU_SETTING_TYPES = {
-    "iourc": str,
-    "iouyap": str,
-    "console_start_port_range": int,
-    "console_end_port_range": int,
-    "udp_start_port_range": int,
-    "udp_end_port_range": int,
+    "iourc_path": str,
+    "iouyap_path": str,
     "use_local_server": bool,
 }
 

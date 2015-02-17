@@ -82,7 +82,7 @@ class VirtualBox(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save some settings to the server config file
+        # save some settings to the local server config file
         server_settings = {
             "vboxmanage_path": self._settings["vboxmanage_path"],
             "vbox_user": self._settings["vbox_user"],
