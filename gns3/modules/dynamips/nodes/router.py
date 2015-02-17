@@ -537,15 +537,6 @@ class Router(VM):
         self._server.send_message("dynamips.vm.update", params, self._updateCallback)
         self._module.updateImageIdlepc(self._settings["image"], idlepc)
 
-    def _saveConfig(self):
-        """
-        Tells the server to save the router configurations (startup-config and private-config).
-        """
-
-        params = {"id": self._router_id}
-        log.debug("{} is saving his configuration: {}".format(self.name(), params))
-        self._server.send_notification("dynamips.vm.save_config", params)
-
     def _slot_info(self):
         """
         Returns information about the slots/ports of this router.
@@ -682,10 +673,6 @@ class Router(VM):
 
         :returns: representation of the node (dictionary)
         """
-
-        # tell the server to save the startup-config and
-        # private-config
-        self._saveConfig()
 
         router = {"id": self.id(),
                   "vm_id": self._vm_id,
