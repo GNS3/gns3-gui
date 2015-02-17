@@ -369,7 +369,7 @@ class Topology(object):
         self._initialized_nodes.clear()
         self._resources_type = "local"
         self._instances = []
-        log.info("topology has been reset")
+        log.info("Topology reset")
 
     def _dump_gui_settings(self, topology):
         """

@@ -43,41 +43,21 @@ else:
             continue
 
 DYNAMIPS_SETTINGS = {
-    "path": DEFAULT_DYNAMIPS_PATH,
+    "dynamips_path": DEFAULT_DYNAMIPS_PATH,
     "hypervisor_start_port_range": 7200,
     "hypervisor_end_port_range": 7700,
-    "console_start_port_range": 2001,
-    "console_end_port_range": 2500,
-    "aux_start_port_range": 2501,
-    "aux_end_port_range": 3000,
-    "udp_start_port_range": 10001,
-    "udp_end_port_range": 20000,
     "use_local_server": True,
-    "allocate_hypervisor_per_device": True,
-    "memory_usage_limit_per_hypervisor": 1024,
-    "allocate_hypervisor_per_ios_image": True,
     "ghost_ios_support": True,
-    "jit_sharing_support": False,
     "sparse_memory_support": True,
     "mmap_support": True,
 }
 
 DYNAMIPS_SETTING_TYPES = {
-    "path": str,
+    "dynamips_path": str,
     "hypervisor_start_port_range": int,
     "hypervisor_end_port_range": int,
-    "console_start_port_range": int,
-    "console_end_port_range": int,
-    "aux_start_port_range": int,
-    "aux_end_port_range": int,
-    "udp_start_port_range": int,
-    "udp_end_port_range": int,
     "use_local_server": bool,
-    "allocate_hypervisor_per_device": bool,
-    "memory_usage_limit_per_hypervisor": int,
-    "allocate_hypervisor_per_ios_image": bool,
     "ghost_ios_support": bool,
-    "jit_sharing_support": bool,
     "sparse_memory_support": bool,
     "mmap_support": bool,
 }

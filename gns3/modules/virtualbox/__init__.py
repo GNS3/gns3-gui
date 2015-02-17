@@ -45,7 +45,6 @@ class VirtualBox(Module):
         self._settings = {}
         self._virtualbox_vms = {}
         self._nodes = []
-        self._working_dir = ""
 
         # load the settings
         self._loadSettings()
@@ -116,7 +115,6 @@ class VirtualBox(Module):
         settings.endGroup()
 
         if virtualbox_vms:
-            log.info(virtualbox_vms)
             local_config.saveSectionSettings(self.__class__.__name__, {"vms": virtualbox_vms})
 
         settings = local_config.settings()
@@ -269,6 +267,7 @@ class VirtualBox(Module):
         Resets the module.
         """
 
+        log.info("VirtualBox module reset")
         self._nodes.clear()
 
     @staticmethod

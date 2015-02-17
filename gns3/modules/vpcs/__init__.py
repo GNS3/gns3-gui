@@ -179,7 +179,7 @@ class VPCS(Module):
         Resets the module.
         """
 
-        log.info("vpcs module reset")
+        log.info("VPCS module reset")
         self._nodes.clear()
 
     def exportConfigs(self, directory):

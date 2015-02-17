@@ -19,12 +19,10 @@
 Dynamips module implementation.
 """
 
-import os
-import glob
-
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
+from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -55,7 +53,6 @@ PLATFORM_TO_CLASS = {
     "c7200": C7200
 }
 
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -71,10 +68,7 @@ class Dynamips(Module):
 
         self._settings = {}
         self._ios_routers = {}
-        self._servers = []
         self._nodes = []
-        self._working_dir = ""
-        self._images_dir = ""
         self._ios_images_cache = {}
 
         # load the settings and IOS images.
@@ -109,67 +103,91 @@ class Dynamips(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
+        # save settings but "use_local_server" to the server config file
+        server_settings = self._settings.copy()
+        del server_settings["use_local_server"]
+        config = LocalServerConfig.instance()
+        config.saveSettings(self.__class__.__name__, server_settings)
+
     def _loadIOSRouters(self):
         """
         Load the IOS routers from the persistent settings file.
         """
 
+
+        local_config = LocalConfig.instance()
+
+        # restore the Dynamips VM settings from QSettings (for backward compatibility)
+        ios_routers = []
         # load the settings
         settings = QtCore.QSettings()
         settings.beginGroup("IOSRouters")
-
-        # load the IOS images
+        # load the VMs
         size = settings.beginReadArray("ios_router")
         for index in range(0, size):
             settings.setArrayIndex(index)
-            name = settings.value("name")
-            server = settings.value("server")
-            key = "{server}:{name}".format(server=server, name=name)
-            if key in self._ios_routers or not name or not server:
-                continue
-            self._ios_routers[key] = {}
+            router = {}
             for setting_name, default_value in IOS_ROUTER_SETTINGS.items():
-                self._ios_routers[key][setting_name] = settings.value(setting_name, default_value, IOS_ROUTER_SETTING_TYPES[setting_name])
+                router[setting_name] = settings.value(setting_name, default_value, IOS_ROUTER_SETTING_TYPES[setting_name])
 
             for slot_id in range(0, 7):
                 slot = "slot{}".format(slot_id)
                 if settings.contains(slot):
-                    self._ios_routers[key][slot] = settings.value(slot, "")
+                    router[slot] = settings.value(slot, "")
 
             for wic_id in range(0, 3):
                 wic = "wic{}".format(wic_id)
                 if settings.contains(wic):
-                    self._ios_routers[key][wic] = settings.value(wic, "")
+                    router[wic] = settings.value(wic, "")
 
-            platform = self._ios_routers[key]["platform"]
-            chassis = self._ios_routers[key]["chassis"]
+            platform = router["platform"]
+            chassis = router["chassis"]
 
             if platform == "c7200":
-                self._ios_routers[key]["midplane"] = settings.value("midplane", "vxr")
-                self._ios_routers[key]["npe"] = settings.value("npe", "npe-400")
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C7200-IO-FE")
+                router["midplane"] = settings.value("midplane", "vxr")
+                router["npe"] = settings.value("npe", "npe-400")
+                router["slot0"] = settings.value("slot0", "C7200-IO-FE")
             else:
-                self._ios_routers[key]["iomem"] = 5
+                router["iomem"] = 5
 
             if platform in ("c3725", "c3725", "c2691"):
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "GT96100-FE")
+                router["slot0"] = settings.value("slot0", "GT96100-FE")
             elif platform == "c3600" and chassis == "3660":
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "Leopard-2FE")
+                router["slot0"] = settings.value("slot0", "Leopard-2FE")
             elif platform == "c2600" and chassis == "2610":
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-1E")
+                router["slot0"] = settings.value("slot0", "C2600-MB-1E")
             elif platform == "c2600" and chassis == "2611":
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-2E")
+                router["slot0"] = settings.value("slot0", "C2600-MB-2E")
             elif platform == "c2600" and chassis in ("2620", "2610XM", "2620XM", "2650XM"):
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-1FE")
+                router["slot0"] = settings.value("slot0", "C2600-MB-1FE")
             elif platform == "c2600" and chassis in ("2621", "2611XM", "2621XM", "2651XM"):
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C2600-MB-2FE")
+                router["slot0"] = settings.value("slot0", "C2600-MB-2FE")
             elif platform == "c1700" and chassis in ("1720", "1721", "1750", "1751", "1760"):
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C1700-MB-1FE")
+                router["slot0"] = settings.value("slot0", "C1700-MB-1FE")
             elif platform == "c1700" and chassis in ("1751", "1760"):
-                self._ios_routers[key]["slot0"] = settings.value("slot0", "C1700-MB-WIC1")
+                router["slot0"] = settings.value("slot0", "C1700-MB-WIC1")
+
+            ios_routers.append(router)
 
         settings.endArray()
+        settings.remove("")
         settings.endGroup()
+
+        if ios_routers:
+            local_config.saveSectionSettings(self.__class__.__name__, {"routers": ios_routers})
+
+        settings = local_config.settings()
+        if "routers" in settings.get(self.__class__.__name__, {}):
+            for router in settings[self.__class__.__name__]["routers"]:
+                name = router.get("name")
+                server = router.get("server")
+                key = "{server}:{name}".format(server=server, name=name)
+                if key in self._ios_routers or not name or not server:
+                    continue
+                self._ios_routers[key] = router
+
+        # keep things sync
+        self._saveIOSRouters()
 
     def _saveIOSRouters(self):
         """
@@ -177,102 +195,7 @@ class Dynamips(Module):
         """
 
         # save the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("IOSRouters")
-        settings.remove("")
-
-        # save the IOS images
-        settings.beginWriteArray("ios_router", len(self._ios_routers))
-        index = 0
-        for ios_router in self._ios_routers.values():
-            settings.setArrayIndex(index)
-            for name, value in ios_router.items():
-                settings.setValue(name, value)
-            index += 1
-        settings.endArray()
-        settings.endGroup()
-
-    def _delete_dynamips_files(self):
-        """
-        Deletes useless local Dynamips files from the working directory
-        """
-
-        files = glob.glob(os.path.join(self._working_dir, "dynamips", "*.ghost"))
-        files += glob.glob(os.path.join(self._working_dir, "dynamips", "*_lock"))
-        files += glob.glob(os.path.join(self._working_dir, "dynamips", "ilt_*"))
-        files += glob.glob(os.path.join(self._working_dir, "dynamips", "c[0-9][0-9][0-9][0-9]_*_rommon_vars"))
-        files += glob.glob(os.path.join(self._working_dir, "dynamips", "c[0-9][0-9][0-9][0-9]_*_ssa"))
-        for file in files:
-            try:
-                log.debug("deleting file {}".format(file))
-                os.remove(file)
-            except OSError as e:
-                log.warn("could not delete file {}: {}".format(file, e))
-                continue
-
-    def setProjectFilesDir(self, path):
-        """
-        Sets the project files directory path this module.
-
-        :param path: path to the local project files directory
-        """
-
-        # self._delete_dynamips_files()  #FIXME: cause issues
-        self._working_dir = path
-        log.info("local working directory for Dynamips module: {}".format(self._working_dir))
-
-        # update the server with the new working directory / project name
-        for server in self._servers:
-            if server.connected():
-                self._sendSettings(server)
-
-    def setImageFilesDir(self, path):
-        """
-        Sets the image files directory path this module.
-
-        :param path: path to the local image files directory
-        """
-
-        self._images_dir = os.path.join(path, "IOS")
-
-    def imageFilesDir(self):
-        """
-        Returns the files directory path this module.
-
-        :returns: path to the local image files directory
-        """
-
-        return self._images_dir
-
-    def addServer(self, server):
-        """
-        Adds a server to be used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("adding server {}:{} to Dynamips module".format(server.host, server.port))
-        self._servers.append(server)
-        self._sendSettings(server)
-
-    def removeServer(self, server):
-        """
-        Removes a server from being used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("removing server {}:{} from Dynamips module".format(server.host, server.port))
-        self._servers.remove(server)
-
-    def servers(self):
-        """
-        Returns all the servers used by this module.
-
-        :returns: list of WebSocketClient instances
-        """
-
-        return self._servers
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"routers": list(self._ios_routers.values())})
 
     def addNode(self, node):
         """
@@ -327,11 +250,6 @@ class Dynamips(Module):
 
         :param settings: module settings (dictionary)
         """
-
-        params = {}
-        for name, value in settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
 
         self._settings.update(settings)
         self._saveSettings()
@@ -461,35 +379,11 @@ class Dynamips(Module):
 
     def reset(self):
         """
-        Resets the servers and nodes.
+        Resets the module.
         """
 
         log.info("Dynamips module reset")
-        for server in self._servers:
-            if server.connected():
-                server.send_notification("dynamips.reset")
-        self._servers.clear()
-
-        for node in self._nodes:
-            node.reset()
         self._nodes.clear()
-
-    def notification(self, destination, params):
-        """
-        To received notifications from the server.
-
-        :param destination: JSON-RPC method
-        :param params: JSON-RPC params
-        """
-
-        if "devices" in params:
-            for node in self._nodes:
-                for device in params["devices"]:
-                    if node.name() == device:
-                        message = "node {}: {}".format(node.name(), params["message"])
-                        self.notification_signal.emit(message, params["details"])
-                        if hasattr(node, "stop"):
-                            node.stop()
 
     def exportConfigs(self, directory):
         """
