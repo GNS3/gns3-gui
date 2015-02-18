@@ -38,6 +38,12 @@ class HTTPClient(QtCore.QObject):
     """
 
     _instance_count = 1
+
+    # Callback class used for displaying progress
+    _progress_callback = None
+    # Count of HTTP running queries
+    _running_queries = 0
+
     connected_signal = QtCore.Signal()
     connection_error_signal = QtCore.Signal(str)
 
@@ -64,6 +70,32 @@ class HTTPClient(QtCore.QObject):
         # create an unique ID
         self._id = HTTPClient._instance_count
         HTTPClient._instance_count += 1
+
+    @classmethod
+    def notify_progress_start_query(cls):
+        """
+        Called when a query start
+        """
+        cls._running_queries += 1
+        if cls._progress_callback and cls._running_queries > 0:
+            cls._progress_callback.show()
+
+    @classmethod
+    def notify_progress_end_query(cls):
+        """
+        Called when a query is over
+        """
+        cls._running_queries -= 1
+        if cls._progress_callback and cls._running_queries <= 0:
+            cls._running_queries = 0
+            cls._progress_callback.hide()
+
+    @classmethod
+    def setProgressCallback(cls, progress_callback):
+        """
+        :param progress_callback: A progress callback instance
+        """
+        cls._progress_callback = progress_callback
 
     @staticmethod
     def reset():
@@ -262,6 +294,7 @@ class HTTPClient(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
+        HTTPClient.notify_progress_start_query()
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = self._request(url)
@@ -321,6 +354,7 @@ class HTTPClient(QtCore.QObject):
                 else:
                     callback(params, server=self, context=context)
         response.deleteLater()
+        HTTPClient.notify_progress_end_query()
 
     def dump(self):
         """

@@ -66,6 +66,8 @@ from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 from .cloud_instances import CloudInstances
 from .project import Project
+from .http_client import HTTPClient
+from .progress import Progress
 
 log = logging.getLogger(__name__)
 
@@ -91,6 +93,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         MainWindow._instance = self
 
         self._settings = {}
+
+        HTTPClient.setProgressCallback(Progress(self))
 
         # FIXME: Temporary not True if project from command line
         self._project = Project()

@@ -93,3 +93,22 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     assert http_client._connected
     assert callback.called
+
+
+def test_progress_callback(http_client, response):
+
+    http_client._connected = True
+    callback = unittest.mock.MagicMock()
+    progress = unittest.mock.MagicMock()
+
+    http_client.setProgressCallback(progress)
+    http_client.post("/test", callback)
+    assert http_client._running_queries == 1
+
+    # Trigger the completion
+    response.finished.emit()
+
+    assert http_client._running_queries == 0
+
+    assert progress.show.called
+    assert progress.hide.called
