@@ -68,7 +68,7 @@ def test_addNIO(vpcs_device):
         vpcs_device.nio_signal.connect(signal_mock)
 
         # Callback
-        args[1]({})
+        args[1]({}, context=kwargs["context"])
 
         # Check the signal
         assert signal_mock.called

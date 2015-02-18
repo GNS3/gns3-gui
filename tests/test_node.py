@@ -32,7 +32,7 @@ def test_allocateUDPPort(vpcs_device):
         vpcs_device.allocate_udp_nio_signal.connect(signal_mock)
 
         # Callback
-        args[1]({"udp_port": 4242})
+        args[1]({"udp_port": 4242}, context=kwargs["context"])
 
         # Check the signal
         assert signal_mock.called

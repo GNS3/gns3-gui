@@ -45,6 +45,7 @@ class Project(QtCore.QObject):
         self._temporary = False
         self._closed = False
         self._files_dir = None
+        self._images_dir = None
         self._type = None
         self._name = None
         self._project_instances.add(self)

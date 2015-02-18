@@ -498,8 +498,8 @@ class IOUDevice(VM):
         self.httpGet("/iou/vms/{vm_id}/initial_config".format(
             vm_id=self._vm_id,
         ),
-        self._exportConfigCallback,
-        context={
+            self._exportConfigCallback,
+            context={
             "path": config_export_path
         })
 
@@ -534,8 +534,8 @@ class IOUDevice(VM):
         self.httpGet("/iou/vms/{vm_id}/initial_config".format(
             vm_id=self._vm_id,
         ),
-        self._exportConfigToDirectoryCallback,
-        context={
+            self._exportConfigToDirectoryCallback,
+            context={
             "directory": directory
         })
 

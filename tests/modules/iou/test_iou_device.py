@@ -394,5 +394,5 @@ def test_exportConfigToDirectory(iou_device, tmpdir):
         args[1]({"content": "TEST"}, context=kwargs["context"])
 
         with open(os.path.join(path, normalize_filename(iou_device.name()) + "_initial-config.cfg"
-                              )) as f:
+                               )) as f:
             assert f.read() == "TEST"
