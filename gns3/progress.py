@@ -15,7 +15,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtCore, QtGui
+import time
+
+from .utils.progress_dialog import ProgressDialog
+from .qt import QtCore
+
+
+class ProgressDialogThread(QtCore.QThread):
+    error = QtCore.pyqtSignal(str, bool)
+    completed = QtCore.pyqtSignal()
+    update = QtCore.pyqtSignal(int)
+
+    def run(self):
+        """
+        Thread starting point.
+        """
+
+        self._is_running = True
+
+        while True:
+            if not self._is_running:
+                self.completed.emit()
+                return
+            time.sleep(0.01)
+
+    def stop(self):
+        """
+        Stops this thread as soon as possible.
+        """
+
+        self._is_running = False
 
 
 class Progress:
@@ -27,24 +56,17 @@ class Progress:
     def __init__(self, parent):
         self._progress_dialog = None
         self._parent = parent
-        self.stimer = QtCore.QTimer()
 
     def show(self):
-        min_duration = 100 # Minimum duration before display (ms)
-
         if self._progress_dialog is None:
-            self._progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
-            self._progress_dialog.setModal(True)
-            self._progress_dialog.setValue(0)
-            self._progress_dialog.setWindowTitle("Please wait")
-            self._progress_dialog.setMinimumDuration(min_duration)
-            self.stimer.singleShot(min_duration, self._show_dialog)
-
-    def _show_dialog(self):
-        if self._progress_dialog is not None:
-            self._progress_dialog.show()
+            self._progress_dialog = ProgressDialogThread()
+            pd = ProgressDialog(self._progress_dialog,
+                                "Waiting server",
+                                "Waiting",
+                                "Cancel", busy=True, parent=self._parent)
+            pd.show()
 
     def hide(self):
         if self._progress_dialog is not None:
-            self._progress_dialog.cancel()
+            self._progress_dialog.stop()
             self._progress_dialog = None
