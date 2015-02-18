@@ -24,6 +24,7 @@ import re
 import base64
 from gns3.vm import VM
 from gns3.node import Node
+from gns3.servers import Servers
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
@@ -425,7 +426,7 @@ class IOUDevice(VM):
         # make the IOU path relative
         image_path = iou["properties"]["path"]
         if self.server().isLocal():
-            if os.path.commonprefix([image_path, self.imageFilesDir()]) == self._module.imageFilesDir():
+            if os.path.commonprefix([image_path, self.imageFilesDir()]) == self.imageFilesDir():
                 # save only the image name if it is stored the images directory
                 iou["properties"]["path"] = os.path.basename(image_path)
         else:
@@ -438,7 +439,7 @@ class IOUDevice(VM):
         """Return location of IOU images"""
 
         servers = Servers.instance()
-        local_server = server.localServerSettings()
+        local_server = servers.localServerSettings()
         return local_server["images_path"]
 
     def load(self, node_info):
