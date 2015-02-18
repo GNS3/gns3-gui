@@ -1029,7 +1029,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         elif self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
             self._project.close()
-            event.ignore()
+            if self._project.closed():
+                event.accept()
+            else:
+                event.ignore()
         else:
             event.ignore()
 
@@ -1039,6 +1042,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         And project closed.
         """
 
+        log.info("_finish_application_closing")
         VPCS.instance().stopMultiHostVPCS()
 
         # save the geometry and state of the main window.

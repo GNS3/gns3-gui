@@ -30,7 +30,7 @@ class Progress:
         self.stimer = QtCore.QTimer()
 
     def show(self):
-        min_duration = 100 # Minimum duration before display (ms)
+        min_duration = 100  #  Minimum duration before display (ms)
 
         if self._progress_dialog is None:
             self._progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
