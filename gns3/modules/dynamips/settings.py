@@ -44,8 +44,6 @@ else:
 
 DYNAMIPS_SETTINGS = {
     "dynamips_path": DEFAULT_DYNAMIPS_PATH,
-    "hypervisor_start_port_range": 7200,
-    "hypervisor_end_port_range": 7700,
     "use_local_server": True,
     "ghost_ios_support": True,
     "sparse_memory_support": True,
@@ -54,8 +52,6 @@ DYNAMIPS_SETTINGS = {
 
 DYNAMIPS_SETTING_TYPES = {
     "dynamips_path": str,
-    "hypervisor_start_port_range": int,
-    "hypervisor_end_port_range": int,
     "use_local_server": bool,
     "ghost_ios_support": bool,
     "sparse_memory_support": bool,

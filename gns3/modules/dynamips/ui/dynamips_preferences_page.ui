@@ -115,61 +115,6 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QGroupBox" name="uiHypervisorPortRangeGroupBox">
-         <property name="title">
-          <string>Dynamips hypervisor port range</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QSpinBox" name="uiHypervisorStartPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>7200</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="uiHypervisorPortRangeLabel">
-            <property name="text">
-             <string>to</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="uiHypervisorEndPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>7700</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="uiMemoryUsageOptimisationGroupBox">
          <property name="title">
           <string>Memory usage optimisation</string>
@@ -233,7 +178,6 @@
       </layout>
       <zorder>spacer_2</zorder>
       <zorder>uiMemoryUsageOptimisationGroupBox</zorder>
-      <zorder>uiHypervisorPortRangeGroupBox</zorder>
      </widget>
     </widget>
    </item>

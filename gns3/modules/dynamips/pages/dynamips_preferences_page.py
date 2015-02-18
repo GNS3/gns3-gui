@@ -107,8 +107,6 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         """
 
         self.uiDynamipsPathLineEdit.setText(settings["dynamips_path"])
-        self.uiHypervisorStartPortSpinBox.setValue(settings["hypervisor_start_port_range"])
-        self.uiHypervisorEndPortSpinBox.setValue(settings["hypervisor_end_port_range"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiGhostIOSSupportCheckBox.setChecked(settings["ghost_ios_support"])
         self.uiMmapSupportCheckBox.setChecked(settings["mmap_support"])
@@ -149,8 +147,6 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
 
         new_settings = {}
         new_settings["dynamips_path"] = self.uiDynamipsPathLineEdit.text()
-        new_settings["hypervisor_start_port_range"] = self.uiHypervisorStartPortSpinBox.value()
-        new_settings["hypervisor_end_port_range"] = self.uiHypervisorEndPortSpinBox.value()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["ghost_ios_support"] = self.uiGhostIOSSupportCheckBox.isChecked()
         new_settings["mmap_support"] = self.uiMmapSupportCheckBox.isChecked()
