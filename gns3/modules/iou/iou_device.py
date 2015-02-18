@@ -455,7 +455,6 @@ class IOUDevice(VM):
         name = settings.pop("name")
         path = settings.pop("path")
 
-        # TODO: It's broken
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
             updated_path = os.path.join(self.imageFilesDir(), path)

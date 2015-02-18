@@ -26,6 +26,7 @@ from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
 from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, STYLES
 from gns3.servers import Servers
 
+
 class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
     """
