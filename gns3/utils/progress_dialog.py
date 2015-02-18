@@ -23,7 +23,6 @@ from ..qt import QtGui
 
 
 class ProgressDialog(QtGui.QProgressDialog):
-
     """
     Progress dialog implementation with thread support.
 
