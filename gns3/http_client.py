@@ -193,49 +193,51 @@ class HTTPClient(QtCore.QObject):
             self._connected = True
             self.connected_signal.emit()
 
-    def get(self, path, callback):
+    def get(self, path, callback, context=None):
         """
         HTTP GET on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
 
-        self.createHTTPQuery("GET", path, callback)
+        self.createHTTPQuery("GET", path, callback, context=context)
 
-    def put(self, path, callback, body={}):
+    def put(self, path, callback, context=None, body={}):
         """
         HTTP PUT on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         :param body: params to send (dictionary)
-        :param check_connected: check if connected to a server
         """
 
-        self.createHTTPQuery("PUT", path, callback, body=body)
+        self.createHTTPQuery("PUT", path, callback, context=context, body=body)
 
-    def post(self, path, callback, body={}):
+    def post(self, path, callback, context=None, body={}):
         """
         HTTP POST on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         :param body: params to send (dictionary)
-        :param connecting: indicates this is an initial connection to the server
         """
 
-        self.createHTTPQuery("POST", path, callback, body=body)
+        self.createHTTPQuery("POST", path, callback, context=context, body=body)
 
-    def delete(self, path, callback):
+    def delete(self, path, callback, context=None):
         """
         HTTP DELETE on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
+        :param context: Pass a context to the response callback
         """
 
-        self.createHTTPQuery("DELETE", path, callback)
+        self.createHTTPQuery("DELETE", path, callback, context=context)
 
     def _request(self, url):
         """
