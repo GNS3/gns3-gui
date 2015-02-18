@@ -189,7 +189,6 @@ STYLES = ["Charcoal (default)", "Classic", "Legacy"]
 
 GENERAL_SETTINGS = {
     "projects_path": DEFAULT_PROJECTS_PATH,
-    "images_path": DEFAULT_IMAGES_PATH,
     "style": STYLES[0],
     "auto_launch_project_dialog": True,
     "check_for_update": True,
@@ -208,7 +207,6 @@ GENERAL_SETTINGS = {
 
 GENERAL_SETTING_TYPES = {
     "projects_path": str,
-    "images_path": str,
     "style": str,
     "auto_launch_project_dialog": bool,
     "check_for_update": bool,
@@ -247,6 +245,7 @@ LOCAL_SERVER_SETTINGS = {
     "path": DEFAULT_LOCAL_SERVER_PATH,
     "host": DEFAULT_LOCAL_SERVER_HOST,
     "port": DEFAULT_LOCAL_SERVER_PORT,
+    "images_path": DEFAULT_IMAGES_PATH,
     "auto_start": False,
     "allow_console_from_anywhere": False,
     "console_start_port_range": 2000,
@@ -259,6 +258,7 @@ LOCAL_SERVER_SETTING_TYPES = {
     "path": str,
     "host": str,
     "port": int,
+    "images_path": str,
     "auto_start": bool,
     "allow_console_from_anywhere": bool,
     "console_start_port_range": int,

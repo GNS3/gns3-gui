@@ -94,7 +94,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
     @staticmethod
     def getDiskImage(parent):
 
-        destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "QEMU")
+        destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "QEMU")
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
                                                              "Select a QEMU disk image",
                                                              destination_directory)

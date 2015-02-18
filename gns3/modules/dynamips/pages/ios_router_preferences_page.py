@@ -120,7 +120,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                         files_to_upload=[(
                             self._ios_routers[key]["path"],
                             'images/' + os.path.relpath(self._ios_routers[key]["path"],
-                                                        self._main_window.settings()["images_path"])
+                                                        self._main_window.settings().imagesDirPath())
                         )]
                     )
                     upload_thread.completed.connect(self._imageUploadComplete)
@@ -212,7 +212,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         :return: path to the IOS image or None
         """
 
-        destination_directory = os.path.join(MainWindow.instance().settings()["images_path"], "IOS")
+        destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "IOS")
         path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
                                                              "Select an IOS image",
                                                              destination_directory,

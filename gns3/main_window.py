@@ -1482,7 +1482,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :returns: path to the default images directory
         """
 
-        return self._settings["images_path"]
+        return Servers.instance().localServerSettings()["images_path"]
 
     @staticmethod
     def instance():
@@ -1614,7 +1614,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self,
             self._cloud_settings,
             self._project.topologyFile(),
-            self._settings['images_path']
+            self.imagesDirPath()
         )
         progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
                                          parent=self)
@@ -1625,7 +1625,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dialog = ImportCloudProjectDialog(
             self,
             self._settings['projects_path'],
-            self._settings['images_path'],
+            self.imagesDirPath(),
             self._cloud_settings
         )
 
@@ -1660,7 +1660,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         images = set([
             (
                 node.settings()['image'],
-                'images/' + os.path.relpath(node.settings()['image'], self._settings["images_path"])
+                'images/' + os.path.relpath(node.settings()['image'], self.imagesDirPath())
             )
             for node in topology.nodes() if 'image' in node.settings()
         ])
@@ -1768,7 +1768,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         log.debug('downloading images ' + str(images))
-        download_images_thread = DownloadImagesThread(self._cloud_settings, self._settings['images_path'], images)
+        download_images_thread = DownloadImagesThread(self._cloud_settings, self.imagesDirPath(), images)
         download_images_progress_dialog = ProgressDialog(download_images_thread, "Downloading Images",
                                                          "Downloading images files...", "Cancel", parent=self)
         download_images_progress_dialog.show()

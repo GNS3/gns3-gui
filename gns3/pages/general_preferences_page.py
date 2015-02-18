@@ -24,7 +24,7 @@ import shutil
 from gns3.qt import QtGui, QtCore
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
 from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, STYLES
-
+from gns3.servers import Servers
 
 class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
@@ -76,7 +76,9 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to select the images directory path.
         """
 
-        directory = self._general_settings["images_path"]
+        servers = Servers.instance()
+        local_server = server.localServerSettings()
+        directory = local_server["images_path"]
         path = QtGui.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtGui.QFileDialog.ShowDirsOnly)
         if path:
             self.uiImagesPathLineEdit.setText(path)
@@ -180,8 +182,10 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         :param settings: General settings
         """
 
+        local_server = Servers.instance().localServerSettings()
+
         self.uiProjectsPathLineEdit.setText(settings["projects_path"])
-        self.uiImagesPathLineEdit.setText(settings["images_path"])
+        self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
@@ -239,10 +243,15 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         """
         Saves the general preferences.
         """
+        servers = Servers.instance()
+
+        local_server = Servers.instance().localServerSettings()
+        local_server["images_path"] = self.uiImagesPathLineEdit.text()
+        servers.setLocalServerSettings(local_server)
+        servers.save()
 
         new_settings = {}
         new_settings["projects_path"] = self.uiProjectsPathLineEdit.text()
-        new_settings["images_path"] = self.uiImagesPathLineEdit.text()
         new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()
         new_settings["style"] = self.uiStyleComboBox.currentText()
         new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()
