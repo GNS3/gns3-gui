@@ -23,7 +23,6 @@ import os
 import re
 import base64
 
-from functools import partial
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
@@ -413,12 +412,15 @@ class Router(VM):
         params = {"capture_file_name": capture_file_name,
                   "data_link_type": data_link_type}
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/start_capture".format(vm_id=self._vm_id,
-                                                                                                                 adapter_number=port.adapterNumber(),
-                                                                                                                 port_number=port.portNumber()),
-                      partial(self._startPacketCaptureCallback, port.id()), body=params)
+        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/start_capture".format(
+            vm_id=self._vm_id,
+            adapter_number=port.adapterNumber(),
+            port_number=port.portNumber()),
+            self._startPacketCaptureCallback,
+            context={"port": port},
+            body=params)
 
-    def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
+    def _startPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -430,15 +432,13 @@ class Router(VM):
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            for port in self._ports:
-                if port.id() == port_id:
-                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
-                    try:
-                        port.startPacketCapture(result["pcap_file_path"])
-                    except OSError as e:
-                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
-                    self.updated_signal.emit()
-                    break
+            port = context["port"]
+            log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
+            try:
+                port.startPacketCapture(result["pcap_file_path"])
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
+            self.updated_signal.emit()
 
     def stopPacketCapture(self, port):
         """
@@ -448,12 +448,14 @@ class Router(VM):
         """
 
         log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/stop_capture".format(vm_id=self._vm_id,
-                                                                                                                adapter_number=port.adapterNumber(),
-                                                                                                                port_number=port.portNumber()),
-                      partial(self._stopPacketCaptureCallback, port.id()))
+        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/stop_capture".format(
+            vm_id=self._vm_id,
+            adapter_number=port.adapterNumber(),
+            port_number=port.portNumber()),
+            self._stopPacketCaptureCallback,
+            context={"port": port})
 
-    def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
+    def _stopPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -465,12 +467,10 @@ class Router(VM):
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            for port in self._ports:
-                if port.id() == port_id:
-                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
-                    port.stopPacketCapture()
-                    self.updated_signal.emit()
-                    break
+            port = context["port"]
+            log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
+            port.stopPacketCapture()
+            self.updated_signal.emit()
 
     def computeIdlepcs(self):
         """

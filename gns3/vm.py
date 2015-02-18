@@ -19,8 +19,6 @@
 Base class for VM classes.
 """
 
-from functools import partial
-
 from .node import Node
 from .ports.port import Port
 
@@ -173,9 +171,11 @@ class VM(Node):
             port=port.portNumber(),
             prefix=self.URL_PREFIX,
             vm_id=self._vm_id),
-            partial(self._addNIOCallback, port.id()), params)
+            self._addNIOCallback,
+            context={"port_id": port.id()},
+            body=params)
 
-    def _addNIOCallback(self, port_id, result, error=False, **kwargs):
+    def _addNIOCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for addNIO.
 
@@ -188,7 +188,7 @@ class VM(Node):
             self.server_error_signal.emit(self.id(), result["message"])
             self.nio_cancel_signal.emit(self.id())
         else:
-            self.nio_signal.emit(self.id(), port_id)
+            self.nio_signal.emit(self.id(), context["port_id"])
 
     def deleteNIO(self, port):
         """

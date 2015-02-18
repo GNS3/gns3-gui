@@ -21,7 +21,6 @@ Asynchronously sends JSON messages to the GNS3 server and receives responses wit
 """
 
 import re
-from functools import partial
 from gns3.node import Node
 from gns3.ports.atm_port import ATMPort
 from .device import Device
@@ -179,7 +178,9 @@ class ATMSwitch(Device):
             port=port.portNumber(),
             prefix=self.URL_PREFIX,
             device_id=self._device_id),
-            partial(self._addNIOCallback, port.id()), params)
+            self._addNIOCallback,
+            context={"port_id": port.id()},
+            body=params)
 
     def info(self):
         """

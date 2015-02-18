@@ -19,10 +19,8 @@
 Base class for Device classes.
 """
 
-from functools import partial
 
 from gns3.node import Node
-from gns3.ports.port import Port
 
 import logging
 log = logging.getLogger(__name__)
@@ -96,7 +94,7 @@ class Device(Node):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def _addNIOCallback(self, port_id, result, error=False, **kwargs):
+    def _addNIOCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for addNIO.
 
@@ -109,7 +107,7 @@ class Device(Node):
             self.server_error_signal.emit(self.id(), result["message"])
             self.nio_cancel_signal.emit(self.id())
         else:
-            self.nio_signal.emit(self.id(), port_id)
+            self.nio_signal.emit(self.id(), context["port_id"])
 
     def deleteNIO(self, port):
         """
@@ -156,9 +154,11 @@ class Device(Node):
             port=port.portNumber(),
             prefix=self.URL_PREFIX,
             device_id=self._device_id),
-            partial(self._startPacketCaptureCallback, port.id()), params)
+            self._startPacketCaptureCallback,
+            context={"port": port},
+            body=params)
 
-    def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
+    def _startPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -170,15 +170,13 @@ class Device(Node):
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            for port in self._ports:
-                if port.id() == port_id:
-                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
-                    try:
-                        port.startPacketCapture(result["pcap_file_path"])
-                    except OSError as e:
-                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
-                    self.updated_signal.emit()
-                    break
+            port = context["port"]
+            log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
+            try:
+                port.startPacketCapture(result["pcap_file_path"])
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
+            self.updated_signal.emit()
 
     def stopPacketCapture(self, port):
         """
@@ -192,9 +190,10 @@ class Device(Node):
             port=port.portNumber(),
             prefix=self.URL_PREFIX,
             device_id=self._device_id),
-            partial(self._stopPacketCaptureCallback, port.id()))
+            self._stopPacketCaptureCallback,
+            context={"port": port})
 
-    def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
+    def _stopPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -206,9 +205,7 @@ class Device(Node):
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            for port in self._ports:
-                if port.id() == port_id:
-                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
-                    port.stopPacketCapture()
-                    self.updated_signal.emit()
-                    break
+            port = context["port"]
+            log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
+            port.stopPacketCapture()
+            self.updated_signal.emit()

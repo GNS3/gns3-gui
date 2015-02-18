@@ -242,11 +242,14 @@ class VirtualBoxVM(VM):
 
         params = {"capture_file_name": capture_file_name}
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_number}/ports/0/start_capture".format(vm_id=self._vm_id,
-                                                                                                       adapter_number=port.portNumber()),
-                      partial(self._startPacketCaptureCallback, port.id()), body=params)
+        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_number}/ports/0/start_capture".format(
+            vm_id=self._vm_id,
+            adapter_number=port.portNumber()),
+            self._startPacketCaptureCallback,
+            context={"port": port},
+            body=params)
 
-    def _startPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
+    def _startPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -258,15 +261,13 @@ class VirtualBoxVM(VM):
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            for port in self._ports:
-                if port.id() == port_id:
-                    log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
-                    try:
-                        port.startPacketCapture(result["pcap_file_path"])
-                    except OSError as e:
-                        self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
-                    self.updated_signal.emit()
-                    break
+            port = context["port"]
+            log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
+            try:
+                port.startPacketCapture(result["pcap_file_path"])
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
+            self.updated_signal.emit()
 
     def stopPacketCapture(self, port):
         """
@@ -276,11 +277,13 @@ class VirtualBoxVM(VM):
         """
 
         log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_number}/ports/0/stop_capture".format(vm_id=self._vm_id,
-                                                                                                      adapter_number=port.portNumber()),
-                      partial(self._stopPacketCaptureCallback, port.id()))
+        self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_number}/ports/0/stop_capture".format(
+            vm_id=self._vm_id,
+            adapter_number=port.portNumber()),
+            self._stopPacketCaptureCallback,
+            context={"port": port})
 
-    def _stopPacketCaptureCallback(self, port_id, result, error=False, **kwargs):
+    def _stopPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -292,12 +295,10 @@ class VirtualBoxVM(VM):
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            for port in self._ports:
-                if port.id() == port_id:
-                    log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
-                    port.stopPacketCapture()
-                    self.updated_signal.emit()
-                    break
+            port = context["port"]
+            log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
+            port.stopPacketCapture()
+            self.updated_signal.emit()
 
     def info(self):
         """

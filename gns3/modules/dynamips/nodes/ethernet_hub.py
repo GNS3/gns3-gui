@@ -20,7 +20,6 @@ Dynamips bridge implementation  on the client side (in the form of a hub).
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
-from functools import partial
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
 from .device import Device
@@ -169,7 +168,9 @@ class EthernetHub(Device):
             port=port.portNumber(),
             prefix=self.URL_PREFIX,
             device_id=self._device_id),
-            partial(self._addNIOCallback, port.id()), params)
+            self._addNIOCallback,
+            context={"port_id": port.id()},
+            body=params)
 
     def info(self):
         """

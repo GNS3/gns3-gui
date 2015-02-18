@@ -19,7 +19,6 @@
 Base class for node classes.
 """
 
-from functools import partial
 from .qt import QtCore
 
 import logging
@@ -466,7 +465,7 @@ class Node(QtCore.QObject):
 
         self._project.put(self._server, path, callback, body=body, context=context)
 
-    def httpGet(self, path, callback):
+    def httpGet(self, path, callback, context=None):
         """
         GET on current server / project
 
@@ -496,9 +495,9 @@ class Node(QtCore.QObject):
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.post("/ports/udp", partial(self._allocateUDPPortCallback, port_id))
+        self._server.post("/ports/udp", self._allocateUDPPortCallback, context={"port_id": port_id})
 
-    def _allocateUDPPortCallback(self, port_id, result, error=False, **kwargs):
+    def _allocateUDPPortCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for allocateUDPPort.
 
@@ -510,6 +509,7 @@ class Node(QtCore.QObject):
             log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
+            port_id = context["port_id"]
             lport = result["udp_port"]
             log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
             self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)

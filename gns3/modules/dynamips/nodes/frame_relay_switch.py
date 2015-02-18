@@ -20,7 +20,6 @@ Dynamips FRSW implementation on the client side.
 Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
-from functools import partial
 from gns3.node import Node
 from gns3.ports.frame_relay_port import FrameRelayPort
 from .device import Device
@@ -180,7 +179,9 @@ class FrameRelaySwitch(Device):
             port=port.portNumber(),
             prefix=self.URL_PREFIX,
             device_id=self._device_id),
-            partial(self._addNIOCallback, port.id()), params)
+            self._addNIOCallback,
+            context={"port_id": port.id()},
+            body=params)
 
     def info(self):
         """
