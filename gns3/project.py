@@ -272,9 +272,9 @@ class Project(QtCore.QObject):
                 server.post("/projects/{project_id}/close".format(project_id=self._id), self._project_closed, body={})
         else:
             # The project is not initialized when can close it
+            self._closed = True
             self.project_about_to_close_signal.emit()
             self.project_closed_signal.emit()
-            self._closed = True
 
     def _project_closed(self, params, error=False, server=None, **kwargs):
         if error:
