@@ -47,3 +47,6 @@ nosetests.xml
 
 # Gedit Temp Files
 *~
+
+# Qt creator
+*.autosave
