@@ -26,6 +26,7 @@ import base64
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
+from gns3.servers import Servers
 from gns3.utils.normalize_filename import normalize_filename
 
 from ..settings import PLATFORMS_DEFAULT_RAM
@@ -58,6 +59,7 @@ class Router(VM):
         self._idlepcs = []
         self._loading = False
         self._export_directory = None
+        self._defaults = {}
         self._settings = {"name": "",
                           "platform": platform,
                           "image": "",
@@ -72,10 +74,9 @@ class Router(VM):
                           "idlemax": 500,
                           "idlesleep": 30,
                           "exec_area": 64,
-                          "jit_sharing_group": None,
                           "disk0": 0,
                           "disk1": 0,
-                          "confreg": '0x2102',
+                          "confreg": "0x2102",
                           "console": None,
                           "aux": None,
                           "mac_addr": None,
@@ -223,6 +224,8 @@ class Router(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this router")
             return
 
+        # keep the default settings
+        self._defaults = self._settings.copy()
         platform = self._settings["platform"]
 
         # Minimum settings to send to the server in order to create a new router
@@ -317,6 +320,14 @@ class Router(VM):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
+
+        if "startup_config" in new_settings:
+            params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
+            del params["startup_config"]
+
+        if "private_config" in new_settings:
+            params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
+            del params["private_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/dynamips/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
@@ -696,13 +707,22 @@ class Router(VM):
         # make the IOS path relative
         image_path = router["properties"]["image"]
         if self.server().isLocal():
-            if os.path.commonprefix([image_path, self._module.imageFilesDir()]) == self._module.imageFilesDir():
+            if os.path.commonprefix([image_path, self._imageFilesDir()]) == self._imageFilesDir():
                 # save only the image name if it is stored the images directory
                 router["properties"]["image"] = os.path.basename(image_path)
         else:
             router["properties"]["image"] = image_path
 
         return router
+
+    def _imageFilesDir(self):
+        """
+        Returns the location of IOS images.
+        """
+
+        servers = Servers.instance()
+        local_server = servers.localServerSettings()
+        return os.path.join(local_server["images_path"], "IOS")
 
     def load(self, node_info):
         """
@@ -726,7 +746,7 @@ class Router(VM):
 
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
-            updated_image_path = os.path.join(self._module.imageFilesDir(), image)
+            updated_image_path = os.path.join(self._imageFilesDir(), image)
             if os.path.isfile(updated_image_path):
                 image = updated_image_path
             elif not os.path.isfile(image):
@@ -755,7 +775,7 @@ class Router(VM):
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and topology_port["slot_number"] == port.adapterNumber():
+                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
@@ -775,11 +795,16 @@ class Router(VM):
         :param private_config_export_path: export path for the private-config
         """
 
-        self._startup_config_export_path = startup_config_export_path
-        self._private_config_export_path = private_config_export_path
-        self._server.send_message("dynamips.vm.export_config", {"id": self._router_id}, self._exportConfigCallback)
+        self.httpGet("/dynamips/vms/{vm_id}/configs".format(
+            vm_id=self._vm_id,
+        ),
+            self._exportConfigCallback,
+            context={
+            "startup_config_path": startup_config_export_path,
+            "private_config_path": private_config_export_path
+        })
 
-    def _exportConfigCallback(self, result, error=False, **kwargs):
+    def _exportConfigCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for exportConfig.
 
@@ -789,26 +814,26 @@ class Router(VM):
 
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
+            startup_config_path = context["startup_config_path"]
+            private_config_path = context["private_config_path"]
 
-            if "startup_config_base64" in result and self._startup_config_export_path:
-                config = base64.decodebytes(result["startup_config_base64"].encode("utf-8"))
+            if "startup_config_content" in result is not None:
                 try:
-                    with open(self._startup_config_export_path, "wb") as f:
-                        log.info("saving {} startup-config to {}".format(self.name(), self._startup_config_export_path))
-                        f.write(config)
+                    with open(startup_config_path, "wb") as f:
+                        log.info("Saving {} startup-config to {}".format(self.name(), startup_config_path))
+                        f.write(result["startup_config_content"].encode("utf-8"))
                 except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(self._startup_config_export_path, e))
+                    self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(startup_config_path, e))
 
-            if "private_config_base64" in result and self._private_config_export_path:
-                config = base64.decodebytes(result["private_config_base64"].encode("utf-8"))
+            if "private_config_content" in result is not None:
                 try:
-                    with open(self._private_config_export_path, "wb") as f:
-                        log.info("saving {} private-config to {}".format(self.name(), self._private_config_export_path))
-                        f.write(config)
+                    with open(private_config_path, "wb") as f:
+                        log.info("Saving {} private-config to {}".format(self.name(), private_config_path))
+                        f.write(result["private_config_content"].encode("utf-8"))
                 except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export private-config to {}: {}".format(self._private_config_export_path, e))
+                    self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(private_config_path, e))
 
     def exportConfigToDirectory(self, directory):
         """
@@ -817,10 +842,15 @@ class Router(VM):
         :param directory: destination directory path
         """
 
-        self._export_directory = directory
-        self._server.send_message("dynamips.vm.export_config", {"id": self._router_id}, self._exportConfigToDirectoryCallback)
+        self.httpGet("/dynamips/vms/{vm_id}/configs".format(
+            vm_id=self._vm_id,
+        ),
+            self._exportConfigToDirectoryCallback,
+            context={
+            "directory": directory
+        })
 
-    def _exportConfigToDirectoryCallback(self, result, error=False, **kwargs):
+    def _exportConfigToDirectoryCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for exportConfigToDirectory.
 
@@ -830,30 +860,25 @@ class Router(VM):
 
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
-
-            if "startup_config_base64" in result:
-                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_startup-config.cfg"
-                config = base64.decodebytes(result["startup_config_base64"].encode("utf-8"))
+            directory = context["directory"]
+            if "startup_config_content" in result:
+                config_path = os.path.join(directory, normalize_filename(self.name())) + "_startup-config.cfg"
                 try:
                     with open(config_path, "wb") as f:
                         log.info("saving {} startup-config to {}".format(self.name(), config_path))
-                        f.write(config)
+                        f.write(result["startup_config_content"].encode("utf-8"))
                 except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(config_path, e))
-
-            if "private_config_base64" in result:
-                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_private-config.cfg"
-                config = base64.decodebytes(result["private_config_base64"].encode("utf-8"))
+                    self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(config_path, e))
+            if "private_config_content" in result:
+                config_path = os.path.join(directory, normalize_filename(self.name())) + "_private-config.cfg"
                 try:
                     with open(config_path, "wb") as f:
                         log.info("saving {} private-config to {}".format(self.name(), config_path))
-                        f.write(config)
+                        f.write(result["private_config_content"].encode("utf-8"))
                 except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export private-config to {}: {}".format(config_path, e))
-
-            self._export_directory = None
+                    self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(config_path, e))
 
     def importConfig(self, path):
         """

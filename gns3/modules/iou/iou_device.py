@@ -21,11 +21,9 @@ IOU device implementation.
 
 import os
 import re
-import base64
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.servers import Servers
-from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
 from gns3.utils.normalize_filename import normalize_filename
@@ -152,23 +150,9 @@ class IOUDevice(VM):
             self._inital_settings = initial_settings
 
         if initial_config:
-            params["initial_config_content"] = self.getInitialConfigFile(initial_config)
+            params["initial_config_content"] = self._readBaseConfig(initial_config)
 
         self.httpPost("/iou/vms", self._setupCallback, body=params)
-
-    def getInitialConfigFile(self, initial_config):
-        """
-        Read the initial config file
-
-        :params initial_config: Path of initial_config file
-        """
-
-        try:
-            with open(initial_config) as f:
-                return f.read()
-        except (OSError) as e:
-            log.error("Could not load the initial configuration file to {}".format(initial_config, e))
-        return None
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -222,7 +206,7 @@ class IOUDevice(VM):
                 params[name] = value
 
         if "initial_config" in new_settings:
-            params["initial_config_content"] = self.getInitialConfigFile(new_settings["initial_config"])
+            params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
             del params["initial_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
@@ -426,7 +410,7 @@ class IOUDevice(VM):
         # make the IOU path relative
         image_path = iou["properties"]["path"]
         if self.server().isLocal():
-            if os.path.commonprefix([image_path, self.imageFilesDir()]) == self.imageFilesDir():
+            if os.path.commonprefix([image_path, self._imageFilesDir()]) == self._imageFilesDir():
                 # save only the image name if it is stored the images directory
                 iou["properties"]["path"] = os.path.basename(image_path)
         else:
@@ -435,12 +419,14 @@ class IOUDevice(VM):
 
         return iou
 
-    def imageFilesDir(self):
-        """Return location of IOU images"""
+    def _imageFilesDir(self):
+        """
+        Returns the location of IOU images.
+        """
 
         servers = Servers.instance()
         local_server = servers.localServerSettings()
-        return local_server["images_path"]
+        return os.path.join(local_server["images_path"], "IOU")
 
     def load(self, node_info):
         """
@@ -458,7 +444,7 @@ class IOUDevice(VM):
 
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
-            updated_path = os.path.join(self.imageFilesDir(), path)
+            updated_path = os.path.join(self._imageFilesDir(), path)
             if os.path.isfile(updated_path):
                 path = updated_path
             elif not os.path.isfile(path):
