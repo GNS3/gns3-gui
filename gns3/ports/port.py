@@ -25,9 +25,11 @@ import tempfile
 import shutil
 import subprocess
 import shlex
+import logging
+
+log = logging.getLogger(__name__)
 
 from gns3.utils.normalize_filename import normalize_filename
-
 from ..qt import QtCore
 from ..local_config import LocalConfig
 from ..nios.nio_udp import NIOUDP
@@ -472,6 +474,7 @@ class Port(object):
 
         self._capturing = True
         self._capture_file_path = capture_file_path
+        log.info("Saving packet capture to {}".format(capture_file_path))
         if os.path.isfile(capture_file_path) and self._settings["command_auto_start"]:
             self.startPacketCaptureReader()
 

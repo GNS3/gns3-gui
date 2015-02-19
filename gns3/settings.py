@@ -21,7 +21,6 @@ Default general settings.
 
 import os
 import sys
-import tempfile
 import platform
 
 # Projects directory location
