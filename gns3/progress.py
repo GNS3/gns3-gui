@@ -27,18 +27,18 @@ class Progress:
     def __init__(self, parent):
         self._progress_dialog = None
         self._parent = parent
-        self.stimer = QtCore.QTimer()
+        self._stimer = QtCore.QTimer()
 
     def show(self):
-        min_duration = 100  #  Minimum duration before display (ms)
 
+        min_duration = 500  # Minimum duration before display (ms)
         if self._progress_dialog is None:
             self._progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
             self._progress_dialog.setModal(True)
             self._progress_dialog.setValue(0)
             self._progress_dialog.setWindowTitle("Please wait")
             self._progress_dialog.setMinimumDuration(min_duration)
-            self.stimer.singleShot(min_duration, self._show_dialog)
+            self._stimer.singleShot(min_duration, self._show_dialog)
 
     def _show_dialog(self):
         if self._progress_dialog is not None:
