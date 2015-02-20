@@ -21,7 +21,6 @@ Base class for Dynamips router implementation on the client side.
 
 import os
 import re
-import base64
 
 from gns3.vm import VM
 from gns3.node import Node
@@ -489,7 +488,9 @@ class Router(VM):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self._server.send_message("dynamips.vm.idlepcs", {"id": self._router_id}, self._computeIdlepcsCallback)
+        self.httpGet("/dynamips/vms/{vm_id}/idlepc_proposals".format(
+            vm_id=self._vm_id),
+            self._computeIdlepcsCallback)
 
     def _computeIdlepcsCallback(self, result, error=False, **kwargs):
         """
@@ -501,7 +502,7 @@ class Router(VM):
 
         if error:
             log.error("error while computing Idle-PC proposals {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has received Idle-PC proposals".format(self.name()))
             self._idlepcs = result["idlepcs"]
@@ -542,11 +543,7 @@ class Router(VM):
         :param idlepc: idlepc value (string)
         """
 
-        params = {"id": self._router_id,
-                  "idlepc": idlepc}
-        log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.send_message("dynamips.vm.update", params, self._updateCallback)
-        self._module.updateImageIdlepc(self._settings["image"], idlepc)
+        self.update({"idlepc": idlepc})
 
     def _slot_info(self):
         """

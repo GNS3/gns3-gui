@@ -59,6 +59,9 @@ class VirtualBoxVM(VM):
                           "headless": VBOX_VM_SETTINGS["headless"],
                           "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
 
+        # save the default settings
+        self._defaults = self._settings.copy()
+
     def _addAdapters(self, adapters):
         """
         Adds adapters.
@@ -102,6 +105,7 @@ class VirtualBoxVM(VM):
 
         self._linked_clone = linked_clone
         params = {"name": name,
+                  "vmname": vmname,
                   "linked_clone": linked_clone}
 
         if vm_id:
@@ -399,8 +403,11 @@ class VirtualBoxVM(VM):
             for topology_port in ports:
                 for port in self._ports:
                     if topology_port["port_number"] == port.portNumber():
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
+                        adapter_number = topology_port.get("adapter_number")
+                        # backward compatibility for pre GNS3 1.3
+                        if adapter_number is None or adapter_number == port.adapterNumber():
+                            port.setName(topology_port["name"])
+                            port.setId(topology_port["id"])
 
         # now we can set the node has initialized and trigger the signal
         self.setInitialized(True)
