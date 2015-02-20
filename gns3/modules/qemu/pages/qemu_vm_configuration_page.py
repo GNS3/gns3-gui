@@ -183,10 +183,6 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         :param error: indicates an error (boolean)
         """
 
-        if self._qemu_binaries_progress_dialog.wasCanceled():
-            return
-        self._qemu_binaries_progress_dialog.accept()
-
         if error:
             QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
         else:
@@ -247,16 +243,10 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             for binary in QEMU_BINARIES_FOR_CLOUD:
                 self.uiQemuListComboBox.addItem("{path}".format(path=binary), binary)
         else:
-            self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
-            self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-            self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
-            self._qemu_binaries_progress_dialog.show()
-
             callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
             try:
                 Qemu.instance().getQemuBinariesFromServer(server, callback)
             except ModuleError as e:
-                self._qemu_binaries_progress_dialog.reject()
                 QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
                 self.uiQemuListComboBox.clear()
 

@@ -17,28 +17,59 @@
 
 from .qt import QtCore, QtGui
 
-
-class Progress:
+class Progress(QtCore.QObject):
 
     """
     Display a progress dialog when something is running
     """
 
+    add_query_signal = QtCore.Signal(str, str)
+    remove_query_signal = QtCore.Signal(str)
+
     def __init__(self, parent):
+        super().__init__()
         self._progress_dialog = None
         self._parent = parent
         self._stimer = QtCore.QTimer()
+        self._finished_query_during_display = 0
+        self._queries = {}
+        self.add_query_signal.connect(self._add_query)
+        self.remove_query_signal.connect(self._remove_query)
+
+    def _add_query(self, query_id, explanation):
+
+        self._queries[query_id] = explanation
+        self.show()
+
+    def _remove_query(self, query_id):
+
+        self._finished_query_during_display += 1
+        del self._queries[query_id]
+
+        if len(self._queries) == 0:
+            self.hide()
+        else:
+            self.show()
 
     def show(self):
 
         min_duration = 500  # Minimum duration before display (ms)
         if self._progress_dialog is None:
-            self._progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
-            self._progress_dialog.setModal(True)
-            self._progress_dialog.setValue(0)
-            self._progress_dialog.setWindowTitle("Please wait")
-            self._progress_dialog.setMinimumDuration(min_duration)
+            progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
+            progress_dialog.setModal(True)
+            progress_dialog.setCancelButton(None)
+            progress_dialog.setWindowTitle("Please wait")
+            progress_dialog.setMinimumDuration(min_duration)
+            self._progress_dialog = progress_dialog
             self._stimer.singleShot(min_duration, self._show_dialog)
+            self._finished_query_during_display = 0
+        else:
+            progress_dialog = self._progress_dialog
+            progress_dialog.setMaximum(len(self._queries) + self._finished_query_during_display)
+            progress_dialog.setValue(self._finished_query_during_display)
+
+        if len(self._queries) > 0:
+            progress_dialog.setLabelText(list(self._queries.values())[0])
 
     def _show_dialog(self):
         if self._progress_dialog is not None:
@@ -46,5 +77,6 @@ class Progress:
 
     def hide(self):
         if self._progress_dialog is not None:
-            self._progress_dialog.cancel()
+            progress_dialog = self._progress_dialog
             self._progress_dialog = None
+            progress_dialog.cancel()

@@ -17,6 +17,7 @@
 
 
 import json
+import uuid
 import urllib.parse
 import urllib.request
 from functools import partial
@@ -41,8 +42,7 @@ class HTTPClient(QtCore.QObject):
 
     # Callback class used for displaying progress
     _progress_callback = None
-    # Count of HTTP running queries
-    _running_queries = 0
+
 
     connected_signal = QtCore.Signal()
     connection_error_signal = QtCore.Signal(str)
@@ -71,24 +71,20 @@ class HTTPClient(QtCore.QObject):
         self._id = HTTPClient._instance_count
         HTTPClient._instance_count += 1
 
-    @classmethod
-    def notify_progress_start_query(cls):
+    def notify_progress_start_query(self, query_id):
         """
         Called when a query start
         """
-        cls._running_queries += 1
-        if cls._progress_callback and cls._running_queries > 0:
-            cls._progress_callback.show()
+        if HTTPClient._progress_callback:
+            HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {scheme}://{host}:{port}".format(scheme=self.scheme, host=self.host, port=self.port))
 
-    @classmethod
-    def notify_progress_end_query(cls):
+    def notify_progress_end_query(cls, query_id):
         """
         Called when a query is over
         """
-        cls._running_queries -= 1
-        if cls._progress_callback and cls._running_queries <= 0:
-            cls._running_queries = 0
-            cls._progress_callback.hide()
+
+        if HTTPClient._progress_callback:
+            HTTPClient._progress_callback.remove_query_signal.emit(query_id)
 
     @classmethod
     def setProgressCallback(cls, progress_callback):
@@ -193,7 +189,7 @@ class HTTPClient(QtCore.QObject):
             self._connected = True
             self.connected_signal.emit()
 
-    def get(self, path, callback, context=None):
+    def get(self, path, callback, context={}):
         """
         HTTP GET on the remote server
 
@@ -204,7 +200,7 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("GET", path, callback, context=context)
 
-    def put(self, path, callback, context=None, body={}):
+    def put(self, path, callback, context={}, body={}):
         """
         HTTP PUT on the remote server
 
@@ -216,7 +212,7 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("PUT", path, callback, context=context, body=body)
 
-    def post(self, path, callback, context=None, body={}):
+    def post(self, path, callback, context={}, body={}):
         """
         HTTP POST on the remote server
 
@@ -228,7 +224,7 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("POST", path, callback, context=context, body=body)
 
-    def delete(self, path, callback, context=None):
+    def delete(self, path, callback, context={}):
         """
         HTTP DELETE on the remote server
 
@@ -250,7 +246,7 @@ class HTTPClient(QtCore.QObject):
 
         return QtNetwork.QNetworkRequest(url)
 
-    def createHTTPQuery(self, method, path, callback, body={}, context=None):
+    def createHTTPQuery(self, method, path, callback, body={}, context={}):
         """
         Call the remote server, if not connected, check connection before
 
@@ -285,7 +281,7 @@ class HTTPClient(QtCore.QObject):
         self.executeHTTPQuery(method, path, callback, body)
         self._connected = True
 
-    def executeHTTPQuery(self, method, path, callback, body, context=None):
+    def executeHTTPQuery(self, method, path, callback, body, context={}):
         """
         Call the remote server
 
@@ -296,7 +292,10 @@ class HTTPClient(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        HTTPClient.notify_progress_start_query()
+        import copy
+        context = copy.copy(context)
+        context["query_id"] = str(uuid.uuid4())
+        self.notify_progress_start_query(context["query_id"])
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = self._request(url)
@@ -326,6 +325,7 @@ class HTTPClient(QtCore.QObject):
 
     def _processResponse(self, response, callback, context):
 
+        self.notify_progress_end_query(context["query_id"])
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
             if error_code < 200:
@@ -356,7 +356,6 @@ class HTTPClient(QtCore.QObject):
                 else:
                     callback(params, server=self, context=context)
         response.deleteLater()
-        HTTPClient.notify_progress_end_query()
 
     def dump(self):
         """

@@ -205,14 +205,9 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                 if index != -1:
                     self.uiQemuListComboBox.setCurrentIndex(index)
             else:
-                self._qemu_binaries_progress_dialog = QtGui.QProgressDialog("Loading QEMU binaries", "Cancel", 0, 0, parent=self)
-                self._qemu_binaries_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-                self._qemu_binaries_progress_dialog.setWindowTitle("QEMU binaries")
-                self._qemu_binaries_progress_dialog.show()
                 try:
                     Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
                 except ModuleError as e:
-                    self._qemu_binaries_progress_dialog.reject()
                     QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
@@ -222,10 +217,6 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         :param result: server response
         :param error: indicates an error (boolean)
         """
-
-        if self._qemu_binaries_progress_dialog.wasCanceled():
-            return
-        self._qemu_binaries_progress_dialog.accept()
 
         if error:
             QtGui.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))

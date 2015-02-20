@@ -441,7 +441,7 @@ class Node(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def httpPost(self, path, callback, body={}, context=None):
+    def httpPost(self, path, callback, body={}, context={}):
         """
         POST on current server / project
 
@@ -453,7 +453,7 @@ class Node(QtCore.QObject):
 
         self._project.post(self._server, path, callback, body=body, context=context)
 
-    def httpPut(self, path, callback, body={}, context=None):
+    def httpPut(self, path, callback, body={}, context={}):
         """
         PUT on current server / project
 
@@ -465,7 +465,7 @@ class Node(QtCore.QObject):
 
         self._project.put(self._server, path, callback, body=body, context=context)
 
-    def httpGet(self, path, callback, context=None):
+    def httpGet(self, path, callback, context={}):
         """
         GET on current server / project
 
@@ -476,7 +476,7 @@ class Node(QtCore.QObject):
 
         self._project.get(self._server, path, callback, context=context)
 
-    def httpDelete(self, path, callback, context=None):
+    def httpDelete(self, path, callback, context={}):
         """
         DELETE on current server / project
 
@@ -497,7 +497,7 @@ class Node(QtCore.QObject):
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self._server.post("/ports/udp", self._allocateUDPPortCallback, context={"port_id": port_id})
 
-    def _allocateUDPPortCallback(self, result, error=False, context=None, **kwargs):
+    def _allocateUDPPortCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for allocateUDPPort.
 

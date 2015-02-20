@@ -94,7 +94,7 @@ class Device(Node):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def _addNIOCallback(self, result, error=False, context=None, **kwargs):
+    def _addNIOCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for addNIO.
 
@@ -158,7 +158,7 @@ class Device(Node):
             context={"port": port},
             body=params)
 
-    def _startPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
+    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -193,7 +193,7 @@ class Device(Node):
             self._stopPacketCaptureCallback,
             context={"port": port})
 
-    def _stopPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
+    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for stopping a packet capture.
 

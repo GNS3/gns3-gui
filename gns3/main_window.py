@@ -432,7 +432,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             else:
                 self._createTemporaryProject()
 
-
     def openProjectActionSlot(self):
         """
         Slot called to open a project.

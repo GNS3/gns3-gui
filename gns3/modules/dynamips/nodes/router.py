@@ -430,7 +430,7 @@ class Router(VM):
             context={"port": port},
             body=params)
 
-    def _startPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
+    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -465,7 +465,7 @@ class Router(VM):
             self._stopPacketCaptureCallback,
             context={"port": port})
 
-    def _stopPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
+    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for stopping a packet capture.
 
@@ -801,7 +801,7 @@ class Router(VM):
             "private_config_path": private_config_export_path
         })
 
-    def _exportConfigCallback(self, result, error=False, context=None, **kwargs):
+    def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for exportConfig.
 
@@ -847,7 +847,7 @@ class Router(VM):
             "directory": directory
         })
 
-    def _exportConfigToDirectoryCallback(self, result, error=False, context=None, **kwargs):
+    def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for exportConfigToDirectory.
 

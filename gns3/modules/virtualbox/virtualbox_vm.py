@@ -253,7 +253,7 @@ class VirtualBoxVM(VM):
             context={"port": port},
             body=params)
 
-    def _startPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
+    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for starting a packet capture.
 
@@ -287,7 +287,7 @@ class VirtualBoxVM(VM):
             self._stopPacketCaptureCallback,
             context={"port": port})
 
-    def _stopPacketCaptureCallback(self, result, error=False, context=None, **kwargs):
+    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for stopping a packet capture.
 

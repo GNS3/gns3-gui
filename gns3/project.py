@@ -158,7 +158,7 @@ class Project(QtCore.QObject):
         for server in list(self._created_servers):
             server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
-    def get(self, server, path, callback, context=None):
+    def get(self, server, path, callback, context={}):
         """
         HTTP GET on the remote server
 
@@ -169,7 +169,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery(server, "GET", path, callback, context=context)
 
-    def post(self, server, path, callback, body={}, context=None):
+    def post(self, server, path, callback, body={}, context={}):
         """
         HTTP POST on the remote server
 
@@ -181,7 +181,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery(server, "POST", path, callback, body=body, context=context)
 
-    def put(self, server, path, callback, body={}, context=None):
+    def put(self, server, path, callback, body={}, context={}):
         """
         HTTP PUT on the remote server
 
@@ -193,7 +193,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery(server, "PUT", path, callback, body=body, context=context)
 
-    def delete(self, server, path, callback, context=None):
+    def delete(self, server, path, callback, context={}):
         """
         HTTP DELETE on the remote server
 
@@ -204,7 +204,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery(server, "DELETE", path, callback, context=context)
 
-    def _projectHTTPQuery(self, server, method, path, callback, body={}, context=None):
+    def _projectHTTPQuery(self, server, method, path, callback, body={}, context={}):
         """
         HTTP query on the remote server
 
@@ -230,7 +230,7 @@ class Project(QtCore.QObject):
         else:
             self._projectOnServerCreated(method, path, callback, body, params={}, server=server, context=context)
 
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, context=None, **kwargs):
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, context={}, **kwargs):
         """
         The project is created on the server continue
         the query

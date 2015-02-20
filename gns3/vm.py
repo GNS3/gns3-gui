@@ -175,7 +175,7 @@ class VM(Node):
             context={"port_id": port.id()},
             body=params)
 
-    def _addNIOCallback(self, result, error=False, context=None, **kwargs):
+    def _addNIOCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for addNIO.
 
