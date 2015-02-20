@@ -86,7 +86,6 @@ class Qemu(Module):
         Load the QEMU VMs from the persistent settings file.
         """
 
-
         local_config = LocalConfig.instance()
 
         # restore the Qemu settings from QSettings (for backward compatibility)
@@ -115,7 +114,7 @@ class Qemu(Module):
                 name = vm.get("name")
                 server = vm.get("server")
                 key = "{server}:{name}".format(server=server, name=name)
-                if key in self._iou_devices or not name or not server:
+                if key in self._qemu_vms or not name or not server:
                     continue
                 self._qemu_vms[key] = vm
 
@@ -187,7 +186,7 @@ class Qemu(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def createNode(self, node_class, server):
+    def createNode(self, node_class, server, project):
         """
         Creates a new node.
 
@@ -198,7 +197,7 @@ class Qemu(Module):
         log.info("creating node {}".format(node_class))
 
         # create an instance of the node class
-        return node_class(self, server)
+        return node_class(self, server, project)
 
     def setupNode(self, node, node_name):
         """
@@ -282,10 +281,6 @@ class Qemu(Module):
         """
 
         log.info("QEMU module reset")
-        for server in self._servers:
-            if server.connected():
-                server.send_notification("qemu.reset")
-        self._servers.clear()
         self._nodes.clear()
 
     def getQemuBinariesFromServer(self, server, callback):
@@ -295,17 +290,7 @@ class Qemu(Module):
         :param server: server to send the request to
         :param callback: callback for the reply from the server
         """
-
-        if not server.connected():
-            try:
-                log.info("reconnecting to server {}:{}".format(server.host, server.port))
-                server.reconnect()
-            except OSError as e:
-                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
-                                                                                 server.port,
-                                                                                 e))
-
-        server.send_message("qemu.qemu_list", None, callback)
+        server.get("/qemu/binaries", callback)
 
     @staticmethod
     def getNodeClass(name):

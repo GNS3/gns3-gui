@@ -152,6 +152,19 @@ def virtualbox_vm(local_server, project):
 
 
 @pytest.fixture
+def qemu_vm(local_server, project):
+
+    from gns3.modules.qemu.qemu_vm import QemuVM
+    from gns3.modules.qemu import Qemu
+
+    vm = QemuVM(Qemu(), local_server, project)
+    vm._qemu_id = str(uuid.uuid4())
+    vm._settings = {"name": "QEMU1"}
+    vm.setInitialized(True)
+    return vm
+
+
+@pytest.fixture
 def main_window():
     """
     Get a mocked main window

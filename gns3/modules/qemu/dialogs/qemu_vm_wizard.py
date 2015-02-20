@@ -231,7 +231,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             QtGui.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
-            for qemu in result["qemus"]:
+            for qemu in result:
                 if qemu["version"]:
                     self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
                 else:

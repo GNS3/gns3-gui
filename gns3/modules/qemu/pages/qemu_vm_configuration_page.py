@@ -175,7 +175,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
 
-    def _getQemuBinariesFromServerCallback(self, result, error=False, qemu_path=None):
+    def _getQemuBinariesFromServerCallback(self, result, error=False, qemu_path=None, **kwargs):
         """
         Callback for getQemuBinariesFromServer.
 
@@ -191,7 +191,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
-            for qemu in result["qemus"]:
+            for qemu in result:
                 if qemu["version"]:
                     self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
                 else:

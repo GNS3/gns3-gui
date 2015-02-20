@@ -19,6 +19,7 @@
 QEMU VM implementation.
 """
 
+from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
@@ -28,7 +29,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class QemuVM(Node):
+class QemuVM(VM):
 
     """
     QEMU VM.
@@ -36,12 +37,12 @@ class QemuVM(Node):
     :param module: parent module for this node
     :param server: GNS3 server instance
     """
+    URL_PREFIX = "qemu"
 
-    def __init__(self, module, server):
-        Node.__init__(self, server)
+    def __init__(self, module, server, project):
+        VM.__init__(self, module, server, project)
 
         log.info("QEMU VM instance is being created")
-        self._qemu_id = None
         self._defaults = {}
         self._inital_settings = None
         self._export_directory = None
@@ -118,7 +119,7 @@ class QemuVM(Node):
         if initial_settings:
             self._inital_settings = initial_settings
 
-        self._server.send_message("qemu.create", params, self._setupCallback)
+        self.httpPost("/qemu/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -130,11 +131,11 @@ class QemuVM(Node):
 
         if error:
             log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
-        self._qemu_id = result["id"]
-        if not self._qemu_id:
+        self._vm_id = result["vm_id"]
+        if not self._vm_id:
             self.error_signal.emit(self.id(), "returned ID from server is null")
             return
 
@@ -163,8 +164,8 @@ class QemuVM(Node):
         log.debug("QEMU VM instance {} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._qemu_id:
-            self._server.send_message("qemu.delete", {"id": self._qemu_id}, self._deleteCallback)
+        if self._vm_id:
+            self.httpDelete("/qemu/vms/{vm_id}".format(vm_id=self._vm_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -179,7 +180,7 @@ class QemuVM(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
@@ -195,7 +196,7 @@ class QemuVM(Node):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
-        params = {"id": self._qemu_id}
+        params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
@@ -204,7 +205,7 @@ class QemuVM(Node):
             params["cloud_path"] = self._settings["cloud_path"] = new_settings.pop("cloud_path")
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
-        self._server.send_message("qemu.update", params, self._updateCallback)
+        self.httpPut("/qemu/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
     def _updateCallback(self, result, error=False, **kwargs):
         """
@@ -216,7 +217,7 @@ class QemuVM(Node):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
         updated = False
@@ -258,7 +259,7 @@ class QemuVM(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self._server.send_message("qemu.start", {"id": self._qemu_id}, self._startCallback)
+        self.httpPost("/qemu/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -270,7 +271,7 @@ class QemuVM(Node):
 
         if error:
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
@@ -289,7 +290,7 @@ class QemuVM(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self._server.send_message("qemu.stop", {"id": self._qemu_id}, self._stopCallback)
+        self.httpPost("/qemu/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
@@ -301,7 +302,7 @@ class QemuVM(Node):
 
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -320,7 +321,7 @@ class QemuVM(Node):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self._server.send_message("qemu.suspend", {"id": self._qemu_id}, self._suspendCallback)
+        self.httpPost("/qemu/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
 
     def _suspendCallback(self, result, error=False, **kwargs):
         """
@@ -332,7 +333,7 @@ class QemuVM(Node):
 
         if error:
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has suspended".format(self.name()))
             self.setStatus(Node.suspended)
@@ -347,7 +348,7 @@ class QemuVM(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self._server.send_message("qemu.reload", {"id": self._qemu_id}, self._reloadCallback)
+        self.httpPost("/qemu/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """
@@ -359,128 +360,9 @@ class QemuVM(Node):
 
         if error:
             log.error("error while reloading {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
-
-    def allocateUDPPort(self, port_id):
-        """
-        Requests an UDP port allocation.
-
-        :param port_id: port identifier
-        """
-
-        log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.send_message("qemu.allocate_udp_port", {"id": self._qemu_id, "port_id": port_id}, self._allocateUDPPortCallback)
-
-    def _allocateUDPPortCallback(self, result, error=False, **kwargs):
-        """
-        Callback for allocateUDPPort.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-        else:
-            port_id = result["port_id"]
-            lport = result["lport"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)
-
-    def addNIO(self, port, nio):
-        """
-        Adds a new NIO on the specified port for this QEMU VM instance.
-
-        :param port: Port instance
-        :param nio: NIO instance
-        """
-
-        params = {"id": self._qemu_id,
-                  "port": port.portNumber(),
-                  "port_id": port.id()}
-
-        params["nio"] = self.getNIOInfo(nio)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self._server.send_message("qemu.add_nio", params, self._addNIOCallback)
-
-    def _addNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for addNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            self.nio_cancel_signal.emit(self.id())
-        else:
-            self.nio_signal.emit(self.id(), result["port_id"])
-
-    def deleteNIO(self, port):
-        """
-        Deletes an NIO from the specified port on this QEMU VM instance.
-
-        :param port: Port instance
-        """
-
-        params = {"id": self._qemu_id,
-                  "port": port.portNumber()}
-
-        log.debug("{} is deleting an NIO: {}".format(self.name(), params))
-        self._server.send_message("qemu.delete_nio", params, self._deleteNIOCallback)
-
-    def _deleteNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for deleteNIO.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
-            return
-
-        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
-
-    def info(self):
-        """
-        Returns information about this QEMU VM instance.
-
-        :returns: formated string
-        """
-
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
-        info = """QEMU VM {name} is {state}
-  Node ID is {id}, server's QEMU VM ID is {qemu_id}
-  console is on port {console}
-  monitor is on port {monitor}
-""".format(name=self.name(),
-           id=self.id(),
-           qemu_id=self._qemu_id,
-           state=state,
-           console=self._settings["console"],
-           monitor=self._settings["monitor"])
-
-        port_info = ""
-        for port in self._ports:
-            if port.isFree():
-                port_info += "     {port_name} is empty\n".format(port_name=port.name())
-            else:
-                port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
-                                                                            port_description=port.description())
-
-        return info + port_info
 
     def dump(self):
         """
@@ -491,7 +373,7 @@ class QemuVM(Node):
         """
 
         qemu_vm = {"id": self.id(),
-                   "qemu_id": self._qemu_id,
+                   "vm_id": self._vm_id,
                    "type": self.__class__.__name__,
                    "description": str(self),
                    "properties": {},
@@ -509,6 +391,39 @@ class QemuVM(Node):
                 ports.append(port.dump())
 
         return qemu_vm
+
+    def info(self):
+        """
+        Returns information about this QEMU VM instance.
+
+        :returns: formated string
+        """
+
+        if self.status() == Node.started:
+            state = "started"
+        else:
+            state = "stopped"
+
+        info = """QEMU VM {name} is {state}
+  Node ID is {id}, server's QEMU VM ID is {vm_id}
+  console is on port {console}
+  monitor is on port {monitor}
+""".format(name=self.name(),
+           id=self.id(),
+           vm_id=self._vm_id,
+           state=state,
+           console=self._settings["console"],
+           monitor=self._settings["monitor"])
+
+        port_info = ""
+        for port in self._ports:
+            if port.isFree():
+                port_info += "     {port_name} is empty\n".format(port_name=port.name())
+            else:
+                port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
+                                                                            port_description=port.description())
+
+        return info + port_info
 
     def load(self, node_info):
         """
