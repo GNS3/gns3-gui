@@ -22,7 +22,6 @@ Handles the saving and loading of a topology.
 
 import os
 import json
-from functools import partial
 from .qt import QtGui, QtSvg
 
 

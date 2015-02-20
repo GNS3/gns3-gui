@@ -23,10 +23,10 @@ import sys
 import os
 import re
 
+from functools import partial
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.node import Node
-from gns3.utils.message_box import MessageBox
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
@@ -207,15 +207,18 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         Slot for the idle-PC finder.
         """
 
+        from gns3.main_window import MainWindow
+        main_window = MainWindow.instance()
         server = Servers.instance().localServer()
         module = Dynamips.instance()
         platform = self.uiPlatformComboBox.currentText()
         ios_image = self.uiIOSImageLineEdit.text()
         ram = self.uiRamSpinBox.value()
         router_class = PLATFORM_TO_CLASS[platform]
-        self._router = router_class(module, server)
-        self._router.setup(ios_image, ram, name="AUTOIDLEPC")
-        self._router.created_signal.connect(self.createdSlot)
+        router = router_class(module, server, main_window.project())
+        router.setup(ios_image, ram, name="AUTOIDLEPC")
+        callback = partial(self.createdSlot, router)
+        router.created_signal.connect(callback)
         self.uiIdlePCFinderPushButton.setEnabled(False)
 
     def _etherSwitchSlot(self, state):
@@ -232,20 +235,17 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             # self.uiNameLineEdit.setEnabled(True)
 
-    def createdSlot(self, node_id):
+    def createdSlot(self, router, node_id):
         """
         The node for the auto Idle-PC has been created.
 
+        :param router: IOS router instance
         :param node_id: not used
         """
 
-        self._router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
-        self._auto_idlepc_progress_dialog = QtGui.QProgressDialog("Searching for an Idle-PC value...", "Cancel", 0, 0, parent=self)
-        self._auto_idlepc_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-        self._auto_idlepc_progress_dialog.setWindowTitle("Idle-PC finder")
-        self._auto_idlepc_progress_dialog.show()
+        router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
 
-    def _computeAutoIdlepcCallback(self, result, error=False, **kwargs):
+    def _computeAutoIdlepcCallback(self, result, error=False, context=None, **kwargs):
         """
         Callback for computeAutoIdlepc.
 
@@ -253,19 +253,14 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         :param error: indicates an error (boolean)
         """
 
-        self._router.delete()
-        if self._auto_idlepc_progress_dialog.wasCanceled():
-            return
-        self._auto_idlepc_progress_dialog.accept()
-
         if error:
-            QtGui.QMessageBox.critical(self, "Idle-PC finder", "Error: ".format(result["message"]))
+            QtGui.QMessageBox.critical(self, "Idle-PC finder", "Error: {}".format(result["message"]))
         else:
-            if result["idlepc"] and result["idlepc"] != "0x0":
-                self.uiIdlepcLineEdit.setText(result["idlepc"])
-            else:
-                logs = "\n".join(result["logs"])
-                MessageBox(self, "Idle-PC finder", "Could not find an Idle-PC value", details=logs)
+            router = context["router"]
+            router.delete()
+            idlepc = result["idlepc"]
+            self.uiIdlepcLineEdit.setText(idlepc)
+            QtGui.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
 
     def _iosImageBrowserSlot(self):
         """

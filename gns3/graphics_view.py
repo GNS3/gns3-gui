@@ -732,7 +732,7 @@ class GraphicsView(QtGui.QGraphicsView):
             capture_action.triggered.connect(self.captureActionSlot)
             menu.addAction(capture_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepcs"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
             idlepc_action = QtGui.QAction("Idle-PC", menu)
             idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
             idlepc_action.triggered.connect(self.idlepcActionSlot)
@@ -1065,53 +1065,47 @@ class GraphicsView(QtGui.QGraphicsView):
             QtGui.QMessageBox.critical(self, "Idle-PC", "Please select only one router")
             return
         item = items[0]
-        if isinstance(item, NodeItem) and hasattr(item.node(), "idlepcs") and item.node().initialized():
+        if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
             router = item.node()
-            idlepc = router.idlepc()
-            router.computeIdlepcs()
+            question = QtGui.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?",
+                                                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-            # TODO: improve to show progress over 10 seconds
-            self._idlepc_progress_dialog = QtGui.QProgressDialog("Computing values...", "Cancel", 0, 0, parent=self)
-            self._idlepc_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-            self._idlepc_progress_dialog.setWindowTitle("Idle-PC")
+            if question == QtGui.QMessageBox.Yes:
+                router.computeAutoIdlepc(self._autoIdlepcCallback)
+            else:
+                router.computeIdlepcs(self._idlepcCallback)
 
-            def cancel():
-                router.idlepc_signal.disconnect(self._showIdlepcProposals)
-                router.server_error_signal.disconnect(self._showIdlepcError)
-                router.setIdlepc(idlepc)
-
-            self._idlepc_progress_dialog.canceled.connect(cancel)
-            router.idlepc_signal.connect(self._showIdlepcProposals)
-            router.server_error_signal.connect(self._showIdlepcError)
-            self._idlepc_progress_dialog.show()
-
-    def _showIdlepcError(self, node_id, message):
+    def _idlepcCallback(self, result, error=False, context={}, **kwargs):
         """
-        Shows an error message if the Idle-PC values cannot be computed.
+        Slot to allow the user to select an idle-pc value.
         """
 
-        self._idlepc_progress_dialog.reject()
-        QtGui.QMessageBox.critical(self, "Idle-PC", "Error: {}".format(message))
-        router = self.scene().selectedItems()[0].node()
-        router.server_error_signal.disconnect(self._showIdlepcError)
-        router.idlepc_signal.disconnect(self._showIdlepcProposals)
+        if error:
+            QtGui.QMessageBox.critical(self, "Idle-PC", "Error: {}".format(result["message"]))
+        else:
+            router = context["router"]
+            log.info("{} has received Idle-PC proposals".format(router.name()))
+            idlepcs = result
+            if idlepcs and idlepcs[0] != "0x0":
+                dialog = IdlePCDialog(router, idlepcs, parent=self)
+                dialog.show()
+                dialog.exec_()
+            else:
+                QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
-    def _showIdlepcProposals(self):
+    def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
         """
         Slot to allow the user to select an idlepc value.
         """
 
-        self._idlepc_progress_dialog.accept()
-        router = self.scene().selectedItems()[0].node()
-        router.idlepc_signal.disconnect(self._showIdlepcProposals)
-        router.server_error_signal.disconnect(self._showIdlepcError)
-        idlepcs = router.idlepcs()
-        if idlepcs and idlepcs[0] != "0x0":
-            dialog = IdlePCDialog(router, idlepcs, parent=self)
-            dialog.show()
-            dialog.exec_()
+        if error:
+            QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Error: {}".format(result["message"]))
         else:
-            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
+            router = context["router"]
+            idlepc = result["idlepc"]
+            log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
+            router.setIdlepc(idlepc)
+            QtGui.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
 
     def duplicateActionSlot(self):
         """

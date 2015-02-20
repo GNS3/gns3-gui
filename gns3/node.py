@@ -43,7 +43,6 @@ class Node(QtCore.QObject):
     updated_signal = QtCore.Signal()
     deleted_signal = QtCore.Signal()
     delete_links_signal = QtCore.Signal()
-    idlepc_signal = QtCore.Signal()
     error_signal = QtCore.Signal(int, str)
     warning_signal = QtCore.Signal(int, str)
     server_error_signal = QtCore.Signal(int, str)

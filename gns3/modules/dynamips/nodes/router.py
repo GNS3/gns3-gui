@@ -55,7 +55,6 @@ class Router(VM):
         log.info("Router {} is being created".format(platform))
         self._ports = []
         self._dynamips_id = None
-        self._idlepcs = []
         self._loading = False
         self._export_directory = None
         self._defaults = {}
@@ -482,50 +481,27 @@ class Router(VM):
             port.stopPacketCapture()
             self.updated_signal.emit()
 
-    def computeIdlepcs(self):
+    def computeIdlepcs(self, callback):
         """
-        Get Idle-PC proposals
+        Get idle-PC proposals.
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
         self.httpGet("/dynamips/vms/{vm_id}/idlepc_proposals".format(
             vm_id=self._vm_id),
-            self._computeIdlepcsCallback)
-
-    def _computeIdlepcsCallback(self, result, error=False, **kwargs):
-        """
-        Callback for computeIdlepc.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while computing Idle-PC proposals {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has received Idle-PC proposals".format(self.name()))
-            self._idlepcs = result["idlepcs"]
-            self.idlepc_signal.emit()
+            callback,
+            context={"router": self})
 
     def computeAutoIdlepc(self, callback):
         """
-        Automatically search for an Idle-PC value.
-
-        :param callback: Callback for the response
+        Find the best idle-PC value.
         """
 
-        log.debug("{} is starting an auto Idle-PC lookup".format(self.name()))
-        self._server.send_message("dynamips.vm.auto_idlepc", {"id": self._router_id}, callback)
-
-    def idlepcs(self):
-        """
-        Returns previously computed Idle-PC values.
-
-        :returns: Idle-PC values (list)
-        """
-
-        return self._idlepcs
+        log.debug("{} is requesting Idle-PC proposals".format(self.name()))
+        self.httpGet("/dynamips/vms/{vm_id}/auto_idlepc".format(
+            vm_id=self._vm_id),
+            callback,
+            context={"router": self})
 
     def idlepc(self):
         """
