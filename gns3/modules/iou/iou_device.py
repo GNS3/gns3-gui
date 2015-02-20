@@ -205,7 +205,7 @@ class IOUDevice(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "initial_config" in new_settings:
+        if "initial_config" in new_settings and self._settings["initial_config"] != new_settings["initial_config"]:
             params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
             del params["initial_config"]
 

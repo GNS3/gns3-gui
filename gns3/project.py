@@ -267,7 +267,6 @@ class Project(QtCore.QObject):
         if self._id:
             self.project_about_to_close_signal.emit()
 
-            server = self._servers.localServer()
             for server in list(self._created_servers):
                 server.post("/projects/{project_id}/close".format(project_id=self._id), self._project_closed, body={})
         else:

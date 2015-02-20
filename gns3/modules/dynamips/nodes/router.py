@@ -321,11 +321,11 @@ class Router(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "startup_config" in new_settings:
+        if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"]:
             params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
             del params["startup_config"]
 
-        if "private_config" in new_settings:
+        if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"]:
             params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
             del params["private_config"]
 

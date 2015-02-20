@@ -433,11 +433,6 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         :param group: indicates the settings apply to a group of routers
         """
 
-        # print("saving {}".format(group))
-
-        # these settings cannot be shared by nodes and updated
-        # in the node configurator.
-
         if not group:
 
             # Check if the Idle-PC value has been validated okay
