@@ -428,10 +428,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
+                self.project_new_signal.emit(self._project.topologyFile())
             else:
                 self._createTemporaryProject()
 
-            self.project_new_signal.emit(self._project.topologyFile())
 
     def openProjectActionSlot(self):
         """
