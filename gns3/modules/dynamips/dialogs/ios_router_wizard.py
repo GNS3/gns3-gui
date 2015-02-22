@@ -255,15 +255,14 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         :param error: indicates an error (boolean)
         """
 
+        router = context["router"]
         if error:
             QtGui.QMessageBox.critical(self, "Idle-PC finder", "Error: {}".format(result["message"]))
         else:
-            router = context["router"]
-            router.delete()
             idlepc = result["idlepc"]
             self.uiIdlepcLineEdit.setText(idlepc)
             QtGui.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
-
+        router.delete()
 
     def _iosImageBrowserSlot(self):
         """
