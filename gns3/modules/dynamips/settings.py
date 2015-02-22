@@ -76,9 +76,9 @@ IOS_ROUTER_SETTINGS = {
     "mmap": True,
     "sparsemem": True,
     "ram": 128,
-    "nvram": 256,
+    "nvram": 128,
     "mac_addr": "",
-    "disk0": 1,
+    "disk0": 0,
     "disk1": 0,
     "confreg": "0x2102",
     "system_id": "FTX0945W0MY",
@@ -113,13 +113,38 @@ IOS_ROUTER_SETTING_TYPES = {
 }
 
 # supported platforms with the default RAM value
-PLATFORMS_DEFAULT_RAM = {"c1700": 128,
-                         "c2600": 128,
+PLATFORMS_DEFAULT_RAM = {"c1700": 160,
+                         "c2600": 160,
                          "c2691": 192,
                          "c3600": 192,
                          "c3725": 128,
                          "c3745": 256,
                          "c7200": 512}
+
+# supported platforms with the default NVRAM value
+PLATFORMS_DEFAULT_NVRAM = {"c1700": 128,
+                           "c2600": 128,
+                           "c2691": 256,
+                           "c3600": 256,
+                           "c3725": 256,
+                           "c3745": 256,
+                           "c7200": 512}
+
+DEFAULT_IDLEPC = {"7f4ae12a098391bc0edcaf4f44caaf9d": "0x80358a60",  # c1700-adventerprisek9-mz.124-25d
+                  "3aaecd2222e812c16c211bc9f7c77512": "0x824a4dc4",  # c1700-adventerprisek9-mz.124-15.T14
+                  "062a32e9e3f59aeec930ea5694fda9c9": "0x80519c48",  # c2600-adventerprisek9-mz.124-25d
+                  "483e3a579a5144ec23f2f160d4b0c0e2": "0x8027ec88",  # c2600-adventerprisek9-mz.124-15.T14
+                  "37b444b29191630e5b688f002de2171c": "0x603a8bac",  # c3620-a3jk8s-mz.122-26c
+                  "493c4ef6578801d74d715e7d11596964": "0x6050b114",  # c3640-a3js-mz.124-25d
+                  "b88ee1b2ed182737395db2df27f34a33": "0x606071f8",  # c3660-a3jk9s-mz.124-25d
+                  "daed99f508fd42dbaacf711e560643ed": "0x6076e0b4",  # c3660-a3jk9s-mz.124-15.T14
+                  "8dc8486065de63883f29c85825a2f18c": "0x60a48cb8",  # c2691-adventerprisek9-mz.124-25d
+                  "e7ee5a4a57ed1433e5f73ba6e7695c90": "0x60bcf9f8",  # c2691-adventerprisek9-mz.124-15.T14
+                  "606484061b9e52e71d4f4ddab9af19e7": "0x602467a4",  # c3725-adventerprisek9-mz.124-25d
+                  "64f8c427ed48fd21bd02cf1ff254c4eb": "0x60c09aa0",  # c3725-adventerprisek9-mz.124-15.T14
+                  "ddbaf74274822b50fa9670e10c75b08f": "0x60aa1da0",  # c3745-adventerprisek9-mz.124-25d
+                  "4af2e752220ed1397924150ff7bbe4ce": "0x602701e4",  # c3745-adventerprisek9-mz.124-15.T14
+                  "6b89d0d804e1f2bb5b8bda66b5692047": "0x606df838"}  # c7200-adventerprisek9-mz.124-24.T5
 
 # platforms with supported chassis
 CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),

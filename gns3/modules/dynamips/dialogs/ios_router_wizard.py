@@ -22,6 +22,7 @@ Wizard for IOS routers.
 import sys
 import os
 import re
+import hashlib
 
 from functools import partial
 from gns3.qt import QtCore, QtGui
@@ -33,7 +34,7 @@ from gns3.utils.get_default_base_config import get_default_base_config
 
 from ....settings import ENABLE_CLOUD
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
-from ..settings import PLATFORMS_DEFAULT_RAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
+from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, DEFAULT_IDLEPC, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 from .. import Dynamips
 from ..nodes.c1700 import C1700
 from ..nodes.c2600 import C2600
@@ -84,8 +85,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
         # Validate the Idle PC value
         self._idle_valid = False
-        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]+)?$")
-        validator = QtGui.QRegExpValidator(idle_pc_rgx)
+        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
+        validator = QtGui.QRegExpValidator(idle_pc_rgx, self)
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
@@ -188,9 +189,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         """
         Slot to validate the entered Idle-PC Value
         """
-        sender = self.sender()
-        validator = sender.validator()
-        state = validator.validate(sender.text(), 0)[0]
+
+        validator = self.uiIdlepcLineEdit.validator()
+        text_input = self.uiIdlepcLineEdit.text()
+        state = validator.validate(text_input, len(text_input))[0]
         if state == QtGui.QValidator.Acceptable:
             color = '#A2C964'  # green
             self._idle_valid = True
@@ -200,7 +202,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         else:
             color = '#f6989d'  # red
             self._idle_valid = False
-        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
+        self.uiIdlepcLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % color)
 
     def _idlePCFinderSlot(self):
         """
@@ -261,6 +263,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             idlepc = result["idlepc"]
             self.uiIdlepcLineEdit.setText(idlepc)
             QtGui.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
+
 
     def _iosImageBrowserSlot(self):
         """
@@ -342,6 +345,17 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 wic_list = list(wics)
                 self._widget_wics[wic_number].addItems([""] + wic_list)
 
+    def _md5sum(self, filename):
+
+        with open(filename, 'rb') as fd:
+            m = hashlib.md5()
+            while True:
+                data = fd.read(8192)
+                if not data:
+                    break
+                m.update(data)
+            return m.hexdigest()
+
     def initializePage(self, page_id):
 
         if self.page(page_id) == self.uiServerWizardPage:
@@ -353,7 +367,6 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             ios_image = self.uiIOSImageLineEdit.text()
             self.setWindowTitle("New IOS router - {}".format(os.path.basename(ios_image)))
-
         elif self.page(page_id) == self.uiMemoryWizardPage:
             # set the correct amount of RAM based on the platform
             from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
@@ -379,6 +392,16 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             if self.uiEtherSwitchCheckBox.isChecked():
                 self.uiSlot1comboBox.setCurrentIndex(self.uiSlot1comboBox.findText("NM-16ESW"))
 
+        elif self.page(page_id) == self.uiIdlePCWizardPage:
+            path = self.uiIOSImageLineEdit.text()
+            if os.path.isfile(path):
+                try:
+                    md5sum = self._md5sum(path)
+                    if md5sum in DEFAULT_IDLEPC:
+                        self.uiIdlepcLineEdit.setText(DEFAULT_IDLEPC[md5sum])
+                except OSError:
+                    pass
+
     def validateCurrentPage(self):
         """
         Validates the IOS name and checks validation state for Idle-PC value
@@ -390,9 +413,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 if ios_router["name"] == name:
                     QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
-                # if self.uiEtherSwitchCheckBox.isChecked() and ios_router["etherswitch"]:
-                #    QtGui.QMessageBox.critical(self, "EtherSwitch router", "A router has already been configured to be used as the EtherSwitch router".format(name))
-                #    return False
+        if self.currentPage() == self.uiMemoryWizardPage and self.uiPlatformComboBox.currentText() == "c7200":
+            if self.uiRamSpinBox.value() > 512:
+                QtGui.QMessageBox.critical(self, "c7200 RAM requirement", "c7200 routers with NPE-400 are limited to 512MB of RAM")
+                return False
         if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
@@ -424,15 +448,17 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         else:  # Cloud is selected
             server = "cloud"
 
+        platform = self.uiPlatformComboBox.currentText()
         settings = {
             "name": self.uiNameLineEdit.text(),
             "path": path,
             "startup_config": get_default_base_config(self._base_startup_config_template),
             "private_config": get_default_base_config(self._base_private_config_template),
             "ram": self.uiRamSpinBox.value(),
+            "nvram": PLATFORMS_DEFAULT_NVRAM[platform],
             "idlepc": self.uiIdlepcLineEdit.text(),
             "image": image,
-            "platform": self.uiPlatformComboBox.currentText(),
+            "platform": platform,
             "chassis": self.uiChassisComboBox.currentText(),
             "server": server,
         }

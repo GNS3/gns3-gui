@@ -106,6 +106,7 @@ class Dynamips(Module):
         # save settings but "use_local_server" to the local server config file
         server_settings = self._settings.copy()
         del server_settings["use_local_server"]
+        del server_settings["routers"]
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
@@ -339,10 +340,10 @@ class Dynamips(Module):
             if "nvram" in ios_router and ios_router["nvram"]:
                 settings["nvram"] = ios_router["nvram"]
 
-            if "disk0" in ios_router and ios_router["disk0"]:
+            if "disk0" in ios_router:
                 settings["disk0"] = ios_router["disk0"]
 
-            if "disk1" in ios_router and ios_router["disk1"]:
+            if "disk1" in ios_router:
                 settings["disk1"] = ios_router["disk1"]
 
             for slot_id in range(0, 7):

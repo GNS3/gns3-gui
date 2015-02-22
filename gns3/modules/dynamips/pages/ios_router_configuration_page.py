@@ -56,8 +56,8 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
 
         self._idle_valid = False
-        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]+)?$")
-        validator = QtGui.QRegExpValidator(idle_pc_rgx)
+        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
+        validator = QtGui.QRegExpValidator(idle_pc_rgx, self)
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
@@ -66,9 +66,9 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         """
         Slot to validate the entered Idle-PC Value
         """
-        sender = self.sender()
-        validator = sender.validator()
-        state = validator.validate(sender.text(), 0)[0]
+
+        validator = self.uiIdlepcLineEdit.validator()
+        state = validator.validate(self.uiIdlepcLineEdit.text(), 0)[0]
         if state == QtGui.QValidator.Acceptable:
             color = '#A2C964'  # green
             self._idle_valid = True
@@ -78,7 +78,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         else:
             color = '#f6989d'  # red
             self._idle_valid = False
-        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
+        self.uiIdlepcLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % color)
 
     def _iosImageBrowserSlot(self):
         """
