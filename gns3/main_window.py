@@ -524,17 +524,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         scene = self.uiGraphicsView.scene()
         scene.clearSelection()
-        rect_save = scene.sceneRect()
-        scene.setSceneRect(scene.itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0))
-        image = QtGui.QImage(scene.sceneRect().size().toSize(), QtGui.QImage.Format_RGB32)
+        source = scene.itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
+        image = QtGui.QImage(source.size().toSize(), QtGui.QImage.Format_RGB32)
         image.fill(QtCore.Qt.white)
         painter = QtGui.QPainter(image)
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
         painter.setRenderHint(QtGui.QPainter.TextAntialiasing, True)
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
-        scene.render(painter)
+        scene.render(painter, source=source)
         painter.end()
-        scene.setSceneRect(rect_save)
         # TODO: quality option
         return image.save(path)
 
