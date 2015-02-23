@@ -37,9 +37,11 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
         project.post(local_server, "/test", lambda: 0, body={"test": "test"})
 
+        assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "POST"
         assert args[1] == "/projects"
+        print (kwargs)
         assert kwargs["body"] == {"temporary": False,
                                   "path": str(tmpdir),
                                   "project_id": None}

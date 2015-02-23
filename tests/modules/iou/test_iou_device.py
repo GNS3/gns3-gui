@@ -111,7 +111,7 @@ def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir):
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
             "path": "/tmp/iou.bin",
-            "initial_config_content": "hostname %h"
+            "initial_config_content": "!\nhostname %h"
         }
 
 
@@ -151,7 +151,7 @@ def test_update_initial_config(iou_device, tmpdir):
         args, kwargs = mock.call_args
         assert args[0] == "/iou/vms/{vm_id}".format(vm_id=iou_device.vm_id())
         assert kwargs["body"]["name"] == "Unreal IOU"
-        assert kwargs["body"]["initial_config_content"] == "hostname %h"
+        assert kwargs["body"]["initial_config_content"] == "!\nhostname %h"
 
         # Callback
         args[1]({})

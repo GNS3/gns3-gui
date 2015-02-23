@@ -199,7 +199,7 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("GET", path, callback, context=context)
 
-    def put(self, path, callback, context={}, body={}):
+    def put(self, path, callback, body={}, context={}):
         """
         HTTP PUT on the remote server
 
@@ -211,7 +211,7 @@ class HTTPClient(QtCore.QObject):
 
         self.createHTTPQuery("PUT", path, callback, context=context, body=body)
 
-    def post(self, path, callback, context={}, body={}):
+    def post(self, path, callback, body={}, context={}):
         """
         HTTP POST on the remote server
 
