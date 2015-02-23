@@ -520,6 +520,7 @@ class Router(VM):
         """
 
         self.update({"idlepc": idlepc})
+        self._module.updateImageIdlepc(self._settings["image"], idlepc)
 
     def _slot_info(self):
         """

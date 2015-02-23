@@ -78,7 +78,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         """
 
         servers = Servers.instance()
-        local_server = server.localServerSettings()
+        local_server = servers.localServerSettings()
         directory = local_server["images_path"]
         path = QtGui.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtGui.QFileDialog.ShowDirsOnly)
         if path:

@@ -525,6 +525,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         scene = self.uiGraphicsView.scene()
         scene.clearSelection()
+        rect_save = scene.sceneRect()
         scene.setSceneRect(scene.itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0))
         image = QtGui.QImage(scene.sceneRect().size().toSize(), QtGui.QImage.Format_RGB32)
         image.fill(QtCore.Qt.white)
@@ -534,6 +535,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
         scene.render(painter)
         painter.end()
+        scene.setSceneRect(rect_save)
         # TODO: quality option
         return image.save(path)
 
