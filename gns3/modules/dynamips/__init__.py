@@ -115,7 +115,6 @@ class Dynamips(Module):
         Load the IOS routers from the persistent settings file.
         """
 
-
         local_config = LocalConfig.instance()
 
         # restore the Dynamips VM settings from QSettings (for backward compatibility)

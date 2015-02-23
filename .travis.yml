@@ -30,4 +30,4 @@ install:
 
 script:
     - "xvfb-run py.test -vv" # Run tests in a fake X server
-    - "pep8 --exclude=build,.git"
+    - "pep8 --exclude=build,.git,ui"

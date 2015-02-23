@@ -1067,8 +1067,7 @@ class GraphicsView(QtGui.QGraphicsView):
         item = items[0]
         if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
             router = item.node()
-            question = QtGui.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?",
-                                                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            question = QtGui.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
             if question == QtGui.QMessageBox.Yes:
                 router.computeAutoIdlepc(self._autoIdlepcCallback)

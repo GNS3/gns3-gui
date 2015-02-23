@@ -41,7 +41,6 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
         args, kwargs = mock.call_args
         assert args[0] == "POST"
         assert args[1] == "/projects"
-        print(kwargs)
         assert kwargs["body"] == {"temporary": False,
                                   "path": str(tmpdir),
                                   "project_id": None}
