@@ -455,6 +455,7 @@ class Topology(object):
                     "topology": {},
                     "auto_start": False,
                     "resources_type": self._project.type(),
+                    "revision": 3
                     }
 
         self._resources_type = self._project.type()

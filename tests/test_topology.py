@@ -48,6 +48,7 @@ def test_dump(vpcs_device, project, local_server):
         "name": project.name(),
         "resources_type": "local",
         "version": __version__,
+        "revision": 3,
         "topology": {
             "nodes": [
                 {
