@@ -339,9 +339,8 @@ class Qemu(Module):
         :returns: QWidget object list
         """
 
-        from .pages.qemu_preferences_page import QemuPreferencesPage
         from .pages.qemu_vm_preferences_page import QemuVMPreferencesPage
-        return [QemuPreferencesPage, QemuVMPreferencesPage]
+        return [QemuVMPreferencesPage]
 
     @staticmethod
     def instance():

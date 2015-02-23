@@ -17,6 +17,7 @@
 
 from .qt import QtCore, QtGui
 
+
 class Progress(QtCore.QObject):
 
     """
