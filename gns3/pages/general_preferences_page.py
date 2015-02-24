@@ -188,6 +188,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         local_server = Servers.instance().localServerSettings()
         self.uiProjectsPathLineEdit.setText(local_server["projects_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
+        self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
@@ -250,6 +251,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         local_server = Servers.instance().localServerSettings()
         local_server["images_path"] = self.uiImagesPathLineEdit.text()
         local_server["projects_path"] = self.uiProjectsPathLineEdit.text()
+        local_server["report_errors"] = self.uiCrashReportCheckBox.isChecked()
         servers.setLocalServerSettings(local_server)
         servers.save()
 

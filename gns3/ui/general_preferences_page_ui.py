@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Wed Feb  4 18:17:33 2015
+# Created: Tue Feb 24 17:44:38 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_GeneralPreferencesPageWidget(object):
-
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName(_fromUtf8("GeneralPreferencesPageWidget"))
         GeneralPreferencesPageWidget.resize(510, 687)
@@ -106,21 +103,25 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.gridLayout_2.addWidget(self.uiCheckForUpdateCheckBox, 1, 0, 2, 2)
         self.uiSlowStartAllLabel = QtGui.QLabel(self.uiGeneralMiscGroupBox)
         self.uiSlowStartAllLabel.setObjectName(_fromUtf8("uiSlowStartAllLabel"))
-        self.gridLayout_2.addWidget(self.uiSlowStartAllLabel, 4, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiSlowStartAllLabel, 6, 0, 1, 2)
         self.uiSlowStartAllSpinBox = QtGui.QSpinBox(self.uiGeneralMiscGroupBox)
         self.uiSlowStartAllSpinBox.setMinimum(0)
         self.uiSlowStartAllSpinBox.setMaximum(10000)
         self.uiSlowStartAllSpinBox.setProperty("value", 0)
         self.uiSlowStartAllSpinBox.setObjectName(_fromUtf8("uiSlowStartAllSpinBox"))
-        self.gridLayout_2.addWidget(self.uiSlowStartAllSpinBox, 5, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiSlowStartAllSpinBox, 7, 0, 1, 2)
         self.uiLinkManualModeCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
         self.uiLinkManualModeCheckBox.setChecked(True)
         self.uiLinkManualModeCheckBox.setObjectName(_fromUtf8("uiLinkManualModeCheckBox"))
-        self.gridLayout_2.addWidget(self.uiLinkManualModeCheckBox, 3, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiLinkManualModeCheckBox, 4, 0, 1, 1)
         self.uiLaunchNewProjectDialogCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
         self.uiLaunchNewProjectDialogCheckBox.setChecked(True)
         self.uiLaunchNewProjectDialogCheckBox.setObjectName(_fromUtf8("uiLaunchNewProjectDialogCheckBox"))
         self.gridLayout_2.addWidget(self.uiLaunchNewProjectDialogCheckBox, 0, 0, 1, 1)
+        self.uiCrashReportCheckBox = QtGui.QCheckBox(self.uiGeneralMiscGroupBox)
+        self.uiCrashReportCheckBox.setChecked(True)
+        self.uiCrashReportCheckBox.setObjectName(_fromUtf8("uiCrashReportCheckBox"))
+        self.gridLayout_2.addWidget(self.uiCrashReportCheckBox, 3, 0, 1, 1)
         self.verticalLayout_5.addWidget(self.uiGeneralMiscGroupBox)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_5.addItem(spacerItem1)
@@ -289,6 +290,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
         self.uiLinkManualModeCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Always use manual mode when adding links", None))
         self.uiLaunchNewProjectDialogCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Launch the new project dialog on startup", None))
+        self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send crash report to GNS3 team", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralTab), _translate("GeneralPreferencesPageWidget", "General", None))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings for Telnet connections", None))
         self.uiTelnetConsolePreconfiguredCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Preconfigured commands:", None))
@@ -319,3 +321,4 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultLabelColorPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default color", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults", None))
+

@@ -131,6 +131,7 @@ class Servers(QtCore.QObject):
             ("console_end_port_range", self._local_server_settings["console_end_port_range"]),
             ("udp_start_port_range", self._local_server_settings["udp_start_port_range"]),
             ("udp_start_end_range", self._local_server_settings["udp_end_port_range"]),
+            ("report_errors", self._local_server_settings["report_errors"]),
         ])
         config = LocalServerConfig.instance()
         config.saveSettings("Server", server_settings)

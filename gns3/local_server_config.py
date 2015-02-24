@@ -62,6 +62,7 @@ class LocalServerConfig:
         """
 
         try:
+            log.debug("Write configuration file %s", self._config_file)
             with open(self._config_file, 'w') as fp:
                 self._config.write(fp)
         except configparser.Error as e:
@@ -104,12 +105,19 @@ class LocalServerConfig:
         :param settings: settings to save (dict)
         """
 
+        changed = False
         if section not in self._config:
             self._config[section] = {}
+            changed = True
 
+        log.error(settings)
         for name, value in settings.items():
-            self._config[section][name] = str(value)
-        self.writeConfig()
+            if name not in self._config[section] or self._config[section][name] != str(value):
+                self._config[section][name] = str(value)
+                changed = True
+
+        if changed:
+            self.writeConfig()
 
     @staticmethod
     def instance():

@@ -164,14 +164,14 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="6" column="0" colspan="2">
            <widget class="QLabel" name="uiSlowStartAllLabel">
             <property name="text">
              <string>Delay between each device start when starting all devices:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0" colspan="2">
+          <item row="7" column="0" colspan="2">
            <widget class="QSpinBox" name="uiSlowStartAllSpinBox">
             <property name="suffix">
              <string> seconds</string>
@@ -187,7 +187,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QCheckBox" name="uiLinkManualModeCheckBox">
             <property name="text">
              <string>Always use manual mode when adding links</string>
@@ -201,6 +201,16 @@
            <widget class="QCheckBox" name="uiLaunchNewProjectDialogCheckBox">
             <property name="text">
              <string>Launch the new project dialog on startup</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="uiCrashReportCheckBox">
+            <property name="text">
+             <string>Send crash report to GNS3 team</string>
             </property>
             <property name="checked">
              <bool>true</bool>

@@ -244,6 +244,7 @@ LOCAL_SERVER_SETTINGS = {
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,
+    "report_errors": True,
     "auto_start": False,
     "allow_console_from_anywhere": False,
     "console_start_port_range": 2000,
