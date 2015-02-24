@@ -110,7 +110,6 @@ class LocalServerConfig:
             self._config[section] = {}
             changed = True
 
-        log.error(settings)
         for name, value in settings.items():
             if name not in self._config[section] or self._config[section][name] != str(value):
                 self._config[section][name] = str(value)

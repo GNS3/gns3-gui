@@ -24,6 +24,9 @@ import time
 import locale
 import argparse
 
+from gns3.crash_report import CrashReport
+
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -113,6 +116,7 @@ def main():
             # if stdout is not a tty (redirected to the console view),
             # then print the exception on stderr too.
             print("".join(lines), file=sys.stderr)
+        CrashReport.instance().captureException(exception, value, tb)
 
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook

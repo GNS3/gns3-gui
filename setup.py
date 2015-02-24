@@ -46,9 +46,10 @@ setup(
     long_description=open("README.rst", "r").read(),
     install_requires=[
         "apache-libcloud>=0.14.1",
-        "requests",
-        "paramiko",
-        "gns3-converter"
+        "requests==2.4.3",
+        "paramiko==1.15.1",
+        "gns3-converter",
+        "raven==5.2.0"
     ],
     entry_points={
         "gui_scripts": [
