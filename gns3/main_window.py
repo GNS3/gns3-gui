@@ -438,9 +438,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              self.projectsDirPath(),
                                                              "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
                                                              "GNS3 project files (*.gns3)")
-        if path and self.checkForUnsavedChanges():
-            if self.loadProject(path):
-                self.project_new_signal.emit(path)
+        self._loadPath(path)
 
     def openRecentFileSlot(self):
         """
@@ -453,9 +451,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if not os.path.isfile(path):
                 QtGui.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
-            if self.checkForUnsavedChanges():
-                if self.loadProject(path):
-                    self.project_new_signal.emit(path)
+            self._loadPath(path)
+
+    def _loadPath(self, path):
+        """Open a file and close the previous project"""
+        if path and self.checkForUnsavedChanges():
+            self._open_project_path = path
+            self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
+            self._project.close()
+
+
+    def _projectClosedContinueLoadPath(self):
+        path = self._open_project_path
+        if self.loadProject(path):
+            self.project_new_signal.emit(path)
+
 
     def _saveProjectActionSlot(self):
         """
@@ -1157,7 +1167,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if self._project_from_cmdline:
             time.sleep(0.5)  # give so time to the server to initialize
-            self.loadProject(self._project_from_cmdline)
+            self._loadPath(self._project_from_cmdline)
         elif self._settings["auto_launch_project_dialog"]:
             project_dialog = NewProjectDialog(self, showed_from_startup=True)
             project_dialog.show()
@@ -1339,7 +1349,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param path: path to project file
         """
 
-        self._project.close()
         self._project = Project()
         self._project.setTopologyFile(path)
 
