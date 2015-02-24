@@ -475,19 +475,23 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             del settings["image"]
 
         if not node:
-            startup_config = self.uiStartupConfigLineEdit.text()
-            if startup_config != settings["startup_config"]:
+            startup_config = self.uiStartupConfigLineEdit.text().strip()
+            if startup_config and startup_config != settings["startup_config"]:
                 if os.access(startup_config, os.R_OK):
                     settings["startup_config"] = startup_config
                 else:
                     QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+            else:
+                settings["startup_config"] = ""
 
-            private_config = self.uiPrivateConfigLineEdit.text()
-            if private_config != settings["private_config"]:
+            private_config = self.uiPrivateConfigLineEdit.text().strip()
+            if private_config and private_config != settings["private_config"]:
                 if os.access(private_config, os.R_OK):
                     settings["private_config"] = private_config
                 else:
                     QtGui.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+            else:
+                settings["private_config"] = ""
 
         # get the platform and chassis if applicable
         platform = settings["platform"]

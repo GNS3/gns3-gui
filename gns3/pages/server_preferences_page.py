@@ -223,6 +223,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
         new_settings["images_path"] = current_settings["images_path"]
         new_settings["projects_path"] = current_settings["projects_path"]
+        new_settings["report_errors"] = current_settings["report_errors"]
 
         if new_settings["auto_start"]:
             if not os.path.isfile(new_settings["path"]):

@@ -210,7 +210,7 @@
           <item row="3" column="0">
            <widget class="QCheckBox" name="uiCrashReportCheckBox">
             <property name="text">
-             <string>Send crash report to GNS3 team</string>
+             <string>Send crash reports to the GNS3 team</string>
             </property>
             <property name="checked">
              <bool>true</bool>

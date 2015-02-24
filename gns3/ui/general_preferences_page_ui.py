@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Tue Feb 24 17:44:38 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created: Tue Feb 24 16:01:27 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -290,7 +290,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
         self.uiLinkManualModeCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Always use manual mode when adding links", None))
         self.uiLaunchNewProjectDialogCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Launch the new project dialog on startup", None))
-        self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send crash report to GNS3 team", None))
+        self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send crash reports to the GNS3 team", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralTab), _translate("GeneralPreferencesPageWidget", "General", None))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings for Telnet connections", None))
         self.uiTelnetConsolePreconfiguredCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Preconfigured commands:", None))

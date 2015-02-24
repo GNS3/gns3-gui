@@ -177,12 +177,14 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             del settings["console"]
 
         if not node:
-            initial_config = self.uiInitialConfigLineEdit.text()
-            if initial_config != settings["initial_config"]:
+            initial_config = self.uiInitialConfigLineEdit.text().strip()
+            if initial_config and initial_config != settings["initial_config"]:
                 if os.access(initial_config, os.R_OK):
                     settings["initial_config"] = initial_config
                 else:
                     QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
+            else:
+                settings["initial_config"] = ""
 
         # save advanced settings
         settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()

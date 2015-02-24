@@ -259,6 +259,7 @@ LOCAL_SERVER_SETTING_TYPES = {
     "port": int,
     "images_path": str,
     "projects_path": str,
+    "report_errors": bool,
     "auto_start": bool,
     "allow_console_from_anywhere": bool,
     "console_start_port_range": int,
