@@ -138,9 +138,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if ENABLE_CLOUD:
             self.uiDocksMenu.addAction(self.uiCloudInspectorDockWidget.toggleViewAction())
 
-        # set the images directory
-        # self.uiGraphicsView.updateImageFilesDir(self.imagesDirPath())
-
         # add recent file actions to the File menu
         for i in range(0, self._max_recent_files):
             action = QtGui.QAction(self.uiFileMenu)
@@ -1303,7 +1300,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         try:
             project_name = os.path.basename(os.path.dirname(path))
-            project_dir = os.path.join(self._settings["projects_path"], project_name)
+            project_dir = os.path.join(self.projectsDirPath(), project_name)
 
             while os.path.isdir(project_dir):
                 text, ok = QtGui.QInputDialog.getText(self,
@@ -1312,7 +1309,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                       text=project_name + "2")
                 if ok:
                     project_name = text
-                    project_dir = os.path.join(self._settings["projects_path"], project_name)
+                    project_dir = os.path.join(self.projectsDirPath(), project_name)
                 else:
                     return
 
@@ -1479,7 +1476,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :returns: path to the default projects directory
         """
 
-        return self._settings["projects_path"]
+        return Servers.instance().localServerSettings()["projects_path"]
 
     def imagesDirPath(self):
         """
@@ -1630,7 +1627,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _importProjectActionSlot(self):
         dialog = ImportCloudProjectDialog(
             self,
-            self._settings['projects_path'],
+            self.projectsDirPath(),
             self.imagesDirPath(),
             self._cloud_settings
         )

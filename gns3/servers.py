@@ -125,6 +125,8 @@ class Servers(QtCore.QObject):
         server_settings = OrderedDict([
             ("host", self._local_server_settings["host"]),
             ("port", self._local_server_settings["port"]),
+            ("images_path", self._local_server_settings["images_path"]),
+            ("projects_path", self._local_server_settings["projects_path"]),
             ("console_start_port_range", self._local_server_settings["console_start_port_range"]),
             ("console_end_port_range", self._local_server_settings["console_end_port_range"]),
             ("udp_start_port_range", self._local_server_settings["udp_start_port_range"]),
@@ -150,7 +152,7 @@ class Servers(QtCore.QObject):
         """
 
         if settings["host"] != self._local_server_settings["host"] or settings["port"] != self._local_server_settings["port"]:
-            url = "http://{host}:{port}".format(host=self.settings["host"], port=self.settings["port"])
+            url = "http://{host}:{port}".format(host=settings["host"], port=settings["port"])
             self._local_server = HTTPClient(url, self._network_manager)
             self._local_server.setLocal(True)
             log.info("New local server connection {} registered".format(url))

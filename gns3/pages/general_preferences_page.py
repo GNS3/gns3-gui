@@ -66,7 +66,9 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to select the projects directory path.
         """
 
-        directory = self._general_settings["projects_path"]
+        servers = Servers.instance()
+        local_server = servers.localServerSettings()
+        directory = local_server["projects_path"]
         path = QtGui.QFileDialog.getExistingDirectory(self, "My projects directory", directory, QtGui.QFileDialog.ShowDirsOnly)
         if path:
             self.uiProjectsPathLineEdit.setText(path)
@@ -184,8 +186,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         """
 
         local_server = Servers.instance().localServerSettings()
-
-        self.uiProjectsPathLineEdit.setText(settings["projects_path"])
+        self.uiProjectsPathLineEdit.setText(local_server["projects_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
@@ -248,11 +249,11 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         local_server = Servers.instance().localServerSettings()
         local_server["images_path"] = self.uiImagesPathLineEdit.text()
+        local_server["projects_path"] = self.uiProjectsPathLineEdit.text()
         servers.setLocalServerSettings(local_server)
         servers.save()
 
         new_settings = {}
-        new_settings["projects_path"] = self.uiProjectsPathLineEdit.text()
         new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()
         new_settings["style"] = self.uiStyleComboBox.currentText()
         new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()

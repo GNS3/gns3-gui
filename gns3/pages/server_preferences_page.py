@@ -207,6 +207,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         servers = Servers.instance()
+        current_settings = servers.localServerSettings()
         restart_local_server = False
 
         # save the local server preferences
@@ -220,6 +221,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
+        new_settings["images_path"] = current_settings["images_path"]
+        new_settings["projects_path"] = current_settings["projects_path"]
 
         if new_settings["auto_start"]:
             if not os.path.isfile(new_settings["path"]):
@@ -228,7 +231,6 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
             if not os.access(new_settings["path"], os.X_OK):
                 QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_settings["path"]))
 
-            current_settings = servers.localServerSettings()
             if new_settings != current_settings:
                 # first check if we have nodes on the local server
                 local_nodes = []
@@ -242,6 +244,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                     local server before changing the local server settings", nodes)
                     return
                 restart_local_server = True
+        else:
+            servers.stopLocalServer(wait=True)
 
         servers.setLocalServerSettings(new_settings)
 
