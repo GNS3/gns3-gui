@@ -276,6 +276,7 @@ class HTTPClient(QtCore.QObject):
             print("Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port))
             print(params)
             log.warn("Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port))
+            callback({}, error=True, server=self)
             return
         self.executeHTTPQuery(method, path, callback, body)
         self._connected = True
@@ -334,11 +335,11 @@ class HTTPClient(QtCore.QObject):
             body = bytes(response.readAll()).decode()
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if not body or content_type != "application/json":
-                callback({"message": error_message}, error=True, server=self)
+                callback({"message": error_message}, error=True, server=self, context=context)
             else:
                 log.debug(body)
                 if callback is not None:
-                    callback(json.loads(body), error=True, server=self)
+                    callback(json.loads(body), error=True, server=self, context=context)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))

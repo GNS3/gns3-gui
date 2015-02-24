@@ -95,6 +95,23 @@ def test_post_not_connected(http_client, request, network_manager, response):
     assert callback.called
 
 
+def test_post_not_connected_connection_failed(http_client, request, network_manager, response):
+
+    http_client._connected = False
+    callback = unittest.mock.MagicMock()
+
+    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
+
+    http_client.post("/test", callback)
+
+    assert network_manager.get.called
+
+    # Trigger the completion of /version
+    response.finished.emit()
+
+    assert callback.called
+
+
 def test_progress_callback(http_client, response):
 
     http_client._connected = True
