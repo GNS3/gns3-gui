@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Wed Dec 24 17:35:25 2014
+# Created: Wed Feb 25 11:53:17 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_iouDeviceConfigPageWidget(object):
-
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName(_fromUtf8("iouDeviceConfigPageWidget"))
         iouDeviceConfigPageWidget.resize(392, 473)
@@ -195,7 +192,8 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("iouDeviceConfigPageWidget", "General settings", None))
         self.groupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Adapters", None))
         self.uiEthernetAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Ethernet adapters:", None))
-        self.uiEthernetAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter egals 4 Ethernet interfaces", None))
+        self.uiEthernetAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter equals 4 Ethernet interfaces", None))
         self.uiSerialAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Serial adapters:", None))
-        self.uiSerialAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter egals 4 serial interfaces", None))
+        self.uiSerialAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter equals 4 serial interfaces", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("iouDeviceConfigPageWidget", "Network", None))
+

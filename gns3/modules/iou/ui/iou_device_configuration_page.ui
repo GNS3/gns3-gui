@@ -252,7 +252,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>1 adapter egals 4 Ethernet interfaces</string>
+             <string>1 adapter equals 4 Ethernet interfaces</string>
             </property>
             <property name="maximum">
              <number>16</number>
@@ -278,7 +278,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>1 adapter egals 4 serial interfaces</string>
+             <string>1 adapter equals 4 serial interfaces</string>
             </property>
             <property name="maximum">
              <number>16</number>
