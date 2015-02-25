@@ -505,15 +505,16 @@ class Topology(object):
 
         return topology
 
-    def loadFile(self, path):
+    def loadFile(self, path, project):
         """
         Load a topology file
 
         :param path: Path to topology directory
+        :param project: Project instance
         """
 
         log.debug("Start loading topology")
-        self._project = Project()
+        self._project = project
 
         project_files_dir = path
         filename = os.path.basename(project_files_dir)

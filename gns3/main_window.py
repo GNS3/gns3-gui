@@ -1362,7 +1362,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._convertOldProject(path)
                 return
 
-            topology.loadFile(path)
+            topology.loadFile(path, self._project)
 
             # if we're opening a cloud project, defer topology load operations
             # if json_topology["resources_type"] == "cloud":
