@@ -154,7 +154,7 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
         progress_dialog.exec_()
 
         from ..main_window import MainWindow
-        MainWindow.instance().loadProject(self._project_path)
+        MainWindow.instance().loadSnapshot(self._project_path)
         self.accept()
 
     def _snapshotDoubleClickedSlot(self, item):

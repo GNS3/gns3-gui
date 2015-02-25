@@ -453,19 +453,26 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
             self._loadPath(path)
 
+    def loadSnapshot(self, path):
+        """Loads a snapshot"""
+
+        self._open_project_path = path
+        self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
+        self._project.close()
+
     def _loadPath(self, path):
         """Open a file and close the previous project"""
+
         if path and self.checkForUnsavedChanges():
             self._open_project_path = path
             self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
             self._project.close()
 
-
     def _projectClosedContinueLoadPath(self):
+
         path = self._open_project_path
         if self.loadProject(path):
             self.project_new_signal.emit(path)
-
 
     def _saveProjectActionSlot(self):
         """
@@ -568,11 +575,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to open the snapshot dialog.
         """
 
+        if self._project.temporary():
+            QtGui.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots are not supported with temporary projects")
+            return
+
         # first check if any node doesn't run locally
         topology = Topology.instance()
         for node in topology.nodes():
             if node.server() != Servers.instance().localServer():
-                QtGui.QMessageBox.critical(self, "Snapshots", "Snapshot can only be created if all the nodes run locally")
+                QtGui.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots can only be created if all the nodes run locally")
                 return
 
         dialog = SnapshotsDialog(self,
