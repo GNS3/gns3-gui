@@ -37,23 +37,6 @@ class Module(QtCore.QObject):
 
         super(Module, self).__init__()
 
-    def setProjectFilesDir(self, path):
-        """
-        Sets the project files directory path this module.
-
-        :param path: path to the local project files directory
-        """
-
-        raise NotImplementedError()
-
-    def setImageFilesDir(self, path):
-        """
-        Sets the image files directory path this module.
-
-        :param path: path to the local image files directory
-        """
-
-        raise NotImplementedError()
 
     @staticmethod
     def nodes(self):
@@ -73,17 +56,6 @@ class Module(QtCore.QObject):
         Must be overloaded.
 
         :returns: list of preference page classes
-        """
-
-        raise NotImplementedError()
-
-    def notification(self, destination, params):
-        """
-        To received notifications from the server.
-        Must be overloaded.
-
-        :param destination: JSON-RPC method
-        :param params: JSON-RPC params
         """
 
         raise NotImplementedError()

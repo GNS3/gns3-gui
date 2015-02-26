@@ -30,12 +30,13 @@ class Host(Cloud):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
     _name_instance_count = 1
 
-    def __init__(self, module, server):
-        Cloud.__init__(self, module, server)
+    def __init__(self, module, server, project):
+        Cloud.__init__(self, module, server, project)
 
         log.info("host is being created")
         # create an unique id and name
@@ -59,7 +60,8 @@ class Host(Cloud):
             self._initial_settings = initial_settings
         else:
             self.created_signal.connect(self._autoConfigure)
-        self._server.send_message("builtin.interfaces", None, self._setupCallback)
+
+        self._server.get("/interfaces", self._setupCallback)
 
     def _autoConfigure(self, node_id):
         """

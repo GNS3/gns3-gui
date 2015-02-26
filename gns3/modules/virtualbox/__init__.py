@@ -200,7 +200,7 @@ class VirtualBox(Module):
         Creates a new node.
 
         :param node_class: Node object
-        :param server: WebSocketClient instance
+        :param server: HTTPClient instance
         :param project: Project instance
         """
 

@@ -264,7 +264,7 @@ class Servers(QtCore.QObject):
         :param host: host address
         :param port: port
 
-        :returns: remote server (WebSocketClient instance)
+        :returns: remote server (HTTPClient instance)
         """
 
         for server in self._remote_servers.values():
@@ -391,7 +391,7 @@ class Servers(QtCore.QObject):
         """
         Returns the next available remote server.
 
-        :returns: remote server (WebSocketClient instance)
+        :returns: remote server (HTTPClient instance)
         """
 
         if not self._remote_servers:

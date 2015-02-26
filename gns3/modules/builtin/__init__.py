@@ -19,7 +19,6 @@
 Built-in module implementation.
 """
 
-import os
 from gns3.qt import QtGui
 from gns3.servers import Servers
 from ..module import Module
@@ -42,54 +41,6 @@ class Builtin(Module):
         Module.__init__(self)
 
         self._nodes = []
-        self._servers = []
-
-    def setProjectFilesDir(self, path):
-        """
-        Sets the project files directory path this module.
-
-        :param path: path to the local project files directory
-        """
-
-        pass  # not used by this module
-
-    def setImageFilesDir(self, path):
-        """
-        Sets the image files directory path this module.
-
-        :param path: path to the local image files directory
-        """
-
-        pass  # not used by this module
-
-    def addServer(self, server):
-        """
-        Adds a server to be used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("adding server {}:{} to built-in module".format(server.host, server.port))
-        self._servers.append(server)
-
-    def removeServer(self, server):
-        """
-        Removes a server from being used by this module.
-
-        :param server: WebSocketClient instance
-        """
-
-        log.info("removing server {}:{} from built-in module".format(server.host, server.port))
-        self._servers.remove(server)
-
-    def servers(self):
-        """
-        Returns all the servers used by this module.
-
-        :returns: list of WebSocketClient instances
-        """
-
-        return self._servers
 
     def addNode(self, node):
         """
@@ -110,13 +61,21 @@ class Builtin(Module):
         if node in self._nodes:
             self._nodes.remove(node)
 
+    def reset(self):
+        """
+        Resets the module.
+        """
+
+        log.info("Built-in module reset")
+        self._nodes.clear()
+
     def allocateServer(self, node_class):
         """
         Allocates a server.
 
         :param node_class: Node object
 
-        :returns: allocated server (WebSocketClient instance)
+        :returns: allocated server (HTTPClient instance)
         """
 
         # check all other modules to find if they
@@ -161,29 +120,19 @@ class Builtin(Module):
                 raise ModuleError("Please select a server")
         return local_server
 
-    def createNode(self, node_class, server):
+    def createNode(self, node_class, server, project):
         """
         Creates a new node.
 
         :param node_class: Node object
-        :param server: WebSocketClient instance
+        :param server: HTTPClient instance
+        :param project: Project instance
         """
 
         log.info("creating node {}".format(node_class))
 
-        if not server.connected():
-            try:
-                log.info("reconnecting to server {}:{}".format(server.host, server.port))
-                server.reconnect()
-            except OSError as e:
-                raise ModuleError("Could not connect to server {}:{}: {}".format(server.host,
-                                                                                 server.port,
-                                                                                 e))
-        if server not in self._servers:
-            self.addServer(server)
-
         # create an instance of the node class
-        return node_class(self, server)
+        return node_class(self, server, project)
 
     def setupNode(self, node, node_name):
         """
@@ -195,13 +144,6 @@ class Builtin(Module):
 
         log.info("configuring node {}".format(node))
         node.setup()
-
-    def reset(self):
-        """
-        Resets the servers.
-        """
-
-        self._servers.clear()
 
     @staticmethod
     def findAlternativeInterface(node, missing_interface):

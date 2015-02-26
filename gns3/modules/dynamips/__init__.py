@@ -260,7 +260,7 @@ class Dynamips(Module):
 
         :param node_class: Node object
 
-        :returns: allocated server (WebSocketClient instance)
+        :returns: allocated server (HTTPClient instance)
         """
 
         # allocate a server for the node
@@ -287,7 +287,7 @@ class Dynamips(Module):
         Creates a new node.
 
         :param node_class: Node object
-        :param server: WebSocketClient instance
+        :param server: HTTPClient instance
         :param project: Project instance
         """
 

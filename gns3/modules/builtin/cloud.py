@@ -42,12 +42,13 @@ class Cloud(Node):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
     _name_instance_count = 1
 
-    def __init__(self, module, server):
-        Node.__init__(self, server)
+    def __init__(self, module, server, project):
+        Node.__init__(self, module, server, project)
 
         log.info("cloud is being created")
         # create an unique id and name
@@ -58,11 +59,10 @@ class Cloud(Node):
         self.setStatus(Node.started)  # this is an always-on node
         self._defaults = {}
         self._ports = []
-        self._module = module
         self._initial_settings = None
-        self._settings = {"nios": [],
+        self._settings = {"name": name,
                           "interfaces": {},
-                          "name": name}
+                          "nios": []}
 
     def delete(self):
         """
@@ -83,10 +83,10 @@ class Cloud(Node):
         if name:
             self._settings["name"] = name
 
-        self._settings["name"] = name
         if initial_settings:
             self._initial_settings = initial_settings
-        self._server.send_message("builtin.interfaces", None, self._setupCallback)
+
+        self._server.get("/interfaces", self._setupCallback)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
