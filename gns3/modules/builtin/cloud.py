@@ -83,6 +83,7 @@ class Cloud(Node):
         if name:
             self._settings["name"] = name
 
+        self._settings["name"] = name
         if initial_settings:
             self._initial_settings = initial_settings
         self._server.send_message("builtin.interfaces", None, self._setupCallback)

@@ -62,6 +62,7 @@ class EthernetHub(Device):
             self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet hub")
             return
 
+        self._settings["name"] = name
         if not initial_ports:
             # default configuration if no initial ports
             for port_number in range(1, 9):

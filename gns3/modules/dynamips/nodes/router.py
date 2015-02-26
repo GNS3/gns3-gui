@@ -222,6 +222,8 @@ class Router(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this router")
             return
 
+        self._settings["name"] = name
+
         # keep the default settings
         self._defaults = self._settings.copy()
         platform = self._settings["platform"]
@@ -285,7 +287,10 @@ class Router(VM):
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
-                log.info("router setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
+                log.info("Router {} setting up and updating {} from '{}' to '{}'".format(self.name(),
+                                                                                         name,
+                                                                                         self._settings[name],
+                                                                                         value))
                 self._settings[name] = value
 
         # insert default adapters

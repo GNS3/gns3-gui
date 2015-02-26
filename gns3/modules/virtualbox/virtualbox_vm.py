@@ -103,6 +103,7 @@ class VirtualBoxVM(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this VirtualBox VM")
             return
 
+        self._settings["name"] = name
         self._linked_clone = linked_clone
         params = {"name": name,
                   "vmname": vmname,
@@ -131,7 +132,10 @@ class VirtualBoxVM(VM):
         # update the settings with what has been sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
-                log.info("VirtualBox VM instance setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
+                log.info("VirtualBox VM instance {} setting up and updating {} from '{}' to '{}'".format(self.name(),
+                                                                                                         name,
+                                                                                                         self._settings[name],
+                                                                                                         value))
                 self._settings[name] = value
 
         if self._settings["adapters"] != 0:

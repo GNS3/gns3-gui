@@ -66,6 +66,7 @@ class EtherSwitchRouter(Router):
         if not name:
             name = self.allocateName("ESW")
 
+        self._settings["name"] = name
         resource_name = "configs/ios_etherswitch_startup-config.txt"
         if hasattr(sys, "frozen") and os.path.isfile(resource_name):
             startup_config = os.path.normpath(resource_name)

@@ -133,6 +133,7 @@ class IOUDevice(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this IOU device")
             return
 
+        self._settings["name"] = name
         params = {"name": name,
                   "path": iou_path}
 
@@ -175,7 +176,10 @@ class IOUDevice(VM):
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
-                log.info("IOU instance setting up and updating {} from '{}' to '{}'".format(name, self._settings[name], value))
+                log.info("IOU instance {} setting up and updating {} from '{}' to '{}'".format(self.name(),
+                                                                                               name,
+                                                                                               self._settings[name],
+                                                                                               value))
                 self._settings[name] = value
 
         # update the node with setup initial settings if any

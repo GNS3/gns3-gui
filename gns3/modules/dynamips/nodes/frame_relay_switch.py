@@ -63,6 +63,7 @@ class FrameRelaySwitch(Device):
             self.error_signal.emit(self.id(), "could not allocate a name for this Frame Relay switch")
             return
 
+        self._settings["name"] = name
         if initial_mappings:
             # add initial mappings
             self._settings["mappings"] = initial_mappings.copy()

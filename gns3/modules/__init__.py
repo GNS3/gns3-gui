@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 from gns3.modules.builtin import Builtin
 from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
