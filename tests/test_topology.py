@@ -20,6 +20,7 @@ import os
 from unittest.mock import patch, MagicMock
 
 from gns3.topology import Topology
+from gns3.project import Project
 from gns3.version import __version__
 
 
@@ -93,7 +94,8 @@ def test_loadFile(tmpdir):
         f.write('{"test": "tutu"}')
 
     with patch("gns3.topology.Topology._load") as mock:
-        topology.loadFile(topo)
+        project = Project()
+        topology.loadFile(topo, project)
 
         assert mock.called
         args, kwargs = mock.call_args

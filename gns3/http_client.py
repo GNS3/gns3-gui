@@ -273,10 +273,10 @@ class HTTPClient(QtCore.QObject):
         """
 
         if error is not False:
-            print("Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port))
+            msg = "Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port)
             print(params)
             log.warn("Can't connect to server on {}://{}:{}".format(self.scheme, self.host, self.port))
-            callback({}, error=True, server=self)
+            callback({"message": msg}, error=True, server=self)
             return
         self.executeHTTPQuery(method, path, callback, body)
         self._connected = True
