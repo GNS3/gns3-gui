@@ -151,6 +151,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                     "server_id": 1,
                     "type": "VPCSDevice",
                     "vpcs_id": 1,
+                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cb8",
                     "x": -349.5,
                     "y": -206.5
                 },
@@ -181,6 +182,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                     },
                     "server_id": 1,
                     "type": "VPCSDevice",
+                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cba",
                     "vpcs_id": 2,
                     "x": 69.5,
                     "y": -190.5
@@ -337,6 +339,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
 
     topology = Topology()
     topology.project = project
+    topology.dump = MagicMock()
     topology._load(topo)
 
     assert topology._project.name() == "twovpcs"
@@ -347,3 +350,4 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
     assert topology.getNode(1).initialized()
     assert topology.getNode(2).initialized()
     assert main_window.uiGraphicsView.addLink.called
+    assert topology.dump.called

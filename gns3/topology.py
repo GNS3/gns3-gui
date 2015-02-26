@@ -590,6 +590,8 @@ class Topology(object):
                     self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
 
         # nodes
+        self._nodes_to_create = 0
+        self._load_old_topology = False
         if "nodes" in topology["topology"]:
             topology_nodes = {}
             nodes = topology["topology"]["nodes"]
@@ -622,6 +624,11 @@ class Topology(object):
                     if not server:
                         topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
                         continue
+
+                    self._nodes_to_create += 1
+
+                    if "vm_id" not in topology_node:
+                        self._load_old_topology = True
 
                     node = node_module.createNode(node_class, server, self._project)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
@@ -797,6 +804,10 @@ class Topology(object):
         # Auto start
         if self._auto_start and hasattr(node, "start"):
             node.start()
+
+        # We save at the end of intialization process in order to upgrade old topologies
+        if self._nodes_to_create == len(self._initialized_nodes) and self._load_old_topology:
+            self.dump()
 
     def _createPortLabel(self, node, label_info):
         """
