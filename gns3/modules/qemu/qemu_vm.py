@@ -434,7 +434,10 @@ class QemuVM(VM):
         """
 
         self.node_info = node_info
-        qemu_id = node_info.get("qemu_id")
+        # for backward compatibility
+        vm_id = node_info.get("qemu_id")
+        if not vm_id:
+            vm_id = node_info["vm_id"]
         settings = node_info["properties"]
         name = settings.pop("name")
         qemu_path = settings.pop("qemu_path")
@@ -445,7 +448,7 @@ class QemuVM(VM):
         self._loading = True
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self.setup(qemu_path, name, console, monitor, qemu_id, settings)
+        self.setup(qemu_path, name, console, monitor, vm_id, settings)
 
     def _updatePortSettings(self):
         """
