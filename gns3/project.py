@@ -17,6 +17,7 @@
 
 import os
 import functools
+import shutil
 from .qt import QtCore
 
 from gns3.servers import Servers
@@ -268,17 +269,18 @@ class Project(QtCore.QObject):
             self.project_about_to_close_signal.emit()
 
             for server in list(self._created_servers):
-                server.post("/projects/{project_id}/close".format(project_id=self._id), self._project_closed, body={})
+                server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={})
         else:
             # The project is not initialized when can close it
             self._closed = True
             self.project_about_to_close_signal.emit()
             self.project_closed_signal.emit()
 
-    def _project_closed(self, params, error=False, server=None, **kwargs):
+    def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
+
         if error:
-            # TODO: handle errors
-            print(params)
+            log.error("Error while closing project {}: {}".format(self._id, result["message"]))
+            return
         else:
             if self._id:
                 log.info("Project {} closed".format(self._id))
@@ -289,15 +291,31 @@ class Project(QtCore.QObject):
             self.project_closed_signal.emit()
             self._project_instances.remove(self)
 
-    def moveFromTemporaryToPath(self, path):
+    def moveFromTemporaryToPath(self, new_path):
         """
         Inform the server that a project is no longer
         temporary and as a new location.
 
-        :params path: New path of the project
+        :param path: New path of the project
         """
 
-        self._files_dir = path
+        temporary_project_path = self._files_dir
+        self._files_dir = new_path
         self._temporary = False
         for server in list(self._created_servers):
-            server.put("/projects/{project_id}".format(project_id=self._id), None, body={"path": path, "temporary": False})
+            server.put("/projects/{project_id}".format(project_id=self._id),
+                       self._temporaryProjectMoveCallback,
+                       context={"temporary_project_path": temporary_project_path},
+                       body={"path": new_path, "temporary": False})
+
+    def _temporaryProjectMoveCallback(self, result, error=False, context={}, **kwargs):
+
+        if error:
+            log.error("Error while moving temporary project {}: {}".format(self._id, result["message"]))
+            return
+        else:
+            temporary_project_path = context["temporary_project_path"]
+            try:
+                shutil.rmtree(temporary_project_path)
+            except OSError as e:
+                log.warn("Could not delete temporary project {}: {}".format(temporary_project_path, e))

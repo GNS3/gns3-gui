@@ -231,7 +231,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             is_64bit = sys.maxsize > 2 ** 32
             if sys.platform.startswith("win"):
                 if self.uiTypeComboBox.currentText() != "Default" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
-                    search_string = "qemu.exe"
+                    search_string = r"qemu-0.13.0\qemu-system-i386w.exe"
                 elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
                     search_string = "x86_64w.exe"
@@ -312,7 +312,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         if self.uiTypeComboBox.currentText() != "Default":
             if "options" not in settings:
                 settings["options"] = ""
-            if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith("qemu.exe")) or (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
+            if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith(r"qemu-0.13.0\qemu-system-i386w.exe")) or \
+                    (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
                 settings["options"] += " -vga none -vnc none"
                 settings["legacy_networking"] = True
             else:
