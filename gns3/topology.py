@@ -399,14 +399,15 @@ class Topology(object):
                             if hover_symbol_path:
                                 node["hover_symbol"] = hover_symbol_path
                 if isinstance(item, LinkItem):
-                    for link in topology["topology"]["links"]:
-                        if link["id"] == item.link().id():
-                            source_port_label = item.sourcePort().label()
-                            destination_port_label = item.destinationPort().label()
-                            if source_port_label:
-                                link["source_port_label"] = source_port_label.dump()
-                            if destination_port_label:
-                                link["destination_port_label"] = destination_port_label.dump()
+                    if item.link() is not None:
+                        for link in topology["topology"]["links"]:
+                            if link["id"] == item.link().id():
+                                source_port_label = item.sourcePort().label()
+                                destination_port_label = item.destinationPort().label()
+                                if source_port_label:
+                                    link["source_port_label"] = source_port_label.dump()
+                                if destination_port_label:
+                                    link["destination_port_label"] = destination_port_label.dump()
 
         # notes
         if self._notes:
