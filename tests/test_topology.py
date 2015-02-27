@@ -24,6 +24,7 @@ from gns3.project import Project
 from gns3.version import __version__
 import gns3.main_window
 
+
 def test_topology_init():
     Topology()
 
