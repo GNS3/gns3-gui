@@ -222,12 +222,11 @@ class Router(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this router")
             return
 
-        self._settings["name"] = name
-
         # keep the default settings
         self._defaults = self._settings.copy()
         platform = self._settings["platform"]
 
+        self._settings["name"] = name
         # Minimum settings to send to the server in order to create a new router
         params = {"name": name,
                   "platform": platform,
