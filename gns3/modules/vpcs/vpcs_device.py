@@ -53,6 +53,7 @@ class VPCSDevice(VM):
         self._settings = {"name": "",
                           "script_file": "",
                           "startup_script": None,
+                          "startup_script_path": None,
                           "console": None}
 
         port_name = EthernetPort.longNameType() + str(0)
@@ -99,6 +100,9 @@ class VPCSDevice(VM):
             except (OSError) as e:
                 log.error("Could not load the script file to {}".format(additional_settings["script_file"], e))
             del additional_settings["script_file"]
+
+        if "startup_script_path" in additional_settings:
+            del additional_settings["startup_script_path"]
 
         # If we have an vm id that mean the VM already exits and we should not send startup_script
         if "startup_script" in additional_settings and vm_id is not None:
@@ -153,6 +157,9 @@ class VPCSDevice(VM):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
+
+        if "startup_script_path" in params:
+            del params["startup_script_path"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
@@ -234,7 +241,10 @@ class VPCSDevice(VM):
         # add the properties
         for name, value in self._settings.items():
             if name in self._defaults and self._defaults[name] != value:
-                vpcs_device["properties"][name] = value
+                if name != "startup_script":
+                    if name == "startup_script_path":
+                        value = os.path.basename(value)
+                    vpcs_device["properties"][name] = value
 
         # add the ports
         if self._ports:
