@@ -1871,7 +1871,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def _setStyle(self, style):
 
-        if style == "Charcoal (default)":
+        if style.startswith("Charcoal"):
             self._setCharcoalStyle()
             return True
         elif style == "Classic":

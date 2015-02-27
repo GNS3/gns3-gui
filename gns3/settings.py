@@ -184,10 +184,15 @@ if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ:
     # Windows 64-bit
     DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(os.environ["PROGRAMFILES(X86)"])
 
-STYLES = ["Charcoal (default)", "Classic", "Legacy"]
+STYLES = ["Charcoal", "Classic", "Legacy"]
+
+if sys.platform.startswith("win"):
+    DEFAULT_STYLE = "Classic"
+else:
+    DEFAULT_STYLE = "Charcoal"
 
 GENERAL_SETTINGS = {
-    "style": STYLES[0],
+    "style": "DEFAULT_STYLE",
     "auto_launch_project_dialog": True,
     "check_for_update": True,
     "last_check_for_update": 0,
