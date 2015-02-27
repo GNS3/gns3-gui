@@ -173,12 +173,13 @@ def main():
         except ImportError:
             raise RuntimeError("Python for Windows extensions must be installed.")
 
-        try:
-            # hide the console
-            console_window = win32console.GetConsoleWindow()
-            win32gui.ShowWindow(console_window, win32con.SW_HIDE)
-        except win32console.error as e:
-            print("warning: could not allocate console: {}".format(e))
+        if not options.debug:
+            try:
+                # hide the console
+                console_window = win32console.GetConsoleWindow()
+                win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+            except win32console.error as e:
+                print("warning: could not allocate console: {}".format(e))
 
     app = QtGui.QApplication(sys.argv)
 
