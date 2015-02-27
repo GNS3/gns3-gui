@@ -24,6 +24,8 @@ import time
 import locale
 import argparse
 
+
+from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
 
 
@@ -144,13 +146,6 @@ def main():
     if DEFAULT_BINDING == "PySide" and version(QtCore.BINDING_VERSION_STR) < version("1.0"):
         raise RuntimeError("Requirement is PySide version 1.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
-    try:
-        # if tornado is present then enable pretty logging.
-        import tornado.log
-        tornado.log.enable_pretty_logging()
-    except ImportError:
-        pass
-
     # check for the correct locale
     # (UNIX/Linux only)
     locale_check()
@@ -193,15 +188,10 @@ def main():
                                   datefmt="%y%m%d %H:%M:%S")
 
     # on debug enable logging to stdout
-    root_logger = logging.getLogger()
     if options.debug:
-        root_logger.setLevel(logging.DEBUG)
-        if len(root_logger.handlers) == 0:    # no log handlers installed
-            root_handler = logging.StreamHandler()
-            root_handler.setFormatter(formatter)
-            root_logger.addHandler(root_handler)
+        root_logger = init_logger(logging.DEBUG)
     else:
-        root_logger.setLevel(logging.INFO)
+        root_logger = init_logger(logging.INFO)
 
     # save client logging info to a file
     logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")
