@@ -1,0 +1,96 @@
+# Change Log
+
+## Unreleased
+
+* No more console port and UDP tunneling settings by type of module
+* Fixe save
+* Settings are stored as JSON
+* All communication with servers display a waiting dialog
+* Add a revision number in the topology file
+* Qemu can run on a server without graphical interface
+* Automated crash reports
+
+## 1.2.3 2015/01/17
+* Fixed temporary files path setting in general preferences which was not used.
+* Fixed missing devices from the node view when they use a remote server.
+* Fixed broken ASA kernel/initrd file browsers.
+* Fixed bug with WICs interfaces no showing up in the port list.
+
+## 1.2.2 2015/01/16
+
+### Small improvements / new features
+ 
+* EtherSwitch routers can be added and configured like other IOS routers.
+* Change hostname option in the contextual device menu.
+* Import & export config options in contextual device menu.
+* Auto screenshot when saving a project.
+* Auto start project support (you have to manually edit your .gns3 project file).
+* Changes to the IOU L2 initial-config (16 Ethernet interfaces, no shutdown by default and 0 serial interfaces).
+* Upgraded SuperPutty to version 1.4.0.5 in the all-in-one installer.
+* Possibility to apply or not the same text to all selected items when editing notes.
+* Base configs are now stored in the GNS3 config directory.
+* Short port names in the topology summary.
+* Added the VirtualBox VM name in VirtualBox device tooltips.
+* Set 5 seconds timeout for local server connections.
+* Check if any device runs and warn the user before closing a project.
+* Restore the debug level status when starting.
+* Automatically select the symbol and category corresponding the edited item in the symbol selection dialog.
+* Scale SVG images to icon sizes.
+* Console switching from local/remote to remote/local while a VirtualBox VM is running.
+* Default Jungle dock location is now bottom right corner.
+ 
+### Bug fixes
+ 
+* Fixed the default jungle news loading on Windows.
+* Fixed SuperPutty integration (not the default, still have to select it in the preferences).
+* Avoid uninitialized nodes to be saved in the project file.
+Prevent GNS3 to crash on Windows when importing GNS3 config file.
+* Fixed resource access on Mac OS X.
+* Fixed transparency or border style restoration for ellipses and rectangles.
+* Support spaces in the controller name of VirtualBox clones.
+* Ignore Unicode errors when executing vboxmanage.
+* Get Windows interface list from the registry if the COM service fails.
+
+
+## 1.2.1 2014/12/04
+* Support for full screen mode (View -> Fullscreen).
+* Bundled Qemu 0.13.0 in the Windows all-in-one. Default for all local Qemu VMs.
+* Bundled Qemu 0.14.1 in the Mac OS X App. Default for all local Qemu VMs.
+* Changed ASA defaults to use Qemu 0.13.0 (on Windows), have 4 interfaces and CPU throttling to 65%.
+* Fixed SecureCRT command line when space in the device name.
+* Fixed port sorting issues.
+* Added default path for VBoxManage on Mac OS X
+* Upgraded gns3-converter to version 1.1.1 for Windows all-in-one and Mac OS X DMG.
+* New idle-PC field validation.
+* Possibility to load the project from command line (or double-click on a project on Windows).
+* Fixed Unicode error when using VirtualBox VM with a name containing non-english characters.
+
+## 1.2 2014/11/20
+
+* New GUI styles: charcoal (default) & classic. Changing GUI Preferences
+* Integration of GNS3 converter (allows old .net topologies to be opened).
+* Allow Qemu VM to have no interface.
+* Automatically extract IOS configs when a project is closed.
+* Show the cancel button in Wizards on Mac OS X.
+* Fix crash on Windows 32-bit.
+* Fix "new project" bug when using the GNS3 IOU VM.
+* Fix "could not find unused port" WinError 10013 bug
+* qemu-system-i386 is the new default on 32-bit platforms.
+* Option to deactivate the new project dialog at startup.
+* Add "open a project" and "recent projects" buttons to the new project dialog.
+* Fix platform detection issue with some Cisco IOS image file name.
+* Add delay (default 500 ms) when Console to all nodes.
+* Check for duplicate node names in Preferences.
+* Fix bug when editing a Qemu VM configured to run on a remote server.
+* News dock widget is smaller.
+* Fix SecureCRT issue when disconnecting from an IOU device on Windows.
+* Update VPCS to version 0.6 in the all-in-one installer.
+
+## 1.1 2014/11/20
+* Fixed broken cloud.
+* Fixed broken remote server.
+* Fixed Qemu binaries not showing up when editing a Qemu VM.
+* Fixed EtherSwitch (until we come with a default template for it).
+* Serial console for local VirtualBox.
+* Warning message when creating an IOU device with a remote server in the Wizard.
+* New Idle-PC dialog.
