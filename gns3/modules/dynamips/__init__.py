@@ -19,6 +19,8 @@
 Dynamips module implementation.
 """
 
+import os
+
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
@@ -103,10 +105,14 @@ class Dynamips(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save settings but "use_local_server" to the local server config file
-        server_settings = self._settings.copy()
-        del server_settings["use_local_server"]
-        del server_settings["routers"]
+        # save some settings to the local server config file
+        server_settings = {
+            "dynamips_path": os.path.normpath(self._settings["dynamips_path"]),
+            "ghost_ios_support": self._settings["ghost_ios_support"],
+            "sparse_memory_support": self._settings["sparse_memory_support"],
+            "mmap_support": self._settings["mmap_support"],
+        }
+
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 

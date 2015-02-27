@@ -100,7 +100,7 @@ class VPCS(Module):
 
         # save some settings to the server config file
         server_settings = {
-            "vpcs_path": self._settings["vpcs_path"],
+            "vpcs_path": os.path.normpath(self._settings["vpcs_path"]),
         }
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)

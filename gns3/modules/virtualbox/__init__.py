@@ -19,6 +19,8 @@
 VirtualBox module implementation.
 """
 
+import os
+
 from gns3.qt import QtCore, QtGui
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
@@ -84,7 +86,7 @@ class VirtualBox(Module):
 
         # save some settings to the local server config file
         server_settings = {
-            "vboxmanage_path": self._settings["vboxmanage_path"],
+            "vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"]),
             "vbox_user": self._settings["vbox_user"],
         }
         config = LocalServerConfig.instance()
