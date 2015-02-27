@@ -28,7 +28,10 @@ import json
 from .qt import QtCore
 from .node import Node
 from .version import __version__
-from gns3converter import __version__ as gns3converter_version
+try:
+    from gns3converter import __version__ as gns3converter_version
+except ImportError:
+    gns3converter_version = "Not installed"
 
 
 class ConsoleCmd(cmd.Cmd):
