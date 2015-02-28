@@ -33,7 +33,11 @@ class LocalConfig:
     def __init__(self):
 
         self._settings = {}
-        filename = "gns3_gui.conf"
+
+        if sys.platform.startswith("win"):
+            filename = "gns3_gui.ini"
+        else:
+            filename = "gns3_gui.conf"
 
         if sys.platform.startswith("darwin"):
             appname = "gns3.net"
