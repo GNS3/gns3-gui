@@ -44,6 +44,7 @@ else:
 
 DYNAMIPS_SETTINGS = {
     "dynamips_path": DEFAULT_DYNAMIPS_PATH,
+    "allocate_aux_console_ports": False,
     "use_local_server": True,
     "ghost_ios_support": True,
     "sparse_memory_support": True,
@@ -52,6 +53,7 @@ DYNAMIPS_SETTINGS = {
 
 DYNAMIPS_SETTING_TYPES = {
     "dynamips_path": str,
+    "allocate_aux_console_ports": bool,
     "use_local_server": bool,
     "ghost_ios_support": bool,
     "sparse_memory_support": bool,

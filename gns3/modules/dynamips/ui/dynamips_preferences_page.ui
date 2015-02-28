@@ -61,6 +61,13 @@
          </property>
         </spacer>
        </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiAllocateAuxConsolePortsCheckBox">
+         <property name="text">
+          <string>Allocate AUX console ports</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiServerSettingsTabWidget">

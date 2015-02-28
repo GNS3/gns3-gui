@@ -111,6 +111,7 @@ class Dynamips(Module):
         # save some settings to the local server config file
         server_settings = {
             "dynamips_path": os.path.normpath(self._settings["dynamips_path"]),
+            "allocate_aux_console_ports": self._settings["allocate_aux_console_ports"],
             "ghost_ios_support": self._settings["ghost_ios_support"],
             "sparse_memory_support": self._settings["sparse_memory_support"],
             "mmap_support": self._settings["mmap_support"],

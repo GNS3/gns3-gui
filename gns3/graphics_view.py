@@ -912,6 +912,9 @@ class GraphicsView(QtGui.QGraphicsView):
             name = node.name()
             if aux:
                 console_port = node.auxConsole()
+                if console_port is None:
+                    QtGui.QMessageBox.critical(self, "Console", "AUX console port not allocated for {}".format(name))
+                    return False
             else:
                 console_port = node.console()
             console_host = node.server().host

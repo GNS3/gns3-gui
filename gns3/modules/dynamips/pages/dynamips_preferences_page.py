@@ -107,6 +107,7 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         """
 
         self.uiDynamipsPathLineEdit.setText(settings["dynamips_path"])
+        self.uiAllocateAuxConsolePortsCheckBox.setChecked(settings["allocate_aux_console_ports"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiGhostIOSSupportCheckBox.setChecked(settings["ghost_ios_support"])
         self.uiMmapSupportCheckBox.setChecked(settings["mmap_support"])
@@ -147,6 +148,7 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
 
         new_settings = {}
         new_settings["dynamips_path"] = self.uiDynamipsPathLineEdit.text()
+        new_settings["allocate_aux_console_ports"] = self.uiAllocateAuxConsolePortsCheckBox.isChecked()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         new_settings["ghost_ios_support"] = self.uiGhostIOSSupportCheckBox.isChecked()
         new_settings["mmap_support"] = self.uiMmapSupportCheckBox.isChecked()

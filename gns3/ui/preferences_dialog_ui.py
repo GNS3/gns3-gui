@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created: Wed Nov 19 16:42:07 2014
+# Created: Sat Feb 28 15:58:23 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,19 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_PreferencesDialog(object):
-
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName(_fromUtf8("PreferencesDialog"))
-        PreferencesDialog.resize(652, 585)
+        PreferencesDialog.resize(590, 534)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(2)
@@ -40,7 +37,7 @@ class Ui_PreferencesDialog(object):
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
         self.uiButtonBox = QtGui.QDialogButtonBox(PreferencesDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.uiButtonBox.setCenterButtons(False)
         self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
         self.gridlayout.addWidget(self.uiButtonBox, 2, 1, 1, 2)

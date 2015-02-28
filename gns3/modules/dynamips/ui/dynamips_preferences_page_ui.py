@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Tue Feb 17 23:10:55 2015
+# Created: Sat Feb 28 15:58:23 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,6 +50,9 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.gridLayout.addWidget(self.uiDynamipsPathLabel, 0, 0, 1, 2)
         spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 3, 0, 1, 2)
+        self.uiAllocateAuxConsolePortsCheckBox = QtGui.QCheckBox(self.uiGeneralSettingsTabWidget)
+        self.uiAllocateAuxConsolePortsCheckBox.setObjectName(_fromUtf8("uiAllocateAuxConsolePortsCheckBox"))
+        self.gridLayout.addWidget(self.uiAllocateAuxConsolePortsCheckBox, 2, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, _fromUtf8(""))
         self.uiServerSettingsTabWidget = QtGui.QWidget()
         self.uiServerSettingsTabWidget.setObjectName(_fromUtf8("uiServerSettingsTabWidget"))
@@ -119,6 +122,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         DynamipsPreferencesPageWidget.setWindowTitle(_translate("DynamipsPreferencesPageWidget", "Dynamips", None))
         self.uiDynamipsPathToolButton.setText(_translate("DynamipsPreferencesPageWidget", "&Browse...", None))
         self.uiDynamipsPathLabel.setText(_translate("DynamipsPreferencesPageWidget", "Path to Dynamips:", None))
+        self.uiAllocateAuxConsolePortsCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Allocate AUX console ports", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "General settings", None))
         self.uiUseLocalServercheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Always use the local server", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("DynamipsPreferencesPageWidget", "Remote servers", None))
