@@ -36,7 +36,6 @@ from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
 from .version import __version__
-from .project import Project
 
 import logging
 log = logging.getLogger(__name__)
@@ -432,8 +431,6 @@ class Topology(object):
             topology_images = topology["topology"]["images"] = []
             for image in self._images:
                 image_info = image.dump()
-                if "path" in image_info:
-                    image_info["path"] = os.path.relpath(image_info["path"], main_window.projectSettings()["project_files_dir"])
                 topology_images.append(image_info)
 
     def dump(self, include_gui_data=True):
@@ -717,7 +714,7 @@ class Topology(object):
             images = topology["topology"]["images"]
             for topology_image in images:
 
-                updated_image_path = os.path.join(self._project.filesDir(), topology_image["path"])
+                updated_image_path = os.path.join(self._project.filesDir(), "project-files", topology_image["path"])
                 if os.path.isfile(updated_image_path):
                     image_path = updated_image_path
                 else:

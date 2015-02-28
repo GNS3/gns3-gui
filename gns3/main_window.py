@@ -802,6 +802,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
 
+        if self._project.filesDir() is None:
+            QtGui.QMessageBox.critical(self, "Image", "Please create a node first")
+            return
+
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff);;All files (*.*)"
 
@@ -814,16 +818,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.critical(self, "Image", "Image file format not supported")
             return
 
-        destination_dir = os.path.join(self._project.filesDir(), "images")
+        destination_dir = os.path.join(self._project.filesDir(), "project-files", "images")
         try:
-            os.makedirs(destination_dir)
-        except FileExistsError:
-            pass
+            os.makedirs(destination_dir, exist_ok=True)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Image", "Could not create the image directory: {}".format(e))
             return
 
-        destination_image_path = os.path.join(destination_dir, os.path.basename(path))
+        image_filename = os.path.basename(path)
+        destination_image_path = os.path.join(destination_dir, image_filename)
         if not os.path.isfile(destination_image_path):
             # copy the image to the project files directory
             try:
@@ -832,7 +835,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 QtGui.QMessageBox.critical(self, "Image", "Could not copy the image to the project image directory: {}".format(e))
                 return
 
-        self.uiGraphicsView.addImage(pixmap, destination_image_path)
+        # path to the image is relative to the project-files dir
+        self.uiGraphicsView.addImage(pixmap, os.path.join("images", image_filename))
 
     def _drawRectangleActionSlot(self):
         """
@@ -1407,9 +1411,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project.close()
         self._project = Project()
         self._project.setTemporary(True)
+        self._project.setName("unsaved")
+        self._project.setType("local")
         self.uiGraphicsView.reset()
-
-        # self.uiGraphicsView.updateProjectFilesDir(self._project.filesDir())
         self._setCurrentFile()
 
     def isTemporaryProject(self):

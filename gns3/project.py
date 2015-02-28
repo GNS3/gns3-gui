@@ -247,14 +247,16 @@ class Project(QtCore.QObject):
         """
 
         if error:
-            print(params)
+            print("Error while creating project: {}".format(params["message"]))
             return
 
         if self._id is None:
             self._id = params["project_id"]
 
-        if server == self._servers.localServer() and "path" in params:
+        #if server == self._servers.localServer() and "path" in params:
+        if "path" in params:
             self._files_dir = params["path"]
+            log.info("Server project path is {}".format(self._files_dir))
 
         self._closed = False
         self._created_servers.add(server)
