@@ -97,6 +97,9 @@ class Dynamips(Module):
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
 
+        # keep the config file sync
+        self._saveSettings()
+
     def _saveSettings(self):
         """
         Saves the settings to the persistent settings file.
