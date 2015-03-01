@@ -298,6 +298,10 @@ class Router(VM):
                 slot_number = int(name[-1])
                 adapter = value
                 self._addAdapterPorts(adapter, slot_number)
+            if name.startswith("wic") and value:
+                wic_slot_number = int(name[-1])
+                wic = value
+                self._addWICPorts(wic, wic_slot_number)
 
         if self._loading:
             self.updated_signal.emit()
