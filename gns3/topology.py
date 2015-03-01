@@ -24,7 +24,7 @@ import os
 import json
 from .qt import QtGui, QtSvg
 
-
+from functools import partial
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
@@ -379,7 +379,6 @@ class Topology(object):
         from .main_window import MainWindow
         main_window = MainWindow.instance()
         view = main_window.uiGraphicsView
-
         if "nodes" in topology["topology"]:
             for item in view.scene().items():
                 if isinstance(item, NodeItem):
@@ -514,16 +513,15 @@ class Topology(object):
         log.debug("Start loading topology")
         self._project = project
 
-        project_files_dir = path
-        filename = os.path.basename(project_files_dir)
-        project_files_dir = project_files_dir.replace(filename, '')
-        project_files_dir = project_files_dir[:-1]  # Drop final /
-        self._project.setFilesDir(project_files_dir)
-
         with open(path, "r") as f:
             log.info("loading project: {}".format(path))
             json_topology = json.load(f)
 
+        if "project_id" in json_topology:
+            self._project.setId(json_topology["project_id"])
+        self._project.setName(json_topology["name"])
+        self._project.setType(json_topology["resources_type"])
+        self._project.setTopologyFile(path)
         self._load(json_topology)
 
     def _load(self, topology):
@@ -533,15 +531,9 @@ class Topology(object):
         :param topology: topology representation
         """
 
-        if "project_id" in topology:
-            self._project.setId(topology["project_id"])
-        self._project.setName(topology["name"])
-        self._project.setType(topology["resources_type"])
-
         from .main_window import MainWindow
         main_window = MainWindow.instance()
         main_window.setProject(self._project)
-
         view = main_window.uiGraphicsView
 
         topology_file_errors = []
@@ -552,10 +544,11 @@ class Topology(object):
         # auto start option
         self._auto_start = topology.get("auto_start", False)
 
-        # deactivate the unsaved state support
-        main_window.ignoreUnsavedState(True)
-        # trick: no matter what, reactivate the unsaved state support after 3 seconds
-        main_window.run_later(3000, self._reactivateUnsavedState)
+        if "project_id" in topology:
+            # deactivate the unsaved state support
+            main_window.ignoreUnsavedState(True)
+            # trick: no matter what, reactivate the unsaved state support after 5 seconds
+            main_window.run_later(5000, self._reactivateUnsavedState)
 
         self._node_to_links_mapping = {}
         # create a mapping node ID to links
@@ -588,7 +581,6 @@ class Topology(object):
                     self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
 
         # nodes
-        self._nodes_to_create = 0
         self._load_old_topology = False
         if "nodes" in topology["topology"]:
             topology_nodes = {}
@@ -623,11 +615,6 @@ class Topology(object):
                         topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
                         continue
 
-                    self._nodes_to_create += 1
-
-                    if "vm_id" not in topology_node:
-                        self._load_old_topology = True
-
                     node = node_module.createNode(node_class, server, self._project)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
                     node.warning_signal.connect(main_window.uiConsoleTextEdit.writeWarning)
@@ -640,7 +627,8 @@ class Topology(object):
                 node.setId(topology_node["id"])
 
                 # we want to know when the node has been created
-                node.created_signal.connect(self._nodeCreatedSlot)
+                callback = partial(self._nodeCreatedSlot, topology, topology_file_errors)
+                node.created_signal.connect(callback)
 
                 self.addNode(node)
 
@@ -709,6 +697,25 @@ class Topology(object):
                 view.scene().addItem(ellipse_item)
                 self.addEllipse(ellipse_item)
 
+        # instances
+        if "instances" in topology["topology"]:
+            instances = topology["topology"]["instances"]
+            for instance in instances:
+                self.addInstance(instance["name"], instance["id"], instance["size_id"],
+                                 instance["image_id"],
+                                 instance["private_key"], instance["public_key"])
+
+        if topology_file_errors:
+            errors = "\n".join(topology_file_errors)
+            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
+        log.debug("Finish loading topology")
+
+    def _load_images(self, topology, topology_file_errors):
+
+        from .main_window import MainWindow
+        main_window = MainWindow.instance()
+        view = main_window.uiGraphicsView
+
         # images
         if "images" in topology["topology"]:
             images = topology["topology"]["images"]
@@ -733,20 +740,7 @@ class Topology(object):
                 view.scene().addItem(image_item)
                 self.addImage(image_item)
 
-        # instances
-        if "instances" in topology["topology"]:
-            instances = topology["topology"]["instances"]
-            for instance in instances:
-                self.addInstance(instance["name"], instance["id"], instance["size_id"],
-                                 instance["image_id"],
-                                 instance["private_key"], instance["public_key"])
-
-        if topology_file_errors:
-            errors = "\n".join(topology_file_errors)
-            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
-        log.debug("Finish loading topology")
-
-    def _nodeCreatedSlot(self, node_id):
+    def _nodeCreatedSlot(self, topology, topology_file_errors, node_id):
         """
         Slot to know when a node has been created.
         When all nodes have initialized, links can be created.
@@ -760,8 +754,8 @@ class Topology(object):
             return
 
         from .main_window import MainWindow
-        view = MainWindow.instance().uiGraphicsView
-
+        main_window = MainWindow.instance()
+        view = main_window.uiGraphicsView
         log.debug("node {} has initialized".format(node.name()))
         self._initialized_nodes.append(node_id)
 
@@ -803,9 +797,11 @@ class Topology(object):
         if self._auto_start and hasattr(node, "start"):
             node.start()
 
-        # We save at the end of intialization process in order to upgrade old topologies
-        if self._nodes_to_create == len(self._initialized_nodes) and self._load_old_topology:
-            self.dump()
+        # We save at the end of initialization process in order to upgrade old topologies
+        if len(topology["topology"]["nodes"]) == len(self._initialized_nodes):
+            self._load_images(topology, topology_file_errors)
+            if "project_id" not in topology:
+                self.dump()
 
     def _createPortLabel(self, node, label_info):
         """
@@ -818,8 +814,8 @@ class Topology(object):
         """
 
         from .main_window import MainWindow
-        view = MainWindow.instance().uiGraphicsView
-
+        main_window = MainWindow.instance()
+        view = main_window.uiGraphicsView
         for item in view.scene().items():
             if isinstance(item, NodeItem) and node.id() == item.node().id():
                 port_label = NoteItem(item)
@@ -835,7 +831,8 @@ class Topology(object):
         """
 
         from .main_window import MainWindow
-        MainWindow.instance().ignoreUnsavedState(False)
+        main_window = MainWindow.instance()
+        main_window.ignoreUnsavedState(False)
 
     def __str__(self):
 

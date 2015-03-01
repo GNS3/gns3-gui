@@ -43,8 +43,8 @@ class HTTPClient(QtCore.QObject):
     # Callback class used for displaying progress
     _progress_callback = None
 
-    connected_signal = QtCore.Signal()
-    connection_error_signal = QtCore.Signal(str)
+    #connected_signal = QtCore.Signal()
+    #connection_error_signal = QtCore.Signal(str)
 
     def __init__(self, url, network_manager):
 
@@ -165,28 +165,28 @@ class HTTPClient(QtCore.QObject):
             log.debug("No server is already running: {}".format(e))
         return False
 
-    def connect(self):
-        """
-        Connects to the server.
-        """
-
-        client_version = {"version": __version__}
-        self.post("/version", self._connectCallback, body=client_version, connecting=True)
-
-    def _connectCallback(self, result, error=False, **kwargs):
-        """
-        Callback for the connection.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            self.connection_error_signal.emit(result["message"])
-        else:
-            self._version = result["version"]
-            self._connected = True
-            self.connected_signal.emit()
+    # def connect(self):
+    #     """
+    #     Connects to the server.
+    #     """
+    #
+    #     client_version = {"version": __version__}
+    #     self.post("/version", self._connectCallback, body=client_version, connecting=True)
+    #
+    # def _connectCallback(self, result, error=False, **kwargs):
+    #     """
+    #     Callback for the connection.
+    #
+    #     :param result: server response (dict)
+    #     :param error: indicates an error (boolean)
+    #     """
+    #
+    #     if error:
+    #         self.connection_error_signal.emit(result["message"])
+    #     else:
+    #         self._version = result["version"]
+    #         self._connected = True
+    #         self.connected_signal.emit()
 
     def get(self, path, callback, context={}):
         """
@@ -278,6 +278,7 @@ class HTTPClient(QtCore.QObject):
             return
         self.executeHTTPQuery(method, path, callback, body)
         self._connected = True
+        self._version = params["version"]
 
     def executeHTTPQuery(self, method, path, callback, body, context={}):
         """

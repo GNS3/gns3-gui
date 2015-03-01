@@ -334,10 +334,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         Set current project
 
-        :params project: Project instance
+        :param project: Project instance
         """
 
         self._project = project
+        self._setCurrentFile(project.topologyFile())
 
     def telnetConsoleCommand(self):
         """
@@ -1365,8 +1366,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         self._project = Project()
-        self._project.setTopologyFile(path)
-
         self.uiGraphicsView.reset()
         topology = Topology.instance()
         try:

@@ -253,13 +253,13 @@ class Project(QtCore.QObject):
         if self._id is None:
             self._id = params["project_id"]
 
-        #if server == self._servers.localServer() and "path" in params:
-        if "path" in params:
+        if server == self._servers.localServer() and "path" in params:
             self._files_dir = params["path"]
             log.info("Server project path is {}".format(self._files_dir))
 
         self._closed = False
-        self._created_servers.add(server)
+        if server not in self._created_servers:
+            self._created_servers.add(server)
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         server.createHTTPQuery(method, path, callback, body=body, context=context)
