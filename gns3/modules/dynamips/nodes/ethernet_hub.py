@@ -46,11 +46,12 @@ class EthernetHub(Device):
         self._settings = {"name": "",
                           "ports": []}
 
-    def setup(self, name=None, initial_ports=[]):
+    def setup(self, name=None, device_id=None, initial_ports=[]):
         """
         Setups this hub.
 
         :param name: optional name for this hub
+        :param device_id: device identifier on the server
         :param initial_ports: ports to automatically be added when creating this hub
         """
 
@@ -83,6 +84,8 @@ class EthernetHub(Device):
 
         params = {"name": name,
                   "device_type": "ethernet_hub"}
+        if device_id:
+            params["device_id"] = device_id
         self.httpPost("/dynamips/devices", self._setupCallback, body=params)
 
     def update(self, new_settings):
@@ -124,8 +127,7 @@ class EthernetHub(Device):
             if self.hasAllocatedName(new_settings["name"]):
                 self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
                 return
-            params = {"id": self._ethhub_id,
-                      "name": new_settings["name"]}
+            params["name"] = new_settings["name"]
             updated = True
 
         if updated:
@@ -210,6 +212,7 @@ class EthernetHub(Device):
         """
 
         hub = {"id": self.id(),
+               "device_id": self._device_id,
                "type": self.__class__.__name__,
                "description": str(self),
                "properties": {"name": self.name()},
@@ -234,6 +237,10 @@ class EthernetHub(Device):
         settings = node_info["properties"]
         name = settings.pop("name")
 
+        # pre-1.3 projects have no device id, set to 1 to have
+        # a proper project conversion on the server side
+        device_id = node_info.get("device_id", 1)
+
         # create the ports with the correct port numbers and IDs
         ports = []
         if "ports" in node_info:
@@ -241,7 +248,7 @@ class EthernetHub(Device):
 
         log.info("Ethernet hub {} is loading".format(name))
         self.setName(name)
-        self.setup(name, ports)
+        self.setup(name, device_id, ports)
 
     def name(self):
         """

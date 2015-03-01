@@ -801,6 +801,7 @@ class Topology(object):
         if len(topology["topology"]["nodes"]) == len(self._initialized_nodes):
             self._load_images(topology, topology_file_errors)
             if "project_id" not in topology:
+                log.info("Saving converted topology...")
                 self.dump()
 
     def _createPortLabel(self, node, label_info):

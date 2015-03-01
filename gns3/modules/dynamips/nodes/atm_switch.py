@@ -47,11 +47,12 @@ class ATMSwitch(Device):
         self._settings = {"name": "",
                           "mappings": {}}
 
-    def setup(self, name=None, initial_ports=[], initial_mappings={}):
+    def setup(self, name=None, device_id=None, initial_ports=[], initial_mappings={}):
         """
         Setups this ATM switch.
 
         :param name: optional name for this switch.
+        :param device_id: device identifier on the server
         :param initial_ports: ports to be automatically added when creating this ATM switch
         :param initial_mappings: mappings to be automatically added when creating this ATM switch
         """
@@ -80,6 +81,8 @@ class ATMSwitch(Device):
 
         params = {"name": name,
                   "device_type": "atm_switch"}
+        if device_id:
+            params["device_id"] = device_id
         self.httpPost("/dynamips/devices", self._setupCallback, body=params)
 
     def update(self, new_settings):
@@ -258,6 +261,7 @@ class ATMSwitch(Device):
         """
 
         atmsw = {"id": self.id(),
+                 "device_id": self._device_id,
                  "type": self.__class__.__name__,
                  "description": str(self),
                  "properties": {"name": self.name()},
@@ -285,6 +289,10 @@ class ATMSwitch(Device):
         settings = node_info["properties"]
         name = settings.pop("name")
 
+        # pre-1.3 projects have no device id, set to 1 to have
+        # a proper project conversion on the server side
+        device_id = node_info.get("device_id", 1)
+
         mappings = {}
         if "mappings" in settings:
             mappings = settings["mappings"]
@@ -295,7 +303,7 @@ class ATMSwitch(Device):
 
         log.info("ATM switch {} is loading".format(name))
         self.setName(name)
-        self.setup(name, ports, mappings)
+        self.setup(name, device_id, ports, mappings)
 
     def name(self):
         """

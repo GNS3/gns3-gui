@@ -46,11 +46,12 @@ class EthernetSwitch(Device):
         self._settings = {"name": "",
                           "ports": {}}
 
-    def setup(self, name=None, initial_ports=[]):
+    def setup(self, name=None, device_id=None, initial_ports=[]):
         """
         Setups this Ethernet switch.
 
         :param name: optional name for this switch
+        :param device_id: device identifier on the server
         :param initial_ports: ports to be automatically added when creating this switch
         """
 
@@ -86,6 +87,8 @@ class EthernetSwitch(Device):
 
         params = {"name": name,
                   "device_type": "ethernet_switch"}
+        if device_id:
+            params["device_id"] = device_id
         self.httpPost("/dynamips/devices", self._setupCallback, body=params)
 
     def update(self, new_settings):
@@ -238,6 +241,7 @@ class EthernetSwitch(Device):
         """
 
         switch = {"id": self.id(),
+                  "device_id": self._device_id,
                   "type": self.__class__.__name__,
                   "description": str(self),
                   "properties": {"name": self.name()},
@@ -266,13 +270,17 @@ class EthernetSwitch(Device):
         settings = node_info["properties"]
         name = settings.pop("name")
 
+        # pre-1.3 projects have no device id, set to 1 to have
+        # a proper project conversion on the server side
+        device_id = node_info.get("device_id", 1)
+
         ports = []
         if "ports" in node_info:
             ports = node_info["ports"]
 
         log.info("Ethernet switch {} is loading".format(name))
         self.setName(name)
-        self.setup(name, ports)
+        self.setup(name, device_id, ports)
 
     def name(self):
         """
