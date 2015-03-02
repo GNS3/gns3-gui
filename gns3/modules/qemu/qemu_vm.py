@@ -88,11 +88,12 @@ class QemuVM(VM):
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, qemu_path, name=None, console=None, monitor=None, qemu_id=None, initial_settings={}, base_name=None):
+    def setup(self, qemu_path, name=None, console=None, monitor=None, vm_id=None, initial_settings={}, base_name=None):
         """
         Setups this QEMU VM.
 
         :param name: optional name
+        :param vm_id: VM identifier
         """
 
         # let's create a unique name if none has been chosen
@@ -113,8 +114,8 @@ class QemuVM(VM):
         if monitor:
             params["monitor"] = self._settings["monitor"] = monitor
 
-        if qemu_id:
-            params["vm_id"] = qemu_id
+        if vm_id:
+            params["vm_id"] = vm_id
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
