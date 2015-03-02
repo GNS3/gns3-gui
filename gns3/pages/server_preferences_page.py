@@ -248,8 +248,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         else:
             servers.stopLocalServer(wait=True)
 
+        # save the local server preferences
         servers.setLocalServerSettings(new_settings)
-
         # save the remote server preferences
         servers.updateRemoteServers(self._remote_servers)
         servers.save()

@@ -253,7 +253,6 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         local_server["projects_path"] = self.uiProjectsPathLineEdit.text()
         local_server["report_errors"] = self.uiCrashReportCheckBox.isChecked()
         servers.setLocalServerSettings(local_server)
-        servers.save()
 
         new_settings = {}
         new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()

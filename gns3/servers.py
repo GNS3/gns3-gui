@@ -162,7 +162,6 @@ class Servers(QtCore.QObject):
             log.info("New local server connection {} registered".format(url))
 
         self._local_server_settings.update(settings)
-        self._saveSettings()
 
     def localServerAutoStart(self):
         """
