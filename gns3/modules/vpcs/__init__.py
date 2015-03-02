@@ -106,7 +106,9 @@ class VPCS(Module):
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
 
         if not os.path.exists(self._settings["vpcs_path"]):
-            self._settings["vpcs_path"] = self._findVPCS(self)
+            vpcs_path = self._findVPCS(self)
+            if vpcs_path:
+                self._settings["vpcs_path"] = vpcs_path
 
         # keep the config file sync
         self._saveSettings()
@@ -119,12 +121,13 @@ class VPCS(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save some settings to the server config file
-        server_settings = {
-            "vpcs_path": os.path.normpath(self._settings["vpcs_path"]),
-        }
-        config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, server_settings)
+        if self._settings["vpcs_path"]:
+            # save some settings to the server config file
+            server_settings = {
+                "vpcs_path": os.path.normpath(self._settings["vpcs_path"]),
+            }
+            config = LocalServerConfig.instance()
+            config.saveSettings(self.__class__.__name__, server_settings)
 
     def addNode(self, node):
         """

@@ -98,7 +98,9 @@ class VirtualBox(Module):
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, VBOX_SETTINGS)
 
         if not os.path.exists(self._settings["vboxmanage_path"]):
-            self._settings["vboxmanage_path"] = self._findVBoxManage(self)
+            vboxmanage_path = self._findVBoxManage(self)
+            if vboxmanage_path:
+                self._settings["vboxmanage_path"] = vboxmanage_path
 
         # keep the config file sync
         self._saveSettings()
@@ -113,9 +115,12 @@ class VirtualBox(Module):
 
         # save some settings to the local server config file
         server_settings = {
-            "vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"]),
             "vbox_user": self._settings["vbox_user"],
         }
+
+        if self._settings["vboxmanage_path"]:
+            server_settings["vboxmanage_path"] = os.path.normpath(self._settings["vboxmanage_path"])
+
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
