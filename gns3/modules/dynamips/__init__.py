@@ -116,7 +116,7 @@ class Dynamips(Module):
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
 
-        if not os.path.exists(self._settings["dynamips_path"]):
+        if self._settings["dynamips_path"] and not os.path.exists(self._settings["dynamips_path"]):
             dynamips_path = self._findDynamips(self)
             if dynamips_path:
                 self._settings["dynamips_path"] = dynamips_path

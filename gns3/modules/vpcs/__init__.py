@@ -105,7 +105,7 @@ class VPCS(Module):
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
 
-        if not os.path.exists(self._settings["vpcs_path"]):
+        if self._settings["vpcs_path"] and not os.path.exists(self._settings["vpcs_path"]):
             vpcs_path = self._findVPCS(self)
             if vpcs_path:
                 self._settings["vpcs_path"] = vpcs_path

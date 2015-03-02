@@ -76,7 +76,7 @@ class IOU(Module):
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
 
-        if sys.platform.startswith("linux") and not os.path.exists(self._settings["iouyap_path"]):
+        if sys.platform.startswith("linux") and self._settings["iouyap_path"] and not os.path.exists(self._settings["iouyap_path"]):
             iouyap_path = shutil.which("iouyap")
             if iouyap_path:
                 self._settings["iouyap_path"] = iouyap_path
