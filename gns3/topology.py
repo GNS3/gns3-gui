@@ -544,11 +544,10 @@ class Topology(object):
         # auto start option
         self._auto_start = topology.get("auto_start", False)
 
-        if "project_id" in topology:
-            # deactivate the unsaved state support
-            main_window.ignoreUnsavedState(True)
-            # trick: no matter what, reactivate the unsaved state support after 5 seconds
-            main_window.run_later(5000, self._reactivateUnsavedState)
+        # deactivate the unsaved state support
+        main_window.ignoreUnsavedState(True)
+        # trick: no matter what, reactivate the unsaved state support after 5 seconds
+        main_window.run_later(5000, self._reactivateUnsavedState)
 
         self._node_to_links_mapping = {}
         # create a mapping node ID to links
@@ -802,7 +801,7 @@ class Topology(object):
             self._load_images(topology, topology_file_errors)
             if "project_id" not in topology:
                 log.info("Saving converted topology...")
-                self.dump()
+                main_window.saveProject(self._project.topologyFile())
 
     def _createPortLabel(self, node, label_info):
         """
