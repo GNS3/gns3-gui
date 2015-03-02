@@ -188,9 +188,9 @@ class Servers(QtCore.QObject):
         path = self.localServerPath()
         host = self._local_server.host
         port = self._local_server.port
-        command = '"{executable}" --host {host} --port {port} --local --quiet'.format(executable=path,
-                                                                                      host=host,
-                                                                                      port=port)
+        command = '"{executable}" --host {host} --port {port} --local'.format(executable=path,
+                                                                              host=host,
+                                                                              port=port)
 
         if self._local_server_settings["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses
@@ -227,8 +227,11 @@ class Servers(QtCore.QObject):
             else:
                 self._local_server_proccess.send_signal(signal.SIGINT)
             if wait:
-                # wait for the server to stop for maximum 3 seconds
-                self._local_server_proccess.wait(timeout=3000)
+                try:
+                    # wait for the server to stop for maximum 3 seconds
+                    self._local_server_proccess.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    self._local_server_proccess.kill()
 
     def localServer(self):
         """
