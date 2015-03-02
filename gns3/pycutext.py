@@ -233,6 +233,9 @@ class PyCutExt(QtGui.QTextEdit):
         text = e.text()
         key = e.key()
 
+        if e.modifiers() == QtCore.Qt.ControlModifier:
+            return super().keyPressEvent(e)
+
         # Keep the cursor after the last prompt.
         self.moveCursor(QtGui.QTextCursor.End)
 
@@ -300,9 +303,6 @@ class PyCutExt(QtGui.QTextEdit):
         elif len(text):
             self._insertText(text)
             return
-
-        else:
-            e.ignore()
 
     def _recall(self):
         """
