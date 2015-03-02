@@ -1625,6 +1625,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtCore.QTimer.singleShot(counter, callback)
 
     def _exportProjectActionSlot(self):
+
+        if not ENABLE_CLOUD:
+            QtGui.QMessageBox.critical(self, "Cloud topology", "Sorry this feature is not yet available")
+            return
+
         if self.isTemporaryProject():
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
@@ -1648,6 +1653,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         progress_dialog.exec_()
 
     def _importProjectActionSlot(self):
+
+        if not ENABLE_CLOUD:
+            QtGui.QMessageBox.critical(self, "Cloud topology", "Sorry this feature is not yet available")
+            return
+
         dialog = ImportCloudProjectDialog(
             self,
             self.projectsDirPath(),
@@ -1659,6 +1669,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dialog.exec_()
 
     def _moveLocalProjectToCloudActionSlot(self):
+
+        if not ENABLE_CLOUD:
+            QtGui.QMessageBox.critical(self, "Cloud topology", "Sorry this feature is not yet available")
+            return
+
         if self.isTemporaryProject():
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
@@ -1764,6 +1779,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         builder.buildComplete.connect(buildComplete)
 
     def _moveCloudProjectToLocalActionSlot(self):
+
+        if not ENABLE_CLOUD:
+            QtGui.QMessageBox.critical(self, "Cloud topology", "Sorry this feature is not yet available")
+            return
+
         if self.isTemporaryProject():
             # do nothing if project is temporary
             QtGui.QMessageBox.critical(
