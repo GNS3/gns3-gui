@@ -114,7 +114,7 @@ class QemuVM(VM):
             params["monitor"] = self._settings["monitor"] = monitor
 
         if qemu_id:
-            params["qemu_id"] = qemu_id
+            params["vm_id"] = qemu_id
 
         # other initial settings will be applied when the router has been created
         if initial_settings:
