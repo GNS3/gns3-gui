@@ -282,7 +282,6 @@ class Project(QtCore.QObject):
 
         if error:
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
-            return
         else:
             if self._id:
                 log.info("Project {} closed".format(self._id))

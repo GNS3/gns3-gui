@@ -43,9 +43,6 @@ class HTTPClient(QtCore.QObject):
     # Callback class used for displaying progress
     _progress_callback = None
 
-    #connected_signal = QtCore.Signal()
-    #connection_error_signal = QtCore.Signal(str)
-
     def __init__(self, url, network_manager):
 
         super().__init__()
@@ -333,11 +330,11 @@ class HTTPClient(QtCore.QObject):
             log.info("Response error: {}".format(error_message))
             body = bytes(response.readAll()).decode()
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-            if not body or content_type != "application/json":
-                callback({"message": error_message}, error=True, server=self, context=context)
-            else:
-                log.debug(body)
-                if callback is not None:
+            if callback is not None:
+                if not body or content_type != "application/json":
+                    callback({"message": error_message}, error=True, server=self, context=context)
+                else:
+                    log.debug(body)
                     callback(json.loads(body), error=True, server=self, context=context)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
