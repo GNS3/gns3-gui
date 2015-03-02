@@ -136,6 +136,9 @@ class Servers(QtCore.QObject):
         config = LocalServerConfig.instance()
         config.saveSettings("Server", server_settings)
 
+        if self._local_server:
+            self._local_server.post("/config/reload", None)
+
     def localServerSettings(self):
         """
         Returns the local server settings.
