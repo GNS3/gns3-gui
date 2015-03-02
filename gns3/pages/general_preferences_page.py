@@ -236,8 +236,8 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         """
 
         from ..main_window import MainWindow
-        self._general_settings = MainWindow.instance().settings()
-        self._populateGeneralSettingWidgets(self._general_settings)
+        general_settings = MainWindow.instance().settings()
+        self._populateGeneralSettingWidgets(general_settings)
 
         graphics_view_settings = MainWindow.instance().uiGraphicsView.settings()
         self._populateGraphicsViewSettingWidgets(graphics_view_settings)

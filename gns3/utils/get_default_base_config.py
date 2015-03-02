@@ -45,7 +45,7 @@ def get_default_base_config(base_config_template_path):
             base_config_path = os.path.join(config_dir, os.path.basename(base_config_template_path))
             if not os.path.isfile(base_config_path):
                 shutil.copyfile(base_config_template_path, base_config_path)
-            return base_config_path
+            return os.path.normpath(base_config_path)
         except OSError as e:
             log.error("could not copy {} to {}: {}".format(base_config_template_path, base_config_path, e))
     return ""

@@ -192,7 +192,7 @@ else:
     DEFAULT_STYLE = "Charcoal"
 
 GENERAL_SETTINGS = {
-    "style": "DEFAULT_STYLE",
+    "style": DEFAULT_STYLE,
     "auto_launch_project_dialog": True,
     "check_for_update": True,
     "last_check_for_update": 0,
