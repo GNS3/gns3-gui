@@ -21,29 +21,8 @@ Default Dynamips settings.
 
 from gns3.node import Node
 
-import sys
-import os
-
-
-# default path to Dynamips executable
-if sys.platform.startswith("win"):
-    DEFAULT_DYNAMIPS_PATH = r"dynamips\dynamips.exe"
-elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-    DEFAULT_DYNAMIPS_PATH = os.path.join(os.getcwd(), "dynamips")
-else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
-    # look for dynamips in the current working directory and $PATH
-    DEFAULT_DYNAMIPS_PATH = "dynamips"
-    for path in paths:
-        try:
-            if "dynamips" in os.listdir(path) and os.access(os.path.join(path, "dynamips"), os.X_OK):
-                DEFAULT_DYNAMIPS_PATH = os.path.join(path, "dynamips")
-                break
-        except OSError:
-            continue
-
 DYNAMIPS_SETTINGS = {
-    "dynamips_path": DEFAULT_DYNAMIPS_PATH,
+    "dynamips_path": "",
     "allocate_aux_console_ports": False,
     "use_local_server": True,
     "ghost_ios_support": True,

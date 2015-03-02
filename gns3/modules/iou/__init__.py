@@ -19,7 +19,10 @@
 IOU module implementation.
 """
 
+import sys
 import os
+import shutil
+
 from gns3.qt import QtCore, QtGui
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
@@ -72,6 +75,9 @@ class IOU(Module):
         if legacy_settings:
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
+
+        if sys.platform.startswith("linux") and not os.path.exists(self._settings["iouyap_path"]):
+            self._settings["iouyap_path"] = shutil.which("iouyap")
 
         # keep the config file sync
         self._saveSettings()

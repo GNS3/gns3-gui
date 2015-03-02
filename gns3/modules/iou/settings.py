@@ -19,29 +19,13 @@
 Default IOU settings.
 """
 
+import sys
 from gns3.node import Node
 
-import sys
-import os
-
-
-if sys.platform.startswith("linux"):
-    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
-    # look for iouyap in the current working directory and $PATH
-    DEFAULT_IOUYAP_PATH = "iouyap"
-    for path in paths:
-        try:
-            if "iouyap" in os.listdir(path) and os.access(os.path.join(path, "iouyap"), os.X_OK):
-                DEFAULT_IOUYAP_PATH = os.path.join(path, "iouyap")
-                break
-        except OSError:
-            continue
-else:
-    DEFAULT_IOUYAP_PATH = ""
 
 IOU_SETTINGS = {
     "iourc_path": "",
-    "iouyap_path": DEFAULT_IOUYAP_PATH,
+    "iouyap_path": "",
     "use_local_server": True,
 }
 

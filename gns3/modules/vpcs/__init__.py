@@ -25,6 +25,7 @@ import sys
 import signal
 import socket
 import re
+import shutil
 import pkg_resources
 
 from gns3.servers import Servers
@@ -63,6 +64,23 @@ class VPCS(Module):
         # load the settings
         self._loadSettings()
 
+    @staticmethod
+    def _findVPCS(self):
+        """
+        Finds the VPCS path.
+
+        :return: path to VPCS
+        """
+
+        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
+            vpcs_path = os.path.join(os.getcwd(), "vpcs", "vpcs.exe")
+        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+            vpcs_path = os.path.join(os.getcwd(), "vpcs")
+        else:
+            vpcs_path = shutil.which("vpcs")
+
+        return vpcs_path
+
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -86,6 +104,9 @@ class VPCS(Module):
 
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
+
+        if not os.path.exists(self._settings["vpcs_path"]):
+            self._settings["vpcs_path"] = self._findVPCS(self)
 
         # keep the config file sync
         self._saveSettings()

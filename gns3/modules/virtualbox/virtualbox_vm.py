@@ -19,7 +19,6 @@
 VirtualBox VM implementation.
 """
 
-from functools import partial
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port

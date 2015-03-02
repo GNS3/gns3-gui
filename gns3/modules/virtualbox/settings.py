@@ -21,33 +21,8 @@ Default VirtualBox settings.
 
 from gns3.node import Node
 
-import sys
-import os
-
-# default path to VirtualBox vboxmanage executable
-if sys.platform.startswith("win"):
-    if "VBOX_INSTALL_PATH" in os.environ:
-        DEFAULT_VBOXMANAGE_PATH = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")
-    elif "VBOX_MSI_INSTALL_PATH" in os.environ:
-        DEFAULT_VBOXMANAGE_PATH = os.path.join(os.environ["VBOX_MSI_INSTALL_PATH"], "VBoxManage.exe")
-    else:
-        DEFAULT_VBOXMANAGE_PATH = "VBoxManage.exe"
-elif sys.platform.startswith("darwin"):
-    DEFAULT_VBOXMANAGE_PATH = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
-else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
-    # look for vboxmanage in the current working directory and $PATH
-    DEFAULT_VBOXMANAGE_PATH = "vboxmanage"
-    for path in paths:
-        try:
-            if "vboxmanage" in os.listdir(path) and os.access(os.path.join(path, "vboxmanage"), os.X_OK):
-                DEFAULT_VBOXMANAGE_PATH = os.path.join(path, "vboxmanage")
-                break
-        except OSError:
-            continue
-
 VBOX_SETTINGS = {
-    "vboxmanage_path": DEFAULT_VBOXMANAGE_PATH,
+    "vboxmanage_path": "",
     "vbox_user": "",
     "use_local_server": True,
 }

@@ -20,6 +20,8 @@ VirtualBox module implementation.
 """
 
 import os
+import sys
+import shutil
 
 from gns3.qt import QtCore, QtGui
 from gns3.local_server_config import LocalServerConfig
@@ -52,6 +54,28 @@ class VirtualBox(Module):
         self._loadSettings()
         self._loadVirtualBoxVMs()
 
+    @staticmethod
+    def _findVBoxManage(self):
+        """
+        Finds the VBoxManage path.
+
+        :return: path to VBoxManage
+        """
+
+        if sys.platform.startswith("win"):
+            if "VBOX_INSTALL_PATH" in os.environ:
+                vboxmanage_path = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")
+            elif "VBOX_MSI_INSTALL_PATH" in os.environ:
+                vboxmanage_path = os.path.join(os.environ["VBOX_MSI_INSTALL_PATH"], "VBoxManage.exe")
+            else:
+                vboxmanage_path = "VBoxManage.exe"
+        elif sys.platform.startswith("darwin"):
+            vboxmanage_path = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+        else:
+            vboxmanage_path = shutil.which("vboxmanage")
+
+        return vboxmanage_path
+
     def _loadSettings(self):
         """
         Loads the settings from the server settings file.
@@ -72,6 +96,9 @@ class VirtualBox(Module):
         if legacy_settings:
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, VBOX_SETTINGS)
+
+        if not os.path.exists(self._settings["vboxmanage_path"]):
+            self._settings["vboxmanage_path"] = self._findVBoxManage(self)
 
         # keep the config file sync
         self._saveSettings()

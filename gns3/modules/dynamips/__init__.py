@@ -19,7 +19,9 @@
 Dynamips module implementation.
 """
 
+import sys
 import os
+import shutil
 
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
@@ -77,6 +79,23 @@ class Dynamips(Module):
         self._loadSettings()
         self._loadIOSRouters()
 
+    @staticmethod
+    def _findDynamips(self):
+        """
+        Finds the Dynamips path.
+
+        :return: path to Dynamips
+        """
+
+        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
+            dynamips_path = os.path.join(os.getcwd(), "dynamips", "dynamips.exe")
+        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+            dynamips_path = os.path.join(os.getcwd(), "dynamips")
+        else:
+            dynamips_path = shutil.which("dynamips")
+
+        return dynamips_path
+
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -96,6 +115,9 @@ class Dynamips(Module):
         if legacy_settings:
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
+
+        if not os.path.exists(self._settings["dynamips_path"]):
+            self._settings["dynamips_path"] = self._findDynamips(self)
 
         # keep the config file sync
         self._saveSettings()
