@@ -79,6 +79,8 @@ class VPCS(Module):
         else:
             vpcs_path = shutil.which("vpcs")
 
+        if vpcs_path is None:
+            return ""
         return vpcs_path
 
     def _loadSettings(self):
@@ -105,10 +107,8 @@ class VPCS(Module):
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
 
-        if self._settings["vpcs_path"] is not None and not os.path.exists(self._settings["vpcs_path"]):
-            vpcs_path = self._findVPCS(self)
-            if vpcs_path:
-                self._settings["vpcs_path"] = vpcs_path
+        if not os.path.exists(self._settings["vpcs_path"]):
+            self._settings["vpcs_path"] = self._findVPCS(self)
 
         # keep the config file sync
         self._saveSettings()

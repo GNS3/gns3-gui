@@ -83,6 +83,8 @@ class Servers(QtCore.QObject):
         else:
             local_server_path = shutil.which("gns3server")
 
+        if local_server_path is None:
+            return ""
         return local_server_path
 
     def _loadSettings(self):
@@ -116,10 +118,8 @@ class Servers(QtCore.QObject):
             local_config.saveSectionSettings("LocalServer", legacy_settings)
 
         self._local_server_settings = local_config.loadSectionSettings("LocalServer", LOCAL_SERVER_SETTINGS)
-        if self._local_server_settings["path"] is not None and not os.path.exists(self._local_server_settings["path"]):
-            local_server_path = self._findLocalServer(self)
-            if local_server_path:
-                self._local_server_settings["path"] = local_server_path
+        if not os.path.exists(self._local_server_settings["path"]):
+            self._local_server_settings["path"] = self._findLocalServer(self)
 
         settings = local_config.settings()
         if "RemoteServers" in settings:
