@@ -92,7 +92,7 @@ def test_loadFile(tmpdir):
 
     os.makedirs(str(tmpdir / "test"))
     with open(topo, 'w+') as f:
-        f.write('{"test": "tutu"}')
+        f.write('{"name": "test", "resources_type": "local"}')
 
     with patch("gns3.topology.Topology._load") as mock:
         project = Project()
@@ -100,8 +100,10 @@ def test_loadFile(tmpdir):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == {"test": "tutu"}
+        assert args[0] == {"name": "test", "resources_type": "local"}
         assert topology._project.filesDir() == str(tmpdir / "test")
+        assert topology._project.name() == "test"
+        assert topology._project.type() == "local"
 
 
 def test_load(project, monkeypatch, main_window, tmpdir):
@@ -221,8 +223,6 @@ def test_load(project, monkeypatch, main_window, tmpdir):
     topology._load(topo)
 
     assert topology._project.id() == project.id()
-    assert topology._project.name() == "twovpcs"
-    assert topology._project.type() == "local"
     assert len(topology.nodes()) == 2
     assert len(topology._node_to_links_mapping) == 2
     assert topology.getNode(1).initialized()
@@ -340,15 +340,15 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
 
     topology = Topology()
     topology.project = project
+    topology._project.setName("unsaved")
+    topology._project.setTopologyFile(str(tmpdir))
     topology.dump = MagicMock()
     topology._load(topo)
 
-    assert topology._project.name() == "twovpcs"
     assert topology._project.id() is not None
-    assert topology._project.type() == "cloud"
     assert len(topology.nodes()) == 2
     assert len(topology._node_to_links_mapping) == 2
     assert topology.getNode(1).initialized()
     assert topology.getNode(2).initialized()
     assert main_window.uiGraphicsView.addLink.called
-    assert topology.dump.called
+    assert main_window.saveProject.called
