@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>491</width>
-    <height>169</height>
+    <height>177</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,6 +70,9 @@
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="uiTypeLabel">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -99,6 +102,9 @@
       </item>
       <item row="2" column="2">
        <widget class="QRadioButton" name="uiCloudRadioButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Cloud</string>
         </property>

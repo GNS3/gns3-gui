@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Jan 12 16:49:09 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Tue Mar  3 11:41:04 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -52,8 +52,8 @@ class Ui_MainWindow(object):
         self.uiCentralWidget = QtGui.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName(_fromUtf8("uiCentralWidget"))
         self.gridlayout = QtGui.QGridLayout(self.uiCentralWidget)
-        self.gridlayout.setMargin(0)
         self.gridlayout.setSpacing(0)
+        self.gridlayout.setMargin(0)
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
         self.uiGraphicsView = GraphicsView(self.uiCentralWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -65,7 +65,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtGui.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
         self.uiMenuBar.setObjectName(_fromUtf8("uiMenuBar"))
         self.uiEditMenu = QtGui.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName(_fromUtf8("uiEditMenu"))
@@ -172,8 +172,8 @@ class Ui_MainWindow(object):
         self.uiTopologySummaryDockWidgetContents.setSizePolicy(sizePolicy)
         self.uiTopologySummaryDockWidgetContents.setObjectName(_fromUtf8("uiTopologySummaryDockWidgetContents"))
         self.gridlayout1 = QtGui.QGridLayout(self.uiTopologySummaryDockWidgetContents)
-        self.gridlayout1.setMargin(0)
         self.gridlayout1.setSpacing(0)
+        self.gridlayout1.setMargin(0)
         self.gridlayout1.setObjectName(_fromUtf8("gridlayout1"))
         self.uiTopologySummaryTreeWidget = TopologySummaryView(self.uiTopologySummaryDockWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -397,10 +397,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtGui.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
+        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/cancel-connection.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new-hover.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/cancel-connection.svg")), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new-hover.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/cancel-connection.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName(_fromUtf8("uiAddLinkAction"))
         self.uiGettingStartedAction = QtGui.QAction(MainWindow)
@@ -410,12 +410,16 @@ class Ui_MainWindow(object):
         self.uiFitInViewAction = QtGui.QAction(MainWindow)
         self.uiFitInViewAction.setObjectName(_fromUtf8("uiFitInViewAction"))
         self.uiExportProjectAction = QtGui.QAction(MainWindow)
+        self.uiExportProjectAction.setVisible(False)
         self.uiExportProjectAction.setObjectName(_fromUtf8("uiExportProjectAction"))
         self.uiImportProjectAction = QtGui.QAction(MainWindow)
+        self.uiImportProjectAction.setVisible(False)
         self.uiImportProjectAction.setObjectName(_fromUtf8("uiImportProjectAction"))
         self.uiMoveLocalProjectToCloudAction = QtGui.QAction(MainWindow)
+        self.uiMoveLocalProjectToCloudAction.setVisible(False)
         self.uiMoveLocalProjectToCloudAction.setObjectName(_fromUtf8("uiMoveLocalProjectToCloudAction"))
         self.uiMoveCloudProjectToLocalAction = QtGui.QAction(MainWindow)
+        self.uiMoveCloudProjectToLocalAction.setVisible(False)
         self.uiMoveCloudProjectToLocalAction.setObjectName(_fromUtf8("uiMoveCloudProjectToLocalAction"))
         self.uiDarkStyleAction = QtGui.QAction(MainWindow)
         self.uiDarkStyleAction.setObjectName(_fromUtf8("uiDarkStyleAction"))
@@ -675,8 +679,8 @@ class Ui_MainWindow(object):
         self.uiVPCSAction.setText(_translate("MainWindow", "&VPCS multi-host", None))
 
 from ..cloud_inspector_view import CloudInspectorView
+from ..graphics_view import GraphicsView
 from ..console_view import ConsoleView
 from ..nodes_view import NodesView
-from ..graphics_view import GraphicsView
 from ..topology_summary_view import TopologySummaryView
 from . import resources_rc
