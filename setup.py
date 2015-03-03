@@ -49,7 +49,8 @@ setup(
         "requests>=2.4.3",
         "paramiko>=1.15.1",
         "gns3-converter>=1.2.3",
-        "raven>=5.2.0"
+        "raven>=5.2.0",
+        "rsa>=3.1.4"
     ],
     entry_points={
         "gui_scripts": [

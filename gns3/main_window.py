@@ -66,6 +66,7 @@ from .cloud.exceptions import KeyPairExists
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
+from .licence import checkLicence
 
 log = logging.getLogger(__name__)
 
@@ -110,7 +111,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.loading_cloud_project = False
 
         self._uiNewsDockWidget = None
-        if not self._settings["hide_news_dock_widget"]:
+        if not checkLicence():
             try:
                 from .news_dock_widget import NewsDockWidget
                 self._uiNewsDockWidget = NewsDockWidget(self)
