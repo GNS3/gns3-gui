@@ -89,7 +89,6 @@ def test_post_not_connected(http_client, request, network_manager, response):
     # Trigger the completion of /version
     response.finished.emit()
 
-
     # Trigger the completion
     response.finished.emit()
 
