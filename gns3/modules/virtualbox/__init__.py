@@ -97,7 +97,7 @@ class VirtualBox(Module):
             local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, VBOX_SETTINGS)
 
-        if self._settings["vboxmanage_path"] and not os.path.exists(self._settings["vboxmanage_path"]):
+        if self._settings["vboxmanage_path"] is not None and not os.path.exists(self._settings["vboxmanage_path"]):
             vboxmanage_path = self._findVBoxManage(self)
             if vboxmanage_path:
                 self._settings["vboxmanage_path"] = vboxmanage_path

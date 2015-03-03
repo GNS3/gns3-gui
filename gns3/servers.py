@@ -20,8 +20,10 @@ Keeps track of all the local and remote servers and their settings.
 """
 
 import sys
+import os
 import shlex
 import signal
+import shutil
 import subprocess
 
 from .qt import QtCore, QtNetwork
@@ -66,6 +68,23 @@ class Servers(QtCore.QObject):
         self._local_server.setLocal(True)
         log.info("New local server connection {} registered".format(url))
 
+    @staticmethod
+    def _findLocalServer(self):
+        """
+        Finds the local server path.
+
+        :return: path to the local server
+        """
+
+        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
+            local_server_path = os.path.join(os.getcwd(), "gns3server.exe")
+        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+            local_server_path = os.path.join(os.getcwd(), "server/Contents/MacOS/gns3server")
+        else:
+            local_server_path = shutil.which("gns3server")
+
+        return local_server_path
+
     def _loadSettings(self):
         """
         Loads the server settings from the persistent settings file.
@@ -97,6 +116,11 @@ class Servers(QtCore.QObject):
             local_config.saveSectionSettings("LocalServer", legacy_settings)
 
         self._local_server_settings = local_config.loadSectionSettings("LocalServer", LOCAL_SERVER_SETTINGS)
+        if self._local_server_settings["path"] is not None and not os.path.exists(self._local_server_settings["path"]):
+            local_server_path = self._findLocalServer(self)
+            if local_server_path:
+                self._local_server_settings["path"] = local_server_path
+
         settings = local_config.settings()
         if "RemoteServers" in settings:
             for remote_server in settings["RemoteServers"]:

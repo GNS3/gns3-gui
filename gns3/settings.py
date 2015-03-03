@@ -29,23 +29,6 @@ DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 # Images directory location
 DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
-# Default path to the local GNS3 server executable
-if sys.platform.startswith("win"):
-    DEFAULT_LOCAL_SERVER_PATH = "gns3server.exe"
-elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-    DEFAULT_LOCAL_SERVER_PATH = "server/Contents/MacOS/gns3server"
-else:
-    paths = [os.getcwd()] + os.environ["PATH"].split(os.pathsep)
-    # look for gns3server in the current working directory and $PATH
-    DEFAULT_LOCAL_SERVER_PATH = "gns3server"
-    for path in paths:
-        try:
-            if "gns3server" in os.listdir(path) and os.access(os.path.join(path, "gns3server"), os.X_OK):
-                DEFAULT_LOCAL_SERVER_PATH = os.path.join(path, "gns3server")
-                break
-        except OSError:
-            continue
-
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
 DEFAULT_LOCAL_SERVER_PORT = 8000
 
@@ -244,7 +227,7 @@ GRAPHICS_VIEW_SETTING_TYPES = {
 }
 
 LOCAL_SERVER_SETTINGS = {
-    "path": DEFAULT_LOCAL_SERVER_PATH,
+    "path": "",
     "host": DEFAULT_LOCAL_SERVER_HOST,
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
