@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import raven
-import json
-
 import sys
+import os
+import raven
 import struct
 import platform
 
@@ -35,7 +34,10 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "https://399087fc600b4a2984874af1cd57124c:a0f8323c923f4246917699c9519f2ff2@app.getsentry.com/38506"
+    DSN = "sync+https://399087fc600b4a2984874af1cd57124c:a0f8323c923f4246917699c9519f2ff2@app.getsentry.com/38506"
+    if hasattr(sys, "frozen"):
+        cacert = os.path.join(os.getcwd(), "cacert.pem")
+        DSN += "?ca_certs={}".format(cacert)
     _instance = None
 
     def __init__(self):
@@ -56,9 +58,14 @@ class CrashReport:
                                                     sys.version_info[1],
                                                     sys.version_info[2]),
                 "python:bit": struct.calcsize("P") * 8,
-                "python:encoding": sys.getdefaultencoding()
+                "python:encoding": sys.getdefaultencoding(),
+                "python:frozen": "{}".format(hasattr(sys, "frozen"))
             })
-            self._client.captureException((exception, value, tb))
+            try:
+                report = self._client.captureException((exception, value, tb))
+            except Exception as e:
+                log.error("Can't send crash report to Sentry: {}".format(e))
+            log.info("Crash report sent with event ID: {}".format(self._client.get_ident(report)))
 
     @classmethod
     def instance(cls):
