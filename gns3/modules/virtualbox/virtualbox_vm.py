@@ -406,12 +406,10 @@ class VirtualBoxVM(VM):
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber():
-                        adapter_number = topology_port.get("adapter_number")
-                        # backward compatibility for pre GNS3 1.3
-                        if adapter_number is None or adapter_number == port.adapterNumber():
-                            port.setName(topology_port["name"])
-                            port.setId(topology_port["id"])
+                    adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
+                    if adapter_number == port.adapterNumber():
+                        port.setName(topology_port["name"])
+                        port.setId(topology_port["id"])
 
         # now we can set the node has initialized and trigger the signal
         self.setInitialized(True)
