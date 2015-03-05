@@ -17,10 +17,13 @@
 
 import sys
 import os
+import tempfile
 import pkg_resources
 
 
 def get_resource(resource_name):
+
+    pkg_resources.set_extraction_path(tempfile.mkdtemp())
 
     resource_path = None
     if hasattr(sys, "frozen") and sys.platform.startswith("darwin"):
