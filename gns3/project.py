@@ -305,18 +305,5 @@ class Project(QtCore.QObject):
         self._temporary = False
         for server in list(self._created_servers):
             server.put("/projects/{project_id}".format(project_id=self._id),
-                       self._temporaryProjectMoveCallback,
-                       context={"temporary_project_path": temporary_project_path},
+                       None,
                        body={"path": new_path, "temporary": False})
-
-    def _temporaryProjectMoveCallback(self, result, error=False, context={}, **kwargs):
-
-        if error:
-            log.error("Error while moving temporary project {}: {}".format(self._id, result["message"]))
-            return
-        else:
-            temporary_project_path = context["temporary_project_path"]
-            try:
-                shutil.rmtree(temporary_project_path)
-            except OSError as e:
-                log.warn("Could not delete temporary project {}: {}".format(temporary_project_path, e))
