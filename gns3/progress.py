@@ -45,7 +45,8 @@ class Progress(QtCore.QObject):
     def _remove_query(self, query_id):
 
         self._finished_query_during_display += 1
-        del self._queries[query_id]
+        if query_id in self._queries:
+            del self._queries[query_id]
 
         if len(self._queries) == 0:
             self.hide()
