@@ -299,7 +299,8 @@ class HTTPClient(QtCore.QObject):
 
     def _processResponse(self, response, callback, context):
 
-        self.notify_progress_end_query(context["query_id"])
+        if "query_id" in context:
+            self.notify_progress_end_query(context["query_id"])
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
             if error_code < 200:
