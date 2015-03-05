@@ -18,6 +18,10 @@
 import raven
 import json
 
+import sys
+import struct
+import platform
+
 from .version import __version__
 from .servers import Servers
 
@@ -42,6 +46,15 @@ class CrashReport:
         if local_server["report_errors"]:
             if self._client is None:
                 self._client = raven.Client(CrashReport.DSN, release=__version__)
+            self._client.tags_context({
+                "os:name": platform.system(),
+                "os:release": platform.release(),
+                "python:version": "{}.{}.{}".format(sys.version_info[0],
+                                                    sys.version_info[1],
+                                                    sys.version_info[2]),
+                "python:bit": struct.calcsize("P") * 8,
+                "python:encoding": sys.getdefaultencoding()
+            })
             self._client.captureException((exception, value, tb))
 
     @classmethod

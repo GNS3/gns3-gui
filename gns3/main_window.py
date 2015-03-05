@@ -93,7 +93,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         MainWindow._instance = self
 
         self._settings = {}
-
         HTTPClient.setProgressCallback(Progress(self))
 
         self._project = Project()
