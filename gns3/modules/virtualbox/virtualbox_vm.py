@@ -385,6 +385,7 @@ class VirtualBoxVM(VM):
             vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)
         settings = node_info["properties"]
+        settings["adapters"] = settings.get("adapters", 1)
         name = settings.pop("name")
         vmname = settings.pop("vmname")
         self.updated_signal.connect(self._updatePortSettings)
