@@ -769,6 +769,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         vpcs_module = VPCS.instance()
+
+        if self._project.filesDir() is None:
+            QtGui.QMessageBox.critical(self, "VPCS", "You can't use this tool on a non initialized project")
+            return
+
         try:
             working_dir = os.path.join(self._project.filesDir(), "vpcs", "multi-host")
             os.makedirs(working_dir)
