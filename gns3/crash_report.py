@@ -40,7 +40,7 @@ class CrashReport:
         if os.path.isfile(cacert):
             DSN += "?ca_certs={}".format(cacert)
         else:
-            log.warning("The SSL certificate bundle file could not be found".format(cacert))
+            log.warning("The SSL certificate bundle file '{}' could not be found".format(cacert))
     _instance = None
 
     def __init__(self):
