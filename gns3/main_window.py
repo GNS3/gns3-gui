@@ -558,7 +558,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff)"
 
-        path, selected_filter = QtGui.QFileDialog.getSaveFileNameAndFilter(self, "Screenshot", self.projectsDirPath(), file_formats)
+        screenshot_dir = self.projectsDirPath()
+        project_dir = self._project.filesDir()
+        if project_dir:
+            screenshot_dir = project_dir
+
+        screenshot_path = os.path.join(screenshot_dir, "screenshot")
+        path, selected_filter = QtGui.QFileDialog.getSaveFileNameAndFilter(self, "Screenshot", screenshot_path, file_formats)
         if not path:
             return
 
