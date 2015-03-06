@@ -20,10 +20,13 @@ import os
 import tempfile
 import pkg_resources
 
+try:
+    pkg_resources.set_extraction_path(tempfile.mkdtemp())
+except ValueError:
+    pass  # If the path is already set the module throw an error
+
 
 def get_resource(resource_name):
-
-    pkg_resources.set_extraction_path(tempfile.mkdtemp())
 
     resource_path = None
     if hasattr(sys, "frozen") and sys.platform.startswith("darwin"):
