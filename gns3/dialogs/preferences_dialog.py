@@ -65,7 +65,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
             pages.append(CloudPreferencesPage)
 
         for page in pages:
-            preferences_page = page()
+            preferences_page = page(self)
             preferences_page.loadPreferences()
             name = preferences_page.windowTitle()
             item = QtGui.QTreeWidgetItem(self.uiTreeWidget)

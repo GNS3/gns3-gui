@@ -37,7 +37,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
     QWidget configuration page for server preferences.
     """
 
-    def __init__(self):
+    def __init__(self, parent=None):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)

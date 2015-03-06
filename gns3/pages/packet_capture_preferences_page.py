@@ -34,7 +34,7 @@ class PacketCapturePreferencesPage(QtGui.QWidget, Ui_PacketCapturePreferencesPag
     QWidget configuration page for packet capture preferences.
     """
 
-    def __init__(self):
+    def __init__(self, parent=None):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)

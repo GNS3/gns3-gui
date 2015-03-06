@@ -21,7 +21,10 @@ Configuration page for general preferences.
 
 import os
 import shutil
+import json
+
 from gns3.qt import QtGui, QtCore
+from gns3.local_config import LocalConfig
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
 from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, STYLES
 from gns3.servers import Servers
@@ -33,11 +36,12 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
     QWidget configuration page for general preferences.
     """
 
-    def __init__(self):
+    def __init__(self, parent=None):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         self._remote_servers = {}
+        self._preferences_dialog = parent
 
         # Load the pre-configured console commands
         for name, cmd in sorted(PRECONFIGURED_TELNET_CONSOLE_COMMANDS.items()):
@@ -45,9 +49,9 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         for name, cmd in sorted(PRECONFIGURED_SERIAL_CONSOLE_COMMANDS.items()):
             self.uiSerialConsolePreconfiguredCommandComboBox.addItem(name, cmd)
 
-        # Display the path of the settings file
-        settings = QtCore.QSettings()
-        self.uiConfigurationFileLabel.setText(settings.fileName())
+        # Display the path of the config file
+        config_file_path = LocalConfig.instance().configFilePath()
+        self.uiConfigurationFileLabel.setText(config_file_path)
 
         self.uiProjectsPathToolButton.clicked.connect(self._projectsPathSlot)
         self.uiImagesPathToolButton.clicked.connect(self._imagesPathSlot)
@@ -120,12 +124,24 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to import a configuration file.
         """
 
-        settings = QtCore.QSettings()
-        configuration_file_path = settings.fileName()
+        configuration_file_path = LocalConfig.instance().configFilePath()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Import configuration file", directory, "Configuration file (*.conf);;All files (*.*)")
+        path = QtGui.QFileDialog.getOpenFileName(self, "Import configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
         if not path:
+            return
+
+        try:
+            with open(path) as f:
+                config_file = json.load(f)
+            if "type" not in config_file or config_file["type"] != "settings":
+                QtGui.QMessageBox.critical(self, "Import configuration file", "Not a GNS3 configuration file: {}".format(path))
+                return
+        except OSError as e:
+            QtGui.QMessageBox.critical(self, "Import configuration file", "Could not load configuration file {}: {}".format(os.path.basename(path), e))
+            return
+        except ValueError as e:
+            QtGui.QMessageBox.critical(self, "Import configuration file", "Invalid file: {}".format(e))
             return
 
         try:
@@ -138,18 +154,19 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         # TODO: implement restart
         # QtCore.QProcess.startDetached(QtGui.QApplication.arguments()[0], QtGui.QApplication.arguments())
-        QtGui.QApplication.quit()
+        # QtGui.QApplication.quit()
+        LocalConfig.instance().setConfigFilePath(configuration_file_path)
+        self._preferences_dialog.reject()
 
     def _exportConfigurationFileSlot(self):
         """
         Slot to export a configuration file.
         """
 
-        settings = QtCore.QSettings()
-        configuration_file_path = settings.fileName()
+        configuration_file_path = LocalConfig.instance().configFilePath()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtGui.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.conf);;All files (*.*)")
+        path = QtGui.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
         if not path:
             return
 

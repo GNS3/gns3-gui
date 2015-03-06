@@ -1548,6 +1548,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         :param project: path to gns3 project file currently opened
         """
+
         if self._project.temporary():
             # do nothing if project is temporary
             return

@@ -111,6 +111,25 @@ class LocalConfig:
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
 
+    def configFilePath(self):
+        """
+        Returns the config file path.
+
+        :returns: path to the config file.
+        """
+
+        return self._config_file
+
+    def setConfigFilePath(self, config_file):
+        """
+        Set a new config file
+
+        :returns: path to the config file.
+        """
+
+        self._settings = self._readConfig(self._config_file)
+        self._config_file = config_file
+
     def settings(self):
         """
         Get the settings.
