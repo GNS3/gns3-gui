@@ -780,6 +780,17 @@ class GraphicsView(QtGui.QGraphicsView):
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
+        if len(items) > 1:
+            horizontal_align_action = QtGui.QAction("Align horizontally", menu)
+            horizontal_align_action.setIcon(QtGui.QIcon(':/icons/horizontally.svg'))
+            horizontal_align_action.triggered.connect(self.horizontalAlignmentSlot)
+            menu.addAction(horizontal_align_action)
+
+            vertical_align_action = QtGui.QAction("Align vertically", menu)
+            vertical_align_action.setIcon(QtGui.QIcon(':/icons/vertically.svg'))
+            vertical_align_action.triggered.connect(self.verticalAlignmentSlot)
+            menu.addAction(vertical_align_action)
+
         # item must have no parent
         if True in list(map(lambda item: item.parentItem() is None, items)):
 
@@ -1162,6 +1173,26 @@ class GraphicsView(QtGui.QGraphicsView):
             text_edit_dialog = TextEditorDialog(self._main_window, items)
             text_edit_dialog.show()
             text_edit_dialog.exec_()
+
+    def horizontalAlignmentSlot(self):
+        """
+        Slot to receive events from the horizontal align action in the
+        contextual menu.
+        """
+
+        horizontal_pos = self.scene().selectedItems()[0].y()
+        for item in self.scene().selectedItems():
+            item.setPos(item.x(), horizontal_pos)
+
+    def verticalAlignmentSlot(self):
+        """
+        Slot to receive events from the vertical align action in the
+        contextual menu.
+        """
+
+        vertical_position = self.scene().selectedItems()[0].x()
+        for item in self.scene().selectedItems():
+            item.setPos(vertical_position, item.y())
 
     def raiseLayerActionSlot(self):
         """
