@@ -43,6 +43,9 @@ class HTTPClient(QtCore.QObject):
     # Callback class used for displaying progress
     _progress_callback = None
 
+    connected_signal = QtCore.Signal()
+    connection_error_signal = QtCore.Signal(str)
+
     def __init__(self, url, network_manager):
 
         super().__init__()
