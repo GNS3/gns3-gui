@@ -151,7 +151,7 @@ class FrameRelaySwitch(Device):
 
         if error:
             log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
             if "name" in result:
                 self._settings["name"] = result["name"]

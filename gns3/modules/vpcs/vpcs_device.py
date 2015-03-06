@@ -174,7 +174,7 @@ class VPCSDevice(VM):
 
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
             return
 
         updated = False
@@ -319,7 +319,7 @@ class VPCSDevice(VM):
 
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
 
             if "startup_script" in result and self._config_export_path:
@@ -351,7 +351,7 @@ class VPCSDevice(VM):
 
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["code"], result["message"])
+            self.server_error_signal.emit(self.id(), result["message"])
         else:
 
             if "startup_script" in result:
