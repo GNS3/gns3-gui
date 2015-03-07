@@ -94,6 +94,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # from the server.
         self._last_error = None
 
+        from ..main_window import MainWindow
+        self._main_window = MainWindow.instance()
+        self._settings = self._main_window.uiGraphicsView.settings()
+
     def defaultRenderer(self):
         """
         Returns the default QSvgRenderer.
@@ -434,7 +438,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         # don't show the selection rectangle
-        option.state = QtGui.QStyle.State_None
+        if not self._settings["draw_rectangle_selected_item"]:
+            option.state = QtGui.QStyle.State_None
         QtSvg.QGraphicsSvgItem.paint(self, painter, option, widget)
 
         if not self._initialized or self.show_layer:
