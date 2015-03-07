@@ -79,14 +79,15 @@ class QemuVM(VM):
         :param adapters: number of adapters
         """
 
-        for port_number in range(0, adapters):
-            port_name = EthernetPort.longNameType() + str(port_number)
-            short_name = EthernetPort.shortNameType() + str(port_number)
-            new_port = EthernetPort(port_name)
+        for adapter_number in range(0, adapters):
+            adapter_name = EthernetPort.longNameType() + str(adapter_number)
+            short_name = EthernetPort.shortNameType() + str(adapter_number)
+            new_port = EthernetPort(adapter_name)
             new_port.setShortName(short_name)
-            new_port.setPortNumber(port_number)
+            new_port.setAdapterNumber(adapter_number)
+            new_port.setPortNumber(0)
             self._ports.append(new_port)
-            log.debug("port {} has been added".format(port_name))
+            log.debug("Adapter {} has been added".format(adapter_name))
 
     def setup(self, qemu_path, name=None, console=None, monitor=None, vm_id=None, initial_settings={}, base_name=None):
         """
@@ -466,7 +467,8 @@ class QemuVM(VM):
             ports = self.node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber():
+                    adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
+                    if adapter_number == port.adapterNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
