@@ -62,8 +62,8 @@ class Port(object):
 
         self._name = name
         self._short_name = None
-        self._port_number = 0
-        self._adapter_number = 0
+        self._port_number = None
+        self._adapter_number = None
         self._stub = stub
         self._link_id = None
         self._port_label = None
