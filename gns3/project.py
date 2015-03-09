@@ -221,6 +221,7 @@ class Project(QtCore.QObject):
             func = functools.partial(self._projectOnServerCreated, method, path, callback, body, context=context)
 
             body = {
+                "name": self._name,
                 "temporary": self._temporary,
                 "project_id": self._id
             }
@@ -300,10 +301,9 @@ class Project(QtCore.QObject):
         :param path: New path of the project
         """
 
-        temporary_project_path = self._files_dir
         self._files_dir = new_path
         self._temporary = False
         for server in list(self._created_servers):
             server.put("/projects/{project_id}".format(project_id=self._id),
                        None,
-                       body={"path": new_path, "temporary": False})
+                       body={"name": self._name, "path": new_path, "temporary": False})
