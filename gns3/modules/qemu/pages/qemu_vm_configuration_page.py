@@ -49,6 +49,8 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
         self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
         self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
+        self.uiHdcDiskImageToolButton.clicked.connect(self._hdcDiskImageBrowserSlot)
+        self.uiHddDiskImageToolButton.clicked.connect(self._hddDiskImageBrowserSlot)
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
@@ -154,6 +156,26 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         if path:
             self.uiHdbDiskImageLineEdit.clear()
             self.uiHdbDiskImageLineEdit.setText(path)
+
+    def _hdcDiskImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU hdc disk image.
+        """
+
+        path = self.getDiskImage(self)
+        if path:
+            self.uiHdcDiskImageLineEdit.clear()
+            self.uiHdcDiskImageLineEdit.setText(path)
+
+    def _hddDiskImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU hdd disk image.
+        """
+
+        path = self.getDiskImage(self)
+        if path:
+            self.uiHddDiskImageLineEdit.clear()
+            self.uiHddDiskImageLineEdit.setText(path)
 
     def _initrdBrowserSlot(self):
         """

@@ -135,7 +135,9 @@ class IOU(Module):
                 key = "{server}:{name}".format(server=server, name=name)
                 if key in self._iou_devices or not name or not server:
                     continue
-                self._iou_devices[key] = device
+                device_settings = IOU_DEVICE_SETTINGS
+                device_settings.update(device)
+                self._iou_devices[key] = device_settings
 
         # keep things sync
         self._saveIOUDevices()
