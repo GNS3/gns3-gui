@@ -22,24 +22,7 @@ It is inspired by PyCute : http://gerard.vermeulen.free.fr
 
 import sys
 from .qt import QtCore, QtGui
-# from code import InteractiveInterpreter as Interpreter
 
-
-# ===============================================================================
-# class MultipleRedirection:
-#     """ Dummy file which redirects stream to multiple file """
-#
-#     def __init__(self, files):
-#         """ The stream is redirect to the file list 'files' """
-#
-#         self.files = files
-#
-#     def write(self, str):
-#         """ Emulate write function """
-#
-#         for f in self.files:
-#             f.write(str)
-# ===============================================================================
 
 class PyCutExt(QtGui.QTextEdit):
 

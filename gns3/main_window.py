@@ -777,7 +777,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         vpcs_module = VPCS.instance()
 
         if self._project.filesDir() is None:
-            QtGui.QMessageBox.critical(self, "VPCS", "Please create a project first")
+            QtGui.QMessageBox.critical(self, "VPCS", "Sorry, the project hasn't been initialized yet")
             return
 
         try:
@@ -1307,6 +1307,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.project = self._project
         try:
+            self._project.commit()
             topo = topology.dump()
             with open(path, "w") as f:
                 log.info("Saving project: {}".format(path))

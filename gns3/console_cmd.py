@@ -263,6 +263,10 @@ class ConsoleCmd(cmd.Cmd):
         :param params: list of parameters
         """
 
+        if self._topology.project is None:
+            print("Sorry, the project hasn't been saved yet")
+            return
+
         topology = self._topology.dump()
         if len(params) == 1:
             # print out whole topology

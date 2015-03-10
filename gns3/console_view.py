@@ -205,12 +205,12 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self.pointer = 0
         if len(self.line):
             self.history.append(self.line)
-        try:
-            self.lines.append(self.line)
-            source = "\n".join(self.lines)
-            self.more = self.onecmd(source)
-        except Exception as e:
-            print("Unknown error: {}".format(e))
+            try:
+                self.lines.append(self.line)
+                source = "\n".join(self.lines)
+                self.more = self.onecmd(source)
+            except Exception as e:
+                print("Unknown error: {}".format(e))
 
         self.write(self.prompt)
         self.lines = []

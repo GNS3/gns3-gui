@@ -96,7 +96,7 @@ class Topology(object):
         self._project = None
 
     @property
-    def project(self, project):
+    def project(self):
         """
         Get topology project
 
@@ -442,9 +442,6 @@ class Topology(object):
         """
 
         log.info("Starting to save the topology (version {})".format(__version__))
-
-        self._project.commit()
-
         topology = {"project_id": self._project.id(),
                     "name": self._project.name(),
                     "version": __version__,
