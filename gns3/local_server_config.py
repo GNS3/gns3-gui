@@ -35,9 +35,9 @@ class LocalServerConfig:
 
         self._config = configparser.ConfigParser()
         if sys.platform.startswith("win"):
-            filename = "server.ini"
+            filename = "gns3_server.ini"
         else:
-            filename = "server.conf"
+            filename = "gns3_server.conf"
         self._config_file = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), filename)
         try:
             # create the config file if it doesn't exist
