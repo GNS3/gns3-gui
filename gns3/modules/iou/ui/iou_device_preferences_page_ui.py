@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Wed Nov 19 18:57:19 2014
+# Created: Mon Mar  9 17:58:56 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,19 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_IOUDevicePreferencesPageWidget(object):
-
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName(_fromUtf8("IOUDevicePreferencesPageWidget"))
-        IOUDevicePreferencesPageWidget.resize(684, 516)
+        IOUDevicePreferencesPageWidget.resize(506, 508)
         self.gridLayout = QtGui.QGridLayout(IOUDevicePreferencesPageWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.uiIOUDevicesTreeWidget = QtGui.QTreeWidget(IOUDevicePreferencesPageWidget)
@@ -51,6 +48,11 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiIOUDevicesTreeWidget.header().setVisible(False)
         self.gridLayout.addWidget(self.uiIOUDevicesTreeWidget, 0, 0, 2, 1)
         self.uiIOUDeviceInfoTreeWidget = QtGui.QTreeWidget(IOUDevicePreferencesPageWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiIOUDeviceInfoTreeWidget.sizePolicy().hasHeightForWidth())
+        self.uiIOUDeviceInfoTreeWidget.setSizePolicy(sizePolicy)
         self.uiIOUDeviceInfoTreeWidget.setIndentation(10)
         self.uiIOUDeviceInfoTreeWidget.setAllColumnsShowFocus(True)
         self.uiIOUDeviceInfoTreeWidget.setObjectName(_fromUtf8("uiIOUDeviceInfoTreeWidget"))
@@ -81,3 +83,4 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiNewIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&New", None))
         self.uiEditIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&Edit", None))
         self.uiDeleteIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "Delete", None))
+

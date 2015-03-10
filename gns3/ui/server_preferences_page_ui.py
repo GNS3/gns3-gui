@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Sat Jan 31 19:10:58 2015
+# Created: Mon Mar  9 18:13:04 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_ServerPreferencesPageWidget(object):
-
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName(_fromUtf8("ServerPreferencesPageWidget"))
         ServerPreferencesPageWidget.resize(430, 505)
@@ -183,7 +180,7 @@ class Ui_ServerPreferencesPageWidget(object):
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPortSpinBox, self.uiRemoteServerPortSpinBox)
 
     def retranslateUi(self, ServerPreferencesPageWidget):
-        ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "GNS3 server", None))
+        ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "Server", None))
         self.uiGeneralSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "General settings", None))
         self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:", None))
         self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "&Browse...", None))
@@ -206,3 +203,4 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers", None))
         self.uiTestSettingsPushButton.setText(_translate("ServerPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults", None))
+

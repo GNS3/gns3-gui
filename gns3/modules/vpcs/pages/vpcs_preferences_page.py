@@ -23,7 +23,6 @@ import os
 import sys
 
 from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -44,12 +43,8 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         # connect signals
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
-
-        # FIXME: temporally hide test button
-        self.uiTestSettingsPushButton.hide()
 
     def _vpcsPathBrowserSlot(self):
         """
@@ -85,10 +80,6 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
 
         self.uiScriptFileEdit.setText(os.path.normpath(path))
 
-    def _testSettingsSlot(self):
-
-        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
-
     def _restoreDefaultsSlot(self):
         """
         Slot to populate the page widgets with the default settings.
@@ -98,13 +89,15 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
 
     def _useLocalServerSlot(self, state):
         """
-        Slot to enable or not the QTreeWidget for remote servers.
+        Slot to enable or not local server settings.
         """
 
         if state:
-            self.uiRemoteServersTreeWidget.setEnabled(False)
+            self.uiVPCSPathLineEdit.setEnabled(True)
+            self.uiVPCSPathToolButton.setEnabled(True)
         else:
-            self.uiRemoteServersTreeWidget.setEnabled(True)
+            self.uiVPCSPathLineEdit.setEnabled(False)
+            self.uiVPCSPathToolButton.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
@@ -117,22 +110,6 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
-    def _updateRemoteServersSlot(self):
-        """
-        Adds/Updates the available remote servers.
-        """
-
-        servers = Servers.instance()
-        self.uiRemoteServersTreeWidget.clear()
-        for server in servers.remoteServers().values():
-            host = server.host
-            port = server.port
-            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, host)
-            item.setText(1, str(port))
-
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
-
     def loadPreferences(self):
         """
         Loads VPCS preferences.
@@ -140,10 +117,6 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
 
         vpcs_settings = VPCS.instance().settings()
         self._populateWidgets(vpcs_settings)
-
-        servers = Servers.instance()
-        servers.updated_signal.connect(self._updateRemoteServersSlot)
-        self._updateRemoteServersSlot()
 
     def savePreferences(self):
         """

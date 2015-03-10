@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>586</height>
+    <width>374</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,13 +24,13 @@
      </property>
      <widget class="QWidget" name="uiServerSettingsTabWidget">
       <attribute name="title">
-       <string>Server settings</string>
+       <string>General settings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QCheckBox" name="uiUseLocalServercheckBox">
          <property name="text">
-          <string>Always use the local server</string>
+          <string>Use the local server</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -38,33 +38,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="uiRemoteServersGroupBox">
-         <property name="title">
-          <string>Remote servers</string>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::NoSelection</enum>
-            </property>
-            <column>
-             <property name="text">
-              <string>Host</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Port</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>455</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

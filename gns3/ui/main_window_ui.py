@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Mar  3 11:41:04 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created: Mon Mar  9 17:21:40 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,43 +17,40 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_MainWindow(object):
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.resize(984, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet(_fromUtf8("#toolBar_Devices QToolButton {\n"
-                                           "width: 50px;\n"
-                                           "height: 55px;\n"
-                                           "border:solid 1px black opacity 0.4;\n"
-                                           "background-none;\n"
-                                           "}\n"
-                                           "\n"
-                                           "#toolBar_General QToolButton {\n"
-                                           "width: 36px;\n"
-                                           "height: 36px;\n"
-                                           "border:solid 1px black opacity 0.4;\n"
-                                           "background-none;\n"
-                                           "}\n"
-                                           "\n"
-                                           ""))
-        MainWindow.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks | QtGui.QMainWindow.AnimatedDocks)
+"width: 50px;\n"
+"height: 55px;\n"
+"border:solid 1px black opacity 0.4;\n"
+"background-none;\n"
+"}\n"
+"\n"
+"#toolBar_General QToolButton {\n"
+"width: 36px;\n"
+"height: 36px;\n"
+"border:solid 1px black opacity 0.4;\n"
+"background-none;\n"
+"}\n"
+"\n"
+""))
+        MainWindow.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks|QtGui.QMainWindow.AnimatedDocks)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.uiCentralWidget = QtGui.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName(_fromUtf8("uiCentralWidget"))
         self.gridlayout = QtGui.QGridLayout(self.uiCentralWidget)
-        self.gridlayout.setSpacing(0)
         self.gridlayout.setMargin(0)
+        self.gridlayout.setSpacing(0)
         self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
         self.uiGraphicsView = GraphicsView(self.uiCentralWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -65,7 +62,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtGui.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName(_fromUtf8("uiMenuBar"))
         self.uiEditMenu = QtGui.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName(_fromUtf8("uiEditMenu"))
@@ -100,7 +97,7 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidget.setEnabled(True)
         self.uiNodesDockWidget.setVisible(True)
         self.uiNodesDockWidget.setFloating(False)
-        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
+        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
         self.uiNodesDockWidget.setObjectName(_fromUtf8("uiNodesDockWidget"))
         self.uiNodesDockWidgetContents = QtGui.QWidget()
         self.uiNodesDockWidgetContents.setObjectName(_fromUtf8("uiNodesDockWidgetContents"))
@@ -162,7 +159,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiTopologySummaryDockWidget.sizePolicy().hasHeightForWidth())
         self.uiTopologySummaryDockWidget.setSizePolicy(sizePolicy)
-        self.uiTopologySummaryDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
+        self.uiTopologySummaryDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
         self.uiTopologySummaryDockWidget.setObjectName(_fromUtf8("uiTopologySummaryDockWidget"))
         self.uiTopologySummaryDockWidgetContents = QtGui.QWidget()
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -172,8 +169,8 @@ class Ui_MainWindow(object):
         self.uiTopologySummaryDockWidgetContents.setSizePolicy(sizePolicy)
         self.uiTopologySummaryDockWidgetContents.setObjectName(_fromUtf8("uiTopologySummaryDockWidgetContents"))
         self.gridlayout1 = QtGui.QGridLayout(self.uiTopologySummaryDockWidgetContents)
-        self.gridlayout1.setSpacing(0)
         self.gridlayout1.setMargin(0)
+        self.gridlayout1.setSpacing(0)
         self.gridlayout1.setObjectName(_fromUtf8("gridlayout1"))
         self.uiTopologySummaryTreeWidget = TopologySummaryView(self.uiTopologySummaryDockWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -397,10 +394,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtGui.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/cancel-connection.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new-hover.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/cancel-connection.svg")), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/connection-new-hover.svg")), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/cancel-connection.svg")), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName(_fromUtf8("uiAddLinkAction"))
         self.uiGettingStartedAction = QtGui.QAction(MainWindow)
@@ -533,7 +530,7 @@ class Ui_MainWindow(object):
         self.uiToolsMenu.setTitle(_translate("MainWindow", "&Tools", None))
         self.uiGeneralToolBar.setWindowTitle(_translate("MainWindow", "General", None))
         self.uiNodesDockWidget.setWindowTitle(_translate("MainWindow", "Node Types", None))
-        self.uiNodesView.setToolTip(_translate("MainWindow", "Drag Node to Workspace (press SHIFT while dragging for multiple nodes).", None))
+        self.uiNodesView.setToolTip(_translate("MainWindow", "Drag a node to the workspace (Press SHIFT while dragging to add multiple identical nodes).", None))
         self.uiNodesView.headerItem().setText(0, _translate("MainWindow", "1", None))
         self.uiBrowsersToolBar.setWindowTitle(_translate("MainWindow", "Devices", None))
         self.uiControlToolBar.setWindowTitle(_translate("MainWindow", "Emulation", None))
@@ -679,8 +676,8 @@ class Ui_MainWindow(object):
         self.uiVPCSAction.setText(_translate("MainWindow", "&VPCS multi-host", None))
 
 from ..cloud_inspector_view import CloudInspectorView
-from ..graphics_view import GraphicsView
 from ..console_view import ConsoleView
 from ..nodes_view import NodesView
+from ..graphics_view import GraphicsView
 from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

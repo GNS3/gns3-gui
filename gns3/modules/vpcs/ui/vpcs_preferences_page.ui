@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>545</height>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,38 +26,35 @@
       <attribute name="title">
        <string>General settings</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="7" column="0" colspan="2">
-        <spacer name="spacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>390</width>
-           <height>193</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiScriptFileLabel">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
          <property name="text">
-          <string>Path to VPCS base script file:</string>
+          <string>Use the local server</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item>
         <widget class="QLabel" name="uiVPCSPathLabel">
          <property name="text">
           <string>Path to VPCS:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLineEdit" name="uiVPCSPathLineEdit"/>
+          <widget class="QLineEdit" name="uiVPCSPathLineEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="uiVPCSPathToolButton">
@@ -71,10 +68,44 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>390</width>
+           <height>193</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiVPCSTabWidget">
+      <attribute name="title">
+       <string>VPCS VM settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="uiScriptFileLabel">
+         <property name="text">
+          <string>Path to VPCS base script file:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLineEdit" name="uiScriptFileEdit"/>
+          <widget class="QLineEdit" name="uiScriptFileEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="uiScriptFileToolButton">
@@ -88,51 +119,18 @@
          </item>
         </layout>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="uiServerSettingsTabWidget">
-      <attribute name="title">
-       <string>Server settings</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
-         <property name="text">
-          <string>Always use the local server</string>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>387</height>
+          </size>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="uiRemoteServersGroupBox">
-         <property name="title">
-          <string>Remote servers</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::NoSelection</enum>
-            </property>
-            <column>
-             <property name="text">
-              <string>Host</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Port</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -152,13 +150,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="uiTestSettingsPushButton">
-       <property name="text">
-        <string>Test settings</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="uiRestoreDefaultsPushButton">

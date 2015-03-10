@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Wed Nov 19 18:57:20 2014
+# Created: Mon Mar  9 17:57:35 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,19 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_IOSRouterPreferencesPageWidget(object):
-
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName(_fromUtf8("IOSRouterPreferencesPageWidget"))
-        IOSRouterPreferencesPageWidget.resize(672, 521)
+        IOSRouterPreferencesPageWidget.resize(551, 518)
         self.gridLayout = QtGui.QGridLayout(IOSRouterPreferencesPageWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.uiIOSRoutersTreeWidget = QtGui.QTreeWidget(IOSRouterPreferencesPageWidget)
@@ -51,6 +48,11 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiIOSRoutersTreeWidget.header().setVisible(False)
         self.gridLayout.addWidget(self.uiIOSRoutersTreeWidget, 0, 0, 2, 1)
         self.uiIOSRouterInfoTreeWidget = QtGui.QTreeWidget(IOSRouterPreferencesPageWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiIOSRouterInfoTreeWidget.sizePolicy().hasHeightForWidth())
+        self.uiIOSRouterInfoTreeWidget.setSizePolicy(sizePolicy)
         self.uiIOSRouterInfoTreeWidget.setIndentation(10)
         self.uiIOSRouterInfoTreeWidget.setAllColumnsShowFocus(True)
         self.uiIOSRouterInfoTreeWidget.setObjectName(_fromUtf8("uiIOSRouterInfoTreeWidget"))
@@ -86,3 +88,4 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Decompress", None))
         self.uiEditIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Edit", None))
         self.uiDeleteIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Delete", None))
+

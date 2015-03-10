@@ -21,7 +21,6 @@ Configuration page for VirtualBox preferences.
 
 import os
 from gns3.qt import QtGui
-from gns3.servers import Servers
 
 from .. import VirtualBox
 from ..ui.virtualbox_preferences_page_ui import Ui_VirtualBoxPreferencesPageWidget
@@ -43,9 +42,6 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVboxManagePathToolButton.clicked.connect(self._vboxPathBrowserSlot)
-
-        # FIXME: temporally hide test button
-        self.uiTestSettingsPushButton.hide()
 
     def _vboxPathBrowserSlot(self):
         """
@@ -71,13 +67,17 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
 
     def _useLocalServerSlot(self, state):
         """
-        Slot to enable or not the QTreeWidget for remote servers.
+        Slot to enable or not local server settings.
         """
 
         if state:
-            self.uiRemoteServersTreeWidget.setEnabled(False)
+            self.uiVboxManagePathLineEdit.setEnabled(True)
+            self.uiVboxManagePathToolButton.setEnabled(True)
+            self.uiVboxManageUserLineEdit.setEnabled(True)
         else:
-            self.uiRemoteServersTreeWidget.setEnabled(True)
+            self.uiVboxManagePathLineEdit.setEnabled(False)
+            self.uiVboxManagePathToolButton.setEnabled(False)
+            self.uiVboxManageUserLineEdit.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
@@ -90,22 +90,6 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         self.uiVboxManageUserLineEdit.setText(settings["vbox_user"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
-    def _updateRemoteServersSlot(self):
-        """
-        Adds/Updates the available remote servers.
-        """
-
-        servers = Servers.instance()
-        self.uiRemoteServersTreeWidget.clear()
-        for server in servers.remoteServers().values():
-            host = server.host
-            port = server.port
-            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, host)
-            item.setText(1, str(port))
-
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
-
     def loadPreferences(self):
         """
         Loads VirtualBox preferences.
@@ -113,9 +97,6 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
 
         vbox_settings = VirtualBox.instance().settings()
         self._populateWidgets(vbox_settings)
-        servers = Servers.instance()
-        servers.updated_signal.connect(self._updateRemoteServersSlot)
-        self._updateRemoteServersSlot()
 
     def savePreferences(self):
         """

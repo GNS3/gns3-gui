@@ -22,8 +22,7 @@ Configuration page for IOU preferences.
 import os
 import sys
 
-from gns3.qt import QtCore, QtGui
-from gns3.servers import Servers
+from gns3.qt import QtGui
 
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
@@ -41,20 +40,15 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        if not sys.platform.startswith("linux"):
-            self.uiIouyapPathLineEdit.setEnabled(False)
-            self.uiIouyapPathToolButton.setEnabled(False)
-            self.uiUseLocalServercheckBox.setEnabled(False)
-
         # connect signals
         self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
         self.uiIouyapPathToolButton.clicked.connect(self._iouyapPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
-        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
 
-        # FIXME: temporally hide test button
-        self.uiTestSettingsPushButton.hide()
+        if not sys.platform.startswith("linux"):
+            self.uiUseLocalServercheckBox.setChecked(False)
+            self.uiUseLocalServercheckBox.setEnabled(False)
 
     def _iourcPathBrowserSlot(self):
         """
@@ -89,26 +83,6 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
         self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
 
-    def _testSettingsSlot(self):
-
-        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
-        return
-
-    def _testSettingsCallback(self, result, error=False, **kwargs):
-
-        if self._progress_dialog.wasCanceled():
-            print("Was canceled")
-            return
-
-        self._progress_dialog.accept()
-
-        if error:
-            pass
-            # log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-
-        print("Report received")
-        print(result)
-
     def _restoreDefaultsSlot(self):
         """
         Slot to populate the page widgets with the default settings.
@@ -118,13 +92,19 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
     def _useLocalServerSlot(self, state):
         """
-        Slot to enable or not the QTreeWidget for remote servers.
+        Slot to enable or not local server settings.
         """
 
         if state:
-            self.uiRemoteServersTreeWidget.setEnabled(False)
+            self.uiIOURCPathLineEdit.setEnabled(True)
+            self.uiIOURCPathToolButton.setEnabled(True)
+            self.uiIouyapPathLineEdit.setEnabled(True)
+            self.uiIouyapPathToolButton.setEnabled(True)
         else:
-            self.uiRemoteServersTreeWidget.setEnabled(True)
+            self.uiIOURCPathLineEdit.setEnabled(False)
+            self.uiIOURCPathToolButton.setEnabled(False)
+            self.uiIouyapPathLineEdit.setEnabled(False)
+            self.uiIouyapPathToolButton.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
@@ -137,22 +117,6 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiIouyapPathLineEdit.setText(settings["iouyap_path"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
-    def _updateRemoteServersSlot(self):
-        """
-        Adds/Updates the available remote servers.
-        """
-
-        servers = Servers.instance()
-        self.uiRemoteServersTreeWidget.clear()
-        for server in servers.remoteServers().values():
-            host = server.host
-            port = server.port
-            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, host)
-            item.setText(1, str(port))
-
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
-
     def loadPreferences(self):
         """
         Loads IOU preferences.
@@ -160,10 +124,6 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
         iou_settings = IOU.instance().settings()
         self._populateWidgets(iou_settings)
-
-        servers = Servers.instance()
-        servers.updated_signal.connect(self._updateRemoteServersSlot)
-        self._updateRemoteServersSlot()
 
     def savePreferences(self):
         """

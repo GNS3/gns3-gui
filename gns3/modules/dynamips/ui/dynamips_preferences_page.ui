@@ -23,11 +23,35 @@
       <attribute name="title">
        <string>General settings</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0" colspan="2">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
+         <property name="text">
+          <string>Use the local server</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="uiDynamipsPathLabel">
+         <property name="text">
+          <string>Path to Dynamips:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLineEdit" name="uiDynamipsPathLineEdit"/>
+          <widget class="QLineEdit" name="uiDynamipsPathLineEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="uiDynamipsPathToolButton">
@@ -41,14 +65,14 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="uiDynamipsPathLabel">
+       <item>
+        <widget class="QCheckBox" name="uiAllocateAuxConsolePortsCheckBox">
          <property name="text">
-          <string>Path to Dynamips:</string>
+          <string>Allocate AUX console ports</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item>
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -60,59 +84,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiAllocateAuxConsolePortsCheckBox">
-         <property name="text">
-          <string>Allocate AUX console ports</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="uiServerSettingsTabWidget">
-      <attribute name="title">
-       <string>Server settings</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="uiUseLocalServercheckBox">
-         <property name="text">
-          <string>Always use the local server</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="uiRemoteServersGroupBox">
-         <property name="title">
-          <string>Remote servers</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::NoSelection</enum>
-            </property>
-            <column>
-             <property name="text">
-              <string>Host</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Port</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -202,13 +173,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="uiTestSettingsPushButton">
-       <property name="text">
-        <string>Test settings</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="uiRestoreDefaultsPushButton">

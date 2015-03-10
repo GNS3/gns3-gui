@@ -44,10 +44,6 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.uiGhostIOSSupportCheckBox.stateChanged.connect(self._ghostIOSSupportSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
-        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
-
-        # FIXME: temporally hide test button
-        self.uiTestSettingsPushButton.hide()
 
     def _dynamipsPathBrowserSlot(self):
         """
@@ -66,10 +62,6 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
             return
 
         self.uiDynamipsPathLineEdit.setText(path)
-
-    def _testSettingsSlot(self):
-
-        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
 
     def _ghostIOSSupportSlot(self, state):
         """
@@ -91,13 +83,23 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
 
     def _useLocalServerSlot(self, state):
         """
-        Slot to enable or not the QTreeWidget for remote servers.
+        Slot to enable or not local server settings.
         """
 
         if state:
-            self.uiRemoteServersTreeWidget.setEnabled(False)
+            self.uiDynamipsPathLineEdit.setEnabled(True)
+            self.uiDynamipsPathToolButton.setEnabled(True)
+            self.uiAllocateAuxConsolePortsCheckBox.setEnabled(True)
+            self.uiGhostIOSSupportCheckBox.setEnabled(True)
+            self.uiMmapSupportCheckBox.setEnabled(True)
+            self.uiSparseMemorySupportCheckBox.setEnabled(True)
         else:
-            self.uiRemoteServersTreeWidget.setEnabled(True)
+            self.uiDynamipsPathLineEdit.setEnabled(False)
+            self.uiDynamipsPathToolButton.setEnabled(False)
+            self.uiAllocateAuxConsolePortsCheckBox.setEnabled(False)
+            self.uiGhostIOSSupportCheckBox.setEnabled(False)
+            self.uiMmapSupportCheckBox.setEnabled(False)
+            self.uiSparseMemorySupportCheckBox.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
@@ -113,22 +115,6 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         self.uiMmapSupportCheckBox.setChecked(settings["mmap_support"])
         self.uiSparseMemorySupportCheckBox.setChecked(settings["sparse_memory_support"])
 
-    def _updateRemoteServersSlot(self):
-        """
-        Adds/Updates the available remote servers.
-        """
-
-        servers = Servers.instance()
-        self.uiRemoteServersTreeWidget.clear()
-        for server in servers.remoteServers().values():
-            host = server.host
-            port = server.port
-            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, host)
-            item.setText(1, str(port))
-
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
-
     def loadPreferences(self):
         """
         Loads the Dynamips preferences.
@@ -136,10 +122,6 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
 
         dynamips_settings = Dynamips.instance().settings()
         self._populateWidgets(dynamips_settings)
-
-        servers = Servers.instance()
-        servers.updated_signal.connect(self._updateRemoteServersSlot)
-        self._updateRemoteServersSlot()
 
     def savePreferences(self):
         """

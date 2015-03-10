@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
-    <height>521</height>
+    <width>551</width>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,6 +56,12 @@
    </item>
    <item row="0" column="1">
     <widget class="QTreeWidget" name="uiIOSRouterInfoTreeWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="indentation">
       <number>10</number>
      </property>
