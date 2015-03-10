@@ -121,7 +121,7 @@
       <attribute name="title">
        <string>HDD</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_7">
+      <layout class="QGridLayout" name="gridLayout_6">
        <item row="0" column="0">
         <widget class="QLabel" name="uiHdaDiskImageLabel">
          <property name="text">
@@ -170,7 +170,55 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiHdcDiskImageLabel">
+         <property name="text">
+          <string>Disk image (hdc):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLineEdit" name="uiHdcDiskImageLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiHdcDiskImageToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiHddDiskImageLabel">
+         <property name="text">
+          <string>Disk image (hdd):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLineEdit" name="uiHddDiskImageLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiHddDiskImageToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0" colspan="2">
         <spacer name="spacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

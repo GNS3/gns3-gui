@@ -116,7 +116,9 @@ class Qemu(Module):
                 key = "{server}:{name}".format(server=server, name=name)
                 if key in self._qemu_vms or not name or not server:
                     continue
-                self._qemu_vms[key] = vm
+                vm_settings = QEMU_VM_SETTINGS
+                vm_settings.update(vm)
+                self._qemu_vms[key] = vm_settings
 
         # keep things sync
         self._saveQemuVMs()
@@ -246,6 +248,12 @@ class Qemu(Module):
 
         if self._qemu_vms[vm]["hdb_disk_image"]:
             settings["hdb_disk_image"] = self._qemu_vms[vm]["hdb_disk_image"]
+
+        if self._qemu_vms[vm]["hdc_disk_image"]:
+            settings["hdc_disk_image"] = self._qemu_vms[vm]["hdc_disk_image"]
+
+        if self._qemu_vms[vm]["hdd_disk_image"]:
+            settings["hdd_disk_image"] = self._qemu_vms[vm]["hdd_disk_image"]
 
         if self._qemu_vms[vm]["initrd"]:
             settings["initrd"] = self._qemu_vms[vm]["initrd"]

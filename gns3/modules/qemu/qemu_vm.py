@@ -54,6 +54,8 @@ class QemuVM(VM):
                           "qemu_path": "",
                           "hda_disk_image": "",
                           "hdb_disk_image": "",
+                          "hdc_disk_image": "",
+                          "hdd_disk_image": "",
                           "options": "",
                           "ram": QEMU_VM_SETTINGS["ram"],
                           "console": None,

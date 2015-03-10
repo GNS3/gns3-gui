@@ -265,6 +265,8 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                 self.uiMonitorPortSpinBox.hide()
             self.uiHdaDiskImageLineEdit.setText(settings["hda_disk_image"])
             self.uiHdbDiskImageLineEdit.setText(settings["hdb_disk_image"])
+            self.uiHdcDiskImageLineEdit.setText(settings["hdc_disk_image"])
+            self.uiHddDiskImageLineEdit.setText(settings["hdd_disk_image"])
             self.uiInitrdLineEdit.setText(settings["initrd"])
             self.uiKernelImageLineEdit.setText(settings["kernel_image"])
         else:
@@ -329,10 +331,12 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                 settings["console"] = self.uiConsolePortSpinBox.value()
             if "monitor" in settings:
                 settings["monitor"] = self.uiMonitorPortSpinBox.value()
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text()
-            settings["initrd"] = self.uiInitrdLineEdit.text()
-            settings["kernel_image"] = self.uiKernelImageLineEdit.text()
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
+            settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text().strip()
+            settings["hdc_disk_image"] = self.uiHdcDiskImageLineEdit.text().strip()
+            settings["hdd_disk_image"] = self.uiHddDiskImageLineEdit.text().strip()
+            settings["initrd"] = self.uiInitrdLineEdit.text().strip()
+            settings["kernel_image"] = self.uiKernelImageLineEdit.text().strip()
 
         else:
             del settings["name"]
@@ -342,6 +346,8 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                 del settings["monitor"]
             del settings["hda_disk_image"]
             del settings["hdb_disk_image"]
+            del settings["hdc_disk_image"]
+            del settings["hdd_disk_image"]
             del settings["initrd"]
             del settings["kernel_image"]
 

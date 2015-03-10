@@ -79,12 +79,16 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
 
         # fill out the Hard disks section
-        if qemu_vm["hda_disk_image"] or qemu_vm["hdb_disk_image"]:
+        if qemu_vm["hda_disk_image"] or qemu_vm["hdb_disk_image"] or qemu_vm["hdc_disk_image"] or qemu_vm["hdd_disk_image"]:
             section_item = self._createSectionItem("Hard disks")
             if qemu_vm["hda_disk_image"]:
                 QtGui.QTreeWidgetItem(section_item, ["Disk image (hda):", qemu_vm["hda_disk_image"]])
             if qemu_vm["hdb_disk_image"]:
                 QtGui.QTreeWidgetItem(section_item, ["Disk image (hdb):", qemu_vm["hdb_disk_image"]])
+            if qemu_vm["hdc_disk_image"]:
+                QtGui.QTreeWidgetItem(section_item, ["Disk image (hdc):", qemu_vm["hdc_disk_image"]])
+            if qemu_vm["hdd_disk_image"]:
+                QtGui.QTreeWidgetItem(section_item, ["Disk image (hdd):", qemu_vm["hdd_disk_image"]])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
@@ -194,6 +198,19 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 _, filename = ntpath.split(src)
                 dst = "images/qemu/{}".format(filename)
                 uploads.append((src, dst))
+
+            src = qemu_vm.get("hdc_disk_image", None)
+            if src:
+                _, filename = ntpath.split(src)
+                dst = "images/qemu/{}".format(filename)
+                uploads.append((src, dst))
+
+            src = qemu_vm.get("hdd_disk_image", None)
+            if src:
+                _, filename = ntpath.split(src)
+                dst = "images/qemu/{}".format(filename)
+                uploads.append((src, dst))
+
             src = qemu_vm.get("initrd", None)
             if src:
                 _, filename = ntpath.split(src)
