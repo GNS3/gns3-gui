@@ -777,7 +777,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         vpcs_module = VPCS.instance()
 
         if self._project.filesDir() is None:
-            QtGui.QMessageBox.critical(self, "VPCS", "You can't use this tool on a non initialized project")
+            QtGui.QMessageBox.critical(self, "VPCS", "Please create a project first")
             return
 
         try:

@@ -6,7 +6,7 @@ no service password-encryption
 hostname %h
 !
 ip cef
-no ip domain lookup
+no ip domain-lookup
 no ip icmp rate-limit unreachable
 ip tcp synwait 5
 no cdp log mismatch duplex

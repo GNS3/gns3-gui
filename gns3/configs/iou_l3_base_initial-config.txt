@@ -13,7 +13,7 @@ no ip icmp rate-limit unreachable
 !
 !
 ip cef
-no ip domain lookup
+no ip domain-lookup
 !
 !
 ip tcp synwait-time 5
