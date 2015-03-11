@@ -479,6 +479,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to save a project.
         """
 
+        if not self._project.filesDir():
+            QtGui.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
+            return
+
         if self._project.temporary():
             return self.saveProjectAs()
         else:
@@ -1192,7 +1196,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._createTemporaryProject()
 
         if self._project_from_cmdline:
-            time.sleep(0.5)  # give so time to the server to initialize
+            time.sleep(0.5)  # give some time to the server to initialize
             self._loadPath(self._project_from_cmdline)
         elif self._settings["auto_launch_project_dialog"]:
             project_dialog = NewProjectDialog(self, showed_from_startup=True)
@@ -1560,17 +1564,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # do nothing if project is temporary
             return
 
-        with open(project) as f:
-            json_topology = json.load(f)
+        try:
+            with open(project) as f:
+                json_topology = json.load(f)
 
-            self.CloudInspectorView.clear()
+                self.CloudInspectorView.clear()
 
-            if json_topology["resources_type"] != 'cloud':
-                # do nothing in case of local projects
-                return
+                if json_topology["resources_type"] != 'cloud':
+                    # do nothing in case of local projects
+                    return
 
-            project_instances = json_topology["topology"]["instances"]
-            self.CloudInspectorView.load(self, [i["id"] for i in project_instances])
+                project_instances = json_topology["topology"]["instances"]
+                self.CloudInspectorView.load(self, [i["id"] for i in project_instances])
+        except (OSError, ValueError) as e:
+            QtGui.QMessageBox.critical(self, "Project", "Could not read project: {}".format(e))
 
     def add_instance_to_project(self, instance, keypair):
         """
