@@ -430,6 +430,9 @@ class Topology(object):
             topology_images = topology["topology"]["images"] = []
             for image in self._images:
                 image_info = image.dump()
+                image_in_default_dir = os.path.join(self._project.filesDir(), "project-files", "images", os.path.basename(image_info["path"]))
+                if os.path.exists(image_in_default_dir):
+                    image_info["path"] = os.path.join("images", os.path.basename(image_info["path"]))
                 topology_images.append(image_info)
 
     def dump(self, include_gui_data=True):
@@ -623,7 +626,7 @@ class Topology(object):
                 node.setId(topology_node["id"])
 
                 # we want to know when the node has been created
-                callback = partial(self._nodeCreatedSlot, topology, topology_file_errors)
+                callback = partial(self._nodeCreatedSlot, topology)
                 node.created_signal.connect(callback)
 
                 self.addNode(node)
@@ -706,22 +709,25 @@ class Topology(object):
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
         log.debug("Finish loading topology")
 
-    def _load_images(self, topology, topology_file_errors):
+    def _load_images(self, topology):
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
         view = main_window.uiGraphicsView
+        topology_file_errors = []
 
         # images
         if "images" in topology["topology"]:
             images = topology["topology"]["images"]
             for topology_image in images:
-
                 updated_image_path = os.path.join(self._project.filesDir(), "project-files", topology_image["path"])
-                if os.path.isfile(updated_image_path):
+                if os.path.exists(updated_image_path):
                     image_path = updated_image_path
                 else:
                     image_path = topology_image["path"]
+
+                image_path = os.path.normpath(image_path)
+                print(image_path)
                 if not os.path.isfile(image_path):
                     topology_file_errors.append("Path to image {} doesn't exist".format(image_path))
                     continue
@@ -736,7 +742,11 @@ class Topology(object):
                 view.scene().addItem(image_item)
                 self.addImage(image_item)
 
-    def _nodeCreatedSlot(self, topology, topology_file_errors, node_id):
+        if topology_file_errors:
+            errors = "\n".join(topology_file_errors)
+            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
+
+    def _nodeCreatedSlot(self, topology, node_id):
         """
         Slot to know when a node has been created.
         When all nodes have initialized, links can be created.
@@ -795,7 +805,7 @@ class Topology(object):
 
         # We save at the end of initialization process in order to upgrade old topologies
         if len(topology["topology"]["nodes"]) == len(self._initialized_nodes):
-            self._load_images(topology, topology_file_errors)
+            self._load_images(topology)
             if "project_id" not in topology:
                 log.info("Saving converted topology...")
                 main_window.saveProject(self._project.topologyFile())
