@@ -686,15 +686,6 @@ class Router(VM):
             for port in self._ports:
                 ports.append(port.dump())
 
-        # make the IOS path relative
-        image_path = router["properties"]["image"]
-        if self.server().isLocal():
-            if os.path.commonprefix([image_path, self._imageFilesDir()]) == self._imageFilesDir():
-                # save only the image name if it is stored the images directory
-                router["properties"]["image"] = os.path.basename(image_path)
-        else:
-            router["properties"]["image"] = image_path
-
         return router
 
     def _imageFilesDir(self):

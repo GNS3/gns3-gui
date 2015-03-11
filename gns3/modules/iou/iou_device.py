@@ -411,15 +411,6 @@ class IOUDevice(VM):
             for port in self._ports:
                 ports.append(port.dump())
 
-        # make the IOU path relative
-        image_path = iou["properties"]["path"]
-        if self.server().isLocal():
-            if os.path.commonprefix([image_path, self._imageFilesDir()]) == self._imageFilesDir():
-                # save only the image name if it is stored the images directory
-                iou["properties"]["path"] = os.path.basename(image_path)
-        else:
-            iou["properties"]["path"] = image_path
-
         return iou
 
     def _imageFilesDir(self):
