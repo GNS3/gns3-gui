@@ -1137,6 +1137,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     return False
         return True
 
+    def _findUnusedLocalPort(self, host):
+        """
+        Find an unused port.
+
+        :param host: server hosts
+
+        :returns: port number
+        """
+
+        s = socket.socket()
+        s.bind((host, 0))
+        return s.getsockname()[1]
+
     def startupLoading(self):
         """
         Called by QTimer.singleShot to load everything needed at startup.
@@ -1159,14 +1172,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log.info("Connecting to a server already running on this host")
         elif servers.localServerAutoStart():
 
-            try:
-                # check if the local address still exists
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                    sock.bind((server.host, 0))
-            except OSError as e:
-                QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {host}: {error} (please check your host binding setting in the preferences)".format(host=server.host, error=e))
-                return
-
             # check the local server path
             local_server_path = servers.localServerPath()
             if not local_server_path:
@@ -1178,6 +1183,31 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             elif not os.access(local_server_path, os.X_OK):
                 QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
                 return
+
+            try:
+                # check if the local address still exists
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.bind((server.host, 0))
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host, e))
+                return
+
+            try:
+                # check if the port is already taken
+                find_unused_port = False
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.bind((server.host, server.port))
+            except OSError as e:
+                log.warning("Could not use socket {}:{} {}".format(server.host, server.port, e))
+                find_unused_port = True
+
+            if find_unused_port:
+                # find an alternate port for the local server
+                try:
+                    server.port = self._findUnusedLocalPort(server.host)
+                except OSError as e:
+                    QtGui.QMessageBox.critical(self, "Local server", "Could not find an unused port for the local server: {}".format(e))
+                    return
 
             if servers.startLocalServer():
                 thread = WaitForConnectionThread(server.host, server.port)

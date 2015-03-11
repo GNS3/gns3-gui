@@ -161,8 +161,8 @@ class HTTPClient(QtCore.QObject):
                     log.debug("Client version {} differs with server version {}".format(__version__, version))
                     return False
                 return True
-        except urllib.request.URLError as e:
-            log.debug("No server is already running: {}".format(e))
+        except OSError as e:
+            log.debug("No GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
         return False
 
     def get(self, path, callback, context={}):
