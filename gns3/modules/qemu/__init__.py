@@ -62,7 +62,7 @@ class Qemu(Module):
         settings.beginGroup(self.__class__.__name__)
         for name in QEMU_SETTINGS.keys():
             if settings.contains(name):
-                self._settings[name] = settings.value(name, type=QEMU_SETTING_TYPES[name])
+                legacy_settings[name] = settings.value(name, type=QEMU_SETTING_TYPES[name])
         settings.remove("")
         settings.endGroup()
 

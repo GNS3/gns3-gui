@@ -96,7 +96,7 @@ class VPCS(Module):
         settings.beginGroup(self.__class__.__name__)
         for name in VPCS_SETTINGS.keys():
             if settings.contains(name):
-                self._settings[name] = settings.value(name, type=VPCS_SETTING_TYPES[name])
+                legacy_settings[name] = settings.value(name, type=VPCS_SETTING_TYPES[name])
         settings.remove("")
         settings.endGroup()
 

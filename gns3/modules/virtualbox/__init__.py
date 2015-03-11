@@ -91,7 +91,7 @@ class VirtualBox(Module):
         settings.beginGroup(self.__class__.__name__)
         for name in VBOX_SETTINGS.keys():
             if settings.contains(name):
-                self._settings[name] = settings.value(name, type=VBOX_SETTING_TYPES[name])
+                legacy_settings[name] = settings.value(name, type=VBOX_SETTING_TYPES[name])
         settings.remove("")
         settings.endGroup()
 

@@ -68,7 +68,10 @@ class IOU(Module):
         settings.beginGroup(self.__class__.__name__)
         for name in IOU_SETTINGS.keys():
             if settings.contains(name):
-                self._settings[name] = settings.value(name, type=IOU_SETTING_TYPES[name])
+                legacy_settings[name] = settings.value(name, type=IOU_SETTING_TYPES[name])
+        if "iourc" in legacy_settings:
+            legacy_settings["iourc_path"] = legacy_settings["iourc"]
+            del legacy_settings["iourc"]
         settings.remove("")
         settings.endGroup()
 
