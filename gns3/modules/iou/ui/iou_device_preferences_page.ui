@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>IOU devices</string>
   </property>
+  <property name="accessibleName">
+   <string>IOU device templates</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
     <widget class="QTreeWidget" name="uiIOUDevicesTreeWidget">
@@ -108,7 +111,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Delete</string>
+        <string>&amp;Delete</string>
        </property>
       </widget>
      </item>

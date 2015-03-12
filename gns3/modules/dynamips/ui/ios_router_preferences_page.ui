@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
+    <width>560</width>
     <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>IOS routers</string>
+  </property>
+  <property name="accessibleName">
+   <string>IOS router templates</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
@@ -118,7 +121,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Delete</string>
+        <string>&amp;Delete</string>
        </property>
       </widget>
      </item>

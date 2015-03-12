@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>QEMU VMs</string>
   </property>
+  <property name="accessibleName">
+   <string>QEMU VM templates</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
     <widget class="QTreeWidget" name="uiQemuVMsTreeWidget">

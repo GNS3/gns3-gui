@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_preferences_page.ui'
 #
-# Created: Mon Mar  9 18:00:29 2015
+# Created: Wed Mar 11 22:04:56 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,7 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
     def setupUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setObjectName(_fromUtf8("VirtualBoxVMPreferencesPageWidget"))
         VirtualBoxVMPreferencesPageWidget.resize(499, 546)
+        VirtualBoxVMPreferencesPageWidget.setAccessibleDescription(_fromUtf8(""))
         self.gridLayout = QtGui.QGridLayout(VirtualBoxVMPreferencesPageWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -78,9 +79,10 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
 
     def retranslateUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxVMPreferencesPageWidget", "VirtualBox VMs", None))
+        VirtualBoxVMPreferencesPageWidget.setAccessibleName(_translate("VirtualBoxVMPreferencesPageWidget", "VirtualBox VM templates", None))
         self.uiNewVirtualBoxVMPushButton.setText(_translate("VirtualBoxVMPreferencesPageWidget", "&New", None))
         self.uiEditVirtualBoxVMPushButton.setText(_translate("VirtualBoxVMPreferencesPageWidget", "&Edit", None))
-        self.uiDeleteVirtualBoxVMPushButton.setText(_translate("VirtualBoxVMPreferencesPageWidget", "Delete", None))
+        self.uiDeleteVirtualBoxVMPushButton.setText(_translate("VirtualBoxVMPreferencesPageWidget", "&Delete", None))
         self.uiVirtualBoxVMInfoTreeWidget.headerItem().setText(0, _translate("VirtualBoxVMPreferencesPageWidget", "1", None))
         self.uiVirtualBoxVMInfoTreeWidget.headerItem().setText(1, _translate("VirtualBoxVMPreferencesPageWidget", "2", None))
 

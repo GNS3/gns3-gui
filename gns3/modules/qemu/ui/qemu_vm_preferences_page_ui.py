@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_preferences_page.ui'
 #
-# Created: Mon Mar  9 18:00:29 2015
+# Created: Wed Mar 11 22:03:56 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -79,6 +79,7 @@ class Ui_QemuVMPreferencesPageWidget(object):
 
     def retranslateUi(self, QemuVMPreferencesPageWidget):
         QemuVMPreferencesPageWidget.setWindowTitle(_translate("QemuVMPreferencesPageWidget", "QEMU VMs", None))
+        QemuVMPreferencesPageWidget.setAccessibleName(_translate("QemuVMPreferencesPageWidget", "QEMU VM templates", None))
         self.uiQemuVMInfoTreeWidget.headerItem().setText(0, _translate("QemuVMPreferencesPageWidget", "1", None))
         self.uiQemuVMInfoTreeWidget.headerItem().setText(1, _translate("QemuVMPreferencesPageWidget", "2", None))
         self.uiNewQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&New", None))

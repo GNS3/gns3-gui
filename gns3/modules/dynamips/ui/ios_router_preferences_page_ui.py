@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Mon Mar  9 17:57:35 2015
+# Created: Wed Mar 11 22:03:56 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_IOSRouterPreferencesPageWidget(object):
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName(_fromUtf8("IOSRouterPreferencesPageWidget"))
-        IOSRouterPreferencesPageWidget.resize(551, 518)
+        IOSRouterPreferencesPageWidget.resize(560, 518)
         self.gridLayout = QtGui.QGridLayout(IOSRouterPreferencesPageWidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.uiIOSRoutersTreeWidget = QtGui.QTreeWidget(IOSRouterPreferencesPageWidget)
@@ -82,10 +82,11 @@ class Ui_IOSRouterPreferencesPageWidget(object):
 
     def retranslateUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setWindowTitle(_translate("IOSRouterPreferencesPageWidget", "IOS routers", None))
+        IOSRouterPreferencesPageWidget.setAccessibleName(_translate("IOSRouterPreferencesPageWidget", "IOS router templates", None))
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(0, _translate("IOSRouterPreferencesPageWidget", "1", None))
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(1, _translate("IOSRouterPreferencesPageWidget", "2", None))
         self.uiNewIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&New", None))
         self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Decompress", None))
         self.uiEditIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Edit", None))
-        self.uiDeleteIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "Delete", None))
+        self.uiDeleteIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Delete", None))
 

@@ -105,8 +105,12 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
             current = previous
 
         preferences_page = current.data(0, QtCore.Qt.UserRole)
-        name = preferences_page.windowTitle()
-        self.uiTitleLabel.setText("{} preferences".format(name))
+        accessible_name = preferences_page.accessibleName()
+        if accessible_name:
+            self.uiTitleLabel.setText(accessible_name)
+        else:
+            name = preferences_page.windowTitle()
+            self.uiTitleLabel.setText("{} preferences".format(name))
         index = self.uiStackedWidget.indexOf(preferences_page)
         widget = self.uiStackedWidget.widget(index)
         self.uiStackedWidget.setMinimumSize(widget.size())

@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>VirtualBox VMs</string>
   </property>
+  <property name="accessibleName">
+   <string>VirtualBox VM templates</string>
+  </property>
+  <property name="accessibleDescription">
+   <string/>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -39,7 +45,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Delete</string>
+        <string>&amp;Delete</string>
        </property>
       </widget>
      </item>
