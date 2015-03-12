@@ -479,13 +479,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called to save a project.
         """
 
-        if not self._project.filesDir():
-            QtGui.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
-            return
-
         if self._project.temporary():
             return self.saveProjectAs()
         else:
+            if not self._project.filesDir():
+                QtGui.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
+                return
             return self.saveProject(self._project.topologyFile())
 
     def _saveProjectAsActionSlot(self):

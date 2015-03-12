@@ -304,6 +304,7 @@ class Project(QtCore.QObject):
         self._files_dir = new_path
         self._temporary = False
         for server in list(self._created_servers):
-            server.put("/projects/{project_id}".format(project_id=self._id),
-                       None,
-                       body={"name": self._name, "path": new_path, "temporary": False})
+            params = {"name": self._name, "temporary": False}
+            if server.isLocal():
+                params["path"] = new_path
+            server.put("/projects/{project_id}".format(project_id=self._id), None, body=params)
