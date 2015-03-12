@@ -194,7 +194,7 @@ def main():
         root_logger = init_logger(logging.INFO)
 
     # save client logging info to a file
-    logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "GNS3_client.log")
+    logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "gns3_gui.log")
     try:
         try:
             os.makedirs(os.path.dirname(QtCore.QSettings().fileName()))

@@ -159,7 +159,7 @@ class VirtualBox(Module):
                 key = "{server}:{vmname}".format(server=server, vmname=vmname)
                 if key in self._virtualbox_vms or not vmname or not server:
                     continue
-                vm_settings = VBOX_VM_SETTINGS
+                vm_settings = VBOX_VM_SETTINGS.copy()
                 vm_settings.update(vm)
                 self._virtualbox_vms[key] = vm_settings
 

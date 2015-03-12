@@ -116,7 +116,7 @@ class Qemu(Module):
                 key = "{server}:{name}".format(server=server, name=name)
                 if key in self._qemu_vms or not name or not server:
                     continue
-                vm_settings = QEMU_VM_SETTINGS
+                vm_settings = QEMU_VM_SETTINGS.copy()
                 vm_settings.update(vm)
                 self._qemu_vms[key] = vm_settings
 
