@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Mon Mar  9 17:58:57 2015
+# Created: Wed Mar 11 18:55:05 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -75,6 +75,10 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIouyapPathToolButton.setObjectName(_fromUtf8("uiIouyapPathToolButton"))
         self.horizontalLayout_6.addWidget(self.uiIouyapPathToolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_6)
+        self.uiLicensecheckBox = QtGui.QCheckBox(self.uiGeneralSettingsTabWidget)
+        self.uiLicensecheckBox.setChecked(True)
+        self.uiLicensecheckBox.setObjectName(_fromUtf8("uiLicensecheckBox"))
+        self.verticalLayout.addWidget(self.uiLicensecheckBox)
         spacerItem = QtGui.QSpacerItem(390, 193, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, _fromUtf8(""))
@@ -99,6 +103,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse...", None))
         self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap:", None))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse...", None))
+        self.uiLicensecheckBox.setText(_translate("IOUPreferencesPageWidget", "Check for a valid IOU license key", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults", None))
 

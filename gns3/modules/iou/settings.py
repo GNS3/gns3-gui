@@ -26,6 +26,7 @@ from gns3.node import Node
 IOU_SETTINGS = {
     "iourc_path": "",
     "iouyap_path": "",
+    "license_check": True,
     "use_local_server": True,
 }
 
@@ -36,6 +37,7 @@ if not sys.platform.startswith("linux"):
 IOU_SETTING_TYPES = {
     "iourc_path": str,
     "iouyap_path": str,
+    "license_check": bool,
     "use_local_server": bool,
 }
 

@@ -99,6 +99,7 @@ class IOU(Module):
         server_settings = {
             "iourc_path": self._settings["iourc_path"],
             "iouyap_path": self._settings["iouyap_path"],
+            "license_check": self._settings["license_check"]
         }
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)

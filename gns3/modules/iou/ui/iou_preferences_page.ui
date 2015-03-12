@@ -97,6 +97,16 @@
         </layout>
        </item>
        <item>
+        <widget class="QCheckBox" name="uiLicensecheckBox">
+         <property name="text">
+          <string>Check for a valid IOU license key</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

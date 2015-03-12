@@ -115,6 +115,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
         self.uiIOURCPathLineEdit.setText(settings["iourc_path"])
         self.uiIouyapPathLineEdit.setText(settings["iouyap_path"])
+        self.uiLicensecheckBox.setChecked(settings["license_check"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
@@ -133,5 +134,6 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         new_settings = {}
         new_settings["iourc_path"] = self.uiIOURCPathLineEdit.text()
         new_settings["iouyap_path"] = self.uiIouyapPathLineEdit.text()
+        new_settings["license_check"] = self.uiLicensecheckBox.isChecked()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         IOU.instance().setSettings(new_settings)
