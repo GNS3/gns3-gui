@@ -19,13 +19,12 @@ from unittest.mock import patch, MagicMock
 from uuid import uuid4
 
 from gns3.project import Project
-from gns3.http_client import HTTPClient
 
 
 def test_project_post_non_initialized_project_local_server(tmpdir, local_server):
     """
     Test a post on a local servers. The project
-    is not created on the server and should be created automaticaly.
+    is not created on the server and should be created automatically.
     And after make the call
     """
 
@@ -41,7 +40,8 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
         args, kwargs = mock.call_args
         assert args[0] == "POST"
         assert args[1] == "/projects"
-        assert kwargs["body"] == {"temporary": False,
+        assert kwargs["body"] == {"name": None,
+                                  "temporary": False,
                                   "path": str(tmpdir),
                                   "project_id": None}
 
@@ -74,7 +74,8 @@ def test_project_post_non_created_project_local_server(tmpdir, local_server):
         args, kwargs = mock.call_args
         assert args[0] == "POST"
         assert args[1] == "/projects"
-        assert kwargs["body"] == {"temporary": False,
+        assert kwargs["body"] == {"name": None,
+                                  "temporary": False,
                                   "project_id": uuid,
                                   "path": str(tmpdir)}
 
@@ -106,7 +107,7 @@ def test_project_post_non_created_project_remote_server(remote_server):
         args, kwargs = mock.call_args
         assert args[0] == "POST"
         assert args[1] == "/projects"
-        assert kwargs["body"] == {"temporary": False, "project_id": uuid}
+        assert kwargs["body"] == {"name": None, "temporary": False, "project_id": uuid}
 
         args[2]({}, server=remote_server)
 
@@ -331,7 +332,7 @@ def test_project_moveFromTemporaryToPath(tmpdir, local_server):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/projects/{project_id}".format(project_id=project.id())
-        assert kwargs["body"] == {"path": str(tmpdir), "temporary": False}
+        assert kwargs["body"] == {"name": None, "path": str(tmpdir), "temporary": False}
 
     assert project.temporary() is False
     assert project.filesDir() == str(tmpdir)
