@@ -26,7 +26,7 @@ import signal
 import shutil
 import subprocess
 
-from .qt import QtCore, QtNetwork
+from .qt import QtGui, QtCore, QtNetwork
 from .http_client import HTTPClient
 from .local_config import LocalConfig
 from .settings import LOCAL_SERVER_SETTINGS, LOCAL_SERVER_SETTING_TYPES
@@ -254,10 +254,19 @@ class Servers(QtCore.QObject):
                 self._local_server_proccess.send_signal(signal.SIGINT)
             if wait:
                 try:
-                    # wait for the server to stop for maximum 3 seconds
-                    self._local_server_proccess.wait(timeout=3)
+                    # wait for the server to stop for maximum 5 seconds
+                    self._local_server_proccess.wait(timeout=5)
                 except subprocess.TimeoutExpired:
-                    self._local_server_proccess.kill()
+                    from .main_window import MainWindow
+                    main_window = MainWindow.instance()
+                    proceed = QtGui.QMessageBox.question(main_window,
+                                                         "Local server",
+                                                         "The Local server cannot be stopped, would you like to kill it?",
+                                                         QtGui.QMessageBox.Yes,
+                                                         QtGui.QMessageBox.No)
+
+                    if proceed == QtGui.QMessageBox.Yes:
+                        self._local_server_proccess.kill()
 
     def localServer(self):
         """
