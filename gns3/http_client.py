@@ -157,8 +157,12 @@ class HTTPClient(QtCore.QObject):
                 content = response.read()
                 json_data = json.loads(content.decode("utf-8"))
                 version = json_data.get("version")
+                local_server = json_data.get("local", False)
                 if version != __version__:
                     log.debug("Client version {} differs with server version {}".format(__version__, version))
+                    return False
+                if not local_server:
+                    log.debug("Running server is not a GNS3 local server (not started with --local)")
                     return False
                 return True
         except OSError as e:

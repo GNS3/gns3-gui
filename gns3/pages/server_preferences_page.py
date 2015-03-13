@@ -49,11 +49,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
         self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
-        self.uiTestSettingsPushButton.clicked.connect(self._testSettingsSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-
-        # FIXME: temporally hide test button
-        self.uiTestSettingsPushButton.hide()
+        self.uiLocalServerAutoStartCheckBox.stateChanged.connect(self._useLocalServerAutoStartSlot)
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
@@ -69,9 +66,19 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
 
-    def _testSettingsSlot(self):
+    def _useLocalServerAutoStartSlot(self, state):
+        """
+        Slot to enable or not local server settings.
+        """
 
-        QtGui.QMessageBox.critical(self, "Test settings", "Sorry, not yet implemented!")
+        if state:
+            self.uiGeneralSettingsGroupBox.setEnabled(True)
+            self.uiConsolePortRangeGroupBox.setEnabled(True)
+            self.uiUDPPortRangeGroupBox.setEnabled(True)
+        else:
+            self.uiGeneralSettingsGroupBox.setEnabled(False)
+            self.uiConsolePortRangeGroupBox.setEnabled(False)
+            self.uiUDPPortRangeGroupBox.setEnabled(False)
 
     def _restoreDefaultsSlot(self):
         """

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Mon Mar  9 18:13:04 2015
+# Created: Fri Mar 13 15:09:36 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName(_fromUtf8("ServerPreferencesPageWidget"))
-        ServerPreferencesPageWidget.resize(430, 505)
+        ServerPreferencesPageWidget.resize(430, 503)
         self.vboxlayout = QtGui.QVBoxLayout(ServerPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(ServerPreferencesPageWidget)
@@ -35,6 +35,10 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalTabWidget.setObjectName(_fromUtf8("uiLocalTabWidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.uiLocalTabWidget)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.uiLocalServerAutoStartCheckBox = QtGui.QCheckBox(self.uiLocalTabWidget)
+        self.uiLocalServerAutoStartCheckBox.setChecked(True)
+        self.uiLocalServerAutoStartCheckBox.setObjectName(_fromUtf8("uiLocalServerAutoStartCheckBox"))
+        self.verticalLayout_2.addWidget(self.uiLocalServerAutoStartCheckBox)
         self.uiGeneralSettingsGroupBox = QtGui.QGroupBox(self.uiLocalTabWidget)
         self.uiGeneralSettingsGroupBox.setObjectName(_fromUtf8("uiGeneralSettingsGroupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.uiGeneralSettingsGroupBox)
@@ -67,10 +71,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerPortSpinBox.setProperty("value", 8000)
         self.uiLocalServerPortSpinBox.setObjectName(_fromUtf8("uiLocalServerPortSpinBox"))
         self.gridLayout_3.addWidget(self.uiLocalServerPortSpinBox, 5, 0, 1, 1)
-        self.uiLocalServerAutoStartCheckBox = QtGui.QCheckBox(self.uiGeneralSettingsGroupBox)
-        self.uiLocalServerAutoStartCheckBox.setChecked(True)
-        self.uiLocalServerAutoStartCheckBox.setObjectName(_fromUtf8("uiLocalServerAutoStartCheckBox"))
-        self.gridLayout_3.addWidget(self.uiLocalServerAutoStartCheckBox, 6, 0, 1, 1)
         self.uiConsoleConnectionsToAnyIPCheckBox = QtGui.QCheckBox(self.uiGeneralSettingsGroupBox)
         self.uiConsoleConnectionsToAnyIPCheckBox.setObjectName(_fromUtf8("uiConsoleConnectionsToAnyIPCheckBox"))
         self.gridLayout_3.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 7, 0, 1, 1)
@@ -164,9 +164,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         spacerItem5 = QtGui.QSpacerItem(164, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem5)
-        self.uiTestSettingsPushButton = QtGui.QPushButton(ServerPreferencesPageWidget)
-        self.uiTestSettingsPushButton.setObjectName(_fromUtf8("uiTestSettingsPushButton"))
-        self.horizontalLayout_2.addWidget(self.uiTestSettingsPushButton)
         self.uiRestoreDefaultsPushButton = QtGui.QPushButton(ServerPreferencesPageWidget)
         self.uiRestoreDefaultsPushButton.setObjectName(_fromUtf8("uiRestoreDefaultsPushButton"))
         self.horizontalLayout_2.addWidget(self.uiRestoreDefaultsPushButton)
@@ -181,12 +178,12 @@ class Ui_ServerPreferencesPageWidget(object):
 
     def retranslateUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "Server", None))
+        self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable local server", None))
         self.uiGeneralSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "General settings", None))
         self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:", None))
         self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "&Browse...", None))
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:", None))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
-        self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Automatically start the server on startup", None))
         self.uiConsoleConnectionsToAnyIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Allow console connections to any local IP address", None))
         self.uiConsolePortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Console port range", None))
         self.uiConsolePortRangeLabel.setText(_translate("ServerPreferencesPageWidget", "to", None))
@@ -201,6 +198,5 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiAddRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Add", None))
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers", None))
-        self.uiTestSettingsPushButton.setText(_translate("ServerPreferencesPageWidget", "Test settings", None))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults", None))
 

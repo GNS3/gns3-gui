@@ -17,7 +17,6 @@
 
 import os
 import functools
-import shutil
 from .qt import QtCore
 
 from gns3.servers import Servers

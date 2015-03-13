@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>505</height>
+    <height>503</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,16 @@
        <string>Local server</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
+         <property name="text">
+          <string>Enable local server</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QGroupBox" name="uiGeneralSettingsGroupBox">
          <property name="title">
@@ -81,16 +91,6 @@
             </property>
             <property name="value">
              <number>8000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
-            <property name="text">
-             <string>Automatically start the server on startup</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -231,6 +231,7 @@
       <zorder>uiConsolePortRangeGroupBox</zorder>
       <zorder>uiUDPPortRangeGroupBox</zorder>
       <zorder>uiGeneralSettingsGroupBox</zorder>
+      <zorder>uiLocalServerAutoStartCheckBox</zorder>
      </widget>
      <widget class="QWidget" name="uiRemoteTabWidget">
       <attribute name="title">
@@ -357,13 +358,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="uiTestSettingsPushButton">
-       <property name="text">
-        <string>Test settings</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
