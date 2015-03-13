@@ -177,6 +177,7 @@ else:
 GENERAL_SETTINGS = {
     "style": DEFAULT_STYLE,
     "auto_launch_project_dialog": True,
+    "auto_screenshot": True,
     "check_for_update": True,
     "last_check_for_update": 0,
     "slow_device_start_all": 0,
@@ -194,6 +195,7 @@ GENERAL_SETTINGS = {
 GENERAL_SETTING_TYPES = {
     "style": str,
     "auto_launch_project_dialog": bool,
+    "auto_screenshot": bool,
     "check_for_update": bool,
     "last_check_for_update": int,
     "slow_device_start_all": int,

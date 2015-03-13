@@ -523,6 +523,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="uiAutoScreenshotCheckBox">
+         <property name="text">
+          <string>Automatically take a screenshot when saving a project</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="uiCheckForUpdateCheckBox">
          <property name="text">
           <string>Automatically check for update</string>

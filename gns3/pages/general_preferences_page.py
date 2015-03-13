@@ -207,6 +207,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
+        self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
         self.uiSlowStartAllSpinBox.setValue(settings["slow_device_start_all"])
@@ -273,6 +274,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
         new_settings = {}
         new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()
+        new_settings["auto_screenshot"] = self.uiAutoScreenshotCheckBox.isChecked()
         new_settings["style"] = self.uiStyleComboBox.currentText()
         new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()
         new_settings["link_manual_mode"] = self.uiLinkManualModeCheckBox.isChecked()

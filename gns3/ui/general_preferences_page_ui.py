@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Mon Mar  9 18:12:02 2015
+# Created: Fri Mar 13 15:27:54 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -263,6 +263,10 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLaunchNewProjectDialogCheckBox.setChecked(True)
         self.uiLaunchNewProjectDialogCheckBox.setObjectName(_fromUtf8("uiLaunchNewProjectDialogCheckBox"))
         self.verticalLayout_2.addWidget(self.uiLaunchNewProjectDialogCheckBox)
+        self.uiAutoScreenshotCheckBox = QtGui.QCheckBox(self.tab)
+        self.uiAutoScreenshotCheckBox.setChecked(True)
+        self.uiAutoScreenshotCheckBox.setObjectName(_fromUtf8("uiAutoScreenshotCheckBox"))
+        self.verticalLayout_2.addWidget(self.uiAutoScreenshotCheckBox)
         self.uiCheckForUpdateCheckBox = QtGui.QCheckBox(self.tab)
         self.uiCheckForUpdateCheckBox.setChecked(True)
         self.uiCheckForUpdateCheckBox.setObjectName(_fromUtf8("uiCheckForUpdateCheckBox"))
@@ -342,6 +346,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneWidthSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " pixels", None))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view", None))
         self.uiLaunchNewProjectDialogCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Launch the new project dialog on startup", None))
+        self.uiAutoScreenshotCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically take a screenshot when saving a project", None))
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update", None))
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically send crash reports", None))
         self.uiSlowStartAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each device start when starting all devices:", None))
