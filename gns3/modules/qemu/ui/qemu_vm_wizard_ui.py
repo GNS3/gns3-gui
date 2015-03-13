@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Wed Oct 22 16:46:37 2014
+# Created: Thu Mar 12 17:05:41 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_QemuVMWizard(object):
-
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName(_fromUtf8("QemuVMWizard"))
         QemuVMWizard.resize(514, 366)
@@ -70,23 +67,33 @@ class Ui_QemuVMWizard(object):
         self.gridLayout_8.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.gridLayout_4.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
         QemuVMWizard.addPage(self.uiServerWizardPage)
-        self.uiNameTypeWizardPage = QtGui.QWizardPage()
-        self.uiNameTypeWizardPage.setObjectName(_fromUtf8("uiNameTypeWizardPage"))
-        self.gridLayout = QtGui.QGridLayout(self.uiNameTypeWizardPage)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.uiTypeLabel = QtGui.QLabel(self.uiNameTypeWizardPage)
+        self.uiTypeWizardPage = QtGui.QWizardPage()
+        self.uiTypeWizardPage.setObjectName(_fromUtf8("uiTypeWizardPage"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.uiTypeWizardPage)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.uiTypeLabel = QtGui.QLabel(self.uiTypeWizardPage)
         self.uiTypeLabel.setObjectName(_fromUtf8("uiTypeLabel"))
-        self.gridLayout.addWidget(self.uiTypeLabel, 1, 0, 1, 1)
-        self.uiNameLineEdit = QtGui.QLineEdit(self.uiNameTypeWizardPage)
+        self.horizontalLayout_2.addWidget(self.uiTypeLabel)
+        self.uiTypeComboBox = QtGui.QComboBox(self.uiTypeWizardPage)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiTypeComboBox.sizePolicy().hasHeightForWidth())
+        self.uiTypeComboBox.setSizePolicy(sizePolicy)
+        self.uiTypeComboBox.setObjectName(_fromUtf8("uiTypeComboBox"))
+        self.horizontalLayout_2.addWidget(self.uiTypeComboBox)
+        QemuVMWizard.addPage(self.uiTypeWizardPage)
+        self.uiNameWizardPage = QtGui.QWizardPage()
+        self.uiNameWizardPage.setObjectName(_fromUtf8("uiNameWizardPage"))
+        self.gridLayout = QtGui.QGridLayout(self.uiNameWizardPage)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.uiNameLineEdit = QtGui.QLineEdit(self.uiNameWizardPage)
         self.uiNameLineEdit.setObjectName(_fromUtf8("uiNameLineEdit"))
         self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
-        self.uiTypeComboBox = QtGui.QComboBox(self.uiNameTypeWizardPage)
-        self.uiTypeComboBox.setObjectName(_fromUtf8("uiTypeComboBox"))
-        self.gridLayout.addWidget(self.uiTypeComboBox, 1, 1, 1, 1)
-        self.uiNameLabel = QtGui.QLabel(self.uiNameTypeWizardPage)
+        self.uiNameLabel = QtGui.QLabel(self.uiNameWizardPage)
         self.uiNameLabel.setObjectName(_fromUtf8("uiNameLabel"))
         self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
-        QemuVMWizard.addPage(self.uiNameTypeWizardPage)
+        QemuVMWizard.addPage(self.uiNameWizardPage)
         self.uiBinaryMemoryWizardPage = QtGui.QWizardPage()
         self.uiBinaryMemoryWizardPage.setObjectName(_fromUtf8("uiBinaryMemoryWizardPage"))
         self.gridLayout_2 = QtGui.QGridLayout(self.uiBinaryMemoryWizardPage)
@@ -181,8 +188,7 @@ class Ui_QemuVMWizard(object):
 
         self.retranslateUi(QemuVMWizard)
         QtCore.QMetaObject.connectSlotsByName(QemuVMWizard)
-        QemuVMWizard.setTabOrder(self.uiNameLineEdit, self.uiTypeComboBox)
-        QemuVMWizard.setTabOrder(self.uiTypeComboBox, self.uiQemuListComboBox)
+        QemuVMWizard.setTabOrder(self.uiNameLineEdit, self.uiQemuListComboBox)
         QemuVMWizard.setTabOrder(self.uiQemuListComboBox, self.uiRamSpinBox)
         QemuVMWizard.setTabOrder(self.uiRamSpinBox, self.uiHdaDiskImageLineEdit)
         QemuVMWizard.setTabOrder(self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton)
@@ -201,9 +207,11 @@ class Ui_QemuVMWizard(object):
         self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Local", None))
         self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote servers", None))
         self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on server:", None))
-        self.uiNameTypeWizardPage.setTitle(_translate("QemuVMWizard", "Name and type", None))
-        self.uiNameTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for the new QEMU virtual machine and select the type of device.", None))
+        self.uiTypeWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM type", None))
+        self.uiTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a type of QEMU VM to help with pre-configuration.", None))
         self.uiTypeLabel.setText(_translate("QemuVMWizard", "Type:", None))
+        self.uiNameWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM name", None))
+        self.uiNameWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for your new QEMU virtual machine.", None))
         self.uiNameLabel.setText(_translate("QemuVMWizard", "Name:", None))
         self.uiBinaryMemoryWizardPage.setTitle(_translate("QemuVMWizard", "QEMU binary and memory", None))
         self.uiBinaryMemoryWizardPage.setSubTitle(_translate("QemuVMWizard", "Please check the Qemu binary is correctly set and the virtual machine has enough memory to work.", None))
@@ -218,10 +226,11 @@ class Ui_QemuVMWizard(object):
         self.uiASAWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a initrd and a kernel image.", None))
         self.uiLinuxBootGroupBox.setTitle(_translate("QemuVMWizard", "Linux boot specific settings", None))
         self.uiInitrdLabel.setText(_translate("QemuVMWizard", "Initial RAM disk (initrd):", None))
-        self.uiKernelImageLabel.setText(_translate("QemuVMWizard", "Kernel image:", None))
+        self.uiKernelImageLabel.setText(_translate("QemuVMWizard", "Kernel image (vmlinuz):", None))
         self.uiInitrdToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
         self.uiKernelImageToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
         self.uiDiskImageHdbWizardPage.setTitle(_translate("QemuVMWizard", "Additional disk image", None))
         self.uiDiskImageHdbWizardPage.setSubTitle(_translate("QemuVMWizard", "Please add an additional disk image for IDS.", None))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):", None))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse...", None))
+

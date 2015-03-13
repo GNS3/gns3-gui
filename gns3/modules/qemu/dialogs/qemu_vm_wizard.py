@@ -62,7 +62,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiTypeComboBox.addItems(["Default", "IOSv", "IOSv-L2", "ASA 8.4(2)", "IDS"])
 
         # Mandatory fields
-        self.uiNameTypeWizardPage.registerField("vm_name*", self.uiNameLineEdit)
+        self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
         self.uiDiskWizardPage.registerField("hda_disk_image*", self.uiHdaDiskImageLineEdit)
         self.uiDiskImageHdbWizardPage.registerField("hdb_disk_image*", self.uiHdbDiskImageLineEdit)
         self.uiASAWizardPage.registerField("initrd*", self.uiInitrdLineEdit)
@@ -176,7 +176,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                     server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
                 self._server = server
 
-        if self.currentPage() == self.uiNameTypeWizardPage:
+        if self.currentPage() == self.uiNameWizardPage:
             name = self.uiNameLineEdit.text()
             for qemu_vm in self._qemu_vms.values():
                 if qemu_vm["name"] == name:
@@ -328,7 +328,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         """
 
         current_id = self.currentId()
-        if self.page(current_id) == self.uiNameTypeWizardPage:
+        if self.page(current_id) == self.uiTypeWizardPage:
 
             if self.uiTypeComboBox.currentText().startswith("IOSv"):
                 self.uiRamSpinBox.setValue(384)

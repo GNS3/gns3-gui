@@ -101,26 +101,43 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiNameTypeWizardPage">
+  <widget class="QWizardPage" name="uiTypeWizardPage">
    <property name="title">
-    <string>Name and type</string>
+    <string>QEMU VM type</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a descriptive name for the new QEMU virtual machine and select the type of device.</string>
+    <string>Please choose a type of QEMU VM to help with pre-configuration.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
      <widget class="QLabel" name="uiTypeLabel">
       <property name="text">
        <string>Type:</string>
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QComboBox" name="uiTypeComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiNameWizardPage">
+   <property name="title">
+    <string>QEMU VM name</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a descriptive name for your new QEMU virtual machine.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="1">
      <widget class="QLineEdit" name="uiNameLineEdit"/>
-    </item>
-    <item row="1" column="1">
-     <widget class="QComboBox" name="uiTypeComboBox"/>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="uiNameLabel">
@@ -242,7 +259,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="uiKernelImageLabel">
          <property name="text">
-          <string>Kernel image:</string>
+          <string>Kernel image (vmlinuz):</string>
          </property>
         </widget>
        </item>
@@ -311,7 +328,6 @@
  </widget>
  <tabstops>
   <tabstop>uiNameLineEdit</tabstop>
-  <tabstop>uiTypeComboBox</tabstop>
   <tabstop>uiQemuListComboBox</tabstop>
   <tabstop>uiRamSpinBox</tabstop>
   <tabstop>uiHdaDiskImageLineEdit</tabstop>
