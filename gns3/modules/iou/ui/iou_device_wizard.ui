@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New IOU device</string>
+   <string>New IOU device template</string>
   </property>
   <property name="modal">
    <bool>true</bool>

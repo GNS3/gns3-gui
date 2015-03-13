@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New IOS router</string>
+   <string>New IOS router template</string>
   </property>
   <property name="modal">
    <bool>true</bool>

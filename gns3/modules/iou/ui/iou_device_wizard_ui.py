@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created: Wed Oct 22 16:46:37 2014
+# Created: Fri Mar 13 11:09:58 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_IOUDeviceWizard(object):
-
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName(_fromUtf8("IOUDeviceWizard"))
         IOUDeviceWizard.resize(514, 366)
@@ -110,7 +107,7 @@ class Ui_IOUDeviceWizard(object):
         IOUDeviceWizard.setTabOrder(self.uiNameLineEdit, self.uiTypeComboBox)
 
     def retranslateUi(self, IOUDeviceWizard):
-        IOUDeviceWizard.setWindowTitle(_translate("IOUDeviceWizard", "New IOU device", None))
+        IOUDeviceWizard.setWindowTitle(_translate("IOUDeviceWizard", "New IOU device template", None))
         self.uiServerWizardPage.setTitle(_translate("IOUDeviceWizard", "Server", None))
         self.uiServerWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a server type to run your new IOU device.", None))
         self.uiServerTypeGroupBox.setTitle(_translate("IOUDeviceWizard", "Server type", None))
@@ -126,3 +123,4 @@ class Ui_IOUDeviceWizard(object):
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:", None))
         self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse...", None))
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:", None))
+

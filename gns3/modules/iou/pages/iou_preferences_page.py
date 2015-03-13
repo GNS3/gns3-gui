@@ -100,11 +100,13 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
             self.uiIOURCPathToolButton.setEnabled(True)
             self.uiIouyapPathLineEdit.setEnabled(True)
             self.uiIouyapPathToolButton.setEnabled(True)
+            self.uiLicensecheckBox.setEnabled(True)
         else:
             self.uiIOURCPathLineEdit.setEnabled(False)
             self.uiIOURCPathToolButton.setEnabled(False)
             self.uiIouyapPathLineEdit.setEnabled(False)
             self.uiIouyapPathToolButton.setEnabled(False)
+            self.uiLicensecheckBox.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """

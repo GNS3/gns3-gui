@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New QEMU VM</string>
+   <string>New QEMU VM template</string>
   </property>
   <property name="modal">
    <bool>true</bool>

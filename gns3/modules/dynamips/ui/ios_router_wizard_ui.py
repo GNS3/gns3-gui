@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Wed Dec 31 11:23:11 2014
+# Created: Fri Mar 13 11:09:58 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_IOSRouterWizard(object):
-
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName(_fromUtf8("IOSRouterWizard"))
         IOSRouterWizard.resize(517, 398)
@@ -286,7 +283,7 @@ class Ui_IOSRouterWizard(object):
         IOSRouterWizard.setTabOrder(self.uiNameLineEdit, self.uiPlatformComboBox)
 
     def retranslateUi(self, IOSRouterWizard):
-        IOSRouterWizard.setWindowTitle(_translate("IOSRouterWizard", "New IOS router", None))
+        IOSRouterWizard.setWindowTitle(_translate("IOSRouterWizard", "New IOS router template", None))
         self.uiServerWizardPage.setTitle(_translate("IOSRouterWizard", "Server", None))
         self.uiServerWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a server type to run your new IOS router.", None))
         self.uiServerTypeGroupBox.setTitle(_translate("IOSRouterWizard", "Server type", None))
@@ -330,3 +327,4 @@ class Ui_IOSRouterWizard(object):
         self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core.", None))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:", None))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder", None))
+
