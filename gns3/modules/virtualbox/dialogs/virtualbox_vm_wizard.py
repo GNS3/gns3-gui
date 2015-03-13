@@ -96,8 +96,8 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
                 existing_vms.append(existing_vm["vmname"])
 
             for vm in result:
-                if vm not in existing_vms:
-                    self.uiVMListComboBox.addItem(vm)
+                if vm["vmname"] not in existing_vms:
+                    self.uiVMListComboBox.addItem(vm["vmname"], vm)
 
     def validateCurrentPage(self):
         """
@@ -137,11 +137,14 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         else:
             server = self.uiRemoteServersComboBox.currentText()
 
-        vmname = self.uiVMListComboBox.itemText(self.uiVMListComboBox.currentIndex())
+        index = self.uiVMListComboBox.currentIndex()
+        vmname = self.uiVMListComboBox.itemText(index)
+        vminfo = self.uiVMListComboBox.itemData(index)
 
         settings = {
             "vmname": vmname,
             "server": server,
+            "ram": vminfo["ram"],
             "linked_base": self.uiBaseVMCheckBox.isChecked()
         }
 

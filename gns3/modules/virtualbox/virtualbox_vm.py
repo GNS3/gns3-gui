@@ -55,6 +55,7 @@ class VirtualBoxVM(VM):
                           "adapters": VBOX_VM_SETTINGS["adapters"],
                           "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
                           "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
+                          "ram": VBOX_VM_SETTINGS["ram"],
                           "headless": VBOX_VM_SETTINGS["headless"],
                           "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
 
@@ -323,12 +324,14 @@ class VirtualBoxVM(VM):
   Local node ID is {id}
   Server's VirtualBox VM ID is {vm_id}
   VirtualBox name is "{vmname}"
+  RAM is {ram} MB
   console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
            vmname=self._settings["vmname"],
+           ram=self._settings["ram"],
            console=self._settings["console"])
 
         port_info = ""

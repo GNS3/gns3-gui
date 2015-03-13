@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created: Fri Feb  6 16:34:54 2015
+# Created: Fri Mar 13 16:56:48 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,16 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_virtualBoxVMConfigPageWidget(object):
-
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName(_fromUtf8("virtualBoxVMConfigPageWidget"))
         virtualBoxVMConfigPageWidget.resize(509, 346)
@@ -55,26 +52,38 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiVMListComboBox.setSizePolicy(sizePolicy)
         self.uiVMListComboBox.setObjectName(_fromUtf8("uiVMListComboBox"))
         self.gridLayout.addWidget(self.uiVMListComboBox, 1, 1, 1, 1)
+        self.uiVMRamLabel = QtGui.QLabel(self.tab)
+        self.uiVMRamLabel.setObjectName(_fromUtf8("uiVMRamLabel"))
+        self.gridLayout.addWidget(self.uiVMRamLabel, 2, 0, 1, 1)
+        self.uiVMRamSpinBox = QtGui.QSpinBox(self.tab)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiVMRamSpinBox.sizePolicy().hasHeightForWidth())
+        self.uiVMRamSpinBox.setSizePolicy(sizePolicy)
+        self.uiVMRamSpinBox.setMaximum(65535)
+        self.uiVMRamSpinBox.setObjectName(_fromUtf8("uiVMRamSpinBox"))
+        self.gridLayout.addWidget(self.uiVMRamSpinBox, 2, 1, 1, 1)
         self.uiConsolePortLabel = QtGui.QLabel(self.tab)
         self.uiConsolePortLabel.setObjectName(_fromUtf8("uiConsolePortLabel"))
-        self.gridLayout.addWidget(self.uiConsolePortLabel, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiConsolePortLabel, 3, 0, 1, 1)
         self.uiConsolePortSpinBox = QtGui.QSpinBox(self.tab)
         self.uiConsolePortSpinBox.setMaximum(65535)
         self.uiConsolePortSpinBox.setObjectName(_fromUtf8("uiConsolePortSpinBox"))
-        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 3, 1, 1, 1)
         self.uiEnableConsoleCheckBox = QtGui.QCheckBox(self.tab)
         self.uiEnableConsoleCheckBox.setObjectName(_fromUtf8("uiEnableConsoleCheckBox"))
-        self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 4, 0, 1, 2)
         self.uiHeadlessModeCheckBox = QtGui.QCheckBox(self.tab)
         self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName(_fromUtf8("uiHeadlessModeCheckBox"))
-        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 4, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 5, 0, 1, 2)
         self.uiBaseVMCheckBox = QtGui.QCheckBox(self.tab)
         self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName(_fromUtf8("uiBaseVMCheckBox"))
-        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 5, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 6, 0, 1, 2)
         spacerItem = QtGui.QSpacerItem(20, 138, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 6, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem, 7, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
@@ -115,6 +124,8 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         virtualBoxVMConfigPageWidget.setWindowTitle(_translate("virtualBoxVMConfigPageWidget", "VirtualBox VM configuration", None))
         self.uiNameLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Name:", None))
         self.uiVMListLabel.setText(_translate("virtualBoxVMConfigPageWidget", "VM name:", None))
+        self.uiVMRamLabel.setText(_translate("virtualBoxVMConfigPageWidget", "RAM:", None))
+        self.uiVMRamSpinBox.setSuffix(_translate("virtualBoxVMConfigPageWidget", " MB", None))
         self.uiConsolePortLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Console port:", None))
         self.uiEnableConsoleCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Enable remote console", None))
         self.uiHeadlessModeCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Start VM in headless mode", None))
@@ -124,3 +135,4 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:", None))
         self.uiUseAnyAdapterCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Allow GNS3 to use any configured VirtualBox adapter", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network", None))
+

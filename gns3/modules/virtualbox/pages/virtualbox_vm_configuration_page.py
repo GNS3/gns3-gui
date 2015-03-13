@@ -90,8 +90,10 @@ class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
+        self.uiVMRamSpinBox.setValue(settings["ram"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
+
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -126,6 +128,7 @@ class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
             del settings["console"]
             del settings["enable_remote_console"]
 
+        settings["ram"] = self.uiVMRamSpinBox.value()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()

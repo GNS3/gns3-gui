@@ -87,6 +87,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtGui.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
+        QtGui.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
         QtGui.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
         QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
