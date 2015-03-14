@@ -68,6 +68,7 @@ class CrashReport:
                 report = self._client.captureException((exception, value, tb))
             except Exception as e:
                 log.error("Can't send crash report to Sentry: {}".format(e))
+                return
             log.info("Crash report sent with event ID: {}".format(self._client.get_ident(report)))
 
     @classmethod
