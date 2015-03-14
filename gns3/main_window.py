@@ -1062,7 +1062,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             event.accept()
         elif self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
-            self._project.close()
+            self._project.close(local_server_shutdown=True)
             if self._project.closed():
                 event.accept()
             else:

@@ -238,6 +238,17 @@ class Servers(QtCore.QObject):
         log.info("Local server process has started (PID={})".format(self._local_server_proccess.pid))
         return True
 
+    def localServerIsRunning(self):
+        """
+        Returns either the local server is running.
+
+        :returns: boolean
+        """
+
+        if self._local_server_proccess and self._local_server_proccess.poll() is None:
+            return True
+        return False
+
     def stopLocalServer(self, wait=False):
         """
         Stops the local server.
@@ -245,28 +256,33 @@ class Servers(QtCore.QObject):
         :param wait: wait for the server to stop
         """
 
-        if self._local_server_proccess and self._local_server_proccess.poll() is None:
+        if self.localServerIsRunning():
             log.info("Stopping local server (PID={})".format(self._local_server_proccess.pid))
             # local server is running, let's stop it
-            if sys.platform.startswith("win"):
-                self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
-            else:
-                self._local_server_proccess.send_signal(signal.SIGINT)
             if wait:
                 try:
-                    # wait for the server to stop for maximum 5 seconds
-                    self._local_server_proccess.wait(timeout=5)
+                    # wait for the server to stop for maximum 2 seconds
+                    self._local_server_proccess.wait(timeout=2)
                 except subprocess.TimeoutExpired:
-                    from .main_window import MainWindow
-                    main_window = MainWindow.instance()
-                    proceed = QtGui.QMessageBox.question(main_window,
-                                                         "Local server",
-                                                         "The Local server cannot be stopped, would you like to kill it?",
-                                                         QtGui.QMessageBox.Yes,
-                                                         QtGui.QMessageBox.No)
+                    # the local server couldn't be stopped with the normal procedure
+                    if sys.platform.startswith("win"):
+                        self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
+                    else:
+                        self._local_server_proccess.send_signal(signal.SIGINT)
+                    try:
+                        # wait for the server to stop for maximum 2 seconds
+                        self._local_server_proccess.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        from .main_window import MainWindow
+                        main_window = MainWindow.instance()
+                        proceed = QtGui.QMessageBox.question(main_window,
+                                                             "Local server",
+                                                             "The Local server cannot be stopped, would you like to kill it?",
+                                                             QtGui.QMessageBox.Yes,
+                                                             QtGui.QMessageBox.No)
 
-                    if proceed == QtGui.QMessageBox.Yes:
-                        self._local_server_proccess.kill()
+                        if proceed == QtGui.QMessageBox.Yes:
+                            self._local_server_proccess.kill()
 
     def localServer(self):
         """

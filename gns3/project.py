@@ -264,19 +264,26 @@ class Project(QtCore.QObject):
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         server.createHTTPQuery(method, path, callback, body=body, context=context)
 
-    def close(self):
+    def close(self, local_server_shutdown=False):
         """Close project"""
 
         if self._id:
             self.project_about_to_close_signal.emit()
 
             for server in list(self._created_servers):
-                server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={})
+                if server.isLocal() and server.connected() and local_server_shutdown:
+                    server.post("/server/shutdown", self._projectClosedCallback)
+                else:
+                    server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={})
         else:
-            # The project is not initialized when can close it
-            self._closed = True
-            self.project_about_to_close_signal.emit()
-            self.project_closed_signal.emit()
+            if self._servers.localServerIsRunning() and local_server_shutdown:
+                local_server = self._servers.localServer()
+                local_server.post("/server/shutdown", self._projectClosedCallback)
+            else:
+                # The project is not initialized when we close it
+                self._closed = True
+                self.project_about_to_close_signal.emit()
+                self.project_closed_signal.emit()
 
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
@@ -286,7 +293,8 @@ class Project(QtCore.QObject):
             if self._id:
                 log.info("Project {} closed".format(self._id))
 
-        self._created_servers.remove(server)
+        if server in self._created_servers:
+            self._created_servers.remove(server)
         if len(self._created_servers) == 0:
             self._closed = True
             self.project_closed_signal.emit()
