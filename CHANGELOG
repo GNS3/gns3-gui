@@ -1,27 +1,42 @@
 # Change Log
 
+## 1.3.0beta2 13/03/2015
+
+* Alternative local server shutdown (faster GUI closing on Windows).
+* Grey out local server preferences if the local server is not activated.
+* Adds "template" to the Wizard titles.
+* Option to automatically take or not a screenshot when saving a project.
+* Support RAM setting for VirtualBox VMs.
+* Fixed duplicate VM template entries for Qemu, VirtualBox and IOU.
+
 ## 1.3.0beta1 11/03/2015
 
+* New title for VMs/Devices/routers preference pages.
+* Deactivate auto idle-pc in contextual menu while we think about a better implementation.
 * Optional IOU license key check.
+* Relative picture paths are saved in projects.
 * Relative path support of IOU, IOS and Qemu images.
-* Do not give attachment warning for generic attachments in VirtualBox.
+* More checks when automatically starting the local server and find an alternative port if needed.
 * Support for HDC and HDD disk images in Qemu.
-* Fixed bug when starting a packet capture in VirtualBox with the project path containing spaces.
-* Renames server.conf and server.ini to gns3_server.conf and gns3_server.ini respectively.
-* Use TCP instead of Telnet to communicate with Qemu monitor.
-* Have the server look in the right place for relative image paths.
-* Fixed bugs when checking if this is a local project.
-* Concert old projects on remote servers.
-* Properly restore configs for Dynamips routers.
-* Fixed rename bug for linked clones in VirtualBox.
-* Makes absolute path checks work on Windows.
-* Upload IOURC file via the web interface
-* Upload interface allows users to choose an image type.
+* Fixed base IOS and IOU base configs.
+* Fixed GNS3 console issues.
+* Renamed server.conf and server.ini to gns3_server.conf and gns3_server.ini respectively.
+* Remove remote servers list from module preferences + some other prefences re-factoring.
+* Automatically convert old projects on remote servers.
+* Bump the progress dialog minimum duration before display to 1000ms.
+* Fixed port listing bug with Cloud and Host nodes.
 * Fixed Qemu networking.
-* Fixed suspend and resume for Qemu VMs.
-* Fixed crash when you start capture on a non running IOU.
-* Fixed Telnet server initialization issue in VirtualBox.
-* Disconnect network cable if adapter is not attached in VirtualBox vNIC.
+* Give a warning when a object is move the background layer.
+* Option to draw a rectangle when a node is selected.
+* New project icon (little yellow indicator).
+* Default name for screenshot file is "screenshot".
+* Alignment options (horizontal & vertical).
+* Fixed import / export of the preferences file.
+* Fixed pkg_ressource bug.
+* Brought back Qemu preferences page.
+* Include SSL cacert file with GNS3 Windows exe and Mac OS App to send crash report using HTTPS.
+* Fixed adapter bug with VirtualBox.
+* Fixed various errors when a project was not initialized.
 
 ## 1.3.0alpha1 03/03/2015
 
