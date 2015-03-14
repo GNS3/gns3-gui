@@ -74,7 +74,6 @@ class Router(VM):
                           "exec_area": 64,
                           "disk0": 0,
                           "disk1": 0,
-                          "confreg": "0x2102",
                           "console": None,
                           "aux": None,
                           "mac_addr": None,

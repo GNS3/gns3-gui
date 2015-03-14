@@ -346,9 +346,6 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         # load the system ID (processor board ID in IOS) setting
         self.uiSystemIdLineEdit.setText(settings["system_id"])
 
-        # load the configuration register setting
-        self.uiConfregLineEdit.setText(settings["confreg"])
-
         if "exec_area" in settings:
             # load the exec area setting
             self.uiExecAreaSpinBox.setValue(settings["exec_area"])
@@ -534,10 +531,6 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
 
         # save the system ID (processor board ID in IOS) setting
         settings["system_id"] = self.uiSystemIdLineEdit.text()
-
-        # save the configuration register setting
-        # TODO: check the format? 0xnnnn
-        settings["confreg"] = self.uiConfregLineEdit.text()
 
         # save the exec area setting
         settings["exec_area"] = self.uiExecAreaSpinBox.value()

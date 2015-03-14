@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Wed Dec 24 17:35:25 2014
+# Created: Sat Mar 14 16:29:27 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,19 +17,16 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-
 class Ui_iosRouterConfigPageWidget(object):
-
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName(_fromUtf8("iosRouterConfigPageWidget"))
-        iosRouterConfigPageWidget.resize(435, 510)
+        iosRouterConfigPageWidget.resize(449, 491)
         self.vboxlayout = QtGui.QVBoxLayout(iosRouterConfigPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(iosRouterConfigPageWidget)
@@ -364,15 +361,12 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSystemIdLineEdit = QtGui.QLineEdit(self.uiSystemGroupBox)
         self.uiSystemIdLineEdit.setObjectName(_fromUtf8("uiSystemIdLineEdit"))
         self.gridLayout_6.addWidget(self.uiSystemIdLineEdit, 0, 1, 1, 1)
-        self.uiConfregLabel = QtGui.QLabel(self.uiSystemGroupBox)
-        self.uiConfregLabel.setObjectName(_fromUtf8("uiConfregLabel"))
-        self.gridLayout_6.addWidget(self.uiConfregLabel, 1, 0, 1, 1)
         self.label = QtGui.QLabel(self.uiSystemGroupBox)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_6.addWidget(self.label, 0, 0, 1, 1)
         self.uiBaseMacLabel = QtGui.QLabel(self.uiSystemGroupBox)
         self.uiBaseMacLabel.setObjectName(_fromUtf8("uiBaseMacLabel"))
-        self.gridLayout_6.addWidget(self.uiBaseMacLabel, 2, 0, 1, 1)
+        self.gridLayout_6.addWidget(self.uiBaseMacLabel, 1, 0, 1, 1)
         self.uiBaseMACLineEdit = QtGui.QLineEdit(self.uiSystemGroupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -381,15 +375,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiBaseMACLineEdit.setSizePolicy(sizePolicy)
         self.uiBaseMACLineEdit.setText(_fromUtf8(""))
         self.uiBaseMACLineEdit.setObjectName(_fromUtf8("uiBaseMACLineEdit"))
-        self.gridLayout_6.addWidget(self.uiBaseMACLineEdit, 2, 1, 1, 1)
-        self.uiConfregLineEdit = QtGui.QLineEdit(self.uiSystemGroupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiConfregLineEdit.sizePolicy().hasHeightForWidth())
-        self.uiConfregLineEdit.setSizePolicy(sizePolicy)
-        self.uiConfregLineEdit.setObjectName(_fromUtf8("uiConfregLineEdit"))
-        self.gridLayout_6.addWidget(self.uiConfregLineEdit, 1, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.uiBaseMACLineEdit, 1, 1, 1, 1)
         self.verticalLayout_4.addWidget(self.uiSystemGroupBox)
         self.uiOptimizationsGroupBox = QtGui.QGroupBox(self.uiAdvancedPageWidget)
         self.uiOptimizationsGroupBox.setObjectName(_fromUtf8("uiOptimizationsGroupBox"))
@@ -560,8 +546,7 @@ class Ui_iosRouterConfigPageWidget(object):
         iosRouterConfigPageWidget.setTabOrder(self.uiSlot6comboBox, self.uiWic0comboBox)
         iosRouterConfigPageWidget.setTabOrder(self.uiWic0comboBox, self.uiWic1comboBox)
         iosRouterConfigPageWidget.setTabOrder(self.uiWic1comboBox, self.uiWic2comboBox)
-        iosRouterConfigPageWidget.setTabOrder(self.uiWic2comboBox, self.uiConfregLineEdit)
-        iosRouterConfigPageWidget.setTabOrder(self.uiConfregLineEdit, self.uiBaseMACLineEdit)
+        iosRouterConfigPageWidget.setTabOrder(self.uiWic2comboBox, self.uiBaseMACLineEdit)
         iosRouterConfigPageWidget.setTabOrder(self.uiBaseMACLineEdit, self.uiExecAreaSpinBox)
 
     def retranslateUi(self, iosRouterConfigPageWidget):
@@ -607,10 +592,8 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiWic2Label.setText(_translate("iosRouterConfigPageWidget", "wic 2:", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiSlotsPageWidget), _translate("iosRouterConfigPageWidget", "Slots", None))
         self.uiSystemGroupBox.setTitle(_translate("iosRouterConfigPageWidget", "System", None))
-        self.uiConfregLabel.setText(_translate("iosRouterConfigPageWidget", "Confreg:", None))
         self.label.setText(_translate("iosRouterConfigPageWidget", "System ID:", None))
         self.uiBaseMacLabel.setText(_translate("iosRouterConfigPageWidget", "Base MAC:", None))
-        self.uiConfregLineEdit.setText(_translate("iosRouterConfigPageWidget", "0x2102", None))
         self.uiOptimizationsGroupBox.setTitle(_translate("iosRouterConfigPageWidget", "Optimisations", None))
         self.uiExecAreaLabel.setText(_translate("iosRouterConfigPageWidget", "Exec area:", None))
         self.uiExecAreaSpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " MiB", None))
@@ -638,3 +621,4 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSensor4Label.setText(_translate("iosRouterConfigPageWidget", "NPE outlet:", None))
         self.uiSensor4SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " C", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiEnvironmentPageWidget), _translate("iosRouterConfigPageWidget", "Environment", None))
+
