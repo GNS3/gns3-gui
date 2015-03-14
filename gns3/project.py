@@ -271,7 +271,7 @@ class Project(QtCore.QObject):
             self.project_about_to_close_signal.emit()
 
             for server in list(self._created_servers):
-                if server.isLocal() and server.connected() and local_server_shutdown:
+                if server.isLocal() and server.connected() and self._servers.localServerIsRunning() and local_server_shutdown:
                     server.post("/server/shutdown", self._projectClosedCallback)
                 else:
                     server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={})
