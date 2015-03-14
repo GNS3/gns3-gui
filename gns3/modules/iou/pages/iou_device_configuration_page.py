@@ -183,8 +183,6 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
                     settings["initial_config"] = initial_config
                 else:
                     QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
-            else:
-                settings["initial_config"] = ""
 
         # save advanced settings
         settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()
