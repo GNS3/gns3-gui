@@ -43,7 +43,7 @@ class Project(QtCore.QObject):
         self._servers = Servers.instance()
         self._id = None
         self._temporary = False
-        self._closed = False
+        self._closed = True
         self._files_dir = None
         self._images_dir = None
         self._type = None
