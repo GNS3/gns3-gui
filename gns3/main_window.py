@@ -1213,8 +1213,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     except OSError as e:
                         QtGui.QMessageBox.critical(self, "Local server", "Could not find an unused port for the local server: {}".format(e))
                         return
-                    log.warning("The server port {} is already in used fallback to port {}".format(old_port, server.port))
-                    print("The server port {} is already in used fallback to port {}".format(old_port, server.port))
+                    log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
+                    print("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
 
                 if servers.startLocalServer():
                     thread = WaitForConnectionThread(server.host, server.port)
