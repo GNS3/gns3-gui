@@ -79,12 +79,12 @@ def test_post_not_connected(http_client, request, network_manager, response):
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
-    http_client.post("/test", callback)
+    http_client.post("/test", callback, context={"toto": 42})
 
     assert network_manager.get.called
 
     response.header.return_value = "application/json"
-    response.readAll.return_value = b"{\"version\": \"0.42\"}"
+    response.readAll.return_value = ("{\"version\": \"" + __version__ + "\"}").encode()
 
     # Trigger the completion of /version
     response.finished.emit()
@@ -96,6 +96,10 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     assert http_client._connected
     assert callback.called
+
+    args, kwargs = callback.call_args
+    print(kwargs["context"])
+    assert kwargs["context"]["toto"] == 42
 
 
 def test_post_not_connected_connection_failed(http_client, request, network_manager, response):

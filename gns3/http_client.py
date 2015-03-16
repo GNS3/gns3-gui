@@ -240,15 +240,16 @@ class HTTPClient(QtCore.QObject):
             self.executeHTTPQuery(method, path, callback, body, context=context)
         else:
             log.info("Connection to {}:{}".format(self.host, self.port))
-            self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body, context=context), {})
+            self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body, context), {})
 
-    def _callbackConnect(self, method, path, callback, body, params, error=False, **kwargs):
+    def _callbackConnect(self, method, path, callback, body, original_context, params, error=False, **kwargs):
         """
         Callback after /version response. Continue execution of query
 
         :param method: HTTP method
         :param path: Remote path
         :param body: params to send (dictionary)
+        :param original_context: Original context
         :param callback: callback method to call when the server replies
         """
 
@@ -264,7 +265,7 @@ class HTTPClient(QtCore.QObject):
                 callback({"message": msg}, error=True, server=self)
             return
 
-        self.executeHTTPQuery(method, path, callback, body)
+        self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._connected = True
         self._version = params["version"]
 
