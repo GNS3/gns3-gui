@@ -935,6 +935,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot to open lab instructions.
         """
 
+        if self._project.temporary():
+            QtGui.QMessageBox.critical(self, "Lab instructions", "Sorry, lab instructions are not supported with temporary projects")
+            return
+
         project_dir = os.path.dirname(self._project.topologyFile())
         instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
