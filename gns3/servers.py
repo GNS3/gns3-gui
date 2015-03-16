@@ -329,7 +329,7 @@ class Servers(QtCore.QObject):
 
     def getServerFromString(self, string):
         """
-        Found a server instance via his string represantation
+        Finds a server instance from its string representation.
         """
 
         if string == "local":

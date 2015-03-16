@@ -780,19 +780,19 @@ class GraphicsView(QtGui.QGraphicsView):
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
-        if len(items) > 1:
-            horizontal_align_action = QtGui.QAction("Align horizontally", menu)
-            horizontal_align_action.setIcon(QtGui.QIcon(':/icons/horizontally.svg'))
-            horizontal_align_action.triggered.connect(self.horizontalAlignmentSlot)
-            menu.addAction(horizontal_align_action)
-
-            vertical_align_action = QtGui.QAction("Align vertically", menu)
-            vertical_align_action.setIcon(QtGui.QIcon(':/icons/vertically.svg'))
-            vertical_align_action.triggered.connect(self.verticalAlignmentSlot)
-            menu.addAction(vertical_align_action)
-
         # item must have no parent
         if True in list(map(lambda item: item.parentItem() is None, items)):
+
+            if len(items) > 1:
+                horizontal_align_action = QtGui.QAction("Align horizontally", menu)
+                horizontal_align_action.setIcon(QtGui.QIcon(':/icons/horizontally.svg'))
+                horizontal_align_action.triggered.connect(self.horizontalAlignmentSlot)
+                menu.addAction(horizontal_align_action)
+
+                vertical_align_action = QtGui.QAction("Align vertically", menu)
+                vertical_align_action.setIcon(QtGui.QIcon(':/icons/vertically.svg'))
+                vertical_align_action.triggered.connect(self.verticalAlignmentSlot)
+                menu.addAction(vertical_align_action)
 
             raise_layer_action = QtGui.QAction("Raise one layer", menu)
             raise_layer_action.setIcon(QtGui.QIcon(':/icons/raise_z_value.svg'))
@@ -1180,9 +1180,12 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        horizontal_pos = self.scene().selectedItems()[0].y()
+        horizontal_pos = None
         for item in self.scene().selectedItems():
-            item.setPos(item.x(), horizontal_pos)
+            if item.parentItem() is None:
+                if horizontal_pos is None:
+                    horizontal_pos = item.y()
+                item.setPos(item.x(), horizontal_pos)
 
     def verticalAlignmentSlot(self):
         """
@@ -1190,9 +1193,12 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        vertical_position = self.scene().selectedItems()[0].x()
+        vertical_position = None
         for item in self.scene().selectedItems():
-            item.setPos(vertical_position, item.y())
+            if item.parentItem() is None:
+                if vertical_position is None:
+                    vertical_position = item.x()
+                item.setPos(vertical_position, item.y())
 
     def raiseLayerActionSlot(self):
         """
