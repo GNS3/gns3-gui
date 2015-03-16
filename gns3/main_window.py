@@ -1202,11 +1202,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 if find_unused_port:
                     # find an alternate port for the local server
+
+                    old_port = server.port
                     try:
                         server.port = self._findUnusedLocalPort(server.host)
                     except OSError as e:
                         QtGui.QMessageBox.critical(self, "Local server", "Could not find an unused port for the local server: {}".format(e))
                         return
+                    log.warning("The server port {} is already in used fallback to port {}".format(old_port, server.port))
+                    print("The server port {} is already in used fallback to port {}".format(old_port, server.port))
 
                 if servers.startLocalServer():
                     thread = WaitForConnectionThread(server.host, server.port)
