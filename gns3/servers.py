@@ -360,6 +360,7 @@ class Servers(QtCore.QObject):
             port = server["port"]
             url = "http://{host}:{port}".format(host=host, port=port)
             new_server = HTTPClient(url, self._network_manager)
+            new_server.setLocal(False)
             self._remote_servers[server_id] = new_server
             log.info("New remote server connection {} registered".format(url))
 
