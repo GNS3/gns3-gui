@@ -64,7 +64,6 @@ class HTTPClient(QtCore.QObject):
         self._cloud = False
 
         self._network_manager = network_manager
-        # self.check_server_version()
 
         # create an unique ID
         self._id = HTTPClient._instance_count
@@ -258,6 +257,13 @@ class HTTPClient(QtCore.QObject):
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)
             return
+        if params["version"] != __version__:
+            msg = "Client version {} differs with server version {}".format(__version__, params["version"])
+            log.error(msg)
+            if callback is not None:
+                callback({"message": msg}, error=True, server=self)
+            return
+
         self.executeHTTPQuery(method, path, callback, body)
         self._connected = True
         self._version = params["version"]
