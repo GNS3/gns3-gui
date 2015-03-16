@@ -140,6 +140,8 @@ class Project(QtCore.QObject):
         Path to the topology file
         """
 
+        assert self._files_dir is not None
+        assert self._name is not None
         return os.path.join(self._files_dir, self._name + ".gns3")
 
     def setTopologyFile(self, topology_file):
