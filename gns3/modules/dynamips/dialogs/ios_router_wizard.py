@@ -54,6 +54,8 @@ PLATFORM_TO_CLASS = {
     "c7200": C7200
 }
 
+import logging
+log = logging.getLogger(__name__)
 
 class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
@@ -211,7 +213,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
         from gns3.main_window import MainWindow
         main_window = MainWindow.instance()
-        server = Servers.instance().localServer()
+        server = Servers.instance().getServerFromString(self.getSettings()["server"])
         module = Dynamips.instance()
         platform = self.uiPlatformComboBox.currentText()
         ios_image = self.uiIOSImageLineEdit.text()

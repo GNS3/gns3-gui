@@ -327,6 +327,17 @@ class Servers(QtCore.QObject):
 
         return self._addRemoteServer(host, port)
 
+    def getServerFromString(self, string):
+        """
+        Found a server instance via his string represantation
+        """
+
+        if string == "local":
+            return self._local_server
+
+        (host, port) = string.split(":")
+        return self.getRemoteServer(host, port)
+
     def updateRemoteServers(self, servers):
         """
         Updates the remote servers list.
@@ -467,6 +478,7 @@ class Servers(QtCore.QObject):
         """
 
         self._saveSettings()
+
 
     def disconnectAllServers(self):
         """
