@@ -84,7 +84,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
     assert network_manager.get.called
 
     response.header.return_value = "application/json"
-    response.readAll.return_value = b"{\"version\": \"0.42\"}"
+    response.readAll.return_value = ("{\"version\": \"" + __version__ + "\"}").encode()
 
     # Trigger the completion of /version
     response.finished.emit()
