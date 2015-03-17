@@ -280,7 +280,6 @@ class IOU(Module):
         settings["ethernet_adapters"] = self._iou_devices[iouimage]["ethernet_adapters"]
         settings["serial_adapters"] = self._iou_devices[iouimage]["serial_adapters"]
 
-
         if len(self._settings["iourc_path"]) > 0:
             try:
                 with open(self._settings["iourc_path"]) as f:
