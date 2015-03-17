@@ -155,7 +155,7 @@ class Project(QtCore.QObject):
         self._name = os.path.basename(topology_file).replace('.gns3', '')
 
     def commit(self):
-        """Save projet on remote servers"""
+        """Save project on remote servers"""
 
         for server in list(self._created_servers):
             server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})

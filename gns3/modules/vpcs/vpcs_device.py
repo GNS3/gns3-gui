@@ -206,11 +206,13 @@ class VPCSDevice(VM):
         info = """Device {name} is {state}
   Local node ID is {id}
   Server's VPCS device ID is {vm_id}
-  console is on port {console}
+  VPCS's server runs on {host}:{port}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
+           host=self._server.host,
+           port=self._server.port,
            console=self._settings["console"])
 
         port_info = ""

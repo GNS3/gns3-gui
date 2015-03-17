@@ -414,12 +414,13 @@ class QemuVM(VM):
 
         info = """QEMU VM {name} is {state}
   Node ID is {id}, server's QEMU VM ID is {vm_id}
-  console is on port {console}
-  monitor is on port {monitor}
+  QEMU VM's server runs on {host}:{port}, console is on port {console} and monitor is on port {monitor}
 """.format(name=self.name(),
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
+           host=self._server.host,
+           port=self._server.port,
            console=self._settings["console"],
            monitor=self._settings["monitor"])
 

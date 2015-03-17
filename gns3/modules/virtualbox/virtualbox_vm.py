@@ -325,13 +325,15 @@ class VirtualBoxVM(VM):
   Server's VirtualBox VM ID is {vm_id}
   VirtualBox name is "{vmname}"
   RAM is {ram} MB
-  console is on port {console}
+  VirtualBox VM's server runs on {host}:{port}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
+           host=self._server.host,
+           port=self._server.port,
            console=self._settings["console"])
 
         port_info = ""
