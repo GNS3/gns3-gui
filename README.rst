@@ -3,6 +3,8 @@ GNS3-gui
 
 GNS3 GUI repository (beta stage).
 
+**NOTE:** Checkout the "rest-api" branch of the repository. It will soon be released in the next release.
+
 Linux (Debian based)
 --------------------
 
