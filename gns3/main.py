@@ -16,6 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# WARNING
+# Due to buggy user machines we choose to put this as the first loading modules
+# otherwise the egg cache is initialized in his standard location and
+# if is not writetable the application crash. It's the user fault
+# because one day the user as used sudo to run an egg and break his
+# filesystem permissions, but it's a common mistake.
+from gns3.utils.get_resource import get_resource
+
+
 import datetime
 import sys
 import os
