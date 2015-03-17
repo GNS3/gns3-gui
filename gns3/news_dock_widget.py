@@ -45,7 +45,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
         self._refresh_timer = QtCore.QTimer(self)
         self._refresh_timer.timeout.connect(self._refreshSlot)
-        self._refresh_timer.start(60000)
+        self._refresh_timer.start(300000)
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self._loadFinishedSlot)
         self._timer.setSingleShot(True)
