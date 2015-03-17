@@ -65,7 +65,8 @@ class IOUDevice(VM):
                           "nvram": IOU_DEVICE_SETTINGS["nvram"],
                           "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
                           "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
-                          "console": None}
+                          "console": None,
+                          "iourc_content": None}
 
         # self._occupied_slots = []
         self._addAdapters(2, 2)

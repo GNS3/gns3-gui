@@ -56,7 +56,7 @@ class Progress(QtCore.QObject):
     def show(self):
 
         min_duration = 1000  # Minimum duration before display (ms)
-        if self._progress_dialog is None:
+        if self._progress_dialog is None or self._progress_dialog.wasCanceled():
             progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
             progress_dialog.setModal(True)
             progress_dialog.setCancelButton(None)

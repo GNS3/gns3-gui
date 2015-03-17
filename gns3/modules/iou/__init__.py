@@ -280,6 +280,13 @@ class IOU(Module):
         settings["ethernet_adapters"] = self._iou_devices[iouimage]["ethernet_adapters"]
         settings["serial_adapters"] = self._iou_devices[iouimage]["serial_adapters"]
 
+        if len(self._settings["iourc_path"]) > 0:
+            try:
+                with open(self._settings["iourc_path"]) as f:
+                    settings["iourc_content"] = f.read()
+            except OSError as e:
+                print("Can't open iourc file {}: {}".format(self._settings["iourc_path"], e))
+
         if node.server().isCloud():
             settings["cloud_path"] = "images/IOU"
             node.setup(self._iou_devices[iouimage]["image"], initial_settings=settings)
