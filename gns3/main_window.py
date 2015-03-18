@@ -1206,6 +1206,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     # check if the port is already taken
                     find_unused_port = False
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                         sock.bind((server.host, server.port))
                 except OSError as e:
                     log.warning("Could not use socket {}:{} {}".format(server.host, server.port, e))
