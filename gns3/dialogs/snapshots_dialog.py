@@ -46,7 +46,7 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
         self.setupUi(self)
 
         self._project_path = project_path
-        self._project_files_dir = project_files_dir
+        self._project_files_dir = os.path.join(project_files_dir, "project-files")
 
         self.uiCreatePushButton.clicked.connect(self._createSnapshotSlot)
         self.uiDeletePushButton.clicked.connect(self._deleteSnapshotSlot)
@@ -146,7 +146,18 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
             if hasattr(node, "start") and node.status() == Node.started:
                 node.stop()
 
-        # FIXME: problably a bug when restoring a snapshot and the project name has changed.
+        # support for pre 1.3 snapshots
+        project_name, _ = os.path.splitext(os.path.basename(self._project_path))
+        legacy_project_files_dir = os.path.join(snapshot_path, "{}-files".format(project_name))
+        if os.path.exists(legacy_project_files_dir):
+            try:
+                project_files_dir = os.path.join(snapshot_path, "project-files")
+                shutil.move(legacy_project_files_dir, os.path.join(snapshot_path, project_files_dir))
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, "Snapshot conversion", "Error while moving '{}' to '{}': {}".format(legacy_project_files_dir,
+                                                                                                                     project_files_dir, e))
+                return
+
         thread = ProcessFilesThread(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
         thread.deleteLater()
         progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
