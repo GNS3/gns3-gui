@@ -420,6 +420,16 @@ class Dynamips(Module):
         log.info("Dynamips module reset")
         self._nodes.clear()
 
+    def save(self):
+        """
+        Called when a project is saved.
+        """
+
+        # save all the configs for all nodes.
+        for node in self._nodes:
+            if isinstance(node, Router) and node.initialized():
+                node.saveConfigs()
+
     def exportConfigs(self, directory):
         """
         Exports all configs for all nodes to a directory.

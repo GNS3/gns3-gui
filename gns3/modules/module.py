@@ -37,6 +37,12 @@ class Module(QtCore.QObject):
 
         super(Module, self).__init__()
 
+    def save(self):
+        """
+        Called when a project is saved.
+        """
+
+        pass
 
     @staticmethod
     def nodes(self):

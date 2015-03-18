@@ -759,9 +759,24 @@ class Router(VM):
         self._inital_settings = None
         self._loading = False
 
+    def saveConfigs(self):
+        """
+        Save the configs
+        """
+
+        self.httpPost("/dynamips/vms/{vm_id}/configs/save".format(vm_id=self._vm_id), self._saveConfigsCallback)
+
+    def _saveConfigsCallback(self, result, error=False, context={}, **kwargs):
+
+        if error:
+            log.error("error while saving {} configs: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            log.info("{}: configs have been saved".format(self.name()))
+
     def exportConfig(self, startup_config_export_path, private_config_export_path):
         """
-        Exports the startup-config.
+        Exports the startup-config and private-config.
 
         :param startup_config_export_path: export path for the startup-config
         :param private_config_export_path: export path for the private-config
