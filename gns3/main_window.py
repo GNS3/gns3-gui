@@ -1062,12 +1062,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
-        if self._project.closed():
+        servers = Servers.instance()
+        server = servers.localServer()
+
+        if self._project.closed() and not (servers.localServerAutoStart() and server.isServerRunning()):
             event.accept()
         elif self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
-            self._project.close(local_server_shutdown=True)
-            if self._project.closed():
+            if servers.localServerAutoStart():
+                self._project.close(local_server_shutdown=True)
+            else:
+                self._project.close(local_server_shutdown=False)
+
+            if self._project.closed() and not (servers.localServerAutoStart() and server.isServerRunning()):
                 event.accept()
             else:
                 event.ignore()

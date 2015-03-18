@@ -279,6 +279,7 @@ class Project(QtCore.QObject):
                     server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={})
         else:
             if self._servers.localServerIsRunning() and local_server_shutdown:
+                log.info("Local server running shutdown the server")
                 local_server = self._servers.localServer()
                 local_server.post("/server/shutdown", self._projectClosedCallback)
             else:
