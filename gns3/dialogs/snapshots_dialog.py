@@ -146,23 +146,34 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
             if hasattr(node, "start") and node.status() == Node.started:
                 node.stop()
 
-        # support for pre 1.3 snapshots
         project_name, _ = os.path.splitext(os.path.basename(self._project_path))
         legacy_project_files_dir = os.path.join(snapshot_path, "{}-files".format(project_name))
         if os.path.exists(legacy_project_files_dir):
-            try:
-                project_files_dir = os.path.join(snapshot_path, "project-files")
-                shutil.move(legacy_project_files_dir, os.path.join(snapshot_path, project_files_dir))
-            except OSError as e:
-                QtGui.QMessageBox.critical(self, "Snapshot conversion", "Error while moving '{}' to '{}': {}".format(legacy_project_files_dir,
-                                                                                                                     project_files_dir, e))
-                return
+            # support for pre 1.3 snapshots
+            for root, dirs, _ in os.walk(self._project_files_dir):
+                dirs[:] = [d for d in dirs if d not in "snapshots"]
+                for project_subdir in dirs:
+                    project_subdir_path = os.path.join(root, project_subdir)
+                    shutil.rmtree(project_subdir_path, ignore_errors=True)
 
-        thread = ProcessFilesThread(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
-        thread.deleteLater()
-        progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
-        progress_dialog.show()
-        progress_dialog.exec_()
+            dirs = os.listdir(legacy_project_files_dir)
+            for snapshot_subdir in dirs:
+                snapshot_subdir_path = os.path.join(legacy_project_files_dir, snapshot_subdir)
+                thread = ProcessFilesThread(snapshot_subdir_path, os.path.join(self._project_files_dir, snapshot_subdir))
+                thread.deleteLater()
+                progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
+                progress_dialog.show()
+                progress_dialog.exec_()
+
+            os.remove(self._project_path)
+            shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
+
+        else:
+            thread = ProcessFilesThread(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
+            thread.deleteLater()
+            progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
+            progress_dialog.show()
+            progress_dialog.exec_()
 
         from ..main_window import MainWindow
         MainWindow.instance().loadSnapshot(self._project_path)
