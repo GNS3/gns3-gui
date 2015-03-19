@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.3.0rc1 19/03/2015
+
+* Handle legacy snapshots
+* Add server informations for Qemu, VirtualBox and VPCS info boxes
+* Support sending IOURC from client to remote servers
+* Fixes crash when quick restart the client
+* Add 1MB disk for EtherSwitch router templates (to store the vlan database)
+* Fixes alignment options to ignore devices labels
+* Compute IDLEPC on remote servers
+* Prevent using lab instruction in a temporary project
+* Display a warning on console if server port is already in used
+* Display an error if server version is incorrect
+
 ## 1.3.0beta2 13/03/2015
 
 * Alternative local server shutdown (faster GUI closing on Windows).
