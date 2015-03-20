@@ -460,7 +460,7 @@ class Servers(QtCore.QObject):
         :returns: remote server (HTTPClient instance)
         """
 
-        if not self._remote_servers:
+        if not self._remote_servers or len(self._remote_servers) == 0:
             return None
 
         server_ids = list(self._remote_servers.keys())
