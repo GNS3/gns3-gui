@@ -236,6 +236,18 @@ class LinkItem(QtGui.QGraphicsPathItem):
             self._hovered = False
             self.adjust()
 
+    def keyPressEvent(self, event):
+        """
+        Handles all key press events
+
+        :param event: QKeyEvent
+        """
+
+        #On pressing backspace or delete key, the selected link gets deleted
+        if event.key() == QtCore.Qt.Key_Delete or event.key() == QtCore.Qt.Key_Backspace:
+            self._deleteActionSlot()
+            return
+
     def _deleteActionSlot(self):
         """
         Slot to receive events from the delete action in the
