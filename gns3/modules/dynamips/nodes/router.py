@@ -759,14 +759,14 @@ class Router(VM):
         self._inital_settings = None
         self._loading = False
 
-    def saveConfigs(self):
+    def saveConfig(self):
         """
         Save the configs
         """
 
-        self.httpPost("/dynamips/vms/{vm_id}/configs/save".format(vm_id=self._vm_id), self._saveConfigsCallback)
+        self.httpPost("/dynamips/vms/{vm_id}/configs/save".format(vm_id=self._vm_id), self._saveConfigCallback)
 
-    def _saveConfigsCallback(self, result, error=False, context={}, **kwargs):
+    def _saveConfigCallback(self, result, error=False, context={}, **kwargs):
 
         if error:
             log.error("error while saving {} configs: {}".format(self.name(), result["message"]))

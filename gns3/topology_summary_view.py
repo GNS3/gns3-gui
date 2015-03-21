@@ -92,7 +92,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
         if self._node.name() != self.text(0):
             # refresh all the other item if the node name has changed
-            self._parent.refreshAll(self)
+            self._parent.refreshAll(source_child=self)
 
         self.setText(0, self._node.name())
         ports = self._node.ports()

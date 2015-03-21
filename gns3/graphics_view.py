@@ -727,6 +727,12 @@ class GraphicsView(QtGui.QGraphicsView):
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "saveConfig"), items)):
+            save_config_action = QtGui.QAction("Save config", menu)
+            save_config_action.setIcon(QtGui.QIcon(':/icons/save.svg'))
+            save_config_action.triggered.connect(self.saveConfigActionSlot)
+            menu.addAction(save_config_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "startPacketCapture"), items)):
             capture_action = QtGui.QAction("Capture", menu)
             capture_action.setIcon(QtGui.QIcon(':/icons/inspect.svg'))
@@ -1044,6 +1050,16 @@ class GraphicsView(QtGui.QGraphicsView):
                 item.node().exportConfig(config_path, private_config_path)
             else:
                 item.node().exportConfig(config_path)
+
+    def saveConfigActionSlot(self):
+        """
+        Slot to receive events from the save config action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "saveConfig") and item.node().initialized():
+                item.node().saveConfig()
 
     def captureActionSlot(self):
         """

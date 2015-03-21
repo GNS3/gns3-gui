@@ -1357,8 +1357,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         topology.project = self._project
         try:
             self._project.commit()
-            for module in MODULES:
-                module.instance().save()
             topo = topology.dump()
             with open(path, "w") as f:
                 log.info("Saving project: {}".format(path))

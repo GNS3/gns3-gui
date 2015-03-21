@@ -8,7 +8,7 @@ GNS3-gui
     :target: https://pypi.python.org/pypi/gns3-gui
 
 
-GNS3 GUI repository (beta stage).
+GNS3 GUI repository.
 
 Linux (Debian based)
 --------------------
