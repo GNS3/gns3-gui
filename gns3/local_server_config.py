@@ -53,7 +53,7 @@ class LocalServerConfig:
 
         try:
             self._config.read(self._config_file)
-        except configparser.Error as e:
+        except (OSError, configparser.Error) as e:
             log.error("Could not read the local server configuration {}: {}".format(self._config_file, e))
 
     def writeConfig(self):
@@ -65,7 +65,7 @@ class LocalServerConfig:
             log.debug("Write configuration file %s", self._config_file)
             with open(self._config_file, 'w') as fp:
                 self._config.write(fp)
-        except configparser.Error as e:
+        except (OSError, configparser.Error) as e:
             log.error("Could not write the local server configuration {}: {}".format(self._config_file, e))
 
     def loadSettings(self, section, default_settings, types):
