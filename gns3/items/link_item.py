@@ -246,6 +246,7 @@ class LinkItem(QtGui.QGraphicsPathItem):
         #On pressing backspace or delete key, the selected link gets deleted
         if event.key() == QtCore.Qt.Key_Delete or event.key() == QtCore.Qt.Key_Backspace:
             self._deleteActionSlot()
+            return
 
     def _deleteActionSlot(self):
         """

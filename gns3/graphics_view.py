@@ -543,6 +543,7 @@ class GraphicsView(QtGui.QGraphicsView):
                     QtGui.QGraphicsView.keyPressEvent(self, event)
                     return
             self.deleteActionSlot()
+            QtGui.QGraphicsView.keyPressEvent(self,event)
         else:
             QtGui.QGraphicsView.keyPressEvent(self, event)
 
