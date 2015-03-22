@@ -24,7 +24,6 @@ import os
 import re
 import hashlib
 
-from functools import partial
 from gns3.qt import QtCore, QtGui
 from gns3.servers import Servers
 from gns3.node import Node

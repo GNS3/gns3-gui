@@ -22,6 +22,7 @@ Graphical view on the scene where items are drawn.
 import logging
 import os
 import pickle
+import functools
 
 from .qt import QtCore, QtGui, QtNetwork
 from .servers import Servers
@@ -964,16 +965,55 @@ class GraphicsView(QtGui.QGraphicsView):
                 return False
         return True
 
+    def consoleFromItems(self, items):
+        """
+        Console from scene items.
+
+        :param items: Item instances
+        """
+
+        nodes = {}
+        for item in items:
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                node = item.node()
+                nodes[node.name()] = node
+
+        delay = self._main_window.settings()["delay_console_all"]
+        counter = 0
+        for name in sorted(nodes.keys()):
+            node = nodes[name]
+            callback = functools.partial(self.consoleToNode, node)
+            self._main_window.run_later(counter, callback)
+            counter += delay
+
     def consoleActionSlot(self):
         """
         Slot to receive events from the console action in the
         contextual menu.
         """
 
-        for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem):
-                if self.consoleToNode(item.node()):
-                    continue
+        self.consoleFromItems(self.scene().selectedItems())
+
+    def auxConsoleFromItems(self, items):
+        """
+        Aux console from scene items.
+
+        :param items: Item instances
+        """
+
+        nodes = {}
+        for item in items:
+            if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized() and item.node().status() == Node.started:
+                node = item.node()
+                nodes[node.name()] = node
+
+        delay = self._main_window.settings()["delay_console_all"]
+        counter = 0
+        for name in sorted(nodes.keys()):
+            node = nodes[name]
+            callback = functools.partial(self.consoleToNode, node, aux=True)
+            self._main_window.run_later(counter, callback)
+            counter += delay
 
     def auxConsoleActionSlot(self):
         """
@@ -981,10 +1021,7 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem):
-                if self.consoleToNode(item.node(), aux=True):
-                    continue
+        self.auxConsoleFromItems(self.scene().selectedItems())
 
     def importConfigActionSlot(self):
         """
@@ -1123,19 +1160,19 @@ class GraphicsView(QtGui.QGraphicsView):
             else:
                 QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
-    # def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
-    #     """
-    #     Slot to allow the user to select an idlepc value.
-    #     """
-    #
-    #     if error:
-    #         QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Error: {}".format(result["message"]))
-    #     else:
-    #         router = context["router"]
-    #         idlepc = result["idlepc"]
-    #         log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
-    #         router.setIdlepc(idlepc)
-    #         QtGui.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
+    def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
+        """
+        Slot to allow the user to select an idlepc value.
+        """
+
+        if error:
+            QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Error: {}".format(result["message"]))
+        else:
+            router = context["router"]
+            idlepc = result["idlepc"]
+            log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
+            router.setIdlepc(idlepc)
+            QtGui.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
 
     def duplicateActionSlot(self):
         """

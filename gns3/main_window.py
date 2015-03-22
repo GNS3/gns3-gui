@@ -751,26 +751,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Slot called when connecting to all the nodes using the AUX console.
         """
 
-        delay = self._settings["delay_console_all"]
-        counter = 0
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized() and item.node().status() == Node.started:
-                callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node(), aux=True)
-                self.run_later(counter, callback)
-                counter += delay
+        self.uiGraphicsView.auxConsoleFromItems(self.uiGraphicsView.scene().items())
 
     def _consoleAllActionSlot(self):
         """
         Slot called when connecting to all the nodes using the console.
         """
 
-        delay = self._settings["delay_console_all"]
-        counter = 0
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                callback = functools.partial(self.uiGraphicsView.consoleToNode, item.node())
-                self.run_later(counter, callback)
-                counter += delay
+        self.uiGraphicsView.consoleFromItems(self.uiGraphicsView.scene().items())
 
     def _vpcsActionSlot(self):
         """
@@ -1679,6 +1667,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :params counter: Time to wait before fire the callback (in milliseconds)
         :params callback: Function to run
         """
+
         QtCore.QTimer.singleShot(counter, callback)
 
     def _exportProjectActionSlot(self):
