@@ -1123,19 +1123,19 @@ class GraphicsView(QtGui.QGraphicsView):
             else:
                 QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
-    def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Slot to allow the user to select an idlepc value.
-        """
-
-        if error:
-            QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Error: {}".format(result["message"]))
-        else:
-            router = context["router"]
-            idlepc = result["idlepc"]
-            log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
-            router.setIdlepc(idlepc)
-            QtGui.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
+    # def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
+    #     """
+    #     Slot to allow the user to select an idlepc value.
+    #     """
+    #
+    #     if error:
+    #         QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Error: {}".format(result["message"]))
+    #     else:
+    #         router = context["router"]
+    #         idlepc = result["idlepc"]
+    #         log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
+    #         router.setIdlepc(idlepc)
+    #         QtGui.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
 
     def duplicateActionSlot(self):
         """

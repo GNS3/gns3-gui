@@ -85,6 +85,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
+        self._router = None
         # Validate the Idle PC value
         self._idle_valid = False
         idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
@@ -219,10 +220,10 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         ios_image = self.uiIOSImageLineEdit.text()
         ram = self.uiRamSpinBox.value()
         router_class = PLATFORM_TO_CLASS[platform]
-        router = router_class(module, server, main_window.project())
-        router.setup(ios_image, ram, name="AUTOIDLEPC")
-        callback = partial(self.createdSlot, router)
-        router.created_signal.connect(callback)
+        self._router = router_class(module, server, main_window.project())
+        self._router.setup(ios_image, ram, name="AUTOIDLEPC")
+        self._router.created_signal.connect(self.createdSlot)
+        self._router.server_error_signal.connect(self.serverErrorSlot)
         self.uiIdlePCFinderPushButton.setEnabled(False)
 
     def _etherSwitchSlot(self, state):
@@ -239,17 +240,26 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             # self.uiNameLineEdit.setEnabled(True)
 
-    def createdSlot(self, router, node_id):
+    def createdSlot(self, node_id):
         """
         The node for the auto Idle-PC has been created.
 
-        :param router: IOS router instance
         :param node_id: not used
         """
 
-        router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
+        self._router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
 
-    def _computeAutoIdlepcCallback(self, result, error=False, context=None, **kwargs):
+    def serverErrorSlot(self, node_id, message):
+        """
+        The auto idle-pc node could not be created.
+
+        :param node_id: not used
+        :param message: error message from the server.
+        """
+
+        QtGui.QMessageBox.critical(self, "Idle-PC finder", "Could not create IOS router: {}".format(message))
+
+    def _computeAutoIdlepcCallback(self, result, error=False, **kwargs):
         """
         Callback for computeAutoIdlepc.
 
@@ -257,14 +267,15 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         :param error: indicates an error (boolean)
         """
 
-        router = context["router"]
+        if self._router:
+            self._router.delete()
+            self._router = None
         if error:
             QtGui.QMessageBox.critical(self, "Idle-PC finder", "Error: {}".format(result["message"]))
         else:
             idlepc = result["idlepc"]
             self.uiIdlepcLineEdit.setText(idlepc)
             QtGui.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
-        router.delete()
 
     def _iosImageBrowserSlot(self):
         """
@@ -308,6 +319,12 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         index = self.uiChassisComboBox.findText(detected_chassis)
         if index != -1:
             self.uiChassisComboBox.setCurrentIndex(index)
+
+    def done(self, result):
+
+        if self._router:
+            self._router.delete()
+        QtGui.QWizard.done(self, result)
 
     def _populateAdapters(self, platform, chassis):
         """
