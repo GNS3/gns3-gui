@@ -161,6 +161,8 @@ class Builtin(Module):
                                                        available_interfaces, 0, False)
             if ok:
                 return selection
+            QtGui.QMessageBox.warning(mainwindow, "Cloud interface", "No alternative interface chosen to replace {} on this host, this may lead to issues".format(missing_interface))
+            return None
         else:
             QtGui.QMessageBox.critical(mainwindow, "Cloud interface", "Could not find interface {} on this host".format(missing_interface))
             return missing_interface

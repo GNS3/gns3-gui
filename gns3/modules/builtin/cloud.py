@@ -361,11 +361,12 @@ This is a pseudo-device for external connections
                                     break
                             if not available_interface:
                                 alternative_interface = self._module.findAlternativeInterface(self, topology_port_name)
-                                if topology_port["name"] in self._settings["nios"]:
-                                    self._settings["nios"].remove(topology_port["name"])
-                                topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
-                                port.setName(topology_port["name"])
-                                self._settings["nios"].append(topology_port["name"])
+                                if alternative_interface:
+                                    if topology_port["name"] in self._settings["nios"]:
+                                        self._settings["nios"].remove(topology_port["name"])
+                                    topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
+                                    port.setName(topology_port["name"])
+                                    self._settings["nios"].append(topology_port["name"])
 
         log.info("cloud {} has been created".format(self.name()))
         self.setInitialized(True)

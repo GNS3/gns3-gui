@@ -129,8 +129,8 @@ class Node(QtCore.QObject):
         :param name: node name
         """
 
-        assert name not in self._allocated_names
-        self._allocated_names.append(name)
+        if name not in self._allocated_names:
+            self._allocated_names.append(name)
 
     def hasAllocatedName(self, name):
         """
