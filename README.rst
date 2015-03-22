@@ -84,3 +84,5 @@ If you want to update the interface modify the .ui files using QT tools. And:
 
     cd scripts
     python build_pyqt.py
+
+**N.B.** The default IP and port to which gns3-gui will try to connect is mentioned in gns3/settings.py. You may change it if required.
