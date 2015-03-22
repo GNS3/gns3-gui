@@ -54,8 +54,6 @@ class HTTPClient(QtCore.QObject):
         self._version = ""
 
         url_settings = urllib.parse.urlparse(url)
-
-        # TODO: move this to properties? (many references to .host and .port in the code)
         self.scheme = url_settings.scheme
         self.host = url_settings.netloc.split(":")[0]
         self.port = url_settings.port
@@ -90,6 +88,7 @@ class HTTPClient(QtCore.QObject):
         """
         :param progress_callback: A progress callback instance
         """
+
         cls._progress_callback = progress_callback
 
     @staticmethod
@@ -311,6 +310,18 @@ class HTTPClient(QtCore.QObject):
             response = self._network_manager.deleteResource(request)
 
         response.finished.connect(partial(self._processResponse, response, callback, context))
+
+        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
+            request_canceled = partial(self._requestCanceled, response, context)
+            HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
+
+    def _requestCanceled(self, response, context):
+
+        if response.isRunning():
+            response.finished.disconnect()
+            response.abort()
+        if "query_id" in context:
+            self.notify_progress_end_query(context["query_id"])
 
     def _processResponse(self, response, callback, context):
 

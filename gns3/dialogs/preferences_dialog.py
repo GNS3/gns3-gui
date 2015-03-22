@@ -27,6 +27,8 @@ from ..pages.cloud_preferences_page import CloudPreferencesPage
 from ..pages.packet_capture_preferences_page import PacketCapturePreferencesPage
 from ..modules import MODULES
 from ..settings import ENABLE_CLOUD
+from ..http_client import HTTPClient
+from ..progress import Progress
 
 
 class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
@@ -49,6 +51,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
 
         # select the first available page
         self.uiTreeWidget.setCurrentItem(self._items[0])
+        HTTPClient.setProgressCallback(Progress(self, min_duration=0))
 
     def _loadPreferencePages(self):
         """
@@ -136,6 +139,8 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         Closes this dialog.
         """
 
+        from gns3.main_window import MainWindow
+        HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
         QtGui.QDialog.reject(self)
 
     def accept(self):
@@ -149,4 +154,6 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         main_window.uiNodesDockWidget.setWindowTitle("")
 
         if self._applyPreferences():
+            from gns3.main_window import MainWindow
+            HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
             QtGui.QDialog.accept(self)

@@ -19,6 +19,9 @@
 Dialog to configure and update node settings using widget pages.
 """
 
+from gns3.http_client import HTTPClient
+from gns3.progress import Progress
+
 from ..qt import QtCore, QtGui
 from ..ui.node_configurator_dialog_ui import Ui_NodeConfiguratorDialog
 
@@ -54,6 +57,7 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
         self.splitter.setSizes([250, 600])
 
         self.uiNodesTreeWidget.itemClicked.connect(self.showConfigurationPageSlot)
+        HTTPClient.setProgressCallback(Progress(self, min_duration=0))
 
     def _loadNodeItems(self):
         """
@@ -132,14 +136,17 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
         """
 
         try:
+            from gns3.main_window import MainWindow
             if button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply):
                 self.applySettings()
             elif button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Reset):
                 self.resetSettings()
             elif button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Cancel):
+                HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
                 QtGui.QDialog.reject(self)
             else:
                 self.applySettings()
+                HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
                 QtGui.QDialog.accept(self)
         except ConfigurationError:
             pass

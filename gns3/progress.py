@@ -27,7 +27,8 @@ class Progress(QtCore.QObject):
     add_query_signal = QtCore.Signal(str, str)
     remove_query_signal = QtCore.Signal(str)
 
-    def __init__(self, parent):
+    def __init__(self, parent, min_duration=1000):
+
         super().__init__()
         self._progress_dialog = None
         self._parent = parent
@@ -36,6 +37,7 @@ class Progress(QtCore.QObject):
         self._queries = {}
         self.add_query_signal.connect(self._add_query)
         self.remove_query_signal.connect(self._remove_query)
+        self._minimum_duration = min_duration
 
     def _add_query(self, query_id, explanation):
 
@@ -53,17 +55,20 @@ class Progress(QtCore.QObject):
         else:
             self.show()
 
+    def progress_dialog(self):
+
+        return self._progress_dialog
+
     def show(self):
 
-        min_duration = 1000  # Minimum duration before display (ms)
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
             progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
             progress_dialog.setModal(True)
             progress_dialog.setCancelButton(None)
             progress_dialog.setWindowTitle("Please wait")
-            progress_dialog.setMinimumDuration(min_duration)
+            progress_dialog.setMinimumDuration(self._minimum_duration)
             self._progress_dialog = progress_dialog
-            self._stimer.singleShot(min_duration, self._show_dialog)
+            self._stimer.singleShot(self._minimum_duration, self._show_dialog)
             self._finished_query_during_display = 0
         else:
             progress_dialog = self._progress_dialog

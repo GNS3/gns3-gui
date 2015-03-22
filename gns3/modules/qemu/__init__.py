@@ -298,6 +298,7 @@ class Qemu(Module):
         :param server: server to send the request to
         :param callback: callback for the reply from the server
         """
+
         server.get("/qemu/binaries", callback)
 
     @staticmethod
