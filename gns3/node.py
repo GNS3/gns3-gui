@@ -494,7 +494,7 @@ class Node(QtCore.QObject):
         """
 
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self._server.post("/ports/udp", self._allocateUDPPortCallback, context={"port_id": port_id})
+        self.httpPost("/ports/udp", self._allocateUDPPortCallback, context={"port_id": port_id})
 
     def _allocateUDPPortCallback(self, result, error=False, context={}, **kwargs):
         """
