@@ -1313,15 +1313,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
             thread = ProcessFilesThread(self._project.filesDir(), project_dir, move=True)
             progress_dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
-            thread.deleteLater()
         else:
             # else, just copy the files
             log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
             thread = ProcessFilesThread(self._project.filesDir(), project_dir)
             progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
-            thread.deleteLater()
         progress_dialog.show()
         progress_dialog.exec_()
+        thread.deleteLater()
 
         errors = progress_dialog.errors()
         if errors:

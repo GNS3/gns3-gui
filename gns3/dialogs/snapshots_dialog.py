@@ -96,10 +96,10 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
             snapshot_name = "{name}_{date}".format(name=snapshot_name, date=time.strftime("%d%m%y_%H%M%S"))
             snapshot_dir = os.path.join(self._project_files_dir, "snapshots", snapshot_name)
             thread = ProcessFilesThread(os.path.dirname(self._project_path), snapshot_dir, skip_dirs=["snapshots"])
-            thread.deleteLater()
             progress_dialog = ProgressDialog(thread, "Creating snapshot", "Copying project files...", "Cancel", parent=self)
             progress_dialog.show()
             progress_dialog.exec_()
+            thread.deleteLater()
             self._listSnaphosts()
 
     def _deleteSnapshotSlot(self):
@@ -160,20 +160,20 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
             for snapshot_subdir in dirs:
                 snapshot_subdir_path = os.path.join(legacy_project_files_dir, snapshot_subdir)
                 thread = ProcessFilesThread(snapshot_subdir_path, os.path.join(self._project_files_dir, snapshot_subdir))
-                thread.deleteLater()
                 progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
                 progress_dialog.show()
                 progress_dialog.exec_()
+                thread.deleteLater()
 
             os.remove(self._project_path)
             shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
 
         else:
             thread = ProcessFilesThread(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
-            thread.deleteLater()
             progress_dialog = ProgressDialog(thread, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
             progress_dialog.show()
             progress_dialog.exec_()
+            thread.deleteLater()
 
         from ..main_window import MainWindow
         MainWindow.instance().loadSnapshot(self._project_path)
