@@ -301,6 +301,7 @@ class Router(VM):
                 wic_slot_number = int(name[-1])
                 wic = value
                 self._addWICPorts(wic, wic_slot_number)
+        self._updateWICNumbering()
 
         if self._loading:
             self.updated_signal.emit()
@@ -536,65 +537,74 @@ class Router(VM):
         :returns: formated string
         """
 
+        slots = {}
         slot_info = ""
         for name, value in self._settings.items():
             if name.startswith("slot") and value is not None:
-                slot_number = int(name[-1])
-                adapter_name = value
-                nb_ports = ADAPTER_MATRIX[adapter_name]["nb_ports"]
-                if nb_ports == 1:
-                    port_string = "port"
+                slots[name] = value
+
+        for name in sorted(slots.keys()):
+            slot_number = int(name[-1])
+            adapter_name = slots[name]
+            nb_ports = ADAPTER_MATRIX[adapter_name]["nb_ports"]
+            if nb_ports == 1:
+                port_string = "port"
+            else:
+                port_string = "ports"
+
+            slot_info = slot_info + "   slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
+                                                                                                                         adapter=adapter_name,
+                                                                                                                         nb_ports=nb_ports,
+                                                                                                                         port_string=port_string)
+
+            port_names = {}
+            for port in self._ports:
+                if port.adapterNumber() == slot_number and port.portNumber() < 16:
+                    port_names[port.name()] = port
+            sorted_ports = sorted(port_names.keys())
+
+            for port_name in sorted_ports:
+                port_info = port_names[port_name]
+                if port_info.isFree():
+                    slot_info += "     {} is empty\n".format(port_name)
                 else:
-                    port_string = "ports"
+                    slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                port_description=port_info.description())
 
-                slot_info = slot_info + "   slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
-                                                                                                                             adapter=adapter_name,
-                                                                                                                             nb_ports=nb_ports,
-                                                                                                                             port_string=port_string)
-
-                port_names = {}
-                for port in self._ports:
-                    if port.adapterNumber() == slot_number and port.portNumber() < 16:
-                        port_names[port.name()] = port
-                sorted_ports = sorted(port_names.keys())
-
-                for port_name in sorted_ports:
-                    port_info = port_names[port_name]
-                    if port_info.isFree():
-                        slot_info += "     {} is empty\n".format(port_name)
-                    else:
-                        slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
-                                                                                    port_description=port_info.description())
-
+        wic_slots = {}
+        for name, value in self._settings.items():
             if name.startswith("wic") and value is not None:
-                wic_slot_number = int(name[-1])
-                wic_name = value
-                nb_ports = WIC_MATRIX[wic_name]["nb_ports"]
-                if nb_ports == 1:
-                    port_string = "port"
+                wic_slots[name] = value
+
+        for name in sorted(wic_slots.keys()):
+            wic_slot_number = int(name[-1])
+            wic_name = wic_slots[name]
+            nb_ports = WIC_MATRIX[wic_name]["nb_ports"]
+            if nb_ports == 1:
+                port_string = "port"
+            else:
+                port_string = "ports"
+
+            slot_info = slot_info + "   {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
+                                                                                                                                   wic_slot_number=wic_slot_number,
+                                                                                                                                   nb_ports=nb_ports,
+                                                                                                                                   port_string=port_string)
+
+            base = 16 * (wic_slot_number + 1)
+            port_names = {}
+            for port_number in range(0, nb_ports):
+                for port in self._ports:
+                    if port.adapterNumber() == 0 and port.portNumber() == base + port_number:
+                        port_names[port.name()] = port
+            sorted_ports = sorted(port_names.keys())
+
+            for port_name in sorted_ports:
+                port_info = port_names[port_name]
+                if port_info.isFree():
+                    slot_info += "     {} is empty\n".format(port_name)
                 else:
-                    port_string = "ports"
-
-                slot_info = slot_info + "   {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
-                                                                                                                                       wic_slot_number=wic_slot_number,
-                                                                                                                                       nb_ports=nb_ports,
-                                                                                                                                       port_string=port_string)
-
-                base = 16 * (wic_slot_number + 1)
-                port_names = {}
-                for port_number in range(0, nb_ports):
-                    for port in self._ports:
-                        if port.adapterNumber() == 0 and port.portNumber() == base + port_number:
-                            port_names[port.name()] = port
-                sorted_ports = sorted(port_names.keys())
-
-                for port_name in sorted_ports:
-                    port_info = port_names[port_name]
-                    if port_info.isFree():
-                        slot_info += "     {} is empty\n".format(port_name)
-                    else:
-                        slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
-                                                                                    port_description=port_info.description())
+                    slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                port_description=port_info.description())
 
         return slot_info
 
