@@ -47,7 +47,7 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         getting_started = get_resource(os.path.join("static", "getting_started.html"))
         if getting_started and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
             # do not show the page on Windows 32-bit (crash when no Internet connection)
-            self.uiWebView.load(QtCore.QUrl("file://{}".format(getting_started)))
+            self.uiWebView.load(QtCore.QUrl.fromLocalFile(getting_started))
         else:
             self.uiCheckBox.setChecked(True)
             self.accept()
