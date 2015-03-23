@@ -47,7 +47,7 @@ class Project(QtCore.QObject):
         self._files_dir = None
         self._images_dir = None
         self._type = None
-        self._name = None
+        self._name = "untitled"
         self._project_instances.add(self)
         self._created_servers = set()
 
