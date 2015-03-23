@@ -1,5 +1,22 @@
 # Change Log
 
+## 1.3.0rc2 23/03/2015
+
+* Fix crash when in same occasion the project name is missing
+* Update sentry key
+* Display adapters in the tooltips in the correct order.
+* Open consoles in alphanumerical order.
+* Auto idle-PC improvements.
+* Adds project id when requesting UDP port.
+* Fixes Thread problem. Fixes  #229.
+* Cancel network requests if the progress dialog itself is canceled. Avoid closing the preferences dialog or any configuration dialog if there is a pending request. Fixes #227.
+* Fixes #228 (no alternative interface has been chosen).
+* Catch OSError when reading or writing the local server config file.
+* Fixes GUI that could not be closed when using an already running local server.
+* Save configs when project is committed.
+* Del key deletes selected link
+* Fix crash is no remote servers is available
+
 ## 1.3.0rc1 19/03/2015
 
 * Handle legacy snapshots
