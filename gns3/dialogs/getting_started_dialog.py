@@ -40,7 +40,6 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
         self.adjustSize()
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
-        self.uiWebView.loadFinished.connect(self._loadFinishedSlot)
         self._local_config = LocalConfig.instance()
         gui_settings = self._local_config.loadSectionSettings("GUI", {"hide_getting_started_dialog": False})
         self.uiCheckBox.setChecked(gui_settings["hide_getting_started_dialog"])
@@ -80,14 +79,3 @@ class GettingStartedDialog(QtGui.QDialog, Ui_GettingStartedDialog):
 
         if QtGui.QDesktopServices.openUrl(url) is False:
             QtGui.QMessageBox.critical(self, "Getting started", "Failed to open the URL: {}".format(url))
-
-    def _loadFinishedSlot(self, result=False):
-        """
-        Slot called when the web page has been loaded.
-
-        :param result: boolean
-        """
-
-        if result is False:
-            self.uiCheckBox.setChecked(True)
-            self.accept()

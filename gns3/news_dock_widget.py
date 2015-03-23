@@ -110,7 +110,6 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
             gns3_jungle = get_resource(os.path.join("static", "gns3_jungle.html"))
             if gns3_jungle and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
                 # do not show the page on Windows 32-bit (crash when no Internet connection)
-                url = QtCore.QUrl.fromLocalFile(gns3_jungle)
-                self.uiWebView.load(url)
+                self.uiWebView.load(QtCore.QUrl.fromLocalFile(gns3_jungle))
             else:
                 self.hide()
