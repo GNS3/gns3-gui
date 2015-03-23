@@ -253,6 +253,8 @@ class Project(QtCore.QObject):
             return
 
         if self._id is None:
+            # Try to track the issue: https://github.com/GNS3/gns3-gui/issues/232
+            assert "project_id" in params, "project_id not in {}".format(params)
             self._id = params["project_id"]
 
         if server == self._servers.localServer() and "path" in params:
