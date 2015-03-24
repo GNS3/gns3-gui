@@ -280,11 +280,6 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             else:
                 self.uiConsolePortLabel.hide()
                 self.uiConsolePortSpinBox.hide()
-            if "monitor" in settings:
-                self.uiMonitorPortSpinBox.setValue(settings["monitor"])
-            else:
-                self.uiMonitorPortLabel.hide()
-                self.uiMonitorPortSpinBox.hide()
             self.uiHdaDiskImageLineEdit.setText(settings["hda_disk_image"])
             self.uiHdbDiskImageLineEdit.setText(settings["hdb_disk_image"])
             self.uiHdcDiskImageLineEdit.setText(settings["hdc_disk_image"])
@@ -351,8 +346,6 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
             if "console" in settings:
                 settings["console"] = self.uiConsolePortSpinBox.value()
-            if "monitor" in settings:
-                settings["monitor"] = self.uiMonitorPortSpinBox.value()
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
             settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text().strip()
             settings["hdc_disk_image"] = self.uiHdcDiskImageLineEdit.text().strip()
@@ -364,8 +357,6 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             del settings["name"]
             if "console" in settings:
                 del settings["console"]
-            if "monitor" in settings:
-                del settings["monitor"]
             del settings["hda_disk_image"]
             del settings["hdb_disk_image"]
             del settings["hdc_disk_image"]

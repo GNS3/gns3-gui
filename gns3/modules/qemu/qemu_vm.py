@@ -59,7 +59,6 @@ class QemuVM(VM):
                           "options": "",
                           "ram": QEMU_VM_SETTINGS["ram"],
                           "console": None,
-                          "monitor": None,
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                           "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
@@ -91,7 +90,7 @@ class QemuVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
-    def setup(self, qemu_path, name=None, console=None, monitor=None, vm_id=None, initial_settings={}, base_name=None):
+    def setup(self, qemu_path, name=None, console=None, vm_id=None, initial_settings={}, base_name=None):
         """
         Setups this QEMU VM.
 
@@ -113,9 +112,6 @@ class QemuVM(VM):
 
         if console:
             params["console"] = self._settings["console"] = console
-
-        if monitor:
-            params["monitor"] = self._settings["monitor"] = monitor
 
         if vm_id:
             params["vm_id"] = vm_id
@@ -414,15 +410,14 @@ class QemuVM(VM):
 
         info = """QEMU VM {name} is {state}
   Node ID is {id}, server's QEMU VM ID is {vm_id}
-  QEMU VM's server runs on {host}:{port}, console is on port {console} and monitor is on port {monitor}
+  QEMU VM's server runs on {host}:{port}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
            host=self._server.host,
            port=self._server.port,
-           console=self._settings["console"],
-           monitor=self._settings["monitor"])
+           console=self._settings["console"])
 
         port_info = ""
         for port in self._ports:
@@ -451,13 +446,12 @@ class QemuVM(VM):
         name = settings.pop("name")
         qemu_path = settings.pop("qemu_path")
         console = settings.pop("console", self._defaults["console"])
-        monitor = settings.pop("monitor", self._defaults["monitor"])
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self.setup(qemu_path, name, console, monitor, vm_id, settings)
+        self.setup(qemu_path, name, console, vm_id, settings)
 
     def _updatePortSettings(self):
         """
@@ -518,15 +512,6 @@ class QemuVM(VM):
         """
 
         return self._settings["console"]
-
-    def monitor(self):
-        """
-        Returns the monitor port for this QEMU VM instance.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["monitor"]
 
     def configPage(self):
         """
