@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/about_dialog.ui'
 #
-# Created: Tue Mar 10 11:26:16 2015
+# Created: Mon Mar 23 22:22:17 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -3654,7 +3654,8 @@ class Ui_AboutDialog(object):
 "DEWTEK\n"
 "DewTech\n"
 "Daniel Darby\n"
-"Tishkov Pavel [64]", None))
+"Tishkov Pavel [64]\n"
+"Wilhelm Jonker", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("AboutDialog", "&Thanks to", None))
         self.uiLicensePlainTextEdit.setPlainText(_translate("AboutDialog", "                    GNU GENERAL PUBLIC LICENSE\n"
 "                       Version 3, 29 June 2007\n"

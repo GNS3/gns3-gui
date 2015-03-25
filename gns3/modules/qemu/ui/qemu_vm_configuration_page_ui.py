@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Tue Mar 10 11:18:47 2015
+# Created: Mon Mar 23 22:22:18 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,7 +42,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiNameLineEdit.setObjectName(_fromUtf8("uiNameLineEdit"))
         self.gridLayout_4.addWidget(self.uiNameLineEdit, 0, 2, 1, 1)
         spacerItem = QtGui.QSpacerItem(263, 94, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_4.addItem(spacerItem, 5, 1, 1, 2)
+        self.gridLayout_4.addItem(spacerItem, 4, 1, 1, 2)
         self.uiQemuListComboBox = QtGui.QComboBox(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -58,13 +58,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiConsolePortLabel = QtGui.QLabel(self.tab)
         self.uiConsolePortLabel.setObjectName(_fromUtf8("uiConsolePortLabel"))
         self.gridLayout_4.addWidget(self.uiConsolePortLabel, 3, 0, 1, 2)
-        self.uiMonitorPortSpinBox = QtGui.QSpinBox(self.tab)
-        self.uiMonitorPortSpinBox.setMaximum(65535)
-        self.uiMonitorPortSpinBox.setObjectName(_fromUtf8("uiMonitorPortSpinBox"))
-        self.gridLayout_4.addWidget(self.uiMonitorPortSpinBox, 4, 2, 1, 1)
-        self.uiMonitorPortLabel = QtGui.QLabel(self.tab)
-        self.uiMonitorPortLabel.setObjectName(_fromUtf8("uiMonitorPortLabel"))
-        self.gridLayout_4.addWidget(self.uiMonitorPortLabel, 4, 0, 1, 2)
         self.uiNameLabel = QtGui.QLabel(self.tab)
         self.uiNameLabel.setObjectName(_fromUtf8("uiNameLabel"))
         self.gridLayout_4.addWidget(self.uiNameLabel, 0, 0, 1, 1)
@@ -266,7 +259,6 @@ class Ui_QemuVMConfigPageWidget(object):
         QemuVMConfigPageWidget.setWindowTitle(_translate("QemuVMConfigPageWidget", "QEMU VM configuration", None))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:", None))
         self.uiConsolePortLabel.setText(_translate("QemuVMConfigPageWidget", "Console port:", None))
-        self.uiMonitorPortLabel.setText(_translate("QemuVMConfigPageWidget", "Monitor port:", None))
         self.uiNameLabel.setText(_translate("QemuVMConfigPageWidget", "VM name:", None))
         self.uiRamLabel.setText(_translate("QemuVMConfigPageWidget", "RAM:", None))
         self.uiRamSpinBox.setSuffix(_translate("QemuVMConfigPageWidget", " MB", None))

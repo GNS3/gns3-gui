@@ -252,7 +252,7 @@ class VirtualBoxVM(VM):
         log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
         self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_number}/ports/0/start_capture".format(
             vm_id=self._vm_id,
-            adapter_number=port.portNumber()),
+            adapter_number=port.adapterNumber()),
             self._startPacketCaptureCallback,
             context={"port": port},
             body=params)
@@ -287,7 +287,7 @@ class VirtualBoxVM(VM):
         log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
         self.httpPost("/virtualbox/vms/{vm_id}/adapters/{adapter_number}/ports/0/stop_capture".format(
             vm_id=self._vm_id,
-            adapter_number=port.portNumber()),
+            adapter_number=port.adapterNumber()),
             self._stopPacketCaptureCallback,
             context={"port": port})
 
