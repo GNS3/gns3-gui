@@ -44,6 +44,7 @@ class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
         progress_dialog = ProgressDialog(download_thread, "Importing project", "Downloading project files...", "Cancel",
                                          parent=self.parent())
 
+        download_thread.deleteLater()
         progress_dialog.show()
         progress_dialog.exec_()
 
@@ -64,6 +65,7 @@ class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
             delete_project_thread = DeleteProjectThread(self, project_file_name, self.cloud_settings)
             progress_dialog = ProgressDialog(delete_project_thread, "Deleting project", "Deleting project files...",
                                              "Cancel", parent=self)
+            delete_project_thread.deleteLater()
             progress_dialog.show()
             progress_dialog.exec_()
 

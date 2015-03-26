@@ -1695,6 +1695,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
         progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
                                          parent=self)
+        upload_thread.deleteLater()
         progress_dialog.show()
         progress_dialog.exec_()
 
@@ -1755,6 +1756,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         upload_thread = UploadFilesThread(self, self._cloud_settings, images)
         upload_images_progress_dialog = ProgressDialog(upload_thread, "Uploading images", "Uploading image files...",
                                                        "Cancel", parent=self)
+        upload_thread.deleteLater()
         upload_images_progress_dialog.show()
         upload_images_progress_dialog.exec_()
 
@@ -1865,6 +1867,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                          "Downloading images files...", "Cancel", parent=self)
         download_images_progress_dialog.show()
         download_images_progress_dialog.exec_()
+        download_images_thread.deleteLater()
 
         # copy device files from cloud instances
         src_project_path = posixpath.join(
