@@ -34,10 +34,11 @@ class EtherSwitchRouter(Router):
 
     :param module: parent module for this node
     :param server: GNS3 server instance
+    :param project: Project instance
     """
 
-    def __init__(self, module, server):
-        Router.__init__(self, module, server, platform="c3725")
+    def __init__(self, module, server, project):
+        Router.__init__(self, module, server, project, platform="c3725")
 
         self._platform_settings = {"ram": 128,
                                    "nvram": 304,
