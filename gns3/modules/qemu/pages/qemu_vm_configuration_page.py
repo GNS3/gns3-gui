@@ -291,8 +291,6 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiNameLineEdit.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-            self.uiMonitorPortLabel.hide()
-            self.uiMonitorPortSpinBox.hide()
             self.uiHdaDiskImageLabel.hide()
             self.uiHdaDiskImageLineEdit.hide()
             self.uiHdaDiskImageToolButton.hide()
