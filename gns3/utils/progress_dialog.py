@@ -49,7 +49,6 @@ class ProgressDialog(QtGui.QProgressDialog):
         self.setModal(True)
         self._errors = []
         self.setWindowTitle(title)
-        self.canceled.connect(self.cancel)
 
         # connect the signals and start the thread
         self._thread = thread
@@ -97,13 +96,13 @@ class ProgressDialog(QtGui.QProgressDialog):
 
         return self._errors
 
-    def cancel(self):
+    def done(self, result):
         """
-        Slot to stop the thread and close this dialog.
+        Stop the thread and close this dialog.
         """
 
         self._thread.stop()
-        if not self._thread.wait(5000):
+        if not self._thread.wait(3000):
             self._thread.terminate()
             self._thread.wait()
-        QtGui.QProgressDialog.cancel(self)
+        QtGui.QProgressDialog.done(self, result)
