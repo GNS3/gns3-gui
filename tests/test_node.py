@@ -21,7 +21,7 @@ from unittest.mock import patch, Mock
 
 def test_allocateUDPPort(vpcs_device):
 
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.node.Node.httpPost') as mock:
         vpcs_device.allocateUDPPort(1)
         assert mock.called
         args, kwargs = mock.call_args
