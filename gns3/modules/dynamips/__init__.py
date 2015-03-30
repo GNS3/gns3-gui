@@ -216,6 +216,7 @@ class Dynamips(Module):
             for router in settings[self.__class__.__name__]["routers"]:
                 name = router.get("name")
                 server = router.get("server")
+                router["image"] = router.get("path", router["image"])  # for compatibility before version 1.3
                 key = "{server}:{name}".format(server=server, name=name)
                 if key in self._ios_routers or not name or not server:
                     continue
@@ -393,7 +394,7 @@ class Dynamips(Module):
             if "slot1" in settings and settings["slot1"] == "NM-16ESW":
                 # must be an EtherSwitch router
                 base_name = "ESW"
-            node.setup(ios_router["path"], ios_router["ram"], additional_settings=settings, base_name=base_name)
+            node.setup(ios_router["image"], ios_router["ram"], additional_settings=settings, base_name=base_name)
         else:
             node.setup()
 
@@ -406,7 +407,7 @@ class Dynamips(Module):
         """
 
         for ios_router in self._ios_routers.values():
-            if ios_router["path"] == image_path:
+            if ios_router["image"] == image_path:
                 if ios_router["idlepc"] != idlepc:
                     ios_router["idlepc"] = idlepc
                     self._saveIOSRouters()
@@ -459,7 +460,7 @@ class Dynamips(Module):
         mainwindow = MainWindow.instance()
         ios_routers = self.iosRouters()
         candidate_ios_images = {}
-        alternative_image = {"path": image,
+        alternative_image = {"image": image,
                              "ram": None,
                              "idlepc": None}
 
@@ -474,7 +475,7 @@ class Dynamips(Module):
                                                        list(candidate_ios_images.keys()), 0, False)
             if ok:
                 ios_image = candidate_ios_images[selection]
-                alternative_image["path"] = ios_router["path"]
+                alternative_image["image"] = ios_router["image"]
                 alternative_image["ram"] = ios_router["ram"]
                 alternative_image["idlepc"] = ios_router["idlepc"]
                 self._ios_images_cache[image] = alternative_image
@@ -483,9 +484,9 @@ class Dynamips(Module):
         # no registered IOS image is used, let's just ask for an IOS image path
         QtGui.QMessageBox.critical(mainwindow, "IOS image", "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image))
         from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        path = IOSRouterPreferencesPage.getIOSImage(mainwindow)
-        if path:
-            alternative_image["path"] = path
+        image_path = IOSRouterPreferencesPage.getIOSImage(mainwindow)
+        if image_path:
+            alternative_image["image"] = image_path
             self._ios_images_cache[image] = alternative_image
         return alternative_image
 

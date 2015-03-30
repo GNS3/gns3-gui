@@ -118,8 +118,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                         self,
                         cloud_settings=MainWindow.instance().cloudSettings(),
                         files_to_upload=[(
-                            self._ios_routers[key]["path"],
-                            'images/' + os.path.relpath(self._ios_routers[key]["path"],
+                            self._ios_routers[key]["image"],
+                            'images/' + os.path.relpath(self._ios_routers[key]["image"],
                                                         self._main_window.settings().imagesDirPath())
                         )]
                     )
@@ -325,7 +325,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             ios_router = self._ios_routers[key]
-            path = ios_router["path"]
+            path = ios_router["image"]
             if not os.path.isfile(path):
                 QtGui.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
                 return
@@ -345,8 +345,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                              "Cancel", busy=True, parent=self)
             progress_dialog.show()
             if progress_dialog.exec_() is not False:
-                ios_router["path"] = decompressed_image_path
-                ios_router["image"] = os.path.basename(decompressed_image_path)
+                ios_router["image"] = decompressed_image_path
                 self._refreshInfo(ios_router)
             thread.wait()
 

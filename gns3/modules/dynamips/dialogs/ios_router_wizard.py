@@ -174,7 +174,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         platform = self.uiPlatformComboBox.currentText()
         ram = self.uiRamSpinBox.value()
         ios_image = self.uiIOSImageLineEdit.text()
-        dynamips = os.path.realpath(Dynamips.instance().settings()["path"])
+        dynamips = os.path.realpath(Dynamips.instance().settings()["image"])
         if not os.path.exists(dynamips):
             QtGui.QMessageBox.critical(self, "IOS image", "Could not find Dynamips executable: {}".format(dynamips))
             return
@@ -452,8 +452,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         :return: settings dict
         """
 
-        path = self.uiIOSImageLineEdit.text()
-        image = os.path.basename(path)
+        image = self.uiIOSImageLineEdit.text()
         if Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
@@ -468,13 +467,12 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         platform = self.uiPlatformComboBox.currentText()
         settings = {
             "name": self.uiNameLineEdit.text(),
-            "path": path,
+            "image": image,
             "startup_config": get_default_base_config(self._base_startup_config_template),
             "private_config": get_default_base_config(self._base_private_config_template),
             "ram": self.uiRamSpinBox.value(),
             "nvram": PLATFORMS_DEFAULT_NVRAM[platform],
             "idlepc": self.uiIdlepcLineEdit.text(),
-            "image": image,
             "platform": platform,
             "chassis": self.uiChassisComboBox.currentText(),
             "server": server,
@@ -487,7 +485,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             settings["disk0"] = 1  # adds 1MB disk to store vlan.dat
             settings["category"] = Node.switches
 
-        if image.lower().startswith("c7200p"):
+        image_file = os.path.basename(image)
+        if image_file.lower().startswith("c7200p"):
             settings["npe"] = "npe-g2"
 
         for slot_id, widget in self._widget_slots.items():

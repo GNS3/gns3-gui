@@ -41,7 +41,6 @@ DYNAMIPS_SETTING_TYPES = {
 
 IOS_ROUTER_SETTINGS = {
     "name": "",
-    "path": "",
     "image": "",
     "default_symbol": ":/symbols/router.normal.svg",
     "hover_symbol": ":/symbols/router.selected.svg",
@@ -67,7 +66,6 @@ IOS_ROUTER_SETTINGS = {
 
 IOS_ROUTER_SETTING_TYPES = {
     "name": str,
-    "path": str,
     "image": str,
     "default_symbol": str,
     "hover_symbol": str,

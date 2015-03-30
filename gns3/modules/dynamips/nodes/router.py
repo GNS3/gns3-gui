@@ -733,7 +733,7 @@ class Router(VM):
                 image = updated_image_path
             elif not os.path.isfile(image):
                 alternative_image = self._module.findAlternativeIOSImage(image, self)
-                image = alternative_image["path"]
+                image = alternative_image["image"]
                 if alternative_image["ram"]:
                     ram = alternative_image["ram"]
                 if alternative_image["idlepc"]:

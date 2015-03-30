@@ -463,9 +463,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             #    settings["mac_addr"] = mac
 
             # save the IOS image path
-            path = self.uiIOSImageLineEdit.text()
-            # settings["path"] = path
-            settings["image"] = path  # os.path.basename(path)
+            settings["image"] = self.uiIOSImageLineEdit.text()
 
         else:
             del settings["name"]
