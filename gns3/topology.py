@@ -22,6 +22,7 @@ Handles the saving and loading of a topology.
 
 import os
 import json
+import uuid
 from .qt import QtGui, QtSvg
 
 from functools import partial
@@ -435,11 +436,12 @@ class Topology(object):
                     image_info["path"] = os.path.join("images", os.path.basename(image_info["path"]))
                 topology_images.append(image_info)
 
-    def dump(self, include_gui_data=True):
+    def dump(self, include_gui_data=True, random_id=False):
         """
         Creates a complete representation of the topology.
 
         :param include_gui_data: either to include or not the GUI specific info.
+        :param dump_id: change vm id and project id too a new randow value (save as feature)
 
         :returns: topology representation
         """
@@ -500,6 +502,20 @@ class Topology(object):
         if include_gui_data:
             self._dump_gui_settings(topology)
 
+        if random_id:
+            topology = self._randomize_id(topology)
+        return topology
+
+    def _randomize_id(self, topology):
+        """
+        Iterate on all keys and replace the uuid by a new one.Use by save as
+        for create new topology.
+
+        :params: A topology dictionnary
+        """
+        topology["project_id"] = str(uuid.uuid4())
+        for key,node in enumerate(topology["topology"]["nodes"]):
+            topology["topology"]["nodes"][key]["vm_id"] = str(uuid.uuid4())
         return topology
 
     def loadFile(self, path, project):

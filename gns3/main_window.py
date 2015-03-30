@@ -1320,24 +1320,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._project.moveFromTemporaryToPath(project_dir)
             return self.saveProject(topology_file_path)
         else:
-            # We save the topology and use the standard restore process
+            # We save the topology and use the standard restore process to reinitialize everything
             self._project.setId(None)
             self._project.setTopologyFile(topology_file_path)
-            self.saveProject(topology_file_path)
+            self.saveProject(topology_file_path, random_id=True)
             return self.loadProject(topology_file_path)
 
-    def saveProject(self, path):
+    def saveProject(self, path, random_id=False):
         """
         Saves a project.
 
         :param path: path to project file
+        :param random_id: Randomize project and vm id (use for save as)
         """
 
         topology = Topology.instance()
         topology.project = self._project
         try:
             self._project.commit()
-            topo = topology.dump()
+            topo = topology.dump(random_id=random_id)
             with open(path, "w") as f:
                 log.info("Saving project: {}".format(path))
                 json.dump(topo, f, sort_keys=True, indent=4)
