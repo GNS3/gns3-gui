@@ -514,7 +514,7 @@ class Topology(object):
         :params: A topology dictionnary
         """
         topology["project_id"] = str(uuid.uuid4())
-        for key,node in enumerate(topology["topology"]["nodes"]):
+        for key, node in enumerate(topology["topology"]["nodes"]):
             topology["topology"]["nodes"][key]["vm_id"] = str(uuid.uuid4())
         return topology
 

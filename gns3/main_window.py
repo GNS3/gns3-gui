@@ -1321,10 +1321,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return self.saveProject(topology_file_path)
         else:
             # We save the topology and use the standard restore process to reinitialize everything
-            self._project.setId(None)
             self._project.setTopologyFile(topology_file_path)
             self.saveProject(topology_file_path, random_id=True)
-            return self.loadProject(topology_file_path)
+            return self._loadPath(topology_file_path)
 
     def saveProject(self, path, random_id=False):
         """

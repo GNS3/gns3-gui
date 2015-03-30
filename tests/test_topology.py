@@ -85,6 +85,7 @@ def test_dump(vpcs_device, project, local_server):
         "type": "topology"
     }
 
+
 def test_randomize_id():
     project_uuid = str(uuid.uuid4())
     vm_uuid1 = str(uuid.uuid4())
@@ -109,13 +110,14 @@ def test_randomize_id():
     assert top["topology"]["nodes"][1]["vm_id"] != vm_uuid2
     assert top["topology"]["nodes"][0]["vm_id"] != top["topology"]["nodes"][1]["vm_id"]
 
+
 def test_dump_random_id(vpcs_device, project, local_server):
     topology = Topology()
     topology.project = project
     topology.addNode(vpcs_device)
 
     fake_uuid = str(uuid.uuid4())
-    with patch("uuid.uuid4", return_value = fake_uuid):
+    with patch("uuid.uuid4", return_value=fake_uuid):
         dump = topology.dump(include_gui_data=False, random_id=True)
         assert dict(dump) == {
             "project_id": fake_uuid,
@@ -142,7 +144,7 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         },
                         "server_id": local_server.id(),
                         "type": "VPCSDevice",
-                        "vm_id": fake_uuid                    }
+                        "vm_id": fake_uuid}
                 ],
                 "servers": [
                     {
