@@ -129,8 +129,7 @@ class FrameRelaySwitch(Device):
             if self.hasAllocatedName(new_settings["name"]):
                 self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
                 return
-            params = {"id": self._frsw_id,
-                      "name": new_settings["name"]}
+            params["name"] = new_settings["name"]
             updated = True
 
         if updated:
