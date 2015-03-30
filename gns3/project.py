@@ -157,6 +157,10 @@ class Project(QtCore.QObject):
     def commit(self):
         """Save project on remote servers"""
 
+        # If current project doesn't exist on remote server
+        if self._id is None:
+            return
+
         for server in list(self._created_servers):
             server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
