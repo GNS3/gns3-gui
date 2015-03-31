@@ -514,8 +514,9 @@ class Topology(object):
         :params: A topology dictionnary
         """
         topology["project_id"] = str(uuid.uuid4())
-        for key, node in enumerate(topology["topology"]["nodes"]):
-            topology["topology"]["nodes"][key]["vm_id"] = str(uuid.uuid4())
+        if "nodes" in topology["topology"]:
+            for key, node in enumerate(topology["topology"]["nodes"]):
+                topology["topology"]["nodes"][key]["vm_id"] = str(uuid.uuid4())
         return topology
 
     def loadFile(self, path, project):
