@@ -17,9 +17,15 @@
 
 import sys
 import os
-import raven
-import struct
 import platform
+
+try:
+    import raven
+    RAVEN_AVAILABLE = True
+except ImportError:
+    # raven is not installed with deb package in order to simplify packagin
+    RAVEN_AVAILABLE = False
+
 
 from .version import __version__
 from .servers import Servers
@@ -47,6 +53,8 @@ class CrashReport:
         self._client = None
 
     def captureException(self, exception, value, tb):
+        if not RAVEN_AVAILABLE:
+            return
         local_server = Servers.instance().localServerSettings()
         if local_server["report_errors"]:
             if self._client is None:
