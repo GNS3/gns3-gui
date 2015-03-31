@@ -743,7 +743,6 @@ class Topology(object):
                     image_path = topology_image["path"]
 
                 image_path = os.path.normpath(image_path)
-                print(image_path)
                 if not os.path.isfile(image_path):
                     topology_file_errors.append("Path to image {} doesn't exist".format(image_path))
                     continue
