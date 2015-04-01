@@ -307,7 +307,10 @@ class Project(QtCore.QObject):
         if len(self._created_servers) == 0:
             self._closed = True
             self.project_closed_signal.emit()
-            self._project_instances.remove(self)
+            try:
+                self._project_instances.remove(self)
+            except KeyError:
+                return
 
     def moveFromTemporaryToPath(self, new_path):
         """
