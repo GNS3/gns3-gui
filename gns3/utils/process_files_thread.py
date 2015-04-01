@@ -84,8 +84,6 @@ class ProcessFilesThread(QtCore.QThread):
 
             # start create the destination sub-directories
             for directory in dirs:
-                if not self._is_running:
-                    return
                 try:
                     destination_dir = os.path.join(base_dir, directory)
                     os.makedirs(destination_dir)
@@ -94,11 +92,11 @@ class ProcessFilesThread(QtCore.QThread):
                 except OSError as e:
                     self.error.emit("Could not create directory {}: {}".format(destination_dir, e), True)
                     return
+                if not self._is_running:
+                    return
 
             # finally the files themselves
             for sfile in filenames:
-                if not self._is_running:
-                    return
                 source_file = os.path.join(path, sfile)
                 destination_file = os.path.join(base_dir, sfile)
                 try:
@@ -113,6 +111,8 @@ class ProcessFilesThread(QtCore.QThread):
                     else:
                         log.warning("Cannot copy: {}".format(e))
                         self.error.emit("Could not copy file to {}: {}".format(destination_file, e), False)
+                if not self._is_running:
+                    return
                 copied += 1
                 # update the progress made
                 progress = float(copied) / file_count * 100
