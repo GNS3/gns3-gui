@@ -71,7 +71,11 @@ class WaitForConnectionThread(QtCore.QThread):
             connection_success = True
             break
 
+        if not self._is_running:
+            return
+
         if not connection_success:
+
             # let the GUI know about the connection was unsuccessful and finish the thread
             self.error.emit("Could not connect to {} on port {}: {}".format(self._host,
                                                                             self._port,
