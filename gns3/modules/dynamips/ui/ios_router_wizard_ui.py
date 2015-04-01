@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Fri Mar 13 11:09:58 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Wed Apr  1 15:15:16 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_IOSRouterWizard(object):
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName(_fromUtf8("IOSRouterWizard"))
-        IOSRouterWizard.resize(517, 398)
+        IOSRouterWizard.resize(585, 398)
         IOSRouterWizard.setModal(True)
         self.uiServerWizardPage = QtGui.QWizardPage()
         self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
@@ -141,7 +141,7 @@ class Ui_IOSRouterWizard(object):
         self.label.setWordWrap(False)
         self.label.setOpenExternalLinks(True)
         self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 3)
         IOSRouterWizard.addPage(self.uiMemoryWizardPage)
         self.uiNetworkAdaptersWizardPage = QtGui.QWizardPage()
         self.uiNetworkAdaptersWizardPage.setObjectName(_fromUtf8("uiNetworkAdaptersWizardPage"))
@@ -304,11 +304,11 @@ class Ui_IOSRouterWizard(object):
         self.uiChassisLabel.setText(_translate("IOSRouterWizard", "Chassis:", None))
         self.uiEtherSwitchCheckBox.setText(_translate("IOSRouterWizard", "This is an EtherSwitch router", None))
         self.uiMemoryWizardPage.setTitle(_translate("IOSRouterWizard", "Memory", None))
-        self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Not enough RAM could prevent IOS to start.", None))
+        self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS to start.", None))
         self.uiRamLabel.setText(_translate("IOSRouterWizard", "Default RAM:", None))
         self.uiRamSpinBox.setSuffix(_translate("IOSRouterWizard", " MiB", None))
         self.uiTestIOSImagePushButton.setText(_translate("IOSRouterWizard", "&Test IOS image", None))
-        self.label.setText(_translate("IOSRouterWizard", "<html><head/><body><p><a href=\"http://tools.cisco.com/ITDIT/CFN/jsp/SearchBySoftware.jsp\"><span style=\" text-decoration: underline; color:#0000ff;\">Check for minimum RAM requirement</span></a></p></body></html>", None))
+        self.label.setText(_translate("IOSRouterWizard", "<html><head/><body><p><a href=\"http://tools.cisco.com/ITDIT/CFN/jsp/SearchBySoftware.jsp\"><span style=\" text-decoration: underline; color:#0000ff;\">Check for minimum and maximum RAM requirement</span></a></p></body></html>", None))
         self.uiNetworkAdaptersWizardPage.setTitle(_translate("IOSRouterWizard", "Network adapters", None))
         self.uiNetworkAdaptersWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose the default network adapters that should be inserted into every new instance of this router.", None))
         self.uiSlot0Label.setText(_translate("IOSRouterWizard", "slot 0:", None))
