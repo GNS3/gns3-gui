@@ -232,6 +232,16 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["projects_path"] = current_settings["projects_path"]
         new_settings["report_errors"] = current_settings["report_errors"]
 
+        if new_settings["console_end_port_range"] <= new_settings["console_start_port_range"]:
+            QtGui.QMessageBox.critical(self, "Local", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
+                                                                                                        new_settings["console_end_port_range"]))
+            return
+
+        if new_settings["udp_end_port_range"] <= new_settings["udp_start_port_range"]:
+            QtGui.QMessageBox.critical(self, "Local", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
+                                                                                                        new_settings["udp_end_port_range"]))
+            return
+
         if new_settings["auto_start"]:
             if not os.path.isfile(new_settings["path"]):
                 QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_settings["path"]))
