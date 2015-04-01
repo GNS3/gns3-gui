@@ -18,12 +18,13 @@
 import sys
 import os
 import platform
+import struct
 
 try:
     import raven
     RAVEN_AVAILABLE = True
 except ImportError:
-    # raven is not installed with deb package in order to simplify packagin
+    # raven is not installed with deb package in order to simplify packaging
     RAVEN_AVAILABLE = False
 
 
