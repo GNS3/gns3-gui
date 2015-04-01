@@ -56,7 +56,7 @@ setup(
             "gns3 = gns3.main:main",
         ]
     },
-    packages=find_packages(),
+    packages=find_packages(".", exclude=["docs", "tests"]),
     include_package_data=True,
     package_data={"gns3": ["configs/*.txt"]},
     platforms="any",
