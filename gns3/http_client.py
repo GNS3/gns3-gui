@@ -258,6 +258,14 @@ class HTTPClient(QtCore.QObject):
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)
             return
+
+        if "version" not in params or "local" not in params:
+            msg = "The remote server {}://{}:{} is not a GNS 3 server".format(self.scheme, self.host, self.port)
+            log.error(msg)
+            if callback is not None:
+                callback({"message": msg}, error=True, server=self)
+            return
+
         if params["version"] != __version__:
             msg = "Client version {} differs with server version {}".format(__version__, params["version"])
             log.error(msg)
