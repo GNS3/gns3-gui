@@ -110,7 +110,11 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         host = item.text(0)
-        port = int(item.text(1))
+        try:
+            port = int(item.text(1))
+        except ValueError:
+            QtGui.QMessageBox.critical(self, "Remote server", "Invalid port")
+            return
         self.uiRemoteServerPortLineEdit.setText(host)
         self.uiRemoteServerPortSpinBox.setValue(port)
 
@@ -239,7 +243,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
         if new_settings["udp_end_port_range"] <= new_settings["udp_start_port_range"]:
             QtGui.QMessageBox.critical(self, "Local", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
-                                                                                                        new_settings["udp_end_port_range"]))
+                                                                                                    new_settings["udp_end_port_range"]))
             return
 
         if new_settings["auto_start"]:
