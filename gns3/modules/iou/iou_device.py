@@ -157,7 +157,7 @@ class IOUDevice(VM):
         if len(self._module._settings["iourc_path"]) > 0:
             try:
                 with open(self._module._settings["iourc_path"], 'rb') as f:
-                    self._inital_settings ["iourc_content"] = f.read().decode("utf-8")
+                    self._inital_settings["iourc_content"] = f.read().decode("utf-8")
             except OSError as e:
                 print("Can't open iourc file {}: {}".format(self._module._settings["iourc_path"], e))
         self.httpPost("/iou/vms", self._setupCallback, body=params)

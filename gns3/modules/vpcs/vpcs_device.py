@@ -356,7 +356,7 @@ class VPCSDevice(VM):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
 
-            if "startup_script" in result:
+            if "startup_script" in result and result["startup_script"] is not None:
                 config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_startup.vpc"
                 config = result["startup_script"].encode("utf-8")
                 try:
