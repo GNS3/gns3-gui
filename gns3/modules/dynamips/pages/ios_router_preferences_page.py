@@ -308,7 +308,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     decompressed_size += zip_info.file_size
             else:
                 decompressed_size = os.path.getsize(path)
-        except OSError:
+        except (zipfile.BadZipFile, OSError):
             return 0
 
         # get the size in MB
