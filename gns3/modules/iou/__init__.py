@@ -282,8 +282,8 @@ class IOU(Module):
 
         if len(self._settings["iourc_path"]) > 0:
             try:
-                with open(self._settings["iourc_path"]) as f:
-                    settings["iourc_content"] = f.read()
+                with open(self._settings["iourc_path"], 'rb') as f:
+                    settings["iourc_content"] = f.read().decode("utf-8")
             except OSError as e:
                 print("Can't open iourc file {}: {}".format(self._settings["iourc_path"], e))
 
