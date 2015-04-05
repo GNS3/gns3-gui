@@ -1,5 +1,22 @@
 # Change Log
 
+## 1.3.1rc1 05/04/2015
+* Fix rare occasion when user manage to put text in port field
+* Fix a crash when exporting vpcs startup script
+* Fix an issue with sending iourc when a topologies is reloaded
+* Solve issue when iourc contains non ascii characters
+* Handle corrupted zip file with IOS image
+* Don't crash if we try to contact a non GNS3 remote server returning JSON
+* Skip tests in package
+* Check port range
+* Add a warning about too much ram for IOS
+* Fix crash if project is already closed
+* Check if wait for connection thread still running before emitting a signal.
+* Check if process files thread still running before emitting a signal.
+* Raven is an optionnal dependencies for Debian
+* Fix crash if a dumped topology as no node during save as
+* Fix: remove old ID references for ATM and Frame-Relay switches.
+
 ## 1.3.0 30/03/2015
 
 * Fix etherswitch router
