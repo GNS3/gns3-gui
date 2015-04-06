@@ -84,7 +84,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
     assert network_manager.get.called
 
     response.header.return_value = "application/json"
-    response.readAll.return_value = ("{\"version\": \"" + __version__ + "\"}").encode()
+    response.readAll.return_value = ("{\"version\": \"" + __version__ + "\", \"local\": true}").encode()
 
     # Trigger the completion of /version
     response.finished.emit()
@@ -98,7 +98,6 @@ def test_post_not_connected(http_client, request, network_manager, response):
     assert callback.called
 
     args, kwargs = callback.call_args
-    print(kwargs["context"])
     assert kwargs["context"]["toto"] == 42
 
 
