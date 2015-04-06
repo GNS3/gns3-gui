@@ -1,6 +1,11 @@
 # Change Log
 
+## 1.3.1rc3 06/04/2015
+
+* Fix race condition during old project import
+
 ## 1.3.1rc1 05/04/2015
+
 * Fix rare occasion when user manage to put text in port field
 * Fix a crash when exporting vpcs startup script
 * Fix an issue with sending iourc when a topologies is reloaded

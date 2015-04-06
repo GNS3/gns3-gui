@@ -280,7 +280,7 @@ class Project(QtCore.QObject):
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         server.createHTTPQuery(method, path, callback, body=body, context=context)
 
-        #Call all operations waiting for project creation:
+        # Call all operations waiting for project creation:
         if server in self._callback_finish_creating_on_server:
             callbacks = self._callback_finish_creating_on_server[server]
             del self._callback_finish_creating_on_server[server]
