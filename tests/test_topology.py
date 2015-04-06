@@ -401,10 +401,13 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
 
     monkeypatch.setattr('gns3.main_window.MainWindow.instance', lambda: main_window)
 
+    project_call = 0
     # We return an uuid for each HTTP post
     def http_loader(self, method, path, callback, body={}, **kwargs):
         if path == "/projects":
             callback({"project_id": uuid.uuid4(), "path": str(tmpdir)}, error=False, server=local_server)
+            project_call += 1
+            assert project_call < 2
         else:
             callback({"vm_id": uuid.uuid4()})
 

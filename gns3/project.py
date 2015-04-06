@@ -49,7 +49,10 @@ class Project(QtCore.QObject):
         self._type = None
         self._name = "untitled"
         self._project_instances.add(self)
+
+        # Manage project creations on multiple servers
         self._created_servers = set()
+        self._callback_finish_creating_on_server = {}
 
         super().__init__()
 
@@ -223,17 +226,22 @@ class Project(QtCore.QObject):
         """
 
         if server not in self._created_servers:
-            func = functools.partial(self._projectOnServerCreated, method, path, callback, body, context=context)
+            func = functools.partial(self._projectOnServerCreated, method, path, callback, body, context=context, server=server)
 
-            body = {
-                "name": self._name,
-                "temporary": self._temporary,
-                "project_id": self._id
-            }
-            if server == self._servers.localServer():
-                body["path"] = self.filesDir()
+            if server not in self._callback_finish_creating_on_server:
+                self._callback_finish_creating_on_server[server] = []
+                body = {
+                    "name": self._name,
+                    "temporary": self._temporary,
+                    "project_id": self._id
+                }
+                if server == self._servers.localServer():
+                    body["path"] = self.filesDir()
 
-            server.post("/projects", func, body)
+                server.post("/projects", func, body)
+            else:
+                # If the project creation is already in progress we bufferizze the query
+                self._callback_finish_creating_on_server[server].append(func)
         else:
             self._projectOnServerCreated(method, path, callback, body, params={}, server=server, context=context)
 
@@ -271,6 +279,13 @@ class Project(QtCore.QObject):
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         server.createHTTPQuery(method, path, callback, body=body, context=context)
+
+        #Call all operations waiting for project creation:
+        if server in self._callback_finish_creating_on_server:
+            callbacks = self._callback_finish_creating_on_server[server]
+            del self._callback_finish_creating_on_server[server]
+            for call in callbacks:
+                call()
 
     def close(self, local_server_shutdown=False):
         """Close project"""
