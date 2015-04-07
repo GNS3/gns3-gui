@@ -30,6 +30,10 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class HttpBadRequest(Exception):
+    pass
+
+
 class HTTPClient(QtCore.QObject):
 
     """
@@ -333,12 +337,17 @@ class HTTPClient(QtCore.QObject):
 
     def _processResponse(self, response, callback, context):
 
+        status = None
+        body = None
+
         if "query_id" in context:
             self.notify_progress_end_query(context["query_id"])
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
             if error_code < 200:
                 self._connected = False
+            else:
+                status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
             log.info("Response error: {}".format(error_message))
             body = bytes(response.readAll()).decode()
@@ -365,6 +374,8 @@ class HTTPClient(QtCore.QObject):
                 else:
                     callback(params, server=self, context=context)
         response.deleteLater()
+        if status == 400:
+            raise HttpBadRequest(body)
 
     def dump(self):
         """
