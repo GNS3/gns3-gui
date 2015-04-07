@@ -1,6 +1,10 @@
 # Change Log
 
-## 1.3.1rc3 06/04/2015
+## 1.3.1rc3 07/04/2015
+
+* Send HTTP errors 400 to the crash report system
+
+## 1.3.1rc2 06/04/2015
 
 * Fix race condition during old project import
 
