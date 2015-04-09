@@ -1293,7 +1293,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(project_dir), e)
+            QtGui.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(project_dir, e))
             return
 
         if self._project.temporary():
