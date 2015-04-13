@@ -30,8 +30,8 @@ from gns3.node import Node
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
+from gns3.device_wizard import DeviceWizard
 
-from ....settings import ENABLE_CLOUD
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, DEFAULT_IDLEPC, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 from .. import Dynamips
@@ -57,7 +57,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
+class IOSRouterWizard(DeviceWizard, Ui_IOSRouterWizard):
 
     """
     Wizard to create an IOS router.
@@ -69,16 +69,8 @@ class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
     def __init__(self, ios_routers, parent):
 
         super().__init__(parent)
-        self.setupUi(self)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
-        if sys.platform.startswith("darwin"):
-            # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
-        self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
-        self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiEtherSwitchCheckBox.stateChanged.connect(self._etherSwitchSlot)
@@ -124,32 +116,43 @@ class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
             # skip the server page if we use the local server
             self.setStartId(1)
 
-        if not ENABLE_CLOUD:
-            self.uiCloudRadioButton.hide()
+        from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
+        self.addImageSelector(self.uiIOSExistingImageRadioButton, self.uiIOSImageListComboBox, self.uiIOSImageLineEdit, self.uiIOSImageToolButton, IOSRouterPreferencesPage.getIOSImage)
 
-    def _remoteServerToggledSlot(self, checked):
+    def _prefillPlatform(self):
         """
-        Slot for when the remote server radio button is toggled.
-
-        :param checked: either the button is checked or not
+        Try to guess the platform based on image name
         """
+        # try to guess the platform
+        image = os.path.basename(self.uiIOSImageLineEdit.text())
+        match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
+        if not match:
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
+            return
 
-        if checked:
-            self.uiRemoteServersGroupBox.setEnabled(True)
-        else:
-            self.uiRemoteServersGroupBox.setEnabled(False)
+        detected_platform = match.group(1)
+        detected_chassis = ""
+        # IOS images for the 3600 platform start with the chassis name (c3620 etc.)
+        for platform, chassis in CHASSIS.items():
+            if detected_platform[1:] in chassis:
+                detected_chassis = detected_platform[1:]
+                detected_platform = platform
+                break
 
-    def _loadBalanceToggledSlot(self, checked):
-        """
-        Slot for when the load balance checkbox is toggled.
+        if detected_platform not in PLATFORMS_DEFAULT_RAM:
+            QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
+            return
 
-        :param checked: either the box is checked or not
-        """
+        if image.lower().startswith("c7200p"):
+            QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
 
-        if checked:
-            self.uiRemoteServersComboBox.setEnabled(False)
-        else:
-            self.uiRemoteServersComboBox.setEnabled(True)
+        index = self.uiPlatformComboBox.findText(detected_platform)
+        if index != -1:
+            self.uiPlatformComboBox.setCurrentIndex(index)
+
+        index = self.uiChassisComboBox.findText(detected_chassis)
+        if index != -1:
+            self.uiChassisComboBox.setCurrentIndex(index)
 
     def _platformChangedSlot(self, platform):
         """
@@ -376,12 +379,12 @@ class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
 
     def initializePage(self, page_id):
 
-        if self.page(page_id) == self.uiServerWizardPage:
-            self.uiRemoteServersComboBox.clear()
-            for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+        super().initializePage(page_id)
 
+        if self.page(page_id) == self.uiIOSImageWizardPage:
+            self.loadImagesList("/dynamips/vms")
         elif self.page(page_id) == self.uiNamePlatformWizardPage:
+            self._prefillPlatform()
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             ios_image = self.uiIOSImageLineEdit.text()
             self.setWindowTitle("New IOS router - {}".format(os.path.basename(ios_image)))
@@ -425,6 +428,9 @@ class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
         Validates the IOS name and checks validation state for Idle-PC value
         """
 
+        if super().validateCurrentPage() is False:
+            return False
+
         if self.currentPage() == self.uiNamePlatformWizardPage:
             name = self.uiNameLineEdit.text()
             for ios_router in self._ios_routers.values():
@@ -439,10 +445,6 @@ class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
                 QtWidgets.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
-                return False
-        if self.currentPage() == self.uiServerWizardPage and self.uiRemoteRadioButton.isChecked():
-            if not Servers.instance().remoteServers():
-                QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in Dynamips preferences")
                 return False
         return True
 

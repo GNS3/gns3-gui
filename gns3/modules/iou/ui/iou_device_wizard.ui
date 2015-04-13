@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>366</height>
+    <width>585</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,57 +118,125 @@
    <property name="subTitle">
     <string>Please choose a descriptive name for the new IOU device and add an IOU image.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="uiNameLabel">
-      <property name="text">
-       <string>Name:</string>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QFormLayout" name="formLayout_7">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::ExpandingFieldsGrow</enum>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="uiNameLineEdit"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="uiIOUImageLabel">
-      <property name="text">
-       <string>IOU image:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <item>
-       <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
-      </item>
-      <item>
-       <widget class="QToolButton" name="uiIOUImageToolButton">
+      <item row="0" column="0">
+       <widget class="QLabel" name="uiNameLabel">
         <property name="text">
-         <string>&amp;Browse...</string>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextOnly</enum>
+         <string>Name:</string>
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiNameLineEdit"/>
+      </item>
      </layout>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="uiTypeLabel">
-      <property name="text">
-       <string>Type:</string>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Image</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QRadioButton" name="uiExistingImageRadioButton">
+           <property name="text">
+            <string>Existing image</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="uiNewImageRadioButton">
+           <property name="text">
+            <string>New Image</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QFormLayout" name="formLayout_8">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="uiTypeLabel">
+           <property name="text">
+            <string>Type:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="uiTypeComboBox"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="uiIOUImageLabel">
+           <property name="text">
+            <string>IOU image:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QComboBox" name="uiIOUImageListComboBox"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
+           </item>
+           <item>
+            <widget class="QToolButton" name="uiIOUImageToolButton">
+             <property name="text">
+              <string>&amp;Browse...</string>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextOnly</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QComboBox" name="uiTypeComboBox"/>
     </item>
    </layout>
   </widget>
  </widget>
  <tabstops>
   <tabstop>uiNameLineEdit</tabstop>
-  <tabstop>uiTypeComboBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>
