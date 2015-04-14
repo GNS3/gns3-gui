@@ -23,7 +23,7 @@ import urllib.parse
 import urllib.request
 from functools import partial
 
-from .version import __version__
+from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork
 
 import logging
@@ -273,9 +273,14 @@ class HTTPClient(QtCore.QObject):
         if params["version"] != __version__:
             msg = "Client version {} differs with server version {}".format(__version__, params["version"])
             log.error(msg)
-            if callback is not None:
-                callback({"message": msg}, error=True, server=self)
-            return
+            # Official release
+            if __version_info__[3] == 0:
+                if callback is not None:
+                    callback({"message": msg}, error=True, server=self)
+                return
+            else:
+                print(msg)
+                print("WARNING: Use a different client and server version can create bugs. Use it at your own risk.")
 
         self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._connected = True
