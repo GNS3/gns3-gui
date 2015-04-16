@@ -238,50 +238,18 @@ class Qemu(Module):
             else:
                 vm = selected_vms[0]
 
-        settings = {"ram": self._qemu_vms[vm]["ram"],
-                    "adapters": self._qemu_vms[vm]["adapters"],
-                    "adapter_type": self._qemu_vms[vm]["adapter_type"]}
+        # use the template VM settings to create the VM settings
+        vm_settings = {}
+        for setting_name in node.settings():
+            if setting_name in self._qemu_vms[vm]:
+                if isinstance(self._qemu_vms[vm][setting_name], str) and not self._qemu_vms[vm][setting_name]:
+                    # ignore empty paths
+                    continue
+                vm_settings[setting_name] = self._qemu_vms[vm][setting_name]
 
-        # FIXME: this is ugly...
-        if self._qemu_vms[vm]["hda_disk_image"]:
-            settings["hda_disk_image"] = self._qemu_vms[vm]["hda_disk_image"]
-
-        if self._qemu_vms[vm]["hdb_disk_image"]:
-            settings["hdb_disk_image"] = self._qemu_vms[vm]["hdb_disk_image"]
-
-        if self._qemu_vms[vm]["hdc_disk_image"]:
-            settings["hdc_disk_image"] = self._qemu_vms[vm]["hdc_disk_image"]
-
-        if self._qemu_vms[vm]["hdd_disk_image"]:
-            settings["hdd_disk_image"] = self._qemu_vms[vm]["hdd_disk_image"]
-
-        if self._qemu_vms[vm]["initrd"]:
-            settings["initrd"] = self._qemu_vms[vm]["initrd"]
-
-        if self._qemu_vms[vm]["kernel_image"]:
-            settings["kernel_image"] = self._qemu_vms[vm]["kernel_image"]
-
-        if self._qemu_vms[vm]["kernel_command_line"]:
-            settings["kernel_command_line"] = self._qemu_vms[vm]["kernel_command_line"]
-
-        if self._qemu_vms[vm]["legacy_networking"]:
-            settings["legacy_networking"] = self._qemu_vms[vm]["legacy_networking"]
-
-        settings["cpu_throttling"] = self._qemu_vms[vm]["cpu_throttling"]
-
-        if self._qemu_vms[vm]["process_priority"]:
-            settings["process_priority"] = self._qemu_vms[vm]["process_priority"]
-
-        if self._qemu_vms[vm]["options"]:
-            settings["options"] = self._qemu_vms[vm]["options"]
-
-        qemu_path = self._qemu_vms[vm]["qemu_path"]
-        name = self._qemu_vms[vm]["name"]
-
-        if node.server().isCloud():
-            settings["cloud_path"] = "images/qemu"
-
-        node.setup(qemu_path, initial_settings=settings, base_name=name)
+        qemu_path = settings.pop("qemu_path")
+        name = settings.pop("name")
+        node.setup(qemu_path, additional_settings=vm_settings, base_name=name)
 
     def reset(self):
         """
