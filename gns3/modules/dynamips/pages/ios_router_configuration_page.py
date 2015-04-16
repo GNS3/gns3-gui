@@ -477,14 +477,18 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
 
         if not node:
             startup_config = self.uiStartupConfigLineEdit.text().strip()
-            if startup_config and startup_config != settings["startup_config"]:
+            if not startup_config:
+                settings["startup_config"] = ""
+            elif startup_config != settings["startup_config"]:
                 if os.access(startup_config, os.R_OK):
                     settings["startup_config"] = startup_config
                 else:
                     QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
 
             private_config = self.uiPrivateConfigLineEdit.text().strip()
-            if private_config and private_config != settings["private_config"]:
+            if not private_config:
+                settings["private_config"] = ""
+            elif private_config != settings["private_config"]:
                 if os.access(private_config, os.R_OK):
                     settings["private_config"] = private_config
                 else:
