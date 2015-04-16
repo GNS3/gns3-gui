@@ -450,10 +450,11 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             else:
                 settings["name"] = name
 
-            settings["console"] = self.uiConsolePortSpinBox.value()
-            aux = self.uiAuxPortSpinBox.value()
-            if aux:
-                settings["aux"] = aux
+            if "console" in settings:
+                settings["console"] = self.uiConsolePortSpinBox.value()
+                aux = self.uiAuxPortSpinBox.value()
+                if aux:
+                    settings["aux"] = aux
 
             # check and save the base MAC address
             # mac = self.uiBaseMACLineEdit.text()

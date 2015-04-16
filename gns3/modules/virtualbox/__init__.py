@@ -290,13 +290,13 @@ class VirtualBox(Module):
                         (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
                     raise ModuleError("Sorry a VirtualBox VM can only be used once in your topology (this will change in future versions)")
 
-        settings = {}
+        vm_settings = {}
         for setting_name, value in self._virtualbox_vms[vm].items():
             if setting_name in node.settings():
-                settings[setting_name] = value
+                vm_settings[setting_name] = value
 
         vmname = self._virtualbox_vms[vm]["vmname"]
-        node.setup(vmname, linked_clone=linked_base, additional_settings=settings)
+        node.setup(vmname, linked_clone=linked_base, additional_settings=vm_settings)
 
     def reset(self):
         """

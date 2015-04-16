@@ -190,13 +190,13 @@ class VPCS(Module):
         """
 
         log.info("configuring node {}".format(node))
-        settings = {}
+        vm_settings = {}
 
         script_file = self._settings["base_script_file"]
         if script_file:
-            settings["script_file"] = script_file
+            vm_settings["script_file"] = script_file
 
-        node.setup(None, additional_settings=settings)
+        node.setup(additional_settings=vm_settings)
 
     def reset(self):
         """

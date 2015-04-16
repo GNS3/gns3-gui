@@ -46,7 +46,6 @@ class VPCSDevice(VM):
         log.info("VPCS instance is being created")
         self._vm_id = None
         self._defaults = {}
-        self._inital_settings = None
         self._export_directory = None
         self._loading = False
         self._ports = []
@@ -293,12 +292,11 @@ class VPCSDevice(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node has initialized and trigger the signal
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
         log.info("vpcs {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
-        self._inital_settings = None
         self._loading = False
 
     def exportConfig(self, config_export_path):
