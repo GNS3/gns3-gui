@@ -178,7 +178,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         QtGui.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
         QtGui.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
         QtGui.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
-        QtGui.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
+        if iou_device["initial_config"]:
+            QtGui.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
 
         if iou_device["use_default_iou_values"]:
             QtGui.QTreeWidgetItem(section_item, ["RAM:", "default"])
