@@ -96,7 +96,7 @@ def test_project_post_non_created_project_remote_server(remote_server):
     And after make the call
     """
 
-    uuid = uuid4()
+    uuid = str(uuid4())
     project = Project()
     project._created_servers = set()
     project.setId(uuid)
@@ -126,7 +126,7 @@ def test_project_post_non_created_project_remote_server_two_query(remote_server)
     And after make the call
     """
 
-    uuid = uuid4()
+    uuid = str(uuid4())
     project = Project()
     project._created_servers = set()
     project.setId(uuid)
@@ -152,6 +152,54 @@ def test_project_post_non_created_project_remote_server_two_query(remote_server)
         assert kwargs["body"] == {"test": "test"}
 
         args, kwargs = mock.call_args
+        assert args[0] == "POST"
+        assert args[1] == "/projects/{uuid}/test2".format(uuid=uuid)
+        assert kwargs["body"] == {"test": "test"}
+
+
+def test_project_post_non_created_project_remote_server_two_query_two_server(remote_server, local_server):
+    """
+    Test a post on a remote servers. The project
+    is not created on the server and should be created automaticaly.
+    And after make the call
+
+    Another server is also waiting for the project to be create on the first server
+    """
+
+    uuid = str(uuid4())
+    project = Project()
+    project._created_servers = set()
+    project.setId(uuid)
+
+    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
+        project.post(remote_server, "/test", lambda: 0, body={"test": "test"})
+        args, kwargs = mock.call_args
+
+        # Send a query from another server, this should wait the first server to finish
+        project.post(local_server, "/test3", lambda: 0, body={"test": "test"})
+
+        assert args[0] == "POST"
+        assert args[1] == "/projects"
+        assert kwargs["body"] == {"name": "untitled", "temporary": False, "project_id": uuid}
+        project.post(remote_server, "/test2", lambda: 0, body={"test": "test"})
+
+        assert mock.call_count == 1
+        args[2]({}, server=remote_server)
+
+        assert len(project._created_servers) == 1
+
+        name, args, kwargs = mock.mock_calls[1]
+        assert args[0] == "POST"
+        assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
+        assert kwargs["body"] == {"test": "test"}
+
+        # Call to the create project on second server
+        name, args, kwargs = mock.mock_calls[2]
+        assert args[0] == "POST"
+        assert args[1] == "/projects".format(uuid=uuid)
+        assert kwargs["body"] == {"name": "untitled", "project_id": uuid, "path": None, "temporary": False}
+
+        name, args, kwargs = mock.mock_calls[3]
         assert args[0] == "POST"
         assert args[1] == "/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}

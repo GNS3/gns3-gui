@@ -4,7 +4,8 @@ include INSTALL
 include LICENSE
 include MANIFEST.in
 include tox.ini
-recursive-exclude tests *
+recursive-include tests *
 recursive-include gns3 *
+recursive-include resources *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
