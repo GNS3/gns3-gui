@@ -317,12 +317,12 @@ class Router(VM):
         if "startup_config" in new_settings:
             if os.path.isfile(new_settings["startup_config"]):
                 params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
-            del params["startup_config"]
+            del new_settings["startup_config"]
 
         if "private_config" in new_settings:
             if os.path.isfile(new_settings["private_config"]):
                 params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
-            del params["private_config"]
+            del new_settings["private_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/dynamips/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)

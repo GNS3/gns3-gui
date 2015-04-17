@@ -207,7 +207,7 @@ class IOUDevice(VM):
         if "initial_config" in new_settings:
             if os.path.isfile(new_settings["initial_config"]):
                 params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
-            del params["initial_config"]
+            del new_settings["initial_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/iou/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
