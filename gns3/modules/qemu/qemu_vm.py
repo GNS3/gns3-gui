@@ -44,7 +44,6 @@ class QemuVM(VM):
 
         log.info("QEMU VM instance is being created")
         self._defaults = {}
-        self._inital_settings = None
         self._export_directory = None
         self._loading = False
         self._module = module
@@ -90,7 +89,7 @@ class QemuVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
-    def setup(self, qemu_path, name=None, console=None, vm_id=None, initial_settings={}, base_name=None):
+    def setup(self, qemu_path, name=None, vm_id=None, additional_settings={}, base_name=None):
         """
         Setups this QEMU VM.
 
@@ -110,16 +109,10 @@ class QemuVM(VM):
         params = {"name": name,
                   "qemu_path": qemu_path}
 
-        if console:
-            params["console"] = self._settings["console"] = console
-
         if vm_id:
             params["vm_id"] = vm_id
 
-        # other initial settings will be applied when the router has been created
-        if initial_settings:
-            self._inital_settings = initial_settings
-
+        params.update(additional_settings)
         self.httpPost("/qemu/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
@@ -149,10 +142,7 @@ class QemuVM(VM):
                                                                                                    value))
                 self._settings[name] = value
 
-        # update the node with setup initial settings if any
-        if self._inital_settings:
-            self.update(self._inital_settings)
-        elif self._loading:
+        if self._loading:
             self.updated_signal.emit()
         else:
             self.setInitialized(True)
@@ -243,13 +233,7 @@ class QemuVM(VM):
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
 
-        if self._inital_settings and not self._loading:
-            self.setInitialized(True)
-            log.info("QEMU VM {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-            self._inital_settings = None
-        elif updated or self._loading:
+        if updated or self._loading:
             log.info("QEMU VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -445,13 +429,12 @@ class QemuVM(VM):
         settings = node_info["properties"]
         name = settings.pop("name")
         qemu_path = settings.pop("qemu_path")
-        console = settings.pop("console", self._defaults["console"])
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self.setup(qemu_path, name, console, vm_id, settings)
+        self.setup(qemu_path, name, vm_id, settings)
 
     def _updatePortSettings(self):
         """
@@ -469,12 +452,11 @@ class QemuVM(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node has initialized and trigger the signal
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
         log.info("QEMU VM {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
-        self._inital_settings = None
         self._loading = False
 
     def name(self):

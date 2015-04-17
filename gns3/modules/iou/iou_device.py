@@ -51,7 +51,6 @@ class IOUDevice(VM):
         log.info("IOU instance is being created")
         self._vm_id = None
         self._defaults = {}
-        self._inital_settings = None
         self._loading = False
         self._module = module
         self._export_directory = None
@@ -68,7 +67,7 @@ class IOUDevice(VM):
                           "console": None,
                           "iourc_content": None}
 
-        # self._occupied_slots = []
+        # 2 Ethernet adapters and 2 Serial adapters by default
         self._addAdapters(2, 2)
 
         # save the default settings
@@ -84,8 +83,6 @@ class IOUDevice(VM):
 
         nb_adapters = nb_ethernet_adapters + nb_serial_adapters
         for slot_number in range(0, nb_adapters):
-            #             if slot_number in self._occupied_slots:
-            #                 continue
             for port_number in range(0, 4):
                 if slot_number < nb_ethernet_adapters:
                     port = EthernetPort
@@ -98,7 +95,6 @@ class IOUDevice(VM):
                 new_port.setPortNumber(port_number)
                 new_port.setAdapterNumber(slot_number)
                 new_port.setPacketCaptureSupported(True)
-                # self._occupied_slots.append(slot_number)
                 self._ports.append(new_port)
                 log.debug("port {} has been added".format(port_name))
 
@@ -112,18 +108,16 @@ class IOUDevice(VM):
         for port in self._ports.copy():
             if (port.adapterNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet") or \
                     (port.adapterNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
-                # self._occupied_slots.remove(port.adapterNumber())
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, console=None, vm_id=None, initial_settings={}, base_name="IOU", initial_config=None):
+    def setup(self, iou_path, name=None, vm_id=None, additional_settings={}, base_name="IOU"):
         """
         Setups this IOU device.
 
         :param iou_path: path to an IOU image
         :param name: optional name
         :param console: optional TCP console port
-        :param initial_config: path to initial configuration file
         """
 
         # let's create a unique name if none has been chosen
@@ -141,27 +135,22 @@ class IOUDevice(VM):
         if vm_id:
             params["vm_id"] = vm_id
 
-        if console:
-            params["console"] = self._settings["console"] = console
+        # push the initial-config
+        if not vm_id and "initial_config" in additional_settings:
+            if os.path.isfile(additional_settings["initial_config"]):
+                params["initial_config_content"] = self._readBaseConfig(additional_settings["initial_config"])
+            del additional_settings["initial_config"]
 
-        if "cloud_path" in initial_settings:
-            params["cloud_path"] = self._settings["cloud_path"] = initial_settings.pop("cloud_path")
-
-        # other initial settings will be applied when the router has been created
-        if initial_settings:
-            self._inital_settings = initial_settings
-        else:
-            self._inital_settings = {}
-
-        if initial_config:
-            params["initial_config_content"] = self._readBaseConfig(initial_config)
-
-        if len(self._module._settings["iourc_path"]) > 0:
+        # push the iourc file
+        module_settings = self._module.settings()
+        if module_settings["iourc_path"] and os.path.isfile(module_settings["iourc_path"]):
             try:
-                with open(self._module._settings["iourc_path"], 'rb') as f:
-                    self._inital_settings["iourc_content"] = f.read().decode("utf-8")
+                with open(module_settings["iourc_path"], 'rb') as f:
+                    params["iourc_content"] = f.read().decode("utf-8")
             except OSError as e:
-                print("Can't open iourc file {}: {}".format(self._module._settings["iourc_path"], e))
+                print("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
+
+        params.update(additional_settings)
         self.httpPost("/iou/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
@@ -191,10 +180,7 @@ class IOUDevice(VM):
                                                                                                value))
                 self._settings[name] = value
 
-        # update the node with setup initial settings if any
-        if self._inital_settings:
-            self.update(self._inital_settings)
-        elif self._loading:
+        if self._loading:
             self.updated_signal.emit()
         else:
             self.setInitialized(True)
@@ -218,9 +204,10 @@ class IOUDevice(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "initial_config" in new_settings and self._settings["initial_config"] != new_settings["initial_config"]:
-            params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
-            del params["initial_config"]
+        if "initial_config" in new_settings:
+            if os.path.isfile(new_settings["initial_config"]):
+                params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
+            del new_settings["initial_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/iou/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
@@ -257,13 +244,7 @@ class IOUDevice(VM):
             self._ports.clear()
             self._addAdapters(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
 
-        if self._inital_settings and not self._loading:
-            self.setInitialized(True)
-            log.info("IOU device {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-            self._inital_settings = None
-        elif updated or self._loading:
+        if updated or self._loading:
             log.info("IOU device {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -456,18 +437,18 @@ class IOUDevice(VM):
             elif not os.path.isfile(path):
                 path = self._module.findAlternativeIOUImage(path)
 
-        console = settings.pop("console", None)
         self.updated_signal.connect(self._updatePortSettings)
         # block the created signal, it will be triggered when loading is completely done
         self._loading = True
         log.info("iou device {} is loading".format(name))
         self.setName(name)
-        self.setup(path, name, console, vm_id, settings)
+        self.setup(path, name, vm_id, settings)
 
     def _updatePortSettings(self):
         """
         Updates port settings when loading a topology.
         """
+
         self.updated_signal.disconnect(self._updatePortSettings)
         # update the port with the correct names and IDs
         if "ports" in self.node_info:
@@ -478,12 +459,11 @@ class IOUDevice(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node has initialized and trigger the signal
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
         log.info("IOU device {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
-        self._inital_settings = None
         self._loading = False
 
     def exportConfig(self, config_export_path):

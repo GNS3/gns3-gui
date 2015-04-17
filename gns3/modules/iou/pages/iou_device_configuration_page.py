@@ -166,7 +166,8 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             else:
                 settings["name"] = name
 
-            settings["console"] = self.uiConsolePortSpinBox.value()
+            if "console" in settings:
+                settings["console"] = self.uiConsolePortSpinBox.value()
 
             # save the IOU image path
             ios_path = self.uiIOUImageLineEdit.text().strip()
@@ -178,7 +179,9 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
 
         if not node:
             initial_config = self.uiInitialConfigLineEdit.text().strip()
-            if initial_config and initial_config != settings["initial_config"]:
+            if not initial_config:
+                settings["initial_config"] = ""
+            elif initial_config != settings["initial_config"]:
                 if os.access(initial_config, os.R_OK):
                     settings["initial_config"] = initial_config
                 else:

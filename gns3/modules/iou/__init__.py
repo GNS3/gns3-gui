@@ -266,32 +266,17 @@ class IOU(Module):
             else:
                 iouimage = selected_images[0]
 
-        name = self._iou_devices[iouimage]["name"]
-        initial_config = self._iou_devices[iouimage]["initial_config"]
-        iou_path = self._iou_devices[iouimage]["path"]
-        use_default_iou_values = self._iou_devices[iouimage]["use_default_iou_values"]
-        settings = {}
-        if initial_config:
-            settings["initial_config"] = initial_config
-        settings["use_default_iou_values"] = use_default_iou_values
-        if not use_default_iou_values:
-            settings["ram"] = self._iou_devices[iouimage]["ram"]
-            settings["nvram"] = self._iou_devices[iouimage]["nvram"]
-        settings["ethernet_adapters"] = self._iou_devices[iouimage]["ethernet_adapters"]
-        settings["serial_adapters"] = self._iou_devices[iouimage]["serial_adapters"]
+        vm_settings = {}
+        for setting_name, value in self._iou_devices[iouimage].items():
+            if setting_name in node.settings() and setting_name != "name":
+                vm_settings[setting_name] = value
 
-        if len(self._settings["iourc_path"]) > 0:
-            try:
-                with open(self._settings["iourc_path"], 'rb') as f:
-                    settings["iourc_content"] = f.read().decode("utf-8")
-            except OSError as e:
-                print("Can't open iourc file {}: {}".format(self._settings["iourc_path"], e))
+        if vm_settings["use_default_iou_values"]:
+            del vm_settings["ram"]
+            del vm_settings["nvram"]
 
-        if node.server().isCloud():
-            settings["cloud_path"] = "images/IOU"
-            node.setup(self._iou_devices[iouimage]["image"], initial_settings=settings)
-        else:
-            node.setup(iou_path, initial_settings=settings)
+        iou_path = vm_settings.pop("path")
+        node.setup(iou_path, additional_settings=vm_settings)
 
     def reset(self):
         """

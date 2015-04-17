@@ -232,11 +232,6 @@ class Router(VM):
                   "ram": ram,
                   "image": image}
 
-        # FIXME: cloud support
-        # if self.server().isCloud():
-        #     initial_settings["cloud_path"] = "images/IOS"
-        #     params["image"] = os.path.basename(params["image"])
-
         if vm_id:
             params["vm_id"] = vm_id
 
@@ -244,24 +239,16 @@ class Router(VM):
             params["dynamips_id"] = dynamips_id
 
         # push the startup-config
-        if not vm_id and "startup_config" in additional_settings and os.path.isfile(additional_settings["startup_config"]):
-            params["startup_config_content"] = self._readBaseConfig(additional_settings["startup_config"])
+        if not vm_id and "startup_config" in additional_settings:
+            if os.path.isfile(additional_settings["startup_config"]):
+                params["startup_config_content"] = self._readBaseConfig(additional_settings["startup_config"])
+            del additional_settings["startup_config"]
 
         # push the private-config
-        if not vm_id and "private_config" in additional_settings and os.path.isfile(additional_settings["private_config"]):
-            params["private_config_content"] = self._readBaseConfig(additional_settings["private_config"])
-
-        # add some initial settings
-        # if "console" in initial_settings:
-        #     params["console"] = self._settings["console"] = initial_settings.pop("console")
-        # if "aux" in initial_settings:
-        #     params["aux"] = self._settings["aux"] = initial_settings.pop("aux")
-        # if "mac_addr" in initial_settings:
-        #     params["mac_addr"] = self._settings["mac_addr"] = initial_settings.pop("mac_addr")
-        # if "chassis" in initial_settings:
-        #     params["chassis"] = self._settings["chassis"] = initial_settings.pop("chassis")
-        # if "cloud_path" in initial_settings:
-        #     params["cloud_path"] = self._settings["cloud_path"] = initial_settings.pop("cloud_path")
+        if not vm_id and "private_config" in additional_settings:
+            if os.path.isfile(additional_settings["private_config"]):
+                params["private_config_content"] = self._readBaseConfig(additional_settings["private_config"])
+            del additional_settings["private_config"]
 
         params.update(additional_settings)
         self.httpPost("/dynamips/vms", self._setupCallback, body=params)
@@ -327,13 +314,15 @@ class Router(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "startup_config" in new_settings and self._settings["startup_config"] != new_settings["startup_config"]:
-            params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
-            del params["startup_config"]
+        if "startup_config" in new_settings:
+            if os.path.isfile(new_settings["startup_config"]):
+                params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
+            del new_settings["startup_config"]
 
-        if "private_config" in new_settings and self._settings["private_config"] != new_settings["private_config"]:
-            params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
-            del params["private_config"]
+        if "private_config" in new_settings:
+            if os.path.isfile(new_settings["private_config"]):
+                params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
+            del new_settings["private_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/dynamips/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
@@ -715,7 +704,6 @@ class Router(VM):
         """
 
         self.node_info = node_info
-        router_id = node_info.get("router_id")
         # for backward compatibility
         vm_id = dynamips_id = node_info.get("router_id")
         if not vm_id:
@@ -761,12 +749,11 @@ class Router(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node has initialized and trigger the signal
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
         log.info("router {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
-        self._inital_settings = None
         self._loading = False
 
     def saveConfig(self):

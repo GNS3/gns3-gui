@@ -100,7 +100,8 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
             else:
                 settings["name"] = name
 
-            settings["console"] = self.uiConsolePortSpinBox.value()
+            if "console" in settings:
+                settings["console"] = self.uiConsolePortSpinBox.value()
 
             # script_file = self.uiScriptFileLineEdit.text()
             # if script_file != settings["script_file"]:

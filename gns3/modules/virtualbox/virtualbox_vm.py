@@ -416,12 +416,11 @@ class VirtualBoxVM(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node has initialized and trigger the signal
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
         log.info("VirtualBox VM {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
         self._module.addNode(self)
-        self._inital_settings = None
         self._loading = False
 
     def name(self):
