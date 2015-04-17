@@ -23,14 +23,14 @@ import os
 import shutil
 import json
 
-from gns3.qt import QtGui, QtCore
+from gns3.qt import QtGui, QtCore, QtWidgets
 from gns3.local_config import LocalConfig
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
 from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, STYLES
 from gns3.servers import Servers
 
 
-class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
+class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget):
 
     """
     QWidget configuration page for general preferences.
@@ -38,7 +38,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
 
     def __init__(self, parent=None):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self._remote_servers = {}
         self._preferences_dialog = parent
@@ -73,7 +73,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         servers = Servers.instance()
         local_server = servers.localServerSettings()
         directory = local_server["projects_path"]
-        path = QtGui.QFileDialog.getExistingDirectory(self, "My projects directory", directory, QtGui.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My projects directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
             self.uiProjectsPathLineEdit.setText(path)
             self.uiProjectsPathLineEdit.setCursorPosition(0)
@@ -86,7 +86,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         servers = Servers.instance()
         local_server = servers.localServerSettings()
         directory = local_server["images_path"]
-        path = QtGui.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtGui.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
             self.uiImagesPathLineEdit.setText(path)
             self.uiImagesPathLineEdit.setCursorPosition(0)
@@ -127,7 +127,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         configuration_file_path = LocalConfig.instance().configFilePath()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Import configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Import configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
         if not path:
             return
 
@@ -135,26 +135,26 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
             with open(path) as f:
                 config_file = json.load(f)
             if "type" not in config_file or config_file["type"] != "settings":
-                QtGui.QMessageBox.critical(self, "Import configuration file", "Not a GNS3 configuration file: {}".format(path))
+                QtWidgets.QMessageBox.critical(self, "Import configuration file", "Not a GNS3 configuration file: {}".format(path))
                 return
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Import configuration file", "Could not load configuration file {}: {}".format(os.path.basename(path), e))
+            QtWidgets.QMessageBox.critical(self, "Import configuration file", "Could not load configuration file {}: {}".format(os.path.basename(path), e))
             return
         except ValueError as e:
-            QtGui.QMessageBox.critical(self, "Import configuration file", "Invalid file: {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "Import configuration file", "Invalid file: {}".format(e))
             return
 
         try:
             shutil.copyfile(path, configuration_file_path)
         except (shutil.Error, IOError) as e:
-            QtGui.QMessageBox.critical(self, "Import configuration file", "Cannot import configuration file: {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "Import configuration file", "Cannot import configuration file: {}".format(e))
             return
 
-        QtGui.QMessageBox.information(self, "Configuration file", "Configuration file imported, default settings will be applied after a restart")
+        QtWidgets.QMessageBox.information(self, "Configuration file", "Configuration file imported, default settings will be applied after a restart")
 
         # TODO: implement restart
-        # QtCore.QProcess.startDetached(QtGui.QApplication.arguments()[0], QtGui.QApplication.arguments())
-        # QtGui.QApplication.quit()
+        # QtCore.QProcess.startDetached(QtWidgets.QApplication.arguments()[0], QtWidgets.QApplication.arguments())
+        # QtWidgets.QApplication.quit()
         LocalConfig.instance().setConfigFilePath(configuration_file_path)
         self._preferences_dialog.reject()
 
@@ -166,14 +166,14 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         configuration_file_path = LocalConfig.instance().configFilePath()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtGui.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
+        path = QtWidgets.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
         if not path:
             return
 
         try:
             shutil.copyfile(configuration_file_path, path)
         except (shutil.Error, IOError) as e:
-            QtGui.QMessageBox.critical(self, "Export configuration file", "Cannot export configuration file: {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "Export configuration file", "Cannot export configuration file: {}".format(e))
             return
 
     def _setDefaultLabelFontSlot(self):
@@ -181,7 +181,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to select the default label font.
         """
 
-        selected_font, ok = QtGui.QFontDialog.getFont(self.uiDefaultLabelStylePlainTextEdit.font(), self)
+        selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiDefaultLabelStylePlainTextEdit.font(), self)
         if ok:
             self.uiDefaultLabelStylePlainTextEdit.setFont(selected_font)
 
@@ -190,7 +190,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         Slot to select the default label color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._default_label_color, self)
+        color = QtWidgets.QColorDialog.getColor(self._default_label_color, self)
         if color.isValid():
             self._default_label_color = color
             self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))

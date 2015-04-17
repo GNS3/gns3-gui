@@ -19,7 +19,7 @@
 Topology summary view that list all the nodes, their status and connections.
 """
 
-from .qt import QtGui, QtCore
+from .qt import QtGui, QtCore, QtWidgets
 from .node import Node
 from .topology import Topology
 from .items.node_item import NodeItem
@@ -29,7 +29,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class TopologyNodeItem(QtGui.QTreeWidgetItem):
+class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
 
     """
     Custom item for the QTreeWidget instance
@@ -41,7 +41,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
     def __init__(self, parent, node):
 
-        QtGui.QTreeWidgetItem.__init__(self, parent)
+        super().__init__(parent)
         self._node = node
         self._parent = parent
 
@@ -101,7 +101,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
         capturing = False
         for port in ports:
             if not port.isFree():
-                item = QtGui.QTreeWidgetItem()
+                item = QtWidgets.QTreeWidgetItem()
                 item.setText(0, "{} {}".format(port.shortName(), port.description(short=True)))
                 item.setData(0, QtCore.Qt.UserRole, port)
                 if port.capturing():
@@ -125,7 +125,7 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
         tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
 
 
-class TopologySummaryView(QtGui.QTreeWidget):
+class TopologySummaryView(QtWidgets.QTreeWidget):
 
     """
     Topology summary view implementation.
@@ -135,7 +135,7 @@ class TopologySummaryView(QtGui.QTreeWidget):
 
     def __init__(self, parent):
 
-        QtGui.QTreeWidget.__init__(self, parent)
+        super().__init__(parent)
         self._topology = Topology.instance()
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
         self.show_only_devices_with_capture = False
@@ -155,7 +155,7 @@ class TopologySummaryView(QtGui.QTreeWidget):
         Clears all the topology summary.
         """
 
-        QtGui.QTreeWidget.clear(self)
+        QtWidgets.QTreeWidget.clear(self)
 
     def refreshAll(self, source_child=None):
         """
@@ -218,36 +218,36 @@ class TopologySummaryView(QtGui.QTreeWidget):
         if event.button() == QtCore.Qt.RightButton:
             self._showContextualMenu()
         else:
-            QtGui.QTreeWidget.mousePressEvent(self, event)
+            super().mousePressEvent(event)
 
     def _showContextualMenu(self):
         """
         Contextual menu to expand and collapse the tree.
         """
 
-        menu = QtGui.QMenu()
-        expand_all = QtGui.QAction("Expand all", menu)
+        menu = QtWidgets.QMenu()
+        expand_all = QtWidgets.QAction("Expand all", menu)
         expand_all.setIcon(QtGui.QIcon(":/icons/plus.svg"))
         self.connect(expand_all, QtCore.SIGNAL('triggered()'), self._expandAllSlot)
         menu.addAction(expand_all)
 
-        collapse_all = QtGui.QAction("Collapse all", menu)
+        collapse_all = QtWidgets.QAction("Collapse all", menu)
         collapse_all.setIcon(QtGui.QIcon(":/icons/minus.svg"))
         self.connect(collapse_all, QtCore.SIGNAL('triggered()'), self._collapseAllSlot)
         menu.addAction(collapse_all)
 
         if self.show_only_devices_with_capture is False:
-            devices_with_capture = QtGui.QAction("Show devices with capture(s)", menu)
+            devices_with_capture = QtWidgets.QAction("Show devices with capture(s)", menu)
             devices_with_capture.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
             self.connect(devices_with_capture, QtCore.SIGNAL('triggered()'), self._devicesWithCaptureSlot)
             menu.addAction(devices_with_capture)
         else:
-            show_all_devices = QtGui.QAction("Show all devices", menu)
+            show_all_devices = QtWidgets.QAction("Show all devices", menu)
             # show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
             self.connect(show_all_devices, QtCore.SIGNAL('triggered()'), self._showAllDevicesSlot)
             menu.addAction(show_all_devices)
 
-        stop_all_captures = QtGui.QAction("Stop all captures", menu)
+        stop_all_captures = QtWidgets.QAction("Stop all captures", menu)
         stop_all_captures.setIcon(QtGui.QIcon(":/icons/capture-stop.svg"))
         self.connect(stop_all_captures, QtCore.SIGNAL('triggered()'), self._stopAllCapturesSlot)
         menu.addAction(stop_all_captures)

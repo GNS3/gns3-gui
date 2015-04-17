@@ -34,6 +34,11 @@ import time
 import locale
 import argparse
 
+try:
+    from gns3.qt import QtCore, QtGui, QtWidgets, DEFAULT_BINDING
+except ImportError:
+    raise RuntimeError("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
+from gns3.main_window import MainWindow
 
 from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
@@ -43,12 +48,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-try:
-    from gns3.qt import QtCore, QtGui, DEFAULT_BINDING
-except ImportError:
-    raise RuntimeError("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
-
-from gns3.main_window import MainWindow
 from gns3.version import __version__
 
 
@@ -137,10 +136,8 @@ def main():
     print("GNS3 GUI version {}".format(__version__))
     print("Copyright (c) 2007-{} GNS3 Technologies Inc.".format(current_year))
 
-    # we only support Python 2 version >= 2.7 and Python 3 version >= 3.3
-    if sys.version_info < (2, 7):
-        raise RuntimeError("Python 2.7 or higher is required")
-    elif sys.version_info[0] == 3 and sys.version_info < (3, 3):
+    # we only support Python 3 version >= 3.3
+    if sys.version_info[0] == 3 and sys.version_info < (3, 3):
         raise RuntimeError("Python 3.3 or higher is required")
 
     def version(version_string):
@@ -150,11 +147,11 @@ def main():
         raise RuntimeError("Requirement is Qt version 4.6 or higher, got version {}".format(QtCore.QT_VERSION_STR))
 
     # 4.8.3 because of QSettings (http://pyqt.sourceforge.net/Docs/PyQt4/pyqt_qsettings.html)
-    if DEFAULT_BINDING == "PyQt" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
+    if DEFAULT_BINDING == "PyQt4" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
         raise RuntimeError("Requirement is PyQt version 4.8.3 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
-    if DEFAULT_BINDING == "PySide" and version(QtCore.BINDING_VERSION_STR) < version("1.0"):
-        raise RuntimeError("Requirement is PySide version 1.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
+    if DEFAULT_BINDING == "PyQt5" and version(QtCore.BINDING_VERSION_STR) < version("5.0.0"):
+        raise RuntimeError("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
     # check for the correct locale
     # (UNIX/Linux only)
@@ -186,7 +183,7 @@ def main():
             except win32console.error as e:
                 print("warning: could not allocate console: {}".format(e))
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # this info is necessary for QSettings
     app.setOrganizationName("GNS3")

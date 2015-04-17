@@ -19,12 +19,12 @@
 Dialog to configure and update node settings using widget pages.
 """
 
-from ..qt import QtGui
+from ..qt import QtGui, QtWidgets
 from ..ui.configuration_dialog_ui import Ui_configurationDialog
 from .node_configurator_dialog import ConfigurationError
 
 
-class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
+class ConfigurationDialog(QtWidgets.QDialog, Ui_configurationDialog):
 
     """
     Configuration dialog implementation.
@@ -37,7 +37,7 @@ class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
 
     def __init__(self, name, settings, configuration_page, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self.uiTitleLabel.setText(name)
@@ -55,11 +55,11 @@ class ConfigurationDialog(QtGui.QDialog, Ui_configurationDialog):
         :param button: button that was clicked (QAbstractButton)
         """
 
-        if button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Cancel):
-            QtGui.QDialog.reject(self)
+        if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel):
+            QtWidgets.QDialog.reject(self)
         else:
             try:
                 self._configuration_page.saveSettings(self._settings)
             except ConfigurationError:
                 return
-            QtGui.QDialog.accept(self)
+            QtWidgets.QDialog.accept(self)

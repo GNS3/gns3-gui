@@ -21,14 +21,14 @@ Configuration page for IOU devices.
 
 import os
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
 
-class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
+class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget):
 
     """
     QWidget configuration page for IOU devices.
@@ -36,7 +36,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
@@ -88,12 +88,12 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Initial configuration", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(self, "Initial configuration", "Cannot read {}".format(path))
             return
 
         self.uiInitialConfigLineEdit.clear()
@@ -160,9 +160,9 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "IOU device name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "IOU device name cannot be empty!")
             elif node and not node.validateHostname(name):
-                QtGui.QMessageBox.critical(self, "Name", "Invalid name detected for IOU device: {}".format(name))
+                QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOU device: {}".format(name))
             else:
                 settings["name"] = name
 
@@ -185,7 +185,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
                 if os.access(initial_config, os.R_OK):
                     settings["initial_config"] = initial_config
                 else:
-                    QtGui.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
+                    QtWidgets.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
 
         # save advanced settings
         settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()
@@ -196,7 +196,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
         ethernet_adapters = self.uiEthernetAdaptersSpinBox.value()
         serial_adapters = self.uiSerialAdaptersSpinBox.value()
         if ethernet_adapters + serial_adapters > 16:
-            QtGui.QMessageBox.warning(self, settings["name"], "The total number of adapters cannot exceed 16")
+            QtWidgets.QMessageBox.warning(self, settings["name"], "The total number of adapters cannot exceed 16")
             raise ConfigurationError()
 
         if node:
@@ -205,7 +205,7 @@ class iouDeviceConfigurationPage(QtGui.QWidget, Ui_iouDeviceConfigPageWidget):
                 node_ports = node.ports()
                 for node_port in node_ports:
                     if not node_port.isFree():
-                        QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                        QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                         raise ConfigurationError()
 
         settings["ethernet_adapters"] = ethernet_adapters

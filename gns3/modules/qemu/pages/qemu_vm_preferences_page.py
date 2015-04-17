@@ -23,7 +23,7 @@ import ntpath
 import os
 import copy
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -37,14 +37,14 @@ from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..dialogs.qemu_vm_wizard import QemuVMWizard
 
 
-class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
+class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
     """
     QWidget preference page for QEMU VM preferences.
     """
 
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self._main_window = MainWindow.instance()
@@ -59,7 +59,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
 
     def _createSectionItem(self, name):
 
-        section_item = QtGui.QTreeWidgetItem(self.uiQemuVMInfoTreeWidget)
+        section_item = QtWidgets.QTreeWidgetItem(self.uiQemuVMInfoTreeWidget)
         section_item.setText(0, name)
         font = section_item.font(0)
         font.setBold(True)
@@ -72,51 +72,51 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtGui.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
-        QtGui.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
-        QtGui.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
         if qemu_vm["qemu_path"]:
-            QtGui.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
+            QtWidgets.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
 
         # fill out the Hard disks section
         if qemu_vm["hda_disk_image"] or qemu_vm["hdb_disk_image"] or qemu_vm["hdc_disk_image"] or qemu_vm["hdd_disk_image"]:
             section_item = self._createSectionItem("Hard disks")
             if qemu_vm["hda_disk_image"]:
-                QtGui.QTreeWidgetItem(section_item, ["Disk image (hda):", qemu_vm["hda_disk_image"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Disk image (hda):", qemu_vm["hda_disk_image"]])
             if qemu_vm["hdb_disk_image"]:
-                QtGui.QTreeWidgetItem(section_item, ["Disk image (hdb):", qemu_vm["hdb_disk_image"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Disk image (hdb):", qemu_vm["hdb_disk_image"]])
             if qemu_vm["hdc_disk_image"]:
-                QtGui.QTreeWidgetItem(section_item, ["Disk image (hdc):", qemu_vm["hdc_disk_image"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Disk image (hdc):", qemu_vm["hdc_disk_image"]])
             if qemu_vm["hdd_disk_image"]:
-                QtGui.QTreeWidgetItem(section_item, ["Disk image (hdd):", qemu_vm["hdd_disk_image"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Disk image (hdd):", qemu_vm["hdd_disk_image"]])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
-        QtGui.QTreeWidgetItem(section_item, ["Adapters:", str(qemu_vm["adapters"])])
-        QtGui.QTreeWidgetItem(section_item, ["Type:", qemu_vm["adapter_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(qemu_vm["adapters"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Type:", qemu_vm["adapter_type"]])
 
         # fill out the Linux boot section
         if qemu_vm["initrd"] or qemu_vm["kernel_image"] or qemu_vm["kernel_command_line"]:
             section_item = self._createSectionItem("Linux boot")
             if qemu_vm["initrd"]:
-                QtGui.QTreeWidgetItem(section_item, ["Initial RAM disk:", qemu_vm["initrd"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Initial RAM disk:", qemu_vm["initrd"]])
             if qemu_vm["kernel_image"]:
-                QtGui.QTreeWidgetItem(section_item, ["Kernel image:", qemu_vm["kernel_image"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Kernel image:", qemu_vm["kernel_image"]])
             if qemu_vm["kernel_command_line"]:
-                QtGui.QTreeWidgetItem(section_item, ["Kernel command line:", qemu_vm["kernel_command_line"]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Kernel command line:", qemu_vm["kernel_command_line"]])
 
         # performance section
         section_item = self._createSectionItem("Optimizations")
         if qemu_vm["cpu_throttling"]:
-            QtGui.QTreeWidgetItem(section_item, ["CPU throttling:", "{}%".format(qemu_vm["cpu_throttling"])])
+            QtWidgets.QTreeWidgetItem(section_item, ["CPU throttling:", "{}%".format(qemu_vm["cpu_throttling"])])
         else:
-            QtGui.QTreeWidgetItem(section_item, ["CPU throttling:", "disabled"])
-        QtGui.QTreeWidgetItem(section_item, ["Process priority:", qemu_vm["process_priority"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["CPU throttling:", "disabled"])
+        QtWidgets.QTreeWidgetItem(section_item, ["Process priority:", qemu_vm["process_priority"]])
 
         # fill out the Additional options section
         if qemu_vm["options"]:
             section_item = self._createSectionItem("Additional options")
-            QtGui.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
 
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)
@@ -152,12 +152,12 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             new_vm_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
             if key in self._qemu_vms:
-                QtGui.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(new_vm_settings["name"]))
+                QtWidgets.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(new_vm_settings["name"]))
                 return
             self._qemu_vms[key] = QEMU_VM_SETTINGS.copy()
             self._qemu_vms[key].update(new_vm_settings)
 
-            item = QtGui.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, self._qemu_vms[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._qemu_vms[key]["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
@@ -179,7 +179,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         """
 
         # Start uploading the image to cloud files
-        self._upload_image_progress_dialog = QtGui.QProgressDialog(
+        self._upload_image_progress_dialog = QtWidgets.QProgressDialog(
             "Uploading image file(s)", "Cancel", 0, 0, parent=self)
         self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
         self._upload_image_progress_dialog.setWindowTitle("Qemu image upload")
@@ -231,7 +231,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
             import logging
             log = logging.getLogger(__name__)
             log.error(e)
-            QtGui.QMessageBox.critical(self, "Qemu image upload", "Error uploading Qemu image: {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "Qemu image upload", "Error uploading Qemu image: {}".format(e))
 
     def _qemuVMEditSlot(self):
         """
@@ -248,8 +248,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
                 if qemu_vm["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
                     if new_key in self._qemu_vms:
-                        QtGui.QMessageBox.critical(self, "QEMU VM", "QEMU VM name {} already exists for server {}".format(qemu_vm["name"],
-                                                                                                                          qemu_vm["server"]))
+                        QtWidgets.QMessageBox.critical(self, "QEMU VM", "QEMU VM name {} already exists for server {}".format(qemu_vm["name"],
+                                                                                                                              qemu_vm["server"]))
                         qemu_vm["name"] = item.text(0)
                         return
                     self._qemu_vms[new_key] = self._qemu_vms[key]
@@ -278,7 +278,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         Slot for item pressed.
         """
 
-        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
             self._showContextualMenu()
 
     def _showContextualMenu(self):
@@ -286,8 +286,8 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         Contextual menu.
         """
 
-        menu = QtGui.QMenu()
-        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        menu = QtWidgets.QMenu()
+        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
         change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
         self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
         menu.addAction(change_symbol_action)
@@ -322,7 +322,7 @@ class QemuVMPreferencesPage(QtGui.QWidget, Ui_QemuVMPreferencesPageWidget):
         self._items.clear()
 
         for key, qemu_vm in self._qemu_vms.items():
-            item = QtGui.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, qemu_vm["name"])
             item.setIcon(0, QtGui.QIcon(qemu_vm["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)

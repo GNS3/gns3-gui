@@ -23,7 +23,7 @@ import sys
 import os
 import shutil
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
@@ -44,7 +44,7 @@ class IOU(Module):
     """
 
     def __init__(self):
-        Module.__init__(self)
+        super().__init__()
 
         self._settings = {}
         self._nodes = []
@@ -257,7 +257,7 @@ class IOU(Module):
                 from gns3.main_window import MainWindow
                 mainwindow = MainWindow.instance()
 
-                (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "IOU image", "Please choose an image", selected_images, 0, False)
+                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "IOU image", "Please choose an image", selected_images, 0, False)
                 if ok:
                     iouimage = selection
                 else:
@@ -333,16 +333,16 @@ class IOU(Module):
                 candidate_iou_images[iou_device["image"]] = iou_device["path"]
 
         if candidate_iou_images:
-            selection, ok = QtGui.QInputDialog.getItem(mainwindow,
-                                                       "IOU image", "IOU image {} could not be found\nPlease select an alternative from your existing images:".format(image),
-                                                       list(candidate_iou_images.keys()), 0, False)
+            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
+                                                           "IOU image", "IOU image {} could not be found\nPlease select an alternative from your existing images:".format(image),
+                                                           list(candidate_iou_images.keys()), 0, False)
             if ok:
                 iou_image = candidate_iou_images[selection]
                 self._iou_images_cache[image] = iou_image
                 return iou_image
 
         # no registered IOU image is used, let's just ask for an IOU image path
-        QtGui.QMessageBox.critical(mainwindow, "IOU image", "Could not find the {} IOU image \nPlease select a similar IOU image!".format(image))
+        QtWidgets.QMessageBox.critical(mainwindow, "IOU image", "Could not find the {} IOU image \nPlease select a similar IOU image!".format(image))
         from .pages.iou_device_preferences_page import IOUDevicePreferencesPage
         path = IOUDevicePreferencesPage.getIOUImage(mainwindow)
         if path:

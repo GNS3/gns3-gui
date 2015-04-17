@@ -19,11 +19,11 @@
 Style editor to edit Shape items.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 
 
-class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
+class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
     """
     Style editor dialog.
@@ -34,13 +34,13 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
 
     def __init__(self, parent, items):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._items = items
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
         self.uiBorderColorPushButton.clicked.connect(self._setBorderColorSlot)
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
 
         self.uiBorderStyleComboBox.addItem("Solid", QtCore.Qt.SolidLine)
         self.uiBorderStyleComboBox.addItem("Dash", QtCore.Qt.DashLine)
@@ -74,7 +74,7 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         Slot to select the filling color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._color, self, "Select Color", QtGui.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._color, self, "Select Color", QtWidgets.QColorDialog.ShowAlphaChannel)
         if color.isValid():
             self._color = color
             self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
@@ -87,7 +87,7 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
         Slot to select the border color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._border_color, self, "Select Color", QtGui.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._border_color, self, "Select Color", QtWidgets.QColorDialog.ShowAlphaChannel)
         if color.isValid():
             self._border_color = color
             self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
@@ -118,4 +118,4 @@ class StyleEditorDialog(QtGui.QDialog, Ui_StyleEditorDialog):
 
         if result:
             self._applyPreferencesSlot()
-        QtGui.QDialog.done(self, result)
+        super().done(result)

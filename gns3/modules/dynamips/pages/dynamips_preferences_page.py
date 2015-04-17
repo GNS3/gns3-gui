@@ -21,14 +21,14 @@ Configuration page for Dynamips preferences.
 
 import os
 import sys
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 from .. import Dynamips
 from ..ui.dynamips_preferences_page_ui import Ui_DynamipsPreferencesPageWidget
 from ..settings import DYNAMIPS_SETTINGS
 
 
-class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
+class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidget):
 
     """
     QWidget preference page for Dynamips.
@@ -36,7 +36,7 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         # connect signals
@@ -53,12 +53,12 @@ class DynamipsPreferencesPage(QtGui.QWidget, Ui_DynamipsPreferencesPageWidget):
         file_filter = ""
         if sys.platform.startswith("win"):
             file_filter = "Executable (*.exe);;All files (*.*)"
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select Dynamips", ".", file_filter)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select Dynamips", ".", file_filter)
         if not path:
             return
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "Dynamips", "{} is not an executable".format(os.path.basename(path)))
+            QtWidgets.QMessageBox.critical(self, "Dynamips", "{} is not an executable".format(os.path.basename(path)))
             return
 
         self.uiDynamipsPathLineEdit.setText(path)

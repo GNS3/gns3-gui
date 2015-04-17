@@ -20,7 +20,7 @@ Base class for NIOs (Network Input/Output).
 """
 
 
-class NIO(object):
+class NIO:
 
     def __init__(self):
 

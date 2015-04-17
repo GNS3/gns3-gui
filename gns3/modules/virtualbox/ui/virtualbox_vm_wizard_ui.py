@@ -1,90 +1,78 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
 #
-# Created: Fri Mar 13 11:09:58 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Fri Apr 17 10:44:36 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+class Ui_VirtualBoxVMWizard:
 
-class Ui_VirtualBoxVMWizard(object):
     def setupUi(self, VirtualBoxVMWizard):
-        VirtualBoxVMWizard.setObjectName(_fromUtf8("VirtualBoxVMWizard"))
+        VirtualBoxVMWizard.setObjectName("VirtualBoxVMWizard")
         VirtualBoxVMWizard.resize(514, 367)
         VirtualBoxVMWizard.setModal(True)
-        self.uiServerWizardPage = QtGui.QWizardPage()
-        self.uiServerWizardPage.setObjectName(_fromUtf8("uiServerWizardPage"))
-        self.gridLayout_2 = QtGui.QGridLayout(self.uiServerWizardPage)
-        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.uiServerTypeGroupBox = QtGui.QGroupBox(self.uiServerWizardPage)
-        self.uiServerTypeGroupBox.setObjectName(_fromUtf8("uiServerTypeGroupBox"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.uiServerTypeGroupBox)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.uiRemoteRadioButton = QtGui.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiServerWizardPage = QtWidgets.QWizardPage()
+        self.uiServerWizardPage.setObjectName("uiServerWizardPage")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiServerWizardPage)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
+        self.uiServerTypeGroupBox.setObjectName("uiServerTypeGroupBox")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiServerTypeGroupBox)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.uiRemoteRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiRemoteRadioButton.setChecked(True)
-        self.uiRemoteRadioButton.setObjectName(_fromUtf8("uiRemoteRadioButton"))
+        self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
-        self.uiCloudRadioButton = QtGui.QRadioButton(self.uiServerTypeGroupBox)
-        self.uiCloudRadioButton.setObjectName(_fromUtf8("uiCloudRadioButton"))
+        self.uiCloudRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiCloudRadioButton.setObjectName("uiCloudRadioButton")
         self.horizontalLayout.addWidget(self.uiCloudRadioButton)
-        self.uiLocalRadioButton = QtGui.QRadioButton(self.uiServerTypeGroupBox)
-        self.uiLocalRadioButton.setObjectName(_fromUtf8("uiLocalRadioButton"))
+        self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
         self.horizontalLayout.addWidget(self.uiLocalRadioButton)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.gridLayout_2.addWidget(self.uiServerTypeGroupBox, 0, 0, 1, 1)
-        self.uiRemoteServersGroupBox = QtGui.QGroupBox(self.uiServerWizardPage)
-        self.uiRemoteServersGroupBox.setObjectName(_fromUtf8("uiRemoteServersGroupBox"))
-        self.gridLayout_8 = QtGui.QGridLayout(self.uiRemoteServersGroupBox)
-        self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
-        self.uiRemoteServersComboBox = QtGui.QComboBox(self.uiRemoteServersGroupBox)
+        self.uiRemoteServersGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
+        self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
+        self.gridLayout_8 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
+        self.gridLayout_8.setObjectName("gridLayout_8")
+        self.uiRemoteServersComboBox = QtWidgets.QComboBox(self.uiRemoteServersGroupBox)
         self.uiRemoteServersComboBox.setEnabled(True)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
-        self.uiRemoteServersComboBox.setObjectName(_fromUtf8("uiRemoteServersComboBox"))
+        self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
         self.gridLayout_8.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
-        self.uiRemoteServersLabel = QtGui.QLabel(self.uiRemoteServersGroupBox)
-        self.uiRemoteServersLabel.setObjectName(_fromUtf8("uiRemoteServersLabel"))
+        self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
+        self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
         self.gridLayout_8.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
         VirtualBoxVMWizard.addPage(self.uiServerWizardPage)
-        self.uiVirtualBoxWizardPage = QtGui.QWizardPage()
-        self.uiVirtualBoxWizardPage.setObjectName(_fromUtf8("uiVirtualBoxWizardPage"))
-        self.gridLayout = QtGui.QGridLayout(self.uiVirtualBoxWizardPage)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.uiVMListLabel = QtGui.QLabel(self.uiVirtualBoxWizardPage)
-        self.uiVMListLabel.setObjectName(_fromUtf8("uiVMListLabel"))
+        self.uiVirtualBoxWizardPage = QtWidgets.QWizardPage()
+        self.uiVirtualBoxWizardPage.setObjectName("uiVirtualBoxWizardPage")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiVirtualBoxWizardPage)
+        self.gridLayout.setObjectName("gridLayout")
+        self.uiVMListLabel = QtWidgets.QLabel(self.uiVirtualBoxWizardPage)
+        self.uiVMListLabel.setObjectName("uiVMListLabel")
         self.gridLayout.addWidget(self.uiVMListLabel, 0, 0, 1, 1)
-        self.uiVMListComboBox = QtGui.QComboBox(self.uiVirtualBoxWizardPage)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        self.uiVMListComboBox = QtWidgets.QComboBox(self.uiVirtualBoxWizardPage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiVMListComboBox.sizePolicy().hasHeightForWidth())
         self.uiVMListComboBox.setSizePolicy(sizePolicy)
-        self.uiVMListComboBox.setObjectName(_fromUtf8("uiVMListComboBox"))
+        self.uiVMListComboBox.setObjectName("uiVMListComboBox")
         self.gridLayout.addWidget(self.uiVMListComboBox, 0, 1, 1, 1)
-        self.uiBaseVMCheckBox = QtGui.QCheckBox(self.uiVirtualBoxWizardPage)
+        self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.uiVirtualBoxWizardPage)
         self.uiBaseVMCheckBox.setEnabled(True)
-        self.uiBaseVMCheckBox.setObjectName(_fromUtf8("uiBaseVMCheckBox"))
+        self.uiBaseVMCheckBox.setObjectName("uiBaseVMCheckBox")
         self.gridLayout.addWidget(self.uiBaseVMCheckBox, 1, 0, 1, 2)
         VirtualBoxVMWizard.addPage(self.uiVirtualBoxWizardPage)
 
@@ -92,17 +80,17 @@ class Ui_VirtualBoxVMWizard(object):
         QtCore.QMetaObject.connectSlotsByName(VirtualBoxVMWizard)
 
     def retranslateUi(self, VirtualBoxVMWizard):
-        VirtualBoxVMWizard.setWindowTitle(_translate("VirtualBoxVMWizard", "New VirtualBox VM template", None))
-        self.uiServerWizardPage.setTitle(_translate("VirtualBoxVMWizard", "Server", None))
-        self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run your new VirtualBox VM.", None))
-        self.uiServerTypeGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Server type", None))
-        self.uiRemoteRadioButton.setText(_translate("VirtualBoxVMWizard", "Remote", None))
-        self.uiCloudRadioButton.setText(_translate("VirtualBoxVMWizard", "Cloud", None))
-        self.uiLocalRadioButton.setText(_translate("VirtualBoxVMWizard", "Local", None))
-        self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Remote servers", None))
-        self.uiRemoteServersLabel.setText(_translate("VirtualBoxVMWizard", "Run on server:", None))
-        self.uiVirtualBoxWizardPage.setTitle(_translate("VirtualBoxVMWizard", "VirtualBox Virtual Machine", None))
-        self.uiVirtualBoxWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a VirtualBox virtual machine from the list.", None))
-        self.uiVMListLabel.setText(_translate("VirtualBoxVMWizard", "VM list:", None))
-        self.uiBaseVMCheckBox.setText(_translate("VirtualBoxVMWizard", "Use as a linked base VM (experimental)", None))
-
+        _translate = QtCore.QCoreApplication.translate
+        VirtualBoxVMWizard.setWindowTitle(_translate("VirtualBoxVMWizard", "New VirtualBox VM template"))
+        self.uiServerWizardPage.setTitle(_translate("VirtualBoxVMWizard", "Server"))
+        self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run your new VirtualBox VM."))
+        self.uiServerTypeGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Server type"))
+        self.uiRemoteRadioButton.setText(_translate("VirtualBoxVMWizard", "Remote"))
+        self.uiCloudRadioButton.setText(_translate("VirtualBoxVMWizard", "Cloud"))
+        self.uiLocalRadioButton.setText(_translate("VirtualBoxVMWizard", "Local"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Remote servers"))
+        self.uiRemoteServersLabel.setText(_translate("VirtualBoxVMWizard", "Run on server:"))
+        self.uiVirtualBoxWizardPage.setTitle(_translate("VirtualBoxVMWizard", "VirtualBox Virtual Machine"))
+        self.uiVirtualBoxWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a VirtualBox virtual machine from the list."))
+        self.uiVMListLabel.setText(_translate("VirtualBoxVMWizard", "VM list:"))
+        self.uiBaseVMCheckBox.setText(_translate("VirtualBoxVMWizard", "Use as a linked base VM (experimental)"))

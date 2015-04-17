@@ -34,7 +34,7 @@ class NIOUDP(NIO):
 
     def __init__(self, lport, rhost, rport):
 
-        NIO.__init__(self)
+        super().__init__()
 
         self._lport = lport
         self._rhost = rhost

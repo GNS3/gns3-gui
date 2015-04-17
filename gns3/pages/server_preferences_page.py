@@ -21,7 +21,7 @@ Configuration page for server preferences.
 
 import os
 import sys
-from gns3.qt import QtNetwork, QtGui
+from gns3.qt import QtNetwork, QtGui, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
 from ..topology import Topology
@@ -31,7 +31,7 @@ from ..utils.wait_for_connection_thread import WaitForConnectionThread
 from ..settings import LOCAL_SERVER_SETTINGS
 
 
-class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
+class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
     """
     QWidget configuration page for server preferences.
@@ -39,7 +39,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
 
     def __init__(self, parent=None):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self._remote_servers = {}
 
@@ -95,7 +95,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select the local server", ".", filter)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", ".", filter)
         if not path:
             return
 
@@ -113,7 +113,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         try:
             port = int(item.text(1))
         except ValueError:
-            QtGui.QMessageBox.critical(self, "Remote server", "Invalid port")
+            QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid port")
             return
         self.uiRemoteServerPortLineEdit.setText(host)
         self.uiRemoteServerPortSpinBox.setValue(port)
@@ -140,11 +140,11 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         # check if the remote server is already defined
         remote_server = "{host}:{port}".format(host=host, port=port)
         if remote_server in self._remote_servers:
-            QtGui.QMessageBox.critical(self, "Remote server", "Remote server {} is already defined.".format(remote_server))
+            QtWidgets.QMessageBox.critical(self, "Remote server", "Remote server {} is already defined.".format(remote_server))
             return
 
         # add a new entry in the tree widget
-        item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
+        item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
         item.setText(0, host)
         item.setText(1, str(port))
 
@@ -206,7 +206,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
             port = server.port
             self._remote_servers[server_id] = {"host": host,
                                                "port": port}
-            item = QtGui.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
             item.setText(0, host)
             item.setText(1, str(port))
 
@@ -237,21 +237,21 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["report_errors"] = current_settings["report_errors"]
 
         if new_settings["console_end_port_range"] <= new_settings["console_start_port_range"]:
-            QtGui.QMessageBox.critical(self, "Local", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
-                                                                                                        new_settings["console_end_port_range"]))
+            QtWidgets.QMessageBox.critical(self, "Local", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
+                                                                                                            new_settings["console_end_port_range"]))
             return
 
         if new_settings["udp_end_port_range"] <= new_settings["udp_start_port_range"]:
-            QtGui.QMessageBox.critical(self, "Local", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
-                                                                                                    new_settings["udp_end_port_range"]))
+            QtWidgets.QMessageBox.critical(self, "Local", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
+                                                                                                        new_settings["udp_end_port_range"]))
             return
 
         if new_settings["auto_start"]:
             if not os.path.isfile(new_settings["path"]):
-                QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_settings["path"]))
+                QtWidgets.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_settings["path"]))
                 return
             if not os.access(new_settings["path"], os.X_OK):
-                QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_settings["path"]))
+                QtWidgets.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_settings["path"]))
 
             if new_settings != current_settings:
                 # first check if we have nodes on the local server
@@ -285,4 +285,4 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
                 dialog.show()
                 dialog.exec_()
             else:
-                QtGui.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_settings["path"]))
+                QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_settings["path"]))

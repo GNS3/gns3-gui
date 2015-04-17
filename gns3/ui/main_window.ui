@@ -435,31 +435,6 @@ background-none;
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="uiCloudInspectorDockWidget">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Cloud Inspector</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="uiCloudInspectorDockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="margin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="CloudInspectorView" name="CloudInspectorView" native="true">
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <action name="uiAboutAction">
    <property name="text">
     <string>&amp;About</string>
@@ -900,7 +875,7 @@ background-none;
      <normaloff>:/icons/save-as-project.svg</normaloff>:/icons/save-as-project.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Save project as…</string>
+    <string>&amp;Save project as...</string>
    </property>
    <property name="toolTip">
     <string>Save project as...</string>
@@ -1185,12 +1160,6 @@ background-none;
    <class>TopologySummaryView</class>
    <extends>QTreeWidget</extends>
    <header>..topology_summary_view.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CloudInspectorView</class>
-   <extends>QWidget</extends>
-   <header>..cloud_inspector_view.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

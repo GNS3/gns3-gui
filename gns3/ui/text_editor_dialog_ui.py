@@ -1,99 +1,85 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/text_editor_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/text_editor_dialog.ui'
 #
-# Created: Tue Dec 23 15:45:13 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Fri Apr 17 10:44:32 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_TextEditorDialog(object):
+class Ui_TextEditorDialog:
 
     def setupUi(self, TextEditorDialog):
-        TextEditorDialog.setObjectName(_fromUtf8("TextEditorDialog"))
+        TextEditorDialog.setObjectName("TextEditorDialog")
         TextEditorDialog.resize(457, 333)
         TextEditorDialog.setModal(True)
-        self.verticalLayout = QtGui.QVBoxLayout(TextEditorDialog)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.uiTextSettingsGroupBox = QtGui.QGroupBox(TextEditorDialog)
-        self.uiTextSettingsGroupBox.setObjectName(_fromUtf8("uiTextSettingsGroupBox"))
-        self.gridLayout = QtGui.QGridLayout(self.uiTextSettingsGroupBox)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.uiColorLabel = QtGui.QLabel(self.uiTextSettingsGroupBox)
-        self.uiColorLabel.setObjectName(_fromUtf8("uiColorLabel"))
+        self.verticalLayout = QtWidgets.QVBoxLayout(TextEditorDialog)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.uiTextSettingsGroupBox = QtWidgets.QGroupBox(TextEditorDialog)
+        self.uiTextSettingsGroupBox.setObjectName("uiTextSettingsGroupBox")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiTextSettingsGroupBox)
+        self.gridLayout.setObjectName("gridLayout")
+        self.uiColorLabel = QtWidgets.QLabel(self.uiTextSettingsGroupBox)
+        self.uiColorLabel.setObjectName("uiColorLabel")
         self.gridLayout.addWidget(self.uiColorLabel, 0, 0, 1, 1)
-        self.uiColorPushButton = QtGui.QPushButton(self.uiTextSettingsGroupBox)
-        self.uiColorPushButton.setText(_fromUtf8(""))
-        self.uiColorPushButton.setObjectName(_fromUtf8("uiColorPushButton"))
+        self.uiColorPushButton = QtWidgets.QPushButton(self.uiTextSettingsGroupBox)
+        self.uiColorPushButton.setText("")
+        self.uiColorPushButton.setObjectName("uiColorPushButton")
         self.gridLayout.addWidget(self.uiColorPushButton, 0, 1, 1, 1)
-        self.uiRotationLabel = QtGui.QLabel(self.uiTextSettingsGroupBox)
-        self.uiRotationLabel.setObjectName(_fromUtf8("uiRotationLabel"))
+        self.uiRotationLabel = QtWidgets.QLabel(self.uiTextSettingsGroupBox)
+        self.uiRotationLabel.setObjectName("uiRotationLabel")
         self.gridLayout.addWidget(self.uiRotationLabel, 1, 0, 1, 1)
-        self.uiRotationSpinBox = QtGui.QSpinBox(self.uiTextSettingsGroupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        self.uiRotationSpinBox = QtWidgets.QSpinBox(self.uiTextSettingsGroupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiRotationSpinBox.sizePolicy().hasHeightForWidth())
         self.uiRotationSpinBox.setSizePolicy(sizePolicy)
         self.uiRotationSpinBox.setMinimum(-360)
         self.uiRotationSpinBox.setMaximum(360)
-        self.uiRotationSpinBox.setObjectName(_fromUtf8("uiRotationSpinBox"))
+        self.uiRotationSpinBox.setObjectName("uiRotationSpinBox")
         self.gridLayout.addWidget(self.uiRotationSpinBox, 1, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiTextSettingsGroupBox)
-        self.uiApplyTextToAllItemsCheckBox = QtGui.QCheckBox(TextEditorDialog)
-        self.uiApplyTextToAllItemsCheckBox.setObjectName(_fromUtf8("uiApplyTextToAllItemsCheckBox"))
+        self.uiApplyTextToAllItemsCheckBox = QtWidgets.QCheckBox(TextEditorDialog)
+        self.uiApplyTextToAllItemsCheckBox.setObjectName("uiApplyTextToAllItemsCheckBox")
         self.verticalLayout.addWidget(self.uiApplyTextToAllItemsCheckBox)
-        self.uiPlainTextEdit = QtGui.QPlainTextEdit(TextEditorDialog)
-        self.uiPlainTextEdit.setObjectName(_fromUtf8("uiPlainTextEdit"))
+        self.uiPlainTextEdit = QtWidgets.QPlainTextEdit(TextEditorDialog)
+        self.uiPlainTextEdit.setObjectName("uiPlainTextEdit")
         self.verticalLayout.addWidget(self.uiPlainTextEdit)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.uiFontPushButton = QtGui.QPushButton(TextEditorDialog)
-        self.uiFontPushButton.setObjectName(_fromUtf8("uiFontPushButton"))
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.uiFontPushButton = QtWidgets.QPushButton(TextEditorDialog)
+        self.uiFontPushButton.setObjectName("uiFontPushButton")
         self.horizontalLayout.addWidget(self.uiFontPushButton)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.uiButtonBox = QtGui.QDialogButtonBox(TextEditorDialog)
+        self.uiButtonBox = QtWidgets.QDialogButtonBox(TextEditorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
-        self.uiButtonBox.setObjectName(_fromUtf8("uiButtonBox"))
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
 
         self.retranslateUi(TextEditorDialog)
-        QtCore.QObject.connect(self.uiButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), TextEditorDialog.accept)
-        QtCore.QObject.connect(self.uiButtonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), TextEditorDialog.reject)
+        self.uiButtonBox.accepted.connect(TextEditorDialog.accept)
+        self.uiButtonBox.rejected.connect(TextEditorDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(TextEditorDialog)
 
     def retranslateUi(self, TextEditorDialog):
-        TextEditorDialog.setWindowTitle(_translate("TextEditorDialog", "Text editor", None))
-        self.uiTextSettingsGroupBox.setTitle(_translate("TextEditorDialog", "Text settings", None))
-        self.uiColorLabel.setText(_translate("TextEditorDialog", "Color:", None))
-        self.uiRotationLabel.setText(_translate("TextEditorDialog", "Rotation:", None))
+        _translate = QtCore.QCoreApplication.translate
+        TextEditorDialog.setWindowTitle(_translate("TextEditorDialog", "Text editor"))
+        self.uiTextSettingsGroupBox.setTitle(_translate("TextEditorDialog", "Text settings"))
+        self.uiColorLabel.setText(_translate("TextEditorDialog", "Color:"))
+        self.uiRotationLabel.setText(_translate("TextEditorDialog", "Rotation:"))
         self.uiRotationSpinBox.setToolTip(_translate("TextEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
-                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)", None))
-        self.uiRotationSpinBox.setSuffix(_translate("TextEditorDialog", "°", None))
-        self.uiApplyTextToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the text below to all selected items", None))
-        self.uiFontPushButton.setText(_translate("TextEditorDialog", "&Select font", None))
+                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
+        self.uiRotationSpinBox.setSuffix(_translate("TextEditorDialog", "°"))
+        self.uiApplyTextToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the text below to all selected items"))
+        self.uiFontPushButton.setText(_translate("TextEditorDialog", "&Select font"))
 
 from . import resources_rc

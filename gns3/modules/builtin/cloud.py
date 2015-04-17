@@ -48,7 +48,7 @@ class Cloud(Node):
     _name_instance_count = 1
 
     def __init__(self, module, server, project):
-        Node.__init__(self, module, server, project)
+        super().__init__(module, server, project)
 
         log.info("cloud is being created")
         # create an unique id and name

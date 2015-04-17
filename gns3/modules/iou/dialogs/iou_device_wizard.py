@@ -22,7 +22,7 @@ Wizard for IOU devices.
 import os
 import sys
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
 from gns3.servers import Servers
 from gns3.utils.get_resource import get_resource
@@ -33,7 +33,7 @@ from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
 from .. import IOU
 
 
-class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
+class IOUDeviceWizard(QtWidgets.QWizard, Ui_IOUDeviceWizard):
 
     """
     Wizard to create an IOU device.
@@ -43,13 +43,13 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
 
     def __init__(self, iou_devices, parent):
 
-        QtGui.QWizard.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
-        self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
-        self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
+        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtGui.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
@@ -133,10 +133,10 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
 
         if image_type == "L2 image":
             #  L2 image
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
         else:
             #  L3 image
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
 
     def initializePage(self, page_id):
 
@@ -146,7 +146,7 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
                 self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
         if self.page(page_id) == self.uiNameImageWizardPage:
             if not self.uiIOUImageToolButton.isEnabled():
-                QtGui.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
+                QtWidgets.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
 
     def validateCurrentPage(self):
         """
@@ -157,11 +157,11 @@ class IOUDeviceWizard(QtGui.QWizard, Ui_IOUDeviceWizard):
             name = self.uiNameLineEdit.text()
             for iou_device in self._iou_devices.values():
                 if iou_device["name"] == name:
-                    QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
+                    QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
         if self.currentPage() == self.uiServerWizardPage and self.uiRemoteRadioButton.isChecked():
             if not Servers.instance().remoteServers():
-                QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in IOS on UNIX preferences")
+                QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in IOS on UNIX preferences")
                 return False
         return True
 

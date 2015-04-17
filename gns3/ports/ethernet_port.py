@@ -34,7 +34,7 @@ class EthernetPort(Port):
 
     def __init__(self, name, nio=None):
 
-        Port.__init__(self, name, nio)
+        super().__init__(name, nio)
 
     @staticmethod
     def longNameType():

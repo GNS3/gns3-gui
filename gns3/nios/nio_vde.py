@@ -33,7 +33,7 @@ class NIOVDE(NIO):
 
     def __init__(self, control_file, local_file):
 
-        NIO.__init__(self)
+        super().__init__()
         self._control_file = control_file
         self._local_file = local_file
 

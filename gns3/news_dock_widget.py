@@ -18,7 +18,7 @@
 import os
 import sys
 
-from .qt import QtGui, QtCore, QtWebKit
+from .qt import QtGui, QtCore, QtWebKit, QtWidgets
 from .ui.news_dock_widget_ui import Ui_NewsDockWidget
 from .utils.get_resource import get_resource
 
@@ -26,7 +26,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
+class NewsDockWidget(QtWidgets.QDockWidget, Ui_NewsDockWidget):
 
     """
     :param parent: parent widget
@@ -34,7 +34,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
 
     def __init__(self, parent):
 
-        QtGui.QDockWidget.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._visible = True
@@ -92,7 +92,7 @@ class NewsDockWidget(QtGui.QDockWidget, Ui_NewsDockWidget):
         """
 
         if QtGui.QDesktopServices.openUrl(url) is False:
-            QtGui.QMessageBox.critical(self, "Getting started", "Failed to open the URL: {}".format(url))
+            QtWidgets.QMessageBox.critical(self, "Getting started", "Failed to open the URL: {}".format(url))
 
     def _loadFinishedSlot(self, result=False):
         """

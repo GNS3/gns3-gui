@@ -19,10 +19,10 @@
 Graphical representation of an image on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 
 
-class ImageItem(QtGui.QGraphicsPixmapItem):
+class ImageItem(QtWidgets.QGraphicsPixmapItem):
 
     """
     Class to insert an image on the scene.
@@ -32,7 +32,7 @@ class ImageItem(QtGui.QGraphicsPixmapItem):
 
     def __init__(self, pixmap, image_path, pos=None):
 
-        QtGui.QGraphicsPixmapItem.__init__(self, pixmap)
+        super().__init__(pixmap)
         self.setFlags(self.ItemIsMovable | self.ItemIsSelectable)
         self.setTransformationMode(QtCore.Qt.SmoothTransformation)
         self._image_path = image_path
@@ -68,7 +68,7 @@ class ImageItem(QtGui.QGraphicsPixmapItem):
         :param widget: QWidget instance
         """
 
-        QtGui.QGraphicsPixmapItem.paint(self, painter, option, widget)
+        super().paint(painter, option, widget)
 
         if self.show_layer is False:
             return
@@ -93,7 +93,7 @@ class ImageItem(QtGui.QGraphicsPixmapItem):
         :param value: Z value
         """
 
-        QtGui.QGraphicsPixmapItem.setZValue(self, value)
+        super().setZValue(value)
         if self.zValue() < 0:
             self.setFlag(self.ItemIsSelectable, False)
             self.setFlag(self.ItemIsMovable, False)

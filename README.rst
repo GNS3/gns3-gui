@@ -30,6 +30,11 @@ The following commands will install some of these dependencies:
 .. code:: bash
 
    sudo apt-get install python3-setuptools
+   sudo apt-get install python3-pyqt5
+
+If you want to test using Qt4
+
+.. code:: bash
    sudo apt-get install python3-pyqt4
 
 Finally these commands will install the GUI as well as the rest of the dependencies:
@@ -59,6 +64,11 @@ Then install the GNS3 dependencies.
    brew install python3
    brew install qt
    brew install sip --without-python --with-python3
+   brew install pyqt5 --without-python --with-python3
+
+If you want to test using Qt4
+
+.. code:: bash
    brew install pyqt --without-python --with-python3
 
 Finally, install both the GUI & server from the source.

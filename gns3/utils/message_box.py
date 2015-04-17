@@ -19,12 +19,12 @@
 To show a advanced message box.
 """
 
-from ..qt import QtGui
+from ..qt import QtGui, QtWidgets
 
 
-def MessageBox(parent, title, message, details="", icon=QtGui.QMessageBox.Critical):
+def MessageBox(parent, title, message, details="", icon=QtWidgets.QMessageBox.Critical):
 
-    msgbox = QtGui.QMessageBox(parent)
+    msgbox = QtWidgets.QMessageBox(parent)
     msgbox.setWindowTitle(title)
     msgbox.setText(message)
     msgbox.setIcon(icon)

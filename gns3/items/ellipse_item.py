@@ -19,11 +19,11 @@
 Graphical representation of an ellipse on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from .shape_item import ShapeItem
 
 
-class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
+class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
 
     """
     Class to draw an ellipse on the scene.
@@ -31,8 +31,8 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
 
     def __init__(self, pos=None, width=200, height=200):
 
-        QtGui.QGraphicsEllipseItem.__init__(self, 0, 0, width, height)
-        ShapeItem.__init__(self)
+        super().__init__()
+        self.setRect(0, 0, width, height)
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.DashLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.setPen(pen)
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
@@ -58,7 +58,7 @@ class EllipseItem(ShapeItem, QtGui.QGraphicsEllipseItem):
         :param widget: QWidget instance
         """
 
-        QtGui.QGraphicsEllipseItem.paint(self, painter, option, widget)
+        super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
     def duplicate(self):

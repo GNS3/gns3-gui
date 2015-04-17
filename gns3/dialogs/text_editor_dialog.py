@@ -19,11 +19,11 @@
 Text editor to edit Note items.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
-class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
+class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
 
     """
     Text editor dialog.
@@ -34,13 +34,13 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
 
     def __init__(self, parent, items):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._items = items
         self.uiFontPushButton.clicked.connect(self._setFontSlot)
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
 
         # use the first item in the list as the model
         first_item = items[0]
@@ -63,7 +63,7 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
         Slot to select the font.
         """
 
-        selected_font, ok = QtGui.QFontDialog.getFont(self.uiPlainTextEdit.font(), self)
+        selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiPlainTextEdit.font(), self)
         if ok:
             self.uiPlainTextEdit.setFont(selected_font)
 
@@ -72,7 +72,7 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
         Slot to select the color.
         """
 
-        color = QtGui.QColorDialog.getColor(self._color, self)
+        color = QtWidgets.QColorDialog.getColor(self._color, self)
         if color.isValid():
             self._color = color
             self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))
@@ -99,4 +99,4 @@ class TextEditorDialog(QtGui.QDialog, Ui_TextEditorDialog):
 
         if result:
             self._applyPreferencesSlot()
-        QtGui.QDialog.done(self, result)
+        super().done(result)

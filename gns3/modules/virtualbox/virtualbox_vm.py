@@ -43,7 +43,7 @@ class VirtualBoxVM(VM):
 
     def __init__(self, module, server, project):
 
-        VM.__init__(self, module, server, project)
+        super().__init__(module, server, project)
         log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
         self._export_directory = None

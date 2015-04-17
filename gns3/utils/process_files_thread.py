@@ -44,7 +44,7 @@ class ProcessFilesThread(QtCore.QThread):
 
     def __init__(self, source_dir, destination_dir, move=False, skip_dirs=None):
 
-        QtCore.QThread.__init__(self)
+        super().__init__()
         self._is_running = False
         self._source = source_dir
         self._destination = destination_dir

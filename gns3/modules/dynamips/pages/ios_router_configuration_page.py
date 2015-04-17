@@ -22,13 +22,13 @@ Configuration page for Dynamips IOS routers.
 import os
 import re
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
 
-class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
+class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget):
 
     """
     QWidget configuration page for IOS routers.
@@ -36,7 +36,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self._widget_slots = {0: self.uiSlot0comboBox,
@@ -96,7 +96,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         image = os.path.basename(path)
         match = re.match("^(c[0-9]+)\\-\w+", image)
         if not match:
-            QtGui.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return
 
         detected_platform = match.group(1)
@@ -112,10 +112,10 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         chassis = self.uiChassisTextLabel.text()
 
         if detected_platform != platform:
-            QtGui.QMessageBox.warning(self, "IOS image", "Using an IOS image made for another platform will likely not work!")
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Using an IOS image made for another platform will likely not work!")
 
         if detected_chassis and chassis and detected_chassis != chassis:
-            QtGui.QMessageBox.warning(self, "IOS image", "Using an IOS image made for another chassis will likely not work!")
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Using an IOS image made for another chassis will likely not work!")
 
     def _startupConfigBrowserSlot(self):
         """
@@ -123,12 +123,12 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
             return
 
         self.uiStartupConfigLineEdit.clear()
@@ -140,12 +140,12 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Private configuration", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(self, "Private configuration", "Cannot read {}".format(path))
             return
 
         self.uiPrivateConfigLineEdit.clear()
@@ -399,8 +399,8 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 index = self._widget_slots[slot_number].findText(adapter)
                 if index != -1:
                     self._widget_slots[slot_number].setCurrentIndex(index)
-                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter {}, please remove it first".format(node_port.name(),
-                                                                                                                                            adapter))
+                QtWidgets.QMessageBox.critical(self, node.name(), "A link is connected to port {} on adapter {}, please remove it first".format(node_port.name(),
+                                                                                                                                                adapter))
                 raise ConfigurationError()
 
     def _checkForLinkConnectedToWIC(self, wic_number, settings, node):
@@ -420,8 +420,8 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 index = self._widget_wics[wic_number].findText(wic)
                 if index != -1:
                     self._widget_wics[wic_number].setCurrentIndex(index)
-                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {} on {}, please remove it first".format(node_port.name(),
-                                                                                                                                    wic))
+                QtWidgets.QMessageBox.critical(self, node.name(), "A link is connected to port {} on {}, please remove it first".format(node_port.name(),
+                                                                                                                                        wic))
                 raise ConfigurationError()
 
     def saveSettings(self, settings, node=None, group=False):
@@ -438,15 +438,15 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             # Check if the Idle-PC value has been validated okay
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
-                QtGui.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
+                QtWidgets.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
                 raise ConfigurationError()
 
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "IOS router name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "IOS router name cannot be empty!")
             elif node and not node.validateHostname(name):
-                QtGui.QMessageBox.critical(self, "Name", "Invalid name detected for IOS router: {}".format(name))
+                QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOS router: {}".format(name))
             else:
                 settings["name"] = name
 
@@ -459,7 +459,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             # check and save the base MAC address
             # mac = self.uiBaseMACLineEdit.text()
             # if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
-            #    QtGui.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
+            #    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
             # elif mac != "":
             #    settings["mac_addr"] = mac
 
@@ -483,7 +483,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 if os.access(startup_config, os.R_OK):
                     settings["startup_config"] = startup_config
                 else:
-                    QtGui.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
 
             private_config = self.uiPrivateConfigLineEdit.text().strip()
             if not private_config:
@@ -492,7 +492,7 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 if os.access(private_config, os.R_OK):
                     settings["private_config"] = private_config
                 else:
-                    QtGui.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
 
         # get the platform and chassis if applicable
         platform = settings["platform"]

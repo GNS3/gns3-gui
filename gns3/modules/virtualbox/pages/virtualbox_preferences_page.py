@@ -20,14 +20,14 @@ Configuration page for VirtualBox preferences.
 """
 
 import os
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 
 from .. import VirtualBox
 from ..ui.virtualbox_preferences_page_ui import Ui_VirtualBoxPreferencesPageWidget
 from ..settings import VBOX_SETTINGS
 
 
-class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidget):
+class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageWidget):
 
     """
     QWidget preference page for VirtualBox.
@@ -35,7 +35,7 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         # connect signals
@@ -48,12 +48,12 @@ class VirtualBoxPreferencesPage(QtGui.QWidget, Ui_VirtualBoxPreferencesPageWidge
         Slot to open a file browser and select VBoxManage.
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select VBoxManage", ".")
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select VBoxManage", ".")
         if not path:
             return
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "VBoxManage", "{} is not an executable".format(os.path.basename(path)))
+            QtWidgets.QMessageBox.critical(self, "VBoxManage", "{} is not an executable".format(os.path.basename(path)))
             return
 
         self.uiVboxManagePathLineEdit.setText(os.path.normpath(path))

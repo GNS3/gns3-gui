@@ -23,7 +23,7 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
@@ -44,7 +44,7 @@ class VirtualBox(Module):
     """
 
     def __init__(self):
-        Module.__init__(self)
+        super().__init__()
 
         self._settings = {}
         self._virtualbox_vms = {}
@@ -274,7 +274,7 @@ class VirtualBox(Module):
                 from gns3.main_window import MainWindow
                 mainwindow = MainWindow.instance()
 
-                (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
+                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
                 if ok:
                     vm = selection
                 else:

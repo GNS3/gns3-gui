@@ -23,7 +23,7 @@ import sys
 import os
 import shutil
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
@@ -68,7 +68,7 @@ class Dynamips(Module):
     """
 
     def __init__(self):
-        Module.__init__(self)
+        super().__init__()
 
         self._settings = {}
         self._ios_routers = {}
@@ -470,9 +470,9 @@ class Dynamips(Module):
                 candidate_ios_images[ios_router["image"]] = ios_router
 
         if candidate_ios_images:
-            selection, ok = QtGui.QInputDialog.getItem(mainwindow,
-                                                       "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
-                                                       list(candidate_ios_images.keys()), 0, False)
+            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
+                                                           "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
+                                                           list(candidate_ios_images.keys()), 0, False)
             if ok:
                 ios_image = candidate_ios_images[selection]
                 alternative_image["image"] = ios_router["image"]
@@ -482,7 +482,7 @@ class Dynamips(Module):
                 return alternative_image
 
         # no registered IOS image is used, let's just ask for an IOS image path
-        QtGui.QMessageBox.critical(mainwindow, "IOS image", "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image))
+        QtWidgets.QMessageBox.critical(mainwindow, "IOS image", "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image))
         from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
         image_path = IOSRouterPreferencesPage.getIOSImage(mainwindow)
         if image_path:

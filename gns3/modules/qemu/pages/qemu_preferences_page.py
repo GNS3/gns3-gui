@@ -19,13 +19,13 @@
 Configuration page for QEMU preferences.
 """
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from .. import Qemu
 from ..ui.qemu_preferences_page_ui import Ui_QemuPreferencesPageWidget
 from ..settings import QEMU_SETTINGS
 
 
-class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
+class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
 
     """
     QWidget preference page for QEMU.
@@ -33,7 +33,7 @@ class QemuPreferencesPage(QtGui.QWidget, Ui_QemuPreferencesPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         # connect signals

@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtGui
+from ..qt import QtGui, QtWidgets
 from ..version import __version__
 from ..ui.about_dialog_ui import Ui_AboutDialog
 
 
-class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
+class AboutDialog(QtWidgets.QDialog, Ui_AboutDialog):
 
     """
     About dialog.
@@ -28,7 +28,7 @@ class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
 
     def __init__(self, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         # dynamically add the current version number

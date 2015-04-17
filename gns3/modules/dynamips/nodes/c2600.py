@@ -46,7 +46,7 @@ class C2600(Router):
 
     def __init__(self, module, server, project, chassis="2610"):
 
-        Router.__init__(self, module, server, project, platform="c2600")
+        super().__init__(module, server, project, platform="c2600")
         c2600_settings = {"ram": 128,
                           "nvram": 128,
                           "disk0": 0,

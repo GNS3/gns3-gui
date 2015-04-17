@@ -27,7 +27,7 @@ import math
 import zipfile
 import logging
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -47,14 +47,14 @@ from ..dialogs.ios_router_wizard import IOSRouterWizard
 log = logging.getLogger(__name__)
 
 
-class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget):
+class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWidget):
 
     """
     QWidget preference page for IOS routers.
     """
 
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self._main_window = MainWindow.instance()
@@ -109,7 +109,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 log.debug(ios_settings["image"])
                 # Start uploading the image to cloud files
 
-                self._upload_image_progress_dialog = QtGui.QProgressDialog("Uploading image file {}".format(ios_settings['image']), "Cancel", 0, 0, parent=self)
+                self._upload_image_progress_dialog = QtWidgets.QProgressDialog("Uploading image file {}".format(ios_settings['image']), "Cancel", 0, 0, parent=self)
                 self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
                 self._upload_image_progress_dialog.setWindowTitle("IOS image upload")
                 self._upload_image_progress_dialog.show()
@@ -128,7 +128,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 except Exception as e:
                     self._upload_image_progress_dialog.reject()
                     log.error(e)
-                    QtGui.QMessageBox.critical(self, "IOS image upload", "Error uploading IOS image: {}".format(e))
+                    QtWidgets.QMessageBox.critical(self, "IOS image upload", "Error uploading IOS image: {}".format(e))
 
             if ios_settings["platform"] == "c7200":
                 self._ios_routers[key]["midplane"] = "vxr"
@@ -147,7 +147,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     self._ios_routers[key][wic] = ios_settings[wic]
 
             self._ios_routers[key].update(ios_settings)
-            item = QtGui.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, self._ios_routers[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
@@ -175,8 +175,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     # rename the IOS router
                     new_key = "{server}:{name}".format(server=ios_router["server"], name=ios_router["name"])
                     if new_key in self._ios_routers:
-                        QtGui.QMessageBox.critical(self, "IOS router", "IOS router name {} already exists for server {}".format(ios_router["name"],
-                                                                                                                                ios_router["server"]))
+                        QtWidgets.QMessageBox.critical(self, "IOS router", "IOS router name {} already exists for server {}".format(ios_router["name"],
+                                                                                                                                    ios_router["server"]))
                         ios_router["name"] = item.text(0)
                         return
                     self._ios_routers[new_key] = self._ios_routers[key]
@@ -213,16 +213,16 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         """
 
         destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "IOS")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
-                                                             "Select an IOS image",
-                                                             destination_directory,
-                                                             "All files (*.*);;IOS image (*.bin *.image)",
-                                                             "IOS image (*.bin *.image)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileNameAndFilter(parent,
+                                                                 "Select an IOS image",
+                                                                 destination_directory,
+                                                                 "All files (*.*);;IOS image (*.bin *.image)",
+                                                                 "IOS image (*.bin *.image)")
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(parent, "IOS image", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(parent, "IOS image", "Cannot read {}".format(path))
             return
 
         if sys.platform.startswith('win'):
@@ -230,19 +230,19 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             try:
                 path.encode('ascii')
             except UnicodeEncodeError:
-                QtGui.QMessageBox.warning(parent, "IOS image", "The IOS image filename should contains only ascii (English) characters.")
+                QtWidgets.QMessageBox.warning(parent, "IOS image", "The IOS image filename should contains only ascii (English) characters.")
 
         try:
             with open(path, "rb") as f:
                 # read the first 7 bytes of the file.
                 elf_header_start = f.read(7)
         except OSError as e:
-            QtGui.QMessageBox.critical(parent, "IOS image", "Cannot read ELF magic number: {}".format(e))
+            QtWidgets.QMessageBox.critical(parent, "IOS image", "Cannot read ELF magic number: {}".format(e))
             return
 
         # file must start with the ELF magic number, be 32-bit, big endian and have an ELF version of 1
         if elf_header_start != b'\x7fELF\x01\x02\x01':
-            QtGui.QMessageBox.critical(parent, "IOS image", "Sorry, this is not a valid IOS image!")
+            QtWidgets.QMessageBox.critical(parent, "IOS image", "Sorry, this is not a valid IOS image!")
             return
 
         try:
@@ -250,13 +250,13 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, e))
+            QtWidgets.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, e))
             return
 
         if isIOSCompressed(path):
-            reply = QtGui.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?",
-                                               QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?",
+                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
                 decompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
                 thread = DecompressIOSThread(path, decompressed_image_path)
                 progress_dialog = ProgressDialog(thread,
@@ -270,12 +270,12 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the IOS image is not in the default images directory
-            reply = QtGui.QMessageBox.question(parent,
-                                               "IOS image",
-                                               "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
-                                               QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(parent,
+                                                   "IOS image",
+                                                   "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                                   QtWidgets.QMessageBox.Yes,
+                                                   QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
                 destination_path = os.path.join(destination_directory, os.path.basename(path))
                 thread = FileCopyThread(path, destination_path)
                 progress_dialog = ProgressDialog(thread, "IOS image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
@@ -284,7 +284,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 progress_dialog.exec_()
                 errors = progress_dialog.errors()
                 if errors:
-                    QtGui.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
+                    QtWidgets.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
                 else:
                     path = destination_path
 
@@ -327,15 +327,15 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             ios_router = self._ios_routers[key]
             path = ios_router["image"]
             if not os.path.isfile(path):
-                QtGui.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
+                QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
                 return
             if not isIOSCompressed(path):
-                QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+                QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
                 return
 
             decompressed_image_path = os.path.splitext(path)[0] + ".image"
             if os.path.isfile(decompressed_image_path):
-                QtGui.QMessageBox.critical(self, "IOS image", "Decompressed IOS image {} already exist".format(os.path.basename(decompressed_image_path)))
+                QtWidgets.QMessageBox.critical(self, "IOS image", "Decompressed IOS image {} already exist".format(os.path.basename(decompressed_image_path)))
                 return
 
             thread = DecompressIOSThread(path, decompressed_image_path)
@@ -351,7 +351,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
     def _createSectionItem(self, name):
 
-        section_item = QtGui.QTreeWidgetItem(self.uiIOSRouterInfoTreeWidget)
+        section_item = QtWidgets.QTreeWidgetItem(self.uiIOSRouterInfoTreeWidget)
         section_item.setText(0, name)
         font = section_item.font(0)
         font.setBold(True)
@@ -364,37 +364,37 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtGui.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
-        QtGui.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
-        QtGui.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
         if ios_router["chassis"]:
-            QtGui.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
-        QtGui.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
         if ios_router["idlepc"]:
-            QtGui.QTreeWidgetItem(section_item, ["Idle-PC:", ios_router["idlepc"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Idle-PC:", ios_router["idlepc"]])
         if ios_router["startup_config"]:
-            QtGui.QTreeWidgetItem(section_item, ["Startup-config:", ios_router["startup_config"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", ios_router["startup_config"]])
         if ios_router["private_config"]:
-            QtGui.QTreeWidgetItem(section_item, ["Private-config:", ios_router["private_config"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Private-config:", ios_router["private_config"]])
         if ios_router["platform"] == "c7200":
-            QtGui.QTreeWidgetItem(section_item, ["Midplane:", ios_router["midplane"]])
-            QtGui.QTreeWidgetItem(section_item, ["NPE:", ios_router["npe"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Midplane:", ios_router["midplane"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["NPE:", ios_router["npe"]])
 
         # fill out the Memories and disk section
         section_item = self._createSectionItem("Memories and disks")
-        QtGui.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(ios_router["ram"])])
-        QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(ios_router["nvram"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(ios_router["ram"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(ios_router["nvram"])])
         if "iomem" in ios_router and ios_router["iomem"]:
-            QtGui.QTreeWidgetItem(section_item, ["I/O memory:", "{}%".format(ios_router["iomem"])])
-        QtGui.QTreeWidgetItem(section_item, ["PCMCIA disk0:", "{} MiB".format(ios_router["disk0"])])
-        QtGui.QTreeWidgetItem(section_item, ["PCMCIA disk1:", "{} MiB".format(ios_router["disk1"])])
+            QtWidgets.QTreeWidgetItem(section_item, ["I/O memory:", "{}%".format(ios_router["iomem"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["PCMCIA disk0:", "{} MiB".format(ios_router["disk0"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["PCMCIA disk1:", "{} MiB".format(ios_router["disk1"])])
 
         # fill out the Adapters section
         section_item = self._createSectionItem("Adapters")
         for slot_id in range(0, 7):
             slot = "slot{}".format(slot_id)
             if slot in ios_router and ios_router[slot]:
-                QtGui.QTreeWidgetItem(section_item, ["Slot {}:".format(slot_id), ios_router[slot]])
+                QtWidgets.QTreeWidgetItem(section_item, ["Slot {}:".format(slot_id), ios_router[slot]])
         if section_item.childCount() == 0:
             self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
 
@@ -403,7 +403,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         for wic_id in range(0, 3):
             wic = "wic{}".format(wic_id)
             if wic in ios_router and ios_router[wic]:
-                QtGui.QTreeWidgetItem(section_item, ["WIC {}:".format(wic_id), ios_router[wic]])
+                QtWidgets.QTreeWidgetItem(section_item, ["WIC {}:".format(wic_id), ios_router[wic]])
         if section_item.childCount() == 0:
             self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
 
@@ -419,7 +419,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         :param column: ignored
         """
 
-        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
             self._showContextualMenu()
 
     def _showContextualMenu(self):
@@ -427,8 +427,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         Contextual menu.
         """
 
-        menu = QtGui.QMenu()
-        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        menu = QtWidgets.QMenu()
+        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
         change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
         self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
         menu.addAction(change_symbol_action)
@@ -463,7 +463,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         self._items.clear()
 
         for key, ios_router in self._ios_routers.items():
-            item = QtGui.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, ios_router["name"])
             item.setIcon(0, QtGui.QIcon(ios_router["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)

@@ -20,11 +20,11 @@ Configuration page for Dynamips ATM bridges.
 """
 
 import re
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from ..ui.atm_bridge_configuration_page_ui import Ui_atmBridgeConfigPageWidget
 
 
-class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
+class ATMBridgeConfigurationPage(QtWidgets.QWidget, Ui_atmBridgeConfigPageWidget):
 
     """
     QWidget configuration page for ATM bridges.
@@ -32,7 +32,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self._mapping = {}
 
@@ -91,7 +91,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         atm_vci = self.uiATMVCISpinBox.value()
 
         if ethernet_port == atm_port:
-            QtGui.QMessageBox.critical(self, self._node.name(), "Same source and destination ports")
+            QtWidgets.QMessageBox.critical(self, self._node.name(), "Same source and destination ports")
             return
 
         destination = "{port}:{vpi}:{vci}".format(port=atm_port,
@@ -99,10 +99,10 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
                                                   vci=atm_vci)
 
         if destination in self._mapping:
-            QtGui.QMessageBox.critical(self, self._node.name(), "Mapping already defined")
+            QtWidgets.QMessageBox.critical(self, self._node.name(), "Mapping already defined")
             return
 
-        item = QtGui.QTreeWidgetItem(self.uiMappingTreeWidget)
+        item = QtWidgets.QTreeWidgetItem(self.uiMappingTreeWidget)
         item.setText(0, str(ethernet_port))
         item.setText(1, destination)
         self.uiMappingTreeWidget.addTopLevelItem(item)
@@ -125,7 +125,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if (node_port.portNumber() == ethernet_port or node_port.portNumber() == atm_port) and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
                     return
 
             del self.mapping[ethernet_port]
@@ -150,7 +150,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
         self._node = node
 
         for ethernet_port, destination in settings["mappings"].items():
-            item = QtGui.QTreeWidgetItem(self.uiMappingTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiMappingTreeWidget)
             item.setText(0, ethernet_port)
             item.setText(1, destination)
             self.uiMappingTreeWidget.addTopLevelItem(item)
@@ -172,7 +172,7 @@ class ATMBridgeConfigurationPage(QtGui.QWidget, Ui_atmBridgeConfigPageWidget):
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "ATM bridge name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "ATM bridge name cannot be empty!")
             else:
                 settings["name"] = name
         else:

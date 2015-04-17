@@ -24,7 +24,7 @@ import os
 import re
 import hashlib
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.node import Node
 from gns3.utils.run_in_terminal import RunInTerminal
@@ -56,7 +56,8 @@ PLATFORM_TO_CLASS = {
 import logging
 log = logging.getLogger(__name__)
 
-class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
+
+class IOSRouterWizard(QtWidgets.QWizard, Ui_IOSRouterWizard):
 
     """
     Wizard to create an IOS router.
@@ -67,13 +68,13 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def __init__(self, ios_routers, parent):
 
-        QtGui.QWizard.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
-        self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
-        self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
+        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtGui.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
@@ -176,7 +177,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         ios_image = self.uiIOSImageLineEdit.text()
         dynamips = os.path.realpath(Dynamips.instance().settings()["image"])
         if not os.path.exists(dynamips):
-            QtGui.QMessageBox.critical(self, "IOS image", "Could not find Dynamips executable: {}".format(dynamips))
+            QtWidgets.QMessageBox.critical(self, "IOS image", "Could not find Dynamips executable: {}".format(dynamips))
             return
         command = '"{path}" -P {platform} -r {ram} "{ios_image}"'.format(path=dynamips,
                                                                          platform=platform[1:],
@@ -185,7 +186,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         try:
             RunInTerminal(command)
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "IOS image", "Could not test the IOS image: {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "IOS image", "Could not test the IOS image: {}".format(e))
 
     def _idlePCValidateSlot(self):
         """
@@ -256,7 +257,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         :param message: error message from the server.
         """
 
-        QtGui.QMessageBox.critical(self, "Idle-PC finder", "Could not create IOS router: {}".format(message))
+        QtWidgets.QMessageBox.critical(self, "Idle-PC finder", "Could not create IOS router: {}".format(message))
 
     def _computeAutoIdlepcCallback(self, result, error=False, **kwargs):
         """
@@ -270,11 +271,11 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             self._router.delete()
             self._router = None
         if error:
-            QtGui.QMessageBox.critical(self, "Idle-PC finder", "Error: {}".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self, "Idle-PC finder", "Error: {}".format(result["message"]))
         else:
             idlepc = result["idlepc"]
             self.uiIdlepcLineEdit.setText(idlepc)
-            QtGui.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
+            QtWidgets.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
 
     def _iosImageBrowserSlot(self):
         """
@@ -292,7 +293,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
         image = os.path.basename(path)
         match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
         if not match:
-            QtGui.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return
 
         detected_platform = match.group(1)
@@ -305,11 +306,11 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
                 break
 
         if detected_platform not in PLATFORMS_DEFAULT_RAM:
-            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
+            QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
             return
 
         if image.lower().startswith("c7200p"):
-            QtGui.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
+            QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
 
         index = self.uiPlatformComboBox.findText(detected_platform)
         if index != -1:
@@ -323,7 +324,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
         if self._router:
             self._router.delete()
-        QtGui.QWizard.done(self, result)
+        super().done(result)
 
     def _populateAdapters(self, platform, chassis):
         """
@@ -428,20 +429,20 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             name = self.uiNameLineEdit.text()
             for ios_router in self._ios_routers.values():
                 if ios_router["name"] == name:
-                    QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
+                    QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
         if self.currentPage() == self.uiMemoryWizardPage and self.uiPlatformComboBox.currentText() == "c7200":
             if self.uiRamSpinBox.value() > 512:
-                QtGui.QMessageBox.critical(self, "c7200 RAM requirement", "c7200 routers with NPE-400 are limited to 512MB of RAM")
+                QtWidgets.QMessageBox.critical(self, "c7200 RAM requirement", "c7200 routers with NPE-400 are limited to 512MB of RAM")
                 return False
         if self.currentPage() == self.uiIdlePCWizardPage:
             if not self._idle_valid:
                 idle_pc = self.uiIdlepcLineEdit.text()
-                QtGui.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
+                QtWidgets.QMessageBox.critical(self, "Idle-PC", "{} is not a valid Idle-PC value ".format(idle_pc))
                 return False
         if self.currentPage() == self.uiServerWizardPage and self.uiRemoteRadioButton.isChecked():
             if not Servers.instance().remoteServers():
-                QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in Dynamips preferences")
+                QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in Dynamips preferences")
                 return False
         return True
 
@@ -510,4 +511,4 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             if platform not in WIC_MATRIX:
                 # skip the WIC modules page if the platform doesn't support any.
                 return self.uiNetworkAdaptersWizardPage.nextId() + 1
-        return QtGui.QWizard.nextId(self)
+        return QtWidgets.QWizard.nextId(self)

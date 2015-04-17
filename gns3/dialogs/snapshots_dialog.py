@@ -24,7 +24,7 @@ import re
 import time
 import os
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.process_files_thread import ProcessFilesThread
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
@@ -32,7 +32,7 @@ from ..topology import Topology
 from ..node import Node
 
 
-class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
+class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
     """
     Snapshots dialog implementation.
@@ -42,7 +42,7 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
 
     def __init__(self, parent, project_path, project_files_dir):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._project_path = project_path
@@ -70,7 +70,7 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
                 snapshot_name = match.group(1)
                 snapshot_date = match.group(2)[:2] + '/' + match.group(2)[2:4] + '/' + match.group(2)[4:]
                 snapshot_time = match.group(3)[:2] + ':' + match.group(3)[2:4] + ':' + match.group(3)[4:]
-                item = QtGui.QListWidgetItem(self.uiSnapshotsList)
+                item = QtWidgets.QListWidgetItem(self.uiSnapshotsList)
                 item.setText("{} on {} at {}".format(snapshot_name, snapshot_date, snapshot_time))
                 item.setData(QtCore.Qt.UserRole, os.path.join(snapshot_dir, snapshot))
 
@@ -89,7 +89,7 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
         Slot to create a snapshot.
         """
 
-        snapshot_name, ok = QtGui.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtGui.QLineEdit.Normal, "Unnamed")
+        snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.Normal, "Unnamed")
         if ok and snapshot_name:
             from ..main_window import MainWindow
             MainWindow.instance().saveProject(self._project_path)
@@ -135,9 +135,9 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
             snapshot_name = match.group(1)
         else:
             snapshot_name = "Unknown"
-        reply = QtGui.QMessageBox.question(self, "Snapshots", "This will discard any changes made to your project since the snapshot \"{}\" was taken?".format(snapshot_name),
-                                           QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
-        if reply == QtGui.QMessageBox.Cancel:
+        reply = QtWidgets.QMessageBox.question(self, "Snapshots", "This will discard any changes made to your project since the snapshot \"{}\" was taken?".format(snapshot_name),
+                                               QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel)
+        if reply == QtWidgets.QMessageBox.Cancel:
             return
 
         # stop all the nodes

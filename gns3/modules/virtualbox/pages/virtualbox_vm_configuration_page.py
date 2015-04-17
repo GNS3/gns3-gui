@@ -19,13 +19,13 @@
 Configuration page for VirtualBox VMs.
 """
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 
 from ..ui.virtualbox_vm_configuration_page_ui import Ui_virtualBoxVMConfigPageWidget
 
 
-class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidget):
+class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPageWidget):
 
     """
     QWidget configuration page for VirtualBox VMs.
@@ -33,7 +33,7 @@ class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self.uiAdapterTypesComboBox.clear()
@@ -94,7 +94,6 @@ class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
-
     def saveSettings(self, settings, node=None, group=False):
         """
         Saves the VirtualBox VM settings.
@@ -111,7 +110,7 @@ class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
             if "name" in settings:
                 name = self.uiNameLineEdit.text()
                 if not name:
-                    QtGui.QMessageBox.critical(self, "Name", "VirtualBox name cannot be empty!")
+                    QtWidgets.QMessageBox.critical(self, "Name", "VirtualBox name cannot be empty!")
                 else:
                     settings["name"] = name
 
@@ -140,6 +139,6 @@ class VirtualBoxVMConfigurationPage(QtGui.QWidget, Ui_virtualBoxVMConfigPageWidg
                 node_ports = node.ports()
                 for node_port in node_ports:
                     if not node_port.isFree():
-                        QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                        QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                         raise ConfigurationError()
         settings["adapters"] = adapters

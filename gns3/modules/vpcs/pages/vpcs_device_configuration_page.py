@@ -21,12 +21,12 @@ Configuration page for VPCS devices.
 
 import os
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from gns3.utils.get_resource import get_resource
 from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 
-class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
+class VPCSDeviceConfigurationPage(QtWidgets.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
     """
     QWidget configuration page for VPCS devices.
@@ -34,7 +34,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         # self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
 
@@ -44,12 +44,12 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
     #     """
     #
     #     config_dir = get_resource("configs")
-    #     path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+    #     path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
     #     if not path:
     #         return
     #
     #     if not os.access(path, os.R_OK):
-    #         QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
+    #         QtWidgets.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
     #         return
     #
     #     self.uiScriptFileLineEdit.clear()
@@ -96,7 +96,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "VPCS device name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "VPCS device name cannot be empty!")
             else:
                 settings["name"] = name
 
@@ -108,7 +108,7 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
             #    if os.access(script_file, os.R_OK):
             #        settings["script_file"] = script_file
             #    else:
-            #        QtGui.QMessageBox.critical(self, "Script-file", "Cannot read the script-file file")
+            #        QtWidgets.QMessageBox.critical(self, "Script-file", "Cannot read the script-file file")
         else:
             del settings["name"]
             del settings["console"]

@@ -30,7 +30,7 @@ class NIONull(NIO):
 
     def __init__(self, identifier):
 
-        NIO.__init__(self)
+        super().__init__()
         self._identifier = identifier
 
     def __str__(self):

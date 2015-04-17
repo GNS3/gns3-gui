@@ -23,7 +23,7 @@ Handles the saving and loading of a topology.
 import os
 import json
 import uuid
-from .qt import QtGui, QtSvg
+from .qt import QtGui, QtSvg, QtWidgets
 
 from functools import partial
 from .items.node_item import NodeItem
@@ -75,7 +75,7 @@ class TopologyInstance:
         self.ssl_ca_file = ssl_ca_file
 
 
-class Topology(object):
+class Topology:
 
     """
     Topology.
@@ -267,9 +267,6 @@ class Topology(object):
                              port=port, ssl_ca=ssl_ca, ssl_ca_file=ssl_ca_file)
 
         self._instances.append(i)
-
-    def addInstance2(self, topology_instance):
-        self._instances.append(topology_instance)
 
     def removeInstance(self, id):
         """

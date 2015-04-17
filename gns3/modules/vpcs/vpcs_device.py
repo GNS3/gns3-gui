@@ -41,7 +41,7 @@ class VPCSDevice(VM):
     URL_PREFIX = "vpcs"
 
     def __init__(self, module, server, project):
-        VM.__init__(self, module, server, project)
+        super().__init__(module, server, project)
 
         log.info("VPCS instance is being created")
         self._vm_id = None

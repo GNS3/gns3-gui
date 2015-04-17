@@ -22,14 +22,14 @@ Configuration page for IOU preferences.
 import os
 import sys
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
 from ..settings import IOU_SETTINGS
 
 
-class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
+class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
 
     """
     QWidget preference page for IOU.
@@ -37,7 +37,7 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         # connect signals
@@ -55,12 +55,12 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         Slot to open a file browser and select an iourc file
         """
 
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select the IOURC file", ".")
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select the IOURC file", ".")
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "IOURC file", "{} cannot be read".format(os.path.basename(path)))
+            QtWidgets.QMessageBox.critical(self, "IOURC file", "{} cannot be read".format(os.path.basename(path)))
             return
 
         self.uiIOURCPathLineEdit.setText(os.path.normpath(path))
@@ -73,12 +73,12 @@ class IOUPreferencesPage(QtGui.QWidget, Ui_IOUPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select iouyap", ".", filter)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select iouyap", ".", filter)
         if not path:
             return
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
+            QtWidgets.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
             return
 
         self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
