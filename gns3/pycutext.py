@@ -24,6 +24,24 @@ import sys
 from .qt import QtCore, QtGui
 
 
+class MultipleRedirection:
+
+    def __init__(self, console, stdout):
+        self.console = console
+        self.stdout = stdout
+
+    def write(self, str):
+        self.console.write(str)
+        self.stdout.write(str)
+
+    def isatty(self):
+        return self.console.isatty() or self.stdout.isatty()
+
+    def flush(self):
+        self.console.flush()
+        self.stdout.flush()
+
+
 class PyCutExt(QtGui.QTextEdit):
 
     """
@@ -51,7 +69,7 @@ class PyCutExt(QtGui.QTextEdit):
             self.eofKey = None
 
         # capture all interactive input/output
-        sys.stdout = self
+        sys.stdout = MultipleRedirection(self, sys.stdout)
         # sys.stderr = MultipleRedirection((sys.stderr, self))
         sys.stdin = self
 
