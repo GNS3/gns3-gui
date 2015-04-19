@@ -20,9 +20,7 @@ Wizard for VirtualBox VMs.
 """
 
 import sys
-
-from functools import partial
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtGui
 from gns3.servers import Servers
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
@@ -64,13 +62,9 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
-            progress_dialog = QtGui.QProgressDialog("Loading VirtualBox VMs", "Cancel", 0, 0, parent=self)
-            progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-            progress_dialog.setWindowTitle("VirtualBox VMs")
-            progress_dialog.show()
-            self._server.get("/virtualbox/vms", partial(self._getVirtualBoxVMsFromServerCallback, progress_dialog))
+            self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
 
-    def _getVirtualBoxVMsFromServerCallback(self, progress_dialog, result, error=False, **kwargs):
+    def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
         """
         Callback for getVirtualBoxVMsFromServer.
 
@@ -79,14 +73,6 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         :param error: indicates an error (boolean)
         """
 
-        if progress_dialog.wasCanceled():
-            return
-        if error:
-            progress_dialog.reject()
-            QtGui.QMessageBox.critical(self, "VirtualBox VMs", "Error while getting the VirtualBox VMs: {}".format(result["message"]))
-            return
-
-        progress_dialog.accept()
         if error:
             QtGui.QMessageBox.critical(self, "VirtualBox VMs", "{}".format(result["message"]))
         else:
