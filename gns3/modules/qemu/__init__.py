@@ -247,8 +247,8 @@ class Qemu(Module):
                     continue
                 vm_settings[setting_name] = self._qemu_vms[vm][setting_name]
 
-        qemu_path = settings.pop("qemu_path")
-        name = settings.pop("name")
+        qemu_path = vm_settings.pop("qemu_path")
+        name = vm_settings.pop("name")
         node.setup(qemu_path, additional_settings=vm_settings, base_name=name)
 
     def reset(self):
