@@ -20,6 +20,7 @@ Base class for node classes.
 """
 
 from .qt import QtCore
+from .ports.port import Port
 
 import logging
 log = logging.getLogger(__name__)
@@ -212,7 +213,19 @@ class Node(QtCore.QObject):
         :param status: node status (integer)
         """
 
+        if status == self._status:
+            return
         self._status = status
+        if status == Node.started:
+            for port in self._ports:
+                # set ports as started
+                port.setStatus(Port.started)
+            self.started_signal.emit()
+        elif status == Node.stopped:
+            for port in self._ports:
+                # set ports as stopped
+                port.setStatus(Port.stopped)
+            self.stopped_signal.emit()
 
     def initialized(self):
         """

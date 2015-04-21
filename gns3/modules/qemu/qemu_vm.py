@@ -240,68 +240,6 @@ class QemuVM(VM):
             log.info("QEMU VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
-    def start(self):
-        """
-        Starts this QEMU VM instance.
-        """
-
-        if self.status() == Node.started:
-            log.debug("{} is already running".format(self.name()))
-            return
-
-        log.debug("{} is starting".format(self.name()))
-        self.httpPost("/qemu/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback)
-
-    def _startCallback(self, result, error=False, **kwargs):
-        """
-        Callback for start.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has started".format(self.name()))
-            self.setStatus(Node.started)
-            for port in self._ports:
-                # set ports as started
-                port.setStatus(Port.started)
-            self.started_signal.emit()
-
-    def stop(self):
-        """
-        Stops this QEMU VM instance.
-        """
-
-        if self.status() == Node.stopped:
-            log.debug("{} is already stopped".format(self.name()))
-            return
-
-        log.debug("{} is stopping".format(self.name()))
-        self.httpPost("/qemu/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback)
-
-    def _stopCallback(self, result, error=False, **kwargs):
-        """
-        Callback for stop.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has stopped".format(self.name()))
-            self.setStatus(Node.stopped)
-            for port in self._ports:
-                # set ports as stopped
-                port.setStatus(Port.stopped)
-            self.stopped_signal.emit()
-
     def suspend(self):
         """
         Suspends this QEMU VM instance.

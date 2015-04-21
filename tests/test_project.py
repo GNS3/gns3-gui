@@ -31,6 +31,7 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
     uuid = str(uuid4())
     project = Project()
     project._created_servers = set()
+    project._listen_notification = False
     project.setFilesDir(str(tmpdir))
 
     with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
@@ -54,6 +55,8 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
         assert args[0] == "POST"
         assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
+
+        assert len(project._notifications_stream) == 1
 
 
 def test_project_post_non_created_project_local_server(tmpdir, local_server):
