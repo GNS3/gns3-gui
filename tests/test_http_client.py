@@ -132,3 +132,36 @@ def test_progress_callback(http_client, response):
 
     assert progress.add_query_signal.emit.called
     assert progress.remove_query_signal.emit.called
+
+
+def test_processDownloadProgress(http_client, response):
+
+    callback = unittest.mock.MagicMock()
+    response = unittest.mock.MagicMock()
+    response.readAll.return_value = b'{"action": "ping"}'
+
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+
+    assert callback.called
+    args, kwargs = callback.call_args
+    assert args[0] == {"action": "ping"}
+
+
+def test_processDownloadProgressPartial(http_client, response):
+    """
+    We can read an incomplete JSON on the network and we need
+    to wait for the next part"""
+    callback = unittest.mock.MagicMock()
+    response = unittest.mock.MagicMock()
+    response.readAll.return_value = b'{"action": "ping"'
+
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+
+    assert not callback.called
+
+    response.readAll.return_value = b'}\n{"a": "b"'
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+
+    assert callback.call_count == 1
+    args, kwargs = callback.call_args
+    assert args[0] == {"action": "ping"}
