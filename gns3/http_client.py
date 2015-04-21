@@ -175,18 +175,21 @@ class HTTPClient(QtCore.QObject):
             log.debug("No GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
         return False
 
-    def get(self, path, callback, context={}):
+    def get(self, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True):
         """
         HTTP GET on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
+        :param body: params to send (dictionary)
+        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+        :param showProgress: Display progress to the user
         """
 
-        self.createHTTPQuery("GET", path, callback, context=context)
+        self.createHTTPQuery("GET", path, callback, context=context, body=body, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
 
-    def put(self, path, callback, body={}, context={}):
+    def put(self, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True):
         """
         HTTP PUT on the remote server
 
@@ -194,11 +197,13 @@ class HTTPClient(QtCore.QObject):
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
         :param body: params to send (dictionary)
+        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+        :param showProgress: Display progress to the user
         """
 
-        self.createHTTPQuery("PUT", path, callback, context=context, body=body)
+        self.createHTTPQuery("PUT", path, callback, context=context, body=body, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
 
-    def post(self, path, callback, body={}, context={}):
+    def post(self, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True):
         """
         HTTP POST on the remote server
 
@@ -206,20 +211,24 @@ class HTTPClient(QtCore.QObject):
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
         :param body: params to send (dictionary)
+        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+        :param showProgress: Display progress to the user
         """
 
-        self.createHTTPQuery("POST", path, callback, context=context, body=body)
+        self.createHTTPQuery("POST", path, callback, context=context, body=body, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
 
-    def delete(self, path, callback, context={}):
+    def delete(self, path, callback, context={}, downloadProgressCallback=None, showProgress=True):
         """
         HTTP DELETE on the remote server
 
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
+        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+        :param showProgress: Display progress to the user
         """
 
-        self.createHTTPQuery("DELETE", path, callback, context=context)
+        self.createHTTPQuery("DELETE", path, callback, context=context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
 
     def _request(self, url):
         """
@@ -287,7 +296,6 @@ class HTTPClient(QtCore.QObject):
             else:
                 print(msg)
                 print("WARNING: Use a different client and server version can create bugs. Use it at your own risk.")
-
         self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._connected = True
         self._version = params["version"]
@@ -314,27 +322,22 @@ class HTTPClient(QtCore.QObject):
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = self._request(url)
-        request.setRawHeader("Content-Type", "application/json")
-        request.setRawHeader("Content-Length", str(len(body)))
+
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
+        request.setRawHeader("Content-Type", "application/json")
 
-        if method == "GET":
-            response = self._network_manager.get(request)
-
-        if method == "PUT":
+        # By default QT doesn't support GET with even if it's in the RFC that's why we need to use sendCustomRequest
+        if body is not None and len(body) != 0:
             body = json.dumps(body)
-            request.setRawHeader("Content-Type", "application/json")
             request.setRawHeader("Content-Length", str(len(body)))
-            response = self._network_manager.put(request, body)
+            data = QtCore.QByteArray(body)
+            body = QtCore.QBuffer(self)
+            body.setData(data)
+            body.open(QtCore.QIODevice.ReadOnly)
+        else:
+            body = None
 
-        if method == "POST":
-            body = json.dumps(body)
-            request.setRawHeader("Content-Type", "application/json")
-            request.setRawHeader("Content-Length", str(len(body)))
-            response = self._network_manager.post(request, body)
-
-        if method == "DELETE":
-            response = self._network_manager.deleteResource(request)
+        response = self._network_manager.sendCustomRequest(request, method, body)
 
         response.finished.connect(partial(self._processResponse, response, callback, context))
         if downloadProgressCallback is not None:
@@ -348,16 +351,22 @@ class HTTPClient(QtCore.QObject):
         part of a JSON we keep it for the next packet
         """
 
-        content = bytes(response.readAll()).decode().strip()
-        if context["query_id"] in self._buffer:
-            content = self._buffer[context["query_id"]] + content
-        try:
-            while True:
-                answer, index = json.JSONDecoder().raw_decode(content)
-                callback(answer, server=self, context=context)
-                content = content[index:]
-        except ValueError:  # Partial JSON
-            self._buffer[context["query_id"]] = content
+        content = bytes(response.readAll())
+
+        content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+        if content_type == "application/json":
+            content = content.decode()
+            if context["query_id"] in self._buffer:
+                content = self._buffer[context["query_id"]] + content
+            try:
+                while True:
+                    answer, index = json.JSONDecoder().raw_decode(content)
+                    callback(answer, server=self, context=context)
+                    content = content[index:]
+            except ValueError:  # Partial JSON
+                self._buffer[context["query_id"]] = content
+        else:
+            callback(content, server=self, context=context)
 
         if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
             request_canceled = partial(self._requestCanceled, response, context)
@@ -386,7 +395,7 @@ class HTTPClient(QtCore.QObject):
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
             log.info("Response error: {}".format(error_message))
-            body = bytes(response.readAll()).decode()
+            body = bytes(response.readAll()).decode().strip("\0")
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if callback is not None:
                 if not body or content_type != "application/json":
@@ -397,10 +406,10 @@ class HTTPClient(QtCore.QObject):
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
-            body = bytes(response.readAll()).decode()
+            body = bytes(response.readAll()).decode().strip("\0")
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             log.debug(body)
-            if body and content_type == "application/json":
+            if body and len(body.strip(" \n\t")) > 0 and content_type == "application/json":
                 params = json.loads(body)
             else:
                 params = {}

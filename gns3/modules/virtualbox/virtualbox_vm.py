@@ -22,6 +22,7 @@ VirtualBox VM implementation.
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
+from gns3.packet_capture import PacketCapture
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VBOX_VM_SETTINGS
 
@@ -269,13 +270,7 @@ class VirtualBoxVM(VM):
             log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            port = context["port"]
-            log.info("{} has successfully started capturing packets on {}".format(self.name(), port.name()))
-            try:
-                port.startPacketCapture(result["pcap_file_path"])
-            except OSError as e:
-                self.error_signal.emit(self.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
-            self.updated_signal.emit()
+            PacketCapture.instance().startCapture(self, context["port"], result["pcap_file_path"])
 
     def stopPacketCapture(self, port):
         """
@@ -304,8 +299,7 @@ class VirtualBoxVM(VM):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             port = context["port"]
-            log.info("{} has successfully stopped capturing packets on {}".format(self.name(), port.name()))
-            port.stopPacketCapture()
+            PacketCapture.instance().stopCapture(self, port)
             self.updated_signal.emit()
 
     def info(self):
