@@ -259,7 +259,7 @@ class HTTPClient(QtCore.QObject):
             return self.executeHTTPQuery(method, path, callback, body, context=context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
         else:
             log.info("Connection to {}:{}".format(self.host, self.port))
-            return self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body, context), {}, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
+            return self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body, context=context), {}, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
 
     def _callbackConnect(self, method, path, callback, body, original_context, params, error=False, **kwargs):
         """
