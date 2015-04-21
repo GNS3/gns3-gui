@@ -36,21 +36,32 @@ def fake_bin(tmpdir):
     return path
 
 
+@pytest.fixture
+def fake_iourc(tmpdir):
+    path = str(tmpdir / "iourc")
+    with open(path, "w+") as f:
+        f.write("[license]\r\ngns42 = dsfdsfdsfdsf;\r\n")
+    return path
+
+
 def test_iou_device_init(local_server, project):
 
     iou_device = IOUDevice(None, local_server, project)
 
 
-def test_iou_device_setup(iou_device, project):
+def test_iou_device_setup(iou_device, project, fake_iourc):
 
     with patch('gns3.node.Node.httpPost') as mock:
+        iou_device._module._settings["iourc_path"] = fake_iourc
+
         iou_device.setup("/tmp/iou.bin", name="PC 1")
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/iou/vms"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "path": "/tmp/iou.bin"
+            "path": "/tmp/iou.bin",
+            "iourc_content": "[license]\r\ngns42 = dsfdsfdsfdsf;\r\n"
         }
 
         # Callback
@@ -65,12 +76,14 @@ def test_iou_device_setup(iou_device, project):
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_iou_device_setup_with_uuid(iou_device, project):
+def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
     with patch('gns3.node.Node.httpPost') as mock:
+        iou_device._module._settings["iourc_path"] = fake_iourc
+
         iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
         assert mock.called
         args, kwargs = mock.call_args
@@ -78,7 +91,8 @@ def test_iou_device_setup_with_uuid(iou_device, project):
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "path": "/tmp/iou.bin"
+            "path": "/tmp/iou.bin",
+            "iourc_content": "[license]\r\ngns42 = dsfdsfdsfdsf;\r\n"
         }
 
         # Callback
@@ -93,7 +107,7 @@ def test_iou_device_setup_with_uuid(iou_device, project):
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir):
+def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir, fake_iourc):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
@@ -103,7 +117,9 @@ def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir):
         f.write("hostname %h")
 
     with patch('gns3.node.Node.httpPost') as mock:
-        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", initial_config=initial_config)
+        iou_device._module._settings["iourc_path"] = fake_iourc
+
+        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"initial_config": initial_config})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/iou/vms"
@@ -111,7 +127,8 @@ def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir):
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
             "path": "/tmp/iou.bin",
-            "initial_config_content": "!\nhostname %h"
+            "initial_config_content": "!\nhostname %h",
+            'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
         }
 
 
@@ -270,10 +287,9 @@ def test_load(local_server, project, fake_bin):
         iou_device.load(nio_node)
 
         assert mock.called
-        (path, name, console, vm_id, settings), kwargs = mock.call_args
+        (path, name, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert console is None
         assert settings == {"initial_config": "/tmp"}
         assert vm_id == uuid
 
@@ -308,10 +324,9 @@ def test_load_1_2(local_server, project, fake_bin):
         iou_device.load(nio_node)
 
         assert mock.called
-        (path, name, console, vm_id, settings), kwargs = mock.call_args
+        (path, name, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert console is None
         assert settings == {"initial_config": "/tmp"}
         assert vm_id == uuid
 
