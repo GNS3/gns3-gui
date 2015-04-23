@@ -37,13 +37,12 @@ class PacketCapture:
         :param port: Instance of port where capture should be executed
         :param file_path: capture file path on server
         """
-        log.info("{} has successfully started capturing packets on {}".format(vm.name(), port.name()))
 
         if vm.server().isLocal():
             try:
                 port.startPacketCapture(file_path)
             except OSError as e:
-                vm.error_signal.emit(vm.id(), "could not start the packet capture reader: {}: {}".format(e, e.filename))
+                vm.error_signal.emit(vm.id(), "Could not start the packet capture reader: {}: {}".format(e, e.filename))
         else:
             (fd, temp_capture_file_path) = tempfile.mkstemp()
             os.close(fd)
@@ -56,15 +55,18 @@ class PacketCapture:
                             context={"pcap_file": temp_capture_file_path, "vm": vm},
                             downloadProgressCallback=self._processDownloadPcapProgress,
                             showProgress=False)
+
+        log.info("{} has successfully started capturing packets on {}".format(vm.name(), port.name()))
         vm.updated_signal.emit()
 
     def _processDownloadPcapProgress(self, content, context={}, **kwargs):
+
         try:
             with open(context["pcap_file"], 'ab+') as f:
                 f.write(content)
         except OSError as e:
             vm = context["vm"]
-            vm.error_signal.emit(vm.id(), "could not write packet capture: {}: {}".format(e, context["pcap_file"]))
+            vm.error_signal.emit(vm.id(), "Could not write packet capture: {}: {}".format(e, context["pcap_file"]))
 
     def stopCapture(self, vm, port):
         """
@@ -73,14 +75,17 @@ class PacketCapture:
         :param vm: Instance of the virtual machine
         :param port: Instance of port where capture should be executed
         """
-        log.info("{} has successfully stopped capturing packets on {}".format(vm.name(), port.name()))
+
         port.stopPacketCapture()
         if port in self._capture_files:
             try:
                 os.remove(self._capture_files[port])
             except OSError as e:
-                vm.error_signal.emit(vm.id(), "could not remove packet capture: {}: {}".format(e, self._capture_files[port]))
+                vm.error_signal.emit(vm.id(), "Could not stop packet capture: {}: {}".format(e, self._capture_files[port]))
             self._capture_files[port] = None
+
+        log.info("{} has successfully stopped capturing packets on {}".format(vm.name(), port.name()))
+        vm.updated_signal.emit()
 
     @staticmethod
     def instance():

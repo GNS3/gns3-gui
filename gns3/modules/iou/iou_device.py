@@ -319,9 +319,7 @@ class IOUDevice(VM):
             log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            port = context["port"]
-            PacketCapture.instance().stopCapture(self, port)
-            self.updated_signal.emit()
+            PacketCapture.instance().stopCapture(self, context["port"])
 
     def info(self):
         """

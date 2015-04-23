@@ -351,26 +351,27 @@ class HTTPClient(QtCore.QObject):
         part of a JSON we keep it for the next packet
         """
 
-        content = bytes(response.readAll())
 
-        content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-        if content_type == "application/json":
-            content = content.decode()
-            if context["query_id"] in self._buffer:
-                content = self._buffer[context["query_id"]] + content
-            try:
-                while True:
-                    answer, index = json.JSONDecoder().raw_decode(content)
-                    callback(answer, server=self, context=context)
-                    content = content[index:]
-            except ValueError:  # Partial JSON
-                self._buffer[context["query_id"]] = content
-        else:
-            callback(content, server=self, context=context)
+        if response.error() != QtNetwork.QNetworkReply.NoError:  # FIXME: check for any side effects of this line
+            content = bytes(response.readAll())
+            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+            if content_type == "application/json":
+                content = content.decode()
+                if context["query_id"] in self._buffer:
+                    content = self._buffer[context["query_id"]] + content
+                try:
+                    while True:
+                        answer, index = json.JSONDecoder().raw_decode(content)
+                        callback(answer, server=self, context=context)
+                        content = content[index:]
+                except ValueError:  # Partial JSON
+                    self._buffer[context["query_id"]] = content
+            else:
+                callback(content, server=self, context=context)
 
-        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
-            request_canceled = partial(self._requestCanceled, response, context)
-            HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
+            if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
+                request_canceled = partial(self._requestCanceled, response, context)
+                HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
 
     def _requestCanceled(self, response, context):
 
