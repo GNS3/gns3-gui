@@ -17,10 +17,14 @@
 
 """
 Compatibility layer for Qt bindings, so it is easier to switch from PyQt4 to PyQt5 and
-vice-versa. If you need you can add PySide
+vice-versa. It is possible to add PySide if needed.
+For PyQt4 and PyQt5 differences please see http://pyqt.sourceforge.net/Docs/PyQt5/pyqt4_differences.html
 """
 
-# based on https://gist.github.com/remram44/5985681
+# based on https://gist.github.com/remram44/5985681 and
+# https://github.com/pyQode/pyqode.qt/blob/master/pyqode/qt/QtWidgets.py (MIT license)
+
+
 
 import sys
 import sip
@@ -38,16 +42,29 @@ else:
         DEFAULT_BINDING = 'PyQt5'
     except ImportError:
         DEFAULT_BINDING = 'PyQt4'
-        print("WARNING: PyQT4 is no longer supported please upgrade to PyQT5")
+        print("WARNING: PyQt4 is no longer supported, please upgrade to PyQt5")
 
 if DEFAULT_BINDING == 'PyQt5':
-    from PyQt5 import QtCore, QtGui, QtNetwork, QtSvg, QtWebKit, QtWidgets
+
+    from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
     sys.modules[__name__ + '.QtCore'] = QtCore
     sys.modules[__name__ + '.QtGui'] = QtGui
     sys.modules[__name__ + '.QtNetwork'] = QtNetwork
-    sys.modules[__name__ + '.QtSvg'] = QtSvg
-    sys.modules[__name__ + '.QtWebKit'] = QtWebKit
     sys.modules[__name__ + '.QtWidgets'] = QtWidgets
+
+    try:
+        from PyQt5 import QtSvg
+        sys.modules[__name__ + '.QtSvg'] = QtSvg
+    except ImportError:
+        raise RuntimeError("Please install the PyQt5.QtSvg module")
+
+    try:
+        from PyQt5 import QtWebKit
+        from PyQt5 import QtWebKitWidgets
+        sys.modules[__name__ + '.QtWebKit'] = QtWebKit
+        sys.modules[__name__ + '.QtWebKitWidgets'] = QtWebKitWidgets
+    except ImportError:
+        pass
 
     QtCore.Signal = QtCore.pyqtSignal
     QtCore.Slot = QtCore.pyqtSlot
@@ -55,6 +72,7 @@ if DEFAULT_BINDING == 'PyQt5':
     QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
 elif DEFAULT_BINDING == 'PyQt4':
+
     sip.setapi('QDate', 2)
     sip.setapi('QDateTime', 2)
     sip.setapi('QString', 2)
@@ -72,6 +90,8 @@ elif DEFAULT_BINDING == 'PyQt4':
     try:
         from PyQt4 import QtWebKit
         sys.modules[__name__ + '.QtWebKit'] = QtWebKit
+        # Qt5 name compatibility
+        QtWebKitWidgets = QtWebKit
     except ImportError:
         pass
 
@@ -80,8 +100,26 @@ elif DEFAULT_BINDING == 'PyQt4':
     QtCore.Property = QtCore.pyqtProperty
     QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
-    # Qt 5 compatibilty previously it was QtGui sub modules
+    # Qt5 name compatibility
     QtWidgets = QtGui
+
+    from PyQt4.QtGui import QFileDialog as OldFileDialog
+
+    class QFileDialog(OldFileDialog):
+
+        @staticmethod
+        def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+            return OldFileDialog.getOpenFileNameAndFilter(parent, caption, directory, filter, selectedFilter,options)
+
+        @staticmethod
+        def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+            return OldFileDialog.getOpenFileNamesAndFilter(parent, caption, directory, filter, selectedFilter, options)
+
+        @staticmethod
+        def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+            return OldFileDialog.getSaveFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
+
+    QtGui.QFileDialog = QFileDialog
 
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):

@@ -21,7 +21,7 @@ Configuration page for server preferences.
 
 import os
 import sys
-from gns3.qt import QtNetwork, QtGui, QtWidgets
+from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
 from ..topology import Topology
@@ -95,7 +95,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", ".", filter)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", ".", filter)
         if not path:
             return
 

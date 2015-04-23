@@ -417,11 +417,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open a project.
         """
 
-        path, _ = QtWidgets.QFileDialog.getOpenFileNameAndFilter(self,
-                                                                 "Open project",
-                                                                 self.projectsDirPath(),
-                                                                 "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
-                                                                 "GNS3 project files (*.gns3)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                        "Open project",
+                                                        self.projectsDirPath(),
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
+                                                        "GNS3 project files (*.gns3)")
         self._loadPath(path)
 
     def openRecentFileSlot(self):
@@ -551,7 +551,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             screenshot_dir = project_dir
 
         screenshot_path = os.path.join(screenshot_dir, "screenshot")
-        path, selected_filter = QtWidgets.QFileDialog.getSaveFileNameAndFilter(self, "Screenshot", screenshot_path, file_formats)
+        path, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self, "Screenshot", screenshot_path, file_formats)
         if not path:
             return
 

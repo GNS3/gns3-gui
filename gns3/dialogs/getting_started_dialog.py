@@ -18,7 +18,7 @@
 import os
 import sys
 
-from ..qt import QtCore, QtGui, QtWebKit, QtWidgets
+from ..qt import QtCore, QtGui, QtWebKitWidgets, QtWidgets
 from ..ui.getting_started_dialog_ui import Ui_GettingStartedDialog
 from ..utils.get_resource import get_resource
 from ..local_config import LocalConfig
@@ -38,7 +38,7 @@ class GettingStartedDialog(QtWidgets.QDialog, Ui_GettingStartedDialog):
         self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
         self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
         self.adjustSize()
-        self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        self.uiWebView.page().setLinkDelegationPolicy(QtWebKitWidgets.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self._local_config = LocalConfig.instance()
         gui_settings = self._local_config.loadSectionSettings("GUI", {"hide_getting_started_dialog": False})

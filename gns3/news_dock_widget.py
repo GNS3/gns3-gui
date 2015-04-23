@@ -18,7 +18,7 @@
 import os
 import sys
 
-from .qt import QtGui, QtCore, QtWebKit, QtWidgets
+from .qt import QtGui, QtCore, QtWebKitWidgets, QtWidgets
 from .ui.news_dock_widget_ui import Ui_NewsDockWidget
 from .utils.get_resource import get_resource
 
@@ -39,7 +39,7 @@ class NewsDockWidget(QtWidgets.QDockWidget, Ui_NewsDockWidget):
 
         self._visible = True
         self.visibilityChanged.connect(self._visibilityChangedSlot)
-        self.uiWebView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        self.uiWebView.page().setLinkDelegationPolicy(QtWebKitWidgets.QWebPage.DelegateAllLinks)
         self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self.uiWebView.loadFinished.connect(self._loadFinishedSlot)

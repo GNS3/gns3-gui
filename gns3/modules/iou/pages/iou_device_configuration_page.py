@@ -88,7 +88,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
         if not path:
             return
 

@@ -21,7 +21,7 @@ Configuration page for VPCS devices.
 
 import os
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.utils.get_resource import get_resource
 from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
@@ -44,7 +44,7 @@ class VPCSDeviceConfigurationPage(QtWidgets.QWidget, Ui_VPCSDeviceConfigPageWidg
     #     """
     #
     #     config_dir = get_resource("configs")
-    #     path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+    #     path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
     #     if not path:
     #         return
     #

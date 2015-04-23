@@ -72,8 +72,9 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         Slot to select the a new project location.
         """
 
-        path = QtWidgets.QFileDialog.getSaveFileName(self, "Project location", os.path.join(self._main_window.projectsDirPath(),
-                                                                                            self.uiNameLineEdit.text()))
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Project location", os.path.join(self._main_window.projectsDirPath(),
+                                                                                               self.uiNameLineEdit.text()))
+
         if path:
             self.uiLocationLineEdit.setText(path)
 

@@ -123,7 +123,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
         if not path:
             return
 
@@ -140,7 +140,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
         if not path:
             return
 

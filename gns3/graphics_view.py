@@ -1044,19 +1044,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.node().importConfigFromDirectory(path)
         else:
             item = items[0]
-            path, _ = QtWidgets.QFileDialog.getOpenFileNameAndFilter(self,
-                                                                     "Import config",
-                                                                     ".",
-                                                                     "All files (*.*);;Config files (*.cfg)",
-                                                                     "Config files (*.cfg)")
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                            "Import config",
+                                                            ".",
+                                                            "All files (*.*);;Config files (*.cfg)",
+                                                            "Config files (*.cfg)")
+
             if path:
                 item.node().importConfig(path)
             if hasattr(item.node(), "importPrivateConfig"):
-                path, _ = QtWidgets.QFileDialog.getOpenFileNameAndFilter(self,
-                                                                         "Import private-config",
-                                                                         ".",
-                                                                         "All files (*.*);;Config files (*.cfg)",
-                                                                         "Config files (*.cfg)")
+                path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                "Import private-config",
+                                                                ".",
+                                                                "All files (*.*);;Config files (*.cfg)",
+                                                                "Config files (*.cfg)")
                 if path:
                     item.node().importPrivateConfig(path)
 
@@ -1081,9 +1082,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.node().exportConfigToDirectory(path)
         else:
             item = items[0]
-            config_path = QtWidgets.QFileDialog.getSaveFileName(self, "Export config")
+            config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export config")
             if hasattr(item.node(), "importPrivateConfig"):
-                private_config_path = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config")
+                private_config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config")
                 item.node().exportConfig(config_path, private_config_path)
             else:
                 item.node().exportConfig(config_path)

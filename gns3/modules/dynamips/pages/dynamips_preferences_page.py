@@ -53,7 +53,7 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         file_filter = ""
         if sys.platform.startswith("win"):
             file_filter = "Executable (*.exe);;All files (*.*)"
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select Dynamips", ".", file_filter)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Dynamips", ".", file_filter)
         if not path:
             return
 

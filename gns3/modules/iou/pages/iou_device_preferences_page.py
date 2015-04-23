@@ -209,11 +209,11 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         """
 
         destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "IOU")
-        path, _ = QtWidgets.QFileDialog.getOpenFileNameAndFilter(parent,
-                                                                 "Select an IOU image",
-                                                                 destination_directory,
-                                                                 "All files (*)",
-                                                                 "IOU image (*.bin *.image)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
+                                                        "Select an IOU image",
+                                                        destination_directory,
+                                                        "All files (*)",
+                                                        "IOU image (*.bin *.image)")
 
         if not path:
             return

@@ -23,7 +23,7 @@ import os
 from functools import partial
 from collections import OrderedDict
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.main_window import MainWindow
@@ -97,9 +97,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
     def getDiskImage(parent):
 
         destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "QEMU")
-        path, _ = QtWidgets.QFileDialog.getOpenFileNameAndFilter(parent,
-                                                                 "Select a QEMU disk image",
-                                                                 destination_directory)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(parent, "Select a QEMU disk image", destination_directory)
         if not path:
             return
 

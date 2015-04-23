@@ -36,9 +36,6 @@ background-none;
   <property name="dockOptions">
    <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
-  <property name="unifiedTitleAndToolBarOnMac">
-   <bool>false</bool>
-  </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
     <property name="margin">

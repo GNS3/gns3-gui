@@ -31,6 +31,8 @@ The following commands will install some of these dependencies:
 
    sudo apt-get install python3-setuptools
    sudo apt-get install python3-pyqt5
+   sudo apt-get install python3-pyqt5.qtsvg
+   sudo apt-get install python3-pyqt5.qtwebkit
 
 If you want to test using Qt4
 

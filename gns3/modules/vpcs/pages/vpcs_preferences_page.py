@@ -22,7 +22,7 @@ Configuration page for VPCS preferences.
 import os
 import sys
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -54,7 +54,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select VPCS", ".", filter)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select VPCS", ".", filter)
         if not path:
             return
 
@@ -70,7 +70,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
         if not path:
             return
 

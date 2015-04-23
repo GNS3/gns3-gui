@@ -66,7 +66,7 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
 
-def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
+    def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
         """
         Callback for getVirtualBoxVMsFromServer.
 

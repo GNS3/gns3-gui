@@ -20,7 +20,7 @@ Configuration page for VirtualBox preferences.
 """
 
 import os
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 
 from .. import VirtualBox
 from ..ui.virtualbox_preferences_page_ui import Ui_VirtualBoxPreferencesPageWidget
@@ -48,7 +48,7 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
         Slot to open a file browser and select VBoxManage.
         """
 
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Select VBoxManage", ".")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select VBoxManage", ".")
         if not path:
             return
 

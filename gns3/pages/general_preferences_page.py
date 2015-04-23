@@ -127,7 +127,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         configuration_file_path = LocalConfig.instance().configFilePath()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Import configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
         if not path:
             return
 
@@ -166,7 +166,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         configuration_file_path = LocalConfig.instance().configFilePath()
         directory = os.path.dirname(configuration_file_path)
 
-        path = QtWidgets.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export configuration file", directory, "Configuration file (*.ini *.conf);;All files (*.*)")
         if not path:
             return
 
