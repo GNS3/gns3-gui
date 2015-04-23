@@ -36,10 +36,6 @@ except ImportError:
 
 class ConsoleCmd(cmd.Cmd):
 
-    def __init__(self):
-
-        cmd.Cmd.__init__(self)
-
     def do_version(self, args):
         """
         Show the version of GNS3 and its dependencies.

@@ -19,10 +19,10 @@
 Graphical representation of a note on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtWidgets, QtGui
 
 
-class NoteItem(QtGui.QGraphicsTextItem):
+class NoteItem(QtWidgets.QGraphicsTextItem):
 
     """
     Text note for the QGraphicsView.
@@ -34,7 +34,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
 
     def __init__(self, parent=None):
 
-        QtGui.QGraphicsTextItem.__init__(self, parent)
+        super().__init__(parent)
 
         from ..main_window import MainWindow
         main_window = MainWindow.instance()
@@ -101,7 +101,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
             if self.rotation() < 360.0:
                 self.setRotation(self.rotation() + 1)
         else:
-            QtGui.QGraphicsTextItem.keyPressEvent(self, event)
+            super().keyPressEvent(event)
 
     def editText(self):
         """
@@ -132,7 +132,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
         :param event: QFocusEvent instance
         """
 
-        self.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
         cursor = self.textCursor()
         if cursor.hasSelection():
             cursor.clearSelection()
@@ -142,7 +142,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
             # delete the note if empty
             self.delete()
             return
-        return QtGui.QGraphicsTextItem.focusOutEvent(self, event)
+        return super().focusOutEvent(event)
 
     def paint(self, painter, option, widget=None):
         """
@@ -153,7 +153,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
         :param widget: QWidget instance
         """
 
-        QtGui.QGraphicsTextItem.paint(self, painter, option, widget)
+        super().paint(painter, option, widget)
 
         if self.show_layer is False or self.parentItem():
             return
@@ -178,7 +178,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
         :param value: Z value
         """
 
-        QtGui.QGraphicsTextItem.setZValue(self, value)
+        super().setZValue(value)
         if self.zValue() < 0:
             self.setFlag(self.ItemIsSelectable, False)
             self.setFlag(self.ItemIsMovable, False)

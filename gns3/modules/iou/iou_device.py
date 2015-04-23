@@ -46,7 +46,7 @@ class IOUDevice(VM):
     URL_PREFIX = "iou"
 
     def __init__(self, module, server, project):
-        VM.__init__(self, server, server, project)
+        super().__init__(server, server, project)
 
         log.info("IOU instance is being created")
         self._vm_id = None

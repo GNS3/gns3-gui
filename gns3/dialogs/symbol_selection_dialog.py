@@ -19,12 +19,12 @@
 Dialog to change the topology symbol of NodeItems
 """
 
-from ..qt import QtSvg, QtCore, QtGui
+from ..qt import QtSvg, QtCore, QtGui, QtWidgets
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 from ..node import Node
 
 
-class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
+class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
 
     """
     Symbol selection dialog.
@@ -35,16 +35,16 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
 
     def __init__(self, parent, items=None, symbol=None, category=None):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._items = items
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
 
         selected_symbol = symbol
         selected_category = category
         if not self._items:
-            self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).hide()
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
 
             # current categories
             categories = {"Routers": Node.routers,
@@ -74,7 +74,7 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
         for symbol in symbol_resources.children():
             if symbol.endswith(".normal.svg"):
                 name = symbol[:-11]
-                item = QtGui.QListWidgetItem(self.uiSymbolListWidget)
+                item = QtWidgets.QListWidgetItem(self.uiSymbolListWidget)
                 item.setText(name)
                 resource_path = ":/symbols/" + symbol
                 svg_renderer = QtSvg.QSvgRenderer(resource_path)
@@ -127,4 +127,4 @@ class SymbolSelectionDialog(QtGui.QDialog, Ui_SymbolSelectionDialog):
 
         if result and self._items:
             self._applyPreferencesSlot()
-        QtGui.QDialog.done(self, result)
+        super().done(result)

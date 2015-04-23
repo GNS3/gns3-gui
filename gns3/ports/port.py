@@ -36,7 +36,7 @@ from ..nios.nio_udp import NIOUDP
 from ..settings import PACKET_CAPTURE_SETTINGS, PACKET_CAPTURE_SETTING_TYPES
 
 
-class Port(object):
+class Port:
 
     """
     Base port.

@@ -23,7 +23,7 @@ import copy
 import os
 import stat
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -38,14 +38,14 @@ from ..pages.iou_device_configuration_page import iouDeviceConfigurationPage
 from ..dialogs.iou_device_wizard import IOUDeviceWizard
 
 
-class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget):
+class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWidget):
 
     """
     QWidget preference page for IOU image & device preferences.
     """
 
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self._main_window = MainWindow.instance()
@@ -90,7 +90,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
             self._iou_devices[key] = IOU_DEVICE_SETTINGS.copy()
             self._iou_devices[key].update(new_device_settings)
 
-            item = QtGui.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, self._iou_devices[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
@@ -102,7 +102,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 log = logging.getLogger(__name__)
 
                 # Start uploading the image to cloud files
-                self._upload_image_progress_dialog = QtGui.QProgressDialog(
+                self._upload_image_progress_dialog = QtWidgets.QProgressDialog(
                     "Uploading image file {}".format(new_device_settings['image']), "Cancel", 0, 0, parent=self)
                 self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
                 self._upload_image_progress_dialog.setWindowTitle("IOU image upload")
@@ -117,7 +117,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 except Exception as e:
                     self._upload_image_progress_dialog.reject()
                     log.error(e)
-                    QtGui.QMessageBox.critical(self, "IOU image upload", "Error uploading IOU image: {}".format(e))
+                    QtWidgets.QMessageBox.critical(self, "IOU image upload", "Error uploading IOU image: {}".format(e))
 
     def _imageUploadComplete(self):
         if self._upload_image_progress_dialog.wasCanceled():
@@ -139,8 +139,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 if iou_device["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
                     if new_key in self._iou_devices:
-                        QtGui.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists for server {}".format(iou_device["name"],
-                                                                                                                                iou_device["server"]))
+                        QtWidgets.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists for server {}".format(iou_device["name"],
+                                                                                                                                    iou_device["server"]))
                         iou_device["name"] = item.text(0)
                         return
                     self._iou_devices[new_key] = self._iou_devices[key]
@@ -162,7 +162,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
     def _createSectionItem(self, name):
 
-        section_item = QtGui.QTreeWidgetItem(self.uiIOUDeviceInfoTreeWidget)
+        section_item = QtWidgets.QTreeWidgetItem(self.uiIOUDeviceInfoTreeWidget)
         section_item.setText(0, name)
         font = section_item.font(0)
         font.setBold(True)
@@ -175,25 +175,25 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtGui.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
-        QtGui.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
-        QtGui.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
         if iou_device["initial_config"]:
-            QtGui.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Initial config:", iou_device["initial_config"]])
 
         if iou_device["use_default_iou_values"]:
-            QtGui.QTreeWidgetItem(section_item, ["RAM:", "default"])
-            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "default"])
+            QtWidgets.QTreeWidgetItem(section_item, ["RAM:", "default"])
+            QtWidgets.QTreeWidgetItem(section_item, ["NVRAM:", "default"])
         else:
-            QtGui.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(iou_device["ram"])])
-            QtGui.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(iou_device["nvram"])])
+            QtWidgets.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(iou_device["ram"])])
+            QtWidgets.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(iou_device["nvram"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
-        QtGui.QTreeWidgetItem(section_item, ["Ethernet adapters:", "{} ({} interfaces)".format(iou_device["ethernet_adapters"],
-                                                                                               iou_device["ethernet_adapters"] * 4)])
-        QtGui.QTreeWidgetItem(section_item, ["Serial adapters:", "{} ({} interfaces)".format(iou_device["serial_adapters"],
-                                                                                             iou_device["serial_adapters"] * 4)])
+        QtWidgets.QTreeWidgetItem(section_item, ["Ethernet adapters:", "{} ({} interfaces)".format(iou_device["ethernet_adapters"],
+                                                                                                   iou_device["ethernet_adapters"] * 4)])
+        QtWidgets.QTreeWidgetItem(section_item, ["Serial adapters:", "{} ({} interfaces)".format(iou_device["serial_adapters"],
+                                                                                                 iou_device["serial_adapters"] * 4)])
 
         self.uiIOUDeviceInfoTreeWidget.expandAll()
         self.uiIOUDeviceInfoTreeWidget.resizeColumnToContents(0)
@@ -209,17 +209,17 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         """
 
         destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "IOU")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
-                                                             "Select an IOU image",
-                                                             destination_directory,
-                                                             "All files (*)",
-                                                             "IOU image (*.bin *.image)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
+                                                        "Select an IOU image",
+                                                        destination_directory,
+                                                        "All files (*)",
+                                                        "IOU image (*.bin *.image)")
 
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(parent, "IOU image", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(parent, "IOU image", "Cannot read {}".format(path))
             return
 
         try:
@@ -227,13 +227,13 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 # read the first 7 bytes of the file.
                 elf_header_start = f.read(7)
         except OSError as e:
-            QtGui.QMessageBox.critical(parent, "IOU image", "Cannot read ELF magic number: {}".format(e))
+            QtWidgets.QMessageBox.critical(parent, "IOU image", "Cannot read ELF magic number: {}".format(e))
             return
 
         # file must start with the ELF magic number, be 32-bit, little endian and have an ELF version of 1
         # normal IOS image are big endian!
         if elf_header_start != b'\x7fELF\x01\x01\x01':
-            QtGui.QMessageBox.critical(parent, "IOU image", "Sorry, this is not a valid IOU image!")
+            QtWidgets.QMessageBox.critical(parent, "IOU image", "Sorry, this is not a valid IOU image!")
             return
 
         try:
@@ -241,17 +241,17 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, e))
+            QtWidgets.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, e))
             return
 
         if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the IOU image is not in the default images directory
-            reply = QtGui.QMessageBox.question(parent,
-                                               "IOU image",
-                                               "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
-                                               QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(parent,
+                                                   "IOU image",
+                                                   "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                                   QtWidgets.QMessageBox.Yes,
+                                                   QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
                 destination_path = os.path.join(destination_directory, os.path.basename(path))
                 thread = FileCopyThread(path, destination_path)
                 progress_dialog = ProgressDialog(thread, "Project", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
@@ -260,14 +260,14 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                 progress_dialog.exec_()
                 errors = progress_dialog.errors()
                 if errors:
-                    QtGui.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
+                    QtWidgets.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
                 else:
                     path = destination_path
                     mode = os.stat(path).st_mode
                     os.chmod(path, mode | stat.S_IXUSR)
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))
+            QtWidgets.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))
 
         return path
 
@@ -279,7 +279,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         :param column: ignored
         """
 
-        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
             self._showContextualMenu()
 
     def _showContextualMenu(self):
@@ -287,8 +287,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         Contextual menu.
         """
 
-        menu = QtGui.QMenu()
-        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        menu = QtWidgets.QMenu()
+        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
         change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
         self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
         menu.addAction(change_symbol_action)
@@ -323,7 +323,7 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
         self._items.clear()
 
         for key, iou_device in self._iou_devices.items():
-            item = QtGui.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, iou_device["name"])
             item.setIcon(0, QtGui.QIcon(iou_device["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)

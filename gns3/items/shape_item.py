@@ -19,7 +19,7 @@
 Base class for shape items (Rectangle, ellipse etc.).
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 
 
 class ShapeItem:
@@ -30,10 +30,10 @@ class ShapeItem:
 
     show_layer = False
 
-    def __init__(self):
+    def __init__(self, **kws):
 
-        self.setFlags(QtGui.QGraphicsItem.ItemIsMovable | QtGui.QGraphicsItem.ItemIsFocusable | QtGui.QGraphicsItem.ItemIsSelectable)
-        self.setAcceptsHoverEvents(True)
+        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setAcceptHoverEvents(True)
         self._border = 5
         self._edge = None
 
@@ -58,7 +58,7 @@ class ShapeItem:
             if self.rotation() < 360.0:
                 self.setRotation(self.rotation() + 1)
         else:
-            QtGui.QGraphicsItem.keyPressEvent(self, event)
+            QtWidgets.QGraphicsItem.keyPressEvent(self, event)
 
     def mousePressEvent(self, event):
         """
@@ -69,22 +69,22 @@ class ShapeItem:
 
         self.update()
         if event.pos().x() > (self.rect().right() - self._border):
-            self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
             self._edge = "right"
 
         elif event.pos().x() < (self.rect().left() + self._border):
-            self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
             self._edge = "left"
 
         elif event.pos().y() < (self.rect().top() + self._border):
-            self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
             self._edge = "top"
 
         elif event.pos().y() > (self.rect().bottom() - self._border):
-            self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
             self._edge = "bottom"
 
-        QtGui.QGraphicsItem.mousePressEvent(self, event)
+        QtWidgets.QGraphicsItem.mousePressEvent(self, event)
 
     def mouseReleaseEvent(self, event):
         """
@@ -94,9 +94,9 @@ class ShapeItem:
         """
 
         self.update()
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
         self._edge = None
-        QtGui.QGraphicsItem.mouseReleaseEvent(self, event)
+        QtWidgets.QGraphicsItem.mouseReleaseEvent(self, event)
 
     def mouseMoveEvent(self, event):
         """
@@ -145,7 +145,7 @@ class ShapeItem:
                     self.setPos(scenePos.x(), self.y())
                     self._edge = "left"
 
-        QtGui.QGraphicsItem.mouseMoveEvent(self, event)
+        QtWidgets.QGraphicsItem.mouseMoveEvent(self, event)
 
     def hoverMoveEvent(self, event):
         """
@@ -208,7 +208,7 @@ class ShapeItem:
         :param value: Z value
         """
 
-        QtGui.QGraphicsItem.setZValue(self, value)
+        QtWidgets.QGraphicsItem.setZValue(self, value)
         if self.zValue() < 0:
             self.setFlag(self.ItemIsSelectable, False)
             self.setFlag(self.ItemIsMovable, False)

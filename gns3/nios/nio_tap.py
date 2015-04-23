@@ -32,7 +32,7 @@ class NIOTAP(NIO):
 
     def __init__(self, tap_device):
 
-        NIO.__init__(self)
+        super().__init__()
         self._tap_device = tap_device
 
     def __str__(self):

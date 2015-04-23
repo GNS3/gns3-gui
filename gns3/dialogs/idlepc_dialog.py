@@ -17,12 +17,12 @@
 
 import re
 
-from ..qt import QtGui
+from ..qt import QtGui, QtWidgets
 from ..topology import Topology
 from ..ui.idlepc_dialog_ui import Ui_IdlePCDialog
 
 
-class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
+class IdlePCDialog(QtWidgets.QDialog, Ui_IdlePCDialog):
 
     """
     Idle-PC dialog.
@@ -30,10 +30,10 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
 
     def __init__(self, router, idlepcs, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applySlot)
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Help).clicked.connect(self._helpSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applySlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).clicked.connect(self._helpSlot)
 
         self._router = router
         self._idlepcs = idlepcs
@@ -56,7 +56,7 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
                     "different Idle-PC values and monitoring the CPU usage.\n\nBest Idle-PC values are usually " \
                     "obtained when IOS is in idle state, the following message being displayed " \
                     "on the console: {} con0 is now available ... Press RETURN to get started.".format(self._router.name())
-        QtGui.QMessageBox.information(self, "Hints for Idle-PC", help_text)
+        QtWidgets.QMessageBox.information(self, "Hints for Idle-PC", help_text)
 
     def _applySlot(self):
         """
@@ -64,7 +64,7 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
         """
 
         if not self.uiComboBox.count():
-            QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry could not find a valid Idle-PC value, please check again with Cisco IOS in a different state")
+            QtWidgets.QMessageBox.critical(self, "Idle-PC", "Sorry could not find a valid Idle-PC value, please check again with Cisco IOS in a different state")
             return
 
         idlepc = self.uiComboBox.itemData(self.uiComboBox.currentIndex())
@@ -83,4 +83,4 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
 
         if result:
             self._applySlot()
-        QtGui.QDialog.done(self, result)
+        super().done(result)

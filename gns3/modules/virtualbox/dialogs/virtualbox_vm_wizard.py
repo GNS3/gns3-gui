@@ -20,14 +20,16 @@ Wizard for VirtualBox VMs.
 """
 
 import sys
-from gns3.qt import QtGui
+
+from functools import partial
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
 from .. import VirtualBox
 
 
-class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
+class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
 
     """
     Wizard to create a VirtualBox VM.
@@ -38,13 +40,13 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
 
     def __init__(self, virtualbox_vms, parent):
 
-        QtGui.QWizard.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
-        self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
-        self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
+        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtGui.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
         if VirtualBox.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
@@ -74,7 +76,7 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
         """
 
         if error:
-            QtGui.QMessageBox.critical(self, "VirtualBox VMs", "{}".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "{}".format(result["message"]))
         else:
             self.uiVMListComboBox.clear()
             existing_vms = []
@@ -94,20 +96,20 @@ class VirtualBoxVMWizard(QtGui.QWizard, Ui_VirtualBoxVMWizard):
 
             # FIXME: prevent users to use "cloud"
             if self.uiCloudRadioButton.isChecked():
-                QtGui.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+                QtWidgets.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
                 return False
 
             if VirtualBox.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
                 server = Servers.instance().localServer()
             else:
                 if not Servers.instance().remoteServers():
-                    QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in VirtualBox preferences")
+                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in VirtualBox preferences")
                     return False
                 server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
             self._server = server
         if self.currentPage() == self.uiVirtualBoxWizardPage:
             if not self.uiVMListComboBox.count():
-                QtGui.QMessageBox.critical(self, "VirtualBox VMs", "There is no VirtualBox VM available!")
+                QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "There is no VirtualBox VM available!")
                 return False
         return True
 

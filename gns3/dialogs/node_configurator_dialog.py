@@ -22,11 +22,11 @@ Dialog to configure and update node settings using widget pages.
 from gns3.http_client import HTTPClient
 from gns3.progress import Progress
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.node_configurator_dialog_ui import Ui_NodeConfiguratorDialog
 
 
-class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
+class NodeConfiguratorDialog(QtWidgets.QDialog, Ui_NodeConfiguratorDialog):
 
     """
     Node configurator implementation.
@@ -37,20 +37,20 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
 
     def __init__(self, node_items, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._node_items = node_items
         self._parent_items = {}
 
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).setEnabled(False)
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Reset).setEnabled(False)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(False)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(False)
 
         self.previousItem = None
         self.previousPage = None
 
         # load the empty page widget by default
-        self.uiEmptyPageWidget = self.uiConfigStackedWidget.findChildren(QtGui.QWidget, "uiEmptyPageWidget")[0]
+        self.uiEmptyPageWidget = self.uiConfigStackedWidget.findChildren(QtWidgets.QWidget, "uiEmptyPageWidget")[0]
         self.uiConfigStackedWidget.setCurrentWidget(self.uiEmptyPageWidget)
 
         self._loadNodeItems()
@@ -71,7 +71,7 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
             group_name = " {} group".format(str(node_item.node()))
             parent = group_name
             if parent not in self._parent_items:
-                item = QtGui.QTreeWidgetItem(self.uiNodesTreeWidget, [group_name])
+                item = QtWidgets.QTreeWidgetItem(self.uiNodesTreeWidget, [group_name])
                 item.setIcon(0, QtGui.QIcon(node_item.node().defaultSymbol()))
                 item.setExpanded(True)
                 self._parent_items[parent] = item
@@ -122,11 +122,11 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
         self.uiConfigStackedWidget.setCurrentWidget(page)
 
         if page != self.uiEmptyPageWidget:
-            self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).setEnabled(True)
-            self.uiButtonBox.button(QtGui.QDialogButtonBox.Reset).setEnabled(True)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(True)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(True)
         else:
-            self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).setEnabled(False)
-            self.uiButtonBox.button(QtGui.QDialogButtonBox.Reset).setEnabled(False)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(False)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(False)
 
     def on_uiButtonBox_clicked(self, button):
         """
@@ -137,17 +137,17 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
 
         try:
             from gns3.main_window import MainWindow
-            if button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply):
+            if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply):
                 self.applySettings()
-            elif button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Reset):
+            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset):
                 self.resetSettings()
-            elif button == self.uiButtonBox.button(QtGui.QDialogButtonBox.Cancel):
+            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel):
                 HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
-                QtGui.QDialog.reject(self)
+                QtWidgets.QDialog.reject(self)
             else:
                 self.applySettings()
                 HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
-                QtGui.QDialog.accept(self)
+                QtWidgets.QDialog.accept(self)
         except ConfigurationError:
             pass
 
@@ -208,7 +208,7 @@ class NodeConfiguratorDialog(QtGui.QDialog, Ui_NodeConfiguratorDialog):
                 child.setSettings(child.node().settings().copy())
 
 
-class ConfigurationPageItem(QtGui.QTreeWidgetItem):
+class ConfigurationPageItem(QtWidgets.QTreeWidgetItem):
 
     """
     Item for the QTreeWidget instance.
@@ -221,7 +221,7 @@ class ConfigurationPageItem(QtGui.QTreeWidgetItem):
     def __init__(self, parent, node_item):
 
         self._node = node_item.node()
-        QtGui.QTreeWidgetItem.__init__(self, parent, [self._node.name()])
+        super().__init__(parent, [self._node.name()])
 
         # return the configuration page widget used to configure the node.
         self._page = self._node.configPage()
@@ -285,4 +285,4 @@ class ConfigurationError(Exception):
 
     def __init__(self):
 
-        Exception.__init__(self)
+        super().__init__()

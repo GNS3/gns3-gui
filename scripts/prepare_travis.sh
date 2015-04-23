@@ -18,8 +18,8 @@
 
 set -e
 
-SIP=4.16.5
-PYQT=4.11.3
+SIP=4.16.7
+PYQT=5.4.1
 
 echo "Install sip $SIP and PyQT $PYQT"
 
@@ -54,5 +54,5 @@ fi
 cd PyQt-x11-gpl-${PYQT}
 sudo make install
 
-python -c 'import PyQt4'  # Check if it's ok
+python -c 'import PyQt5'  # Check if it's ok
 

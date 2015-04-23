@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
 
-from PyQt4.QtGui import QApplication
+from gns3.qt.QtWidgets import QApplication
 
 import sys
 

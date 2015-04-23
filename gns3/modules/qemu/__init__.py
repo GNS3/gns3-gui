@@ -19,7 +19,7 @@
 QEMU module implementation.
 """
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.local_config import LocalConfig
 
 from ..module import Module
@@ -39,7 +39,7 @@ class Qemu(Module):
     """
 
     def __init__(self):
-        Module.__init__(self)
+        super().__init__()
 
         self._settings = {}
         self._qemu_vms = {}
@@ -230,7 +230,7 @@ class Qemu(Module):
                 from gns3.main_window import MainWindow
                 mainwindow = MainWindow.instance()
 
-                (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "QEMU VM", "Please choose a VM", selected_vms, 0, False)
+                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "QEMU VM", "Please choose a VM", selected_vms, 0, False)
                 if ok:
                     vm = selection
                 else:

@@ -3,10 +3,10 @@ from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..settings import CLOUD_PROVIDERS
 from ..utils import import_from_string
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 
 
-class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
+class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     """
     QWidget configuration page for cloud preferences.
@@ -14,7 +14,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
 
     def __init__(self, parent=None):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         # the list containing provider controller classes
@@ -77,7 +77,7 @@ class CloudPreferencesPage(QtGui.QWidget, Ui_CloudPreferencesPageWidget):
             errors += "You have to accept Terms and Conditions to proceed.\n"
 
         if errors:
-            QtGui.QMessageBox.critical(self, "Cloud Preferences", errors)
+            QtWidgets.QMessageBox.critical(self, "Cloud Preferences", errors)
             return False
         return True
 

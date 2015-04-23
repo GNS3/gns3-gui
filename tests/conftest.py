@@ -7,7 +7,7 @@ import sys
 
 
 # If the QT application is not initialized we can got segfault
-from PyQt4.QtGui import QApplication
+from gns3.qt.QtWidgets import QApplication
 app = QApplication([])
 
 

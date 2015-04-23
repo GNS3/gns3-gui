@@ -60,7 +60,7 @@ class CrashReport:
         if local_server["report_errors"]:
             if self._client is None:
                 self._client = raven.Client(CrashReport.DSN, release=__version__)
-            self._client.tags_context({
+            context = {
                 "os:name": platform.system(),
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
@@ -72,13 +72,26 @@ class CrashReport:
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
                 "python:frozen": "{}".format(hasattr(sys, "frozen"))
-            })
+            }
+            context = self._add_qt_informations(context)
+            self._client.tags_context(context)
             try:
                 report = self._client.captureException((exception, value, tb))
             except Exception as e:
                 log.error("Can't send crash report to Sentry: {}".format(e))
                 return
             log.info("Crash report sent with event ID: {}".format(self._client.get_ident(report)))
+
+    def _add_qt_informations(self, context):
+        try:
+            from .qt import QtCore
+            import sip
+        except ImportError:
+            return context
+        context["pyqt:version"] = QtCore.PYQT_VERSION_STR
+        context["qt:version"] = QtCore.QT_VERSION_STR
+        context["sip:version"] = sip.SIP_VERSION_STR
+        return context
 
     @classmethod
     def instance(cls):

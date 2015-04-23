@@ -19,7 +19,7 @@
 Graphical representation of an Ethernet link for QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from .link_item import LinkItem
 from .note_item import NoteItem
 from ..ports.port import Port
@@ -41,7 +41,7 @@ class EthernetLinkItem(LinkItem):
 
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
 
-        LinkItem.__init__(self, source_item, source_port, destination_item, destination_port, link, adding_flag, multilink)
+        super().__init__(source_item, source_port, destination_item, destination_port, link, adding_flag, multilink)
         self._source_collision_offset = 0.0
         self._destination_collision_offset = 0.0
 
@@ -75,7 +75,7 @@ class EthernetLinkItem(LinkItem):
         :returns: QPainterPath instance
         """
 
-        path = QtGui.QGraphicsPathItem.shape(self)
+        path = QtWidgets.QGraphicsPathItem.shape(self)
         offset = self._point_size / 2
         if not self._adding_flag:
             if self.length:
@@ -106,7 +106,7 @@ class EthernetLinkItem(LinkItem):
         :param widget: QWidget instance.
         """
 
-        QtGui.QGraphicsPathItem.paint(self, painter, option, widget)
+        QtWidgets.QGraphicsPathItem.paint(self, painter, option, widget)
         if not self._adding_flag and self._settings["draw_link_status_points"]:
 
             # points disappears if nodes are too close to each others.

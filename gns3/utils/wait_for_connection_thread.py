@@ -40,7 +40,7 @@ class WaitForConnectionThread(QtCore.QThread):
 
     def __init__(self, host, port):
 
-        QtCore.QThread.__init__(self)
+        super().__init__()
         self._is_running = False
         self._host = host
         self._port = port

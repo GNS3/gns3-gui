@@ -34,7 +34,7 @@ class C3725(Router):
 
     def __init__(self, module, server, project):
 
-        Router.__init__(self, module, server, project, platform="c3725")
+        super().__init__(module, server, project, platform="c3725")
         c3725_settings = {"ram": 128,
                           "nvram": 112,
                           "disk0": 16,

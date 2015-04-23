@@ -33,7 +33,7 @@ class NIOUNIX(NIO):
 
     def __init__(self, local_file, remote_file):
 
-        NIO.__init__(self)
+        super().__init__()
         self._local_file = local_file
         self._remote_file = remote_file
 

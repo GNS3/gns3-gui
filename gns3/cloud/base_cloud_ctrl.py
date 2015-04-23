@@ -64,7 +64,7 @@ def parse_exception(exception):
     return status, error_text
 
 
-class BaseCloudCtrl(object):
+class BaseCloudCtrl:
 
     """ Base class for interacting with a cloud provider API. """
 

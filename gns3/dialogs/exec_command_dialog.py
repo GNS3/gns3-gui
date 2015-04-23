@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.exec_command_dialog_ui import Ui_ExecCommandDialog
 
 
-class ExecCommandDialog(QtGui.QDialog, Ui_ExecCommandDialog):
+class ExecCommandDialog(QtWidgets.QDialog, Ui_ExecCommandDialog):
 
     """
     Execute a command and display its output.
@@ -27,7 +27,7 @@ class ExecCommandDialog(QtGui.QDialog, Ui_ExecCommandDialog):
 
     def __init__(self, parent, command, params):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self.setWindowTitle("Executing {}".format(command))
@@ -57,4 +57,4 @@ class ExecCommandDialog(QtGui.QDialog, Ui_ExecCommandDialog):
 
         self._process.kill()
         self._process.waitForFinished()
-        QtGui.QDialog.done(self, result)
+        super().done(result)

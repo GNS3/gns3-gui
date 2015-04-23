@@ -19,12 +19,12 @@
 Configuration page for Dynamips Ethernet switches.
 """
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from ..utils.tree_widget_item import TreeWidgetItem
 from ..ui.ethernet_switch_configuration_page_ui import Ui_ethernetSwitchConfigPageWidget
 
 
-class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPageWidget):
+class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfigPageWidget):
 
     """
     QWidget configuration page for Ethernet switches.
@@ -32,7 +32,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self._ports = {}
 
@@ -114,7 +114,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.portNumber() == port and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
                     return
             del self._ports[port]
             self.uiPortsTreeWidget.takeTopLevelItem(self.uiPortsTreeWidget.indexOfTopLevelItem(item))
@@ -168,7 +168,7 @@ class EthernetSwitchConfigurationPage(QtGui.QWidget, Ui_ethernetSwitchConfigPage
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "Ethernet switch name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "Ethernet switch name cannot be empty!")
             else:
                 settings["name"] = name
         else:

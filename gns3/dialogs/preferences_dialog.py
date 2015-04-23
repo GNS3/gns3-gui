@@ -19,7 +19,7 @@
 Dialog to load module and built-in preference pages.
 """
 
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.preferences_dialog_ui import Ui_PreferencesDialog
 from ..pages.server_preferences_page import ServerPreferencesPage
 from ..pages.general_preferences_page import GeneralPreferencesPage
@@ -31,7 +31,7 @@ from ..http_client import HTTPClient
 from ..progress import Progress
 
 
-class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
+class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
 
     """
     Preferences dialog implementation.
@@ -41,11 +41,11 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
 
     def __init__(self, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
-        self.uiButtonBox.button(QtGui.QDialogButtonBox.Apply).clicked.connect(self._applyPreferences)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferences)
         self._items = []
         self._loadPreferencePages()
 
@@ -71,7 +71,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
             preferences_page = page(self)
             preferences_page.loadPreferences()
             name = preferences_page.windowTitle()
-            item = QtGui.QTreeWidgetItem(self.uiTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiTreeWidget)
             item.setText(0, name)
             item.setData(0, QtCore.Qt.UserRole, preferences_page)
             self.uiStackedWidget.addWidget(preferences_page)
@@ -85,7 +85,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
                 preferences_page = cls()
                 preferences_page.loadPreferences()
                 name = preferences_page.windowTitle()
-                item = QtGui.QTreeWidgetItem(parent)
+                item = QtWidgets.QTreeWidgetItem(parent)
                 item.setText(0, name)
                 item.setData(0, QtCore.Qt.UserRole, preferences_page)
                 self.uiStackedWidget.addWidget(preferences_page)
@@ -141,7 +141,7 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
 
         from gns3.main_window import MainWindow
         HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
-        QtGui.QDialog.reject(self)
+        QtWidgets.QDialog.reject(self)
 
     def accept(self):
         """
@@ -156,4 +156,4 @@ class PreferencesDialog(QtGui.QDialog, Ui_PreferencesDialog):
         if self._applyPreferences():
             from gns3.main_window import MainWindow
             HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
-            QtGui.QDialog.accept(self)
+            QtWidgets.QDialog.accept(self)

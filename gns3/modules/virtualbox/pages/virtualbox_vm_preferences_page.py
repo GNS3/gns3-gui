@@ -21,7 +21,7 @@ Configuration page for VirtualBox VM preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -33,14 +33,14 @@ from ..pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPa
 from ..dialogs.virtualbox_vm_wizard import VirtualBoxVMWizard
 
 
-class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageWidget):
+class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesPageWidget):
 
     """
     QWidget preference page for VirtualBox VM preferences.
     """
 
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self._main_window = MainWindow.instance()
@@ -73,7 +73,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
     def _createSectionItem(self, name):
 
-        section_item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMInfoTreeWidget)
+        section_item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMInfoTreeWidget)
         section_item.setText(0, name)
         font = section_item.font(0)
         font.setBold(True)
@@ -86,18 +86,18 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtGui.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
-        QtGui.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
-        QtGui.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
-        QtGui.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
-        QtGui.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
-        QtGui.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_base"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_base"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
-        QtGui.QTreeWidgetItem(section_item, ["Adapters:", str(vbox_vm["adapters"])])
-        QtGui.QTreeWidgetItem(section_item, ["Use any adapter:", "{}".format(vbox_vm["use_any_adapter"])])
-        QtGui.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(vbox_vm["adapters"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Use any adapter:", "{}".format(vbox_vm["use_any_adapter"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
 
         self.uiVirtualBoxVMInfoTreeWidget.expandAll()
         self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(0)
@@ -117,7 +117,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
             self._virtualbox_vms[key] = VBOX_VM_SETTINGS.copy()
             self._virtualbox_vms[key].update(new_vm_settings)
 
-            item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, self._virtualbox_vms[key]["vmname"])
             item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
@@ -139,8 +139,8 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
                 if vbox_vm["vmname"] != item.text(0):
                     new_key = "{server}:{vmname}".format(server=vbox_vm["server"], name=vbox_vm["vmname"])
                     if new_key in self._virtualbox_vms:
-                        QtGui.QMessageBox.critical(self, "VirtualBox VM", "VirtualBox VM name {} already exists for server {}".format(vbox_vm["vmname"],
-                                                                                                                                      vbox_vm["server"]))
+                        QtWidgets.QMessageBox.critical(self, "VirtualBox VM", "VirtualBox VM name {} already exists for server {}".format(vbox_vm["vmname"],
+                                                                                                                                          vbox_vm["server"]))
                         vbox_vm["vmname"] = item.text(0)
                         return
                     self._virtualbox_vms[new_key] = self._virtualbox_vms[key]
@@ -168,7 +168,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         :param column: ignored
         """
 
-        if QtGui.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
             self._showContextualMenu()
 
     def _showContextualMenu(self):
@@ -176,8 +176,8 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         Contextual menu.
         """
 
-        menu = QtGui.QMenu()
-        change_symbol_action = QtGui.QAction("Change symbol", menu)
+        menu = QtWidgets.QMenu()
+        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
         change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
         self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
         menu.addAction(change_symbol_action)
@@ -212,7 +212,7 @@ class VirtualBoxVMPreferencesPage(QtGui.QWidget, Ui_VirtualBoxVMPreferencesPageW
         self._items.clear()
 
         for key, vbox_vm in self._virtualbox_vms.items():
-            item = QtGui.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["vmname"])
             item.setIcon(0, QtGui.QIcon(vbox_vm["default_symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)

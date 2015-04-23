@@ -43,7 +43,7 @@ class RackspaceCtrl(BaseCloudCtrl):
     """ Controller class for interacting with Rackspace API. """
 
     def __init__(self, username, api_key, *args, **kwargs):
-        super(RackspaceCtrl, self).__init__(username, api_key)
+        super().__init__(username, api_key)
 
         # set this up so it can be swapped out with a mock for testing
         self.post_fn = requests.post

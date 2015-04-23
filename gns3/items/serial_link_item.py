@@ -20,7 +20,7 @@ Graphical representation of a Serial link on the QGraphicsScene.
 """
 
 import math
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from .link_item import LinkItem
 from .note_item import NoteItem
 from ..ports.port import Port
@@ -42,7 +42,7 @@ class SerialLinkItem(LinkItem):
 
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
 
-        LinkItem.__init__(self, source_item, source_port, destination_item, destination_port, link, adding_flag, multilink)
+        super().__init__(source_item, source_port, destination_item, destination_port, link, adding_flag, multilink)
 
     def adjust(self):
         """
@@ -89,7 +89,7 @@ class SerialLinkItem(LinkItem):
         :returns: QPainterPath instance
         """
 
-        path = QtGui.QGraphicsPathItem.shape(self)
+        path = QtWidgets.QGraphicsPathItem.shape(self)
         offset = self._point_size / 2
         point = self.source
         path.addEllipse(point.x() - offset, point.y() - offset, self._point_size, self._point_size)
@@ -106,7 +106,7 @@ class SerialLinkItem(LinkItem):
         :param widget: QWidget instance.
         """
 
-        QtGui.QGraphicsPathItem.paint(self, painter, option, widget)
+        QtWidgets.QGraphicsPathItem.paint(self, painter, option, widget)
 
         if not self._adding_flag and self._settings["draw_link_status_points"]:
 

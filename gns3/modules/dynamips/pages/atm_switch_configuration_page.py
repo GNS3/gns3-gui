@@ -20,11 +20,11 @@ Configuration page for Dynamips ATM switches.
 """
 
 import re
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from ..ui.atm_switch_configuration_page_ui import Ui_atmSwitchConfigPageWidget
 
 
-class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
+class ATMSwitchConfigurationPage(QtWidgets.QWidget, Ui_atmSwitchConfigPageWidget):
 
     """
     QWidget configuration page for ATM switches.
@@ -32,7 +32,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self._mapping = {}
 
@@ -116,10 +116,10 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
             destination = "{port}:{vpi}".format(port=destination_port, vpi=destination_vpi)
 
         if source in self._mapping or destination in self._mapping:
-            QtGui.QMessageBox.critical(self, self._node.name(), "Mapping already defined")
+            QtWidgets.QMessageBox.critical(self, self._node.name(), "Mapping already defined")
             return
 
-        item = QtGui.QTreeWidgetItem(self.uiMappingTreeWidget)
+        item = QtWidgets.QTreeWidgetItem(self.uiMappingTreeWidget)
         item.setText(0, source)
         item.setText(1, destination)
         self.uiMappingTreeWidget.addTopLevelItem(item)
@@ -145,7 +145,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if (node_port.portNumber() == source_port or node_port.portNumber() == destination_port) and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
                     return
 
             del self._mapping[source]
@@ -170,7 +170,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
         self._node = node
 
         for source, destination in settings["mappings"].items():
-            item = QtGui.QTreeWidgetItem(self.uiMappingTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiMappingTreeWidget)
             item.setText(0, source)
             item.setText(1, destination)
             self.uiMappingTreeWidget.addTopLevelItem(item)
@@ -192,7 +192,7 @@ class ATMSwitchConfigurationPage(QtGui.QWidget, Ui_atmSwitchConfigPageWidget):
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "ATM switch name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "ATM switch name cannot be empty!")
             else:
                 settings["name"] = name
         else:

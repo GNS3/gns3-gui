@@ -48,7 +48,7 @@ class Link(QtCore.QObject):
 
     def __init__(self, source_node, source_port, destination_node, destination_port):
 
-        super(Link, self).__init__()
+        super().__init__()
 
         log.info("adding link from {} {} to {} {}".format(source_node.name(),
                                                           source_port.name(),

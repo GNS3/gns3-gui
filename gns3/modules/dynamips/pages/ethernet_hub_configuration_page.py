@@ -19,12 +19,12 @@
 Configuration page for Dynamips Ethernet hubs.
 """
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from ..ui.ethernet_hub_configuration_page_ui import Ui_ethernetHubConfigPageWidget
 
 
-class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget):
+class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWidget):
 
     """
     QWidget configuration page for Ethernet hubs.
@@ -32,7 +32,7 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
     def loadSettings(self, settings, node, group=False):
@@ -66,7 +66,7 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "Ethernet hub name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "Ethernet hub name cannot be empty!")
             else:
                 settings["name"] = name
         else:
@@ -80,7 +80,7 @@ class EthernetHubConfigurationPage(QtGui.QWidget, Ui_ethernetHubConfigPageWidget
         for port in ports:
             if not port.isFree() and port.portNumber() > nbports:
                 self.loadSettings(settings, node)
-                QtGui.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port.name()))
+                QtWidgets.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port.name()))
                 raise ConfigurationError()
 
         settings["ports"] = []

@@ -26,7 +26,7 @@ from ..qt import QtCore
 from ..version import __version__
 
 
-class AnalyticsClient(object):
+class AnalyticsClient:
 
     """
     Google analytics client to send events.

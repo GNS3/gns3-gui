@@ -15,10 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 
 
-class TreeWidgetItem(QtGui.QTreeWidgetItem):
+class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
 
     """
     QTreeWidgetItem reimplementation to allow numeric sort.
@@ -26,7 +26,7 @@ class TreeWidgetItem(QtGui.QTreeWidgetItem):
 
     def __init__(self, parent=None):
 
-        QtGui.QTreeWidgetItem.__init__(self, parent)
+        super().__init__(parent)
 
     def __lt__(self, other_item):
 

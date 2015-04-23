@@ -24,7 +24,7 @@ class ModuleError(Exception):
 
     def __init__(self, message, original_exception=None):
 
-        Exception.__init__(self, message)
+        super().__init__(message)
         self._message = message
         self._original_exception = original_exception
 

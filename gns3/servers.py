@@ -26,7 +26,7 @@ import signal
 import shutil
 import subprocess
 
-from .qt import QtGui, QtCore, QtNetwork
+from .qt import QtGui, QtCore, QtNetwork, QtWidgets
 from .http_client import HTTPClient
 from .local_config import LocalConfig
 from .settings import LOCAL_SERVER_SETTINGS, LOCAL_SERVER_SETTING_TYPES
@@ -48,7 +48,7 @@ class Servers(QtCore.QObject):
 
     def __init__(self):
 
-        super(Servers, self).__init__()
+        super().__init__()
         self._local_server = None
         self._remote_servers = {}
         self._cloud_servers = {}
@@ -275,13 +275,13 @@ class Servers(QtCore.QObject):
                     except subprocess.TimeoutExpired:
                         from .main_window import MainWindow
                         main_window = MainWindow.instance()
-                        proceed = QtGui.QMessageBox.question(main_window,
-                                                             "Local server",
-                                                             "The Local server cannot be stopped, would you like to kill it?",
-                                                             QtGui.QMessageBox.Yes,
-                                                             QtGui.QMessageBox.No)
+                        proceed = QtWidgets.QMessageBox.question(main_window,
+                                                                 "Local server",
+                                                                 "The Local server cannot be stopped, would you like to kill it?",
+                                                                 QtWidgets.QMessageBox.Yes,
+                                                                 QtWidgets.QMessageBox.No)
 
-                        if proceed == QtGui.QMessageBox.Yes:
+                        if proceed == QtWidgets.QMessageBox.Yes:
                             self._local_server_proccess.kill()
 
     def localServer(self):
@@ -483,7 +483,6 @@ class Servers(QtCore.QObject):
         """
 
         self._saveSettings()
-
 
     def disconnectAllServers(self):
         """

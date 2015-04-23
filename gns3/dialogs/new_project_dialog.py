@@ -16,12 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from ..qt import QtCore, QtGui
+from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.new_project_dialog_ui import Ui_NewProjectDialog
 from ..settings import ENABLE_CLOUD
 
 
-class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
+class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
 
     """
     New project dialog.
@@ -33,7 +33,7 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
 
     def __init__(self, parent, showed_from_startup=False):
 
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self._main_window = parent
@@ -72,8 +72,9 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
         Slot to select the a new project location.
         """
 
-        path = QtGui.QFileDialog.getSaveFileName(self, "Project location", os.path.join(self._main_window.projectsDirPath(),
-                                                                                        self.uiNameLineEdit.text()))
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Project location", os.path.join(self._main_window.projectsDirPath(),
+                                                                                               self.uiNameLineEdit.text()))
+
         if path:
             self.uiLocationLineEdit.setText(path)
 
@@ -104,7 +105,7 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
         lot to show all the recent projects in a menu.
         """
 
-        menu = QtGui.QMenu()
+        menu = QtWidgets.QMenu()
         menu.triggered.connect(self._menuTriggeredSlot)
         for action in self._main_window._recent_file_actions:
             menu.addAction(action)
@@ -121,20 +122,20 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
                 project_type = "local"
 
             if not project_name:
-                QtGui.QMessageBox.critical(self, "New project", "Project name is empty")
+                QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
                 return
 
             if not project_location:
-                QtGui.QMessageBox.critical(self, "New project", "Project location is empty")
+                QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
                 return
 
             if os.path.isdir(project_location):
-                reply = QtGui.QMessageBox.question(self,
-                                                   "New project",
-                                                   "Location {} already exists, overwrite it?".format(project_location),
-                                                   QtGui.QMessageBox.Yes,
-                                                   QtGui.QMessageBox.No)
-                if reply == QtGui.QMessageBox.No:
+                reply = QtWidgets.QMessageBox.question(self,
+                                                       "New project",
+                                                       "Location {} already exists, overwrite it?".format(project_location),
+                                                       QtWidgets.QMessageBox.Yes,
+                                                       QtWidgets.QMessageBox.No)
+                if reply == QtWidgets.QMessageBox.No:
                     return
 
             self._project_settings["project_name"] = project_name
@@ -142,4 +143,4 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
             self._project_settings["project_files_dir"] = project_location
             self._project_settings["project_type"] = project_type
 
-        QtGui.QDialog.done(self, result)
+        super().done(result)

@@ -20,11 +20,11 @@ Configuration page for clouds.
 """
 
 import re
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
 
 
-class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
+class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
     """
     QWidget configuration page for clouds.
@@ -32,7 +32,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
         self._nios = []
 
@@ -122,7 +122,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiGenericEthernetListWidget.takeItem(self.uiGenericEthernetListWidget.currentRow())
@@ -171,7 +171,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiLinuxEthernetListWidget.takeItem(self.uiLinuxEthernetListWidget.currentRow())
@@ -231,7 +231,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiNIOUDPListWidget.takeItem(self.uiNIOUDPListWidget.currentRow())
@@ -285,7 +285,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiNIOTAPListWidget.takeItem(self.uiNIOTAPListWidget.currentRow())
@@ -342,7 +342,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiNIOUNIXListWidget.takeItem(self.uiNIOUNIXListWidget.currentRow())
@@ -398,7 +398,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiNIOVDEListWidget.takeItem(self.uiNIOVDEListWidget.currentRow())
@@ -450,7 +450,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiNIONullListWidget.takeItem(self.uiNIONullListWidget.currentRow())
@@ -481,7 +481,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
             self.uiGenericEthernetComboBox.addItem(interface["name"])
             self.uiGenericEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
             index += 1
-        self.uiGenericEthernetComboBox.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
+        self.uiGenericEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
         # load all network interfaces
         self.uiLinuxEthernetComboBox.clear()
@@ -491,7 +491,7 @@ class CloudConfigurationPage(QtGui.QWidget, Ui_cloudConfigPageWidget):
                 self.uiLinuxEthernetComboBox.addItem(interface["name"])
                 self.uiLinuxEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
                 index += 1
-        self.uiLinuxEthernetComboBox.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents)
+        self.uiLinuxEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
         # populate the NIO lists
         self.nios = []

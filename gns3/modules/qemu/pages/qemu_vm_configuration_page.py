@@ -23,7 +23,7 @@ import os
 from functools import partial
 from collections import OrderedDict
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtWidgets
 from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.main_window import MainWindow
@@ -36,7 +36,7 @@ from .. import Qemu
 from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
-class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
+class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
     """
     QWidget configuration page for QEMU VMs.
@@ -44,7 +44,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
@@ -97,14 +97,12 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
     def getDiskImage(parent):
 
         destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "QEMU")
-        path, _ = QtGui.QFileDialog.getOpenFileNameAndFilter(parent,
-                                                             "Select a QEMU disk image",
-                                                             destination_directory)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(parent, "Select a QEMU disk image", destination_directory)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(parent, "QEMU disk image", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(parent, "QEMU disk image", "Cannot read {}".format(path))
             return
 
         try:
@@ -112,17 +110,17 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         except FileExistsError:
             pass
         except OSError as e:
-            QtGui.QMessageBox.critical(parent, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory, e))
+            QtWidgets.QMessageBox.critical(parent, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory, e))
             return
 
         if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the QEMU disk image is not in the default images directory
-            reply = QtGui.QMessageBox.question(parent,
-                                               "QEMU disk image",
-                                               "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
-                                               QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(parent,
+                                                   "QEMU disk image",
+                                                   "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                                   QtWidgets.QMessageBox.Yes,
+                                                   QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
                 destination_path = os.path.join(destination_directory, os.path.basename(path))
                 thread = FileCopyThread(path, destination_path)
                 progress_dialog = ProgressDialog(thread, "QEMU disk image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
@@ -131,7 +129,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
                 progress_dialog.exec_()
                 errors = progress_dialog.errors()
                 if errors:
-                    QtGui.QMessageBox.critical(parent, "QEMU disk image", "{}".format("".join(errors)))
+                    QtWidgets.QMessageBox.critical(parent, "QEMU disk image", "{}".format("".join(errors)))
                 else:
                     path = destination_path
 
@@ -206,7 +204,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         """
 
         if error:
-            QtGui.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
             for qemu in result:
@@ -219,7 +217,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
         if index != -1:
             self.uiQemuListComboBox.setCurrentIndex(index)
         else:
-            QtGui.QMessageBox.critical(self, "Qemu", "Could not find {} in the Qemu binaries list".format(qemu_path))
+            QtWidgets.QMessageBox.critical(self, "Qemu", "Could not find {} in the Qemu binaries list".format(qemu_path))
             self.uiQemuListComboBox.clear()
 
     def _cpuThrottlingChangedSlot(self, state):
@@ -269,7 +267,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             try:
                 Qemu.instance().getQemuBinariesFromServer(server, callback)
             except ModuleError as e:
-                QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+                QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
                 self.uiQemuListComboBox.clear()
 
         if not group:
@@ -338,7 +336,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
 
             name = self.uiNameLineEdit.text()
             if not name:
-                QtGui.QMessageBox.critical(self, "Name", "The QEMU VM name cannot be empty!")
+                QtWidgets.QMessageBox.critical(self, "Name", "The QEMU VM name cannot be empty!")
             else:
                 settings["name"] = name
 
@@ -375,7 +373,7 @@ class QemuVMConfigurationPage(QtGui.QWidget, Ui_QemuVMConfigPageWidget):
             node_ports = node.ports()
             for node_port in node_ports:
                 if not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                    QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                     raise ConfigurationError()
 
         settings["adapters"] = adapters

@@ -32,7 +32,7 @@ class NIOGenericEthernet(NIO):
 
     def __init__(self, ethernet_device):
 
-        NIO.__init__(self)
+        super().__init__()
         self._ethernet_device = ethernet_device
 
     def __str__(self):

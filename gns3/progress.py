@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtCore, QtGui
+from .qt import QtCore, QtGui, QtWidgets
 
 
 class Progress(QtCore.QObject):
@@ -62,7 +62,7 @@ class Progress(QtCore.QObject):
     def show(self):
 
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
-            progress_dialog = QtGui.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
+            progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
             progress_dialog.setModal(True)
             progress_dialog.setCancelButton(None)
             progress_dialog.setWindowTitle("Please wait")

@@ -21,7 +21,7 @@ It is inspired by PyCute : http://gerard.vermeulen.free.fr
 """
 
 import sys
-from .qt import QtCore, QtGui
+from .qt import QtCore, QtGui, QtWidgets
 
 
 class MultipleRedirection:
@@ -42,7 +42,7 @@ class MultipleRedirection:
         self.stdout.flush()
 
 
-class PyCutExt(QtGui.QTextEdit):
+class PyCutExt(QtWidgets.QTextEdit):
 
     """
     PyCute is a Python shell for PyQt.
@@ -54,7 +54,7 @@ class PyCutExt(QtGui.QTextEdit):
 
     def __init__(self, interpreter, message="", log="", parent=None):
 
-        QtGui.QTextEdit.__init__(self, parent)
+        super().__init__(parent)
 
         self.interpreter = interpreter
         self.colorizer = SyntaxColor()
@@ -91,7 +91,7 @@ class PyCutExt(QtGui.QTextEdit):
         self.pointer = 0
         self.cursor_pos = 0
 
-        self.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        self.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
 
         try:
             sys.ps1
@@ -142,7 +142,7 @@ class PyCutExt(QtGui.QTextEdit):
         self._clearLine()
         self.moveCursor(QtGui.QTextCursor.End)
         while self.reading:
-            QtGui.QApplication.processEvents(QtCore.QEventLoop.AllEvents, 1000)
+            QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents, 1000)
         if len(self.line) == 0:
             return '\n'
         else:
@@ -358,7 +358,7 @@ class PyCutExt(QtGui.QTextEdit):
             cursor.setCharFormat(char_format)
 
 
-class SyntaxColor(object):
+class SyntaxColor:
 
     """
     Allows to color python keywords.

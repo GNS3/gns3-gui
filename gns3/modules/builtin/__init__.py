@@ -19,7 +19,7 @@
 Built-in module implementation.
 """
 
-from gns3.qt import QtGui
+from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
@@ -38,7 +38,7 @@ class Builtin(Module):
     """
 
     def __init__(self):
-        Module.__init__(self)
+        super().__init__()
 
         self._nodes = []
 
@@ -110,7 +110,7 @@ class Builtin(Module):
             # TODO: move this to graphics_view
             from gns3.main_window import MainWindow
             mainwindow = MainWindow.instance()
-            (selection, ok) = QtGui.QInputDialog.getItem(mainwindow, "Server", "Please choose a server", server_list, 0, False)
+            (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "Server", "Please choose a server", server_list, 0, False)
             if ok:
                 if selection.startswith("Local server"):
                     return local_server
@@ -156,15 +156,15 @@ class Builtin(Module):
             available_interfaces.append(interface["name"])
 
         if available_interfaces:
-            selection, ok = QtGui.QInputDialog.getItem(mainwindow,
-                                                       "Cloud interfaces", "Interface {} could not be found\nPlease select an alternative from your existing interfaces:".format(missing_interface),
-                                                       available_interfaces, 0, False)
+            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
+                                                           "Cloud interfaces", "Interface {} could not be found\nPlease select an alternative from your existing interfaces:".format(missing_interface),
+                                                           available_interfaces, 0, False)
             if ok:
                 return selection
-            QtGui.QMessageBox.warning(mainwindow, "Cloud interface", "No alternative interface chosen to replace {} on this host, this may lead to issues".format(missing_interface))
+            QtWidgets.QMessageBox.warning(mainwindow, "Cloud interface", "No alternative interface chosen to replace {} on this host, this may lead to issues".format(missing_interface))
             return None
         else:
-            QtGui.QMessageBox.critical(mainwindow, "Cloud interface", "Could not find interface {} on this host".format(missing_interface))
+            QtWidgets.QMessageBox.critical(mainwindow, "Cloud interface", "Could not find interface {} on this host".format(missing_interface))
             return missing_interface
 
     @staticmethod

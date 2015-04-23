@@ -22,14 +22,14 @@ Configuration page for VPCS preferences.
 import os
 import sys
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtWidgets
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
 from ..settings import VPCS_SETTINGS
 
 
-class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
+class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
     """
     QWidget preference page for VPCS
@@ -37,7 +37,7 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
 
     def __init__(self):
 
-        QtGui.QWidget.__init__(self)
+        super().__init__()
         self.setupUi(self)
 
         # connect signals
@@ -54,12 +54,12 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select VPCS", ".", filter)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select VPCS", ".", filter)
         if not path:
             return
 
         if not os.access(path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "VPCS", "{} is not an executable".format(os.path.basename(path)))
+            QtWidgets.QMessageBox.critical(self, "VPCS", "{} is not an executable".format(os.path.basename(path)))
             return
 
         self.uiVPCSPathLineEdit.setText(os.path.normpath(path))
@@ -70,12 +70,12 @@ class VPCSPreferencesPage(QtGui.QWidget, Ui_VPCSPreferencesPageWidget):
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path = QtGui.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtGui.QMessageBox.critical(self, "Script file", "{} cannot be read".format(os.path.basename(path)))
+            QtWidgets.QMessageBox.critical(self, "Script file", "{} cannot be read".format(os.path.basename(path)))
             return
 
         self.uiScriptFileEdit.setText(os.path.normpath(path))

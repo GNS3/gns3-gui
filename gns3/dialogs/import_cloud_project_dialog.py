@@ -3,19 +3,19 @@ Dialog for importing cloud projects
 """
 
 from ..ui.import_cloud_project_dialog_ui import Ui_ImportCloudProjectDialog
-from ..qt import QtGui
+from ..qt import QtGui, QtWidgets
 from ..cloud.utils import get_cloud_projects, DownloadProjectThread, DeleteProjectThread
 from ..utils.progress_dialog import ProgressDialog
 
 
-class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
+class ImportCloudProjectDialog(QtWidgets.QDialog, Ui_ImportCloudProjectDialog):
 
     """
     Import cloud project dialog implementation.
     """
 
     def __init__(self, parent, project_dest_path, images_dest_path, cloud_settings):
-        QtGui.QDialog.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self.project_dest_path = project_dest_path
@@ -52,15 +52,15 @@ class ImportCloudProjectDialog(QtGui.QDialog, Ui_ImportCloudProjectDialog):
     def _deleteProject(self):
         project_file_name = self.projects[self.listWidget.currentItem().text()]
 
-        button_clicked = QtGui.QMessageBox.question(
+        button_clicked = QtWidgets.QMessageBox.question(
             self,
             "Delete project",
             "Are you sure you want to delete project " + self.listWidget.currentItem().text(),
-            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-            QtGui.QMessageBox.Yes
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.Yes
         )
 
-        if button_clicked == QtGui.QMessageBox.Yes:
+        if button_clicked == QtWidgets.QMessageBox.Yes:
             delete_project_thread = DeleteProjectThread(self, project_file_name, self.cloud_settings)
             progress_dialog = ProgressDialog(delete_project_thread, "Deleting project", "Deleting project files...",
                                              "Cancel", parent=self)

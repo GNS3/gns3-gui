@@ -35,7 +35,7 @@ class Module(QtCore.QObject):
 
     def __init__(self):
 
-        super(Module, self).__init__()
+        super().__init__()
 
     @staticmethod
     def nodes(self):

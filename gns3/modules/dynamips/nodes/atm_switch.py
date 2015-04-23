@@ -41,7 +41,7 @@ class ATMSwitch(Device):
 
     def __init__(self, module, server, project):
 
-        Device.__init__(self, module, server, project)
+        super().__init__(module, server, project)
         self.setStatus(Node.started)  # this is an always-on node
         self._ports = []
         self._settings = {"name": "",

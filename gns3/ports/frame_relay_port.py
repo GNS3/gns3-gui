@@ -33,7 +33,7 @@ class FrameRelayPort(SerialPort):
 
     def __init__(self, name, nio=None):
 
-        SerialPort.__init__(self, name, nio)
+        super().__init__(name, nio)
 
     @staticmethod
     def dataLinkTypes():

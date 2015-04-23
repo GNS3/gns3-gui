@@ -21,7 +21,7 @@ Wizard for QEMU VMs.
 
 import sys
 
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.node import Node
 from gns3.modules.module_error import ModuleError
@@ -33,7 +33,7 @@ from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
-class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
+class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
 
     """
     Wizard to create a Qemu VM.
@@ -43,13 +43,13 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
     def __init__(self, qemu_vms, parent):
 
-        QtGui.QWizard.__init__(self, parent)
+        super().__init__(parent)
         self.setupUi(self)
-        self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
-        self.setWizardStyle(QtGui.QWizard.ModernStyle)
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtGui.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
@@ -100,22 +100,22 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         """
 
         if vm_type == "IOSv":
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.normal.svg"))
             self.uiNameLineEdit.setText("vIOS")
             self.uiHdaDiskImageLabel.setText("IOSv VDMK file:")
         elif vm_type == "IOSv-L2":
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.normal.svg"))
             self.uiNameLineEdit.setText("vIOS-L2")
             self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
         elif vm_type == "ASA 8.4(2)":
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
             self.uiNameLineEdit.setText("ASA")
         elif vm_type == "IDS":
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.normal.svg"))
             self.uiNameLineEdit.setText("IDS")
             self.uiHdaDiskImageLabel.setText("Disk image (hda):")
         else:
-            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
             self.uiHdaDiskImageLabel.setText("Disk image (hda):")
             self.uiNameLineEdit.setText("")
 
@@ -171,7 +171,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                     server = Servers.instance().localServer()
                 elif self.uiRemoteRadioButton.isChecked():
                     if not Servers.instance().remoteServers():
-                        QtGui.QMessageBox.critical(self, "Remote server", "There is no remote server registered in QEMU preferences")
+                        QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in QEMU preferences")
                         return False
                     server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
                 self._server = server
@@ -180,12 +180,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             name = self.uiNameLineEdit.text()
             for qemu_vm in self._qemu_vms.values():
                 if qemu_vm["name"] == name:
-                    QtGui.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
+                    QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
 
         if self.currentPage() == self.uiBinaryMemoryWizardPage:
             if not self.uiQemuListComboBox.count():
-                QtGui.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
+                QtWidgets.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
                 return False
 
         return True
@@ -208,7 +208,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
                 try:
                     Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
                 except ModuleError as e:
-                    QtGui.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+                    QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -219,7 +219,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         """
 
         if error:
-            QtGui.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
             for qemu in result:
@@ -348,4 +348,4 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         elif self.page(current_id) == self.uiASAWizardPage:
             return -1
 
-        return QtGui.QWizard.nextId(self)
+        return QtWidgets.QWizard.nextId(self)

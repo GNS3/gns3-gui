@@ -42,7 +42,7 @@ class FileCopyThread(QtCore.QThread):
 
     def __init__(self, source, destination):
 
-        QtCore.QThread.__init__(self)
+        super().__init__()
         self._is_running = False
         self._source = source
         self._destination = destination

@@ -51,7 +51,7 @@ class Router(VM):
 
     def __init__(self, module, server, project, platform="c7200"):
 
-        VM.__init__(self, module, server, project)
+        super().__init__(module, server, project)
         log.info("Router {} is being created".format(platform))
         self._ports = []
         self._dynamips_id = None

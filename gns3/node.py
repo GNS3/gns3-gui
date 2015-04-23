@@ -66,7 +66,7 @@ class Node(QtCore.QObject):
 
     def __init__(self, module, server, project):
 
-        super(Node, self).__init__()
+        super().__init__()
 
         # create an unique ID
         self._id = Node._instance_count
