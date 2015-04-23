@@ -27,10 +27,7 @@ from gns3.version import __version__
 def network_manager(response):
 
     mock = unittest.mock.MagicMock()
-    mock.get.return_value = response
-    mock.post.return_value = response
-    mock.put.return_value = response
-    mock.delete.return_value = response
+    mock.sendCustomRequest.return_value = response
     return mock
 
 
@@ -40,6 +37,7 @@ def response():
     type(response).finished = unittest.mock.PropertyMock(return_value=FakeQtSignal())
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
+    response.header.return_value = "application/json"
     return response
 
 
@@ -66,7 +64,7 @@ def test_get_connected(http_client, request, network_manager, response):
     request.assert_call_with("/test")
     request.setRawHeader.assert_any_call("Content-Type", "application/json")
     request.setRawHeader.assert_any_call("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
-    network_manager.get.assert_call_with(request)
+    network_manager.sendCustomRequest.assert_called_once_with(request, "GET", None)
 
     # Trigger the completion
     response.finished.emit()
@@ -81,7 +79,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     http_client.post("/test", callback, context={"toto": 42})
 
-    assert network_manager.get.called
+    network_manager.sendCustomRequest.assert_called_with(request, "GET", None)
 
     response.header.return_value = "application/json"
     response.readAll.return_value = ("{\"version\": \"" + __version__ + "\", \"local\": true}").encode()
@@ -92,7 +90,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
     # Trigger the completion
     response.finished.emit()
 
-    assert network_manager.post.called
+    network_manager.sendCustomRequest.assert_called_with(request, "POST", None)
 
     assert http_client._connected
     assert callback.called
@@ -110,7 +108,7 @@ def test_post_not_connected_connection_failed(http_client, request, network_mana
 
     http_client.post("/test", callback)
 
-    assert network_manager.get.called
+    network_manager.sendCustomRequest.assert_called_once_with(request, "GET", None)
 
     # Trigger the completion of /version
     response.finished.emit()
@@ -134,10 +132,11 @@ def test_progress_callback(http_client, response):
     assert progress.remove_query_signal.emit.called
 
 
-def test_processDownloadProgress(http_client, response):
+def test_processDownloadProgress(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"}'
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
@@ -147,12 +146,13 @@ def test_processDownloadProgress(http_client, response):
     assert args[0] == {"action": "ping"}
 
 
-def test_processDownloadProgressPartial(http_client, response):
+def test_processDownloadProgressPartialJSON(http_client):
     """
     We can read an incomplete JSON on the network and we need
     to wait for the next part"""
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"'
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
@@ -165,3 +165,16 @@ def test_processDownloadProgressPartial(http_client, response):
     assert callback.call_count == 1
     args, kwargs = callback.call_args
     assert args[0] == {"action": "ping"}
+
+
+def test_processDownloadProgressPartialBytes(http_client):
+    callback = unittest.mock.MagicMock()
+    response = unittest.mock.MagicMock()
+    response.header.return_value = "application/octet-stream"
+    response.readAll.return_value = b'hello'
+
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+
+    assert callback.call_count == 1
+    args, kwargs = callback.call_args
+    assert args[0] == b'hello'
