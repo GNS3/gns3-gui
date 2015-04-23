@@ -22,6 +22,7 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 import pickle
 from .qt import QtCore, QtGui, QtSvg
 from .modules import MODULES
+from .node import Node
 
 
 class NodesView(QtGui.QTreeWidget):
@@ -48,6 +49,7 @@ class NodesView(QtGui.QTreeWidget):
         :param project_type: Filter devices for this type of project (cloud|local)
         """
 
+        added = 0
         for module in MODULES:
             for node in module.instance().nodes():
                 if category is not None and category not in node["categories"]:
@@ -65,8 +67,13 @@ class NodesView(QtGui.QTreeWidget):
                 svg_renderer.render(QtGui.QPainter(image))
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(0, icon)
+                added += 1
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
+
+        if added == 0 and category == Node.routers:
+            dialog = QtGui.QMessageBox.critical(self, 'Routers', 'No routers have been configured.<br>You need to provide your own routers images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
+
 
     def mouseMoveEvent(self, event):
         """
