@@ -136,7 +136,7 @@ class IOUDevice(VM):
             params["vm_id"] = vm_id
 
         # push the initial-config
-        if not vm_id and "initial_config" in additional_settings:
+        if "initial_config" in additional_settings:
             if os.path.isfile(additional_settings["initial_config"]):
                 params["initial_config_content"] = self._readBaseConfig(additional_settings["initial_config"])
             del additional_settings["initial_config"]
