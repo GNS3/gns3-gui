@@ -55,9 +55,9 @@ class DecompressIOSThread(QtCore.QThread):
         try:
             decompressIOS(self._ios_image, self._destination_file)
         except zipfile.BadZipFile as e:
-            self.error.emit("File {} is corrupted {}".format(self._ios_image, e), True)
-            return
-        except OSError as e:
+             self.error.emit("File {} is corrupted {}".format(self._ios_image, e), True)
+             return
+        except (OSError, MemoryError) as e:
             self.error.emit("Could not decompress {}: {}".format(self._ios_image, e), True)
             return
 

@@ -22,6 +22,7 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 import pickle
 from .qt import QtCore, QtGui, QtSvg, QtWidgets
 from .modules import MODULES
+from .node import Node
 
 
 class NodesView(QtWidgets.QTreeWidget):
@@ -67,6 +68,11 @@ class NodesView(QtWidgets.QTreeWidget):
                 item.setIcon(0, icon)
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        if not self.topLevelItemCount() and category == Node.routers:
+            #FIXME: port to PyQt5
+            QtGui.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
+            #TODO: would be nicer to use QErrorMessage but the link cannot be clicked by default
+            #QtGui.QErrorMessage.qtHandler().showMessage('No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
 
     def mouseMoveEvent(self, event):
         """

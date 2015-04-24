@@ -254,9 +254,13 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             QtWidgets.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, e))
             return
 
-        if isIOSCompressed(path):
-            reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?",
-                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+        compressed = False
+        try:
+            compressed = isIOSCompressed(path)
+        except OSError as e:
+            QtWidgets.QMessageBox.warning(parent, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
+        if compressed:
+            reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 decompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
                 thread = DecompressIOSThread(path, decompressed_image_path)
@@ -330,8 +334,17 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             if not os.path.isfile(path):
                 QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
                 return
+<<<<<<< HEAD
             if not isIOSCompressed(path):
                 QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+=======
+            try:
+                if not isIOSCompressed(path):
+                    QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+                    return
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
+>>>>>>> master
                 return
 
             decompressed_image_path = os.path.splitext(path)[0] + ".image"
