@@ -253,7 +253,12 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             QtGui.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, e))
             return
 
-        if isIOSCompressed(path):
+        compressed = False
+        try:
+            compressed = isIOSCompressed(path)
+        except OSError as e:
+            QtGui.QMessageBox.warning(parent, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
+        if compressed:
             reply = QtGui.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?",
                                                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes:
@@ -329,8 +334,12 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             if not os.path.isfile(path):
                 QtGui.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
                 return
-            if not isIOSCompressed(path):
-                QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+            try:
+                if not isIOSCompressed(path):
+                    QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+                    return
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
                 return
 
             decompressed_image_path = os.path.splitext(path)[0] + ".image"
