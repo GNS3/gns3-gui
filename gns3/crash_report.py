@@ -41,7 +41,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "sync+https://93967ffc7e08401fa0b7578ecf08256b:8c0a5bcbc99e42f1819c6870d6362122@app.getsentry.com/38506"
+    DSN = "sync+https://142117b276c64393a5b59a6e658824f2:4cd6312a0ce9406b8ca264b2d217b49e@app.getsentry.com/38506"
     if hasattr(sys, "frozen"):
         cacert = os.path.join(os.getcwd(), "cacert.pem")
         if os.path.isfile(cacert):
@@ -55,6 +55,9 @@ class CrashReport:
 
     def captureException(self, exception, value, tb):
         if not RAVEN_AVAILABLE:
+            return
+        if os.path.exists(".git"):
+            log.warning("A .git directory exist crash report is turn off for developers")
             return
         local_server = Servers.instance().localServerSettings()
         if local_server["report_errors"]:
