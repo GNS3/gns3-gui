@@ -149,6 +149,8 @@ class IOUDevice(VM):
                     params["iourc_content"] = f.read().decode("utf-8")
             except OSError as e:
                 print("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
+            except UnicodeDecodeError as e:
+                print("Invalid IOURC file {}: {}".format(module_settings["iourc_path"], e))
 
         params.update(additional_settings)
         self.httpPost("/iou/vms", self._setupCallback, body=params)
