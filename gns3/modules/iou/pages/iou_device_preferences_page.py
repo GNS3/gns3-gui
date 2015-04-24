@@ -264,7 +264,10 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                 else:
                     path = destination_path
                     mode = os.stat(path).st_mode
-                    os.chmod(path, mode | stat.S_IXUSR)
+                    try:
+                        os.chmod(path, mode | stat.S_IXUSR)
+                    except OSError:
+                        pass
 
         if not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))

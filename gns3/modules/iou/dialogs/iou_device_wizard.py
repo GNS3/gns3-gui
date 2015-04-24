@@ -56,7 +56,7 @@ class IOUDeviceWizard(QtWidgets.QWizard, Ui_IOUDeviceWizard):
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
             # Cannot use IOU locally on Windows
             self.uiLocalRadioButton.setEnabled(False)
 
