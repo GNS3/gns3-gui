@@ -45,11 +45,9 @@ class VMWizard(QtWidgets.QWizard):
 
         # The list of images combo box (Qemu support multiple images)
         self._images_combo_boxes = set()
+
         # The list of button opening file browser for images
         self._images_browser_buttons = set()
-
-        # Current progress dialog about images list
-        self._image_list_progress_dialog = None
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -167,14 +165,6 @@ class VMWizard(QtWidgets.QWizard):
         :param endpoint: server endpoint with the list of Images
         """
 
-        if self._image_list_progress_dialog is not None:
-            self._image_list_progress_dialog.reject()
-
-        self._image_list_progress_dialog = QtWidgets.QProgressDialog("Loading Images", "Cancel", 0, 0, parent=self)
-        self._image_list_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-        self._image_list_progress_dialog.setWindowTitle("Images")
-        self._image_list_progress_dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self._image_list_progress_dialog.show()
         self._server.get(endpoint, self._getImagesFromServerCallback)
 
     def _getImagesFromServerCallback(self, result, error=False, **kwargs):
@@ -184,14 +174,6 @@ class VMWizard(QtWidgets.QWizard):
         :param result: server response
         :param error: indicates an error (boolean)
         """
-
-        progress_dialog = self._image_list_progress_dialog
-        self._image_list_progress_dialog = None
-
-        if progress_dialog.wasCanceled():
-            return
-
-        progress_dialog.accept()
 
         if error:
             QtWidgets.QMessageBox.critical(self, "Images", "Error while getting the VMs: {}".format(result["message"]))
