@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>366</height>
+    <width>585</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,8 +23,8 @@
    <property name="subTitle">
     <string>Please choose a server type to run your new QEMU VM.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout_7">
+    <item>
      <widget class="QGroupBox" name="uiServerTypeGroupBox">
       <property name="title">
        <string>Server type</string>
@@ -70,29 +70,39 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item>
      <widget class="QGroupBox" name="uiRemoteServersGroupBox">
       <property name="title">
        <string>Remote servers</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_8">
-       <item row="0" column="1">
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiLoadBalanceCheckBox">
+         <property name="text">
+          <string>Load balance across all available remote servers</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiRemoteServersLabel">
+         <property name="text">
+          <string>Run on server:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
         <widget class="QComboBox" name="uiRemoteServersComboBox">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiRemoteServersLabel">
-         <property name="text">
-          <string>Run on server:</string>
          </property>
         </widget>
        </item>
@@ -205,9 +215,56 @@
    <property name="subTitle">
     <string>Please choose a base disk image for your virtual machine.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_6">
-    <item row="0" column="1">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="uiHdaDiskExistingImageRadioButton">
+        <property name="text">
+         <string>Existing image</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiNewImageRadioButton_2">
+        <property name="text">
+         <string>New Image</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QLabel" name="uiHdaDiskImageLabel">
+        <property name="text">
+         <string>Disk image (hda):</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="uiHdaDiskImageListComboBox"/>
+      </item>
       <item>
        <widget class="QLineEdit" name="uiHdaDiskImageLineEdit"/>
       </item>
@@ -223,13 +280,6 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="uiHdaDiskImageLabel">
-      <property name="text">
-       <string>Disk image (hda):</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QWizardPage" name="uiASAWizardPage">
@@ -239,52 +289,107 @@
    <property name="subTitle">
     <string>Please choose a initrd and a kernel image.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_5">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout_10">
+    <item>
      <widget class="QGroupBox" name="uiLinuxBootGroupBox">
       <property name="title">
        <string>Linux boot specific settings</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiKernelImageLineEdit"/>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QRadioButton" name="uiLinuxExistingImageRadioButton">
+           <property name="text">
+            <string>Existing image</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="uiNewImageRadioButton_4">
+           <property name="text">
+            <string>New Image</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiInitrdLabel">
-         <property name="text">
-          <string>Initial RAM disk (initrd):</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiKernelImageLabel">
-         <property name="text">
-          <string>Kernel image (vmlinuz):</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiInitrdLineEdit"/>
-       </item>
-       <item row="0" column="2">
-        <widget class="QToolButton" name="uiInitrdToolButton">
-         <property name="text">
-          <string>&amp;Browse...</string>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextOnly</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QToolButton" name="uiKernelImageToolButton">
-         <property name="text">
-          <string>&amp;Browse...</string>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextOnly</enum>
-         </property>
-        </widget>
+       <item>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="4" column="0">
+          <widget class="QLabel" name="uiInitrdLabel">
+           <property name="text">
+            <string>Initial RAM disk (initrd):</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <widget class="QComboBox" name="uiInitrdImageListComboBox"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="uiInitrdImageLineEdit"/>
+           </item>
+           <item>
+            <widget class="QToolButton" name="uiInitrdImageToolButton">
+             <property name="text">
+              <string>&amp;Browse...</string>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextOnly</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="uiKernelImageLabel">
+           <property name="text">
+            <string>Kernel image (vmlinuz):</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_14">
+           <item>
+            <widget class="QComboBox" name="uiKernelImageListComboBox"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="uiKernelImageLineEdit"/>
+           </item>
+           <item>
+            <widget class="QToolButton" name="uiKernelImageToolButton">
+             <property name="text">
+              <string>&amp;Browse...</string>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextOnly</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -298,16 +403,56 @@
    <property name="subTitle">
     <string>Please add an additional disk image for IDS.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_7">
-    <item row="0" column="0">
-     <widget class="QLabel" name="uiHdbDiskImageLabel">
-      <property name="text">
-       <string>Disk image (hdb):</string>
-      </property>
-     </widget>
+   <layout class="QVBoxLayout" name="verticalLayout_6">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
+       <widget class="QRadioButton" name="uiHdbDiskExistingImageRadioButton">
+        <property name="text">
+         <string>Existing image</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiNewImageRadioButton_5">
+        <property name="text">
+         <string>New Image</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
-    <item row="0" column="1">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="uiHdbDiskImageLabel">
+        <property name="text">
+         <string>Disk image (hdb):</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="uiHdbDiskImageListComboBox"/>
+      </item>
       <item>
        <widget class="QLineEdit" name="uiHdbDiskImageLineEdit"/>
       </item>
@@ -332,10 +477,6 @@
   <tabstop>uiRamSpinBox</tabstop>
   <tabstop>uiHdaDiskImageLineEdit</tabstop>
   <tabstop>uiHdaDiskImageToolButton</tabstop>
-  <tabstop>uiInitrdLineEdit</tabstop>
-  <tabstop>uiInitrdToolButton</tabstop>
-  <tabstop>uiKernelImageLineEdit</tabstop>
-  <tabstop>uiKernelImageToolButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

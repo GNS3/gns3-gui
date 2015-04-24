@@ -25,7 +25,6 @@ For PyQt4 and PyQt5 differences please see http://pyqt.sourceforge.net/Docs/PyQt
 # https://github.com/pyQode/pyqode.qt/blob/master/pyqode/qt/QtWidgets.py (MIT license)
 
 
-
 import sys
 import sip
 import os
@@ -109,7 +108,7 @@ elif DEFAULT_BINDING == 'PyQt4':
 
         @staticmethod
         def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            return OldFileDialog.getOpenFileNameAndFilter(parent, caption, directory, filter, selectedFilter,options)
+            return OldFileDialog.getOpenFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
 
         @staticmethod
         def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
@@ -119,7 +118,7 @@ elif DEFAULT_BINDING == 'PyQt4':
         def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
             return OldFileDialog.getSaveFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
 
-    QtGui.QFileDialog = QFileDialog
+    QtWidgets.QFileDialog = QFileDialog
 
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):
