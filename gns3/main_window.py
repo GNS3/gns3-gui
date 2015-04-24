@@ -29,7 +29,6 @@ import shutil
 import json
 import glob
 import logging
-import functools
 import posixpath
 import stat
 
@@ -1269,8 +1268,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
 
-        projects_dir_path = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
-
+        projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
         file_dialog = QtGui.QFileDialog(self)
         file_dialog.setWindowTitle("Save project")
         file_dialog.setNameFilters(["Directories"])

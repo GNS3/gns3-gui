@@ -23,10 +23,10 @@ import os
 import sys
 import platform
 
-# Projects directory location
+# Default projects directory location
 DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 
-# Images directory location
+# Default images directory location
 DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
