@@ -142,10 +142,7 @@ class DeviceWizard(QtWidgets.QWizard):
         User select a different image in the combo box
         """
         item = combo_box.itemData(index)
-        if item:
-            line_edit.setText(item["filename"])
-        else:
-            line_edit.setText(item["filename"])
+        line_edit.setText(item["filename"])
 
     def _existingImageToggledSlot(self, checked, combo_box, line_edit, browser):
         """
