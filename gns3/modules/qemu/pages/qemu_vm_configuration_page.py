@@ -33,7 +33,6 @@ from gns3.utils.file_copy_thread import FileCopyThread
 
 from ..ui.qemu_vm_configuration_page_ui import Ui_QemuVMConfigPageWidget
 from .. import Qemu
-from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
 class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
@@ -259,16 +258,12 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 host, port = server.rsplit(":")
                 server = Servers.instance().getRemoteServer(host, port)
 
-        if server == "cloud":
-            for binary in QEMU_BINARIES_FOR_CLOUD:
-                self.uiQemuListComboBox.addItem("{path}".format(path=binary), binary)
-        else:
-            callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
-            try:
-                Qemu.instance().getQemuBinariesFromServer(server, callback)
-            except ModuleError as e:
-                QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
-                self.uiQemuListComboBox.clear()
+        callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
+        try:
+            Qemu.instance().getQemuBinariesFromServer(server, callback)
+        except ModuleError as e:
+            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+            self.uiQemuListComboBox.clear()
 
         if not group:
             # set the device name

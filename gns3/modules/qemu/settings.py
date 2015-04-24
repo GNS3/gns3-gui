@@ -75,33 +75,4 @@ QEMU_VM_SETTING_TYPES = {
     "server": str
 }
 
-# Use a hardcoded list of binaries rather than a dynamic one so the user
-# doesn't require a running cloud instance to upload qemu images.
-QEMU_BINARIES_FOR_CLOUD = sorted([
-    "qemu-system-arm",
-    "qemu-system-microblaze",
-    "qemu-system-mipsel",
-    "qemu-system-ppcemb",
-    "qemu-system-sparc64",
-    "qemu-system-cris",
-    "qemu-system-microblazeel",
-    "qemu-system-moxie",
-    "qemu-system-s390x",
-    "qemu-system-unicore32",
-    "qemu-system-i386",
-    "qemu-system-mips",
-    "qemu-system-or32",
-    "qemu-system-sh4",
-    "qemu-system-x86_64",
-    "qemu-system-lm32",
-    "qemu-system-mips64",
-    "qemu-system-ppc",
-    "qemu-system-sh4eb",
-    "qemu-system-xtensa",
-    "qemu-system-alpha",
-    "qemu-system-m68k",
-    "qemu-system-mips64el",
-    "qemu-system-ppc64",
-    "qemu-system-sparc",
-    "qemu-system-xtensaeb",
-])
+
