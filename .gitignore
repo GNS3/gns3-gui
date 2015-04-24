@@ -50,3 +50,6 @@ nosetests.xml
 
 # Qt creator
 *.autosave
+
+# Licence keys
+keys
