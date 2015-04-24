@@ -22,10 +22,9 @@ Wizard for QEMU VMs.
 import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
-from gns3.servers import Servers
 from gns3.node import Node
 from gns3.modules.module_error import ModuleError
-from gns3.settings import ENABLE_CLOUD
+from gns3.dialogs.vm_wizard import VMWizard
 
 from .. import Qemu
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
@@ -33,7 +32,7 @@ from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
-class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
+class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
 
     """
     Wizard to create a Qemu VM.
@@ -44,18 +43,9 @@ class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
     def __init__(self, qemu_vms, parent):
 
         super().__init__(parent)
-        self.setupUi(self)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
-        if sys.platform.startswith("darwin"):
-            # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
-        self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
-        self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
-        self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
-        self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
         # Available types
@@ -65,32 +55,20 @@ class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
         self.uiDiskWizardPage.registerField("hda_disk_image*", self.uiHdaDiskImageLineEdit)
         self.uiDiskImageHdbWizardPage.registerField("hdb_disk_image*", self.uiHdbDiskImageLineEdit)
-        self.uiASAWizardPage.registerField("initrd*", self.uiInitrdLineEdit)
+        self.uiASAWizardPage.registerField("initrd*", self.uiInitrdImageLineEdit)
         self.uiASAWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
 
         self._qemu_vms = qemu_vms
 
+        # Fill image combo boxes
+        self.addImageSelector(self.uiHdaDiskExistingImageRadioButton, self.uiHdaDiskImageListComboBox, self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton, QemuVMConfigurationPage.getDiskImage)
+        self.addImageSelector(self.uiHdbDiskExistingImageRadioButton, self.uiHdbDiskImageListComboBox, self.uiHdbDiskImageLineEdit, self.uiHdbDiskImageToolButton, QemuVMConfigurationPage.getDiskImage)
+        self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiInitrdImageListComboBox, self.uiInitrdImageLineEdit, self.uiInitrdImageToolButton, QemuVMConfigurationPage.getDiskImage)
+        self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiKernelImageListComboBox, self.uiKernelImageLineEdit, self.uiKernelImageToolButton, QemuVMConfigurationPage.getDiskImage)
+
         if Qemu.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
             self.setStartId(1)
-
-        # By default we use the local server
-        self._server = Servers.instance().localServer()
-
-        if not ENABLE_CLOUD:
-            self.uiCloudRadioButton.hide()
-
-    def _remoteServerToggledSlot(self, checked):
-        """
-        Slot for when the remote server radio button is toggled.
-
-        :param checked: either the button is checked or not
-        """
-
-        if checked:
-            self.uiRemoteServersGroupBox.setEnabled(True)
-        else:
-            self.uiRemoteServersGroupBox.setEnabled(False)
 
     def _typeChangedSlot(self, vm_type):
         """
@@ -119,62 +97,13 @@ class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
             self.uiHdaDiskImageLabel.setText("Disk image (hda):")
             self.uiNameLineEdit.setText("")
 
-    def _hdaDiskImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select a QEMU hda disk image.
-        """
-
-        path = QemuVMConfigurationPage.getDiskImage(self)
-        if path:
-            self.uiHdaDiskImageLineEdit.clear()
-            self.uiHdaDiskImageLineEdit.setText(path)
-
-    def _hdbDiskImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select a QEMU hdb disk image.
-        """
-
-        path = QemuVMConfigurationPage.getDiskImage(self)
-        if path:
-            self.uiHdbDiskImageLineEdit.clear()
-            self.uiHdbDiskImageLineEdit.setText(path)
-
-    def _initrdBrowserSlot(self):
-        """
-        Slot to open a file browser and select a QEMU initrd.
-        """
-
-        path = QemuVMConfigurationPage.getDiskImage(self)
-        if path:
-            self.uiInitrdLineEdit.clear()
-            self.uiInitrdLineEdit.setText(path)
-
-    def _kernelImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select a QEMU kernel image.
-        """
-
-        from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
-        path = QemuVMConfigurationPage.getDiskImage(self)
-        if path:
-            self.uiKernelImageLineEdit.clear()
-            self.uiKernelImageLineEdit.setText(path)
-
     def validateCurrentPage(self):
         """
         Validates the server.
         """
 
-        if self.currentPage() == self.uiServerWizardPage:
-            if not self.uiCloudRadioButton.isChecked():
-                if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
-                    server = Servers.instance().localServer()
-                elif self.uiRemoteRadioButton.isChecked():
-                    if not Servers.instance().remoteServers():
-                        QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in QEMU preferences")
-                        return False
-                    server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
-                self._server = server
+        if super().validateCurrentPage is False:
+            return False
 
         if self.currentPage() == self.uiNameWizardPage:
             name = self.uiNameLineEdit.text()
@@ -192,10 +121,10 @@ class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
 
     def initializePage(self, page_id):
 
-        if self.page(page_id) == self.uiServerWizardPage:
-            self.uiRemoteServersComboBox.clear()
-            for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+        super().initializePage(page_id)
+
+        if self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
+            self.loadImagesList("/qemu/vms")
         if self.page(page_id) == self.uiBinaryMemoryWizardPage:
             if self.uiCloudRadioButton.isChecked():
                 for binary in QEMU_BINARIES_FOR_CLOUD:
@@ -287,7 +216,7 @@ class QemuVMWizard(QtWidgets.QWizard, Ui_QemuVMWizard):
             settings["category"] = Node.switches
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
-            settings["initrd"] = self.uiInitrdLineEdit.text()
+            settings["initrd"] = self.uiInitrdImageLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
             settings["options"] = "-icount auto -hdachs 980,16,32"
