@@ -29,7 +29,6 @@ from gns3.dialogs.vm_wizard import VMWizard
 from .. import Qemu
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
-from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
 class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
@@ -126,18 +125,10 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         if self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
             self.loadImagesList("/qemu/vms")
         if self.page(page_id) == self.uiBinaryMemoryWizardPage:
-            if self.uiCloudRadioButton.isChecked():
-                for binary in QEMU_BINARIES_FOR_CLOUD:
-                    self.uiQemuListComboBox.addItem("{path}".format(path=binary), binary)
-                # Default to x86_64 for the user
-                index = self.uiQemuListComboBox.findData("x86_64", flags=QtCore.Qt.MatchEndsWith)
-                if index != -1:
-                    self.uiQemuListComboBox.setCurrentIndex(index)
-            else:
-                try:
-                    Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
-                except ModuleError as e:
-                    QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
+            try:
+                Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
+            except ModuleError as e:
+                QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
