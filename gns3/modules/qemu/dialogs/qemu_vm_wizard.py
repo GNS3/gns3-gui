@@ -22,11 +22,9 @@ Wizard for QEMU VMs.
 import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
-from gns3.servers import Servers
 from gns3.node import Node
 from gns3.modules.module_error import ModuleError
-from gns3.settings import ENABLE_CLOUD
-from gns3.device_wizard import DeviceWizard
+from gns3.dialogs.vm_wizard import VMWizard
 
 from .. import Qemu
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
@@ -34,7 +32,7 @@ from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from ..settings import QEMU_BINARIES_FOR_CLOUD
 
 
-class QemuVMWizard(DeviceWizard, Ui_QemuVMWizard):
+class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
 
     """
     Wizard to create a Qemu VM.

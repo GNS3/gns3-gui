@@ -16,17 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from functools import partial
-from .qt import QtGui, QtCore, QtWidgets
 
-from .settings import ENABLE_CLOUD
-from .servers import Servers
+from gns3.qt import QtCore, QtWidgets
+from gns3.settings import ENABLE_CLOUD
+from gns3.servers import Servers
 
 
-class DeviceWizard(QtWidgets.QWizard):
+class VMWizard(QtWidgets.QWizard):
 
     """
-    Base class for device wizard
+    Base class for VM wizard.
     """
 
     def __init__(self, parent):

@@ -30,7 +30,7 @@ from gns3.node import Node
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
-from gns3.device_wizard import DeviceWizard
+from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, DEFAULT_IDLEPC, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -57,7 +57,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class IOSRouterWizard(DeviceWizard, Ui_IOSRouterWizard):
+class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
     """
     Wizard to create an IOS router.

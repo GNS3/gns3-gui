@@ -27,13 +27,13 @@ from gns3.node import Node
 from gns3.servers import Servers
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
-from gns3.device_wizard import DeviceWizard
+from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
 from .. import IOU
 
 
-class IOUDeviceWizard(DeviceWizard, Ui_IOUDeviceWizard):
+class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
 
     """
     Wizard to create an IOU device.
