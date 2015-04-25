@@ -19,10 +19,7 @@
 Configuration page for VPCS devices.
 """
 
-import os
-
 from gns3.qt import QtGui
-from gns3.utils.get_resource import get_resource
 from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 
@@ -36,24 +33,6 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        # self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
-
-    # def _scriptFileBrowserSlot(self):
-    #     """
-    #     Slot to open a file browser and select a script-file file.
-    #     """
-    #
-    #     config_dir = get_resource("configs")
-    #     path = QtGui.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
-    #     if not path:
-    #         return
-    #
-    #     if not os.access(path, os.R_OK):
-    #         QtGui.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
-    #         return
-    #
-    #     self.uiScriptFileLineEdit.clear()
-    #     self.uiScriptFileLineEdit.setText(path)
 
     def loadSettings(self, settings, node, group=False):
         """
@@ -67,18 +46,11 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
             self.uiConsolePortSpinBox.setValue(settings["console"])
-
-            # load the script-file
-            # self.uiScriptFileLineEdit.setText(settings["script_file"])
-
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-            # self.uiScriptFileLabel.hide()
-            # self.uiScriptFileLineEdit.hide()
-            # self.uiScriptFileToolButton.hide()
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -102,13 +74,6 @@ class VPCSDeviceConfigurationPage(QtGui.QWidget, Ui_VPCSDeviceConfigPageWidget):
 
             if "console" in settings:
                 settings["console"] = self.uiConsolePortSpinBox.value()
-
-            # script_file = self.uiScriptFileLineEdit.text()
-            # if script_file != settings["script_file"]:
-            #    if os.access(script_file, os.R_OK):
-            #        settings["script_file"] = script_file
-            #    else:
-            #        QtGui.QMessageBox.critical(self, "Script-file", "Cannot read the script-file file")
         else:
             del settings["name"]
             del settings["console"]

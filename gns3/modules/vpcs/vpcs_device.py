@@ -321,12 +321,12 @@ class VPCSDevice(VM):
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-
             if "startup_script" in result and self._config_export_path:
                 try:
                     with open(self._config_export_path, "wb") as f:
                         log.info("saving {} script file to {}".format(self.name(), self._config_export_path))
-                        f.write(result["startup_script"].encode("utf-8"))
+                        if result["startup_script"]:
+                            f.write(result["startup_script"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(self._config_export_path, e))
 
@@ -388,7 +388,7 @@ class VPCSDevice(VM):
         script_file = normalize_filename(self.name()) + "_startup.vpc"
         new_settings = {}
         if script_file in contents:
-            new_settings["script_file"] = os.path.join(directory, script_file)
+            new_settings["startup_script"] = os.path.join(directory, script_file)
         else:
             self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(script_file))
         if new_settings:
