@@ -30,11 +30,11 @@ from .main_window import MainWindow
 import logging
 log = logging.getLogger(__name__)
 
-
 # TODO: support more than just Vbox (Qemu maybe?)
-def serialConsole(vmname):
+def serialConsole(vmname, pipe_path):
     """
     :param vmname: Virtual machine name.
+    :param pipe_path: Virtual machine serial pipe path.
 
     Start a Serial console program.
     """
@@ -43,15 +43,8 @@ def serialConsole(vmname):
     if not command:
         return
 
-    p = re.compile('\s+', re.UNICODE)
-    pipe_name = p.sub("_", vmname)
-    if sys.platform.startswith('win'):
-        pipe_name = r"\\.\pipe\VBOX\{}".format(pipe_name)
-    else:
-        pipe_name = os.path.join(tempfile.gettempdir(), "pipe_{}".format(pipe_name))
-
     # replace the place-holders by the actual values
-    command = command.replace("%s", pipe_name)
+    command = command.replace("%s", pipe_path)
     command = command.replace("%d", vmname)
     log.info('starting serial console "{}"'.format(command))
 

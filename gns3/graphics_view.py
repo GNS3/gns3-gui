@@ -924,7 +924,7 @@ class GraphicsView(QtGui.QGraphicsView):
         if hasattr(node, "serialConsole") and node.serialConsole():
             try:
                 from .serial_console import serialConsole
-                serialConsole(node.name())
+                serialConsole(node.name(), node.serialPipe())
             except (OSError, ValueError) as e:
                 QtGui.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
                 return False
