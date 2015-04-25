@@ -306,10 +306,11 @@ class VPCSDevice(VM):
         :param config_export_path: export path for the script file
         """
 
-        self._config_export_path = config_export_path
-        self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id), self._exportConfigCallback)
+        self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
+                     self._exportConfigCallback,
+                     context={"path": config_export_path})
 
-    def _exportConfigCallback(self, result, error=False, **kwargs):
+    def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for exportConfig.
 
@@ -320,15 +321,15 @@ class VPCSDevice(VM):
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            if "startup_script" in result and self._config_export_path:
-                try:
-                    with open(self._config_export_path, "wb") as f:
-                        log.info("saving {} script file to {}".format(self.name(), self._config_export_path))
-                        if result["startup_script"]:
-                            f.write(result["startup_script"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(self._config_export_path, e))
+        elif "startup_script" in result:
+            path = context["path"]
+            try:
+                with open(path, "wb") as f:
+                    log.info("saving {} script file to {}".format(self.name(), path))
+                    if result["startup_script"]:
+                        f.write(result["startup_script"].encode("utf-8"))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(path, e))
 
     def exportConfigToDirectory(self, directory):
         """
@@ -337,11 +338,11 @@ class VPCSDevice(VM):
         :param directory: destination directory path
         """
 
-        self._export_directory = directory
         self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
-                     self._exportConfigToDirectoryCallback)
+                     self._exportConfigToDirectoryCallback,
+                     context={"directory": directory})
 
-    def _exportConfigToDirectoryCallback(self, result, error=False, **kwargs):
+    def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for exportConfigToDirectory.
 
@@ -352,19 +353,16 @@ class VPCSDevice(VM):
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-
-            if "startup_script" in result and result["startup_script"] is not None:
-                config_path = os.path.join(self._export_directory, normalize_filename(self.name())) + "_startup.vpc"
-                config = result["startup_script"].encode("utf-8")
-                try:
-                    with open(config_path, "wb") as f:
-                        log.info("saving {} script file to {}".format(self.name(), config_path))
-                        f.write(config)
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(config_path, e))
-
-            self._export_directory = None
+        elif "startup_script" in result:
+            export_directory = context["directory"]
+            config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup.vpc"
+            try:
+                with open(config_path, "wb") as f:
+                    log.info("saving {} script file to {}".format(self.name(), config_path))
+                    if result["startup_script"]:
+                        f.write(result["startup_script"].encode("utf-8"))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(config_path, e))
 
     def importConfig(self, path):
         """

@@ -475,13 +475,9 @@ class IOUDevice(VM):
         :param config_export_path: export path for the initial-config
         """
 
-        self.httpGet("/iou/vms/{vm_id}/initial_config".format(
-            vm_id=self._vm_id,
-        ),
-            self._exportConfigCallback,
-            context={
-            "path": config_export_path
-        })
+        self.httpGet("/iou/vms/{vm_id}/initial_config".format(vm_id=self._vm_id),
+                     self._exportConfigCallback,
+                     context={"path": config_export_path})
 
     def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -491,18 +487,18 @@ class IOUDevice(VM):
         :param error: indicates an error (boolean)
         """
 
-        path = context["path"]
         if error:
             log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            if "content" in result is not None:
-                try:
-                    with open(path, "wb") as f:
-                        log.info("saving {} initial-config to {}".format(self.name(), path))
+        elif "content" in result:
+            path = context["path"]
+            try:
+                with open(path, "wb") as f:
+                    log.info("saving {} initial-config to {}".format(self.name(), path))
+                    if result["content"]:
                         f.write(result["content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "Could not export initial-config to {}: {}".format(path, e))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "Could not export initial-config to {}: {}".format(path, e))
 
     def exportConfigToDirectory(self, directory):
         """
@@ -511,13 +507,9 @@ class IOUDevice(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/iou/vms/{vm_id}/initial_config".format(
-            vm_id=self._vm_id,
-        ),
-            self._exportConfigToDirectoryCallback,
-            context={
-            "directory": directory
-        })
+        self.httpGet("/iou/vms/{vm_id}/initial_config".format(vm_id=self._vm_id),
+                     self._exportConfigToDirectoryCallback,
+                     context={"directory": directory})
 
     def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -527,20 +519,19 @@ class IOUDevice(VM):
         :param error: indicates an error (boolean)
         """
 
-        export_directory = context["directory"]
         if error:
             log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-
-            if "content" in result:
-                config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_initial-config.cfg"
-                try:
-                    with open(config_path, "wb") as f:
-                        log.info("saving {} initial-config to {}".format(self.name(), config_path))
+        elif "content" in result:
+            export_directory = context["directory"]
+            config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_initial-config.cfg"
+            try:
+                with open(config_path, "wb") as f:
+                    log.info("saving {} initial-config to {}".format(self.name(), config_path))
+                    if result["content"]:
                         f.write(result["content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(config_path, e))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(config_path, e))
 
     def importConfig(self, path):
         """
