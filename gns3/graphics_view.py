@@ -178,9 +178,9 @@ class GraphicsView(QtGui.QGraphicsView):
         if enabled:
             self.setCursor(QtCore.Qt.CrossCursor)
         else:
-            if self._newlink:
+            if self._newlink and self._newlink in self.scene().items():
                 self.scene().removeItem(self._newlink)
-                self._newlink = None
+            self._newlink = None
             self.setCursor(QtCore.Qt.ArrowCursor)
         self._adding_link = enabled
 
@@ -405,9 +405,10 @@ class GraphicsView(QtGui.QGraphicsView):
                 QtGui.QMessageBox.critical(self, "Connection", "Server {} cannot communicate with server {}, most likely because your local server host binding is set to a local address".format(source_host, destination_host))
                 return
 
-            self.scene().removeItem(self._newlink)
-            self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
+            if self._newlink in self.scene().items():
+                self.scene().removeItem(self._newlink)
             self._newlink = None
+            self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
 
     def mousePressEvent(self, event):
         """
@@ -566,7 +567,7 @@ class GraphicsView(QtGui.QGraphicsView):
             hBar.setValue(hBar.value() + (delta.x() if QtGui.QApplication.isRightToLeft() else -delta.x()))
             vBar.setValue(vBar.value() - delta.y())
             self._last_mouse_position = mapped_global_pos
-        if self._adding_link and self._newlink:
+        if self._adding_link and self._newlink and self._newlink in self.scene().items():
             # update the mouse position when the user is adding a link.
             self._newlink.setMousePoint(self.mapToScene(event.pos()))
             event.ignore()
