@@ -364,7 +364,7 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     def _md5sum(self, filename):
 
-        with open(filename, 'rb') as fd:
+        with open(filename, "rb") as fd:
             m = hashlib.md5()
             while True:
                 data = fd.read(8192)

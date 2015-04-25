@@ -132,7 +132,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
             return
 
         try:
-            with open(path) as f:
+            with open(path, encoding="utf-8") as f:
                 config_file = json.load(f)
             if "type" not in config_file or config_file["type"] != "settings":
                 QtGui.QMessageBox.critical(self, "Import configuration file", "Not a GNS3 configuration file: {}".format(path))

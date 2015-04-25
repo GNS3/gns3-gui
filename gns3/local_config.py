@@ -77,7 +77,7 @@ class LocalConfig:
             try:
                 # create the config file if it doesn't exist
                 os.makedirs(os.path.dirname(self._config_file), exist_ok=True)
-                with open(self._config_file, "w") as f:
+                with open(self._config_file, "w", encoding="utf-8") as f:
                     json.dump({"version": __version__, "type": "settings"}, f)
             except OSError as e:
                 log.error("Could not create the config file {}: {}".format(self._config_file, e))
@@ -93,7 +93,7 @@ class LocalConfig:
         """
 
         try:
-            with open(config_path, "r") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except (ValueError, OSError) as e:
             log.error("Could not read the config file {}: {}".format(self._config_file, e))
@@ -106,7 +106,7 @@ class LocalConfig:
         """
 
         try:
-            with open(self._config_file, "w") as f:
+            with open(self._config_file, "w", encoding="utf-8") as f:
                 json.dump(self._settings, f, sort_keys=True, indent=4)
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))

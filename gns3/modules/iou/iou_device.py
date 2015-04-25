@@ -145,8 +145,8 @@ class IOUDevice(VM):
         module_settings = self._module.settings()
         if module_settings["iourc_path"] and os.path.isfile(module_settings["iourc_path"]):
             try:
-                with open(module_settings["iourc_path"], 'rb') as f:
-                    params["iourc_content"] = f.read().decode("utf-8")
+                with open(module_settings["iourc_path"], "rb") as f:
+                    params["iourc_content"] = f.read().decode("utf-8", errors="replace")
             except OSError as e:
                 print("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
             except UnicodeDecodeError as e:

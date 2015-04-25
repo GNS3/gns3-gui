@@ -530,7 +530,7 @@ class Topology(object):
         log.debug("Start loading topology")
         self._project = project
 
-        with open(path, "r") as f:
+        with open(path, encoding="utf-8") as f:
             log.info("loading project: {}".format(path))
             json_topology = json.load(f)
 

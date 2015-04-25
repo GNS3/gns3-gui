@@ -94,9 +94,9 @@ class VPCSDevice(VM):
 
         if "script_file" in additional_settings:
             try:
-                with open(additional_settings["script_file"]) as f:
-                    additional_settings["startup_script"] = f.read()
-            except (OSError) as e:
+                with open(additional_settings["script_file"], "rb") as f:
+                    additional_settings["startup_script"] = f.read().decode("utf-8")
+            except OSError as e:
                 log.error("Could not load the script file to {}".format(additional_settings["script_file"], e))
             del additional_settings["script_file"]
 
@@ -373,8 +373,8 @@ class VPCSDevice(VM):
         :param path: path to the script file
         """
 
-        with open(path) as f:
-            new_settings = {"startup_script": f.read()}
+        with open(path, "rb") as f:
+            new_settings = {"startup_script": f.read().decode("utf-8")}
         self.update(new_settings)
 
     def importConfigFromDirectory(self, directory):

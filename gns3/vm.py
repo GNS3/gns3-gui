@@ -230,9 +230,9 @@ class VM(Node):
         """
 
         try:
-            with open(config_path, "r", errors="replace") as f:
+            with open(config_path, "rb") as f:
                 log.info("Opening configuration file: {}".format(config_path))
-                config = f.read()
+                config = f.read().decode("utf-8", errors="replace")
                 config = "!\n" + config.replace('\r', "")
                 return config
         except OSError as e:

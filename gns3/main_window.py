@@ -1336,7 +1336,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         try:
             self._project.commit()
             topo = topology.dump(random_id=random_id)
-            with open(path, "w") as f:
+            with open(path, "w", encoding="utf-8") as f:
                 log.info("Saving project: {}".format(path))
                 json.dump(topo, f, sort_keys=True, indent=4)
         except OSError as e:
@@ -1589,7 +1589,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         try:
-            with open(project) as f:
+            with open(project, encoding="utf-8") as f:
                 json_topology = json.load(f)
 
                 self.CloudInspectorView.clear()

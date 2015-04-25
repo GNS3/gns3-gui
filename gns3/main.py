@@ -117,7 +117,7 @@ def main():
         print("".join(lines))
         try:
             curdate = time.strftime("%d %b %Y %H:%M:%S")
-            logfile = open(exception_file_path, "a")
+            logfile = open(exception_file_path, "a", encoding="utf-8")
             logfile.write("=== GNS3 {} traceback on {} ===\n".format(__version__, curdate))
             logfile.write("".join(lines))
             logfile.close()

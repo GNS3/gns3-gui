@@ -33,7 +33,7 @@ def isIOSCompressed(ios_image):
     """
 
     try:
-        fd = open(ios_image, "r+b")
+        fd = open(ios_image, "rb")
     except OSError:
         return False
     mapped_file = mmap.mmap(fd.fileno(), 0)
