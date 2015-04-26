@@ -256,7 +256,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
         compressed = False
         try:
             compressed = isIOSCompressed(path)
-        except OSError:
+        except (OSError, ValueError):
             pass  # ignore errors if we cannot find out the IOS image is compressed.
         if compressed:
             reply = QtGui.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?",
@@ -338,7 +338,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 if not isIOSCompressed(path):
                     QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
                     return
-            except OSError as e:
+            except (OSError, ValueError) as e:
                 # errno 22, invalid argument means the file system where the IOS image is located doesn't support mmap
                 if e.errno == 22:
                     QtGui.QMessageBox.critical(self, "IOS image", "IOS image {} cannot be memory mapped, most likely because the file system doesn't support it".format(os.path.basename(path)))
