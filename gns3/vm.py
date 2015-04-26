@@ -232,9 +232,13 @@ class VM(Node):
         try:
             with open(config_path, "rb") as f:
                 log.info("Opening configuration file: {}".format(config_path))
-                config = f.read().decode("utf-8", errors="replace")
+                config = f.read().decode("utf-8")
                 config = "!\n" + config.replace('\r', "")
                 return config
         except OSError as e:
-            log.warn("Could not read base configuration file {}: {}".format(config_path, e))
-            return ""
+            self.error_signal.emit(self.id(), "Could not read configuration file {}: {}".format(config_path, e))
+            return None
+        except UnicodeDecodeError as e:
+            self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
+            return None
+        return ""

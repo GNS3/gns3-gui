@@ -241,13 +241,19 @@ class Router(VM):
         # push the startup-config
         if not vm_id and "startup_config" in additional_settings:
             if os.path.isfile(additional_settings["startup_config"]):
-                params["startup_config_content"] = self._readBaseConfig(additional_settings["startup_config"])
+                base_config_content = self._readBaseConfig(additional_settings["startup_config"])
+                if base_config_content is None:
+                    return
+                params["startup_config_content"] = base_config_content
             del additional_settings["startup_config"]
 
         # push the private-config
         if not vm_id and "private_config" in additional_settings:
             if os.path.isfile(additional_settings["private_config"]):
-                params["private_config_content"] = self._readBaseConfig(additional_settings["private_config"])
+                base_config_content = self._readBaseConfig(additional_settings["private_config"])
+                if base_config_content is None:
+                    return
+                params["private_config_content"] = base_config_content
             del additional_settings["private_config"]
 
         params.update(additional_settings)
@@ -316,12 +322,18 @@ class Router(VM):
 
         if "startup_config" in new_settings:
             if os.path.isfile(new_settings["startup_config"]):
-                params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
+                base_config_content = self._readBaseConfig(new_settings["startup_config"])
+                if base_config_content is None:
+                    return
+                params["startup_config_content"] = base_config_content
             del new_settings["startup_config"]
 
         if "private_config" in new_settings:
             if os.path.isfile(new_settings["private_config"]):
-                params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
+                base_config_content = self._readBaseConfig(new_settings["private_config"])
+                if base_config_content is None:
+                    return
+                params["private_config_content"] = base_config_content
             del new_settings["private_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))

@@ -138,7 +138,10 @@ class IOUDevice(VM):
         # push the initial-config
         if "initial_config" in additional_settings:
             if os.path.isfile(additional_settings["initial_config"]):
-                params["initial_config_content"] = self._readBaseConfig(additional_settings["initial_config"])
+                base_config_content = self._readBaseConfig(additional_settings["initial_config"])
+                if base_config_content is None:
+                    return
+                params["initial_config_content"] = base_config_content
             del additional_settings["initial_config"]
 
         # push the iourc file
@@ -208,7 +211,10 @@ class IOUDevice(VM):
 
         if "initial_config" in new_settings:
             if os.path.isfile(new_settings["initial_config"]):
-                params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
+                base_config_content = self._readBaseConfig(new_settings["initial_config"])
+                if base_config_content is None:
+                    return
+                params["initial_config_content"] = base_config_content
             del new_settings["initial_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))

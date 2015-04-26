@@ -93,11 +93,11 @@ class VPCSDevice(VM):
             params["vm_id"] = vm_id
 
         if "script_file" in additional_settings:
-            try:
-                with open(additional_settings["script_file"], "rb") as f:
-                    additional_settings["startup_script"] = f.read().decode("utf-8")
-            except OSError as e:
-                log.error("Could not load the script file to {}".format(additional_settings["script_file"], e))
+            if os.path.isfile(additional_settings["script_file"]):
+                base_config_content = self._readBaseConfig(additional_settings["script_file"])
+                if base_config_content is None:
+                    return
+                additional_settings["startup_script"] = base_config_content
             del additional_settings["script_file"]
 
         if "startup_script_path" in additional_settings:
