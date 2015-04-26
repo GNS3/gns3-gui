@@ -86,15 +86,20 @@ class TopologyNodeItem(QtGui.QTreeWidgetItem):
 
     def refresh(self):
         """
-        Updates the widget item with the current node name and list all the connections
-        as children.
+        Updates the widget item with the current node name.
         """
 
         if self._node.name() != self.text(0):
             # refresh all the other item if the node name has changed
-            self._parent.refreshAll(source_child=self)
-
+            self._parent.refreshAllLinks(source_child=self)
         self.setText(0, self._node.name())
+        self.refreshLinks()
+
+    def refreshLinks(self):
+        """
+        List all the connections as children.
+        """
+
         ports = self._node.ports()
         self.takeChildren()
 
@@ -157,9 +162,9 @@ class TopologySummaryView(QtGui.QTreeWidget):
 
         QtGui.QTreeWidget.clear(self)
 
-    def refreshAll(self, source_child=None):
+    def refreshAllLinks(self, source_child=None):
         """
-        Refreshes all the items.
+        Refreshes all links for all items.
         """
 
         root = self.invisibleRootItem()
@@ -167,7 +172,7 @@ class TopologySummaryView(QtGui.QTreeWidget):
             child = root.child(index)
             if source_child and source_child == child:
                 continue
-            child.refresh()
+            child.refreshLinks()
 
     def _createdNodeSlot(self, node_id):
         """
