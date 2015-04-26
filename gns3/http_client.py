@@ -326,11 +326,10 @@ class HTTPClient(QtCore.QObject):
         if method == "DELETE":
             response = self._network_manager.deleteResource(request)
 
-        response.finished.connect(partial(self._processResponse, response, callback, context))
-
         if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
             request_canceled = partial(self._requestCanceled, response, context)
             HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
+        response.finished.connect(partial(self._processResponse, response, callback, context))
 
     def _requestCanceled(self, response, context):
 

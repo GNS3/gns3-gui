@@ -49,8 +49,8 @@ from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.import_cloud_project_dialog import ImportCloudProjectDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES, ENABLE_CLOUD
 from .utils.progress_dialog import ProgressDialog
-from .utils.process_files_thread import ProcessFilesThread
-from .utils.wait_for_connection_thread import WaitForConnectionThread
+from .utils.process_files_worker import ProcessFilesWorker
+from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.message_box import MessageBox
 from .utils.analytics import AnalyticsClient
 from .ports.port import Port
@@ -1205,9 +1205,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     print("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
 
                 if servers.startLocalServer():
-                    thread = WaitForConnectionThread(server.host, server.port)
-                    thread.deleteLater()
-                    progress_dialog = ProgressDialog(thread,
+                    worker = WaitForConnectionWorker(server.host, server.port)
+                    progress_dialog = ProgressDialog(worker,
                                                      "Local server",
                                                      "Connecting to server {} on port {}...".format(server.host, server.port),
                                                      "Cancel", busy=True, parent=self)
@@ -1297,16 +1296,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             # move files if saving from a temporary project
             log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
-            thread = ProcessFilesThread(self._project.filesDir(), project_dir, move=True)
-            progress_dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
+            worker = ProcessFilesWorker(self._project.filesDir(), project_dir, move=True)
+            progress_dialog = ProgressDialog(worker, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
             log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
-            thread = ProcessFilesThread(self._project.filesDir(), project_dir)
-            progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
+            worker = ProcessFilesWorker(self._project.filesDir(), project_dir)
+            progress_dialog = ProgressDialog(worker, "Project", "Copying project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
-        thread.deleteLater()
 
         errors = progress_dialog.errors()
         if errors:

@@ -27,7 +27,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class ProcessFilesThread(QtCore.QThread):
+class ProcessFilesWorker(QtCore.QObject):
 
     """
     Thread to process files (copy or move).
@@ -39,12 +39,12 @@ class ProcessFilesThread(QtCore.QThread):
 
     # signals to update the progress dialog.
     error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
+    finished = QtCore.pyqtSignal()
+    updated = QtCore.pyqtSignal(int)
 
     def __init__(self, source_dir, destination_dir, move=False, skip_dirs=None):
 
-        QtCore.QThread.__init__(self)
+        QtCore.QObject.__init__(self)
         self._is_running = False
         self._source = source_dir
         self._destination = destination_dir
@@ -55,11 +55,10 @@ class ProcessFilesThread(QtCore.QThread):
 
     def run(self):
         """
-        Thread starting point.
+        Worker starting point.
         """
 
         self._is_running = True
-
         try:
             os.makedirs(self._destination)
         except FileExistsError:
@@ -70,7 +69,7 @@ class ProcessFilesThread(QtCore.QThread):
 
         # Source can be None if directory have never been created (temporary project only on remote servers)
         if self._source is None:
-            self.completed.emit()
+            self.finished.emit()
             return
 
         # count the number of files in the source directory
@@ -116,17 +115,10 @@ class ProcessFilesThread(QtCore.QThread):
                 copied += 1
                 # update the progress made
                 progress = float(copied) / file_count * 100
-                self.update.emit(progress)
+                self.updated.emit(progress)
 
-        # everything has been copied or moved, let's inform the GUI before the thread exits
-        self.completed.emit()
-
-    def stop(self):
-        """
-        Stops this thread as soon as possible.
-        """
-
-        self._is_running = False
+        # everything has been copied or moved, let's inform the GUI
+        self.finished.emit()
 
     def _countFiles(self, directory):
         """
@@ -140,3 +132,10 @@ class ProcessFilesThread(QtCore.QThread):
             dirs[:] = [d for d in dirs if d not in self._skip_dirs]
             count += len(files)
         return count
+
+    def cancel(self):
+        """
+        Cancel this worker.
+        """
+
+        self._is_running = False

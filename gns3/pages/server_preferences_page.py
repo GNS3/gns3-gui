@@ -27,7 +27,7 @@ from ..servers import Servers
 from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
-from ..utils.wait_for_connection_thread import WaitForConnectionThread
+from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 from ..settings import LOCAL_SERVER_SETTINGS
 
 
@@ -279,9 +279,8 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         if restart_local_server:
             servers.stopLocalServer(wait=True)
             if servers.startLocalServer():
-                thread = WaitForConnectionThread(new_settings["host"], new_settings["port"])
-                thread.deleteLater()
-                dialog = ProgressDialog(thread, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                worker = WaitForConnectionWorker(new_settings["host"], new_settings["port"])
+                dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
                 dialog.show()
                 dialog.exec_()
             else:
