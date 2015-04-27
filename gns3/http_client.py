@@ -354,7 +354,11 @@ class HTTPClient(QtCore.QObject):
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
             log.info("Response error: {}".format(error_message))
-            body = bytes(response.readAll()).decode("utf-8")
+            try:
+                body = bytes(response.readAll()).decode("utf-8")
+            # Some time antivirus intercept our query and reply with garbage content
+            except UnicodeError:
+                body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if callback is not None:
                 if not body or content_type != "application/json":
