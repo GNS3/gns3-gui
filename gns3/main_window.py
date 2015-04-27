@@ -1426,9 +1426,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             # log.error("exception {type}".format(type=type(e)), exc_info=1)
+            self._createTemporaryProject()
             return False
         except ValueError as e:
-            QtGui.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))
+            QtGui.QMessageBox.critical(self, "Load", "Invalid or corrupted file: {}".format(e))
+            self._createTemporaryProject()
             return False
         finally:
             QtGui.QApplication.restoreOverrideCursor()
