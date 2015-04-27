@@ -26,10 +26,10 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class FileCopyThread(QtCore.QThread):
+class FileCopyWorker(QtCore.QObject):
 
     """
-    Thread to copy a file.
+    Worker to copy a file.
 
     :param source: path to the source file
     :param destination: path to the destination file
@@ -37,19 +37,19 @@ class FileCopyThread(QtCore.QThread):
 
     # signals to update the progress dialog.
     error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
+    finished = QtCore.pyqtSignal()
+    updated = QtCore.pyqtSignal(int)
 
     def __init__(self, source, destination):
 
-        QtCore.QThread.__init__(self)
+        QtCore.QObject.__init__(self)
         self._is_running = False
         self._source = source
         self._destination = destination
 
     def run(self):
         """
-        Thread starting point.
+        Worker starting point.
         """
 
         self._is_running = True
@@ -58,11 +58,11 @@ class FileCopyThread(QtCore.QThread):
         except OSError as e:
             log.warning("cannot copy: {}".format(e))
             self.error.emit("Could not copy file to {}: {}".format(self._destination, e), False)
-        self.completed.emit()
+        self.finished.emit()
 
-    def stop(self):
+    def cancel(self):
         """
-        Stops this thread as soon as possible.
+        Stops this worker.
         """
 
         self._is_running = False

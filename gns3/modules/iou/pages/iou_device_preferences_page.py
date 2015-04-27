@@ -29,7 +29,7 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.file_copy_thread import FileCopyThread
+from gns3.utils.file_copy_worker import FileCopyWorker
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -253,9 +253,8 @@ class IOUDevicePreferencesPage(QtGui.QWidget, Ui_IOUDevicePreferencesPageWidget)
                                                QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes:
                 destination_path = os.path.join(destination_directory, os.path.basename(path))
-                thread = FileCopyThread(path, destination_path)
-                progress_dialog = ProgressDialog(thread, "Project", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
-                thread.deleteLater()
+                worker = FileCopyWorker(path, destination_path)
+                progress_dialog = ProgressDialog(worker, "Project", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
                 progress_dialog.exec_()
                 errors = progress_dialog.errors()
