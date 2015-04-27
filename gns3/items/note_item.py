@@ -235,7 +235,7 @@ class NoteItem(QtGui.QGraphicsTextItem):
         if color:
             self.setDefaultTextColor(QtGui.QColor(color))
         if rotation is not None:
-            self.setRotation(rotation)
+            self.setRotation(float(rotation))
         if z is not None:
             self.setZValue(z)
 
