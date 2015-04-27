@@ -1334,9 +1334,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         try:
             self._project.commit()
             topo = topology.dump(random_id=random_id)
+            log.info("Saving project: {}".format(path))
+            content = json.dumps(topo, sort_keys=True, indent=4)
             with open(path, "w", encoding="utf-8") as f:
-                log.info("Saving project: {}".format(path))
-                json.dump(topo, f, sort_keys=True, indent=4)
+                f.write(content)
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
             return False
