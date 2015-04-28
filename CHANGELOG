@@ -1,5 +1,57 @@
 # Change Log
 
+## 1.3.2 28/04/2015
+
+* Fixes bug when IOS configs are not in VM settings.
+* Fixes small issue with Qemu VM monitor.
+* Fixes issue when only one port is added after a QEMU VM is created. Fixes #296.
+* Avoid Cygwin warning with VPCS on Windows.
+* Fixes issues with QThread handling.
+* Fixes missing title + icon in layer position warning message box.
+* Allows the warning message box to be displayed once only when moving an object to a background layer.
+* Fixes small issue with old monitor setting.
+* Check the config path is set when creating a IOU or IOS router.
+* Removes residual link when a NIO cannot be created on the server. Fixes #294.
+* Fix VPCS tests
+* Do not crash if an antivirus intercept a message and send non UTF-8
+* Avoid C++ runtime error when progress dialog is finished.
+* Merge remote-tracking branch 'origin/master'
+* Move FileCopyThread to FileCopyWorker.
+* If project loading fail fallback to real temporary project
+* Do not crash if rotation is a string
+* I think it's prevent empty topologies
+* Explicit utf-8 decoding.
+* Fixes rare maximum recursion depth exceeded exception.
+* Check for invalid base VM configuration files.
+* Catch ValueError exception thrown by mmap(): cannot mmap an empty file.
+* Use QThreads the correct way (moveToThread).
+* Fixes broken serial console connection.
+* Fixes "RuntimeError: wrapped C/C++ object ... has been deleted" exceptions with item links.
+* Allows exported config files to be created even when there is no config set on VMs.
+* Do not try to export empty VPCS startup configs.
+* Prevent issues when a file with a simple number is considered valid JSON.
+* Explicit error when mmap throw an invalid argument exception.
+* Do not replace invalid utf-8 characters when reading the iourc file (we catch the exception to tell the user this is an invalid file).
+* Explicit utf-8 encoding where necessary to avoid Unicode errors on Windows (we require/set an utf-8 locale on other systems).
+* Save as dialog opens in the projects directory. Fixes #267.
+* Adds Terminal + nc for serial console connections on OSX. Fixes #228.
+* Improve warning when non unicode char in iourc
+* Crash report not for developers and new key
+* Do not crash if we can't change IOU permission
+* More checks when decompressing IOS images.
+* Warn users that they must provide their router images.
+* Display an error and link to the documentation if no router available
+* Display print( in std console and Qt Console
+* Fix tests and a potential issue where initial_content is not send
+* Fix a crash in qemu loading
+* Removes unnecessary progress dialog when listing VirtualBox VMs.
+* Fixes issues when pushing configs for Dynamips and IOU.
+* Allow for empty initial-config path for IOU VM templates. Send IOU VM settings while creating it (POST) and not using the update API call immediately after (PUT).
+* Allow for empty startup-config and private-config paths for IOS routers.
+* Send QEMU VM settings while creating it (POST) and not using the update API call immediately after (PUT).
+* Include resources and tests in pypi packages
+* Fix issue during project import on Windows with non local server
+
 ## 1.3.1 11/04/2015
 
 * Release
