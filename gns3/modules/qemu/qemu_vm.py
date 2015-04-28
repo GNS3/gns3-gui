@@ -430,7 +430,8 @@ class QemuVM(VM):
         if not vm_id:
             vm_id = node_info["vm_id"]
         settings = node_info["properties"]
-        settings.pop("monitor")  # for compatibility with older projects
+        if "monitor" in settings:
+            settings.pop("monitor")  # for compatibility with older projects
         name = settings.pop("name")
         qemu_path = settings.pop("qemu_path")
         self.updated_signal.connect(self._updatePortSettings)
