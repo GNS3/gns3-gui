@@ -130,7 +130,7 @@ def test_exportConfig(tmpdir, vpcs_device):
         assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
 
         # Callback
-        args[1]({"startup_script": "echo TEST"})
+        args[1]({"startup_script": "echo TEST"}, context={"path": str(path)})
 
         assert path.exists()
 
@@ -150,7 +150,7 @@ def test_exportConfigToDirectory(tmpdir, vpcs_device):
         assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
 
         # Callback
-        args[1]({"startup_script": "echo TEST"})
+        args[1]({"startup_script": "echo TEST"}, context={"directory": str(tmpdir)})
 
         assert path.exists()
 

@@ -137,10 +137,12 @@ class Link(QtCore.QObject):
                                                             self._destination_port.name()))
 
         # delete the NIOs on both source and destination nodes
-        self._source_node.deleteNIO(self._source_port)
+        if self._source_port.nio():
+            self._source_node.deleteNIO(self._source_port)
         self._source_port.setFree()
         self._source_node.updated_signal.emit()
-        self._destination_node.deleteNIO(self._destination_port)
+        if self._destination_port.nio():
+            self._destination_node.deleteNIO(self._destination_port)
         self._destination_port.setFree()
         self._destination_node.updated_signal.emit()
 
@@ -344,10 +346,6 @@ class Link(QtCore.QObject):
                     # ignore TypeError: 'method' object is not connected
                     pass
 
-                self._source_node.deleteNIO(self._source_port)
-                self._source_port.setFree()
-                self._source_node.updated_signal.emit()
-
             elif self._destination_node.id() != node_id:
                 try:
                     # the source node has canceled its NIO allocation
@@ -355,10 +353,6 @@ class Link(QtCore.QObject):
                 except TypeError:
                     # ignore TypeError: 'method' object is not connected
                     pass
-
-                self._destination_node.deleteNIO(self._destination_port)
-                self._destination_port.setFree()
-                self._destination_node.updated_signal.emit()
 
             self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
             self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
@@ -372,6 +366,7 @@ class Link(QtCore.QObject):
 
         self._source_nio_active = False
         self._destination_nio_active = False
+        self.deleteLink()
 
     def dump(self):
         """

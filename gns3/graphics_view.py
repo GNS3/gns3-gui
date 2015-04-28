@@ -83,6 +83,8 @@ class GraphicsView(QtGui.QGraphicsView):
         self._dragging = False
         self._last_mouse_position = None
         self._topology = Topology.instance()
+        self._background_warning_msgbox = QtGui.QErrorMessage(self)
+        self._background_warning_msgbox.setWindowTitle("Layer position")
 
         # set the scene
         scene = QtGui.QGraphicsScene(parent=self)
@@ -1273,15 +1275,13 @@ class GraphicsView(QtGui.QGraphicsView):
         contextual menu.
         """
 
-        show_message = True
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
                 current_zvalue = item.zValue()
                 item.setZValue(current_zvalue - 1)
                 item.update()
-                if item.zValue() == -1 and show_message:
-                    QtGui.QMessageBox.information(self, "Layer position", "Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
-                    show_message = False
+                if item.zValue() == -1:
+                    self._background_warning_msgbox.showMessage("Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
 
     def deleteActionSlot(self):
         """

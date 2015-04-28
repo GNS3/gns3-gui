@@ -137,7 +137,7 @@ class IOUDevice(VM):
 
         # push the initial-config
         if "initial_config" in additional_settings:
-            if os.path.isfile(additional_settings["initial_config"]):
+            if additional_settings["initial_config"] and os.path.isfile(additional_settings["initial_config"]):
                 base_config_content = self._readBaseConfig(additional_settings["initial_config"])
                 if base_config_content is None:
                     return
@@ -210,7 +210,7 @@ class IOUDevice(VM):
                 params[name] = value
 
         if "initial_config" in new_settings:
-            if os.path.isfile(new_settings["initial_config"]):
+            if new_settings["initial_config"] and os.path.isfile(new_settings["initial_config"]):
                 base_config_content = self._readBaseConfig(new_settings["initial_config"])
                 if base_config_content is None:
                     return
