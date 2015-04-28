@@ -239,7 +239,7 @@ class Router(VM):
             params["dynamips_id"] = dynamips_id
 
         # push the startup-config
-        if "startup_config" in additional_settings:
+        if not vm_id and "startup_config" in additional_settings:
             if additional_settings["startup_config"] and os.path.isfile(additional_settings["startup_config"]):
                 base_config_content = self._readBaseConfig(additional_settings["startup_config"])
                 if base_config_content is None:
@@ -248,7 +248,7 @@ class Router(VM):
             del additional_settings["startup_config"]
 
         # push the private-config
-        if "private_config" in additional_settings:
+        if not vm_id and "private_config" in additional_settings:
             if additional_settings["private_config"] and os.path.isfile(additional_settings["private_config"]):
                 base_config_content = self._readBaseConfig(additional_settings["private_config"])
                 if base_config_content is None:
