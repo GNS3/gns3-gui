@@ -141,6 +141,9 @@ class QemuVM(VM):
                                                                                                    self._settings[name],
                                                                                                    value))
                 self._settings[name] = value
+                if name == "adapters":
+                    self._ports.clear()
+                    self._addAdapters(self._settings["adapters"])
 
         if self._loading:
             self.updated_signal.emit()
