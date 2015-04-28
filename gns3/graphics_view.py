@@ -83,7 +83,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._dragging = False
         self._last_mouse_position = None
         self._topology = Topology.instance()
-        self._background_warning_msgbox = QtGui.QErrorMessage(self)
+        self._background_warning_msgbox = QtWidgets.QErrorMessage(self)
         self._background_warning_msgbox.setWindowTitle("Layer position")
 
         # set the scene
