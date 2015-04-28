@@ -29,7 +29,6 @@ import shutil
 import json
 import glob
 import logging
-import functools
 import posixpath
 import stat
 
@@ -49,8 +48,8 @@ from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .settings import GENERAL_SETTINGS, GENERAL_SETTING_TYPES, CLOUD_SETTINGS, CLOUD_SETTINGS_TYPES, ENABLE_CLOUD
 from .utils.progress_dialog import ProgressDialog
-from .utils.process_files_thread import ProcessFilesThread
-from .utils.wait_for_connection_thread import WaitForConnectionThread
+from .utils.process_files_worker import ProcessFilesWorker
+from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.message_box import MessageBox
 from .utils.analytics import AnalyticsClient
 from .ports.port import Port
@@ -870,7 +869,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if network_reply.error() != QtNetwork.QNetworkReply.NoError and not is_silent:
             QtWidgets.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
         else:
-            latest_release = bytes(network_reply.readAll()).decode().rstrip()
+            latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
             if parse_version(__version__) < parse_version(latest_release):
                 reply = QtWidgets.QMessageBox.question(self,
                                                        "Check For Update",
@@ -1193,9 +1192,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     print("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
 
                 if servers.startLocalServer():
-                    thread = WaitForConnectionThread(server.host, server.port)
-                    thread.deleteLater()
-                    progress_dialog = ProgressDialog(thread,
+                    worker = WaitForConnectionWorker(server.host, server.port)
+                    progress_dialog = ProgressDialog(worker,
                                                      "Local server",
                                                      "Connecting to server {} on port {}...".format(server.host, server.port),
                                                      "Cancel", busy=True, parent=self)
@@ -1256,8 +1254,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if default_project_name.endswith(".gns3"):
                 default_project_name = default_project_name[:-5]
 
-        projects_dir_path = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
-
+        projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
         file_dialog = QtWidgets.QFileDialog(self)
         file_dialog.setWindowTitle("Save project")
         file_dialog.setNameFilters(["Directories"])
@@ -1286,16 +1283,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             # move files if saving from a temporary project
             log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
-            thread = ProcessFilesThread(self._project.filesDir(), project_dir, move=True)
-            progress_dialog = ProgressDialog(thread, "Project", "Moving project files...", "Cancel", parent=self)
+            worker = ProcessFilesWorker(self._project.filesDir(), project_dir, move=True)
+            progress_dialog = ProgressDialog(worker, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
             log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
-            thread = ProcessFilesThread(self._project.filesDir(), project_dir)
-            progress_dialog = ProgressDialog(thread, "Project", "Copying project files...", "Cancel", parent=self)
+            worker = ProcessFilesWorker(self._project.filesDir(), project_dir)
+            progress_dialog = ProgressDialog(worker, "Project", "Copying project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
-        thread.deleteLater()
 
         errors = progress_dialog.errors()
         if errors:
@@ -1325,9 +1321,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             self._project.commit()
             topo = topology.dump(random_id=random_id)
-            with open(path, "w") as f:
-                log.info("Saving project: {}".format(path))
-                json.dump(topo, f, sort_keys=True, indent=4)
+            log.info("Saving project: {}".format(path))
+            content = json.dumps(topo, sort_keys=True, indent=4)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(content)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
             return False
@@ -1417,9 +1414,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             # log.error("exception {type}".format(type=type(e)), exc_info=1)
+            self._createTemporaryProject()
             return False
         except ValueError as e:
-            QtWidgets.QMessageBox.critical(self, "Load", "Invalid file: {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "Load", "Invalid or corrupted file: {}".format(e))
+            self._createTemporaryProject()
             return False
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
@@ -1578,9 +1577,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         try:
-            with open(project) as f:
+            with open(project, encoding="utf-8") as f:
                 json_topology = json.load(f)
+                if not isinstance(json_topology, dict):
+                    raise ValueError("Not a GNS3 project")
 
+                self.CloudInspectorView.clear()
                 if json_topology["resources_type"] != 'cloud':
                     # do nothing in case of local projects
                     return

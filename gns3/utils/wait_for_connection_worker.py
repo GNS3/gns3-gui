@@ -24,7 +24,7 @@ import time
 from ..qt import QtCore
 
 
-class WaitForConnectionThread(QtCore.QThread):
+class WaitForConnectionWorker(QtCore.QObject):
 
     """
     Thread to wait for a connection.
@@ -35,8 +35,8 @@ class WaitForConnectionThread(QtCore.QThread):
 
     # signals to update the progress dialog.
     error = QtCore.pyqtSignal(str, bool)
-    completed = QtCore.pyqtSignal()
-    update = QtCore.pyqtSignal(int)
+    finished = QtCore.pyqtSignal()
+    updated = QtCore.pyqtSignal(int)
 
     def __init__(self, host, port):
 
@@ -47,7 +47,7 @@ class WaitForConnectionThread(QtCore.QThread):
 
     def run(self):
         """
-        Thread starting point.
+        Worker starting point.
         """
 
         self._is_running = True
@@ -76,18 +76,18 @@ class WaitForConnectionThread(QtCore.QThread):
 
         if not connection_success:
 
-            # let the GUI know about the connection was unsuccessful and finish the thread
+            # let the GUI know about the connection was unsuccessful
             self.error.emit("Could not connect to {} on port {}: {}".format(self._host,
                                                                             self._port,
                                                                             last_exception), True)
             return
 
-        # connection has been successful, let's inform the GUI before the thread exits
-        self.completed.emit()
+        # connection has been successful, let's inform the GUI
+        self.finished.emit()
 
-    def stop(self):
+    def cancel(self):
         """
-        Stops this thread as soon as possible.
+        Cancel this worker.
         """
 
         self._is_running = False

@@ -83,6 +83,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._dragging = False
         self._last_mouse_position = None
         self._topology = Topology.instance()
+        self._background_warning_msgbox = QtGui.QErrorMessage(self)
+        self._background_warning_msgbox.setWindowTitle("Layer position")
 
         # set the scene
         scene = QtWidgets.QGraphicsScene(parent=self)
@@ -178,9 +180,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if enabled:
             self.setCursor(QtCore.Qt.CrossCursor)
         else:
-            if self._newlink:
+            if self._newlink and self._newlink in self.scene().items():
                 self.scene().removeItem(self._newlink)
-                self._newlink = None
+            self._newlink = None
             self.setCursor(QtCore.Qt.ArrowCursor)
         self._adding_link = enabled
 
@@ -405,9 +407,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 QtWidgets.QMessageBox.critical(self, "Connection", "Server {} cannot communicate with server {}, most likely because your local server host binding is set to a local address".format(source_host, destination_host))
                 return
 
-            self.scene().removeItem(self._newlink)
-            self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
+            if self._newlink in self.scene().items():
+                self.scene().removeItem(self._newlink)
             self._newlink = None
+            self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
 
     def mousePressEvent(self, event):
         """
@@ -566,7 +569,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             hBar.setValue(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else -delta.x()))
             vBar.setValue(vBar.value() - delta.y())
             self._last_mouse_position = mapped_global_pos
-        if self._adding_link and self._newlink:
+        if self._adding_link and self._newlink and self._newlink in self.scene().items():
             # update the mouse position when the user is adding a link.
             self._newlink.setMousePoint(self.mapToScene(event.pos()))
             event.ignore()
@@ -923,7 +926,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if hasattr(node, "serialConsole") and node.serialConsole():
             try:
                 from .serial_console import serialConsole
-                serialConsole(node.name())
+                serialConsole(node.name(), node.serialPipe())
             except (OSError, ValueError) as e:
                 QtWidgets.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
                 return False
@@ -1273,15 +1276,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
         contextual menu.
         """
 
-        show_message = True
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
                 current_zvalue = item.zValue()
                 item.setZValue(current_zvalue - 1)
                 item.update()
-                if item.zValue() == -1 and show_message:
-                    QtWidgets.QMessageBox.information(self, "Layer position", "Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
-                    show_message = False
+
+                if item.zValue() == -1:
+                    self._background_warning_msgbox.showMessage("Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
 
     def deleteActionSlot(self):
         """

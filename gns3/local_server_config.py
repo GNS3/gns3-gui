@@ -41,7 +41,7 @@ class LocalServerConfig:
         self._config_file = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), filename)
         try:
             # create the config file if it doesn't exist
-            open(self._config_file, 'a').close()
+            open(self._config_file, "a").close()
         except OSError as e:
             log.error("Could not create the local server configuration {}: {}".format(self._config_file, e))
         self.readConfig()
@@ -63,7 +63,7 @@ class LocalServerConfig:
 
         try:
             log.debug("Write configuration file %s", self._config_file)
-            with open(self._config_file, 'w') as fp:
+            with open(self._config_file, "w", encoding="utf-8") as fp:
                 self._config.write(fp)
         except (OSError, configparser.Error) as e:
             log.error("Could not write the local server configuration {}: {}".format(self._config_file, e))

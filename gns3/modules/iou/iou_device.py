@@ -138,18 +138,23 @@ class IOUDevice(VM):
 
         # push the initial-config
         if "initial_config" in additional_settings:
-            if os.path.isfile(additional_settings["initial_config"]):
-                params["initial_config_content"] = self._readBaseConfig(additional_settings["initial_config"])
+            if additional_settings["initial_config"] and os.path.isfile(additional_settings["initial_config"]):
+                base_config_content = self._readBaseConfig(additional_settings["initial_config"])
+                if base_config_content is None:
+                    return
+                params["initial_config_content"] = base_config_content
             del additional_settings["initial_config"]
 
         # push the iourc file
         module_settings = self._module.settings()
         if module_settings["iourc_path"] and os.path.isfile(module_settings["iourc_path"]):
             try:
-                with open(module_settings["iourc_path"], 'rb') as f:
+                with open(module_settings["iourc_path"], "rb") as f:
                     params["iourc_content"] = f.read().decode("utf-8")
             except OSError as e:
                 print("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
+            except UnicodeDecodeError as e:
+                print("Invalid IOURC file {}: {}".format(module_settings["iourc_path"], e))
 
         params.update(additional_settings)
         self.httpPost("/iou/vms", self._setupCallback, body=params)
@@ -206,8 +211,11 @@ class IOUDevice(VM):
                 params[name] = value
 
         if "initial_config" in new_settings:
-            if os.path.isfile(new_settings["initial_config"]):
-                params["initial_config_content"] = self._readBaseConfig(new_settings["initial_config"])
+            if new_settings["initial_config"] and os.path.isfile(new_settings["initial_config"]):
+                base_config_content = self._readBaseConfig(new_settings["initial_config"])
+                if base_config_content is None:
+                    return
+                params["initial_config_content"] = base_config_content
             del new_settings["initial_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
@@ -465,13 +473,9 @@ class IOUDevice(VM):
         :param config_export_path: export path for the initial-config
         """
 
-        self.httpGet("/iou/vms/{vm_id}/initial_config".format(
-            vm_id=self._vm_id,
-        ),
-            self._exportConfigCallback,
-            context={
-            "path": config_export_path
-        })
+        self.httpGet("/iou/vms/{vm_id}/initial_config".format(vm_id=self._vm_id),
+                     self._exportConfigCallback,
+                     context={"path": config_export_path})
 
     def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -481,18 +485,18 @@ class IOUDevice(VM):
         :param error: indicates an error (boolean)
         """
 
-        path = context["path"]
         if error:
             log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            if "content" in result is not None:
-                try:
-                    with open(path, "wb") as f:
-                        log.info("saving {} initial-config to {}".format(self.name(), path))
+        elif "content" in result:
+            path = context["path"]
+            try:
+                with open(path, "wb") as f:
+                    log.info("saving {} initial-config to {}".format(self.name(), path))
+                    if result["content"]:
                         f.write(result["content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "Could not export initial-config to {}: {}".format(path, e))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "Could not export initial-config to {}: {}".format(path, e))
 
     def exportConfigToDirectory(self, directory):
         """
@@ -501,13 +505,9 @@ class IOUDevice(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/iou/vms/{vm_id}/initial_config".format(
-            vm_id=self._vm_id,
-        ),
-            self._exportConfigToDirectoryCallback,
-            context={
-            "directory": directory
-        })
+        self.httpGet("/iou/vms/{vm_id}/initial_config".format(vm_id=self._vm_id),
+                     self._exportConfigToDirectoryCallback,
+                     context={"directory": directory})
 
     def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -517,20 +517,19 @@ class IOUDevice(VM):
         :param error: indicates an error (boolean)
         """
 
-        export_directory = context["directory"]
         if error:
             log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-
-            if "content" in result:
-                config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_initial-config.cfg"
-                try:
-                    with open(config_path, "wb") as f:
-                        log.info("saving {} initial-config to {}".format(self.name(), config_path))
+        elif "content" in result:
+            export_directory = context["directory"]
+            config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_initial-config.cfg"
+            try:
+                with open(config_path, "wb") as f:
+                    log.info("saving {} initial-config to {}".format(self.name(), config_path))
+                    if result["content"]:
                         f.write(result["content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(config_path, e))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(config_path, e))
 
     def importConfig(self, path):
         """

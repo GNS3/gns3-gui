@@ -29,7 +29,7 @@ from gns3.modules.module_error import ModuleError
 from gns3.main_window import MainWindow
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.file_copy_thread import FileCopyThread
+from gns3.utils.file_copy_worker import FileCopyWorker
 
 from ..ui.qemu_vm_configuration_page_ui import Ui_QemuVMConfigPageWidget
 from .. import Qemu
@@ -121,9 +121,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 destination_path = os.path.join(destination_directory, os.path.basename(path))
-                thread = FileCopyThread(path, destination_path)
-                progress_dialog = ProgressDialog(thread, "QEMU disk image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
-                thread.deleteLater()
+                worker = FileCopyWorker(path, destination_path)
+                progress_dialog = ProgressDialog(worker, "QEMU disk image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
                 progress_dialog.exec_()
                 errors = progress_dialog.errors()

@@ -241,14 +241,20 @@ class Router(VM):
 
         # push the startup-config
         if not vm_id and "startup_config" in additional_settings:
-            if os.path.isfile(additional_settings["startup_config"]):
-                params["startup_config_content"] = self._readBaseConfig(additional_settings["startup_config"])
+            if additional_settings["startup_config"] and os.path.isfile(additional_settings["startup_config"]):
+                base_config_content = self._readBaseConfig(additional_settings["startup_config"])
+                if base_config_content is None:
+                    return
+                params["startup_config_content"] = base_config_content
             del additional_settings["startup_config"]
 
         # push the private-config
         if not vm_id and "private_config" in additional_settings:
-            if os.path.isfile(additional_settings["private_config"]):
-                params["private_config_content"] = self._readBaseConfig(additional_settings["private_config"])
+            if additional_settings["private_config"] and os.path.isfile(additional_settings["private_config"]):
+                base_config_content = self._readBaseConfig(additional_settings["private_config"])
+                if base_config_content is None:
+                    return
+                params["private_config_content"] = base_config_content
             del additional_settings["private_config"]
 
         params.update(additional_settings)
@@ -316,13 +322,19 @@ class Router(VM):
                 params[name] = value
 
         if "startup_config" in new_settings:
-            if os.path.isfile(new_settings["startup_config"]):
-                params["startup_config_content"] = self._readBaseConfig(new_settings["startup_config"])
+            if new_settings["startup_config"] and os.path.isfile(new_settings["startup_config"]):
+                base_config_content = self._readBaseConfig(new_settings["startup_config"])
+                if base_config_content is None:
+                    return
+                params["startup_config_content"] = base_config_content
             del new_settings["startup_config"]
 
         if "private_config" in new_settings:
-            if os.path.isfile(new_settings["private_config"]):
-                params["private_config_content"] = self._readBaseConfig(new_settings["private_config"])
+            if new_settings["private_config"] and os.path.isfile(new_settings["private_config"]):
+                base_config_content = self._readBaseConfig(new_settings["private_config"])
+                if base_config_content is None:
+                    return
+                params["private_config_content"] = base_config_content
             del new_settings["private_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
@@ -771,14 +783,10 @@ class Router(VM):
         :param private_config_export_path: export path for the private-config
         """
 
-        self.httpGet("/dynamips/vms/{vm_id}/configs".format(
-            vm_id=self._vm_id,
-        ),
-            self._exportConfigCallback,
-            context={
-            "startup_config_path": startup_config_export_path,
-            "private_config_path": private_config_export_path
-        })
+        self.httpGet("/dynamips/vms/{vm_id}/configs".format(vm_id=self._vm_id),
+                     self._exportConfigCallback,
+                     context={"startup_config_path": startup_config_export_path,
+                              "private_config_path": private_config_export_path})
 
     def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -794,20 +802,21 @@ class Router(VM):
         else:
             startup_config_path = context["startup_config_path"]
             private_config_path = context["private_config_path"]
-
-            if "startup_config_content" in result is not None:
+            if "startup_config_content" in result:
                 try:
                     with open(startup_config_path, "wb") as f:
                         log.info("Saving {} startup-config to {}".format(self.name(), startup_config_path))
-                        f.write(result["startup_config_content"].encode("utf-8"))
+                        if result["startup_config_content"]:
+                            f.write(result["startup_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(startup_config_path, e))
 
-            if "private_config_content" in result is not None:
+            if "private_config_content" in result:
                 try:
                     with open(private_config_path, "wb") as f:
                         log.info("Saving {} private-config to {}".format(self.name(), private_config_path))
-                        f.write(result["private_config_content"].encode("utf-8"))
+                        if result["private_config_content"]:
+                            f.write(result["private_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(private_config_path, e))
 
@@ -818,13 +827,9 @@ class Router(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/dynamips/vms/{vm_id}/configs".format(
-            vm_id=self._vm_id,
-        ),
-            self._exportConfigToDirectoryCallback,
-            context={
-            "directory": directory
-        })
+        self.httpGet("/dynamips/vms/{vm_id}/configs".format(vm_id=self._vm_id),
+                     self._exportConfigToDirectoryCallback,
+                     context={"directory": directory})
 
     def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -844,7 +849,8 @@ class Router(VM):
                 try:
                     with open(config_path, "wb") as f:
                         log.info("saving {} startup-config to {}".format(self.name(), config_path))
-                        f.write(result["startup_config_content"].encode("utf-8"))
+                        if result["startup_config_content"]:
+                            f.write(result["startup_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(config_path, e))
             if "private_config_content" in result:
@@ -852,7 +858,8 @@ class Router(VM):
                 try:
                     with open(config_path, "wb") as f:
                         log.info("saving {} private-config to {}".format(self.name(), config_path))
-                        f.write(result["private_config_content"].encode("utf-8"))
+                        if result["private_config_content"]:
+                            f.write(result["private_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(config_path, e))
 

@@ -23,10 +23,10 @@ import os
 import sys
 import platform
 
-# Projects directory location
+# Default projects directory location
 DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 
-# Images directory location
+# Default images directory location
 DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
@@ -121,10 +121,11 @@ if sys.platform.startswith("win"):
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Terminal + socat': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"socat UNIX-CONNECT:\\\"%s\\\" stdio,raw,echo=0 ; exit\"'"}
+    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Terminal + nc': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"stty raw; nc -U \\\"%s\\\"; exit\"'",
+                                             'Terminal + socat': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"socat UNIX-CONNECT:\\\"%s\\\" stdio,raw,echo=0 ; exit\"'"}
 
     # default Mac OS X serial console command
-    DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Terminal + socat"]
+    DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS['Terminal + nc']
 
 else:
     PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T "%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',

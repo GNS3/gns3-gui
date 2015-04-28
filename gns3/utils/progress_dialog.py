@@ -19,7 +19,7 @@
 Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
-from ..qt import QtGui, QtWidgets
+from ..qt import QtGui, QtWidgets, QtCore
 
 
 class ProgressDialog(QtWidgets.QProgressDialog):
@@ -36,7 +36,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
     :param parent: parent widget
     """
 
-    def __init__(self, thread, title, label_text, cancel_button_text, busy=False, parent=None):
+    def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None):
 
         minimum = 0
         maximum = 100
@@ -49,13 +49,35 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.setModal(True)
         self._errors = []
         self.setWindowTitle(title)
+        self.canceled.connect(worker.cancel)
+        # self.canceled.connect(self._cancel)
 
-        # connect the signals and start the thread
-        self._thread = thread
-        self._thread.update.connect(self._updateProgress)
-        self._thread.completed.connect(self._completed)
-        self._thread.error.connect(self._error)
+        # create the thread and set the worker
+        self._thread = QtCore.QThread(self)
+        worker.moveToThread(self._thread)
+
+        # connect worker the signals
+        worker.updated.connect(self._updateProgress)
+        worker.error.connect(self._error)
+        # worker.finished.connect(self._thread.quit)
+        worker.finished.connect(self.accept)
+        worker.finished.connect(worker.deleteLater)
+
+        #  connect the thread signals and start the thread
+        self._thread.started.connect(worker.run)
+        # self._thread.finished.connect(self._thread.deleteLater)
         self._thread.start()
+
+    def __del__(self):
+        """
+        Delete the thread.
+        """
+
+        self._thread.quit()
+        if not self._thread.wait(3000):
+            self._thread.terminate()
+            self._thread.wait()
+        self._thread.deleteLater()
 
     def _updateProgress(self, value):
         """
@@ -65,14 +87,6 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         """
 
         self.setValue(value)
-
-    def _completed(self):
-        """
-        Slot to close this dialog when the thread is finished.
-        """
-
-        self._thread.wait()
-        QtWidgets.QProgressDialog.accept(self)
 
     def _error(self, message, stop=False):
         """
@@ -95,14 +109,3 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         """
 
         return self._errors
-
-    def done(self, result):
-        """
-        Stop the thread and close this dialog.
-        """
-
-        self._thread.stop()
-        if not self._thread.wait(3000):
-            self._thread.terminate()
-            self._thread.wait()
-        super().done(result)

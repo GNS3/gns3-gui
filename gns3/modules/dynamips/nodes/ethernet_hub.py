@@ -108,7 +108,7 @@ class EthernetHub(Device):
                     self._ports.remove(port)
                     updated = True
                     log.debug("port {} has been removed".format(port.name()))
-                else:
+                elif port.name() in ports_to_create:
                     ports_to_create.remove(port.name())
 
             for port_name in ports_to_create:

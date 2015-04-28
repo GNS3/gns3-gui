@@ -527,9 +527,12 @@ class Topology:
         log.debug("Start loading topology")
         self._project = project
 
-        with open(path, "r") as f:
+        with open(path, encoding="utf-8") as f:
             log.info("loading project: {}".format(path))
             json_topology = json.load(f)
+
+        if not isinstance(json_topology, dict):
+            raise ValueError("Not a GNS3 project")
 
         if "project_id" in json_topology:
             self._project.setId(json_topology["project_id"])

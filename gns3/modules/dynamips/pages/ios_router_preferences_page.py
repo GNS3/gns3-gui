@@ -22,7 +22,6 @@ Configuration page for IOS router preferences.
 import os
 import copy
 import sys
-import shutil
 import math
 import zipfile
 import logging
@@ -33,7 +32,7 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.file_copy_thread import FileCopyThread
+from gns3.utils.file_copy_worker import FileCopyWorker
 
 from .. import Dynamips
 from ..settings import IOS_ROUTER_SETTINGS
@@ -257,8 +256,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         compressed = False
         try:
             compressed = isIOSCompressed(path)
-        except OSError as e:
-            QtWidgets.QMessageBox.warning(parent, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
+        except (OSError, ValueError):
+            pass  # ignore errors if we cannot find out the IOS image is compressed.
         if compressed:
             reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
@@ -282,9 +281,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 destination_path = os.path.join(destination_directory, os.path.basename(path))
-                thread = FileCopyThread(path, destination_path)
-                progress_dialog = ProgressDialog(thread, "IOS image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
-                thread.deleteLater()
+                worker = FileCopyWorker(path, destination_path)
+                progress_dialog = ProgressDialog(worker, "IOS image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
                 progress_dialog.exec_()
                 errors = progress_dialog.errors()
@@ -338,8 +336,12 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                 if not isIOSCompressed(path):
                     QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
                     return
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(self, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
+            except (OSError, ValueError) as e:
+                # errno 22, invalid argument means the file system where the IOS image is located doesn't support mmap
+                if e.errno == 22:
+                    QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} cannot be memory mapped, most likely because the file system doesn't support it".format(os.path.basename(path)))
+                else:
+                    QtWidgets.QMessageBox.critical(self, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
                 return
 
             decompressed_image_path = os.path.splitext(path)[0] + ".image"

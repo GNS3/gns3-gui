@@ -351,7 +351,6 @@ class HTTPClient(QtCore.QObject):
         part of a JSON we keep it for the next packet
         """
 
-
         if response.error() != QtNetwork.QNetworkReply.NoError:  # FIXME: check for any side effects of this line
             content = bytes(response.readAll())
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
@@ -396,7 +395,11 @@ class HTTPClient(QtCore.QObject):
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
             log.info("Response error: {}".format(error_message))
-            body = bytes(response.readAll()).decode().strip("\0")
+            try:
+                body = bytes(response.readAll()).decode("utf-8").strip("\0")
+            # Some time antivirus intercept our query and reply with garbage content
+            except UnicodeError:
+                body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if callback is not None:
                 if not body or content_type != "application/json":
@@ -407,7 +410,7 @@ class HTTPClient(QtCore.QObject):
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
-            body = bytes(response.readAll()).decode().strip("\0")
+            body = bytes(response.readAll()).decode("utf-8").strip("\0")
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             log.debug(body)
             if body and len(body.strip(" \n\t")) > 0 and content_type == "application/json":
