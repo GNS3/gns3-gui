@@ -361,9 +361,9 @@ class Dynamips(Module):
                 settings["chassis"] = ios_router["chassis"]
             if "idlepc" in ios_router and ios_router["idlepc"]:
                 settings["idlepc"] = ios_router["idlepc"]
-            if ios_router["startup_config"]:
+            if "startup_config" in ios_router:
                 settings["startup_config"] = ios_router["startup_config"]
-            if "private_config" in ios_router and ios_router["private_config"]:
+            if "private_config" in ios_router:
                 settings["private_config"] = ios_router["private_config"]
 
             if ios_router["platform"] == "c7200":
