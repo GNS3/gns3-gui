@@ -233,7 +233,7 @@ class VM(Node):
             with open(config_path, "rb") as f:
                 log.info("Opening configuration file: {}".format(config_path))
                 config = f.read().decode("utf-8")
-                config = "!\n" + config.replace('\r', "")
+                config = config.replace('\r', "")
                 return config
         except OSError as e:
             self.error_signal.emit(self.id(), "Could not read configuration file {}: {}".format(config_path, e))
