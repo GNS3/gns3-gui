@@ -56,6 +56,7 @@ PLATFORM_TO_CLASS = {
 import logging
 log = logging.getLogger(__name__)
 
+
 class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
 
     """

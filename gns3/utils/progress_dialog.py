@@ -50,33 +50,34 @@ class ProgressDialog(QtGui.QProgressDialog):
         self._errors = []
         self.setWindowTitle(title)
         self.canceled.connect(worker.cancel)
-        self.canceled.connect(self._cancel)
+        #self.canceled.connect(self._cancel)
 
         # create the thread and set the worker
-        self._thread = QtCore.QThread()
+        self._thread = QtCore.QThread(self)
         worker.moveToThread(self._thread)
 
         # connect worker the signals
         worker.updated.connect(self._updateProgress)
         worker.error.connect(self._error)
-        worker.finished.connect(self._thread.quit)
+        #worker.finished.connect(self._thread.quit)
         worker.finished.connect(self.accept)
         worker.finished.connect(worker.deleteLater)
 
         #  connect the thread signals and start the thread
         self._thread.started.connect(worker.run)
-        self._thread.finished.connect(self._thread.deleteLater)
+        #self._thread.finished.connect(self._thread.deleteLater)
         self._thread.start()
 
-    def _cancel(self):
+    def __del__(self):
         """
-        Cancels the thread.
+        Delete the thread.
         """
 
         self._thread.quit()
         if not self._thread.wait(3000):
             self._thread.terminate()
             self._thread.wait()
+        self._thread.deleteLater()
 
     def _updateProgress(self, value):
         """
