@@ -471,8 +471,10 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             del settings["console"]
             del settings["aux"]
             del settings["mac_addr"]
-            del settings["startup_config"]
-            del settings["private_config"]
+            if "startup_config" in settings:
+                del settings["startup_config"]
+            if "private_config" in settings:
+                del settings["private_config"]
             del settings["image"]
 
         if not node:

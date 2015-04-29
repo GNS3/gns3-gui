@@ -185,6 +185,9 @@ class IOUDevice(VM):
                                                                                                self._settings[name],
                                                                                                value))
                 self._settings[name] = value
+                if name == "ethernet_adapters" or name == "serial_adapters":
+                    self._ports.clear()
+                    self._addAdapters(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
 
         if self._loading:
             self.updated_signal.emit()
