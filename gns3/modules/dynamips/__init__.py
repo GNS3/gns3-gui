@@ -460,7 +460,7 @@ class Dynamips(Module):
         # no registered IOS image is used, let's just ask for an IOS image path
         QtWidgets.QMessageBox.critical(mainwindow, "IOS image", "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image))
         from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        image_path = IOSRouterPreferencesPage.getIOSImage(mainwindow)
+        image_path = IOSRouterPreferencesPage.getIOSImage(mainwindow, None)
         if image_path:
             alternative_image["image"] = image_path
             self._ios_images_cache[image] = alternative_image

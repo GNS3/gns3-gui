@@ -33,6 +33,7 @@ from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.file_copy_worker import FileCopyWorker
+from gns3.image_manager import ImageManager
 
 from .. import Dynamips
 from ..settings import IOS_ROUTER_SETTINGS
@@ -380,15 +381,20 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             thread.wait()
 
     @staticmethod
-    def getIOSImage(parent):
+    def getImageDirectory():
+        return os.path.join(MainWindow.instance().imagesDirPath(), "IOS")
+
+    @classmethod
+    def getIOSImage(cls, parent, server):
         """
 
         :param parent: parent widget
+        :param server: The server where the image is located
 
         :return: path to the IOS image or None
         """
 
-        destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "IOS")
+        destination_directory = cls.getImageDirectory()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
                                                         "Select an IOS image",
                                                         destination_directory,
@@ -403,7 +409,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             return
 
         if sys.platform.startswith('win'):
-            # Dynamips (Cygwin acutally) doesn't like non ascii paths on Windows
+            # Dynamips (Cygwin actually) doesn't like non ascii paths on Windows
             try:
                 path.encode('ascii')
             except UnicodeEncodeError:
@@ -449,24 +455,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                     path = decompressed_image_path
                 thread.wait()
 
-        if os.path.normpath(os.path.dirname(path)) != destination_directory:
-            # the IOS image is not in the default images directory
-            reply = QtWidgets.QMessageBox.question(parent,
-                                                   "IOS image",
-                                                   "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
-                destination_path = os.path.join(destination_directory, os.path.basename(path))
-                worker = FileCopyWorker(path, destination_path)
-                progress_dialog = ProgressDialog(worker, "IOS image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
-                progress_dialog.show()
-                progress_dialog.exec_()
-                errors = progress_dialog.errors()
-                if errors:
-                    QtWidgets.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
-                else:
-                    path = destination_path
+        path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/dynamips/vms")
 
         return path
 

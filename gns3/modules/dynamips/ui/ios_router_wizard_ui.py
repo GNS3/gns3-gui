@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ios_router_wizard.ui'
 #
-# Created: Wed May  6 14:31:56 2015
+# Created: Sun May 10 20:44:27 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,9 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOSRouterWizard(object):
-
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName("IOSRouterWizard")
         IOSRouterWizard.resize(585, 398)
@@ -83,6 +81,11 @@ class Ui_IOSRouterWizard(object):
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.uiIOSImageListComboBox = QtWidgets.QComboBox(self.uiIOSImageWizardPage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiIOSImageListComboBox.sizePolicy().hasHeightForWidth())
+        self.uiIOSImageListComboBox.setSizePolicy(sizePolicy)
         self.uiIOSImageListComboBox.setObjectName("uiIOSImageListComboBox")
         self.horizontalLayout_5.addWidget(self.uiIOSImageListComboBox)
         self.uiIOSImageLineEdit = QtWidgets.QLineEdit(self.uiIOSImageWizardPage)
@@ -335,3 +338,4 @@ class Ui_IOSRouterWizard(object):
         self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core."))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:"))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder"))
+

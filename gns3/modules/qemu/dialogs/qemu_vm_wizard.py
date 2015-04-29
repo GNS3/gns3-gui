@@ -101,7 +101,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         Validates the server.
         """
 
-        if super().validateCurrentPage is False:
+        if super().validateCurrentPage() is False:
             return False
 
         if self.currentPage() == self.uiNameWizardPage:

@@ -30,6 +30,7 @@ from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.file_copy_worker import FileCopyWorker
+from gns3.image_manager import ImageManager
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -276,15 +277,20 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self._upload_image_progress_dialog.accept()
 
     @staticmethod
-    def getIOUImage(parent):
+    def getImageDirectory():
+        return os.path.join(MainWindow.instance().imagesDirPath(), "IOU")
+
+    @classmethod
+    def getIOUImage(cls, parent, server):
         """
 
         :param parent: parent widget
+        :param server: The server where the image is located
 
         :return: path to the IOU image or None
         """
 
-        destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "IOU")
+        destination_directory = cls.getImageDirectory()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
                                                         "Select an IOU image",
                                                         destination_directory,
@@ -320,31 +326,9 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             QtWidgets.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, e))
             return
 
-        if os.path.normpath(os.path.dirname(path)) != destination_directory:
-            # the IOU image is not in the default images directory
-            reply = QtWidgets.QMessageBox.question(parent,
-                                                   "IOU image",
-                                                   "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
-                destination_path = os.path.join(destination_directory, os.path.basename(path))
-                worker = FileCopyWorker(path, destination_path)
-                progress_dialog = ProgressDialog(worker, "Project", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
-                progress_dialog.show()
-                progress_dialog.exec_()
-                errors = progress_dialog.errors()
-                if errors:
-                    QtWidgets.QMessageBox.critical(parent, "IOS image", "{}".format("".join(errors)))
-                else:
-                    path = destination_path
-                    mode = os.stat(path).st_mode
-                    try:
-                        os.chmod(path, mode | stat.S_IXUSR)
-                    except OSError:
-                        pass
+        path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/iou/vms")
 
-        if not os.access(path, os.X_OK):
+        if os.path.exists(path) and not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))
 
         return path

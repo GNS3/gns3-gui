@@ -110,25 +110,23 @@ class VMWizard(QtWidgets.QWizard):
         :param image_selector: function which display an image selector and return path
         """
 
-        radio_button.toggled.connect(lambda checked: self._existingImageToggledSlot(checked, combo_box, line_edit, browser))
         combo_box.currentIndexChanged.connect(lambda index: self._imageListIndexChangedSlot(index, combo_box, line_edit))
         self._images_combo_boxes.add(combo_box)
 
         browser.clicked.connect(lambda: self._imageBrowserSlot(line_edit, image_selector))
-        if self.uiLocalRadioButton.isChecked():
-            browser.hide()
-        else:
-            browser.show()
+
         self._images_browser_buttons.add(browser)
 
         self._existingImageToggledSlot(True, combo_box, line_edit, browser)
+        radio_button.toggled.connect(lambda checked: self._existingImageToggledSlot(checked, combo_box, line_edit, browser))
 
     def _imageBrowserSlot(self, line_edit, image_selector):
         """
         Slot to open a file browser and select an image.
         """
 
-        path = image_selector(self)
+        server = Servers.instance().getServerFromString(self.getSettings()["server"])
+        path = image_selector(self, server)
         if not path:
             return
         line_edit.clear()
@@ -139,7 +137,10 @@ class VMWizard(QtWidgets.QWizard):
         User select a different image in the combo box
         """
         item = combo_box.itemData(index)
-        line_edit.setText(item["filename"])
+        if item and item["filename"]:
+            line_edit.setText(item["filename"])
+        else:
+            line_edit.setText("")
 
     def _existingImageToggledSlot(self, checked, combo_box, line_edit, browser):
         """

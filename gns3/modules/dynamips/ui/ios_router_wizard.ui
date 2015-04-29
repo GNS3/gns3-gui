@@ -166,7 +166,14 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QComboBox" name="uiIOSImageListComboBox"/>
+       <widget class="QComboBox" name="uiIOSImageListComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLineEdit" name="uiIOSImageLineEdit"/>
