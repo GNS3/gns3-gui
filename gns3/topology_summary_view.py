@@ -293,7 +293,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         """
 
         self.show_only_devices_with_capture = True
-        self.refreshAll()
+        self.refreshAllLinks()
 
     def _showAllDevicesSlot(self):
         """
@@ -301,7 +301,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         """
 
         self.show_only_devices_with_capture = False
-        self.refreshAll()
+        self.refreshAllLinks()
 
     def _stopAllCapturesSlot(self):
         """
