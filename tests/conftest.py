@@ -4,7 +4,7 @@ import os
 import uuid
 import unittest
 import sys
-
+sys._called_from_test = True
 
 # If the QT application is not initialized we can got segfault
 from gns3.qt.QtWidgets import QApplication
@@ -28,7 +28,6 @@ def reset_qt_signal():
     """
 
     from gns3.qt import FakeQtSignal
-
     FakeQtSignal.reset()
 
 
