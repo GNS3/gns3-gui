@@ -63,7 +63,7 @@ class VMware(Module):
         """
 
         if sys.platform.startswith("win"):
-            #TODO: find vmrun on Windows
+            # TODO: find vmrun on Windows
             vmrun_path = "VBoxManage.exe"
         elif sys.platform.startswith("darwin"):
             vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
@@ -228,11 +228,11 @@ class VMware(Module):
         if not vm:
             selected_vms = []
             for vm, info in self._vmware_vms.items():
-                if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                if info["server"] == node.server().host() or (node.server().isLocal() and info["server"] == "local"):
                     selected_vms.append(vm)
 
             if not selected_vms:
-                raise ModuleError("No VMware VM on server {}".format(node.server().host))
+                raise ModuleError("No VMware VM on server {}".format(node.server().url()))
             elif len(selected_vms) > 1:
 
                 from gns3.main_window import MainWindow
@@ -252,6 +252,7 @@ class VMware(Module):
                 if other_node.settings()["vmx_path"] == self._vmware_vms[vm]["vmx_path"] and \
                         (self._vmware_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._vmware_vms[vm]["server"] == other_node.server().host):
                     raise ModuleError("Sorry a VMware VM that is not a linked base can only be used once in your topology")
+
 
         vm_settings = {}
         for setting_name, value in self._vmware_vms[vm].items():

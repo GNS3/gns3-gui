@@ -264,11 +264,11 @@ class VirtualBox(Module):
         if not vm:
             selected_vms = []
             for vm, info in self._virtualbox_vms.items():
-                if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                if info["server"] == node.server().host() or (node.server().isLocal() and info["server"] == "local"):
                     selected_vms.append(vm)
 
             if not selected_vms:
-                raise ModuleError("No VirtualBox VM on server {}".format(node.server().host))
+                raise ModuleError("No VirtualBox VM on server {}".format(node.server().url()))
             elif len(selected_vms) > 1:
 
                 from gns3.main_window import MainWindow

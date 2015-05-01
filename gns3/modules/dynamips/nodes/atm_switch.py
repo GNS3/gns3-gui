@@ -199,8 +199,8 @@ class ATMSwitch(Device):
 """.format(name=self.name(),
            id=self.id(),
            device_id=self._device_id,
-           host=self._server.host,
-           port=self._server.port)
+           host=self._server.host(),
+           port=self._server.port())
 
         port_info = ""
         mapping = re.compile(r"""^([0-9]*):([0-9]*):([0-9]*)$""")

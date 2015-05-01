@@ -190,7 +190,7 @@ class ConsoleCmd(cmd.Cmd):
 
         name = node.name()
         console_port = node.console()
-        console_host = node.server().host
+        console_host = node.server().host()
         try:
             from .telnet_console import telnetConsole
             telnetConsole(name, console_host, console_port)

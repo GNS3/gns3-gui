@@ -290,7 +290,7 @@ class Dynamips(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def allocateServer(self, node_class, use_cloud=False):
+    def allocateServer(self, node_class):
         """
         Allocates a server.
 
@@ -302,20 +302,14 @@ class Dynamips(Module):
         # allocate a server for the node
         servers = Servers.instance()
 
-        if use_cloud:
-            from ...topology import Topology
-            topology = Topology.instance()
-            top_instance = topology.anyInstance()
-            server = servers.getCloudServer(top_instance.host, top_instance.port, top_instance.ssl_ca_file)
+        if self._settings["use_local_server"]:
+            # use the local server
+            server = servers.localServer()
         else:
-            if self._settings["use_local_server"]:
-                # use the local server
-                server = servers.localServer()
-            else:
-                # pick up a remote server (round-robin method)
-                server = next(iter(servers))
-                if not server:
-                    raise ModuleError("No remote server is configured")
+            # pick up a remote server (round-robin method)
+            server = next(iter(servers))
+            if not server:
+                raise ModuleError("No remote server is configured")
         return server
 
     def createNode(self, node_class, server, project):
@@ -499,7 +493,7 @@ class Dynamips(Module):
             # pick up a remote server (round-robin method)
             remote_server = next(iter(Servers.instance()))
             if remote_server:
-                server = "{}:{}".format(remote_server.host, remote_server.port)
+                server = remote_server.url()
 
         nodes = []
         for node_class in [EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:

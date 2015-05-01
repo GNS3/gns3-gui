@@ -103,7 +103,7 @@ class Builtin(Module):
                 return next(iter(servers))
 
             server_list = []
-            server_list.append("Local server ({}:{})".format(local_server.host, local_server.port))
+            server_list.append("Local server ({})".format(local_server.url()))
             for remote_server in remote_servers:
                 server_list.append("{}".format(remote_server))
 

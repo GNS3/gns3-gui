@@ -1043,6 +1043,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project.close(local_server_shutdown=False)
 
             if self._project.closed() and not servers.localServerIsRunning():
+                log.debug("Disconnect all servers")
+                servers.disconnectAllServers()
                 event.accept()
             else:
                 event.ignore()
@@ -1161,9 +1163,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 try:
                     # check if the local address still exists
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                        sock.bind((server.host, 0))
+                        sock.bind((server.host(), 0))
                 except OSError as e:
-                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host, e))
+                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host(), e))
                     return
 
                 try:
@@ -1171,28 +1173,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     find_unused_port = False
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                        sock.bind((server.host, server.port))
+                        sock.bind((server.host(), server.port()))
                 except OSError as e:
-                    log.warning("Could not use socket {}:{} {}".format(server.host, server.port, e))
+                    log.warning("Could not use socket {}:{} {}".format(server.host(), server.port(), e))
                     find_unused_port = True
 
                 if find_unused_port:
                     # find an alternate port for the local server
 
-                    old_port = server.port
+                    old_port = server.port()
                     try:
-                        server.port = self._findUnusedLocalPort(server.host)
+                        server.setPort(self._findUnusedLocalPort(server.host()))
                     except OSError as e:
                         QtWidgets.QMessageBox.critical(self, "Local server", "Could not find an unused port for the local server: {}".format(e))
                         return
-                    log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
-                    print("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
+                    log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
+                    print("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
 
                 if servers.startLocalServer():
-                    worker = WaitForConnectionWorker(server.host, server.port)
+                    worker = WaitForConnectionWorker(server.host(), server.port())
                     progress_dialog = ProgressDialog(worker,
                                                      "Local server",
-                                                     "Connecting to server {} on port {}...".format(server.host, server.port),
+                                                     "Connecting to server {} on port {}...".format(server.host(), server.port()),
                                                      "Cancel", busy=True, parent=self)
                     progress_dialog.show()
                     if not progress_dialog.exec_():

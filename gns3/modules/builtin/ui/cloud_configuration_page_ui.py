@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'cloud_configuration_page.ui'
 #
-# Created: Thu May 14 20:45:42 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Tue May 26 09:42:44 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_cloudConfigPageWidget:
-
+class Ui_cloudConfigPageWidget(object):
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
         cloudConfigPageWidget.resize(653, 478)
@@ -459,3 +457,4 @@ class Ui_cloudConfigPageWidget:
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIONullTab), _translate("cloudConfigPageWidget", "NULL"))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
+

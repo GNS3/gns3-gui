@@ -45,7 +45,7 @@ import logging
 log = logging.getLogger(__name__)
 
 # The topology version supported by client
-TOPOLOGY_REVISION = 3
+TOPOLOGY_REVISION = 4
 
 
 class TopologyInstance:
@@ -504,7 +504,7 @@ class Topology:
         if servers:
             topology_servers = topology["topology"]["servers"] = []
             for server in servers.values():
-                log.info("saving server {}:{}".format(server.host, server.port))
+                log.info("saving server {}".format(server.url))
                 topology_servers.append(server.dump())
 
         # instances
@@ -625,9 +625,11 @@ class Topology:
                 elif "cloud" in topology_server and topology_server["cloud"]:
                     self._servers[topology_server["id"]] = server_manager.anyCloudServer()
                 else:
+                    protocol = topology_server.get("protocol", "http")
                     host = topology_server["host"]
                     port = topology_server["port"]
-                    self._servers[topology_server["id"]] = server_manager.getRemoteServer(host, port)
+                    user = topology_server.get("user", None)
+                    self._servers[topology_server["id"]] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
 
         # nodes
         self._load_old_topology = False

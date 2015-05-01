@@ -244,7 +244,7 @@ class IOU(Module):
         if not iouimage:
             selected_images = []
             for image, info in self._iou_devices.items():
-                if info["server"] == node.server().host or (node.server().isLocal() and info["server"] == "local"):
+                if info["server"] == node.server().host() or (node.server().isLocal() and info["server"] == "local"):
                     selected_images.append(image)
 
             if not selected_images:

@@ -19,13 +19,13 @@
 import json
 import http
 import uuid
-import urllib.parse
 import urllib.request
 import pathlib
 from functools import partial
 
 from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork
+from .network_client import getNetworkUrl
 
 import logging
 log = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class HTTPClient(QtCore.QObject):
     """
     HTTP client.
 
-    :param url: URL to connect to the server
+    :param settings: Dictionnary with connection information to the server
     :param network_manager: A QT network manager
     """
 
@@ -54,16 +54,17 @@ class HTTPClient(QtCore.QObject):
     connected_signal = QtCore.Signal()
     connection_error_signal = QtCore.Signal(str)
 
-    def __init__(self, url, network_manager):
+    def __init__(self, settings, network_manager):
 
         super().__init__()
-        self._url = url
         self._version = ""
 
-        url_settings = urllib.parse.urlparse(url)
-        self.scheme = url_settings.scheme
-        self.host = url_settings.netloc.split(":")[0]
-        self.port = url_settings.port
+        self._scheme = settings.get("protocol", "http")
+        self._host = settings["host"]
+        self._http_host = settings["host"]
+        self._port = int(settings["port"])
+        self._http_port = int(settings["port"])
+        self._user = settings.get("user", None)
 
         self._connected = False
         self._local = True
@@ -78,12 +79,67 @@ class HTTPClient(QtCore.QObject):
         self._id = HTTPClient._instance_count
         HTTPClient._instance_count += 1
 
+    def getTunnel(self, port):
+        """
+        Get a tunnel to the remote port.
+        For HTTP standard client it's the same port. For SSH it will create a new tunnel.
+
+        :param port: Remote port
+        :returns: Tuple host, port to connect
+        """
+        return (self._host, port)
+
+    def releaseTunnel(self, port):
+        """
+        Release a tunnel to the remote port.
+        For HTTP standard client it's do nothing
+
+        :param port: Allocated remote port
+        """
+        pass
+
+    def settings(self):
+        """
+        Return a dictionnary with server settings
+        """
+        return {"protocol": self.protocol(),
+                "host": self.host(),
+                "port": self.port(),
+                "user": self.user()}
+
+    def host(self):
+        """
+        Host display to user
+        """
+        return self._host
+
+    def port(self):
+        """
+        Port display to user
+        """
+        return self._port
+
+    def setPort(self, port):
+        self._port = port
+
+    def protocol(self):
+        """
+        Transport protocol
+        """
+        return self._scheme
+
+    def user(self):
+        """
+        User login display to GNS3 user
+        """
+        return self._user
+
     def notify_progress_start_query(self, query_id):
         """
         Called when a query start
         """
         if HTTPClient._progress_callback:
-            HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {scheme}://{host}:{port}".format(scheme=self.scheme, host=self.host, port=self.port))
+            HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {}".format(self.url()))
 
     def notify_progress_end_query(cls, query_id):
         """
@@ -123,8 +179,7 @@ class HTTPClient(QtCore.QObject):
 
     def url(self):
         """Returns current server url"""
-
-        return "{scheme}://{host}:{port}".format(scheme=self.scheme, host=self.host, port=self.port)
+        return getNetworkUrl(self.protocol(), self.host(), self.port(), self.user(), self.settings())
 
     def id(self):
         """
@@ -162,7 +217,7 @@ class HTTPClient(QtCore.QObject):
         """
         Closes the connection with the server.
         """
-
+        log.info("Connection to %s closed", self.url())
         self._connected = False
 
     def isServerRunning(self):
@@ -173,7 +228,7 @@ class HTTPClient(QtCore.QObject):
         """
 
         try:
-            url = "{scheme}://{host}:{port}/v1/version".format(scheme=self.scheme, host=self.host, port=self.port)
+            url = "{protocol}://{host}:{port}/v1/version".format(protocol=self._scheme, host=self._http_host, port=self._http_port)
             response = urllib.request.urlopen(url, timeout=2)
             content_type = response.getheader("CONTENT-TYPE")
             if response.status == 200 and content_type == "application/json":
@@ -258,7 +313,16 @@ class HTTPClient(QtCore.QObject):
 
         return QtNetwork.QNetworkRequest(url)
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True):
+    def connect(self, query, callback):
+        """
+        Initialize the connection
+
+        :param query: The query to execute when all network stack is ready
+        :param callback: User callback when connection is finish
+        """
+        self.executeHTTPQuery("GET", "/version", query, {})
+
+    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False):
         """
         Call the remote server, if not connected, check connection before
 
@@ -269,14 +333,32 @@ class HTTPClient(QtCore.QObject):
         :param context: Pass a context to the response callback
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
+        :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :returns: QNetworkReply
         """
 
         if self._connected:
-            return self.executeHTTPQuery(method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
+            return self.executeHTTPQuery(method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors)
         else:
-            log.info("Connection to {}:{}".format(self.host, self.port))
-            return self.executeHTTPQuery("GET", "/version", partial(self._callbackConnect, method, path, callback, body, context), {}, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress)
+            log.info("Connection to {}".format(self.url()))
+            query = partial(self._callbackConnect, method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors)
+            self.connect(query, callback)
+
+    def _connectionError(self, callback, msg=""):
+        """
+        Return an error to user if connection failed
+
+        :param callback: User callback
+        :param msg: An optional additional message for the callback
+        """
+
+        if len(msg) > 0:
+            msg = "Can't connect to server {}: {}".format(self.url(), msg)
+        else:
+            msg = "Can't connect to server {}".format(self.url())
+        log.error(msg)
+        if callback is not None:
+            callback({"message": msg}, error=True, server=self)
 
     def _callbackConnect(self, method, path, callback, body, original_context, params, error=False, **kwargs):
         """
@@ -290,13 +372,11 @@ class HTTPClient(QtCore.QObject):
         """
 
         if error is not False:
-            msg = "Can't connect to server {}://{}:{}".format(self.scheme, self.host, self.port)
-            if callback is not None:
-                callback({"message": msg}, error=True, server=self)
+            self._connectionError(callback)
             return
 
         if "version" not in params or "local" not in params:
-            msg = "The remote server {}://{}:{} is not a GNS 3 server".format(self.scheme, self.host, self.port)
+            msg = "The remote server {} is not a GNS 3 server".format(self.url())
             log.error(msg)
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)
@@ -321,8 +401,8 @@ class HTTPClient(QtCore.QObject):
                 callback({"message": msg}, error=True, server=self)
             return
 
-        self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._connected = True
+        self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._version = params["version"]
 
     def _addBodyToRequest(self, body, request):
@@ -356,7 +436,7 @@ class HTTPClient(QtCore.QObject):
         else:
             return None
 
-    def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True):
+    def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False):
         """
         Call the remote server
 
@@ -367,6 +447,7 @@ class HTTPClient(QtCore.QObject):
         :param context: Pass a context to the response callback
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
+        :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :returns: QNetworkReply
         """
 
@@ -376,8 +457,8 @@ class HTTPClient(QtCore.QObject):
         context["query_id"] = query_id
         if showProgress:
             self.notify_progress_start_query(context["query_id"])
-        log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
-        url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
+        log.debug("{method} {protocol}://{host}:{port}/v1{path} {body}".format(method=method, protocol=self._scheme, host=self._http_host, port=self._http_port, path=path, body=body))
+        url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._scheme, host=self._host, port=self._http_port, path=path))
         request = self._request(url)
 
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
@@ -391,7 +472,7 @@ class HTTPClient(QtCore.QObject):
             response.uploadProgress.connect(partial(self.notify_progress_upload, query_id))
             response.downloadProgress.connect(partial(self.notify_progress_download, query_id))
 
-        response.finished.connect(partial(self._processResponse, response, callback, context, body))
+        response.finished.connect(partial(self._processResponse, response, callback, context, body, ignoreErrors))
         if downloadProgressCallback is not None:
             response.downloadProgress.connect(partial(self._processDownloadProgress, response, downloadProgressCallback, context))
         return response
@@ -432,7 +513,7 @@ class HTTPClient(QtCore.QObject):
         if "query_id" in context:
             self.notify_progress_end_query(context["query_id"])
 
-    def _processResponse(self, response, callback, context, request_body):
+    def _processResponse(self, response, callback, context, request_body, ignore_errors):
 
         if request_body is not None:
             request_body.close()
@@ -446,11 +527,12 @@ class HTTPClient(QtCore.QObject):
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
             if error_code < 200:
-                self._connected = False
+                if not ignore_errors:
+                    self.close()
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
-            log.info("Response error: {}".format(error_message))
+            log.info("Response error: {} for {}".format(error_message, response.request().url()))
             try:
                 body = bytes(response.readAll()).decode("utf-8").strip("\0")
                 # Some time antivirus intercept our query and reply with garbage content
@@ -488,11 +570,11 @@ class HTTPClient(QtCore.QObject):
         :returns: dictionary
         """
 
-        return {"id": self._id,
-                "host": self.host,
-                "port": self.port,
-                "local": self._local,
-                "cloud": self._cloud}
+        server = self.settings()
+        server["id"] = self._id
+        server["local"] = self._local
+        server["cloud"] = self._cloud
+        return server
 
     def isCloud(self):
         return False

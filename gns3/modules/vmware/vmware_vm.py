@@ -254,8 +254,8 @@ class VMwareVM(VM):
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
-           host=self._server.host,
-           port=self._server.port,
+           host=self._server.host(),
+           port=self._server.port(),
            console=self._settings["console"])
 
         port_info = ""

@@ -322,8 +322,8 @@ class VirtualBoxVM(VM):
            state=state,
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
-           host=self._server.host,
-           port=self._server.port,
+           host=self._server.host(),
+           port=self._server.port(),
            console=self._settings["console"])
 
         port_info = ""

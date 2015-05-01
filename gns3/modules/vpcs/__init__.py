@@ -334,7 +334,7 @@ class VPCS(Module):
             # pick up a remote server (round-robin method)
             remote_server = next(iter(Servers.instance()))
             if remote_server:
-                server = "{}:{}".format(remote_server.host, remote_server.port)
+                server = remote_server.url()
 
         nodes = []
         for node_class in VPCS.classes():
