@@ -1582,7 +1582,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if not isinstance(json_topology, dict):
                     raise ValueError("Not a GNS3 project")
 
-                self.CloudInspectorView.clear()
                 if json_topology["resources_type"] != 'cloud':
                     # do nothing in case of local projects
                     return
