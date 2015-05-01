@@ -698,13 +698,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             # Action: Change hostname
             change_hostname_action = QtWidgets.QAction("Change hostname", menu)
             change_hostname_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))
-            self.connect(change_hostname_action, QtCore.SIGNAL('triggered()'), self.changeHostnameActionSlot)
+            change_hostname_action.triggered.connect(self.changeHostnameActionSlot)
             menu.addAction(change_hostname_action)
 
             # Action: Change symbol
             change_symbol_action = QtWidgets.QAction("Change symbol", menu)
             change_symbol_action.setIcon(QtGui.QIcon(':/icons/node_conception.svg'))
-            self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self.changeSymbolActionSlot)
+            change_symbol_action.triggered.connect(self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
