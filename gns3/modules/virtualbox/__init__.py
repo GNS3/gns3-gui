@@ -187,7 +187,7 @@ class VirtualBox(Module):
         """
         Sets VirtualBox VM settings.
 
-        :param new_iou_images: IOS images settings (dictionary)
+        :param new_virtualbox_vms: VirtualBox VM settings (dictionary)
         """
 
         self._virtualbox_vms = new_virtualbox_vms.copy()

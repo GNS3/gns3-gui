@@ -24,6 +24,8 @@
     <file>symbols/qemu_guest.selected.svg</file>
     <file>symbols/vbox_guest.normal.svg</file>
     <file>symbols/vbox_guest.selected.svg</file>
+    <file>symbols/vmware_guest.normal.svg</file>
+    <file>symbols/vmware_guest.selected.svg</file>
     <file>symbols/server.normal.svg</file>
     <file>symbols/server.selected.svg</file>
     <file>symbols/router_netflow.normal.svg</file>
