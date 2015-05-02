@@ -85,12 +85,12 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             #self.uiVMListLabel.hide()
             #self.uiVMListComboBox.hide()
 
-        self.uiAdaptersSpinBox.setValue(settings["adapters"])
-        index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
-        if index != -1:
-            self.uiAdapterTypesComboBox.setCurrentIndex(index)
-        self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
-        self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
+        #self.uiAdaptersSpinBox.setValue(settings["adapters"])
+        # index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
+        # if index != -1:
+        #     self.uiAdapterTypesComboBox.setCurrentIndex(index)
+        # self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
+        # self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -128,13 +128,13 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
 
-        adapters = self.uiAdaptersSpinBox.value()
-        if node:
-            if settings["adapters"] != adapters:
-                # check if the adapters settings have changed
-                node_ports = node.ports()
-                for node_port in node_ports:
-                    if not node_port.isFree():
-                        QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-                        raise ConfigurationError()
-        settings["adapters"] = adapters
+        # adapters = self.uiAdaptersSpinBox.value()
+        # if node:
+        #     if settings["adapters"] != adapters:
+        #         # check if the adapters settings have changed
+        #         node_ports = node.ports()
+        #         for node_port in node_ports:
+        #             if not node_port.isFree():
+        #                 QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+        #                 raise ConfigurationError()
+        # settings["adapters"] = adapters

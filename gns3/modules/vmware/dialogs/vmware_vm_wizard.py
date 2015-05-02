@@ -27,7 +27,6 @@ from gns3.servers import Servers
 from ..ui.vmware_vm_wizard_ui import Ui_VMwareVMWizard
 from .. import VMware
 
-
 class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
 
     """
@@ -62,29 +61,29 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
-        #if self.page(page_id) == self.uiVirtualBoxWizardPage:
-        #    self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
+        if self.page(page_id) == self.uiVirtualBoxWizardPage:
+            self._server.get("/vmware/vms", self._getVMwareVMsFromServerCallback)
 
-    # def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
-    #     """
-    #     Callback for getVirtualBoxVMsFromServer.
-    #
-    #     :param progress_dialog: QProgressDialog instance
-    #     :param result: server response
-    #     :param error: indicates an error (boolean)
-    #     """
-    #
-    #     if error:
-    #         QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "{}".format(result["message"]))
-    #     else:
-    #         self.uiVMListComboBox.clear()
-    #         existing_vms = []
-    #         for existing_vm in self._virtualbox_vms.values():
-    #             existing_vms.append(existing_vm["vmname"])
-    #
-    #         for vm in result:
-    #             if vm["vmname"] not in existing_vms:
-    #                 self.uiVMListComboBox.addItem(vm["vmname"], vm)
+    def _getVMwareVMsFromServerCallback(self, result, error=False, **kwargs):
+        """
+        Callback for getVMwareVMsFromServer.
+
+        :param progress_dialog: QProgressDialog instance
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self, "VMware VMs", "{}".format(result["message"]))
+        else:
+            self.uiVMListComboBox.clear()
+            existing_vms = []
+            for existing_vm in self._vmware_vms.values():
+                existing_vms.append(existing_vm["name"])
+
+            for vm in result:
+                if vm["vmname"] not in existing_vms:
+                    self.uiVMListComboBox.addItem(vm["vmname"], vm)
 
     def validateCurrentPage(self):
         """
@@ -106,10 +105,10 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
                     return False
                 server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
             self._server = server
-        #if self.currentPage() == self.uiVirtualBoxWizardPage:
-        #    if not self.uiVMListComboBox.count():
-        #        QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
-        #        return False
+        if self.currentPage() == self.uiVirtualBoxWizardPage:
+            if not self.uiVMListComboBox.count():
+                QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
+                return False
         return True
 
     def getSettings(self):
@@ -125,15 +124,13 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
             server = self.uiRemoteServersComboBox.currentText()
 
         index = self.uiVMListComboBox.currentIndex()
-        #vmname = self.uiVMListComboBox.itemText(index)
-        #vminfo = self.uiVMListComboBox.itemData(index)
+        vmname = self.uiVMListComboBox.itemText(index)
+        vminfo = self.uiVMListComboBox.itemData(index)
 
         settings = {
-            #"vmname": vmname,
-            "name": "test",
+            "name": vmname,
             "server": server,
-            "vmx_path": "/home/grossmj/vmware/Ubuntu/Ubuntu.vmx",
-            #"ram": vminfo["ram"],
+            "vmx_path": vminfo["vmx_path"],
             "linked_base": self.uiBaseVMCheckBox.isChecked()
         }
 

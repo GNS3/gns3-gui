@@ -20,6 +20,7 @@ Configuration page for VMware preferences.
 """
 
 import os
+import sys
 from gns3.qt import QtWidgets
 
 from .. import VMware
@@ -42,6 +43,12 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVmrunPathToolButton.clicked.connect(self._vmrunPathBrowserSlot)
+
+        if sys.platform.startswith("darwin"):
+            self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
+        else:
+            self.uiHostTypeComboBox.addItem("VMware Player", "player")
+            self.uiHostTypeComboBox.addItem("VMware Workstation", "ws")
 
     def _vmrunPathBrowserSlot(self):
         """
@@ -73,9 +80,11 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         if state:
             self.uiVmrunPathLineEdit.setEnabled(True)
             self.uiVmrunPathToolButton.setEnabled(True)
+            self.uiHostTypeComboBox.setEnabled(True)
         else:
             self.uiVmrunPathLineEdit.setEnabled(False)
             self.uiVmrunPathToolButton.setEnabled(False)
+            self.uiHostTypeComboBox.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
@@ -85,6 +94,9 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         """
 
         self.uiVmrunPathLineEdit.setText(settings["vmrun_path"])
+        index = self.uiHostTypeComboBox.findData(settings["host_type"])
+        if index != -1:
+            self.uiHostTypeComboBox.setCurrentIndex(index)
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
@@ -102,5 +114,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
 
         new_settings = {}
         new_settings["vmrun_path"] = self.uiVmrunPathLineEdit.text()
+        new_settings["host_type"] = self.uiHostTypeComboBox.itemData(self.uiHostTypeComboBox.currentIndex())
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         VMware.instance().setSettings(new_settings)

@@ -23,7 +23,7 @@ from gns3.node import Node
 
 VMWARE_SETTINGS = {
     "vmrun_path": "",
-    "host_type": "",
+    "host_type": "ws",
     "use_local_server": True,
 }
 

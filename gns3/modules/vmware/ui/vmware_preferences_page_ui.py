@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created: Thu Apr 30 17:53:01 2015
+# Created: Fri May  1 18:17:41 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,15 +20,20 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiTabWidget.setObjectName("uiTabWidget")
         self.uiGeneralSettingsTabWidget = QtWidgets.QWidget()
         self.uiGeneralSettingsTabWidget.setObjectName("uiGeneralSettingsTabWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiGeneralSettingsTabWidget)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiGeneralSettingsTabWidget)
+        self.gridLayout.setObjectName("gridLayout")
+        self.uiVmrunPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
+        self.uiVmrunPathLabel.setObjectName("uiVmrunPathLabel")
+        self.gridLayout.addWidget(self.uiVmrunPathLabel, 1, 0, 1, 2)
+        spacerItem = QtWidgets.QSpacerItem(390, 193, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 6, 0, 1, 2)
+        self.uiHostTypeLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
+        self.uiHostTypeLabel.setObjectName("uiHostTypeLabel")
+        self.gridLayout.addWidget(self.uiHostTypeLabel, 3, 0, 2, 2)
         self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
         self.uiUseLocalServercheckBox.setChecked(True)
         self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.verticalLayout.addWidget(self.uiUseLocalServercheckBox)
-        self.uiVmrunPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
-        self.uiVmrunPathLabel.setObjectName("uiVmrunPathLabel")
-        self.verticalLayout.addWidget(self.uiVmrunPathLabel)
+        self.gridLayout.addWidget(self.uiUseLocalServercheckBox, 0, 0, 1, 2)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.uiVmrunPathLineEdit = QtWidgets.QLineEdit(self.uiGeneralSettingsTabWidget)
@@ -43,9 +48,10 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiVmrunPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiVmrunPathToolButton.setObjectName("uiVmrunPathToolButton")
         self.horizontalLayout_5.addWidget(self.uiVmrunPathToolButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_5)
-        spacerItem = QtWidgets.QSpacerItem(390, 193, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 2, 0, 1, 2)
+        self.uiHostTypeComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsTabWidget)
+        self.uiHostTypeComboBox.setObjectName("uiHostTypeComboBox")
+        self.gridLayout.addWidget(self.uiHostTypeComboBox, 5, 0, 1, 2)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -64,8 +70,9 @@ class Ui_VMwarePreferencesPageWidget(object):
     def retranslateUi(self, VMwarePreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         VMwarePreferencesPageWidget.setWindowTitle(_translate("VMwarePreferencesPageWidget", "VMware"))
-        self.uiUseLocalServercheckBox.setText(_translate("VMwarePreferencesPageWidget", "Use the local server"))
         self.uiVmrunPathLabel.setText(_translate("VMwarePreferencesPageWidget", "Path to vmrun:"))
+        self.uiHostTypeLabel.setText(_translate("VMwarePreferencesPageWidget", "Host type:"))
+        self.uiUseLocalServercheckBox.setText(_translate("VMwarePreferencesPageWidget", "Use the local server"))
         self.uiVmrunPathToolButton.setText(_translate("VMwarePreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VMwarePreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
