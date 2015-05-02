@@ -54,7 +54,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiNewQemuVMPushButton.clicked.connect(self._qemuVMNewSlot)
         self.uiEditQemuVMPushButton.clicked.connect(self._qemuVMEditSlot)
         self.uiDeleteQemuVMPushButton.clicked.connect(self._qemuVMDeleteSlot)
-        self.uiQemuVMsTreeWidget.currentItemChanged.connect(self._qemuVMChangedSlot)
+        self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
         self.uiQemuVMsTreeWidget.itemPressed.connect(self._qemuVMPressedSlot)
 
     def _createSectionItem(self, name):
@@ -122,23 +122,22 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(1)
 
-    def _qemuVMChangedSlot(self, current, previous):
+    def _qemuVMChangedSlot(self):
         """
         Loads a selected QEMU VM from the tree widget.
-
-        :param current: current QTreeWidgetItem instance
-        :param previous: ignored
         """
 
-        if not current:
-            self.uiQemuVMInfoTreeWidget.clear()
-            return
+        selection = self.uiQemuVMsTreeWidget.selectedItems()
+        self.uiDeleteQemuVMPushButton.setEnabled(len(selection) != 0)
+        single_selected = len(selection) == 1
+        self.uiEditQemuVMPushButton.setEnabled(single_selected)
 
-        self.uiEditQemuVMPushButton.setEnabled(True)
-        self.uiDeleteQemuVMPushButton.setEnabled(True)
-        key = current.data(0, QtCore.Qt.UserRole)
-        qemu_vm = self._qemu_vms[key]
-        self._refreshInfo(qemu_vm)
+        if single_selected:
+            key = selection[0].data(0, QtCore.Qt.UserRole)
+            qemu_vm = self._qemu_vms[key]
+            self._refreshInfo(qemu_vm)
+        else:
+            self.uiQemuVMInfoTreeWidget.clear()
 
     def _qemuVMNewSlot(self):
         """
@@ -167,6 +166,122 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             if self._qemu_vms[key]["server"] == 'cloud':
                 self._qemu_vms[key]["options"] = "-nographic"
                 self._uploadImages(new_vm_settings)
+
+    def _qemuVMEditSlot(self):
+        """
+        Edits a QEMU VM.
+        """
+
+        item = self.uiQemuVMsTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            qemu_vm = self._qemu_vms[key]
+            dialog = ConfigurationDialog(qemu_vm["name"], qemu_vm, QemuVMConfigurationPage(), parent=self)
+            dialog.show()
+            if dialog.exec_():
+                if qemu_vm["name"] != item.text(0):
+                    new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
+                    if new_key in self._qemu_vms:
+                        QtWidgets.QMessageBox.critical(self, "QEMU VM", "QEMU VM name {} already exists for server {}".format(qemu_vm["name"],
+                                                                                                                              qemu_vm["server"]))
+                        qemu_vm["name"] = item.text(0)
+                        return
+                    self._qemu_vms[new_key] = self._qemu_vms[key]
+                    del self._qemu_vms[key]
+                    item.setText(0, qemu_vm["name"])
+                    item.setData(0, QtCore.Qt.UserRole, new_key)
+
+                if qemu_vm["server"] == 'cloud':
+                    self._uploadImages(qemu_vm)
+
+                self._refreshInfo(qemu_vm)
+
+    def _qemuVMDeleteSlot(self):
+        """
+        Deletes a QEMU VM.
+        """
+
+        for item in self.uiQemuVMsTreeWidget.selectedItems():
+            if item:
+                key = item.data(0, QtCore.Qt.UserRole)
+                del self._qemu_vms[key]
+                self.uiQemuVMsTreeWidget.takeTopLevelItem(self.uiQemuVMsTreeWidget.indexOfTopLevelItem(item))
+
+    def _qemuVMPressedSlot(self, item, column):
+        """
+        Slot for item pressed.
+
+        :param item: ignored
+        :param column: ignored
+        """
+
+        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+            self._showContextualMenu()
+
+    def _showContextualMenu(self):
+        """
+        Contextual menu.
+        """
+
+        menu = QtWidgets.QMenu()
+
+        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
+        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
+        change_symbol_action.setEnabled(len(self.uiQemuVMsTreeWidget.selectedItems()) == 1)
+        change_symbol_action.triggered.connect(self._changeSymbolSlot)
+        menu.addAction(change_symbol_action)
+
+        delete_action = QtWidgets.QAction("Delete", menu)
+        delete_action.triggered.connect(self._qemuVMDeleteSlot)
+        menu.addAction(delete_action)
+
+        menu.exec_(QtGui.QCursor.pos())
+
+    def _changeSymbolSlot(self):
+        """
+        Change a symbol for a QEMU VM.
+        """
+
+        item = self.uiQemuVMsTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            qemu_vm = self._qemu_vms[key]
+            dialog = SymbolSelectionDialog(self, symbol=qemu_vm["default_symbol"], category=qemu_vm["category"])
+            dialog.show()
+            if dialog.exec_():
+                normal_symbol, selected_symbol = dialog.getSymbols()
+                category = dialog.getCategory()
+                item.setIcon(0, QtGui.QIcon(normal_symbol))
+                qemu_vm["default_symbol"] = normal_symbol
+                qemu_vm["hover_symbol"] = selected_symbol
+                qemu_vm["category"] = category
+
+    def loadPreferences(self):
+        """
+        Loads the QEMU VM preferences.
+        """
+
+        qemu_module = Qemu.instance()
+        self._qemu_vms = copy.deepcopy(qemu_module.qemuVMs())
+        self._items.clear()
+
+        for key, qemu_vm in self._qemu_vms.items():
+            item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
+            item.setText(0, qemu_vm["name"])
+            item.setIcon(0, QtGui.QIcon(qemu_vm["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
+
+        if self._items:
+            self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
+            self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+
+    def savePreferences(self):
+        """
+        Saves the QEMU VM preferences.
+        """
+
+        Qemu.instance().setQemuVMs(self._qemu_vms)
 
     def _imageUploadComplete(self):
         if self._upload_image_progress_dialog.wasCanceled():
@@ -232,109 +347,3 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             log = logging.getLogger(__name__)
             log.error(e)
             QtWidgets.QMessageBox.critical(self, "Qemu image upload", "Error uploading Qemu image: {}".format(e))
-
-    def _qemuVMEditSlot(self):
-        """
-        Edits a QEMU VM.
-        """
-
-        item = self.uiQemuVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            qemu_vm = self._qemu_vms[key]
-            dialog = ConfigurationDialog(qemu_vm["name"], qemu_vm, QemuVMConfigurationPage(), parent=self)
-            dialog.show()
-            if dialog.exec_():
-                if qemu_vm["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
-                    if new_key in self._qemu_vms:
-                        QtWidgets.QMessageBox.critical(self, "QEMU VM", "QEMU VM name {} already exists for server {}".format(qemu_vm["name"],
-                                                                                                                              qemu_vm["server"]))
-                        qemu_vm["name"] = item.text(0)
-                        return
-                    self._qemu_vms[new_key] = self._qemu_vms[key]
-                    del self._qemu_vms[key]
-                    item.setText(0, qemu_vm["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
-
-                if qemu_vm["server"] == 'cloud':
-                    self._uploadImages(qemu_vm)
-
-                self._refreshInfo(qemu_vm)
-
-    def _qemuVMDeleteSlot(self):
-        """
-        Deletes a QEMU VM.
-        """
-
-        item = self.uiQemuVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            del self._qemu_vms[key]
-            self.uiQemuVMsTreeWidget.takeTopLevelItem(self.uiQemuVMsTreeWidget.indexOfTopLevelItem(item))
-
-    def _qemuVMPressedSlot(self, item, column):
-        """
-        Slot for item pressed.
-        """
-
-        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
-            self._showContextualMenu()
-
-    def _showContextualMenu(self):
-        """
-        Contextual menu.
-        """
-
-        menu = QtWidgets.QMenu()
-        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
-        menu.addAction(change_symbol_action)
-        menu.exec_(QtGui.QCursor.pos())
-
-    def _changeSymbolSlot(self):
-        """
-        Change a symbol for a QEMU VM.
-        """
-
-        item = self.uiQemuVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            qemu_vm = self._qemu_vms[key]
-            dialog = SymbolSelectionDialog(self, symbol=qemu_vm["default_symbol"], category=qemu_vm["category"])
-            dialog.show()
-            if dialog.exec_():
-                normal_symbol, selected_symbol = dialog.getSymbols()
-                category = dialog.getCategory()
-                item.setIcon(0, QtGui.QIcon(normal_symbol))
-                qemu_vm["default_symbol"] = normal_symbol
-                qemu_vm["hover_symbol"] = selected_symbol
-                qemu_vm["category"] = category
-
-    def loadPreferences(self):
-        """
-        Loads the QEMU VM preferences.
-        """
-
-        qemu_module = Qemu.instance()
-        self._qemu_vms = copy.deepcopy(qemu_module.qemuVMs())
-        self._items.clear()
-
-        for key, qemu_vm in self._qemu_vms.items():
-            item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
-            item.setText(0, qemu_vm["name"])
-            item.setIcon(0, QtGui.QIcon(qemu_vm["default_symbol"]))
-            item.setData(0, QtCore.Qt.UserRole, key)
-            self._items.append(item)
-
-        if self._items:
-            self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
-            self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
-
-    def savePreferences(self):
-        """
-        Saves the QEMU VM preferences.
-        """
-
-        Qemu.instance().setQemuVMs(self._qemu_vms)

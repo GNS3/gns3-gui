@@ -50,26 +50,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiNewVirtualBoxVMPushButton.clicked.connect(self._vboxVMNewSlot)
         self.uiEditVirtualBoxVMPushButton.clicked.connect(self._vboxVMEditSlot)
         self.uiDeleteVirtualBoxVMPushButton.clicked.connect(self._vboxVMDeleteSlot)
-        self.uiVirtualBoxVMsTreeWidget.currentItemChanged.connect(self._vboxVMChangedSlot)
+        self.uiVirtualBoxVMsTreeWidget.itemSelectionChanged.connect(self._vboxVMChangedSlot)
         self.uiVirtualBoxVMsTreeWidget.itemPressed.connect(self._vboxVMPressedSlot)
-
-    def _vboxVMChangedSlot(self, current, previous):
-        """
-        Loads a selected VirtualBox VM from the tree widget.
-
-        :param current: current QTreeWidgetItem instance
-        :param previous: ignored
-        """
-
-        if not current:
-            self.uiVirtualBoxVMInfoTreeWidget.clear()
-            return
-
-        self.uiEditVirtualBoxVMPushButton.setEnabled(True)
-        self.uiDeleteVirtualBoxVMPushButton.setEnabled(True)
-        key = current.data(0, QtCore.Qt.UserRole)
-        vbox_vm = self._virtualbox_vms[key]
-        self._refreshInfo(vbox_vm)
 
     def _createSectionItem(self, name):
 
@@ -102,6 +84,23 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiVirtualBoxVMInfoTreeWidget.expandAll()
         self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(1)
+
+    def _vboxVMChangedSlot(self):
+        """
+        Loads a selected VirtualBox VM from the tree widget.
+        """
+
+        selection = self.uiVirtualBoxVMsTreeWidget.selectedItems()
+        self.uiDeleteVirtualBoxVMPushButton.setEnabled(len(selection) != 0)
+        single_selected = len(selection) == 1
+        self.uiEditVirtualBoxVMPushButton.setEnabled(single_selected)
+
+        if single_selected:
+            key = selection[0].data(0, QtCore.Qt.UserRole)
+            vbox_vm = self._virtualbox_vms[key]
+            self._refreshInfo(vbox_vm)
+        else:
+            self.uiVirtualBoxVMInfoTreeWidget.clear()
 
     def _vboxVMNewSlot(self):
         """
@@ -154,11 +153,11 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Deletes a VirtualBox VM.
         """
 
-        item = self.uiVirtualBoxVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            del self._virtualbox_vms[key]
-            self.uiVirtualBoxVMsTreeWidget.takeTopLevelItem(self.uiVirtualBoxVMsTreeWidget.indexOfTopLevelItem(item))
+        for item in self.uiVirtualBoxVMsTreeWidget.selectedItems():
+            if item:
+                key = item.data(0, QtCore.Qt.UserRole)
+                del self._virtualbox_vms[key]
+                self.uiVirtualBoxVMsTreeWidget.takeTopLevelItem(self.uiVirtualBoxVMsTreeWidget.indexOfTopLevelItem(item))
 
     def _vboxVMPressedSlot(self, item, column):
         """
@@ -177,10 +176,17 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         """
 
         menu = QtWidgets.QMenu()
+
         change_symbol_action = QtWidgets.QAction("Change symbol", menu)
         change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
+        change_symbol_action.setEnabled(len(self.uiVirtualBoxVMsTreeWidget.selectedItems()) == 1)
+        change_symbol_action.triggered.connect(self._changeSymbolSlot)
         menu.addAction(change_symbol_action)
+
+        delete_action = QtWidgets.QAction("Delete", menu)
+        delete_action.triggered.connect(self._vboxVMDeleteSlot)
+        menu.addAction(delete_action)
+
         menu.exec_(QtGui.QCursor.pos())
 
     def _changeSymbolSlot(self):
