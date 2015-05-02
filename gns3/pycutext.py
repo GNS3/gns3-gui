@@ -32,6 +32,10 @@ class MultipleRedirection:
 
     def write(self, str):
         self.console.write(str)
+        if self.stdout.encoding is None:
+            str = str.encode("ascii", "ignore").decode()
+        elif self.stdout.encoding != "UTF-8":
+            str = str.encode(self.stdout.encoding, "ignore").decode()
         self.stdout.write(str)
 
     def isatty(self):
