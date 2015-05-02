@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_preferences_page.ui'
+# Form implementation generated from reading ui file 'vmware_vm_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:33 2015
+# Created: Wed May  6 14:31:58 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_VMwareVMPreferencesPageWidget(object):
 
     def setupUi(self, VMwareVMPreferencesPageWidget):
         VMwareVMPreferencesPageWidget.setObjectName("VMwareVMPreferencesPageWidget")
-        VMwareVMPreferencesPageWidget.resize(499, 546)
+        VMwareVMPreferencesPageWidget.resize(505, 350)
         VMwareVMPreferencesPageWidget.setAccessibleDescription("")
         self.gridLayout = QtWidgets.QGridLayout(VMwareVMPreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -56,6 +56,7 @@ class Ui_VMwareVMPreferencesPageWidget(object):
         font.setBold(True)
         font.setWeight(75)
         self.uiVMwareVMsTreeWidget.setFont(font)
+        self.uiVMwareVMsTreeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiVMwareVMsTreeWidget.setIconSize(QtCore.QSize(32, 32))
         self.uiVMwareVMsTreeWidget.setRootIsDecorated(False)
         self.uiVMwareVMsTreeWidget.setObjectName("uiVMwareVMsTreeWidget")
@@ -65,11 +66,12 @@ class Ui_VMwareVMPreferencesPageWidget(object):
 
         self.retranslateUi(VMwareVMPreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(VMwareVMPreferencesPageWidget)
+        VMwareVMPreferencesPageWidget.setTabOrder(self.uiNewVMwareVMPushButton, self.uiDeleteVMwareVMPushButton)
 
     def retranslateUi(self, VMwareVMPreferencesPageWidget):
         _translate = gns3.qt.translate
         VMwareVMPreferencesPageWidget.setWindowTitle(_translate("VMwareVMPreferencesPageWidget", "VMware VMs"))
-        VMwareVMPreferencesPageWidget.setAccessibleName(_translate("VMwareVMPreferencesPageWidget", "VirtualBox VM templates"))
+        VMwareVMPreferencesPageWidget.setAccessibleName(_translate("VMwareVMPreferencesPageWidget", "VMware VM templates"))
         self.uiNewVMwareVMPushButton.setText(_translate("VMwareVMPreferencesPageWidget", "&New"))
         self.uiEditVMwareVMPushButton.setText(_translate("VMwareVMPreferencesPageWidget", "&Edit"))
         self.uiDeleteVMwareVMPushButton.setText(_translate("VMwareVMPreferencesPageWidget", "&Delete"))

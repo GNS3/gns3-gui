@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_preferences_page.ui'
+# Form implementation generated from reading ui file 'virtualbox_vm_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:33 2015
+# Created: Wed May  6 14:31:58 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
 
     def setupUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setObjectName("VirtualBoxVMPreferencesPageWidget")
-        VirtualBoxVMPreferencesPageWidget.resize(499, 546)
+        VirtualBoxVMPreferencesPageWidget.resize(505, 350)
         VirtualBoxVMPreferencesPageWidget.setAccessibleDescription("")
         self.gridLayout = QtWidgets.QGridLayout(VirtualBoxVMPreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -56,6 +56,7 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
         font.setBold(True)
         font.setWeight(75)
         self.uiVirtualBoxVMsTreeWidget.setFont(font)
+        self.uiVirtualBoxVMsTreeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiVirtualBoxVMsTreeWidget.setIconSize(QtCore.QSize(32, 32))
         self.uiVirtualBoxVMsTreeWidget.setRootIsDecorated(False)
         self.uiVirtualBoxVMsTreeWidget.setObjectName("uiVirtualBoxVMsTreeWidget")
@@ -65,6 +66,7 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
 
         self.retranslateUi(VirtualBoxVMPreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(VirtualBoxVMPreferencesPageWidget)
+        VirtualBoxVMPreferencesPageWidget.setTabOrder(self.uiNewVirtualBoxVMPushButton, self.uiDeleteVirtualBoxVMPushButton)
 
     def retranslateUi(self, VirtualBoxVMPreferencesPageWidget):
         _translate = gns3.qt.translate

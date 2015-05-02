@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>503</height>
+    <width>435</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -228,10 +228,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>uiConsolePortRangeGroupBox</zorder>
-      <zorder>uiUDPPortRangeGroupBox</zorder>
-      <zorder>uiGeneralSettingsGroupBox</zorder>
-      <zorder>uiLocalServerAutoStartCheckBox</zorder>
      </widget>
      <widget class="QWidget" name="uiRemoteTabWidget">
       <attribute name="title">
@@ -334,13 +330,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>spacer_2</zorder>
-      <zorder>uiRemoteServerPortLabel</zorder>
-      <zorder>uiRemoteServerPortSpinBox</zorder>
-      <zorder>uiRemoteServerHostLabel</zorder>
-      <zorder>uiRemoteServerPortLineEdit</zorder>
-      <zorder>uiRemoteServersTreeWidget</zorder>
-      <zorder>horizontalSpacer_2</zorder>
      </widget>
     </widget>
    </item>

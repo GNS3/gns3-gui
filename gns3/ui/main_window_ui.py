@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon May  4 12:01:29 2015
+# Created: Wed May  6 14:31:53 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -368,9 +368,9 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
@@ -649,8 +649,8 @@ class Ui_MainWindow(object):
         self.uiActionFullscreen.setShortcut(_translate("MainWindow", "Ctrl+F"))
         self.uiVPCSAction.setText(_translate("MainWindow", "&VPCS multi-host"))
 
-from ..nodes_view import NodesView
 from ..topology_summary_view import TopologySummaryView
-from ..graphics_view import GraphicsView
 from ..console_view import ConsoleView
+from ..nodes_view import NodesView
+from ..graphics_view import GraphicsView
 from . import resources_rc

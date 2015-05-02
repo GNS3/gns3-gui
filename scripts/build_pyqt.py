@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 if args.qt4:
     if sys.platform.startswith('win'):
-        PATH = os.path.join(os.path.dirname(sys.executable), "Lib/site-packages/PyQt4")
+        PATH = os.path.join(os.path.dirname(sys.executable), "Lib\\site-packages\\PyQt4")
         if os.access(os.path.join(PATH, "bin"), os.R_OK):
             PATH = os.path.join(PATH, "bin")
         PYUIC = os.path.join(PATH, "pyuic4")
@@ -30,7 +30,7 @@ if args.qt4:
     PYRCC_PYTHON3_FLAG = "-py3"
 else:
     if sys.platform.startswith('win'):
-        PATH = os.path.join(os.path.dirname(sys.executable), "Lib/site-packages/PyQt5")
+        PATH = os.path.join(os.path.dirname(sys.executable), "Lib\\site-packages\\PyQt5")
         if os.access(os.path.join(PATH, "bin"), os.R_OK):
             PATH = os.path.join(PATH, "bin")
         PYUIC = os.path.join(PATH, "pyuic5")
@@ -51,7 +51,14 @@ def build_ui(path):
                 print("Building UI {}".format(source))
                 if args.force and os.access(target, os.F_OK):
                     os.remove(target)
-                subprocess.call(command)
+
+                if sys.platform.startswith('win'):
+                    for i, arg in enumerate(command):
+                        command[i] = '"' + arg.replace('"', '"""') + '"'
+                    command = ' '.join(command)
+                    subprocess.call(command, shell=True)
+                else:
+                    subprocess.call(command)
                 patch_file_qt4_5(target)
 
 
@@ -68,6 +75,10 @@ def build_resources(path, target):
                 print("Building resources {}".format(source))
                 if args.force and os.access(target, os.F_OK):
                     os.remove(target)
+                if sys.platform.startswith('win'):
+                    for i, arg in enumerate(command):
+                        command[i] = '"' + arg.replace('"', '"""') + '"'
+                    command = ' '.join(command)
                 subprocess.call(command)
                 patch_file_qt4_5(target)
 
@@ -79,12 +90,17 @@ def patch_file_qt4_5(target):
     # We patch the file in order to support both version of Qt
     out = ""
     print("Patch {} for Qt4 and Qt5 support".format(target))
-    with open(target) as f:
+    original_from = re.compile(r"^from PyQt[45] ", re.U)
+    original_translate = re.compile(r"_translate = QtCore\.QCoreApplication\.translate", re.U)
+    gen_line = r"# Form implementation generated from reading ui file '";
+    with open(target, 'r', encoding="utf-8") as f:
         for line in f.readlines():
-            line = re.sub(r"^from PyQt[45] ", "import gns3.qt\nfrom gns3.qt ", line)
-            line = re.sub(r"_translate = QtCore\.QCoreApplication\.translate", "_translate = gns3.qt.translate", line)
+            if line.startswith(gen_line):
+                line = line[0:len(gen_line)] + line[line.rfind(os.sep)+len(os.sep):]
+            line = original_from.sub("import gns3.qt\nfrom gns3.qt ", line)
+            line = original_translate.sub("_translate = gns3.qt.translate", line)
             out += line
-    with open(target, 'w') as f:
+    with open(target, 'w', encoding="utf-8") as f:
         f.write(out)
 
 

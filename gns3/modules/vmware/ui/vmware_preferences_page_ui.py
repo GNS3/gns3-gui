@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
+# Form implementation generated from reading ui file 'vmware_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:33 2015
+# Created: Wed May  6 14:31:58 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_VMwarePreferencesPageWidget(object):
 
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
-        VMwarePreferencesPageWidget.resize(430, 490)
+        VMwarePreferencesPageWidget.resize(450, 250)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VMwarePreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VMwarePreferencesPageWidget)

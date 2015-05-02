@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
+# Form implementation generated from reading ui file 'virtualbox_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:33 2015
+# Created: Wed May  6 14:31:57 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
 
     def setupUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setObjectName("VirtualBoxPreferencesPageWidget")
-        VirtualBoxPreferencesPageWidget.resize(430, 490)
+        VirtualBoxPreferencesPageWidget.resize(450, 250)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VirtualBoxPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VirtualBoxPreferencesPageWidget)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
+# Form implementation generated from reading ui file 'vpcs_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:34 2015
+# Created: Wed May  6 14:31:59 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_VPCSPreferencesPageWidget(object):
 
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")
-        VPCSPreferencesPageWidget.resize(430, 469)
+        VPCSPreferencesPageWidget.resize(450, 200)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VPCSPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VPCSPreferencesPageWidget)

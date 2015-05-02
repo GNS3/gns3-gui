@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
+# Form implementation generated from reading ui file 'dynamips_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:31 2015
+# Created: Wed May  6 14:31:55 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
 
     def setupUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setObjectName("DynamipsPreferencesPageWidget")
-        DynamipsPreferencesPageWidget.resize(430, 539)
+        DynamipsPreferencesPageWidget.resize(435, 200)
         self.vboxlayout = QtWidgets.QVBoxLayout(DynamipsPreferencesPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(DynamipsPreferencesPageWidget)
