@@ -39,8 +39,8 @@ def fake_bin(tmpdir):
 @pytest.fixture
 def fake_iourc(tmpdir):
     path = str(tmpdir / "iourc")
-    with open(path, "w+") as f:
-        f.write("[license]\r\ngns42 = dsfdsfdsfdsf;\r\n")
+    with open(path, "wb+") as f:
+        f.write(b"[license]\r\ngns42 = dsfdsfdsfdsf;\r\n")
     return path
 
 
