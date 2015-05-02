@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>539</height>
+    <width>435</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -154,8 +154,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>spacer_2</zorder>
-      <zorder>uiMemoryUsageOptimisationGroupBox</zorder>
      </widget>
     </widget>
    </item>
