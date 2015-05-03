@@ -334,7 +334,6 @@ class HTTPClient(QtCore.QObject):
     def _requestCanceled(self, response, context):
 
         if response.isRunning():
-            response.finished.disconnect()
             response.abort()
         if "query_id" in context:
             self.notify_progress_end_query(context["query_id"])
@@ -356,7 +355,7 @@ class HTTPClient(QtCore.QObject):
             log.info("Response error: {}".format(error_message))
             try:
                 body = bytes(response.readAll()).decode("utf-8")
-            # Some time antivirus intercept our query and reply with garbage content
+            # Some time anti-virus intercept our query and reply with garbage content
             except UnicodeError:
                 body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
@@ -381,7 +380,7 @@ class HTTPClient(QtCore.QObject):
                     callback(params, error=True, server=self, context=context)
                 else:
                     callback(params, server=self, context=context)
-        response.deleteLater()
+        #response.deleteLater()
         if status == 400:
             raise HttpBadRequest(body)
 
