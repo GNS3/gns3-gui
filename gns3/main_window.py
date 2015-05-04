@@ -1319,6 +1319,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # We save the topology and use the standard restore process to reinitialize everything
             self._project.setTopologyFile(topology_file_path)
             self.saveProject(topology_file_path, random_id=True)
+
             if os.path.exists(old_topology_file_path):
                 try:
                     os.remove(old_topology_file_path)

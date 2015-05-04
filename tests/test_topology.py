@@ -86,9 +86,13 @@ def test_dump(vpcs_device, project, local_server):
     }
 
 
-def test_randomize_id():
+def test_randomize_id(project, tmpdir):
+    project.setTopologyFile(str(tmpdir / "test.gns3"))
+
     project_uuid = str(uuid.uuid4())
     vm_uuid1 = str(uuid.uuid4())
+    os.makedirs(str(tmpdir / "project-files" / "vpcs" / vm_uuid1))
+    open(str(tmpdir / "project-files" / "vpcs" / vm_uuid1 / "test.log"), "w+").close()
     vm_uuid2 = str(uuid.uuid4())
     orig_topology = {
         "project_id": project_uuid,
@@ -104,9 +108,14 @@ def test_randomize_id():
         }
     }
     topology = Topology()
+    topology.project = project
     top = topology._randomize_id(orig_topology)
     assert top["project_id"] != project_uuid
     assert top["topology"]["nodes"][0]["vm_id"] != vm_uuid1
+
+    assert not os.path.exists(str(tmpdir / "project-files" / "vpcs" / vm_uuid1 / "test.log"))
+    assert os.path.exists(str(tmpdir / "project-files" / "vpcs" / top["topology"]["nodes"][0]["vm_id"]  / "test.log"))
+
     assert top["topology"]["nodes"][1]["vm_id"] != vm_uuid2
     assert top["topology"]["nodes"][0]["vm_id"] != top["topology"]["nodes"][1]["vm_id"]
 
