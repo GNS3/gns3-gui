@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
+# Form implementation generated from reading ui file 'cloud_configuration_page.ui'
 #
-# Created: Mon May  4 12:01:30 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_cloudConfigPageWidget(object):
-
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
         cloudConfigPageWidget.resize(542, 500)
@@ -408,3 +405,4 @@ class Ui_cloudConfigPageWidget(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("cloudConfigPageWidget", "NIO NULL"))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("cloudConfigPageWidget", "Misc."))
+

@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
+# Form implementation generated from reading ui file 'dynamips_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:31 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_DynamipsPreferencesPageWidget(object):
-
     def setupUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setObjectName("DynamipsPreferencesPageWidget")
-        DynamipsPreferencesPageWidget.resize(430, 539)
+        DynamipsPreferencesPageWidget.resize(435, 200)
         self.vboxlayout = QtWidgets.QVBoxLayout(DynamipsPreferencesPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(DynamipsPreferencesPageWidget)
@@ -111,3 +108,4 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiSparseMemorySupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable sparse memory support"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("DynamipsPreferencesPageWidget", "Restore defaults"))
+

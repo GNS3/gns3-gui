@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
+# Form implementation generated from reading ui file 'qemu_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:32 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuPreferencesPageWidget(object):
-
     def setupUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setObjectName("QemuPreferencesPageWidget")
-        QemuPreferencesPageWidget.resize(374, 495)
+        QemuPreferencesPageWidget.resize(200, 200)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(QemuPreferencesPageWidget)
@@ -52,3 +49,4 @@ class Ui_QemuPreferencesPageWidget(object):
         self.uiUseLocalServercheckBox.setText(_translate("QemuPreferencesPageWidget", "Use the local server"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults"))
+

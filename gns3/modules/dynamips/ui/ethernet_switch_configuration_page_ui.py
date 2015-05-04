@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ethernet_switch_configuration_page.ui'
+# Form implementation generated from reading ui file 'ethernet_switch_configuration_page.ui'
 #
-# Created: Mon May  4 12:01:31 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_ethernetSwitchConfigPageWidget(object):
-
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName("ethernetSwitchConfigPageWidget")
         ethernetSwitchConfigPageWidget.resize(397, 315)
@@ -128,3 +125,4 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiPortTypeComboBox.setItemText(2, _translate("ethernetSwitchConfigPageWidget", "qinq"))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete"))
+

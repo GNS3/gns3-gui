@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
+# Form implementation generated from reading ui file 'vmware_vm_wizard.ui'
 #
-# Created: Mon May  4 12:01:34 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwareVMWizard(object):
-
     def setupUi(self, VMwareVMWizard):
         VMwareVMWizard.setObjectName("VMwareVMWizard")
         VMwareVMWizard.resize(514, 367)
@@ -95,3 +92,4 @@ class Ui_VMwareVMWizard(object):
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a VMware virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VMwareVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMWizard", "Use as a linked base VM (experimental)"))
+

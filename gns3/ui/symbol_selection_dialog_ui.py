@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/symbol_selection_dialog.ui'
+# Form implementation generated from reading ui file 'symbol_selection_dialog.ui'
 #
-# Created: Mon May  4 12:01:30 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_SymbolSelectionDialog(object):
-
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName("SymbolSelectionDialog")
         SymbolSelectionDialog.resize(319, 389)
@@ -40,7 +37,7 @@ class Ui_SymbolSelectionDialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(SymbolSelectionDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)

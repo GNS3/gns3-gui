@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
+# Form implementation generated from reading ui file 'ios_router_wizard.ui'
 #
-# Created: Mon May  4 12:01:31 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOSRouterWizard(object):
-
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName("IOSRouterWizard")
         IOSRouterWizard.resize(585, 398)
@@ -335,3 +332,4 @@ class Ui_IOSRouterWizard(object):
         self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core."))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:"))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder"))
+

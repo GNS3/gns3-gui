@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
+# Form implementation generated from reading ui file 'virtualbox_vm_wizard.ui'
 #
-# Created: Mon May  4 12:01:33 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_VirtualBoxVMWizard(object):
-
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName("VirtualBoxVMWizard")
         VirtualBoxVMWizard.resize(514, 367)
@@ -95,3 +92,4 @@ class Ui_VirtualBoxVMWizard(object):
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a VirtualBox virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VirtualBoxVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VirtualBoxVMWizard", "Use as a linked base VM (experimental)"))
+
