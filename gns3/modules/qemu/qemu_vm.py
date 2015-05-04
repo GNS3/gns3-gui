@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2015 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,10 +43,6 @@ class QemuVM(VM):
         VM.__init__(self, module, server, project)
 
         log.info("QEMU VM instance is being created")
-        self._defaults = {}
-        self._export_directory = None
-        self._loading = False
-        self._module = module
         self._ports = []
 
         self._settings = {"name": "",
@@ -66,11 +62,6 @@ class QemuVM(VM):
                           "initrd": "",
                           "kernel_image": "",
                           "kernel_command_line": ""}
-
-        self._addAdapters(1)
-
-        # save the default settings
-        self._defaults = self._settings.copy()
 
     def _addAdapters(self, adapters):
         """
@@ -111,6 +102,8 @@ class QemuVM(VM):
 
         if vm_id:
             params["vm_id"] = vm_id
+        else:
+            self._addAdapters(additional_settings["adapters"])
 
         params.update(additional_settings)
         self.httpPost("/qemu/vms", self._setupCallback, body=params)
@@ -141,17 +134,11 @@ class QemuVM(VM):
                                                                                                    self._settings[name],
                                                                                                    value))
                 self._settings[name] = value
-                if name == "adapters":
-                    self._ports.clear()
-                    self._addAdapters(self._settings["adapters"])
 
-        if self._loading:
-            self.updated_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("QEMU VM instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
+        self.setInitialized(True)
+        log.info("QEMU VM instance {} has been created".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
 
     def delete(self):
         """
@@ -236,7 +223,7 @@ class QemuVM(VM):
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
 
-        if updated or self._loading:
+        if updated:
             log.info("QEMU VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -372,7 +359,7 @@ class QemuVM(VM):
 
         # add the properties
         for name, value in self._settings.items():
-            if name in self._defaults and self._defaults[name] != value:
+            if value is not None and value != "":
                 qemu_vm["properties"][name] = value
 
         # add the ports
@@ -424,32 +411,29 @@ class QemuVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-        self.node_info = node_info
         # for backward compatibility
         vm_id = node_info.get("qemu_id")
         if not vm_id:
             vm_id = node_info["vm_id"]
-        settings = node_info["properties"]
-        if "monitor" in settings:
-            settings.pop("monitor")  # for compatibility with older projects
-        name = settings.pop("name")
-        qemu_path = settings.pop("qemu_path")
-        self.updated_signal.connect(self._updatePortSettings)
-        # block the created signal, it will be triggered when loading is completely done
-        self._loading = True
+
+        # prepare the VM settings
+        vm_settings = {}
+        for name, value in node_info["properties"].items():
+            if name in self._settings:
+                vm_settings[name] = value
+        name = vm_settings.pop("name")
+        qemu_path = vm_settings.pop("qemu_path")
+
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self.setup(qemu_path, name, vm_id, settings)
 
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
+        # create the adapters
+        if "adapters" in vm_settings:
+            self._addAdapters(vm_settings["adapters"])
 
-        self.updated_signal.disconnect(self._updatePortSettings)
-        # update the port with the correct names and IDs
-        if "ports" in self.node_info:
-            ports = self.node_info["ports"]
+        # assign the correct names and IDs to the ports
+        if "ports" in node_info:
+            ports = node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
                     adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
@@ -457,12 +441,7 @@ class QemuVM(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("QEMU VM {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
+        self.setup(qemu_path, name, vm_id, vm_settings)
 
     def name(self):
         """
