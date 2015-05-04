@@ -110,8 +110,8 @@ class VirtualBoxVM(VM):
 
         if vm_id:
             params["vm_id"] = vm_id
-        elif "adapters" in additional_settings:
-            self._addAdapters(additional_settings["adapters"])
+        else:
+            self._addAdapters(additional_settings.get("adapters", 0))
 
         params.update(additional_settings)
         self.httpPost("/virtualbox/vms", self._setupCallback, body=params)

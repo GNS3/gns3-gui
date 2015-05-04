@@ -125,7 +125,7 @@ class IOUDevice(VM):
         if vm_id:
             params["vm_id"] = vm_id
         else:
-            self._addAdapters(additional_settings["ethernet_adapters"], additional_settings["serial_adapters"])
+            self._addAdapters(additional_settings.get("ethernet_adapters", 0), additional_settings.get("serial_adapters", 0))
 
         # push the initial-config
         if "initial_config" in additional_settings:

@@ -180,6 +180,14 @@ def test_dump(local_server, project):
     iou_device._settings["name"] = "IOU 1"
     iou_device._settings["path"] = "test.bin"
     iou_device._settings["initial_config"] = "/tmp"
+    iou_device._settings["ethernet_adapters"] = 2
+    iou_device._settings["serial_adapters"] = 2
+    iou_device._settings["l1_keepalives"] = True
+    iou_device._settings["ram"] = 256
+    iou_device._settings["nvram"] = 128
+    iou_device._settings["use_default_iou_values"] = True
+    iou_device._addAdapters(iou_device._settings["ethernet_adapters"], iou_device._settings["serial_adapters"])
+
     assert iou_device.dump() == {
         "description": "IOU device",
         "id": iou_device.id(),
@@ -252,7 +260,13 @@ def test_dump(local_server, project):
         "properties": {
             "name": "IOU 1",
             "path": "test.bin",
-            "initial_config": "/tmp"
+            "initial_config": "/tmp",
+            "ethernet_adapters": 2,
+            "serial_adapters": 2,
+            "l1_keepalives": True,
+            "ram": 256,
+            "nvram": 128,
+            "use_default_iou_values": True
         },
         "server_id": local_server.id(),
         "type": "IOUDevice",
@@ -277,7 +291,9 @@ def test_load(local_server, project, fake_bin):
         "properties": {
             "name": "IOU 1",
             "path": fake_bin,
-            "initial_config": "/tmp"
+            "initial_config": "/tmp",
+            "ethernet_adapters": 1,
+            "serial_adapters": 0,
         },
         "server_id": 1,
         "type": "IOUDevice",
@@ -290,7 +306,7 @@ def test_load(local_server, project, fake_bin):
         (path, name, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert settings == {"initial_config": "/tmp"}
+        assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "initial_config": "/tmp"}
         assert vm_id == uuid
 
     iou_device.updated_signal.emit()
@@ -314,7 +330,9 @@ def test_load_1_2(local_server, project, fake_bin):
         "properties": {
             "name": "IOU 1",
             "path": fake_bin,
-            "initial_config": "/tmp"
+            "initial_config": "/tmp",
+            "ethernet_adapters": 1,
+            "serial_adapters": 0,
         },
         "server_id": 1,
         "type": "IOUDevice",
@@ -327,7 +345,7 @@ def test_load_1_2(local_server, project, fake_bin):
         (path, name, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert settings == {"initial_config": "/tmp"}
+        assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "initial_config": "/tmp"}
         assert vm_id == uuid
 
     iou_device.updated_signal.emit()

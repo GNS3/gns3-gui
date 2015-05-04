@@ -103,7 +103,7 @@ class QemuVM(VM):
         if vm_id:
             params["vm_id"] = vm_id
         else:
-            self._addAdapters(additional_settings["adapters"])
+            self._addAdapters(additional_settings.get("adapters", 0))
 
         params.update(additional_settings)
         self.httpPost("/qemu/vms", self._setupCallback, body=params)
