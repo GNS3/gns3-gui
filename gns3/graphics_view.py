@@ -595,10 +595,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         item = self.itemAt(event.pos())
         if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
             item.setSelected(True)
-            if isinstance(item, NodeItem):
-                self.consoleToNode(item.node())
-            else:
+            if item.node().status() == Node.stopped:
                 self.configureSlot()
+            else:
+                self.consoleFromItems(self.scene().selectedItems())
         else:
             super().mouseDoubleClickEvent(event)
 
