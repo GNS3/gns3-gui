@@ -23,6 +23,8 @@ Handles the saving and loading of a topology.
 import os
 import json
 import uuid
+import glob
+import shutil
 from .qt import QtGui, QtSvg
 
 from functools import partial
@@ -442,6 +444,7 @@ class Topology(object):
 
         :param include_gui_data: either to include or not the GUI specific info.
         :param dump_id: change vm id and project id too a new randow value (save as feature)
+        :param random_id: Randomize vm and project id (for save as)
 
         :returns: topology representation
         """
@@ -504,19 +507,25 @@ class Topology(object):
 
         if random_id:
             topology = self._randomize_id(topology)
+
         return topology
 
     def _randomize_id(self, topology):
         """
         Iterate on all keys and replace the uuid by a new one.Use by save as
-        for create new topology.
+        for create new topology. It's also rename the VM folder on disk.
 
-        :params: A topology dictionnary
         """
         topology["project_id"] = str(uuid.uuid4())
         if "nodes" in topology["topology"]:
             for key, node in enumerate(topology["topology"]["nodes"]):
-                topology["topology"]["nodes"][key]["vm_id"] = str(uuid.uuid4())
+                old_uuid = topology["topology"]["nodes"][key]["vm_id"]
+                new_uuid = str(uuid.uuid4())
+                topology["topology"]["nodes"][key]["vm_id"] = new_uuid
+                if old_uuid:
+                    for path in glob.glob(os.path.join(self.project.filesDir(), "project-files", "*", old_uuid)):
+                        new_path = path.replace(old_uuid, new_uuid)
+                        shutil.move(path, new_path)
         return topology
 
     def loadFile(self, path, project):
