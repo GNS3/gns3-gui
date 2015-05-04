@@ -275,6 +275,10 @@ class IOU(Module):
             del vm_settings["ram"]
             del vm_settings["nvram"]
 
+        if "console" in vm_settings:
+            # Older GNS3 versions may have a console setting in the VM template
+            del vm_settings["console"]
+
         iou_path = vm_settings.pop("path")
         node.setup(iou_path, additional_settings=vm_settings)
 
