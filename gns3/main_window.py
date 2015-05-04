@@ -1282,6 +1282,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         project_dir = file_dialog.selectedFiles()[0]
         project_name = os.path.basename(project_dir)
         topology_file_path = os.path.join(project_dir, project_name + ".gns3")
+        old_topology_file_path = os.path.join(project_dir, default_project_name + ".gns3")
 
         # create the destination directory for project files
         try:
@@ -1318,6 +1319,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # We save the topology and use the standard restore process to reinitialize everything
             self._project.setTopologyFile(topology_file_path)
             self.saveProject(topology_file_path, random_id=True)
+            if os.path.exists(old_topology_file_path):
+                try:
+                    os.remove(old_topology_file_path)
+                except OSError as e:
+                    MessageBox(self, "Save project", "Errors detected while saving the project", str(e), icon=QtGui.QMessageBox.Warning)
             return self._loadPath(topology_file_path)
 
     def saveProject(self, path, random_id=False):
