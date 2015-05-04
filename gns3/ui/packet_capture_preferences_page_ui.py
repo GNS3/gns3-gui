@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:31 2015
+# Created: Mon May  4 12:01:29 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_PacketCapturePreferencesPageWidget:
+class Ui_PacketCapturePreferencesPageWidget(object):
 
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName("PacketCapturePreferencesPageWidget")
@@ -66,7 +67,7 @@ class Ui_PacketCapturePreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(PacketCapturePreferencesPageWidget)
 
     def retranslateUi(self, PacketCapturePreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         PacketCapturePreferencesPageWidget.setWindowTitle(_translate("PacketCapturePreferencesPageWidget", "Packet capture"))
         self.uiSettingsGroupBox.setTitle(_translate("PacketCapturePreferencesPageWidget", "Settings"))
         self.uiCaptureAnalyzerCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Packet capture analyzer command:"))

@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:35 2015
+# Created: Mon May  4 12:01:33 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VirtualBoxPreferencesPageWidget:
+class Ui_VirtualBoxPreferencesPageWidget(object):
 
     def setupUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setObjectName("VirtualBoxPreferencesPageWidget")
@@ -75,7 +76,7 @@ class Ui_VirtualBoxPreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(VirtualBoxPreferencesPageWidget)
 
     def retranslateUi(self, VirtualBoxPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VirtualBoxPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxPreferencesPageWidget", "VirtualBox"))
         self.uiUseLocalServercheckBox.setText(_translate("VirtualBoxPreferencesPageWidget", "Use the local server"))
         self.uiVboxManagePathLabel.setText(_translate("VirtualBoxPreferencesPageWidget", "Path to VBoxManage:"))

@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:33 2015
+# Created: Mon May  4 12:01:31 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_DynamipsPreferencesPageWidget:
+class Ui_DynamipsPreferencesPageWidget(object):
 
     def setupUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setObjectName("DynamipsPreferencesPageWidget")
@@ -94,7 +95,7 @@ class Ui_DynamipsPreferencesPageWidget:
         DynamipsPreferencesPageWidget.setTabOrder(self.uiMmapSupportCheckBox, self.uiSparseMemorySupportCheckBox)
 
     def retranslateUi(self, DynamipsPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         DynamipsPreferencesPageWidget.setWindowTitle(_translate("DynamipsPreferencesPageWidget", "Dynamips"))
         self.uiUseLocalServercheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Use the local server"))
         self.uiDynamipsPathLabel.setText(_translate("DynamipsPreferencesPageWidget", "Path to Dynamips:"))

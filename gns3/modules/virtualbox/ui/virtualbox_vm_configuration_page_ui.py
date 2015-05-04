@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:35 2015
+# Created: Mon May  4 12:01:33 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_virtualBoxVMConfigPageWidget:
+class Ui_virtualBoxVMConfigPageWidget(object):
 
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
@@ -109,7 +110,7 @@ class Ui_virtualBoxVMConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(virtualBoxVMConfigPageWidget)
 
     def retranslateUi(self, virtualBoxVMConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         virtualBoxVMConfigPageWidget.setWindowTitle(_translate("virtualBoxVMConfigPageWidget", "VirtualBox VM configuration"))
         self.uiNameLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Name:"))
         self.uiVMListLabel.setText(_translate("virtualBoxVMConfigPageWidget", "VM name:"))

@@ -70,6 +70,9 @@ if DEFAULT_BINDING == 'PyQt5':
     QtCore.Property = QtCore.pyqtProperty
     QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
+    def translate(*args):
+        return QtCore.QCoreApplication.translate(*args)
+
 elif DEFAULT_BINDING == 'PyQt4':
 
     sip.setapi('QDate', 2)
@@ -119,6 +122,11 @@ elif DEFAULT_BINDING == 'PyQt4':
             return OldFileDialog.getSaveFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
 
     QtWidgets.QFileDialog = QFileDialog
+
+    # Translate not working well when reading a PyQT5 ui file (unicode issues)
+    # we turn off translation for PyQT4
+    def translate(*args):
+        return ''.join(args[-1:])
 
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):

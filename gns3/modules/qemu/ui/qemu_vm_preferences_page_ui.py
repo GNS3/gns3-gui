@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:35 2015
+# Created: Mon May  4 12:01:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_QemuVMPreferencesPageWidget:
+class Ui_QemuVMPreferencesPageWidget(object):
 
     def setupUi(self, QemuVMPreferencesPageWidget):
         QemuVMPreferencesPageWidget.setObjectName("QemuVMPreferencesPageWidget")
@@ -66,7 +67,7 @@ class Ui_QemuVMPreferencesPageWidget:
         QemuVMPreferencesPageWidget.setTabOrder(self.uiNewQemuVMPushButton, self.uiDeleteQemuVMPushButton)
 
     def retranslateUi(self, QemuVMPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         QemuVMPreferencesPageWidget.setWindowTitle(_translate("QemuVMPreferencesPageWidget", "QEMU VMs"))
         QemuVMPreferencesPageWidget.setAccessibleName(_translate("QemuVMPreferencesPageWidget", "QEMU VM templates"))
         self.uiQemuVMInfoTreeWidget.headerItem().setText(0, _translate("QemuVMPreferencesPageWidget", "1"))

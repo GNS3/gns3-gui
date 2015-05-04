@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vpcs/ui/vpcs_device_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:36 2015
+# Created: Mon May  4 12:01:34 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VPCSDeviceConfigPageWidget:
+class Ui_VPCSDeviceConfigPageWidget(object):
 
     def setupUi(self, VPCSDeviceConfigPageWidget):
         VPCSDeviceConfigPageWidget.setObjectName("VPCSDeviceConfigPageWidget")
@@ -37,7 +38,7 @@ class Ui_VPCSDeviceConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(VPCSDeviceConfigPageWidget)
 
     def retranslateUi(self, VPCSDeviceConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VPCSDeviceConfigPageWidget.setWindowTitle(_translate("VPCSDeviceConfigPageWidget", "VPCS device configuration"))
         self.uiNameLabel.setText(_translate("VPCSDeviceConfigPageWidget", "Name:"))
         self.uiConsolePortLabel.setText(_translate("VPCSDeviceConfigPageWidget", "Console port:"))

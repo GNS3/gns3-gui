@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_project_dialog.ui'
 #
-# Created: Fri Apr 17 10:44:31 2015
+# Created: Mon May  4 12:01:29 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_NewProjectDialog:
+class Ui_NewProjectDialog(object):
 
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")
@@ -92,7 +93,7 @@ class Ui_NewProjectDialog:
         QtCore.QMetaObject.connectSlotsByName(NewProjectDialog)
 
     def retranslateUi(self, NewProjectDialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         NewProjectDialog.setWindowTitle(_translate("NewProjectDialog", "New project"))
         self.uiProjectGroupBox.setTitle(_translate("NewProjectDialog", "Project"))
         self.uiNameLabel.setText(_translate("NewProjectDialog", "Name:"))

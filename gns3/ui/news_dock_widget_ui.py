@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/news_dock_widget.ui'
 #
-# Created: Fri Apr 17 10:44:31 2015
+# Created: Mon May  4 12:01:29 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_NewsDockWidget:
+class Ui_NewsDockWidget(object):
 
     def setupUi(self, NewsDockWidget):
         NewsDockWidget.setObjectName("NewsDockWidget")
@@ -37,7 +38,8 @@ class Ui_NewsDockWidget:
         QtCore.QMetaObject.connectSlotsByName(NewsDockWidget)
 
     def retranslateUi(self, NewsDockWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         NewsDockWidget.setWindowTitle(_translate("NewsDockWidget", "Jungle Newsfeed"))
 
+import gns3.qt
 from gns3.qt import QtWebKitWidgets

@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:34 2015
+# Created: Mon May  4 12:01:31 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_IOSRouterPreferencesPageWidget:
+class Ui_IOSRouterPreferencesPageWidget(object):
 
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName("IOSRouterPreferencesPageWidget")
@@ -69,7 +70,7 @@ class Ui_IOSRouterPreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(IOSRouterPreferencesPageWidget)
 
     def retranslateUi(self, IOSRouterPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         IOSRouterPreferencesPageWidget.setWindowTitle(_translate("IOSRouterPreferencesPageWidget", "IOS routers"))
         IOSRouterPreferencesPageWidget.setAccessibleName(_translate("IOSRouterPreferencesPageWidget", "IOS router templates"))
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(0, _translate("IOSRouterPreferencesPageWidget", "1"))

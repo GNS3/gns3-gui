@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_preferences_page.ui'
 #
-# Created: Thu Apr 30 17:58:09 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Mon May  4 12:01:33 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwareVMPreferencesPageWidget(object):
+
     def setupUi(self, VMwareVMPreferencesPageWidget):
         VMwareVMPreferencesPageWidget.setObjectName("VMwareVMPreferencesPageWidget")
         VMwareVMPreferencesPageWidget.resize(499, 546)
@@ -64,7 +67,7 @@ class Ui_VMwareVMPreferencesPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(VMwareVMPreferencesPageWidget)
 
     def retranslateUi(self, VMwareVMPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VMwareVMPreferencesPageWidget.setWindowTitle(_translate("VMwareVMPreferencesPageWidget", "VMware VMs"))
         VMwareVMPreferencesPageWidget.setAccessibleName(_translate("VMwareVMPreferencesPageWidget", "VirtualBox VM templates"))
         self.uiNewVMwareVMPushButton.setText(_translate("VMwareVMPreferencesPageWidget", "&New"))
@@ -72,4 +75,3 @@ class Ui_VMwareVMPreferencesPageWidget(object):
         self.uiDeleteVMwareVMPushButton.setText(_translate("VMwareVMPreferencesPageWidget", "&Delete"))
         self.uiVMwareVMInfoTreeWidget.headerItem().setText(0, _translate("VMwareVMPreferencesPageWidget", "1"))
         self.uiVMwareVMInfoTreeWidget.headerItem().setText(1, _translate("VMwareVMPreferencesPageWidget", "2"))
-

@@ -81,7 +81,9 @@ def patch_file_qt4_5(target):
     print("Patch {} for Qt4 and Qt5 support".format(target))
     with open(target) as f:
         for line in f.readlines():
-            out += re.sub(r"^from PyQt[45] ", "from gns3.qt ", line)
+            line = re.sub(r"^from PyQt[45] ", "import gns3.qt\nfrom gns3.qt ", line)
+            line = re.sub(r"_translate = QtCore\.QCoreApplication\.translate", "_translate = gns3.qt.translate", line)
+            out += line
     with open(target, 'w') as f:
         f.write(out)
 

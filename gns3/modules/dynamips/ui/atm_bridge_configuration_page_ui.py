@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/atm_bridge_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:32 2015
+# Created: Mon May  4 12:01:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_atmBridgeConfigPageWidget:
+class Ui_atmBridgeConfigPageWidget(object):
 
     def setupUi(self, atmBridgeConfigPageWidget):
         atmBridgeConfigPageWidget.setObjectName("atmBridgeConfigPageWidget")
@@ -138,7 +139,7 @@ class Ui_atmBridgeConfigPageWidget:
         atmBridgeConfigPageWidget.setTabOrder(self.uiAddPushButton, self.uiDeletePushButton)
 
     def retranslateUi(self, atmBridgeConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         atmBridgeConfigPageWidget.setWindowTitle(_translate("atmBridgeConfigPageWidget", "ATM Bridge"))
         self.uiMappingGroupBox.setTitle(_translate("atmBridgeConfigPageWidget", "Mapping"))
         self.uiMappingTreeWidget.headerItem().setText(0, _translate("atmBridgeConfigPageWidget", "Ethernet Port"))

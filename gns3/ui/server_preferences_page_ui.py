@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:31 2015
+# Created: Mon May  4 12:01:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_ServerPreferencesPageWidget:
+class Ui_ServerPreferencesPageWidget(object):
 
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
@@ -165,7 +166,7 @@ class Ui_ServerPreferencesPageWidget:
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPortSpinBox, self.uiRemoteServerPortSpinBox)
 
     def retranslateUi(self, ServerPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "Server"))
         self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable local server"))
         self.uiGeneralSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "General settings"))

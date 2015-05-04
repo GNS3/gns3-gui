@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/snapshots_dialog.ui'
 #
-# Created: Fri Apr 17 10:44:32 2015
+# Created: Mon May  4 12:01:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_SnapshotsDialog:
+class Ui_SnapshotsDialog(object):
 
     def setupUi(self, SnapshotsDialog):
         SnapshotsDialog.setObjectName("SnapshotsDialog")
@@ -44,7 +45,7 @@ class Ui_SnapshotsDialog:
         QtCore.QMetaObject.connectSlotsByName(SnapshotsDialog)
 
     def retranslateUi(self, SnapshotsDialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         SnapshotsDialog.setWindowTitle(_translate("SnapshotsDialog", "Snapshots"))
         self.uiCreatePushButton.setText(_translate("SnapshotsDialog", "&Create"))
         self.uiRestorePushButton.setText(_translate("SnapshotsDialog", "&Restore"))

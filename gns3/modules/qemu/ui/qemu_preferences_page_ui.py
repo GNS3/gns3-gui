@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:35 2015
+# Created: Mon May  4 12:01:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_QemuPreferencesPageWidget:
+class Ui_QemuPreferencesPageWidget(object):
 
     def setupUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setObjectName("QemuPreferencesPageWidget")
@@ -46,7 +47,7 @@ class Ui_QemuPreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(QemuPreferencesPageWidget)
 
     def retranslateUi(self, QemuPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         QemuPreferencesPageWidget.setWindowTitle(_translate("QemuPreferencesPageWidget", "QEMU"))
         self.uiUseLocalServercheckBox.setText(_translate("QemuPreferencesPageWidget", "Use the local server"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "General settings"))

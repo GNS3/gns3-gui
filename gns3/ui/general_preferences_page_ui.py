@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:30 2015
+# Created: Mon May  4 12:01:28 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_GeneralPreferencesPageWidget:
+class Ui_GeneralPreferencesPageWidget(object):
 
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
@@ -290,7 +291,7 @@ class Ui_GeneralPreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(GeneralPreferencesPageWidget)
 
     def retranslateUi(self, GeneralPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         GeneralPreferencesPageWidget.setWindowTitle(_translate("GeneralPreferencesPageWidget", "General"))
         self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style"))
         self.uiLocalPathsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Local paths"))

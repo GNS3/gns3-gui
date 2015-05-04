@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
 #
-# Created: Fri Apr 17 10:44:36 2015
+# Created: Mon May  4 12:01:33 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VirtualBoxVMWizard:
+class Ui_VirtualBoxVMWizard(object):
 
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName("VirtualBoxVMWizard")
@@ -80,7 +81,7 @@ class Ui_VirtualBoxVMWizard:
         QtCore.QMetaObject.connectSlotsByName(VirtualBoxVMWizard)
 
     def retranslateUi(self, VirtualBoxVMWizard):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VirtualBoxVMWizard.setWindowTitle(_translate("VirtualBoxVMWizard", "New VirtualBox VM template"))
         self.uiServerWizardPage.setTitle(_translate("VirtualBoxVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run your new VirtualBox VM."))

@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:34 2015
+# Created: Mon May  4 12:01:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_iouDeviceConfigPageWidget:
+class Ui_iouDeviceConfigPageWidget(object):
 
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName("iouDeviceConfigPageWidget")
@@ -162,7 +163,7 @@ class Ui_iouDeviceConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(iouDeviceConfigPageWidget)
 
     def retranslateUi(self, iouDeviceConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         iouDeviceConfigPageWidget.setWindowTitle(_translate("iouDeviceConfigPageWidget", "IOU device configuration"))
         self.uiGeneralgroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("iouDeviceConfigPageWidget", "Name:"))

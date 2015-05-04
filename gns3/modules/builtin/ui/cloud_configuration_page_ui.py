@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:32 2015
+# Created: Mon May  4 12:01:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_cloudConfigPageWidget:
+class Ui_cloudConfigPageWidget(object):
 
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
@@ -363,7 +364,7 @@ class Ui_cloudConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(cloudConfigPageWidget)
 
     def retranslateUi(self, cloudConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud configuration"))
         self.uiGenericEthernetGroupBox.setTitle(_translate("cloudConfigPageWidget", "Generic Ethernet NIO (Administrator or root access required)"))
         self.uiAddGenericEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))

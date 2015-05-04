@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:34 2015
+# Created: Mon May  4 12:01:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_IOUPreferencesPageWidget:
+class Ui_IOUPreferencesPageWidget(object):
 
     def setupUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setObjectName("IOUPreferencesPageWidget")
@@ -95,7 +96,7 @@ class Ui_IOUPreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(IOUPreferencesPageWidget)
 
     def retranslateUi(self, IOUPreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         IOUPreferencesPageWidget.setWindowTitle(_translate("IOUPreferencesPageWidget", "IOS on UNIX"))
         self.uiLocalServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Local server"))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))

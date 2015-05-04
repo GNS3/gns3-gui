@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:33 2015
+# Created: Mon May  4 12:01:31 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_iosRouterConfigPageWidget:
+class Ui_iosRouterConfigPageWidget(object):
 
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName("iosRouterConfigPageWidget")
@@ -538,7 +539,7 @@ class Ui_iosRouterConfigPageWidget:
         iosRouterConfigPageWidget.setTabOrder(self.uiBaseMACLineEdit, self.uiExecAreaSpinBox)
 
     def retranslateUi(self, iosRouterConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         iosRouterConfigPageWidget.setWindowTitle(_translate("iosRouterConfigPageWidget", "Dynamips IOS Router configuration"))
         self.uiNameLabel.setText(_translate("iosRouterConfigPageWidget", "Name:"))
         self.uiPlatformLabel.setText(_translate("iosRouterConfigPageWidget", "Platform:"))

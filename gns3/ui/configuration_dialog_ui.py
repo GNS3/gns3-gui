@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/configuration_dialog.ui'
 #
-# Created: Fri Apr 17 10:44:30 2015
+# Created: Mon May  4 12:01:28 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_configurationDialog:
+class Ui_configurationDialog(object):
 
     def setupUi(self, configurationDialog):
         configurationDialog.setObjectName("configurationDialog")
@@ -65,7 +66,7 @@ class Ui_configurationDialog:
         QtCore.QMetaObject.connectSlotsByName(configurationDialog)
 
     def retranslateUi(self, configurationDialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         configurationDialog.setWindowTitle(_translate("configurationDialog", "Configuration"))
         self.uiTitleLabel.setText(_translate("configurationDialog", "Configuration"))
 

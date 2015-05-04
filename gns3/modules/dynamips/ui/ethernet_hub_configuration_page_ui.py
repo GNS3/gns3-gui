@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ethernet_hub_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:33 2015
+# Created: Mon May  4 12:01:31 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_ethernetHubConfigPageWidget:
+class Ui_ethernetHubConfigPageWidget(object):
 
     def setupUi(self, ethernetHubConfigPageWidget):
         ethernetHubConfigPageWidget.setObjectName("ethernetHubConfigPageWidget")
@@ -54,7 +55,7 @@ class Ui_ethernetHubConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(ethernetHubConfigPageWidget)
 
     def retranslateUi(self, ethernetHubConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         ethernetHubConfigPageWidget.setWindowTitle(_translate("ethernetHubConfigPageWidget", "Ethernet hub"))
         self.uiSettingsGroupBox.setTitle(_translate("ethernetHubConfigPageWidget", "Settings"))
         self.uiNameLabel.setText(_translate("ethernetHubConfigPageWidget", "Name:"))

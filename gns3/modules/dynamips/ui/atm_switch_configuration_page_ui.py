@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/atm_switch_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:33 2015
+# Created: Mon May  4 12:01:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_atmSwitchConfigPageWidget:
+class Ui_atmSwitchConfigPageWidget(object):
 
     def setupUi(self, atmSwitchConfigPageWidget):
         atmSwitchConfigPageWidget.setObjectName("atmSwitchConfigPageWidget")
@@ -169,7 +170,7 @@ class Ui_atmSwitchConfigPageWidget:
         atmSwitchConfigPageWidget.setTabOrder(self.uiAddPushButton, self.uiDeletePushButton)
 
     def retranslateUi(self, atmSwitchConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         atmSwitchConfigPageWidget.setWindowTitle(_translate("atmSwitchConfigPageWidget", "ATM Switch"))
         self.uiGeneralGroupBox.setTitle(_translate("atmSwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("atmSwitchConfigPageWidget", "Name:"))

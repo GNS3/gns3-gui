@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
 #
-# Created: Thu Apr 30 17:19:45 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Mon May  4 12:01:34 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwareVMWizard(object):
+
     def setupUi(self, VMwareVMWizard):
         VMwareVMWizard.setObjectName("VMwareVMWizard")
         VMwareVMWizard.resize(514, 367)
@@ -78,7 +81,7 @@ class Ui_VMwareVMWizard(object):
         QtCore.QMetaObject.connectSlotsByName(VMwareVMWizard)
 
     def retranslateUi(self, VMwareVMWizard):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VMwareVMWizard.setWindowTitle(_translate("VMwareVMWizard", "New VMware VM template"))
         self.uiServerWizardPage.setTitle(_translate("VMwareVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM."))
@@ -92,4 +95,3 @@ class Ui_VMwareVMWizard(object):
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a VMware virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VMwareVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMWizard", "Use as a linked base VM (experimental)"))
-

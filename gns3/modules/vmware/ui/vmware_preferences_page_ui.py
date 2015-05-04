@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created: Fri May  1 18:17:41 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Mon May  4 12:01:33 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwarePreferencesPageWidget(object):
+
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
         VMwarePreferencesPageWidget.resize(430, 490)
@@ -68,7 +71,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(VMwarePreferencesPageWidget)
 
     def retranslateUi(self, VMwarePreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VMwarePreferencesPageWidget.setWindowTitle(_translate("VMwarePreferencesPageWidget", "VMware"))
         self.uiVmrunPathLabel.setText(_translate("VMwarePreferencesPageWidget", "Path to vmrun:"))
         self.uiHostTypeLabel.setText(_translate("VMwarePreferencesPageWidget", "Host type:"))
@@ -76,4 +79,3 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiVmrunPathToolButton.setText(_translate("VMwarePreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VMwarePreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
-

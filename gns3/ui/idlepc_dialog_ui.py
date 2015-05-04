@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/idlepc_dialog.ui'
 #
-# Created: Fri Apr 17 10:44:30 2015
+# Created: Mon May  4 12:01:28 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_IdlePCDialog:
+class Ui_IdlePCDialog(object):
 
     def setupUi(self, IdlePCDialog):
         IdlePCDialog.setObjectName("IdlePCDialog")
@@ -36,6 +37,6 @@ class Ui_IdlePCDialog:
         QtCore.QMetaObject.connectSlotsByName(IdlePCDialog)
 
     def retranslateUi(self, IdlePCDialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         IdlePCDialog.setWindowTitle(_translate("IdlePCDialog", "Idle-PC values"))
         self.uiLabel.setText(_translate("IdlePCDialog", "Potentially better Idle-PC values are marked with \'*\'"))

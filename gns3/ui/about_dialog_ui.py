@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/about_dialog.ui'
 #
-# Created: Fri Apr 17 10:44:29 2015
+# Created: Mon May  4 12:01:28 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_AboutDialog:
+class Ui_AboutDialog(object):
 
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName("AboutDialog")
@@ -82,7 +83,7 @@ class Ui_AboutDialog:
         AboutDialog.setTabOrder(self.uiThanksPlainTextEdit, self.uiLicensePlainTextEdit)
 
     def retranslateUi(self, AboutDialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         AboutDialog.setWindowTitle(_translate("AboutDialog", "About"))
         self.uiAboutTextLabel.setText(_translate("AboutDialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                  "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

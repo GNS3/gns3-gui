@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created: Thu Apr 30 18:09:36 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Mon May  4 12:01:33 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwareVMConfigPageWidget(object):
+
     def setupUi(self, VMwareVMConfigPageWidget):
         VMwareVMConfigPageWidget.setObjectName("VMwareVMConfigPageWidget")
         VMwareVMConfigPageWidget.resize(509, 346)
@@ -81,7 +84,7 @@ class Ui_VMwareVMConfigPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(VMwareVMConfigPageWidget)
 
     def retranslateUi(self, VMwareVMConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         VMwareVMConfigPageWidget.setWindowTitle(_translate("VMwareVMConfigPageWidget", "VMware VM configuration"))
         self.uiNameLabel.setText(_translate("VMwareVMConfigPageWidget", "Name:"))
         self.uiConsolePortLabel.setText(_translate("VMwareVMConfigPageWidget", "Console port:"))
@@ -92,4 +95,3 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiAdaptersLabel.setText(_translate("VMwareVMConfigPageWidget", "Adapters:"))
         self.label.setText(_translate("VMwareVMConfigPageWidget", "Type:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
-

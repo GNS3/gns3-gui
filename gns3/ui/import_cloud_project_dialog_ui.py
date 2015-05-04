@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/import_cloud_project_dialog.ui'
 #
-# Created: Fri Apr 17 10:44:30 2015
+# Created: Mon May  4 12:01:29 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_ImportCloudProjectDialog:
+class Ui_ImportCloudProjectDialog(object):
 
     def setupUi(self, ImportCloudProjectDialog):
         ImportCloudProjectDialog.setObjectName("ImportCloudProjectDialog")
@@ -34,7 +35,7 @@ class Ui_ImportCloudProjectDialog:
         QtCore.QMetaObject.connectSlotsByName(ImportCloudProjectDialog)
 
     def retranslateUi(self, ImportCloudProjectDialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         ImportCloudProjectDialog.setWindowTitle(_translate("ImportCloudProjectDialog", "Dialog"))
         self.uiImportProjectAction.setText(_translate("ImportCloudProjectDialog", "Import"))
         self.uiDeleteProjectAction.setText(_translate("ImportCloudProjectDialog", "Delete"))

@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Fri Apr 17 10:44:35 2015
+# Created: Mon May  4 12:01:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_QemuVMConfigPageWidget:
+class Ui_QemuVMConfigPageWidget(object):
 
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
@@ -244,7 +245,7 @@ class Ui_QemuVMConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(QemuVMConfigPageWidget)
 
     def retranslateUi(self, QemuVMConfigPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         QemuVMConfigPageWidget.setWindowTitle(_translate("QemuVMConfigPageWidget", "QEMU VM configuration"))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:"))
         self.uiConsolePortLabel.setText(_translate("QemuVMConfigPageWidget", "Console port:"))

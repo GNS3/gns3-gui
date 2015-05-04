@@ -2,15 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Fri Apr 17 10:44:34 2015
+# Created: Mon May  4 12:01:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
+import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_IOUDevicePreferencesPageWidget:
+class Ui_IOUDevicePreferencesPageWidget(object):
 
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName("IOUDevicePreferencesPageWidget")
@@ -65,7 +66,7 @@ class Ui_IOUDevicePreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(IOUDevicePreferencesPageWidget)
 
     def retranslateUi(self, IOUDevicePreferencesPageWidget):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = gns3.qt.translate
         IOUDevicePreferencesPageWidget.setWindowTitle(_translate("IOUDevicePreferencesPageWidget", "IOU devices"))
         IOUDevicePreferencesPageWidget.setAccessibleName(_translate("IOUDevicePreferencesPageWidget", "IOU device templates"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "1"))
