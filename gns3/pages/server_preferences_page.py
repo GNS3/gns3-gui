@@ -138,7 +138,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         host = self.uiRemoteServerPortLineEdit.text().strip()
         port = self.uiRemoteServerPortSpinBox.value()
 
-        if not re.match("^[a-zA-Z0-9\.-]+$", host):
+        if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
             QtGui.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
             return
 
