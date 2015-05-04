@@ -354,47 +354,19 @@ class Dynamips(Module):
             if not ios_router:
                 raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))
 
-            #  TODO: improve this part
-            settings = {}
-            # set initial settings like the chassis or an Idle-PC value etc.
-            if "chassis" in ios_router and ios_router["chassis"]:
-                settings["chassis"] = ios_router["chassis"]
-            if "idlepc" in ios_router and ios_router["idlepc"]:
-                settings["idlepc"] = ios_router["idlepc"]
-            if "startup_config" in ios_router:
-                settings["startup_config"] = ios_router["startup_config"]
-            if "private_config" in ios_router:
-                settings["private_config"] = ios_router["private_config"]
-
-            if ios_router["platform"] == "c7200":
-                settings["midplane"] = ios_router["midplane"]
-                settings["npe"] = ios_router["npe"]
-            elif "iomem" in ios_router:
-                settings["iomem"] = ios_router["iomem"]
-
-            if "nvram" in ios_router and ios_router["nvram"]:
-                settings["nvram"] = ios_router["nvram"]
-
-            if "disk0" in ios_router:
-                settings["disk0"] = ios_router["disk0"]
-
-            if "disk1" in ios_router:
-                settings["disk1"] = ios_router["disk1"]
-
-            for slot_id in range(0, 7):
-                slot = "slot{}".format(slot_id)
-                if slot in ios_router:
-                    settings[slot] = ios_router[slot]
-            for wic_id in range(0, 3):
-                wic = "wic{}".format(wic_id)
-                if wic in ios_router:
-                    settings[wic] = ios_router[wic]
+            vm_settings = {}
+            for setting_name, value in ios_router.items():
+                if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
+                    vm_settings[setting_name] = value
 
             base_name = "R"
-            if "slot1" in settings and settings["slot1"] == "NM-16ESW":
+            if "slot1" in vm_settings and vm_settings["slot1"] == "NM-16ESW":
                 # must be an EtherSwitch router
                 base_name = "ESW"
-            node.setup(ios_router["image"], ios_router["ram"], additional_settings=settings, base_name=base_name)
+
+            ram = vm_settings.pop("ram")
+            image = vm_settings.pop("image")
+            node.setup(image, ram, additional_settings=vm_settings, base_name=base_name)
         else:
             node.setup()
 

@@ -55,9 +55,6 @@ class Router(VM):
         log.info("Router {} is being created".format(platform))
         self._ports = []
         self._dynamips_id = None
-        self._loading = False
-        self._export_directory = None
-        self._defaults = {}
         self._settings = {"name": "",
                           "platform": platform,
                           "image": "",
@@ -201,6 +198,25 @@ class Router(VM):
                                 port.setShortName(port.shortNameType() + "0/" + str(wic_port_number))
                             log.debug("port {} renamed to {}".format(old_name, port.name()))
 
+    def _insertAdapters(self, vm_settings):
+        """
+        Insert adapters and create ports.
+
+        :param vm_settings: VM settings
+        """
+
+        for name, value in vm_settings.items():
+            if name.startswith("slot") and value:
+                slot_number = int(name[-1])
+                adapter = value
+                self._addAdapterPorts(adapter, slot_number)
+            if name.startswith("wic") and value:
+                wic_slot_number = int(name[-1])
+                wic = value
+                self._addWICPorts(wic, wic_slot_number)
+        self._updateWICNumbering()
+
+
     def setup(self, image, ram, name=None, vm_id=None, dynamips_id=None, additional_settings={}, base_name="R"):
         """
         Setups this router.
@@ -221,11 +237,12 @@ class Router(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this router")
             return
 
-        # keep the default settings
-        self._defaults = self._settings.copy()
         platform = self._settings["platform"]
 
         self._settings["name"] = name
+        self._settings["ram"] = ram
+        self._settings["image"] = image
+
         # Minimum settings to send to the server in order to create a new router
         params = {"name": name,
                   "platform": platform,
@@ -234,6 +251,8 @@ class Router(VM):
 
         if vm_id:
             params["vm_id"] = vm_id
+        else:
+            self._insertAdapters(additional_settings)
 
         if dynamips_id:
             params["dynamips_id"] = dynamips_id
@@ -284,25 +303,10 @@ class Router(VM):
                                                                                          value))
                 self._settings[name] = value
 
-        # insert default adapters
-        for name, value in self._settings.items():
-            if name.startswith("slot") and value:
-                slot_number = int(name[-1])
-                adapter = value
-                self._addAdapterPorts(adapter, slot_number)
-            if name.startswith("wic") and value:
-                wic_slot_number = int(name[-1])
-                wic = value
-                self._addWICPorts(wic, wic_slot_number)
-        self._updateWICNumbering()
-
-        if self._loading:
-            self.updated_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.debug("router {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
+        self.setInitialized(True)
+        log.debug("router {} has been created".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -383,7 +387,7 @@ class Router(VM):
                 self._settings[name] = value
         self._updateWICNumbering()
 
-        if updated or self._loading:
+        if updated:
             log.info("router {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -687,7 +691,7 @@ class Router(VM):
 
         # add the properties
         for name, value in self._settings.items():
-            if name in self._defaults and self._defaults[name] != value:
+            if value is not None and value != "":
                 router["properties"][name] = value
 
         # add the ports
@@ -715,16 +719,32 @@ class Router(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-        self.node_info = node_info
         # for backward compatibility
         vm_id = dynamips_id = node_info.get("router_id")
         if not vm_id:
             vm_id = node_info["vm_id"]
             dynamips_id = node_info["dynamips_id"]
-        settings = node_info["properties"]
-        name = settings.pop("name")
-        ram = settings.get("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
-        image = settings.pop("image")
+
+        vm_settings = {}
+        for name, value in node_info["properties"].items():
+            if name in self._settings:
+                vm_settings[name] = value
+        name = vm_settings.pop("name")
+        ram = vm_settings.pop("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
+        image = vm_settings.pop("image")
+
+        log.info("router {} is loading".format(name))
+        self.setName(name)
+        self._insertAdapters(vm_settings)
+
+        # assign the correct names and IDs to the ports
+        if "ports" in node_info:
+            ports = node_info["ports"]
+            for topology_port in ports:
+                for port in self._ports:
+                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
+                        port.setName(topology_port["name"])
+                        port.setId(topology_port["id"])
 
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
@@ -737,36 +757,9 @@ class Router(VM):
                 if alternative_image["ram"]:
                     ram = alternative_image["ram"]
                 if alternative_image["idlepc"]:
-                    settings["idlepc"] = alternative_image["idlepc"]
+                    vm_settings["idlepc"] = alternative_image["idlepc"]
 
-        self.updated_signal.connect(self._updatePortSettings)
-        # block the created signal, it will be triggered when loading is completely done
-        self._loading = True
-        log.info("router {} is loading".format(name))
-        self.setName(name)
-        self.setup(image, ram, name, vm_id, dynamips_id, settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.updated_signal.disconnect(self._updatePortSettings)
-        # update the port with the correct names and IDs
-        if "ports" in self.node_info:
-            ports = self.node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("router {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
+        self.setup(image, ram, name, vm_id, dynamips_id, vm_settings)
 
     def saveConfig(self):
         """
