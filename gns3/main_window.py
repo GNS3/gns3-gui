@@ -94,10 +94,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._settings = {}
         HTTPClient.setProgressCallback(Progress(self))
 
-        self._project = Project()
-        self._project.setTemporary(True)
-        self._project.setName("unsaved")
-        self._project.setType("local")
+        self._project = None
+        self._createTemporaryProject()
 
         self._project_from_cmdline = project
         self._cloud_settings = {}
@@ -391,6 +389,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             pass
         except OSError as e:
             QtGui.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"], e))
+            self._createTemporaryProject()
             return
 
         # let all modules know about the new project files directory
@@ -1447,7 +1446,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         Creates a temporary project.
         """
 
-        self._project.close()
+        if self._project:
+            self._project.close()
         self._project = Project()
         self._project.setTemporary(True)
         self._project.setName("unsaved")
