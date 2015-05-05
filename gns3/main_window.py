@@ -1481,6 +1481,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not path:
             self.setWindowFilePath("Unsaved project")
         else:
+            path = os.path.normpath(path)
             self.setWindowFilePath(path)
             self._updateRecentFileSettings(path)
             self._updateRecentFileActions()
@@ -1501,7 +1502,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if "RecentFiles" in settings:
             for file_path in settings["RecentFiles"]:
                 if file_path:
-                    recent_files.append(file_path)
+                    file_path = os.path.normpath(file_path)
+                    if file_path not in recent_files and os.path.exists(file_path):
+                        recent_files.append(file_path)
 
         # update the recent file list
         if path in recent_files:
@@ -1526,7 +1529,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             index = 0
             size = len(settings["RecentFiles"])
             for file_path in settings["RecentFiles"]:
-                if file_path:
+                if file_path and os.path.exists(file_path):
                     action = self._recent_file_actions[index]
                     action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
                     action.setData(file_path)
