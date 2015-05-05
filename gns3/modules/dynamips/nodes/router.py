@@ -216,7 +216,6 @@ class Router(VM):
                 self._addWICPorts(wic, wic_slot_number)
         self._updateWICNumbering()
 
-
     def setup(self, image, ram, name=None, vm_id=None, dynamips_id=None, additional_settings={}, base_name="R"):
         """
         Setups this router.
@@ -803,20 +802,20 @@ class Router(VM):
         else:
             startup_config_path = context["startup_config_path"]
             private_config_path = context["private_config_path"]
-            if "startup_config_content" in result:
+            if startup_config_path:
                 try:
                     with open(startup_config_path, "wb") as f:
                         log.info("Saving {} startup-config to {}".format(self.name(), startup_config_path))
-                        if result["startup_config_content"]:
+                        if "startup_config_content" in result and result["startup_config_content"]:
                             f.write(result["startup_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(startup_config_path, e))
 
-            if "private_config_content" in result:
+            if private_config_path:
                 try:
                     with open(private_config_path, "wb") as f:
                         log.info("Saving {} private-config to {}".format(self.name(), private_config_path))
-                        if result["private_config_content"]:
+                        if "private_config_content" in result and result["private_config_content"]:
                             f.write(result["private_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(private_config_path, e))
