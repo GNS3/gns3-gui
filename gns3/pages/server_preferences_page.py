@@ -21,6 +21,7 @@ Configuration page for server preferences.
 
 import os
 import sys
+import re
 from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
@@ -134,8 +135,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Adds a new remote server.
         """
 
-        host = self.uiRemoteServerPortLineEdit.text()
+        host = self.uiRemoteServerPortLineEdit.text().strip()
         port = self.uiRemoteServerPortSpinBox.value()
+
+        if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
+            QtGui.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
+            return
 
         # check if the remote server is already defined
         remote_server = "{host}:{port}".format(host=host, port=port)

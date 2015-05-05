@@ -472,7 +472,6 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
             "name": self.uiNameLineEdit.text(),
             "image": image,
             "startup_config": get_default_base_config(self._base_startup_config_template),
-            "private_config": get_default_base_config(self._base_private_config_template),
             "ram": self.uiRamSpinBox.value(),
             "nvram": PLATFORMS_DEFAULT_NVRAM[platform],
             "idlepc": self.uiIdlepcLineEdit.text(),

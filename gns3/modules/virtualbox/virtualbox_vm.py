@@ -51,8 +51,6 @@ class VirtualBoxVM(VM):
         super().__init__(module, server, project)
         log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
-        self._export_directory = None
-        self._loading = False
         self._ports = []
         self._settings = {"name": "",
                           "vmname": "",
@@ -63,9 +61,6 @@ class VirtualBoxVM(VM):
                           "ram": VBOX_VM_SETTINGS["ram"],
                           "headless": VBOX_VM_SETTINGS["headless"],
                           "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
-
-        # save the default settings
-        self._defaults = self._settings.copy()
 
     def _addAdapters(self, adapters):
         """
@@ -116,6 +111,8 @@ class VirtualBoxVM(VM):
 
         if vm_id:
             params["vm_id"] = vm_id
+        else:
+            self._addAdapters(additional_settings.get("adapters", 0))
 
         params.update(additional_settings)
         self.httpPost("/virtualbox/vms", self._setupCallback, body=params)
@@ -143,16 +140,10 @@ class VirtualBoxVM(VM):
                                                                                                          value))
                 self._settings[name] = value
 
-        if self._settings["adapters"] != 0:
-            self._addAdapters(self._settings["adapters"])
-
-        if self._loading:
-            self.updated_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("VirtualBox VM instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
+        self.setInitialized(True)
+        log.info("VirtualBox VM instance {} has been created".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -209,7 +200,7 @@ class VirtualBoxVM(VM):
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
 
-        if updated or self._loading:
+        if updated:
             log.info("VirtualBox VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -360,7 +351,7 @@ class VirtualBoxVM(VM):
 
         # add the properties
         for name, value in self._settings.items():
-            if name in self._defaults and self._defaults[name] != value:
+            if value is not None and value != "":
                 vbox_vm["properties"][name] = value
 
         # add the ports
@@ -379,32 +370,29 @@ class VirtualBoxVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-        self.node_info = node_info
         # for backward compatibility
         vm_id = node_info.get("vbox_id")
         if not vm_id:
             vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)
-        settings = node_info["properties"]
-        settings["adapters"] = settings.get("adapters", 1)
-        name = settings.pop("name")
-        vmname = settings.pop("vmname")
-        self.updated_signal.connect(self._updatePortSettings)
-        # block the created signal, it will be triggered when loading is completely done
-        self._loading = True
+
+        vm_settings = {}
+        for name, value in node_info["properties"].items():
+            if name in self._settings:
+                vm_settings[name] = value
+        vm_settings["adapters"] = vm_settings.get("adapters", 1)  # for compatibility
+        name = vm_settings.pop("name")
+        vmname = vm_settings.pop("vmname")
+
         log.info("VirtualBox VM {} is loading".format(name))
         self.setName(name)
-        self.setup(vmname, name, vm_id, linked_clone, settings)
 
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
+        # create the adapters
+        self._addAdapters(vm_settings["adapters"])
 
-        self.updated_signal.disconnect(self._updatePortSettings)
-        # update the port with the correct names and IDs
-        if "ports" in self.node_info:
-            ports = self.node_info["ports"]
+        # assign the correct names and IDs to the ports
+        if "ports" in node_info:
+            ports = node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
                     adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
@@ -412,12 +400,7 @@ class VirtualBoxVM(VM):
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("VirtualBox VM {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
+        self.setup(vmname, name, vm_id, linked_clone, vm_settings)
 
     def name(self):
         """

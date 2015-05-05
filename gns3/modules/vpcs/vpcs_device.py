@@ -45,12 +45,8 @@ class VPCSDevice(VM):
 
         log.info("VPCS instance is being created")
         self._vm_id = None
-        self._defaults = {}
-        self._export_directory = None
-        self._loading = False
         self._ports = []
         self._settings = {"name": "",
-                          "script_file": "",
                           "startup_script": None,
                           "startup_script_path": None,
                           "console": None}
@@ -58,16 +54,13 @@ class VPCSDevice(VM):
         port_name = EthernetPort.longNameType() + str(0)
         short_name = EthernetPort.shortNameType() + str(0)
 
-        # VPCS devices have only one Ethernet port
+        # VPCS devices have only one fixed Ethernet port
         port = EthernetPort(port_name)
         port.setShortName(short_name)
         port.setAdapterNumber(0)
         port.setPortNumber(0)
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
-
-        # save the default settings
-        self._defaults = self._settings.copy()
 
     def setup(self, name=None, vm_id=None, additional_settings={}):
         """
@@ -95,9 +88,8 @@ class VPCSDevice(VM):
         if "script_file" in additional_settings:
             if os.path.isfile(additional_settings["script_file"]):
                 base_config_content = self._readBaseConfig(additional_settings["script_file"])
-                if base_config_content is None:
-                    return
-                additional_settings["startup_script"] = base_config_content
+                if base_config_content is not None:
+                    additional_settings["startup_script"] = base_config_content
             del additional_settings["script_file"]
 
         if "startup_script_path" in additional_settings:
@@ -133,13 +125,10 @@ class VPCSDevice(VM):
                                                                                                 value))
                 self._settings[name] = value
 
-        if self._loading:
-            self.updated_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("VPCS instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
+        self.setInitialized(True)
+        log.info("VPCS instance {} has been created".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -152,13 +141,20 @@ class VPCSDevice(VM):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
+        if "script_file" in new_settings:
+            if os.path.isfile(new_settings["script_file"]):
+                base_config_content = self._readBaseConfig(new_settings["script_file"])
+                if base_config_content is not None:
+                    new_settings["startup_script"] = base_config_content
+            del new_settings["script_file"]
+
+        if "startup_script_path" in new_settings:
+            del new_settings["startup_script_path"]
+
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
-        if "startup_script_path" in params:
-            del params["startup_script_path"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
@@ -186,7 +182,7 @@ class VPCSDevice(VM):
                     self.updateAllocatedName(value)
                 self._settings[name] = value
 
-        if updated or self._loading:
+        if updated:
             log.info("VPCS device {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
@@ -241,7 +237,7 @@ class VPCSDevice(VM):
 
         # add the properties
         for name, value in self._settings.items():
-            if name in self._defaults and self._defaults[name] != value:
+            if value is not None and value != "":
                 if name != "startup_script":
                     if name == "startup_script_path":
                         value = os.path.basename(value)
@@ -263,41 +259,31 @@ class VPCSDevice(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-        self.node_info = node_info
         # for backward compatibility
         vm_id = node_info.get("vpcs_id")
         if not vm_id:
             vm_id = node_info["vm_id"]
-        settings = node_info["properties"]
-        name = settings.pop("name")
-        self.updated_signal.connect(self._updatePortSettings)
-        # block the created signal, it will be triggered when loading is completely done
-        self._loading = True
+
+        # prepare the VM settings
+        vm_settings = {}
+        for name, value in node_info["properties"].items():
+            if name in self._settings:
+                vm_settings[name] = value
+        name = vm_settings.pop("name")
+
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
-        self.setup(name, vm_id, settings)
 
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.updated_signal.disconnect(self._updatePortSettings)
-        # update the port with the correct names and IDs
-        if "ports" in self.node_info:
-            ports = self.node_info["ports"]
+        # assign the correct names and IDs to the ports
+        if "ports" in node_info:
+            ports = node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
                     if topology_port["port_number"] == port.portNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("vpcs {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
+        self.setup(name, vm_id, vm_settings)
 
     def exportConfig(self, config_export_path):
         """
@@ -371,8 +357,7 @@ class VPCSDevice(VM):
         :param path: path to the script file
         """
 
-        with open(path, "rb") as f:
-            new_settings = {"startup_script": f.read().decode("utf-8")}
+        new_settings = {"script_file": path}
         self.update(new_settings)
 
     def importConfigFromDirectory(self, directory):
@@ -386,7 +371,7 @@ class VPCSDevice(VM):
         script_file = normalize_filename(self.name()) + "_startup.vpc"
         new_settings = {}
         if script_file in contents:
-            new_settings["startup_script"] = os.path.join(directory, script_file)
+            new_settings["script_file"] = os.path.join(directory, script_file)
         else:
             self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(script_file))
         if new_settings:

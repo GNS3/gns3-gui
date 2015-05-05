@@ -33,7 +33,7 @@ class LocalServerConfig:
 
     def __init__(self):
 
-        self._config = configparser.ConfigParser()
+        self._config = configparser.RawConfigParser()
         if sys.platform.startswith("win"):
             filename = "gns3_server.ini"
         else:
