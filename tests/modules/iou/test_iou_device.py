@@ -300,7 +300,9 @@ def test_load(local_server, project, fake_bin):
         "vm_id": uuid
     }
     with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
+
         iou_device.load(nio_node)
+        iou_device._addAdapters(1, 0)
 
         assert mock.called
         (path, name, vm_id, settings), kwargs = mock.call_args
@@ -309,7 +311,7 @@ def test_load(local_server, project, fake_bin):
         assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "initial_config": "/tmp"}
         assert vm_id == uuid
 
-    iou_device.updated_signal.emit()
+    iou_device.loaded_signal.emit()
     assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
 
 
@@ -340,6 +342,7 @@ def test_load_1_2(local_server, project, fake_bin):
     }
     with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
         iou_device.load(nio_node)
+        iou_device._addAdapters(1, 0)
 
         assert mock.called
         (path, name, vm_id, settings), kwargs = mock.call_args
@@ -348,7 +351,7 @@ def test_load_1_2(local_server, project, fake_bin):
         assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "initial_config": "/tmp"}
         assert vm_id == uuid
 
-    iou_device.updated_signal.emit()
+    iou_device.loaded_signal.emit()
     assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
 
 

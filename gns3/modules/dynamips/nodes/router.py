@@ -250,8 +250,6 @@ class Router(VM):
 
         if vm_id:
             params["vm_id"] = vm_id
-        else:
-            self._insertAdapters(additional_settings)
 
         if dynamips_id:
             params["dynamips_id"] = dynamips_id
@@ -300,10 +298,16 @@ class Router(VM):
                                                                                          value))
                 self._settings[name] = value
 
-        self.setInitialized(True)
-        log.debug("router {} has been created".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
+        # create the ports on the client side
+        self._insertAdapters(self._settings)
+
+        if self._loading:
+            self.loaded_signal.emit()
+        else:
+            self.setInitialized(True)
+            log.debug("router {} has been created".format(self.name()))
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -316,21 +320,21 @@ class Router(VM):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
+        params = {}
         if "startup_config" in new_settings:
             if new_settings["startup_config"] and os.path.isfile(new_settings["startup_config"]):
                 base_config_content = self._readBaseConfig(new_settings["startup_config"])
                 if base_config_content is not None:
-                    new_settings["startup_config_content"] = base_config_content
+                    params["startup_config_content"] = base_config_content
             del new_settings["startup_config"]
 
         if "private_config" in new_settings:
             if new_settings["private_config"] and os.path.isfile(new_settings["private_config"]):
                 base_config_content = self._readBaseConfig(new_settings["private_config"])
                 if base_config_content is not None:
-                    new_settings["private_config_content"] = base_config_content
+                    params["private_config_content"] = base_config_content
             del new_settings["private_config"]
 
-        params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
@@ -728,19 +732,6 @@ class Router(VM):
         ram = vm_settings.pop("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
         image = vm_settings.pop("image")
 
-        log.info("router {} is loading".format(name))
-        self.setName(name)
-        self._insertAdapters(vm_settings)
-
-        # assign the correct names and IDs to the ports
-        if "ports" in node_info:
-            ports = node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
             updated_image_path = os.path.join(self._imageFilesDir(), image)
@@ -754,7 +745,36 @@ class Router(VM):
                 if alternative_image["idlepc"]:
                     vm_settings["idlepc"] = alternative_image["idlepc"]
 
+        log.info("router {} is loading".format(name))
+        self.setName(name)
+        self._loading = True
+        self._node_info = node_info
+        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(image, ram, name, vm_id, dynamips_id, vm_settings)
+
+    def _updatePortSettings(self):
+        """
+        Updates port settings when loading a topology.
+        """
+
+        self.loaded_signal.disconnect(self._updatePortSettings)
+
+        # update the port with the correct names and IDs
+        if "ports" in self._node_info:
+            ports = self._node_info["ports"]
+            for topology_port in ports:
+                for port in self._ports:
+                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
+                        port.setName(topology_port["name"])
+                        port.setId(topology_port["id"])
+
+        # now we can set the node as initialized and trigger the created signal
+        self.setInitialized(True)
+        log.info("router {} has been loaded".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
+        self._loading = False
+        self._node_info = None
 
     def saveConfig(self):
         """

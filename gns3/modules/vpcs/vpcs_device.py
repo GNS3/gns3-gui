@@ -125,10 +125,13 @@ class VPCSDevice(VM):
                                                                                                 value))
                 self._settings[name] = value
 
-        self.setInitialized(True)
-        log.info("VPCS instance {} has been created".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
+        if self._loading:
+            self.loaded_signal.emit()
+        else:
+            self.setInitialized(True)
+            log.info("VPCS instance {} has been created".format(self.name()))
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -273,17 +276,34 @@ class VPCSDevice(VM):
 
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
+        self._loading = True
+        self._node_info = node_info
+        self.loaded_signal.connect(self._updatePortSettings)
+        self.setup(name, vm_id, vm_settings)
+
+    def _updatePortSettings(self):
+        """
+        Updates port settings when loading a topology.
+        """
+
+        self.loaded_signal.disconnect(self._updatePortSettings)
 
         # assign the correct names and IDs to the ports
-        if "ports" in node_info:
-            ports = node_info["ports"]
+        if "ports" in self._node_info:
+            ports = self._node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
                     if topology_port["port_number"] == port.portNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
-        self.setup(name, vm_id, vm_settings)
+        # now we can set the node as initialized and trigger the created signal
+        self.setInitialized(True)
+        log.info("VPCS device {} has been loaded".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
+        self._loading = False
+        self._node_info = None
 
     def exportConfig(self, config_export_path):
         """
