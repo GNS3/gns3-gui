@@ -258,9 +258,10 @@ class GraphicsView(QtGui.QGraphicsView):
 
         # connect the signals that let the graphics view knows about events such as
         # a new link creation or deletion.
-        link.add_link_signal.connect(self.addLinkSlot)
-        link.delete_link_signal.connect(self.deleteLinkSlot)
-        self._topology.addLink(link)
+        if self._topology.addLink(link):
+            link.add_link_signal.connect(self.addLinkSlot)
+            link.delete_link_signal.connect(self.deleteLinkSlot)
+
 
     def addLinkSlot(self, link_id):
         """
