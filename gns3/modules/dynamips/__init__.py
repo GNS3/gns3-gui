@@ -364,6 +364,10 @@ class Dynamips(Module):
                 # must be an EtherSwitch router
                 base_name = "ESW"
 
+            if "console" in vm_settings:
+                # Older GNS3 versions may have a console setting in the VM template
+                del vm_settings["console"]
+
             ram = vm_settings.pop("ram")
             image = vm_settings.pop("image")
             node.setup(image, ram, additional_settings=vm_settings, base_name=base_name)
