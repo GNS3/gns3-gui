@@ -268,7 +268,7 @@ class IOU(Module):
 
         vm_settings = {}
         for setting_name, value in self._iou_devices[iouimage].items():
-            if setting_name in node.settings() and setting_name != "name":
+            if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
                 vm_settings[setting_name] = value
 
         if vm_settings["use_default_iou_values"]:

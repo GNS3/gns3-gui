@@ -292,7 +292,7 @@ class VirtualBox(Module):
 
         vm_settings = {}
         for setting_name, value in self._virtualbox_vms[vm].items():
-            if setting_name in node.settings():
+            if setting_name in node.settings() and value != "" and value is not None:
                 vm_settings[setting_name] = value
 
         vmname = self._virtualbox_vms[vm]["vmname"]

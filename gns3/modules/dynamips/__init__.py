@@ -446,7 +446,7 @@ class Dynamips(Module):
                                                        "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
                                                        list(candidate_ios_images.keys()), 0, False)
             if ok:
-                ios_image = candidate_ios_images[selection]
+                ios_image = candidate_ios_images[selection]  # FIXME
                 alternative_image["image"] = ios_router["image"]
                 alternative_image["ram"] = ios_router["ram"]
                 alternative_image["idlepc"] = ios_router["idlepc"]

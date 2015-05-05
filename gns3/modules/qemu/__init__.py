@@ -238,14 +238,10 @@ class Qemu(Module):
             else:
                 vm = selected_vms[0]
 
-        # use the template VM settings to create the VM settings
         vm_settings = {}
-        for setting_name in node.settings():
-            if setting_name in self._qemu_vms[vm]:
-                if isinstance(self._qemu_vms[vm][setting_name], str) and not self._qemu_vms[vm][setting_name]:
-                    # ignore empty paths
-                    continue
-                vm_settings[setting_name] = self._qemu_vms[vm][setting_name]
+        for setting_name, value in self._qemu_vms[vm].items():
+            if setting_name in node.settings() and value != "" and value is not None:
+                vm_settings[setting_name] = value
 
         qemu_path = vm_settings.pop("qemu_path")
         name = vm_settings.pop("name")
