@@ -770,7 +770,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         try:
-            working_dir = os.path.join(self._project.filesDir(), "vpcs", "multi-host")
+            working_dir = os.path.join(self._project.filesDir(), "project-files", "vpcs", "multi-host")
             os.makedirs(working_dir)
         except FileExistsError:
             pass
