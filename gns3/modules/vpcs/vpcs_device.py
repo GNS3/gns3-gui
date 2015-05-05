@@ -47,7 +47,6 @@ class VPCSDevice(VM):
         self._vm_id = None
         self._ports = []
         self._settings = {"name": "",
-                          "script_file": "",
                           "startup_script": None,
                           "startup_script_path": None,
                           "console": None}
