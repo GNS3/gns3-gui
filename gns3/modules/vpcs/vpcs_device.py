@@ -89,9 +89,8 @@ class VPCSDevice(VM):
         if "script_file" in additional_settings:
             if os.path.isfile(additional_settings["script_file"]):
                 base_config_content = self._readBaseConfig(additional_settings["script_file"])
-                if base_config_content is None:
-                    return
-                additional_settings["startup_script"] = base_config_content
+                if base_config_content is not None:
+                    additional_settings["startup_script"] = base_config_content
             del additional_settings["script_file"]
 
         if "startup_script_path" in additional_settings:
@@ -143,13 +142,20 @@ class VPCSDevice(VM):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
+        if "script_file" in new_settings:
+            if os.path.isfile(new_settings["script_file"]):
+                base_config_content = self._readBaseConfig(new_settings["script_file"])
+                if base_config_content is not None:
+                    new_settings["startup_script"] = base_config_content
+            del new_settings["script_file"]
+
+        if "startup_script_path" in new_settings:
+            del new_settings["startup_script_path"]
+
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
-        if "startup_script_path" in params:
-            del params["startup_script_path"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
@@ -352,8 +358,7 @@ class VPCSDevice(VM):
         :param path: path to the script file
         """
 
-        with open(path, "rb") as f:
-            new_settings = {"startup_script": f.read().decode("utf-8")}
+        new_settings = {"script_file": path}
         self.update(new_settings)
 
     def importConfigFromDirectory(self, directory):
@@ -367,7 +372,7 @@ class VPCSDevice(VM):
         script_file = normalize_filename(self.name()) + "_startup.vpc"
         new_settings = {}
         if script_file in contents:
-            new_settings["startup_script"] = os.path.join(directory, script_file)
+            new_settings["script_file"] = os.path.join(directory, script_file)
         else:
             self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(script_file))
         if new_settings:

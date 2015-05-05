@@ -131,9 +131,8 @@ class IOUDevice(VM):
         if "initial_config" in additional_settings:
             if additional_settings["initial_config"] and os.path.isfile(additional_settings["initial_config"]):
                 base_config_content = self._readBaseConfig(additional_settings["initial_config"])
-                if base_config_content is None:
-                    return
-                params["initial_config_content"] = base_config_content
+                if base_config_content is not None:
+                    params["initial_config_content"] = base_config_content
             del additional_settings["initial_config"]
 
         # push the iourc file
@@ -196,18 +195,17 @@ class IOUDevice(VM):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
+        if "initial_config" in new_settings:
+            if new_settings["initial_config"] and os.path.isfile(new_settings["initial_config"]):
+                base_config_content = self._readBaseConfig(new_settings["initial_config"])
+                if base_config_content is not None:
+                    new_settings["initial_config_content"] = base_config_content
+            del new_settings["initial_config"]
+
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
-        if "initial_config" in new_settings:
-            if new_settings["initial_config"] and os.path.isfile(new_settings["initial_config"]):
-                base_config_content = self._readBaseConfig(new_settings["initial_config"])
-                if base_config_content is None:
-                    return
-                params["initial_config_content"] = base_config_content
-            del new_settings["initial_config"]
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/iou/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)

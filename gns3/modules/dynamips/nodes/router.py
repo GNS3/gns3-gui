@@ -260,18 +260,16 @@ class Router(VM):
         if not vm_id and "startup_config" in additional_settings:
             if additional_settings["startup_config"] and os.path.isfile(additional_settings["startup_config"]):
                 base_config_content = self._readBaseConfig(additional_settings["startup_config"])
-                if base_config_content is None:
-                    return
-                params["startup_config_content"] = base_config_content
+                if base_config_content is not None:
+                    params["startup_config_content"] = base_config_content
             del additional_settings["startup_config"]
 
         # push the private-config
         if not vm_id and "private_config" in additional_settings:
             if additional_settings["private_config"] and os.path.isfile(additional_settings["private_config"]):
                 base_config_content = self._readBaseConfig(additional_settings["private_config"])
-                if base_config_content is None:
-                    return
-                params["private_config_content"] = base_config_content
+                if base_config_content is not None:
+                    params["private_config_content"] = base_config_content
             del additional_settings["private_config"]
 
         params.update(additional_settings)
@@ -318,26 +316,24 @@ class Router(VM):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
         if "startup_config" in new_settings:
             if new_settings["startup_config"] and os.path.isfile(new_settings["startup_config"]):
                 base_config_content = self._readBaseConfig(new_settings["startup_config"])
-                if base_config_content is None:
-                    return
-                params["startup_config_content"] = base_config_content
+                if base_config_content is not None:
+                    new_settings["startup_config_content"] = base_config_content
             del new_settings["startup_config"]
 
         if "private_config" in new_settings:
             if new_settings["private_config"] and os.path.isfile(new_settings["private_config"]):
                 base_config_content = self._readBaseConfig(new_settings["private_config"])
-                if base_config_content is None:
-                    return
-                params["private_config_content"] = base_config_content
+                if base_config_content is not None:
+                    new_settings["private_config_content"] = base_config_content
             del new_settings["private_config"]
+
+        params = {}
+        for name, value in new_settings.items():
+            if name in self._settings and self._settings[name] != value:
+                params[name] = value
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/dynamips/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
