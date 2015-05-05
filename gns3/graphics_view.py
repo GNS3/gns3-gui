@@ -660,6 +660,9 @@ class GraphicsView(QtGui.QGraphicsView):
             else:
                 self.createNode(node_data, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
+            # This should arrive but we received bug report with it...
+            if len(event.mimeData().urls()) == 0:
+                return
             if len(event.mimeData().urls()) > 1:
                 QtGui.QMessageBox.critical(self, "Project files", "Please drop only one file")
                 return
