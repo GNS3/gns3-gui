@@ -262,7 +262,6 @@ class GraphicsView(QtGui.QGraphicsView):
             link.add_link_signal.connect(self.addLinkSlot)
             link.delete_link_signal.connect(self.deleteLinkSlot)
 
-
     def addLinkSlot(self, link_id):
         """
         Slot to receive events from Link instances
@@ -552,7 +551,7 @@ class GraphicsView(QtGui.QGraphicsView):
                     QtGui.QGraphicsView.keyPressEvent(self, event)
                     return
             self.deleteActionSlot()
-            QtGui.QGraphicsView.keyPressEvent(self,event)
+            QtGui.QGraphicsView.keyPressEvent(self, event)
         else:
             QtGui.QGraphicsView.keyPressEvent(self, event)
 
@@ -661,7 +660,7 @@ class GraphicsView(QtGui.QGraphicsView):
             else:
                 self.createNode(node_data, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
-            # This should arrive but we received bug report with it...
+            # This should not arrive but we received bug report with it...
             if len(event.mimeData().urls()) == 0:
                 return
             if len(event.mimeData().urls()) > 1:
@@ -1146,11 +1145,11 @@ class GraphicsView(QtGui.QGraphicsView):
         item = items[0]
         if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
             router = item.node()
-            #question = QtGui.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            # question = QtGui.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
-            #if question == QtGui.QMessageBox.Yes:
+            # if question == QtGui.QMessageBox.Yes:
             #    router.computeAutoIdlepc(self._autoIdlepcCallback)
-            #else:
+            # else:
             router.computeIdlepcs(self._idlepcCallback)
 
     def _idlepcCallback(self, result, error=False, context={}, **kwargs):
