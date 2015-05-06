@@ -551,13 +551,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     super().keyPressEvent(event)
                     return
             self.deleteActionSlot()
-<<<<<<< HEAD
-            super().keyPressEvent(event)
-=======
-            QtGui.QGraphicsView.keyPressEvent(self, event)
->>>>>>> master
-        else:
-            super().keyPressEvent(event)
+        super().keyPressEvent(event)
 
     def mouseMoveEvent(self, event):
         """
