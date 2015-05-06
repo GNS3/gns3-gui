@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/atm_bridge_configuration_page.ui'
+# Form implementation generated from reading ui file 'atm_bridge_configuration_page.ui'
 #
-# Created: Mon May  4 12:01:30 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_atmBridgeConfigPageWidget(object):
-
     def setupUi(self, atmBridgeConfigPageWidget):
         atmBridgeConfigPageWidget.setObjectName("atmBridgeConfigPageWidget")
         atmBridgeConfigPageWidget.resize(432, 358)
@@ -154,3 +151,4 @@ class Ui_atmBridgeConfigPageWidget(object):
         self.uiDeletePushButton.setText(_translate("atmBridgeConfigPageWidget", "&Delete"))
         self.uiGeneralGroupBox.setTitle(_translate("atmBridgeConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("atmBridgeConfigPageWidget", "Name:"))
+

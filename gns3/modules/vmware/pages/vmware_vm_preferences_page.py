@@ -50,26 +50,8 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiNewVMwareVMPushButton.clicked.connect(self._vmwareVMNewSlot)
         self.uiEditVMwareVMPushButton.clicked.connect(self._vmwareVMEditSlot)
         self.uiDeleteVMwareVMPushButton.clicked.connect(self._vmwareVMDeleteSlot)
-        self.uiVMwareVMsTreeWidget.currentItemChanged.connect(self._vmwareVMChangedSlot)
+        self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
         self.uiVMwareVMsTreeWidget.itemPressed.connect(self._vmwareVMPressedSlot)
-
-    def _vmwareVMChangedSlot(self, current, previous):
-        """
-        Loads a selected VMware VM from the tree widget.
-
-        :param current: current QTreeWidgetItem instance
-        :param previous: ignored
-        """
-
-        if not current:
-            self.uiVMwareVMInfoTreeWidget.clear()
-            return
-
-        self.uiEditVMwareVMPushButton.setEnabled(True)
-        self.uiDeleteVMwareVMPushButton.setEnabled(True)
-        key = current.data(0, QtCore.Qt.UserRole)
-        vmware_vm = self._vmware_vms[key]
-        self._refreshInfo(vmware_vm)
 
     def _createSectionItem(self, name):
 
@@ -95,6 +77,23 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiVMwareVMInfoTreeWidget.expandAll()
         self.uiVMwareVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiVMwareVMInfoTreeWidget.resizeColumnToContents(1)
+
+    def _vmwareVMChangedSlot(self):
+        """
+        Loads a selected VMware VM from the tree widget.
+        """
+
+        selection = self.uiVMwareVMsTreeWidget.selectedItems()
+        self.uiDeleteVMwareVMPushButton.setEnabled(len(selection) != 0)
+        single_selected = len(selection) == 1
+        self.uiEditVMwareVMPushButton.setEnabled(single_selected)
+
+        if single_selected:
+            key = selection[0].data(0, QtCore.Qt.UserRole)
+            vmware_vm = self._vmware_vms[key]
+            self._refreshInfo(vmware_vm)
+        else:
+            self.uiVMwareVMInfoTreeWidget.clear()
 
     def _vmwareVMNewSlot(self):
         """
@@ -147,11 +146,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Deletes a VMware VM.
         """
 
-        item = self.uiVMwareVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            del self._vmware_vms[key]
-            self.uiVMwareVMsTreeWidget.takeTopLevelItem(self.uiVMwareVMsTreeWidget.indexOfTopLevelItem(item))
+        for item in self.uiVMwareVMsTreeWidget.selectedItems():
+            if item:
+                key = item.data(0, QtCore.Qt.UserRole)
+                del self._vmware_vms[key]
+                self.uiVMwareVMsTreeWidget.takeTopLevelItem(self.uiVMwareVMsTreeWidget.indexOfTopLevelItem(item))
 
     def _vmwareVMPressedSlot(self, item, column):
         """
@@ -170,10 +169,17 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         """
 
         menu = QtWidgets.QMenu()
+
         change_symbol_action = QtWidgets.QAction("Change symbol", menu)
         change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
+        change_symbol_action.setEnabled(len(self.uiVMwareVMsTreeWidget.selectedItems()) == 1)
+        change_symbol_action.triggered.connect(self._changeSymbolSlot)
         menu.addAction(change_symbol_action)
+
+        delete_action = QtWidgets.QAction("Delete", menu)
+        delete_action.triggered.connect(self._vmwareVMDeleteSlot)
+        menu.addAction(delete_action)
+
         menu.exec_(QtGui.QCursor.pos())
 
     def _changeSymbolSlot(self):

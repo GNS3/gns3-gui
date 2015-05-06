@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/idlepc_dialog.ui'
+# Form implementation generated from reading ui file 'idlepc_dialog.ui'
 #
-# Created: Mon May  4 12:01:28 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_IdlePCDialog(object):
-
     def setupUi(self, IdlePCDialog):
         IdlePCDialog.setObjectName("IdlePCDialog")
         IdlePCDialog.setModal(True)
@@ -27,7 +24,7 @@ class Ui_IdlePCDialog(object):
         self.gridLayout.addWidget(self.uiComboBox, 1, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(IdlePCDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Help | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridLayout.addWidget(self.uiButtonBox, 2, 0, 1, 1)
 
@@ -40,3 +37,4 @@ class Ui_IdlePCDialog(object):
         _translate = gns3.qt.translate
         IdlePCDialog.setWindowTitle(_translate("IdlePCDialog", "Idle-PC values"))
         self.uiLabel.setText(_translate("IdlePCDialog", "Potentially better Idle-PC values are marked with \'*\'"))
+

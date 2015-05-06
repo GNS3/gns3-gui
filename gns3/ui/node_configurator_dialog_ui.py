@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/node_configurator_dialog.ui'
+# Form implementation generated from reading ui file 'node_configurator_dialog.ui'
 #
-# Created: Mon May  4 12:01:29 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_NodeConfiguratorDialog(object):
-
     def setupUi(self, NodeConfiguratorDialog):
         NodeConfiguratorDialog.setObjectName("NodeConfiguratorDialog")
         NodeConfiguratorDialog.resize(689, 454)
@@ -72,7 +69,7 @@ class Ui_NodeConfiguratorDialog(object):
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NodeConfiguratorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Reset)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Reset)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 
@@ -86,6 +83,6 @@ class Ui_NodeConfiguratorDialog(object):
         self.uiNodesTreeWidget.headerItem().setText(0, _translate("NodeConfiguratorDialog", "Nodes"))
         self.uiTitleLabel.setText(_translate("NodeConfiguratorDialog", "Node Configuration"))
         self.textLabel.setText(_translate("NodeConfiguratorDialog", "Please select a node in the list \n"
-                                          "to display the configuration page."))
+"to display the configuration page."))
 
 from . import resources_rc

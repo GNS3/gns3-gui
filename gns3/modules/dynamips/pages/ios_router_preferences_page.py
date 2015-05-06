@@ -63,28 +63,89 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         self.uiNewIOSRouterPushButton.clicked.connect(self._iosRouterNewSlot)
         self.uiEditIOSRouterPushButton.clicked.connect(self._iosRouterEditSlot)
         self.uiDeleteIOSRouterPushButton.clicked.connect(self._iosRouterDeleteSlot)
-        self.uiIOSRoutersTreeWidget.currentItemChanged.connect(self._iosRouterChangedSlot)
+        self.uiIOSRoutersTreeWidget.itemSelectionChanged.connect(self._iosRouterChangedSlot)
         self.uiIOSRoutersTreeWidget.itemPressed.connect(self._iosRouterPressedSlot)
         self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
 
-    def _iosRouterChangedSlot(self, current, previous):
+    def _createSectionItem(self, name):
+
+        section_item = QtWidgets.QTreeWidgetItem(self.uiIOSRouterInfoTreeWidget)
+        section_item.setText(0, name)
+        font = section_item.font(0)
+        font.setBold(True)
+        section_item.setFont(0, font)
+        return section_item
+
+    def _refreshInfo(self, ios_router):
+
+        self.uiIOSRouterInfoTreeWidget.clear()
+
+        # fill out the General section
+        section_item = self._createSectionItem("General")
+        QtWidgets.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
+        if ios_router["chassis"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
+        if ios_router["idlepc"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Idle-PC:", ios_router["idlepc"]])
+        if ios_router["startup_config"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", ios_router["startup_config"]])
+        if ios_router["private_config"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Private-config:", ios_router["private_config"]])
+        if ios_router["platform"] == "c7200":
+            QtWidgets.QTreeWidgetItem(section_item, ["Midplane:", ios_router["midplane"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["NPE:", ios_router["npe"]])
+
+        # fill out the Memories and disk section
+        section_item = self._createSectionItem("Memories and disks")
+        QtWidgets.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(ios_router["ram"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(ios_router["nvram"])])
+        if "iomem" in ios_router and ios_router["iomem"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["I/O memory:", "{}%".format(ios_router["iomem"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["PCMCIA disk0:", "{} MiB".format(ios_router["disk0"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["PCMCIA disk1:", "{} MiB".format(ios_router["disk1"])])
+
+        # fill out the Adapters section
+        section_item = self._createSectionItem("Adapters")
+        for slot_id in range(0, 7):
+            slot = "slot{}".format(slot_id)
+            if slot in ios_router and ios_router[slot]:
+                QtWidgets.QTreeWidgetItem(section_item, ["Slot {}:".format(slot_id), ios_router[slot]])
+        if section_item.childCount() == 0:
+            self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
+
+        # fill out the WICs section
+        section_item = self._createSectionItem("WICs")
+        for wic_id in range(0, 3):
+            wic = "wic{}".format(wic_id)
+            if wic in ios_router and ios_router[wic]:
+                QtWidgets.QTreeWidgetItem(section_item, ["WIC {}:".format(wic_id), ios_router[wic]])
+        if section_item.childCount() == 0:
+            self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
+
+        self.uiIOSRouterInfoTreeWidget.expandAll()
+        self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(0)
+        self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(1)
+
+    def _iosRouterChangedSlot(self):
         """
         Loads a selected an IOS router from the tree widget.
-
-        :param current: current QTreeWidgetItem instance
-        :param previous: ignored
         """
 
-        if not current:
-            self.uiIOSRouterInfoTreeWidget.clear()
-            return
+        selection = self.uiIOSRoutersTreeWidget.selectedItems()
+        self.uiDeleteIOSRouterPushButton.setEnabled(len(selection) != 0)
+        single_selected = len(selection) == 1
+        self.uiEditIOSRouterPushButton.setEnabled(single_selected)
+        self.uiDecompressIOSPushButton.setEnabled(single_selected)
 
-        self.uiEditIOSRouterPushButton.setEnabled(True)
-        self.uiDeleteIOSRouterPushButton.setEnabled(True)
-        self.uiDecompressIOSPushButton.setEnabled(True)
-        key = current.data(0, QtCore.Qt.UserRole)
-        ios_router = self._ios_routers[key]
-        self._refreshInfo(ios_router)
+        if single_selected:
+            key = selection[0].data(0, QtCore.Qt.UserRole)
+            ios_router = self._ios_routers[key]
+            self._refreshInfo(ios_router)
+        else:
+            self.uiIOSRouterInfoTreeWidget.clear()
 
     def _iosRouterNewSlot(self):
         """
@@ -153,11 +214,6 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             self._items.append(item)
             self.uiIOSRoutersTreeWidget.setCurrentItem(item)
 
-    def _imageUploadComplete(self):
-        if self._upload_image_progress_dialog.wasCanceled():
-            return
-        self._upload_image_progress_dialog.accept()
-
     def _iosRouterEditSlot(self):
         """
         Edits an IOS router.
@@ -190,17 +246,138 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         Deletes an IOS router.
         """
 
+        for item in self.uiIOSRoutersTreeWidget.selectedItems():
+            if item:
+                key = item.data(0, QtCore.Qt.UserRole)
+                ios_router = self._ios_routers[key]
+
+                del self._ios_routers[key]
+                self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))
+                if self._ios_routers == {}:
+                    self.uiEditIOSRouterPushButton.setEnabled(False)
+                    self.uiDeleteIOSRouterPushButton.setEnabled(False)
+                    self.uiDecompressIOSPushButton.setEnabled(False)
+
+    def _iosRouterPressedSlot(self, item, column):
+        """
+        Slot for item pressed.
+
+        :param item: ignored
+        :param column: ignored
+        """
+
+        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
+            self._showContextualMenu()
+
+    def _showContextualMenu(self):
+        """
+        Contextual menu.
+        """
+
+        menu = QtWidgets.QMenu()
+        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
+        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
+        change_symbol_action.setEnabled(len(self.uiIOSRoutersTreeWidget.selectedItems()) == 1)
+        change_symbol_action.triggered.connect(self._changeSymbolSlot)
+        menu.addAction(change_symbol_action)
+
+        delete_action = QtWidgets.QAction("Delete", menu)
+        delete_action.triggered.connect(self._iosRouterDeleteSlot)
+        menu.addAction(delete_action)
+
+        menu.exec_(QtGui.QCursor.pos())
+
+    def _changeSymbolSlot(self):
+        """
+        Change a symbol for an IOS router.
+        """
+
         item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             ios_router = self._ios_routers[key]
+            dialog = SymbolSelectionDialog(self, symbol=ios_router["default_symbol"], category=ios_router["category"])
+            dialog.show()
+            if dialog.exec_():
+                normal_symbol, selected_symbol = dialog.getSymbols()
+                category = dialog.getCategory()
+                item.setIcon(0, QtGui.QIcon(normal_symbol))
+                ios_router["default_symbol"] = normal_symbol
+                ios_router["hover_symbol"] = selected_symbol
+                ios_router["category"] = category
 
-            del self._ios_routers[key]
-            self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))
-            if self._ios_routers == {}:
-                self.uiEditIOSRouterPushButton.setEnabled(False)
-                self.uiDeleteIOSRouterPushButton.setEnabled(False)
-                self.uiDecompressIOSPushButton.setEnabled(False)
+    def loadPreferences(self):
+        """
+        Loads the IOS router preferences.
+        """
+
+        dynamips_module = Dynamips.instance()
+        self._ios_routers = copy.deepcopy(dynamips_module.iosRouters())
+        self._items.clear()
+
+        for key, ios_router in self._ios_routers.items():
+            item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
+            item.setText(0, ios_router["name"])
+            item.setIcon(0, QtGui.QIcon(ios_router["default_symbol"]))
+            item.setData(0, QtCore.Qt.UserRole, key)
+            self._items.append(item)
+
+        if self._items:
+            self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
+            self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+
+    def savePreferences(self):
+        """
+        Saves the IOS router preferences.
+        """
+
+        Dynamips.instance().setIOSRouters(self._ios_routers)
+
+    def _imageUploadComplete(self):
+        if self._upload_image_progress_dialog.wasCanceled():
+            return
+        self._upload_image_progress_dialog.accept()
+
+    def _decompressIOSSlot(self):
+        """
+        Slot to decompress an IOS image.
+        """
+
+        item = self.uiIOSRoutersTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            ios_router = self._ios_routers[key]
+            path = ios_router["image"]
+            if not os.path.isfile(path):
+                QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
+                return
+            try:
+                if not isIOSCompressed(path):
+                    QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
+                    return
+            except (OSError, ValueError) as e:
+                # errno 22, invalid argument means the file system where the IOS image is located doesn't support mmap
+                if e.errno == 22:
+                    QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} cannot be memory mapped, most likely because the file system doesn't support it".format(os.path.basename(path)))
+                else:
+                    QtWidgets.QMessageBox.critical(self, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
+                return
+
+            decompressed_image_path = os.path.splitext(path)[0] + ".image"
+            if os.path.isfile(decompressed_image_path):
+                QtWidgets.QMessageBox.critical(self, "IOS image", "Decompressed IOS image {} already exist".format(os.path.basename(decompressed_image_path)))
+                return
+
+            thread = DecompressIOSThread(path, decompressed_image_path)
+            progress_dialog = ProgressDialog(thread,
+                                             "IOS image",
+                                             "Decompressing IOS image {}...".format(path),
+                                             "Cancel", busy=True, parent=self)
+            progress_dialog.show()
+            if progress_dialog.exec_() is not False:
+                ios_router["image"] = decompressed_image_path
+                self._refreshInfo(ios_router)
+            thread.wait()
 
     @staticmethod
     def getIOSImage(parent):
@@ -318,175 +495,3 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         decompressed_size = (decompressed_size / (1000 * 1000)) + 1
         # round up to the closest multiple of 32 (step of the RAM SpinBox)
         return math.ceil(decompressed_size / 32) * 32
-
-    def _decompressIOSSlot(self):
-        """
-        Slot to decompress an IOS image.
-        """
-
-        item = self.uiIOSRoutersTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            ios_router = self._ios_routers[key]
-            path = ios_router["image"]
-            if not os.path.isfile(path):
-                QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
-                return
-            try:
-                if not isIOSCompressed(path):
-                    QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} is not compressed".format(os.path.basename(path)))
-                    return
-            except (OSError, ValueError) as e:
-                # errno 22, invalid argument means the file system where the IOS image is located doesn't support mmap
-                if e.errno == 22:
-                    QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image {} cannot be memory mapped, most likely because the file system doesn't support it".format(os.path.basename(path)))
-                else:
-                    QtWidgets.QMessageBox.critical(self, "IOS image", "Could not determine if the IOS image is compressed: {}".format(e))
-                return
-
-            decompressed_image_path = os.path.splitext(path)[0] + ".image"
-            if os.path.isfile(decompressed_image_path):
-                QtWidgets.QMessageBox.critical(self, "IOS image", "Decompressed IOS image {} already exist".format(os.path.basename(decompressed_image_path)))
-                return
-
-            thread = DecompressIOSThread(path, decompressed_image_path)
-            progress_dialog = ProgressDialog(thread,
-                                             "IOS image",
-                                             "Decompressing IOS image {}...".format(path),
-                                             "Cancel", busy=True, parent=self)
-            progress_dialog.show()
-            if progress_dialog.exec_() is not False:
-                ios_router["image"] = decompressed_image_path
-                self._refreshInfo(ios_router)
-            thread.wait()
-
-    def _createSectionItem(self, name):
-
-        section_item = QtWidgets.QTreeWidgetItem(self.uiIOSRouterInfoTreeWidget)
-        section_item.setText(0, name)
-        font = section_item.font(0)
-        font.setBold(True)
-        section_item.setFont(0, font)
-        return section_item
-
-    def _refreshInfo(self, ios_router):
-
-        self.uiIOSRouterInfoTreeWidget.clear()
-
-        # fill out the General section
-        section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
-        if ios_router["chassis"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
-        if ios_router["idlepc"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Idle-PC:", ios_router["idlepc"]])
-        if ios_router["startup_config"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", ios_router["startup_config"]])
-        if ios_router["private_config"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Private-config:", ios_router["private_config"]])
-        if ios_router["platform"] == "c7200":
-            QtWidgets.QTreeWidgetItem(section_item, ["Midplane:", ios_router["midplane"]])
-            QtWidgets.QTreeWidgetItem(section_item, ["NPE:", ios_router["npe"]])
-
-        # fill out the Memories and disk section
-        section_item = self._createSectionItem("Memories and disks")
-        QtWidgets.QTreeWidgetItem(section_item, ["RAM:", "{} MiB".format(ios_router["ram"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["NVRAM:", "{} KiB".format(ios_router["nvram"])])
-        if "iomem" in ios_router and ios_router["iomem"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["I/O memory:", "{}%".format(ios_router["iomem"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["PCMCIA disk0:", "{} MiB".format(ios_router["disk0"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["PCMCIA disk1:", "{} MiB".format(ios_router["disk1"])])
-
-        # fill out the Adapters section
-        section_item = self._createSectionItem("Adapters")
-        for slot_id in range(0, 7):
-            slot = "slot{}".format(slot_id)
-            if slot in ios_router and ios_router[slot]:
-                QtWidgets.QTreeWidgetItem(section_item, ["Slot {}:".format(slot_id), ios_router[slot]])
-        if section_item.childCount() == 0:
-            self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
-
-        # fill out the WICs section
-        section_item = self._createSectionItem("WICs")
-        for wic_id in range(0, 3):
-            wic = "wic{}".format(wic_id)
-            if wic in ios_router and ios_router[wic]:
-                QtWidgets.QTreeWidgetItem(section_item, ["WIC {}:".format(wic_id), ios_router[wic]])
-        if section_item.childCount() == 0:
-            self.uiIOSRouterInfoTreeWidget.takeTopLevelItem(self.uiIOSRouterInfoTreeWidget.indexOfTopLevelItem(section_item))
-
-        self.uiIOSRouterInfoTreeWidget.expandAll()
-        self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(0)
-        self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(1)
-
-    def _iosRouterPressedSlot(self, item, column):
-        """
-        Slot for item pressed.
-
-        :param item: ignored
-        :param column: ignored
-        """
-
-        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
-            self._showContextualMenu()
-
-    def _showContextualMenu(self):
-        """
-        Contextual menu.
-        """
-
-        menu = QtWidgets.QMenu()
-        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        self.connect(change_symbol_action, QtCore.SIGNAL('triggered()'), self._changeSymbolSlot)
-        menu.addAction(change_symbol_action)
-        menu.exec_(QtGui.QCursor.pos())
-
-    def _changeSymbolSlot(self):
-        """
-        Change a symbol for an IOS router.
-        """
-
-        item = self.uiIOSRoutersTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            ios_router = self._ios_routers[key]
-            dialog = SymbolSelectionDialog(self, symbol=ios_router["default_symbol"], category=ios_router["category"])
-            dialog.show()
-            if dialog.exec_():
-                normal_symbol, selected_symbol = dialog.getSymbols()
-                category = dialog.getCategory()
-                item.setIcon(0, QtGui.QIcon(normal_symbol))
-                ios_router["default_symbol"] = normal_symbol
-                ios_router["hover_symbol"] = selected_symbol
-                ios_router["category"] = category
-
-    def loadPreferences(self):
-        """
-        Loads the IOS router preferences.
-        """
-
-        dynamips_module = Dynamips.instance()
-        self._ios_routers = copy.deepcopy(dynamips_module.iosRouters())
-        self._items.clear()
-
-        for key, ios_router in self._ios_routers.items():
-            item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
-            item.setText(0, ios_router["name"])
-            item.setIcon(0, QtGui.QIcon(ios_router["default_symbol"]))
-            item.setData(0, QtCore.Qt.UserRole, key)
-            self._items.append(item)
-
-        if self._items:
-            self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
-            self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
-
-    def savePreferences(self):
-        """
-        Saves the IOS router preferences.
-        """
-
-        Dynamips.instance().setIOSRouters(self._ios_routers)

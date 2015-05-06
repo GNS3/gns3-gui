@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/cloud_preferences_page.ui'
+# Form implementation generated from reading ui file 'cloud_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:28 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_CloudPreferencesPageWidget(object):
-
     def setupUi(self, CloudPreferencesPageWidget):
         CloudPreferencesPageWidget.setObjectName("CloudPreferencesPageWidget")
         CloudPreferencesPageWidget.resize(482, 485)
@@ -134,10 +131,11 @@ class Ui_CloudPreferencesPageWidget(object):
         self.uiUserNameLabel.setText(_translate("CloudPreferencesPageWidget", "User Name:"))
         self.uiAPIKeyLabel.setText(_translate("CloudPreferencesPageWidget", "API Key"))
         self.uiRememberAPIKeyRadioButton.setText(_translate("CloudPreferencesPageWidget", "Remeber these settings\n"
-                                                            "(Suggested for private computers)"))
+"(Suggested for private computers)"))
         self.uiStartNewProjectsLabel.setText(_translate("CloudPreferencesPageWidget", "Start new projects with:"))
         self.uiCloudProviderLabel.setText(_translate("CloudPreferencesPageWidget", "Cloud provider"))
         self.uiRegionLabel.setText(_translate("CloudPreferencesPageWidget", "Region (optional)"))
         self.uiForgetAPIKeyRadioButton.setText(_translate("CloudPreferencesPageWidget", "Forget these settings on exit\n"
-                                                          "(Suggested for public computers)"))
+"(Suggested for public computers)"))
         self.uiTimeoutLabel2.setText(_translate("CloudPreferencesPageWidget", "minutes of lost communication"))
+

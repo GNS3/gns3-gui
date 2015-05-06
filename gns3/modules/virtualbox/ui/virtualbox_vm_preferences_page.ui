@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
-    <height>546</height>
+    <width>505</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,6 +101,9 @@
        <bold>true</bold>
       </font>
      </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
      <property name="iconSize">
       <size>
        <width>32</width>
@@ -122,6 +125,10 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+   <tabstop>uiNewVirtualBoxVMPushButton</tabstop>
+   <tabstop>uiDeleteVirtualBoxVMPushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <designerdata>

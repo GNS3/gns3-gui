@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/preferences_dialog.ui'
+# Form implementation generated from reading ui file 'preferences_dialog.ui'
 #
-# Created: Mon May  4 12:01:29 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_PreferencesDialog(object):
-
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")
         PreferencesDialog.resize(590, 534)
@@ -26,7 +23,7 @@ class Ui_PreferencesDialog(object):
         self.gridlayout.setObjectName("gridlayout")
         self.uiButtonBox = QtWidgets.QDialogButtonBox(PreferencesDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setCenterButtons(False)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 2, 1, 1, 2)

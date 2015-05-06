@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
+# Form implementation generated from reading ui file 'iou_device_wizard.ui'
 #
-# Created: Mon May  4 12:01:32 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOUDeviceWizard(object):
-
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
         IOUDeviceWizard.resize(585, 423)
@@ -146,3 +143,4 @@ class Ui_IOUDeviceWizard(object):
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:"))
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:"))
         self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse..."))
+

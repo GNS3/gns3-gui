@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_preferences_page.ui'
+# Form implementation generated from reading ui file 'ios_router_preferences_page.ui'
 #
-# Created: Mon May  4 12:01:31 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOSRouterPreferencesPageWidget(object):
-
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName("IOSRouterPreferencesPageWidget")
-        IOSRouterPreferencesPageWidget.resize(560, 518)
+        IOSRouterPreferencesPageWidget.resize(505, 350)
         self.gridLayout = QtWidgets.QGridLayout(IOSRouterPreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiIOSRoutersTreeWidget = QtWidgets.QTreeWidget(IOSRouterPreferencesPageWidget)
@@ -30,6 +27,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         font.setBold(True)
         font.setWeight(75)
         self.uiIOSRoutersTreeWidget.setFont(font)
+        self.uiIOSRoutersTreeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiIOSRoutersTreeWidget.setIconSize(QtCore.QSize(32, 32))
         self.uiIOSRoutersTreeWidget.setRootIsDecorated(False)
         self.uiIOSRoutersTreeWidget.setObjectName("uiIOSRoutersTreeWidget")
@@ -79,3 +77,4 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Decompress"))
         self.uiEditIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Edit"))
         self.uiDeleteIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Delete"))
+

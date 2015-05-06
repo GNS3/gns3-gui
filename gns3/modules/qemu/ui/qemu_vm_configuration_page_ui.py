@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created: Mon May  4 12:01:32 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuVMConfigPageWidget(object):
-
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(486, 407)
@@ -233,6 +230,8 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiQemuOptionsLineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.uiQemuOptionsLineEdit.setObjectName("uiQemuOptionsLineEdit")
         self.gridLayout_3.addWidget(self.uiQemuOptionsLineEdit, 0, 2, 1, 1)
+        self.uiQemuOptionsLineEdit.raise_()
+        self.uiQemuOptionsLabel.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem3 = QtWidgets.QSpacerItem(20, 90, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem3)
@@ -286,3 +285,4 @@ class Ui_QemuVMConfigPageWidget(object):
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings"))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+

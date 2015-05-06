@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_project_dialog.ui'
+# Form implementation generated from reading ui file 'new_project_dialog.ui'
 #
-# Created: Mon May  4 12:01:29 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_NewProjectDialog(object):
-
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -83,7 +80,7 @@ class Ui_NewProjectDialog(object):
         self.gridLayout_2.addWidget(self.uiRecentProjectsPushButton, 1, 1, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NewProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridLayout_2.addWidget(self.uiButtonBox, 1, 2, 1, 1)
 
@@ -104,3 +101,4 @@ class Ui_NewProjectDialog(object):
         self.uiCloudRadioButton.setText(_translate("NewProjectDialog", "Cloud"))
         self.uiOpenProjectPushButton.setText(_translate("NewProjectDialog", "&Open a project"))
         self.uiRecentProjectsPushButton.setText(_translate("NewProjectDialog", "&Recent projects..."))
+
