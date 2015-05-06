@@ -50,7 +50,23 @@ Finally these commands will install the GUI as well as the rest of the dependenc
 Windows
 -------
 
-Please use our all-in-one installer.
+Please use our `all-in-one installer <https://community.gns3.com/community/software/download>`_ to install the stable build.
+
+If you install via source you need to first install:
+
+- Python (3.3 or above) - https://www.python.org/downloads/windows/
+- Pywin32 - https://sourceforge.net/projects/pywin32/
+- Qt5 - http://www.qt.io/download-open-source/
+- PyQt5 - http://www.riverbankcomputing.com/software/pyqt/download5
+- PyCrypto (which if you compile from source, requires Visual Studio 2010 with GMP or MPIR libraries)
+
+And finally, call
+
+.. code:: bash
+
+   python setup.py install
+
+to install the remaining dependencies.
 
 Mac OS X
 --------
@@ -90,7 +106,7 @@ Or follow this `HOWTO that uses MacPorts <http://binarynature.blogspot.ca/2014/0
 Developement
 -------------
 
-If you want to update the interface modify the .ui files using QT tools. And:
+If you want to update the interface, modify the .ui files using QT tools. And:
 
 .. code:: bash
 
