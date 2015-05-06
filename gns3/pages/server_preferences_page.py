@@ -141,6 +141,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
             QtGui.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
             return
+        if port == None or port < 1:
+            QtGui.QMessageBox.critical(self, "Remote server", "Invalid remote server port {}".format(port))
+            return
+
 
         # check if the remote server is already defined
         remote_server = "{host}:{port}".format(host=host, port=port)
