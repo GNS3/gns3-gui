@@ -50,7 +50,7 @@ If you install via source you need to first install:
 - Python (3.3 or above) - https://www.python.org/downloads/windows/
 - Pywin32 - https://sourceforge.net/projects/pywin32/
 - Qt4 - http://www.qt.io/download-open-source/
-- PyQt4 - http://www.riverbankcomputing.com/software/pyqt/download5
+- PyQt4 - http://www.riverbankcomputing.com/software/pyqt/download
 - PyCrypto (which if you compile from source, requires Visual Studio 2010 with GMP or MPIR libraries)
 
 And finally, call
