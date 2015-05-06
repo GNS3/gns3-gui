@@ -74,6 +74,9 @@ class ColouredStreamHandler(logging.StreamHandler):
             stream.write(msg)
             stream.write(self.terminator)
             self.flush()
+        # On OSX when frozen flush raise a BrokenPipeError
+        except BrokenPipeError:
+            pass
         except Exception:
             self.handleError(record)
 
