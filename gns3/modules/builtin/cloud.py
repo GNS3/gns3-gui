@@ -25,6 +25,7 @@ from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.nios.nio_generic_ethernet import NIOGenericEthernet
 from gns3.nios.nio_linux_ethernet import NIOLinuxEthernet
+from gns3.nios.nio_nat import NIONAT
 from gns3.nios.nio_udp import NIOUDP
 from gns3.nios.nio_tap import NIOTAP
 from gns3.nios.nio_unix import NIOUNIX
@@ -152,6 +153,19 @@ class Cloud(Node):
             return NIOLinuxEthernet(linux_device)
         return None
 
+    def _createNIONAT(self, nio):
+        """
+        Creates a NIO NAT.
+
+        :param nio: nio string
+        """
+
+        match = re.search(r"""^nio_nat:(.+)$""", nio)
+        if match:
+            identifier = match.group(1)
+            return NIONAT(identifier)
+        return None
+
     def _createNIOTAP(self, nio):
         """
         Creates a NIO TAP.
@@ -229,6 +243,8 @@ class Cloud(Node):
                     nio_object = self._createNIOGenericEthernet(nio)
                 if nio.lower().startswith("nio_gen_linux"):
                     nio_object = self._createNIOLinuxEthernet(nio)
+                if nio.lower().startswith("nio_nat"):
+                    nio_object = self._createNIONAT(nio)
                 if nio.lower().startswith("nio_tap"):
                     nio_object = self._createNIOTAP(nio)
                 if nio.lower().startswith("nio_unix"):
