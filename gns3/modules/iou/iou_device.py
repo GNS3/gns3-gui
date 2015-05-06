@@ -125,8 +125,6 @@ class IOUDevice(VM):
 
         if vm_id:
             params["vm_id"] = vm_id
-        else:
-            self._addAdapters(additional_settings.get("ethernet_adapters", 0), additional_settings.get("serial_adapters", 0))
 
         # push the initial-config
         if "initial_config" in additional_settings:
@@ -177,13 +175,16 @@ class IOUDevice(VM):
                                                                                                value))
                 self._settings[name] = value
 
-        #if self._loading:
-        #    self.updated_signal.emit()
-        #else:
-        self.setInitialized(True)
-        log.info("IOU instance {} has been created".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
+        # create the ports on the client side
+        self._addAdapters(self._settings.get("ethernet_adapters", 0), self._settings.get("serial_adapters", 0))
+
+        if self._loading:
+            self.loaded_signal.emit()
+        else:
+            self.setInitialized(True)
+            log.info("IOU instance {} has been created".format(self.name()))
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -196,14 +197,14 @@ class IOUDevice(VM):
             self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
             return
 
+        params = {}
         if "initial_config" in new_settings:
             if new_settings["initial_config"] and os.path.isfile(new_settings["initial_config"]):
                 base_config_content = self._readBaseConfig(new_settings["initial_config"])
                 if base_config_content is not None:
-                    new_settings["initial_config_content"] = base_config_content
+                    params["initial_config_content"] = base_config_content
             del new_settings["initial_config"]
 
-        params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
@@ -422,23 +423,6 @@ class IOUDevice(VM):
         name = vm_settings.pop("name")
         path = vm_settings.pop("path")
 
-        log.info("iou device {} is loading".format(name))
-        self.setName(name)
-
-        # create the adapters
-        ethernet_adapters = vm_settings.get("ethernet_adapters", 0)
-        serial_adapters = vm_settings.get("serial_adapters", 0)
-        self._addAdapters(ethernet_adapters, serial_adapters)
-
-        # assign the correct names and IDs to the ports
-        if "ports" in node_info:
-            ports = node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
             updated_path = os.path.join(self._imageFilesDir(), path)
@@ -447,7 +431,36 @@ class IOUDevice(VM):
             elif not os.path.isfile(path):
                 path = self._module.findAlternativeIOUImage(path)
 
+        log.info("iou device {} is loading".format(name))
+        self.setName(name)
+        self._loading = True
+        self._node_info = node_info
+        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(path, name, vm_id, vm_settings)
+
+    def _updatePortSettings(self):
+        """
+        Updates port settings when loading a topology.
+        """
+
+        self.loaded_signal.disconnect(self._updatePortSettings)
+
+        # assign the correct names and IDs to the ports
+        if "ports" in self._node_info:
+            ports = self._node_info["ports"]
+            for topology_port in ports:
+                for port in self._ports:
+                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
+                        port.setName(topology_port["name"])
+                        port.setId(topology_port["id"])
+
+        # now we can set the node as initialized and trigger the created signal
+        self.setInitialized(True)
+        log.info("IOU device {} has been loaded".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
+        self._loading = False
+        self._node_info = None
 
     def exportConfig(self, config_export_path):
         """

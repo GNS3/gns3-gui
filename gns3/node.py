@@ -41,6 +41,7 @@ class Node(QtCore.QObject):
     stopped_signal = QtCore.Signal()
     suspended_signal = QtCore.Signal()
     updated_signal = QtCore.Signal()
+    loaded_signal = QtCore.Signal()
     deleted_signal = QtCore.Signal()
     delete_links_signal = QtCore.Signal()
     error_signal = QtCore.Signal(int, str)
@@ -76,6 +77,7 @@ class Node(QtCore.QObject):
         self._server = server
         self._project = project
         self._initialized = False
+        self._loading = False
         self._status = 0
 
     @classmethod

@@ -156,10 +156,14 @@ class Topology:
         Adds a new link to this topology.
 
         :param link: Link instance
+        :returns: Boolean false if link already exists
         """
 
-        # self._topology.add_node(node)
+        for l in self._links:
+            if l._source_node == link._destination_node and l._source_port == link._destination_port:
+                return False
         self._links.append(link)
+        return True
 
     def removeLink(self, link):
         """

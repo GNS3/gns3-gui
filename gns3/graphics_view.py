@@ -258,9 +258,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # connect the signals that let the graphics view knows about events such as
         # a new link creation or deletion.
-        link.add_link_signal.connect(self.addLinkSlot)
-        link.delete_link_signal.connect(self.deleteLinkSlot)
-        self._topology.addLink(link)
+        if self._topology.addLink(link):
+            link.add_link_signal.connect(self.addLinkSlot)
+            link.delete_link_signal.connect(self.deleteLinkSlot)
 
     def addLinkSlot(self, link_id):
         """
@@ -551,7 +551,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     super().keyPressEvent(event)
                     return
             self.deleteActionSlot()
+<<<<<<< HEAD
             super().keyPressEvent(event)
+=======
+            QtGui.QGraphicsView.keyPressEvent(self, event)
+>>>>>>> master
         else:
             super().keyPressEvent(event)
 
@@ -660,6 +664,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
             else:
                 self.createNode(node_data, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
+            # This should not arrive but we received bug report with it...
+            if len(event.mimeData().urls()) == 0:
+                return
             if len(event.mimeData().urls()) > 1:
                 QtWidgets.QMessageBox.critical(self, "Project files", "Please drop only one file")
                 return
@@ -1143,7 +1150,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         item = items[0]
         if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
             router = item.node()
-            #question = QtWidgets.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            # question = QtWidgets.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 
             # if question == QtWidgets.QMessageBox.Yes:
             #    router.computeAutoIdlepc(self._autoIdlepcCallback)
