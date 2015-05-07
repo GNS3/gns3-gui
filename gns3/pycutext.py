@@ -43,7 +43,11 @@ class MultipleRedirection:
 
     def flush(self):
         self.console.flush()
-        self.stdout.flush()
+        try:
+            self.stdout.flush()
+        # On OSX when frozen flush raise a BrokenPipeError
+        except BrokenPipeError:
+            pass
 
 
 class PyCutExt(QtGui.QTextEdit):
