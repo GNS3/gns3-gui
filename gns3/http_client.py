@@ -282,6 +282,13 @@ class HTTPClient(QtCore.QObject):
                 print(msg)
                 print("WARNING: Use a different client and server version can create bugs. Use it at your own risk.")
 
+        if params["local"] != self.isLocal():
+            msg = "Running server is not a GNS3 local server (not started with --local)"
+            log.error(msg)
+            if callback is not None:
+                callback({"message": msg}, error=True, server=self)
+            return
+
         self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._connected = True
         self._version = params["version"]
@@ -380,7 +387,7 @@ class HTTPClient(QtCore.QObject):
                     callback(params, error=True, server=self, context=context)
                 else:
                     callback(params, server=self, context=context)
-        #response.deleteLater()
+        # response.deleteLater()
         if status == 400:
             raise HttpBadRequest(body)
 
