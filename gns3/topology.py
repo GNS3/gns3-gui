@@ -43,6 +43,8 @@ from .version import __version__
 import logging
 log = logging.getLogger(__name__)
 
+# The topology version supported by client
+TOPOLOGY_REVISION = 3
 
 class TopologyInstance:
 
@@ -461,7 +463,7 @@ class Topology(object):
                     "topology": {},
                     "auto_start": False,
                     "resources_type": self._project.type(),
-                    "revision": 3
+                    "revision": TOPOLOGY_REVISION
                     }
 
         self._resources_type = self._project.type()
@@ -549,6 +551,9 @@ class Topology(object):
 
         if not isinstance(json_topology, dict):
             raise ValueError("Not a GNS3 project")
+
+        if "revision" in json_topology and json_topology["revision"] > TOPOLOGY_REVISION:
+            raise ValueError("This topology is not supported by your version of GNS3 please use GNS3 {} or later".format(json_topology["version"]))
 
         if "project_id" in json_topology:
             self._project.setId(json_topology["project_id"])
