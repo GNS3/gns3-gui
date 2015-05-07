@@ -161,8 +161,9 @@ class Topology(object):
         """
 
         for l in self._links:
-            if l._source_node == link._destination_node and l._source_port == link._destination_port:
+            if (l._source_node == link._destination_node and l._source_port == link._destination_port) or (l._source_node == link._source_node and l._source_port == link._source_port):
                 return False
+
         self._links.append(link)
         return True
 
