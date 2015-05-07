@@ -70,6 +70,40 @@ if DEFAULT_BINDING == 'PyQt5':
     QtCore.Property = QtCore.pyqtProperty
     QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
+    from PyQt5.QtWidgets import QFileDialog as OldFileDialog
+
+    class QFileDialog(OldFileDialog):
+
+        @staticmethod
+        def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
+            path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
+            if path:
+                path = os.path.normpath(path)
+            return path
+
+        @staticmethod
+        def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+            path, _ = OldFileDialog.getOpenFileName(parent, caption, directory, filter, selectedFilter, options)
+            if path:
+                path = os.path.normpath(path)
+            return path, _
+
+        @staticmethod
+        def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+            path, _ = OldFileDialog.getOpenFileNames(parent, caption, directory, filter, selectedFilter, options)
+            if path:
+                path = os.path.normpath(path)
+            return path, _
+
+        @staticmethod
+        def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+            path, _ = OldFileDialog.getSaveFileName(parent, caption, directory, filter, selectedFilter, options)
+            if path:
+                path = os.path.normpath(path)
+            return path, _
+
+    QtWidgets.QFileDialog = QFileDialog
+
     def translate(*args):
         return QtCore.QCoreApplication.translate(*args)
 
@@ -110,16 +144,32 @@ elif DEFAULT_BINDING == 'PyQt4':
     class QFileDialog(OldFileDialog):
 
         @staticmethod
+        def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
+            path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
+            if path:
+                path = os.path.normpath(path)
+            return path
+
+        @staticmethod
         def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            return OldFileDialog.getOpenFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
+            path, _ = OldFileDialog.getOpenFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
+            if path:
+                path = os.path.normpath(path)
+            return path, _
 
         @staticmethod
         def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            return OldFileDialog.getOpenFileNamesAndFilter(parent, caption, directory, filter, selectedFilter, options)
+            path, _ = OldFileDialog.getOpenFileNamesAndFilter(parent, caption, directory, filter, selectedFilter, options)
+            if path:
+                path = os.path.normpath(path)
+            return path, _
 
         @staticmethod
         def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            return OldFileDialog.getSaveFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
+            path, _ = OldFileDialog.getSaveFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
+            if path:
+                path = os.path.normpath(path)
+            return path, _
 
     QtWidgets.QFileDialog = QFileDialog
 
@@ -127,6 +177,7 @@ elif DEFAULT_BINDING == 'PyQt4':
     # we turn off translation for PyQT4
     def translate(*args):
         return ''.join(args[-1:])
+
 
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):
