@@ -320,6 +320,13 @@ class Node(QtCore.QObject):
                                                                           nio.ethernetDevice()))
             return nio_info
 
+        elif nio_type == "nio_nat":
+            nio_info["type"] = nio_type
+            log.debug("creating {} for {} with identifier '{}'".format(nio,
+                                                                       self.name(),
+                                                                       nio.identifier()))
+            return nio_info
+
         elif nio_type == "nio_linux_ethernet":
             # return NIO Linux Ethernet info
             nio_info["type"] = nio_type

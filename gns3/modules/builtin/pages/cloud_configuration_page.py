@@ -48,6 +48,12 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiAddLinuxEthernetPushButton.clicked.connect(self._linuxEthernetAddSlot)
         self.uiDeleteLinuxEthernetPushButton.clicked.connect(self._linuxEthernetDeleteSlot)
 
+        # connect NIO NAT slots
+        self.uiNIONATListWidget.currentRowChanged.connect(self._NIONATSelectedSlot)
+        self.uiNIONATListWidget.itemSelectionChanged.connect(self._NIONATChangedSlot)
+        self.uiAddNIONATPushButton.clicked.connect(self._NIONATAddSlot)
+        self.uiDeleteNIONATPushButton.clicked.connect(self._NIONATDeleteSlot)
+
         # connect NIO UDP slots
         self.uiNIOUDPListWidget.currentRowChanged.connect(self._NIOUDPSelectedSlot)
         self.uiNIOUDPListWidget.itemSelectionChanged.connect(self._NIOUDPChangedSlot)
@@ -176,9 +182,65 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self._nios.remove(nio)
             self.uiLinuxEthernetListWidget.takeItem(self.uiLinuxEthernetListWidget.currentRow())
 
+    def _NIONATSelectedSlot(self, index):
+        """
+        Loads a selected NAT NIO.
+
+        :param index: ignored
+        """
+
+        item = self.uiNIONATListWidget.currentItem()
+        if item:
+            nio = item.text()
+            match = re.search(r"""^nio_nat:(.+)$""", nio)
+            if match:
+                self.uiNIONATIdentiferLineEdit.setText(match.group(1))
+
+    def _NIONATChangedSlot(self):
+        """
+        Enables the use of the delete button.
+        """
+
+        item = self.uiNIONATListWidget.currentItem()
+        if item:
+            self.uiDeleteNIONATPushButton.setEnabled(True)
+        else:
+            self.uiDeleteNIONATPushButton.setEnabled(False)
+
+    def _NIONATAddSlot(self):
+        """
+        Adds a new NAT NIO.
+        """
+
+        identifier = self.uiNIONATIdentiferLineEdit.text()
+        if identifier:
+            nio = "nio_nat:{}".format(identifier)
+            if nio not in self._nios:
+                self.uiNIONATListWidget.addItem(nio)
+                self._nios.append(nio)
+
+    def _NIONATDeleteSlot(self):
+        """
+        Deletes a NAT NIO.
+        """
+
+        item = self.uiNIONATListWidget.currentItem()
+        if item:
+            nio = item.text()
+            # check we can delete that NIO
+            node_ports = self._node.ports()
+            for node_port in node_ports:
+                if node_port.name() == nio and not node_port.isFree():
+                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    return
+            self._nios.remove(nio)
+            self.uiNIONATListWidget.takeItem(self.uiNIONATListWidget.currentRow())
+
     def _NIOUDPSelectedSlot(self, index):
         """
         Loads a selected UDP.
+
+        :param index: ignored
         """
 
         item = self.uiNIOUDPListWidget.currentItem()
@@ -406,6 +468,8 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
     def _NIONullSelectedSlot(self, index):
         """
         Loads a selected NULL NIO.
+
+        :param index: ignored
         """
 
         item = self.uiNIONullListWidget.currentItem()

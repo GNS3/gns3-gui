@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>500</height>
+    <width>653</width>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,13 +15,13 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="uiNIOsTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="NIOEthernetTab">
       <attribute name="title">
-       <string>NIO Ethernet</string>
+       <string>Ethernet</string>
       </attribute>
       <layout class="QVBoxLayout">
        <item>
@@ -135,9 +135,104 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="NIONATTab">
       <attribute name="title">
-       <string>NIO UDP</string>
+       <string>NAT</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0" colspan="2">
+        <widget class="QGroupBox" name="uiNIONATSettingsGroupBox">
+         <property name="title">
+          <string>Settings</string>
+         </property>
+         <layout class="QGridLayout" name="_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiNIONATIdentifierLabel">
+            <property name="text">
+             <string>Identifier:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLineEdit" name="uiNIONATIdentiferLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="2" rowspan="3">
+        <widget class="QGroupBox" name="uiNIONATListGroupBox">
+         <property name="title">
+          <string>NIOs</string>
+         </property>
+         <layout class="QVBoxLayout" name="_3">
+          <item>
+           <widget class="QListWidget" name="uiNIONATListWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="uiAddNIONATPushButton">
+         <property name="text">
+          <string>&amp;Add</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="uiDeleteNIONATPushButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>&amp;Delete</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" rowspan="2">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>294</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="2">
+        <spacer name="spacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>194</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="NIOUDPTab">
+      <attribute name="title">
+       <string>UDP</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="2">
@@ -265,9 +360,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="NIOTAPTab">
       <attribute name="title">
-       <string>NIO TAP</string>
+       <string>TAP</string>
       </attribute>
       <layout class="QVBoxLayout">
        <item>
@@ -317,9 +412,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="NIOUnixTab">
       <attribute name="title">
-       <string>NIO UNIX</string>
+       <string>UNIX</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="2">
@@ -440,9 +535,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_5">
+     <widget class="QWidget" name="NIOVDETab">
       <attribute name="title">
-       <string>NIO VDE</string>
+       <string>VDE</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="2">
@@ -563,9 +658,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_6">
+     <widget class="QWidget" name="NIONullTab">
       <attribute name="title">
-       <string>NIO NULL</string>
+       <string>NULL</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="2">
@@ -575,7 +670,7 @@
          </property>
          <layout class="QGridLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="uiNIONullIdentifierLabel">
             <property name="text">
              <string>Identifier:</string>
             </property>
@@ -658,7 +753,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_7">
+     <widget class="QWidget" name="MiscTab">
       <attribute name="title">
        <string>Misc.</string>
       </attribute>

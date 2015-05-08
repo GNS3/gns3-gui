@@ -1,5 +1,44 @@
 # Change Log
 
+## 1.3.3rc1 07/05/2015
+
+* Catch broken pipe error catched for OSX
+* Prevent a topology made for next version to be open in previous version
+* Check if the local server is really a local server
+* NIO NAT support for QEMU VMs (user mode back-end is used).
+* Modified version requirements, so that they require the dependency versions as minimums. Added some more detailed instructions for compilation on Windows.
+* Prevent user to enter a None port
+* Fix broken pipe error on OSX when frozen
+* Prevent the same link created twice on OSX
+* Project loading: names and IDs must be assigned to ports on the client side after nodes have been created. Fixes #326. Fixes config updating for IOS router and IOU devices.
+* Fix a crash when dropping a .gns3
+* Cleanup VPCS code
+* Turn off config parser interpolation
+* Support unicode characters in regex
+* Fixes duplicate entries for "Recent files" on Windows. Fixes #316.
+* Fixes VPCS multi-host. Fixes #318.
+* Fixes issues when importing configs for IOS, IOU and VPCS. Fixes #314.
+* Fixes issue when console setting present in IOS router templates.
+* Do not send empty settings when creating VMs.
+* Do not set a default private-config when creating a new IOS router template. Fixes #317.
+* Refactors how startup-config and private-config are handled for IOS routers.
+* Fixes IOU and QEMU tests.
+* Makes sure all IOS router settings are saved in the project file & simplify loading from a project.
+*  Makes sure all VirtualBox VM settings are saved in the project file & simplify loading from a project.
+*  Makes sure all VPCS VM settings are saved in the project file & simplify loading from a project.
+* Makes sure all IOU VM settings are saved in the project file & simplify loading from a project.
+* Makes sure all QEMU VM settings are saved in the project file & simplify loading from a project.
+* Fix save as by correctly renaming VM uuid project directory
+* Fix save as duplicate the .gns3 file
+* Fix broken project in Another assert topology fixe
+* Prevent user to enter bad hostname
+* Fixes an issue when the IOU VM template has a console setting.
+* Releasing adding a link. Fixes #235.
+* Fix RuntimeError: wrapped C/C++ object of type QNetworkReply has been deleted.
+* Do not crash if terminal doesn't support UTF-8
+* Fix windows build
+* Fixes "show only devices with captures" in the topology summary.
+
 ## 1.3.2 28/04/2015
 
 * Fixes bug when IOS configs are not in VM settings.
