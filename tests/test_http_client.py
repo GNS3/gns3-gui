@@ -137,6 +137,7 @@ def test_processDownloadProgress(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
+
     response.readAll.return_value = b'{"action": "ping"}'
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})

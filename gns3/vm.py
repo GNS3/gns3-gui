@@ -20,7 +20,6 @@ Base class for VM classes.
 """
 
 from .node import Node
-from .ports.port import Port
 
 import logging
 log = logging.getLogger(__name__)
@@ -98,10 +97,6 @@ class VM(Node):
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
-            for port in self._ports:
-                # set ports as started
-                port.setStatus(Port.started)
-            self.started_signal.emit()
 
     def stop(self):
         """
@@ -129,10 +124,6 @@ class VM(Node):
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
-            for port in self._ports:
-                # set ports as stopped
-                port.setStatus(Port.stopped)
-            self.stopped_signal.emit()
 
     def reload(self):
         """

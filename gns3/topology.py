@@ -141,9 +141,21 @@ class Topology:
         if node in self._nodes:
             self._nodes.remove(node)
 
+    def getVM(self, vm_id):
+        """
+        Lookups for a vm using its identifier.
+
+        :returns: Node instance or None
+        """
+
+        for node in self._nodes:
+            if hasattr(node, "vm_id") and node.vm_id() == vm_id:
+                return node
+        return None
+
     def getNode(self, node_id):
         """
-        Lookups for a node using its identifier.
+        Lookups for a node using its vm_id.
 
         :returns: Node instance or None
         """

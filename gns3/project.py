@@ -20,6 +20,8 @@ import functools
 from .qt import QtCore
 
 from gns3.servers import Servers
+from gns3.topology import Topology
+from gns3.node import Node
 
 import logging
 log = logging.getLogger(__name__)
@@ -56,6 +58,9 @@ class Project(QtCore.QObject):
         self._creating_first_server = None
         # We queue query in order to ensure the project is only created once on remote server
         self._callback_finish_creating_on_server = {}
+
+        self._listen_notification = False
+        self._notifications_stream = set()
 
         super().__init__()
 
@@ -289,6 +294,8 @@ class Project(QtCore.QObject):
         if server not in self._created_servers:
             self._created_servers.add(server)
 
+        self._startListenNotifications(server)
+
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         server.createHTTPQuery(method, path, callback, body=body, context=context)
 
@@ -305,6 +312,8 @@ class Project(QtCore.QObject):
         if self._id:
             self.project_about_to_close_signal.emit()
 
+            for stream in self._notifications_stream:
+                stream.abort()
             for server in list(self._created_servers):
                 if server.isLocal() and server.connected() and self._servers.localServerIsRunning() and local_server_shutdown:
                     server.post("/server/shutdown", self._projectClosedCallback)
@@ -353,4 +362,24 @@ class Project(QtCore.QObject):
             params = {"name": self._name, "temporary": False}
             if server.isLocal():
                 params["path"] = new_path
-            server.put("/projects/{project_id}".format(project_id=self._id), None, body=params)
+            server.put("/projects/{project_id}".format(project_id=self._id),
+                       None,
+                       body=params)
+
+    def _startListenNotifications(self, server):
+
+        path = "/projects/{project_id}/notifications".format(project_id=self._id)
+        self._notifications_stream.add(server.createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False))
+
+    def _event_received(self, result, **kwargs):
+
+        log.debug("Event received: %s", result)
+        if result["action"] in ["vm.started", "vm.stopped"]:
+            vm = Topology.instance().getVM(result["event"]["vm_id"])
+            if vm is not None:
+                if result["action"] == "vm.started":
+                    vm.setStatus(Node.started)
+                    vm.started_signal.emit()
+                elif result["action"] == "vm.stopped":
+                    vm.setStatus(Node.stopped)
+                    vm.stopped_signal.emit()
