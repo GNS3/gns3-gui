@@ -24,7 +24,6 @@ from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
 class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
-
     """
     Text editor dialog.
 
@@ -44,12 +43,10 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
 
         # use the first item in the list as the model
         first_item = items[0]
-        self._color = first_item.defaultTextColor()
+        self._setColor(first_item.defaultTextColor())
         self.uiRotationSpinBox.setValue(first_item.rotation())
-        self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))
         self.uiPlainTextEdit.setPlainText(first_item.toPlainText())
         self.uiPlainTextEdit.setFont(first_item.font())
-        self.uiPlainTextEdit.setStyleSheet("color : {}".format(self._color.name()))
 
         if not first_item.editable():
             self.uiPlainTextEdit.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
@@ -57,6 +54,17 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         if len(self._items) == 1:
             self.uiApplyTextToAllItemsCheckBox.setChecked(True)
             self.uiApplyTextToAllItemsCheckBox.hide()
+
+    def _setColor(self, color):
+        self._color = color
+        self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(color.red(),
+                                                                                              color.green(),
+                                                                                              color.blue(),
+                                                                                              color.alpha()))
+        self.uiPlainTextEdit.setStyleSheet("color: rgba({}, {}, {}, {});".format(color.red(),
+                                                                                 color.green(),
+                                                                                 color.blue(),
+                                                                                 color.alpha()))
 
     def _setFontSlot(self):
         """
@@ -72,11 +80,9 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         Slot to select the color.
         """
 
-        color = QtWidgets.QColorDialog.getColor(self._color, self)
+        color = QtWidgets.QColorDialog.getColor(self._color, self, None, QtWidgets.QColorDialog.ShowAlphaChannel)
         if color.isValid():
-            self._color = color
-            self.uiColorPushButton.setStyleSheet("background-color: {}".format(self._color.name()))
-            self.uiPlainTextEdit.setStyleSheet("color : {}".format(self._color.name()))
+            self._setColor(color)
 
     def _applyPreferencesSlot(self):
         """

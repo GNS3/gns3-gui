@@ -23,7 +23,6 @@ from ..qt import QtCore, QtWidgets, QtGui
 
 
 class NoteItem(QtWidgets.QGraphicsTextItem):
-
     """
     Text note for the QGraphicsView.
 
@@ -37,6 +36,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         super().__init__(parent)
 
         from ..main_window import MainWindow
+
         main_window = MainWindow.instance()
         view_settings = main_window.uiGraphicsView.settings()
         qt_font = QtGui.QFont()
@@ -59,6 +59,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
 
         self.scene().removeItem(self)
         from ..topology import Topology
+
         Topology.instance().removeNote(self)
 
     def editable(self):
@@ -198,7 +199,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                      "y": self.y()}
 
         note_info["font"] = self.font().toString()
-        note_info["color"] = self.defaultTextColor().name()
+        note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
         if self.rotation() != 0:
             note_info["rotation"] = self.rotation()
         if self.zValue() != 2:
