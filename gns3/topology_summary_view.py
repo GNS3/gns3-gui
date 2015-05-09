@@ -233,28 +233,28 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         menu = QtWidgets.QMenu()
         expand_all = QtWidgets.QAction("Expand all", menu)
         expand_all.setIcon(QtGui.QIcon(":/icons/plus.svg"))
-        self.connect(expand_all, QtCore.SIGNAL('triggered()'), self._expandAllSlot)
+        expand_all.triggered.connect(self._expandAllSlot)
         menu.addAction(expand_all)
 
         collapse_all = QtWidgets.QAction("Collapse all", menu)
         collapse_all.setIcon(QtGui.QIcon(":/icons/minus.svg"))
-        self.connect(collapse_all, QtCore.SIGNAL('triggered()'), self._collapseAllSlot)
+        collapse_all.triggered.connect(self._collapseAllSlot)
         menu.addAction(collapse_all)
 
         if self.show_only_devices_with_capture is False:
             devices_with_capture = QtWidgets.QAction("Show devices with capture(s)", menu)
             devices_with_capture.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
-            self.connect(devices_with_capture, QtCore.SIGNAL('triggered()'), self._devicesWithCaptureSlot)
+            devices_with_capture.triggered.connect(self._devicesWithCaptureSlot)
             menu.addAction(devices_with_capture)
         else:
             show_all_devices = QtWidgets.QAction("Show all devices", menu)
             # show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
-            self.connect(show_all_devices, QtCore.SIGNAL('triggered()'), self._showAllDevicesSlot)
+            show_all_devices.triggered.connect(self._showAllDevicesSlot)
             menu.addAction(show_all_devices)
 
         stop_all_captures = QtWidgets.QAction("Stop all captures", menu)
         stop_all_captures.setIcon(QtGui.QIcon(":/icons/capture-stop.svg"))
-        self.connect(stop_all_captures, QtCore.SIGNAL('triggered()'), self._stopAllCapturesSlot)
+        stop_all_captures.triggered.connect(self._stopAllCapturesSlot)
         menu.addAction(stop_all_captures)
 
         current_item = self.currentItem()
