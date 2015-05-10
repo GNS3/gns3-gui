@@ -22,6 +22,7 @@ Configuration page for QEMU VMs.
 import os
 from functools import partial
 from collections import OrderedDict
+from gns3.modules.qemu.dialogs.qemu_image_wizzard import QemuImageWizard
 
 from gns3.qt import QtCore, QtWidgets
 from gns3.servers import Servers
@@ -49,6 +50,12 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
         self.uiHdcDiskImageToolButton.clicked.connect(self._hdcDiskImageBrowserSlot)
         self.uiHddDiskImageToolButton.clicked.connect(self._hddDiskImageBrowserSlot)
+
+        self.uiHdaDiskImageCreateToolButton.clicked.connect(self._hdaDiskImageCreateSlot)
+        self.uiHdbDiskImageCreateToolButton.clicked.connect(self._hdbDiskImageCreateSlot)
+        self.uiHdcDiskImageCreateToolButton.clicked.connect(self._hdcDiskImageCreateSlot)
+        self.uiHddDiskImageCreateToolButton.clicked.connect(self._hddDiskImageCreateSlot)
+
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
@@ -153,6 +160,26 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if path:
             self.uiHddDiskImageLineEdit.clear()
             self.uiHddDiskImageLineEdit.setText(path)
+
+    def _hdaDiskImageCreateSlot(self):
+        create_dialog = QemuImageWizard(self, self.uiNameLineEdit.text() + '-hda')
+        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+            self.uiHdaDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+    def _hdbDiskImageCreateSlot(self):
+        create_dialog = QemuImageWizard(self, self.uiNameLineEdit.text() + '-hdb')
+        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+            self.uiHdbDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+    def _hdcDiskImageCreateSlot(self):
+        create_dialog = QemuImageWizard(self, self.uiNameLineEdit.text() + '-hdc')
+        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+            self.uiHdcDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+    def _hddDiskImageCreateSlot(self):
+        create_dialog = QemuImageWizard(self, self.uiNameLineEdit.text() + '-hdd')
+        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+            self.uiHddDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
 
     def _initrdBrowserSlot(self):
         """

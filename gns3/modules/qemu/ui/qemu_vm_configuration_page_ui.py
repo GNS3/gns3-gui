@@ -2,17 +2,14 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:57 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_QemuVMConfigPageWidget:
-
+class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(486, 407)
@@ -76,6 +73,9 @@ class Ui_QemuVMConfigPageWidget:
         self.uiHdaDiskImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiHdaDiskImageToolButton.setObjectName("uiHdaDiskImageToolButton")
         self.horizontalLayout_8.addWidget(self.uiHdaDiskImageToolButton)
+        self.uiHdaDiskImageCreateToolButton = QtWidgets.QToolButton(self.tab_3)
+        self.uiHdaDiskImageCreateToolButton.setObjectName("uiHdaDiskImageCreateToolButton")
+        self.horizontalLayout_8.addWidget(self.uiHdaDiskImageCreateToolButton)
         self.gridLayout_6.addLayout(self.horizontalLayout_8, 0, 1, 1, 1)
         self.uiHdbDiskImageLabel = QtWidgets.QLabel(self.tab_3)
         self.uiHdbDiskImageLabel.setObjectName("uiHdbDiskImageLabel")
@@ -89,6 +89,9 @@ class Ui_QemuVMConfigPageWidget:
         self.uiHdbDiskImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiHdbDiskImageToolButton.setObjectName("uiHdbDiskImageToolButton")
         self.horizontalLayout_4.addWidget(self.uiHdbDiskImageToolButton)
+        self.uiHdbDiskImageCreateToolButton = QtWidgets.QToolButton(self.tab_3)
+        self.uiHdbDiskImageCreateToolButton.setObjectName("uiHdbDiskImageCreateToolButton")
+        self.horizontalLayout_4.addWidget(self.uiHdbDiskImageCreateToolButton)
         self.gridLayout_6.addLayout(self.horizontalLayout_4, 1, 1, 1, 1)
         self.uiHdcDiskImageLabel = QtWidgets.QLabel(self.tab_3)
         self.uiHdcDiskImageLabel.setObjectName("uiHdcDiskImageLabel")
@@ -102,6 +105,9 @@ class Ui_QemuVMConfigPageWidget:
         self.uiHdcDiskImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiHdcDiskImageToolButton.setObjectName("uiHdcDiskImageToolButton")
         self.horizontalLayout_9.addWidget(self.uiHdcDiskImageToolButton)
+        self.uiHdcDiskImageCreateToolButton = QtWidgets.QToolButton(self.tab_3)
+        self.uiHdcDiskImageCreateToolButton.setObjectName("uiHdcDiskImageCreateToolButton")
+        self.horizontalLayout_9.addWidget(self.uiHdcDiskImageCreateToolButton)
         self.gridLayout_6.addLayout(self.horizontalLayout_9, 2, 1, 1, 1)
         self.uiHddDiskImageLabel = QtWidgets.QLabel(self.tab_3)
         self.uiHddDiskImageLabel.setObjectName("uiHddDiskImageLabel")
@@ -115,6 +121,9 @@ class Ui_QemuVMConfigPageWidget:
         self.uiHddDiskImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiHddDiskImageToolButton.setObjectName("uiHddDiskImageToolButton")
         self.horizontalLayout_10.addWidget(self.uiHddDiskImageToolButton)
+        self.uiHddDiskImageCreateToolButton = QtWidgets.QToolButton(self.tab_3)
+        self.uiHddDiskImageCreateToolButton.setObjectName("uiHddDiskImageCreateToolButton")
+        self.horizontalLayout_10.addWidget(self.uiHddDiskImageCreateToolButton)
         self.gridLayout_6.addLayout(self.horizontalLayout_10, 3, 1, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(438, 257, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_6.addItem(spacerItem1, 4, 0, 1, 2)
@@ -233,6 +242,8 @@ class Ui_QemuVMConfigPageWidget:
         self.uiQemuOptionsLineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.uiQemuOptionsLineEdit.setObjectName("uiQemuOptionsLineEdit")
         self.gridLayout_3.addWidget(self.uiQemuOptionsLineEdit, 0, 2, 1, 1)
+        self.uiQemuOptionsLineEdit.raise_()
+        self.uiQemuOptionsLabel.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem3 = QtWidgets.QSpacerItem(20, 90, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem3)
@@ -255,12 +266,16 @@ class Ui_QemuVMConfigPageWidget:
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab), _translate("QemuVMConfigPageWidget", "General settings"))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hda):"))
         self.uiHdaDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
+        self.uiHdaDiskImageCreateToolButton.setText(_translate("QemuVMConfigPageWidget", "Create..."))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
+        self.uiHdbDiskImageCreateToolButton.setText(_translate("QemuVMConfigPageWidget", "Create..."))
         self.uiHdcDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hdc):"))
         self.uiHdcDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
+        self.uiHdcDiskImageCreateToolButton.setText(_translate("QemuVMConfigPageWidget", "Create..."))
         self.uiHddDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hdd):"))
         self.uiHddDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
+        self.uiHddDiskImageCreateToolButton.setText(_translate("QemuVMConfigPageWidget", "Create..."))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_3), _translate("QemuVMConfigPageWidget", "HDD"))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:"))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:"))
@@ -286,3 +301,4 @@ class Ui_QemuVMConfigPageWidget:
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings"))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+

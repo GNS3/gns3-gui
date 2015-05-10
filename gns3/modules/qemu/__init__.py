@@ -265,6 +265,16 @@ class Qemu(Module):
 
         server.get("/qemu/binaries", callback)
 
+    def getQemuImgBinariesFromServer(self, server, callback):
+        """
+        Gets the QEMU-img binaries list from a server.
+
+        :param server: server to send the request to
+        :param callback: callback for the reply from the server
+        """
+
+        server.get(r"/qemu/img-binaries", callback)
+
     @staticmethod
     def getNodeClass(name):
         """

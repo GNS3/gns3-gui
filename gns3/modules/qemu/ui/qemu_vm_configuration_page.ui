@@ -130,6 +130,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QToolButton" name="uiHdaDiskImageCreateToolButton">
+           <property name="text">
+            <string>Create...</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item row="1" column="0">
@@ -151,6 +158,13 @@
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiHdbDiskImageCreateToolButton">
+           <property name="text">
+            <string>Create...</string>
            </property>
           </widget>
          </item>
@@ -178,6 +192,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QToolButton" name="uiHdcDiskImageCreateToolButton">
+           <property name="text">
+            <string>Create...</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item row="3" column="0">
@@ -199,6 +220,13 @@
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiHddDiskImageCreateToolButton">
+           <property name="text">
+            <string>Create...</string>
            </property>
           </widget>
          </item>

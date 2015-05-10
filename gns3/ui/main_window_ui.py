@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon May 18 17:22:21 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -35,8 +34,8 @@ class Ui_MainWindow(object):
         self.uiCentralWidget = QtWidgets.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName("uiCentralWidget")
         self.gridlayout = QtWidgets.QGridLayout(self.uiCentralWidget)
-        self.gridlayout.setSpacing(0)
         self.gridlayout.setContentsMargins(0, 0, 0, 0)
+        self.gridlayout.setSpacing(0)
         self.gridlayout.setObjectName("gridlayout")
         self.uiGraphicsView = GraphicsView(self.uiCentralWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -48,7 +47,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -155,8 +154,8 @@ class Ui_MainWindow(object):
         self.uiTopologySummaryDockWidgetContents.setSizePolicy(sizePolicy)
         self.uiTopologySummaryDockWidgetContents.setObjectName("uiTopologySummaryDockWidgetContents")
         self.gridlayout1 = QtWidgets.QGridLayout(self.uiTopologySummaryDockWidgetContents)
-        self.gridlayout1.setSpacing(0)
         self.gridlayout1.setContentsMargins(0, 0, 0, 0)
+        self.gridlayout1.setSpacing(0)
         self.gridlayout1.setObjectName("gridlayout1")
         self.uiTopologySummaryTreeWidget = TopologySummaryView(self.uiTopologySummaryDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -366,10 +365,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -401,6 +400,11 @@ class Ui_MainWindow(object):
         icon30.addPixmap(QtGui.QPixmap(":/classic_icons/save-as-project.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiDownloadRemoteProject.setIcon(icon30)
         self.uiDownloadRemoteProject.setObjectName("uiDownloadRemoteProject")
+        self.uiQemuImgWizardAction = QtWidgets.QAction(MainWindow)
+        icon31 = QtGui.QIcon()
+        icon31.addPixmap(QtGui.QPixmap(":/icons/qemu.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiQemuImgWizardAction.setIcon(icon31)
+        self.uiQemuImgWizardAction.setObjectName("uiQemuImgWizardAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -450,6 +454,7 @@ class Ui_MainWindow(object):
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
         self.uiAnnotateMenu.addAction(self.uiDrawEllipseAction)
         self.uiToolsMenu.addAction(self.uiVPCSAction)
+        self.uiToolsMenu.addAction(self.uiQemuImgWizardAction)
         self.uiMenuBar.addAction(self.uiFileMenu.menuAction())
         self.uiMenuBar.addAction(self.uiEditMenu.menuAction())
         self.uiMenuBar.addAction(self.uiViewMenu.menuAction())
@@ -653,9 +658,10 @@ class Ui_MainWindow(object):
         self.uiActionFullscreen.setShortcut(_translate("MainWindow", "Ctrl+F"))
         self.uiVPCSAction.setText(_translate("MainWindow", "&VPCS multi-host"))
         self.uiDownloadRemoteProject.setText(_translate("MainWindow", "Download remote project"))
+        self.uiQemuImgWizardAction.setText(_translate("MainWindow", "Qemu image wizard"))
 
-from ..nodes_view import NodesView
-from ..topology_summary_view import TopologySummaryView
 from ..graphics_view import GraphicsView
 from ..console_view import ConsoleView
+from ..topology_summary_view import TopologySummaryView
+from ..nodes_view import NodesView
 from . import resources_rc
