@@ -521,9 +521,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QWheelEvent instance
         """
 
-        if event.modifiers() == QtCore.Qt.ControlModifier and event.orientation() == QtCore.Qt.Vertical:
-            # CTRL is pressed then use the mouse wheel to zoom in or out.
-            self.scaleView(pow(2.0, event.delta() / 240.0))
+        if event.modifiers() == QtCore.Qt.ControlModifier:
+            # event.delta() added for Qt4 compatibility
+            delta = event.angleDelta() if hasattr(event, 'angleDelta') else event.delta()
+            if not delta == None and delta.x() == 0:
+                # CTRL is pressed then use the mouse wheel to zoom in or out.
+                self.scaleView(pow(2.0, delta.y() / 240.0))
         else:
             super().wheelEvent(event)
 
