@@ -49,6 +49,7 @@ class Cloud(Node):
     _name_instance_count = 1
 
     def __init__(self, module, server, project):
+
         super().__init__(module, server, project)
 
         log.info("cloud is being created")
@@ -59,7 +60,6 @@ class Cloud(Node):
         name = "Cloud {}".format(self._name_id)
         self.setStatus(Node.started)  # this is an always-on node
         self._defaults = {}
-        self._ports = []
         self._initial_settings = None
         self._settings = {"name": name,
                           "interfaces": {},

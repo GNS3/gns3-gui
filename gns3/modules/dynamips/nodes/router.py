@@ -54,7 +54,6 @@ class Router(VM):
 
         super().__init__(module, server, project)
         log.info("Router {} is being created".format(platform))
-        self._ports = []
         self._dynamips_id = None
         self._settings = {"name": "",
                           "platform": platform,

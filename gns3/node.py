@@ -69,7 +69,6 @@ class Node(QtCore.QObject):
     def __init__(self, module, server, project):
 
         super().__init__()
-
         # create an unique ID
         self._id = Node._instance_count
         Node._instance_count += 1
@@ -80,6 +79,7 @@ class Node(QtCore.QObject):
         self._initialized = False
         self._loading = False
         self._status = 0
+        self._ports = []
 
     @classmethod
     def reset(cls):

@@ -43,7 +43,6 @@ class QemuVM(VM):
         super().__init__(module, server, project)
 
         log.info("QEMU VM instance is being created")
-        self._ports = []
 
         self._settings = {"name": "",
                           "qemu_path": "",

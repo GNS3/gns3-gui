@@ -45,7 +45,6 @@ class VPCSDevice(VM):
 
         log.info("VPCS instance is being created")
         self._vm_id = None
-        self._ports = []
         self._settings = {"name": "",
                           "startup_script": None,
                           "startup_script_path": None,

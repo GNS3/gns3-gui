@@ -51,7 +51,6 @@ class IOUDevice(VM):
 
         log.info("IOU instance is being created")
         self._vm_id = None
-        self._ports = []
         self._settings = {"name": "",
                           "path": "",
                           "initial_config": "",

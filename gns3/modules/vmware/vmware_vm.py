@@ -49,7 +49,6 @@ class VMwareVM(VM):
         self._linked_clone = False
         self._export_directory = None
         self._loading = False
-        self._ports = []
         self._settings = {"name": "",
                           "vmx_path": "",
                           "console": None,

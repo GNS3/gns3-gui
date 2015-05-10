@@ -51,7 +51,6 @@ class VirtualBoxVM(VM):
         super().__init__(module, server, project)
         log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
-        self._ports = []
         self._settings = {"name": "",
                           "vmname": "",
                           "console": None,
