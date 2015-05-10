@@ -144,6 +144,8 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
         self.uiSerialAdaptersSpinBox.setValue(settings["serial_adapters"])
 
+        self.server = Servers.instance().getServerFromString(settings["server"])
+
     def saveSettings(self, settings, node=None, group=False):
         """
         Saves the IOU device settings.

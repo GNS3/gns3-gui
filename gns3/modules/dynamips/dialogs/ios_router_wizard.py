@@ -286,7 +286,8 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
         """
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        path = IOSRouterPreferencesPage.getIOSImage(self)
+        server = Servers.instance().getServerFromString(self.getSettings()["server"])
+        path = IOSRouterPreferencesPage.getIOSImage(self, server)
         if not path:
             return
         self.uiIOSImageLineEdit.clear()

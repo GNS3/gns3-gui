@@ -30,6 +30,7 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.file_copy_worker import FileCopyWorker
+from gns3.image_manager import ImageManager
 
 from ..ui.qemu_vm_configuration_page_ui import Ui_QemuVMConfigPageWidget
 from .. import Qemu
@@ -92,10 +93,17 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 continue
             self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
 
-    @staticmethod
-    def getDiskImage(parent):
+    def getServer(self):
+        return Servers.instance().getServerFromString(self.getSettings()["server"])
 
-        destination_directory = os.path.join(MainWindow.instance().imagesDirPath(), "QEMU")
+    @staticmethod
+    def getImageDirectory():
+        return os.path.join(MainWindow.instance().imagesDirPath(), "QEMU")
+
+    @classmethod
+    def getDiskImage(cls, parent, server):
+
+        destination_directory = cls.getImageDirectory()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent, "Select a QEMU disk image", destination_directory)
         if not path:
             return
@@ -104,32 +112,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.critical(parent, "QEMU disk image", "Cannot read {}".format(path))
             return
 
-        try:
-            os.makedirs(destination_directory)
-        except FileExistsError:
-            pass
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(parent, "QEMU disk images directory", "Could not create the QEMU disk images directory {}: {}".format(destination_directory, e))
-            return
-
-        if os.path.normpath(os.path.dirname(path)) != destination_directory:
-            # the QEMU disk image is not in the default images directory
-            reply = QtWidgets.QMessageBox.question(parent,
-                                                   "QEMU disk image",
-                                                   "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
-                destination_path = os.path.join(destination_directory, os.path.basename(path))
-                worker = FileCopyWorker(path, destination_path)
-                progress_dialog = ProgressDialog(worker, "QEMU disk image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
-                progress_dialog.show()
-                progress_dialog.exec_()
-                errors = progress_dialog.errors()
-                if errors:
-                    QtWidgets.QMessageBox.critical(parent, "QEMU disk image", "{}".format("".join(errors)))
-                else:
-                    path = destination_path
+        path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/qemu/vms")
 
         return path
 
@@ -138,7 +121,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hda disk image.
         """
 
-        path = self.getDiskImage(self)
+        path = self.getDiskImage(self, self.getServer())
         if path:
             self.uiHdaDiskImageLineEdit.clear()
             self.uiHdaDiskImageLineEdit.setText(path)
@@ -148,7 +131,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdb disk image.
         """
 
-        path = self.getDiskImage(self)
+        path = self.getDiskImage(self, self.getServer())
         if path:
             self.uiHdbDiskImageLineEdit.clear()
             self.uiHdbDiskImageLineEdit.setText(path)
@@ -158,7 +141,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdc disk image.
         """
 
-        path = self.getDiskImage(self)
+        path = self.getDiskImage(self, self.getServer())
         if path:
             self.uiHdcDiskImageLineEdit.clear()
             self.uiHdcDiskImageLineEdit.setText(path)
@@ -168,7 +151,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdd disk image.
         """
 
-        path = self.getDiskImage(self)
+        path = self.getDiskImage(self, self.getServer())
         if path:
             self.uiHddDiskImageLineEdit.clear()
             self.uiHddDiskImageLineEdit.setText(path)
@@ -178,7 +161,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU initrd.
         """
 
-        path = self.getDiskImage(self)
+        path = self.getDiskImage(self, self.getServer())
         if path:
             self.uiInitrdLineEdit.clear()
             self.uiInitrdLineEdit.setText(path)
@@ -188,7 +171,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU kernel image.
         """
 
-        path = self.getDiskImage(self)
+        path = self.getDiskImage(self, self.getServer())
         if path:
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
@@ -250,12 +233,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if node:
             server = node.server()
         else:
-            server = settings["server"]
-            if server == "local":
-                server = Servers.instance().localServer()
-            elif ":" in server:
-                host, port = server.rsplit(":")
-                server = Servers.instance().getRemoteServer(host, port)
+            server = Servers.instance().getServerFromString(settings["server"])
 
         callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
         try:

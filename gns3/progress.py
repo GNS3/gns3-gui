@@ -41,7 +41,7 @@ class Progress(QtCore.QObject):
 
     def _add_query(self, query_id, explanation):
 
-        self._queries[query_id] = explanation
+        self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0}
         self.show()
 
     def _remove_query(self, query_id):
@@ -59,6 +59,12 @@ class Progress(QtCore.QObject):
 
         return self._progress_dialog
 
+    def progress(self, query_id, current, maximum):
+        if query_id in self._queries:
+            self._queries[query_id]["current"] = current
+            self._queries[query_id]["maximum"] = maximum
+            self.show()
+
     def show(self):
 
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
@@ -72,11 +78,19 @@ class Progress(QtCore.QObject):
             self._finished_query_during_display = 0
         else:
             progress_dialog = self._progress_dialog
-            progress_dialog.setMaximum(len(self._queries) + self._finished_query_during_display)
-            progress_dialog.setValue(self._finished_query_during_display)
+
+            # If we have multiple queries running progress show progress of the queries
+            # otherwise it's the progress of the current query
+            if len(self._queries) + self._finished_query_during_display > 1:
+                progress_dialog.setMaximum(len(self._queries) + self._finished_query_during_display)
+                progress_dialog.setValue(self._finished_query_during_display)
+            elif len(self._queries) == 1:
+                query = list(self._queries.values())[0]
+                progress_dialog.setMaximum(query["maximum"])
+                progress_dialog.setValue(query["current"])
 
         if len(self._queries) > 0:
-            progress_dialog.setLabelText(list(self._queries.values())[0])
+            progress_dialog.setLabelText(list(self._queries.values())[0]["explanation"])
 
     def _show_dialog(self):
         if self._progress_dialog is not None:

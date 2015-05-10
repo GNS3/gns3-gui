@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
 #
-# Created: Wed May  6 14:31:57 2015
+# Created: Sun May 10 20:44:27 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,9 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuVMWizard(object):
-
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(585, 381)
@@ -135,6 +133,11 @@ class Ui_QemuVMWizard(object):
         self.uiHdaDiskImageLabel.setObjectName("uiHdaDiskImageLabel")
         self.horizontalLayout_8.addWidget(self.uiHdaDiskImageLabel)
         self.uiHdaDiskImageListComboBox = QtWidgets.QComboBox(self.uiDiskWizardPage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiHdaDiskImageListComboBox.sizePolicy().hasHeightForWidth())
+        self.uiHdaDiskImageListComboBox.setSizePolicy(sizePolicy)
         self.uiHdaDiskImageListComboBox.setObjectName("uiHdaDiskImageListComboBox")
         self.horizontalLayout_8.addWidget(self.uiHdaDiskImageListComboBox)
         self.uiHdaDiskImageLineEdit = QtWidgets.QLineEdit(self.uiDiskWizardPage)
@@ -290,3 +293,4 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_5.setText(_translate("QemuVMWizard", "New Image"))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
+

@@ -348,7 +348,7 @@ class IOU(Module):
         # no registered IOU image is used, let's just ask for an IOU image path
         QtWidgets.QMessageBox.critical(mainwindow, "IOU image", "Could not find the {} IOU image \nPlease select a similar IOU image!".format(image))
         from .pages.iou_device_preferences_page import IOUDevicePreferencesPage
-        path = IOUDevicePreferencesPage.getIOUImage(mainwindow)
+        path = IOUDevicePreferencesPage.getIOUImage(mainwindow, None)
         if path:
             alternative_image = path
             self._iou_images_cache[image] = alternative_image

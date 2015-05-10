@@ -23,6 +23,7 @@ import os
 import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.servers import Servers
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -82,11 +83,11 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
     def _iosImageBrowserSlot(self):
         """
-        Slot to open a file browser and select an IOU image.
+        Slot to open a file browser and select an IOS image.
         """
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        path = IOSRouterPreferencesPage.getIOSImage(self)
+        path = IOSRouterPreferencesPage.getIOSImage(self, self.server)
         if not path:
             return
         self.uiIOSImageLineEdit.clear()
@@ -381,6 +382,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiSparseMemoryCheckBox.setChecked(settings["sparsemem"])
         else:
             self.uiSparseMemoryCheckBox.hide()
+
+        self.server = Servers.instance().getServerFromString(settings["server"])
 
     def _checkForLinkConnectedToAdapter(self, slot_number, settings, node):
         """

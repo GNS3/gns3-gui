@@ -263,7 +263,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="uiHdaDiskImageListComboBox"/>
+       <widget class="QComboBox" name="uiHdaDiskImageListComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLineEdit" name="uiHdaDiskImageLineEdit"/>

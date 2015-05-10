@@ -21,6 +21,7 @@ import http
 import uuid
 import urllib.parse
 import urllib.request
+import pathlib
 from functools import partial
 
 from .version import __version__, __version_info__
@@ -31,6 +32,8 @@ log = logging.getLogger(__name__)
 
 
 class HttpBadRequest(Exception):
+
+    """We raise bad request exception for logging them in Sentry"""
     pass
 
 
@@ -89,6 +92,20 @@ class HTTPClient(QtCore.QObject):
 
         if HTTPClient._progress_callback:
             HTTPClient._progress_callback.remove_query_signal.emit(query_id)
+
+    def notify_progress_upload(self, query_id, sent, total):
+        """
+        Called when a query upload progress
+        """
+        if HTTPClient._progress_callback:
+            HTTPClient._progress_callback.progress(query_id, sent, total)
+
+    def notify_progress_download(self, query_id, sent, total):
+        """
+        Called when a query download progress
+        """
+        if HTTPClient._progress_callback:
+            HTTPClient._progress_callback.progress(query_id, sent, total)
 
     @classmethod
     def setProgressCallback(cls, progress_callback):
@@ -182,7 +199,7 @@ class HTTPClient(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
-        :param body: params to send (dictionary)
+        :param body: params to send (dictionary or pathlib.Path)
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
         """
@@ -196,7 +213,7 @@ class HTTPClient(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
-        :param body: params to send (dictionary)
+        :param body: params to send (dictionary or pathlib.Path)
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
         """
@@ -210,7 +227,7 @@ class HTTPClient(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
-        :param body: params to send (dictionary)
+        :param body: params to send (dictionary or pathlib.Path)
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
         """
@@ -247,7 +264,7 @@ class HTTPClient(QtCore.QObject):
 
         :param method: HTTP method
         :param path: Remote path
-        :param body: params to send (dictionary)
+        :param body: params to send (dictionary or pathlib.Path)
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
@@ -267,7 +284,7 @@ class HTTPClient(QtCore.QObject):
 
         :param method: HTTP method
         :param path: Remote path
-        :param body: params to send (dictionary)
+        :param body: params to send (dictionary or pathlib.Path)
         :param original_context: Original context
         :param callback: callback method to call when the server replies
         """
@@ -308,6 +325,37 @@ class HTTPClient(QtCore.QObject):
         self._connected = True
         self._version = params["version"]
 
+    def _addBodyToRequest(self, body, request):
+        """
+        Add the require headers for sending the body.
+        It detect the type of body for sending the corresponding headers
+        and methods.
+
+        :param body: The body
+        :returns: The body compatible with Qt
+        """
+
+        if body is None:
+            return None
+
+        if isinstance(body, dict):
+            body = json.dumps(body)
+            request.setRawHeader("Content-Type", "application/json")
+            request.setRawHeader("Content-Length", str(len(body)))
+            data = QtCore.QByteArray(body)
+            body = QtCore.QBuffer(self)
+            body.setData(data)
+            body.open(QtCore.QIODevice.ReadOnly)
+            return body
+        elif isinstance(body, pathlib.Path):
+            body = QtCore.QFile(str(body), self)
+            body.open(QtCore.QFile.ReadOnly)
+            request.setRawHeader("Content-Type", "application/octet-stream")
+            # QT is smart and will compute the Content-Lenght for us
+            return body
+        else:
+            return None
+
     def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True):
         """
         Call the remote server
@@ -324,7 +372,8 @@ class HTTPClient(QtCore.QObject):
 
         import copy
         context = copy.copy(context)
-        context["query_id"] = str(uuid.uuid4())
+        query_id = str(uuid.uuid4())
+        context["query_id"] = query_id
         if showProgress:
             self.notify_progress_start_query(context["query_id"])
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
@@ -332,22 +381,17 @@ class HTTPClient(QtCore.QObject):
         request = self._request(url)
 
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
-        request.setRawHeader("Content-Type", "application/json")
 
-        # By default QT doesn't support GET with even if it's in the RFC that's why we need to use sendCustomRequest
-        if body is not None and len(body) != 0:
-            body = json.dumps(body)
-            request.setRawHeader("Content-Length", str(len(body)))
-            data = QtCore.QByteArray(body)
-            body = QtCore.QBuffer(self)
-            body.setData(data)
-            body.open(QtCore.QIODevice.ReadOnly)
-        else:
-            body = None
+        # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
+        body = self._addBodyToRequest(body, request)
 
         response = self._network_manager.sendCustomRequest(request, method, body)
 
-        response.finished.connect(partial(self._processResponse, response, callback, context))
+        if showProgress:
+            response.uploadProgress.connect(partial(self.notify_progress_upload, query_id))
+            response.downloadProgress.connect(partial(self.notify_progress_download, query_id))
+
+        response.finished.connect(partial(self._processResponse, response, callback, context, body))
         if downloadProgressCallback is not None:
             response.downloadProgress.connect(partial(self._processDownloadProgress, response, downloadProgressCallback, context))
         return response
@@ -387,13 +431,17 @@ class HTTPClient(QtCore.QObject):
         if "query_id" in context:
             self.notify_progress_end_query(context["query_id"])
 
-    def _processResponse(self, response, callback, context):
+    def _processResponse(self, response, callback, context, request_body):
+
+        if request_body is not None:
+            request_body.close()
 
         status = None
         body = None
 
         if "query_id" in context:
             self.notify_progress_end_query(context["query_id"])
+
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
             if error_code < 200:
