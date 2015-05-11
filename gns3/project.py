@@ -293,8 +293,7 @@ class Project(QtCore.QObject):
         self._closed = False
         if server not in self._created_servers:
             self._created_servers.add(server)
-
-        self._startListenNotifications(server)
+            self._startListenNotifications(server)
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         server.createHTTPQuery(method, path, callback, body=body, context=context)

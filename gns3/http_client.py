@@ -403,15 +403,16 @@ class HTTPClient(QtCore.QObject):
         part of a JSON we keep it for the next packet
         """
 
-        if response.error() != QtNetwork.QNetworkReply.NoError:  # FIXME: check for any side effects of this line
+        if response.error() == QtNetwork.QNetworkReply.NoError:
             content = bytes(response.readAll())
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if content_type == "application/json":
-                content = content.decode()
+                content = content.decode("utf-8")
                 if context["query_id"] in self._buffer:
                     content = self._buffer[context["query_id"]] + content
                 try:
                     while True:
+                        content = content.lstrip(" \r\n\t")
                         answer, index = json.JSONDecoder().raw_decode(content)
                         callback(answer, server=self, context=context)
                         content = content[index:]
