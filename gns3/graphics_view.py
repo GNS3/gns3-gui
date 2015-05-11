@@ -1091,11 +1091,12 @@ class GraphicsView(QtGui.QGraphicsView):
                     item.node().exportConfigToDirectory(path)
         else:
             item = items[0]
-            config_path = QtGui.QFileDialog.getSaveFileName(self, "Export config")
             if hasattr(item.node(), "importPrivateConfig"):
+                config_path = QtGui.QFileDialog.getSaveFileName(self, "Export startup-config")
                 private_config_path = QtGui.QFileDialog.getSaveFileName(self, "Export private-config")
                 item.node().exportConfig(config_path, private_config_path)
             else:
+                config_path = QtGui.QFileDialog.getSaveFileName(self, "Export config")
                 item.node().exportConfig(config_path)
 
     def saveConfigActionSlot(self):
