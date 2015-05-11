@@ -1071,8 +1071,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #     cs.close_connection()
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
-        AnalyticsClient().send_event("GNS3", "Close", "Version {} on {}".format(__version__, platform.system()), time_spent)
-
+        log.debug("Time spend in the software is {}".format(time_spent))
         self.close()
 
     def checkForUnsavedChanges(self):

@@ -47,6 +47,7 @@ log = logging.getLogger(__name__)
 # The topology version supported by client
 TOPOLOGY_REVISION = 3
 
+
 class TopologyInstance:
 
     def __init__(self, name, id, size_id, image_id, private_key, public_key,
@@ -536,7 +537,7 @@ class Topology:
         topology["project_id"] = str(uuid.uuid4())
         if "nodes" in topology["topology"]:
             for key, node in enumerate(topology["topology"]["nodes"]):
-                old_uuid = topology["topology"]["nodes"][key]["vm_id"]
+                old_uuid = topology["topology"]["nodes"][key].get("vm_id", None)
                 new_uuid = str(uuid.uuid4())
                 topology["topology"]["nodes"][key]["vm_id"] = new_uuid
                 if old_uuid:

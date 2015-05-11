@@ -149,7 +149,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="uiNIONATIdentifierLabel">
             <property name="text">
-             <string>Identifier:</string>
+             <string>Local identifier:</string>
             </property>
            </widget>
           </item>
@@ -672,7 +672,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="uiNIONullIdentifierLabel">
             <property name="text">
-             <string>Identifier:</string>
+             <string>Local identifier:</string>
             </property>
            </widget>
           </item>
