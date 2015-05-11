@@ -59,7 +59,6 @@ class Cloud(Node):
 
         name = "Cloud {}".format(self._name_id)
         self.setStatus(Node.started)  # this is an always-on node
-        self._defaults = {}
         self._initial_settings = None
         self._settings = {"name": name,
                           "interfaces": {},
@@ -347,11 +346,11 @@ This is a pseudo-device for external connections
         :param node_info: representation of the node (dictionary)
         """
 
-        self.node_info = node_info
         settings = node_info["properties"]
         name = settings.pop("name")
         self.updated_signal.connect(self._updatePortSettings)
         log.info("cloud {} is loading".format(name))
+        self._node_info = node_info
         self.setup(name, settings)
 
     def _updatePortSettings(self):
@@ -361,8 +360,8 @@ This is a pseudo-device for external connections
 
         self.updated_signal.disconnect(self._updatePortSettings)
         # update the port with the correct IDs
-        if "ports" in self.node_info:
-            ports = self.node_info["ports"]
+        if "ports" in self._node_info:
+            ports = self._node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
                     if topology_port["name"] == port.name():
