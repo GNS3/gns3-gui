@@ -294,7 +294,6 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["default_symbol"] = ":/symbols/router.normal.svg"
             settings["hover_symbol"] = ":/symbols/router.selected.svg"
-            settings["options"] = "-enable-kvm"
             settings["category"] = Node.routers            
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
