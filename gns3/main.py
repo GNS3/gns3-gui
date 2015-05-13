@@ -113,7 +113,7 @@ def main():
 
         lines = traceback.format_exception(exception, value, tb)
         print("****** Exception detected, traceback information saved in {} ******".format(exception_file_path))
-        print("\nPLEASE REPORT ON https://community.gns3.com/community/support/bug\n")
+        print("\nPLEASE REPORT ON https://community.gns3.com/community/software/bug\n")
         print("".join(lines))
         try:
             curdate = time.strftime("%d %b %Y %H:%M:%S")
