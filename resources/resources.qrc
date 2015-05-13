@@ -131,6 +131,8 @@
     <file>icons/horizontally.svg</file>
     <file>icons/vertically.svg</file>
     <file>icons/export.svg</file>
+    <file>icons/export_config.svg</file>
+    <file>icons/import_config.svg</file>
     <file>icons/import_export_configs.svg</file>
     <file>icons/zoom-in.png</file>
     <file>icons/zoom-out.png</file>
@@ -152,7 +154,6 @@
     <file>images/gns3_icon_128x128.png</file>
     <file>images/gns3_icon_256x256.png</file>
     <file>images/gns3.ico</file>
-
     <file>classic_icons/add-link.svg</file>
     <file>classic_icons/add-link-hover.svg</file>
     <file>classic_icons/add-link-cancel.svg</file>
