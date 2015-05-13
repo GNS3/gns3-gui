@@ -464,7 +464,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         elif is_not_link and self._adding_link and event.button() == QtCore.Qt.RightButton:
             # send a escape key to the main window to cancel the link addition
             key = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)
-            QtGui.QApplication.sendEvent(self._main_window, key)
+            QtWidgets.QApplication.sendEvent(self._main_window, key)
         elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
             self._userNodeLinking(event, item)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
