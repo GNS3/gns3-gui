@@ -756,6 +756,12 @@ class GraphicsView(QtGui.QGraphicsView):
             idlepc_action.triggered.connect(self.idlepcActionSlot)
             menu.addAction(idlepc_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
+            auto_idlepc_action = QtGui.QAction("Auto Idle-PC", menu)
+            auto_idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
+            auto_idlepc_action.triggered.connect(self.autoIdlepcActionSlot)
+            menu.addAction(auto_idlepc_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "start"), items)):
             start_action = QtGui.QAction("Start", menu)
             start_action.setIcon(QtGui.QIcon(':/icons/start.svg'))
@@ -1171,6 +1177,21 @@ class GraphicsView(QtGui.QGraphicsView):
             else:
                 QtGui.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
+    def autoIdlepcActionSlot(self):
+        """
+        Slot to receive events from the auto idlepc action in the
+        contextual menu.
+        """
+
+        items = self.scene().selectedItems()
+        if len(items) != 1:
+            QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Please select only one router")
+            return
+        item = items[0]
+        if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
+            router = item.node()
+            router.computeAutoIdlepc(self._autoIdlepcCallback)
+
     def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
         """
         Slot to allow the user to select an idlepc value.
@@ -1183,6 +1204,9 @@ class GraphicsView(QtGui.QGraphicsView):
             idlepc = result["idlepc"]
             log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
             router.setIdlepc(idlepc)
+            # apply the idle-pc to templates with the same IOS image
+            ios_image = os.path.basename(router.settings()["image"])
+            router.module().updateImageIdlepc(ios_image, idlepc)
             QtGui.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
 
     def duplicateActionSlot(self):

@@ -383,7 +383,7 @@ class Dynamips(Module):
         """
 
         for ios_router in self._ios_routers.values():
-            if ios_router["image"] == image_path:
+            if os.path.basename(ios_router["image"]) == image_path:
                 if ios_router["idlepc"] != idlepc:
                     ios_router["idlepc"] = idlepc
                     self._saveIOSRouters()

@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import re
 
 from ..qt import QtGui
@@ -69,10 +70,13 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
 
         idlepc = self.uiComboBox.itemData(self.uiComboBox.currentIndex())
         # apply Idle-PC to all routers with the same IOS image
-        ios_image = self._router.settings()["image"]
+        ios_image = os.path.basename(self._router.settings()["image"])
         for node in Topology.instance().nodes():
             if hasattr(node, "idlepc") and node.settings()["image"] == ios_image:
                 node.setIdlepc(idlepc)
+
+        # apply the idle-pc to templates with the same IOS image
+        self._router.module().updateImageIdlepc(ios_image, idlepc)
 
     def done(self, result):
         """
