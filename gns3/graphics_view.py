@@ -729,13 +729,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "importConfig"), items)):
             import_config_action = QtWidgets.QAction("Import config", menu)
-            import_config_action.setIcon(QtGui.QIcon(':/icons/import_config.svg'))
+            # TODO: Create import.svg icon that is analogous to export.svg
+            #import_config_action.setIcon(QtGui.QIcon(':/icons/import.svg'))
             import_config_action.triggered.connect(self.importConfigActionSlot)
             menu.addAction(import_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "exportConfig"), items)):
             export_config_action = QtWidgets.QAction("Export config", menu)
-            export_config_action.setIcon(QtGui.QIcon(':/icons/export_config.svg'))
+            export_config_action.setIcon(QtGui.QIcon(':/icons/export.svg'))
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
