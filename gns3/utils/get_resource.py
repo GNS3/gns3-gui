@@ -19,11 +19,28 @@ import sys
 import os
 import tempfile
 import pkg_resources
+import atexit
+import logging
+
+log = logging.getLogger(__name__)
 
 try:
-    pkg_resources.set_extraction_path(tempfile.mkdtemp())
+    egg_cache_dir = tempfile.mkdtemp()
+    pkg_resources.set_extraction_path(dir)
 except ValueError:
-    pass  # If the path is already set the module throw an error
+    # If the path is already set the module throw an error
+    pass
+
+
+@atexit.register
+def clean_egg_cache():
+    try:
+        import shutil
+        log.debug("Clean egg cache %s", egg_cache_dir)
+        shutil.rmtree(egg_cache_dir)
+    except Exception:
+        # We don't care if we can not cleanup
+        pass
 
 
 def get_resource(resource_name):
