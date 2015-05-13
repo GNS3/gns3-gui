@@ -22,7 +22,6 @@ Main window for the GUI.
 import traceback
 import sys
 import os
-import platform
 import time
 import socket
 import shutil
