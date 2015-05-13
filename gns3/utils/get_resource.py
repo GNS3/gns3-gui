@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 
 try:
     egg_cache_dir = tempfile.mkdtemp()
-    pkg_resources.set_extraction_path(dir)
+    pkg_resources.set_extraction_path(egg_cache_dir)
 except ValueError:
     # If the path is already set the module throw an error
     pass
