@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.3.3 14/05/2015
+
+* New inline help text for the idle-pc dialog.
+* Reactivate auto idle-pc in device contextual menu + save a chosen idle-pc value in template.
+* Adds name to the thank you section.
+* Prevent users to use VirtualBox linked clone VMs in temporary projects (for now).
+* Capture error if the command is invalid
+* Cleanup egg cache when exit
+* Fix a crash in console when you used non UTF-8 terminal
+* Fix crash during save as
+* Change title when exporting an IOS startup-config.
+* Removes analytics client on closing.
+
 ## 1.3.3rc1 07/05/2015
 
 * Catch broken pipe error catched for OSX
