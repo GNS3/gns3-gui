@@ -44,8 +44,11 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVmrunPathToolButton.clicked.connect(self._vmrunPathBrowserSlot)
 
-        if sys.platform.startswith("darwin"):
-            self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
+        if not sys.platform.startswith("darwin"):
+            # we do not support VMware Fusion for now
+            self.uiUseLocalServercheckBox.setChecked(False)
+            self.uiUseLocalServercheckBox.setEnabled(False)
+            #self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
         else:
             self.uiHostTypeComboBox.addItem("VMware Player", "player")
             self.uiHostTypeComboBox.addItem("VMware Workstation", "ws")

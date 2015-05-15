@@ -54,11 +54,6 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
         self.uiVMwareVMsTreeWidget.itemPressed.connect(self._vmwareVMPressedSlot)
 
-        if not sys.platform.startswith("win") or not sys.platform.startswith("linux"):
-            # we do not support VMware Fusion for now
-            self.uiUseLocalServercheckBox.setChecked(False)
-            self.uiUseLocalServercheckBox.setEnabled(False)
-
     def _createSectionItem(self, name):
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMInfoTreeWidget)
