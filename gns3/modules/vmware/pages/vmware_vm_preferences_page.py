@@ -19,6 +19,7 @@
 Configuration page for VMware VM preferences.
 """
 
+import sys
 import copy
 
 from gns3.qt import QtCore, QtGui, QtWidgets
@@ -52,6 +53,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiDeleteVMwareVMPushButton.clicked.connect(self._vmwareVMDeleteSlot)
         self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
         self.uiVMwareVMsTreeWidget.itemPressed.connect(self._vmwareVMPressedSlot)
+
+        if not sys.platform.startswith("win") or not sys.platform.startswith("linux"):
+            # we do not support VMware Fusion for now
+            self.uiUseLocalServercheckBox.setChecked(False)
+            self.uiUseLocalServercheckBox.setEnabled(False)
 
     def _createSectionItem(self, name):
 
