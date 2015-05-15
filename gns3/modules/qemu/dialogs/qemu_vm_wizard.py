@@ -59,7 +59,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
         # Available types
-        self.uiTypeComboBox.addItems(["Default", "IOSv", "IOSv-L2", "ASA 8.4(2)", "IDS"])
+        self.uiTypeComboBox.addItems(["Default", "IOSv", "IOSv-L2", "IOS-XRv", "ASA 8.4(2)", "IDS"])
 
         # Mandatory fields
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
@@ -107,6 +107,10 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.normal.svg"))
             self.uiNameLineEdit.setText("vIOS-L2")
             self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
+        elif vm_type == "IOS-XRv":
+            self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
+            self.uiNameLineEdit.setText("IOS-XRv")
+            self.uiHdaDiskImageLabel.setText("IOS-XRv VDMK file:")            
         elif vm_type == "ASA 8.4(2)":
             self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
             self.uiNameLineEdit.setText("ASA")
@@ -285,6 +289,12 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["default_symbol"] = ":/symbols/iosv_l2_virl.normal.svg"
             settings["hover_symbol"] = ":/symbols/iosv_l2_virl.selected.svg"
             settings["category"] = Node.switches
+        elif self.uiTypeComboBox.currentText() == "IOS-XRv":
+            settings["adapters"] = 16
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
+            settings["default_symbol"] = ":/symbols/router.normal.svg"
+            settings["hover_symbol"] = ":/symbols/router.selected.svg"
+            settings["category"] = Node.routers            
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdLineEdit.text()
@@ -331,6 +341,8 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
 
             if self.uiTypeComboBox.currentText().startswith("IOSv"):
                 self.uiRamSpinBox.setValue(384)
+            elif self.uiTypeComboBox.currentText().startswith("IOS-XRv"):
+                self.uiRamSpinBox.setValue(3072)                
             elif self.uiTypeComboBox.currentText() != "Default":
                 self.uiRamSpinBox.setValue(1024)
 
