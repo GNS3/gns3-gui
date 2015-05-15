@@ -121,7 +121,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hda disk image.
         """
 
-        path = self.getDiskImage(self, self.getServer())
+        path = self.getDiskImage(self, self.server)
         if path:
             self.uiHdaDiskImageLineEdit.clear()
             self.uiHdaDiskImageLineEdit.setText(path)
@@ -131,7 +131,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdb disk image.
         """
 
-        path = self.getDiskImage(self, self.getServer())
+        path = self.getDiskImage(self, self.server)
         if path:
             self.uiHdbDiskImageLineEdit.clear()
             self.uiHdbDiskImageLineEdit.setText(path)
@@ -141,7 +141,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdc disk image.
         """
 
-        path = self.getDiskImage(self, self.getServer())
+        path = self.getDiskImage(self, self.server)
         if path:
             self.uiHdcDiskImageLineEdit.clear()
             self.uiHdcDiskImageLineEdit.setText(path)
@@ -151,7 +151,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdd disk image.
         """
 
-        path = self.getDiskImage(self, self.getServer())
+        path = self.getDiskImage(self, self.server)
         if path:
             self.uiHddDiskImageLineEdit.clear()
             self.uiHddDiskImageLineEdit.setText(path)
@@ -161,7 +161,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU initrd.
         """
 
-        path = self.getDiskImage(self, self.getServer())
+        path = self.getDiskImage(self, self.server)
         if path:
             self.uiInitrdLineEdit.clear()
             self.uiInitrdLineEdit.setText(path)
@@ -171,7 +171,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU kernel image.
         """
 
-        path = self.getDiskImage(self, self.getServer())
+        path = self.getDiskImage(self, self.server)
         if path:
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
@@ -231,13 +231,13 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         """
 
         if node:
-            server = node.server()
+            self.server = node.server()
         else:
-            server = Servers.instance().getServerFromString(settings["server"])
+            self.server = Servers.instance().getServerFromString(settings["server"])
 
         callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
         try:
-            Qemu.instance().getQemuBinariesFromServer(server, callback)
+            Qemu.instance().getQemuBinariesFromServer(self.server, callback)
         except ModuleError as e:
             QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
             self.uiQemuListComboBox.clear()
@@ -292,6 +292,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if index != -1:
             self.uiProcessPriorityComboBox.setCurrentIndex(index)
         self.uiQemuOptionsLineEdit.setText(settings["options"])
+
 
     def saveSettings(self, settings, node=None, group=False):
         """
