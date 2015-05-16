@@ -28,8 +28,6 @@ from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.main_window import MainWindow
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
-from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.image_manager import ImageManager
 
 from ..ui.qemu_vm_configuration_page_ui import Ui_QemuVMConfigPageWidget

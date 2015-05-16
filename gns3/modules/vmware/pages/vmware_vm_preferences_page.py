@@ -19,7 +19,6 @@
 Configuration page for VMware VM preferences.
 """
 
-import sys
 import copy
 
 from gns3.qt import QtCore, QtGui, QtWidgets
@@ -74,6 +73,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vmware_vm["enable_remote_console"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vmware_vm["linked_base"])])
+
+        # fill out the Network section
+        section_item = self._createSectionItem("Network")
+        QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(vmware_vm["adapters"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Type:", vmware_vm["adapter_type"]])
 
         self.uiVMwareVMInfoTreeWidget.expandAll()
         self.uiVMwareVMInfoTreeWidget.resizeColumnToContents(0)

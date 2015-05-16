@@ -52,33 +52,27 @@ class VMwareVM(VM):
         self._settings = {"name": "",
                           "vmx_path": "",
                           "console": None,
-                          #"adapters": VBOX_VM_SETTINGS["adapters"],
-                          #"use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
-                          #"adapter_type": VBOX_VM_SETTINGS["adapter_type"],
-                          #"ram": VBOX_VM_SETTINGS["ram"],
+                          "adapters": VMWARE_VM_SETTINGS["adapters"],
+                          "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                           "headless": VMWARE_VM_SETTINGS["headless"],
                           "enable_remote_console": VMWARE_VM_SETTINGS["enable_remote_console"]}
 
-        # save the default settings
-        self._defaults = self._settings.copy()
+    def _addAdapters(self, adapters):
+        """
+        Adds adapters.
 
-    # def _addAdapters(self, adapters):
-    #     """
-    #     Adds adapters.
-    #
-    #     :param adapters: number of adapters
-    #     """
-    #
-    #     for adapter_number in range(0, adapters):
-    #         adapter_name = EthernetPort.longNameType() + str(adapter_number)
-    #         short_name = EthernetPort.shortNameType() + str(adapter_number)
-    #         new_port = EthernetPort(adapter_name)
-    #         new_port.setShortName(short_name)
-    #         new_port.setAdapterNumber(adapter_number)
-    #         new_port.setPortNumber(0)
-    #         new_port.setPacketCaptureSupported(True)
-    #         self._ports.append(new_port)
-    #         log.debug("Adapter {} has been added".format(adapter_name))
+        :param adapters: number of adapters
+        """
+
+        for adapter_number in range(0, adapters):
+            adapter_name = EthernetPort.longNameType() + str(adapter_number)
+            short_name = EthernetPort.shortNameType() + str(adapter_number)
+            new_port = EthernetPort(adapter_name)
+            new_port.setShortName(short_name)
+            new_port.setAdapterNumber(adapter_number)
+            new_port.setPortNumber(0)
+            self._ports.append(new_port)
+            log.debug("Adapter {} has been added".format(adapter_name))
 
     def setup(self, vmx_path, name=None, vm_id=None, linked_clone=False, additional_settings={}, base_name=None):
         """
@@ -93,7 +87,11 @@ class VMwareVM(VM):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(base_name + "-")
+            if linked_clone:
+                name = self.allocateName(base_name + "-")
+            else:
+                name = base_name
+                self.setName(base_name)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this VMware VM")
@@ -134,11 +132,11 @@ class VMwareVM(VM):
                                                                                                      value))
                 self._settings[name] = value
 
-        #if self._settings["adapters"] != 0:
-        #    self._addAdapters(self._settings["adapters"])
+        # create the ports on the client side
+        self._addAdapters(self._settings.get("adapters", 0))
 
         if self._loading:
-            self.updated_signal.emit()
+            self.loaded_signal.emit()
         else:
             self.setInitialized(True)
             log.info("VMware VM instance {} has been created".format(self.name()))
@@ -182,7 +180,7 @@ class VMwareVM(VM):
             return
 
         updated = False
-        #nb_adapters_changed = False
+        nb_adapters_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
@@ -190,15 +188,15 @@ class VMwareVM(VM):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
-                # if name == "adapters":
-                #     nb_adapters_changed = True
-                # self._settings[name] = value
+                if name == "adapters":
+                    nb_adapters_changed = True
+                self._settings[name] = value
 
-        # if nb_adapters_changed:
-        #     log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
-        #     # TODO: dynamically add/remove adapters
-        #     self._ports.clear()
-        #     self._addAdapters(self._settings["adapters"])
+        if nb_adapters_changed:
+            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+            # TODO: dynamically add/remove adapters
+            self._ports.clear()
+            self._addAdapters(self._settings["adapters"])
 
         if updated or self._loading:
             log.info("VMware VM {} has been updated".format(self.name()))
@@ -287,7 +285,7 @@ class VMwareVM(VM):
 
         # add the properties
         for name, value in self._settings.items():
-            if name in self._defaults and self._defaults[name] != value:
+            if value is not None and value != "":
                 vmware_vm["properties"][name] = value
 
         # add the ports
@@ -306,29 +304,33 @@ class VMwareVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-        self.node_info = node_info
+
         vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)
-        settings = node_info["properties"]
-        settings["adapters"] = settings.get("adapters", 1)
-        name = settings.pop("name")
-        vmx_path = settings.pop("vmx_path")
-        self.updated_signal.connect(self._updatePortSettings)
-        # block the created signal, it will be triggered when loading is completely done
-        self._loading = True
+
+        vm_settings = {}
+        for name, value in node_info["properties"].items():
+            if name in self._settings:
+                vm_settings[name] = value
+        name = vm_settings.pop("name")
+        vmx_path = vm_settings.pop("vmx_path")
+
         log.info("VMware VM {} is loading".format(name))
         self.setName(name)
-        self.setup(vmx_path, name, vm_id, linked_clone, settings)
+        self._loading = True
+        self._node_info = node_info
+        self.loaded_signal.connect(self._updatePortSettings)
+        self.setup(vmx_path, name, vm_id, linked_clone, vm_settings)
 
     def _updatePortSettings(self):
         """
         Updates port settings when loading a topology.
         """
 
-        self.updated_signal.disconnect(self._updatePortSettings)
+        self.loaded_signal.disconnect(self._updatePortSettings)
         # update the port with the correct names and IDs
-        if "ports" in self.node_info:
-            ports = self.node_info["ports"]
+        if "ports" in self._node_info:
+            ports = self._node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
                     adapter_number = topology_port.get("adapter_number")
@@ -342,6 +344,7 @@ class VMwareVM(VM):
         self.created_signal.emit(self.id())
         self._module.addNode(self)
         self._loading = False
+        self._node_info = None
 
     def name(self):
         """

@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'vmware_vm_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:58 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Fri May 15 14:06:46 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwareVMConfigPageWidget(object):
-
     def setupUi(self, VMwareVMConfigPageWidget):
         VMwareVMConfigPageWidget.setObjectName("VMwareVMConfigPageWidget")
         VMwareVMConfigPageWidget.resize(509, 346)
@@ -59,8 +57,8 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiAdaptersLabel.setObjectName("uiAdaptersLabel")
         self.gridLayout_3.addWidget(self.uiAdaptersLabel, 0, 0, 1, 1)
         self.uiAdaptersSpinBox = QtWidgets.QSpinBox(self.tab_2)
-        self.uiAdaptersSpinBox.setMinimum(1)
-        self.uiAdaptersSpinBox.setMaximum(36)
+        self.uiAdaptersSpinBox.setMinimum(0)
+        self.uiAdaptersSpinBox.setMaximum(10)
         self.uiAdaptersSpinBox.setObjectName("uiAdaptersSpinBox")
         self.gridLayout_3.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
         self.label = QtWidgets.QLabel(self.tab_2)
@@ -95,3 +93,4 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiAdaptersLabel.setText(_translate("VMwareVMConfigPageWidget", "Adapters:"))
         self.label.setText(_translate("VMwareVMConfigPageWidget", "Type:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
+

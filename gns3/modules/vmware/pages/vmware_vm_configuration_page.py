@@ -21,7 +21,6 @@ Configuration page for VMware VMs.
 
 from gns3.qt import QtWidgets
 from gns3.dialogs.node_configurator_dialog import ConfigurationError
-
 from ..ui.vmware_vm_configuration_page_ui import Ui_VMwareVMConfigPageWidget
 
 
@@ -36,17 +35,15 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         super().__init__()
         self.setupUi(self)
 
-        # self.uiAdapterTypesComboBox.clear()
-        # self.uiAdapterTypesComboBox.addItems(["PCnet-PCI II (Am79C970A)",
-        #                                       "PCNet-FAST III (Am79C973)",
-        #                                       "Intel PRO/1000 MT Desktop (82540EM)",
-        #                                       "Intel PRO/1000 T Server (82543GC)",
-        #                                       "Intel PRO/1000 MT Server (82545EM)",
-        #                                       "Paravirtualized Network (virtio-net)"])
-
-        # TODO: finish VM name change
-        #self.uiVMListLabel.hide()
-        #self.uiVMListComboBox.hide()
+        self.uiAdapterTypesComboBox.clear()
+        self.uiAdapterTypesComboBox.addItems(["default",
+                                              "e1000",
+                                              "e1000e",
+                                              "flexible",
+                                              "vlance",
+                                              "vmxnet",
+                                              "vmxnet2",
+                                              "vmxnet3"])
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -85,12 +82,12 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             #self.uiVMListLabel.hide()
             #self.uiVMListComboBox.hide()
 
-        #self.uiAdaptersSpinBox.setValue(settings["adapters"])
-        # index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
-        # if index != -1:
-        #     self.uiAdapterTypesComboBox.setCurrentIndex(index)
-        # self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
-        # self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
+        self.uiAdaptersSpinBox.setValue(settings["adapters"])
+        index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
+        if index != -1:
+            self.uiAdapterTypesComboBox.setCurrentIndex(index)
+        self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
+        self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -128,13 +125,13 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
 
-        # adapters = self.uiAdaptersSpinBox.value()
-        # if node:
-        #     if settings["adapters"] != adapters:
-        #         # check if the adapters settings have changed
-        #         node_ports = node.ports()
-        #         for node_port in node_ports:
-        #             if not node_port.isFree():
-        #                 QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-        #                 raise ConfigurationError()
-        # settings["adapters"] = adapters
+        adapters = self.uiAdaptersSpinBox.value()
+        if node:
+            if settings["adapters"] != adapters:
+                # check if the adapters settings have changed
+                node_ports = node.ports()
+                for node_port in node_ports:
+                    if not node_port.isFree():
+                        QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                        raise ConfigurationError()
+        settings["adapters"] = adapters
