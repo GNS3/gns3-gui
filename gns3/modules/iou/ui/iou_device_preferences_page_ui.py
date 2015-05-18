@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_IOUDevicePreferencesPageWidget(object):
+class Ui_IOUDevicePreferencesPageWidget:
 
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName("IOUDevicePreferencesPageWidget")

@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_StyleEditorDialog(object):
+class Ui_StyleEditorDialog:
 
     def setupUi(self, StyleEditorDialog):
         StyleEditorDialog.setObjectName("StyleEditorDialog")

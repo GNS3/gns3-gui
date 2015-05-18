@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_atmBridgeConfigPageWidget(object):
+class Ui_atmBridgeConfigPageWidget:
 
     def setupUi(self, atmBridgeConfigPageWidget):
         atmBridgeConfigPageWidget.setObjectName("atmBridgeConfigPageWidget")

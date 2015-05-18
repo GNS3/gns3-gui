@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_ImportCloudProjectDialog(object):
+class Ui_ImportCloudProjectDialog:
 
     def setupUi(self, ImportCloudProjectDialog):
         ImportCloudProjectDialog.setObjectName("ImportCloudProjectDialog")

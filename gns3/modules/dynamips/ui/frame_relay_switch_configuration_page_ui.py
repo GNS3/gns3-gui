@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_frameRelaySwitchConfigPageWidget(object):
+class Ui_frameRelaySwitchConfigPageWidget:
 
     def setupUi(self, frameRelaySwitchConfigPageWidget):
         frameRelaySwitchConfigPageWidget.setObjectName("frameRelaySwitchConfigPageWidget")

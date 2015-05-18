@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VirtualBoxVMPreferencesPageWidget(object):
+class Ui_VirtualBoxVMPreferencesPageWidget:
 
     def setupUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setObjectName("VirtualBoxVMPreferencesPageWidget")

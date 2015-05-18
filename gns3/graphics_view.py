@@ -758,7 +758,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             menu.addAction(idlepc_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
-            auto_idlepc_action = QtGui.QAction("Auto Idle-PC", menu)
+            auto_idlepc_action = QtWidgets.QAction("Auto Idle-PC", menu)
             auto_idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
             auto_idlepc_action.triggered.connect(self.autoIdlepcActionSlot)
             menu.addAction(auto_idlepc_action)
@@ -1105,7 +1105,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 private_config_path = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config")
                 item.node().exportConfig(config_path, private_config_path)
             else:
-                config_path = QtGui.QFileDialog.getSaveFileName(self, "Export config")
+                config_path = QtWidgets.QFileDialog.getSaveFileName(self, "Export config")
                 item.node().exportConfig(config_path)
 
     def saveConfigActionSlot(self):
@@ -1188,7 +1188,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = self.scene().selectedItems()
         if len(items) != 1:
-            QtGui.QMessageBox.critical(self, "Auto Idle-PC", "Please select only one router")
+            QtWidgets.QMessageBox.critical(self, "Auto Idle-PC", "Please select only one router")
             return
         item = items[0]
         if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():

@@ -231,7 +231,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             node_ports = self._node.ports()
             for node_port in node_ports:
                 if node_port.name() == nio and not node_port.isFree():
-                    QtGui.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
             self._nios.remove(nio)
             self.uiNIONATListWidget.takeItem(self.uiNIONATListWidget.currentRow())

@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VPCSPreferencesPageWidget(object):
+class Ui_VPCSPreferencesPageWidget:
 
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")

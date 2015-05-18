@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_SymbolSelectionDialog(object):
+class Ui_SymbolSelectionDialog:
 
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName("SymbolSelectionDialog")

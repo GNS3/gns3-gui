@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_NewProjectDialog(object):
+class Ui_NewProjectDialog:
 
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")

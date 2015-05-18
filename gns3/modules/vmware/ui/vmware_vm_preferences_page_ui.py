@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VMwareVMPreferencesPageWidget(object):
+class Ui_VMwareVMPreferencesPageWidget:
 
     def setupUi(self, VMwareVMPreferencesPageWidget):
         VMwareVMPreferencesPageWidget.setObjectName("VMwareVMPreferencesPageWidget")

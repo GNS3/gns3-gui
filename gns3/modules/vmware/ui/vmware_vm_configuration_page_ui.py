@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'vmware_vm_configuration_page.ui'
 #
-# Created: Fri May 15 14:06:46 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Mon May 18 17:25:01 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 

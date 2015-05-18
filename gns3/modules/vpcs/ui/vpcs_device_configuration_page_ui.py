@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VPCSDeviceConfigPageWidget(object):
+class Ui_VPCSDeviceConfigPageWidget:
 
     def setupUi(self, VPCSDeviceConfigPageWidget):
         VPCSDeviceConfigPageWidget.setObjectName("VPCSDeviceConfigPageWidget")

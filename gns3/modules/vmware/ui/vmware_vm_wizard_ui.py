@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_VMwareVMWizard(object):
+class Ui_VMwareVMWizard:
 
     def setupUi(self, VMwareVMWizard):
         VMwareVMWizard.setObjectName("VMwareVMWizard")

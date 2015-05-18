@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_configurationDialog(object):
+class Ui_configurationDialog:
 
     def setupUi(self, configurationDialog):
         configurationDialog.setObjectName("configurationDialog")

@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_PacketCapturePreferencesPageWidget(object):
+class Ui_PacketCapturePreferencesPageWidget:
 
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName("PacketCapturePreferencesPageWidget")

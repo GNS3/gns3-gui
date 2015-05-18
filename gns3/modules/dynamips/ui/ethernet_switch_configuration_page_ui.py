@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_ethernetSwitchConfigPageWidget(object):
+class Ui_ethernetSwitchConfigPageWidget:
 
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName("ethernetSwitchConfigPageWidget")

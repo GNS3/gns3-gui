@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_CloudPreferencesPageWidget(object):
+class Ui_CloudPreferencesPageWidget:
 
     def setupUi(self, CloudPreferencesPageWidget):
         CloudPreferencesPageWidget.setObjectName("CloudPreferencesPageWidget")

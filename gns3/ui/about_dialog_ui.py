@@ -10,7 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-class Ui_AboutDialog(object):
+class Ui_AboutDialog:
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName("AboutDialog")
         AboutDialog.setWindowModality(QtCore.Qt.WindowModal)

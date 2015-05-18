@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_iosRouterConfigPageWidget(object):
+class Ui_iosRouterConfigPageWidget:
 
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName("iosRouterConfigPageWidget")

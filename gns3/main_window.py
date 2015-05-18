@@ -1309,7 +1309,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 try:
                     os.remove(old_topology_file_path)
                 except OSError as e:
-                    MessageBox(self, "Save project", "Errors detected while saving the project", str(e), icon=QtGui.QMessageBox.Warning)
+                    MessageBox(self, "Save project", "Errors detected while saving the project", str(e), icon=QtWidgets.QMessageBox.Warning)
             return self._loadPath(topology_file_path)
 
     def saveProject(self, path, random_id=False):

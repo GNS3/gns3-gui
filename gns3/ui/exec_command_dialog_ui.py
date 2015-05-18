@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_ExecCommandDialog(object):
+class Ui_ExecCommandDialog:
 
     def setupUi(self, ExecCommandDialog):
         ExecCommandDialog.setObjectName("ExecCommandDialog")

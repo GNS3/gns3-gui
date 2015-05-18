@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_PreferencesDialog(object):
+class Ui_PreferencesDialog:
 
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")

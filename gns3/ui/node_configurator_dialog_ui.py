@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_NodeConfiguratorDialog(object):
+class Ui_NodeConfiguratorDialog:
 
     def setupUi(self, NodeConfiguratorDialog):
         NodeConfiguratorDialog.setObjectName("NodeConfiguratorDialog")

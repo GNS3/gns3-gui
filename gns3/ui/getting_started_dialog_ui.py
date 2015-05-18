@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_GettingStartedDialog(object):
+class Ui_GettingStartedDialog:
 
     def setupUi(self, GettingStartedDialog):
         GettingStartedDialog.setObjectName("GettingStartedDialog")

@@ -11,7 +11,7 @@ import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
 
-class Ui_IOUDeviceWizard(object):
+class Ui_IOUDeviceWizard:
 
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
