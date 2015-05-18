@@ -10,7 +10,9 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_IOSRouterWizard:
+
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName("IOSRouterWizard")
         IOSRouterWizard.resize(585, 398)
@@ -338,4 +340,3 @@ class Ui_IOSRouterWizard:
         self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core."))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:"))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder"))
-
