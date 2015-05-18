@@ -1228,6 +1228,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
 
+    def _running_nodes(self):
+        """
+        :returns: Return the list of running nodes
+        """
+        topology = Topology.instance()
+        running_nodes = []
+        for node in topology.nodes():
+            if hasattr(node, "start") and node.status() == Node.started:
+                running_nodes.append(node.name())
+        return running_nodes
+
     def saveProjectAs(self):
         """
         Saves a project to another location/name.
@@ -1238,10 +1249,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # first check if any node that can be started is running
         topology = Topology.instance()
         topology.project = self._project
-        running_nodes = []
-        for node in topology.nodes():
-            if hasattr(node, "start") and node.status() == Node.started:
-                running_nodes.append(node.name())
+        running_nodes = self._running_nodes()
 
         if running_nodes:
             nodes = "\n".join(running_nodes)
@@ -1697,6 +1705,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _downloadRemoteProjectActionSlot(self):
         if self._project.temporary():
             QtWidgets.QMessageBox.warning(self, "You can not download a temporary project")
+
+        running_nodes = self._running_nodes()
+
+        if running_nodes:
+            nodes = "\n".join(running_nodes)
+            MessageBox(self, "Download project", "Please stop the following nodes before downloading the project", nodes)
+            return
+
         download_thread = DownloadProjectThread(self, self._project, Servers.instance())
         progress_dialog = ProgressDialog(download_thread, "Download remote project", "Downloading project files...", "Cancel", parent=self)
         progress_dialog.show()
