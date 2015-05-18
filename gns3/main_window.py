@@ -389,7 +389,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except OSError as e:
             QtGui.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"], e))
             self._createTemporaryProject()
-            return
 
         # let all modules know about the new project files directory
         # self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
@@ -403,6 +402,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project.setTopologyFile(new_project_settings["project_path"])
         self._project.setType(new_project_settings["project_type"])
         self.saveProject(new_project_settings["project_path"])
+        self.project_new_signal.emit(self._project.topologyFile())
 
     def _newProjectActionSlot(self):
         """
@@ -421,7 +421,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
-                self.project_new_signal.emit(self._project.topologyFile())
             else:
                 self._createTemporaryProject()
 
@@ -1226,7 +1225,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if create_new_project:
                 new_project_settings = project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
-                self.project_new_signal.emit(self._project.topologyFile())
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
