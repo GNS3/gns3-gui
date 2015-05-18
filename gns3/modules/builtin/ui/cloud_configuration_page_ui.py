@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'cloud_configuration_page.ui'
 #
-# Created: Tue May 26 09:42:44 2015
+# Created: Tue May 26 09:46:14 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!

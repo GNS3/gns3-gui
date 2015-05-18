@@ -38,7 +38,16 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -62,7 +71,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -87,6 +96,7 @@ background-none;
     <addaction name="separator"/>
     <addaction name="uiMoveLocalProjectToCloudAction"/>
     <addaction name="uiMoveCloudProjectToLocalAction"/>
+    <addaction name="uiDownloadRemoteProject"/>
     <addaction name="separator"/>
     <addaction name="uiImportExportConfigsAction"/>
     <addaction name="uiScreenshotAction"/>
@@ -221,7 +231,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -341,7 +360,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -405,7 +433,16 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -1134,6 +1171,15 @@ background-none;
   <action name="uiVPCSAction">
    <property name="text">
     <string>&amp;VPCS multi-host</string>
+   </property>
+  </action>
+  <action name="uiDownloadRemoteProject">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/classic_icons/save-as-project.svg</normaloff>:/classic_icons/save-as-project.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Download remote project</string>
    </property>
   </action>
  </widget>

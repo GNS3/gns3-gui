@@ -520,6 +520,6 @@ class Servers(QtCore.QObject):
         :returns: instance of Servers
         """
 
-        if not hasattr(Servers, "_instance"):
+        if not hasattr(Servers, "_instance") or Servers._instance is None:
             Servers._instance = Servers()
         return Servers._instance
