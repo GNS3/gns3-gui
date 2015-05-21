@@ -149,12 +149,17 @@ def test_project_post_non_created_project_remote_server_two_query(remote_server)
         assert len(project._created_servers) == 1
 
         calls = mock.mock_calls
-        name, args, kwargs = mock.mock_calls[1]
-        assert args[0] == "POST"
+
+        name, args, kwargs = calls[1]
+        assert args[1] == "/projects/{uuid}/notifications".format(uuid=uuid)
+        assert args[0] == "GET"
+
+        name, args, kwargs = calls[3]
         assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
+        assert args[0] == "POST"
         assert kwargs["body"] == {"test": "test"}
 
-        args, kwargs = mock.call_args
+        name, args, kwargs = calls[4]
         assert args[0] == "POST"
         assert args[1] == "/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
@@ -191,18 +196,24 @@ def test_project_post_non_created_project_remote_server_two_query_two_server(rem
 
         assert len(project._created_servers) == 1
 
-        name, args, kwargs = mock.mock_calls[1]
+        calls = mock.mock_calls
+
+        name, args, kwargs = calls[1]
+        assert args[0] == "GET"
+        assert args[1] == "/projects/{uuid}/notifications".format(uuid=uuid)
+
+        name, args, kwargs = calls[3]
         assert args[0] == "POST"
         assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
         # Call to the create project on second server
-        name, args, kwargs = mock.mock_calls[2]
+        name, args, kwargs =calls[4]
         assert args[0] == "POST"
         assert args[1] == "/projects".format(uuid=uuid)
         assert kwargs["body"] == {"name": "untitled", "project_id": uuid, "path": None, "temporary": False}
 
-        name, args, kwargs = mock.mock_calls[3]
+        name, args, kwargs = calls[5]
         assert args[0] == "POST"
         assert args[1] == "/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
