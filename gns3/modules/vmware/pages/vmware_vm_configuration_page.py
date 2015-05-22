@@ -86,6 +86,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
+        self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
@@ -123,6 +124,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             del settings["enable_remote_console"]
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
+        settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()

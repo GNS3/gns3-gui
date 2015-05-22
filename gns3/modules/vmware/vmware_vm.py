@@ -54,6 +54,7 @@ class VMwareVM(VM):
                           "console": None,
                           "adapters": VMWARE_VM_SETTINGS["adapters"],
                           "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
+                          "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                           "headless": VMWARE_VM_SETTINGS["headless"],
                           "enable_remote_console": VMWARE_VM_SETTINGS["enable_remote_console"]}
 

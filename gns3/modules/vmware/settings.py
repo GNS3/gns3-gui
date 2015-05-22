@@ -19,17 +19,27 @@
 Default VMware settings.
 """
 
+import sys
 from gns3.node import Node
+
+if sys.platform.startswith("win"):
+    DEFAULT_VMNET_END_RANGE = 19
+else:
+    DEFAULT_VMNET_END_RANGE = 255
 
 VMWARE_SETTINGS = {
     "vmrun_path": "",
     "host_type": "ws",
+    "vmnet_start_range": 2,
+    "vmnet_end_range": DEFAULT_VMNET_END_RANGE,
     "use_local_server": True,
 }
 
 VMWARE_SETTING_TYPES = {
     "vmrun_path": str,
     "host_type": str,
+    "vmnet_start_range": int,
+    "vmnet_end_range": int,
     "use_local_server": bool,
 }
 
@@ -40,6 +50,7 @@ VMWARE_VM_SETTINGS = {
     "category": Node.end_devices,
     "adapters": 1,
     "adapter_type": "default",
+    "use_any_adapter": False,
     "headless": False,
     "enable_remote_console": False,
     "linked_base": False,
@@ -53,6 +64,7 @@ VMWARE_VM_SETTING_TYPES = {
     "category": int,
     "adapters": int,
     "adapter_type": str,
+    "use_any_adapter": bool,
     "headless": bool,
     "enable_remote_console": bool,
     "linked_base": bool,

@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'virtualbox_vm_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:58 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Thu May 21 21:37:50 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_virtualBoxVMConfigPageWidget:
-
+class Ui_virtualBoxVMConfigPageWidget(object):
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
         virtualBoxVMConfigPageWidget.resize(509, 346)
@@ -125,3 +123,4 @@ class Ui_virtualBoxVMConfigPageWidget:
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Allow GNS3 to use any configured VirtualBox adapter"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network"))
+

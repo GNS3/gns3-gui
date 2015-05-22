@@ -99,6 +99,8 @@ class VMware(Module):
         # save some settings to the local server config file
         server_settings = {
             "host_type": self._settings["host_type"],
+            "vmnet_start_range": self._settings["vmnet_start_range"],
+            "vmnet_end_range": self._settings["vmnet_end_range"],
         }
 
         if self._settings["vmrun_path"]:

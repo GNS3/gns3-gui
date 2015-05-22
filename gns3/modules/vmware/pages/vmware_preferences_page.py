@@ -44,7 +44,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVmrunPathToolButton.clicked.connect(self._vmrunPathBrowserSlot)
 
-        if not sys.platform.startswith("darwin"):
+        if sys.platform.startswith("darwin"):
             # we do not support VMware Fusion for now
             self.uiUseLocalServercheckBox.setChecked(False)
             self.uiUseLocalServercheckBox.setEnabled(False)
@@ -52,6 +52,13 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         else:
             self.uiHostTypeComboBox.addItem("VMware Player", "player")
             self.uiHostTypeComboBox.addItem("VMware Workstation", "ws")
+
+        if sys.platform.startswith("win"):
+            # VMnet limit on Windows is 19
+            self.uiVMnetEndRangeSpinBox.setMaximum(19)
+        else:
+            # VMnet limit on Linux is 255
+            self.uiVMnetEndRangeSpinBox.setMaximum(255)
 
     def _vmrunPathBrowserSlot(self):
         """
@@ -84,10 +91,12 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             self.uiVmrunPathLineEdit.setEnabled(True)
             self.uiVmrunPathToolButton.setEnabled(True)
             self.uiHostTypeComboBox.setEnabled(True)
+            self.uiNetworkTab.setEnabled(True)
         else:
             self.uiVmrunPathLineEdit.setEnabled(False)
             self.uiVmrunPathToolButton.setEnabled(False)
             self.uiHostTypeComboBox.setEnabled(False)
+            self.uiNetworkTab.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
@@ -100,6 +109,8 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         index = self.uiHostTypeComboBox.findData(settings["host_type"])
         if index != -1:
             self.uiHostTypeComboBox.setCurrentIndex(index)
+        self.uiVMnetStartRangeSpinBox.setValue(settings["vmnet_start_range"])
+        self.uiVMnetEndRangeSpinBox.setValue(settings["vmnet_end_range"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
@@ -118,5 +129,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         new_settings = {}
         new_settings["vmrun_path"] = self.uiVmrunPathLineEdit.text()
         new_settings["host_type"] = self.uiHostTypeComboBox.itemData(self.uiHostTypeComboBox.currentIndex())
+        new_settings["vmnet_start_range"] = self.uiVMnetStartRangeSpinBox.value()
+        new_settings["vmnet_end_range"] = self.uiVMnetEndRangeSpinBox.value()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         VMware.instance().setSettings(new_settings)
