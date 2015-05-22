@@ -64,7 +64,10 @@ def test_get_connected(http_client, request, network_manager, response):
     request.assert_call_with("/test")
     request.setRawHeader.assert_any_call("Content-Type", "application/json")
     request.setRawHeader.assert_any_call("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
-    network_manager.sendCustomRequest.assert_called_once_with(request, "GET", None)
+    assert network_manager.sendCustomRequest.called
+    args, kwargs = network_manager.sendCustomRequest.call_args
+    assert args[0] == request
+    assert args[1] == "GET"
 
     # Trigger the completion
     response.finished.emit()
@@ -79,7 +82,9 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     http_client.post("/test", callback, context={"toto": 42})
 
-    network_manager.sendCustomRequest.assert_called_with(request, "GET", None)
+    args, kwargs = network_manager.sendCustomRequest.call_args
+    assert args[0] == request
+    assert args[1] == "GET"
 
     response.header.return_value = "application/json"
     response.readAll.return_value = ("{\"version\": \"" + __version__ + "\", \"local\": true}").encode()
@@ -90,7 +95,9 @@ def test_post_not_connected(http_client, request, network_manager, response):
     # Trigger the completion
     response.finished.emit()
 
-    network_manager.sendCustomRequest.assert_called_with(request, "POST", None)
+    args, kwargs = network_manager.sendCustomRequest.call_args
+    assert args[0] == request
+    assert args[1] == "POST"
 
     assert http_client._connected
     assert callback.called
@@ -108,7 +115,9 @@ def test_post_not_connected_connection_failed(http_client, request, network_mana
 
     http_client.post("/test", callback)
 
-    network_manager.sendCustomRequest.assert_called_once_with(request, "GET", None)
+    args, kwargs = network_manager.sendCustomRequest.call_args
+    assert args[0] == request
+    assert args[1] == "GET"
 
     # Trigger the completion of /version
     response.finished.emit()
@@ -137,6 +146,7 @@ def test_processDownloadProgress(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
+    response.error.return_value = QtNetwork.QNetworkReply.NoError
 
     response.readAll.return_value = b'{"action": "ping"}'
 
@@ -155,6 +165,7 @@ def test_processDownloadProgressPartialJSON(http_client):
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"'
+    response.error.return_value = QtNetwork.QNetworkReply.NoError
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
 
@@ -173,6 +184,7 @@ def test_processDownloadProgressPartialBytes(http_client):
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/octet-stream"
     response.readAll.return_value = b'hello'
+    response.error.return_value = QtNetwork.QNetworkReply.NoError
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
 
