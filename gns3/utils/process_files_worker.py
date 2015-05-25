@@ -42,7 +42,7 @@ class ProcessFilesWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, source_dir, destination_dir, move=False, skip_dirs=None):
+    def __init__(self, source_dir, destination_dir, move=False, skip_dirs=None, skip_files=None):
 
         QtCore.QObject.__init__(self)
         self._is_running = False
@@ -50,8 +50,11 @@ class ProcessFilesWorker(QtCore.QObject):
         self._destination = destination_dir
         self._move = move
         self._skip_dirs = []
+        self._skip_files = []
         if skip_dirs:
             self._skip_dirs = skip_dirs
+        if skip_files:
+            self._skip_files = skip_files
 
     def run(self):
         """
@@ -79,6 +82,7 @@ class ProcessFilesWorker(QtCore.QObject):
         # start copying/moving from the source directory
         for path, dirs, filenames in os.walk(self._source):
             dirs[:] = [d for d in dirs if d not in self._skip_dirs]
+            filenames[:] = [f for f in filenames if f not in self._skip_files]
             base_dir = path.replace(self._source, self._destination)
 
             # start create the destination sub-directories
@@ -130,6 +134,7 @@ class ProcessFilesWorker(QtCore.QObject):
         count = 0
         for _, dirs, files in os.walk(directory):
             dirs[:] = [d for d in dirs if d not in self._skip_dirs]
+            files[:] = [f for f in files if f not in self._skip_files]
             count += len(files)
         return count
 

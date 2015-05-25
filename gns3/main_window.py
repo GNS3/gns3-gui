@@ -1292,7 +1292,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             # move files if saving from a temporary project
             log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
-            worker = ProcessFilesWorker(self._project.filesDir(), project_dir, move=True)
+            worker = ProcessFilesWorker(self._project.filesDir(), project_dir, move=True, skip_files=[".gns3_temporary"])
             progress_dialog = ProgressDialog(worker, "Project", "Moving project files...", "Cancel", parent=self)
         else:
             # else, just copy the files
