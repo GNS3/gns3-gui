@@ -53,10 +53,13 @@ class IdlePCDialog(QtGui.QDialog, Ui_IdlePCDialog):
         Shows the help for Idle-PC.
         """
 
-        help_text = "Finding the right idlepc value is a trial and error process, consisting of applying " \
-                    "different Idle-PC values and monitoring the CPU usage.\n\nBest Idle-PC values are usually " \
-                    "obtained when IOS is in idle state, the following message being displayed " \
-                    "on the console: {} con0 is now available ... Press RETURN to get started.".format(self._router.name())
+        help_text = """Best Idle-PC values are obtained when IOS is in idle state, after the "Press RETURN to get started" message has appeared on the console, messages have finished displaying on the console and you have have actually pressed the RETURN key.
+
+Finding the right idle-pc value is a trial and error process, consisting of applying different Idle-PC values and monitoring the CPU usage.
+
+Select each value that appears in the list and click Apply, and note the CPU usage a few moments later. When you have found the value that minimises the CPU usage, apply that value.
+"""
+
         QtGui.QMessageBox.information(self, "Hints for Idle-PC", help_text)
 
     def _applySlot(self):

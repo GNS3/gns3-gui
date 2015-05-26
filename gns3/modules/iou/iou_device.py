@@ -422,7 +422,7 @@ class IOUDevice(VM):
         # for backward compatibility
         vm_id = node_info.get("iou_id")
         if not vm_id:
-            vm_id = node_info["vm_id"]
+            vm_id = node_info.get("vm_id")
 
         vm_settings = {}
         for name, value in node_info["properties"].items():

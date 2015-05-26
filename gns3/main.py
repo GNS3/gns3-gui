@@ -128,7 +128,11 @@ def main():
             # if stdout is not a tty (redirected to the console view),
             # then print the exception on stderr too.
             print("".join(lines), file=sys.stderr)
-        CrashReport.instance().captureException(exception, value, tb)
+
+        if exception is MemoryError:
+            print("YOUR SYSTEM IS OUT OF MEMORY!")
+        else:
+            CrashReport.instance().captureException(exception, value, tb)
 
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
