@@ -37,7 +37,7 @@ from gns3.utils.file_copy_worker import FileCopyWorker
 from .. import Dynamips
 from ..settings import IOS_ROUTER_SETTINGS
 from ..utils.decompress_ios import isIOSCompressed
-from ..utils.decompress_ios_thread import DecompressIOSThread
+from ..utils.decompress_ios_worker import DecompressIOSWorker
 from ..ui.ios_router_preferences_page_ui import Ui_IOSRouterPreferencesPageWidget
 from ..pages.ios_router_configuration_page import IOSRouterConfigurationPage
 from ..dialogs.ios_router_wizard import IOSRouterWizard
@@ -146,6 +146,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     self._ios_routers[key][wic] = ios_settings[wic]
 
             self._ios_routers[key].update(ios_settings)
+            print(self._ios_routers[key])
             item = QtGui.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, self._ios_routers[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["default_symbol"]))
@@ -262,15 +263,14 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                                                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes:
                 decompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
-                thread = DecompressIOSThread(path, decompressed_image_path)
-                progress_dialog = ProgressDialog(thread,
+                worker = DecompressIOSWorker(path, decompressed_image_path)
+                progress_dialog = ProgressDialog(worker,
                                                  "IOS image",
                                                  "Decompressing IOS image {}...".format(os.path.basename(path)),
                                                  "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
                 if progress_dialog.exec_() is not False:
                     path = decompressed_image_path
-                thread.wait()
 
         if os.path.normpath(os.path.dirname(path)) != destination_directory:
             # the IOS image is not in the default images directory
@@ -349,8 +349,8 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                 QtGui.QMessageBox.critical(self, "IOS image", "Decompressed IOS image {} already exist".format(os.path.basename(decompressed_image_path)))
                 return
 
-            thread = DecompressIOSThread(path, decompressed_image_path)
-            progress_dialog = ProgressDialog(thread,
+            worker = DecompressIOSWorker(path, decompressed_image_path)
+            progress_dialog = ProgressDialog(worker,
                                              "IOS image",
                                              "Decompressing IOS image {}...".format(path),
                                              "Cancel", busy=True, parent=self)
@@ -358,7 +358,6 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             if progress_dialog.exec_() is not False:
                 ios_router["image"] = decompressed_image_path
                 self._refreshInfo(ios_router)
-            thread.wait()
 
     def _createSectionItem(self, name):
 
