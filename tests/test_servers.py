@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2014 GNS3 Technologies Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from gns3.servers import Servers
+
+
+def test_getServerFromString():
+
+    servers = Servers.instance()
+    server = servers.getServerFromString("127.0.0.1:4000")
+    assert server.protocol() == "http"
+    assert server.host() == "127.0.0.1"
+    assert server.port() == 4000
+    assert server.user() is None
+
+
+def test_getServerFromString_with_user():
+
+    servers = Servers.instance()
+    server = servers.getServerFromString("http://root@127.0.0.1:4000")
+    assert server.protocol() == "http"
+    assert server.host() == "127.0.0.1"
+    assert server.port() == 4000
+    assert server.user() == "root"
+
+
+def test_getServerFromString_with_ssh():
+
+    servers = Servers.instance()
+    servers._addRemoteServer("ssh", "127.0.0.1", "4000", user="root", ssh_port=22)
+    server = servers.getServerFromString("ssh://root@127.0.0.1:22:4000")
+    assert server.protocol() == "ssh"
+    assert server.host() == "127.0.0.1"
+    assert server.port() == 4000
+    assert server.user() == "root"
+    assert server.ssh_port() == 22

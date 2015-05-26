@@ -190,8 +190,8 @@ class EthernetHub(Device):
 """.format(name=self.name(),
            id=self.id(),
            device_id=self._device_id,
-           host=self._server.host,
-           port=self._server.port)
+           host=self._server.host(),
+           port=self._server.port())
 
         port_info = ""
         for port in self._ports:

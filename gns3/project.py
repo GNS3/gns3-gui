@@ -368,7 +368,7 @@ class Project(QtCore.QObject):
     def _startListenNotifications(self, server):
 
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notifications_stream.add(server.createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False))
+        self._notifications_stream.add(server.createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True))
 
     def _event_received(self, result, **kwargs):
 

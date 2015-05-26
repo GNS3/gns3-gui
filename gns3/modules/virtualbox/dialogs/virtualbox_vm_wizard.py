@@ -62,7 +62,7 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
         if self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+                self.uiRemoteServersComboBox.addItem("{}".format(server.url()), server)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
 

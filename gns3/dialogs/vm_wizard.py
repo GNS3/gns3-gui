@@ -70,7 +70,7 @@ class VMWizard(QtWidgets.QWizard):
         if self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+                self.uiRemoteServersComboBox.addItem(server.url(), server)
 
     def validateCurrentPage(self):
         """

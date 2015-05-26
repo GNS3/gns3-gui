@@ -92,7 +92,7 @@ def remote_server():
 
     from gns3.servers import Servers
 
-    return Servers.instance().getRemoteServer("127.0.0.1", 8001)
+    return Servers.instance().getRemoteServer("http", "127.0.0.1", 8001, None)
 
 
 @pytest.fixture

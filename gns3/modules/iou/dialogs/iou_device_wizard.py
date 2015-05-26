@@ -105,7 +105,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
         if self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+                self.uiRemoteServersComboBox.addItem(server.url(), server)
         if self.page(page_id) == self.uiNameImageWizardPage:
             if not self.uiIOUImageToolButton.isEnabled():
                 QtWidgets.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
@@ -163,7 +163,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():
                 server = next(iter(Servers.instance()))
-                server = "{}:{}".format(server.host, server.port)
+                server = server.url()
             else:
                 server = self.uiRemoteServersComboBox.currentText()
         else:  # Cloud is selected

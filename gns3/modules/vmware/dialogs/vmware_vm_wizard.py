@@ -27,6 +27,7 @@ from gns3.servers import Servers
 from ..ui.vmware_vm_wizard_ui import Ui_VMwareVMWizard
 from .. import VMware
 
+
 class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
 
     """
@@ -60,7 +61,7 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
         if self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem("{}:{}".format(server.host, server.port), server)
+                self.uiRemoteServersComboBox.addItem(server.url(), server)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             self._server.get("/vmware/vms", self._getVMwareVMsFromServerCallback)
 

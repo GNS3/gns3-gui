@@ -22,7 +22,8 @@ Configuration page for server preferences.
 import os
 import sys
 import re
-from gns3.qt import QtNetwork, QtWidgets
+import uuid
+from gns3.qt import QtNetwork, QtWidgets, QtCore
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
 from ..topology import Topology
@@ -52,6 +53,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiLocalServerAutoStartCheckBox.stateChanged.connect(self._useLocalServerAutoStartSlot)
+        self.uiRemoteServerProtocolComboBox.currentIndexChanged.connect(self._remoteServerProtocolCurrentIndexSlot)
+        self.uiRemoteServerSSHKeyPushButton.clicked.connect(self._remoteServerSSHKeyPushButtonSlot)
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
@@ -66,6 +69,39 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         index = self.uiLocalServerHostComboBox.findText("127.0.0.1")
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
+
+        self._remoteServerProtocolCurrentIndexSlot(0)
+
+    def _remoteServerSSHKeyPushButtonSlot(self):
+        """
+        Slot to open a file browser and select an ssh key.
+        """
+
+        filter = ""
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the SSH key", ".", filter)
+        if not path:
+            return
+
+        self.uiRemoteServerSSHKeyLineEdit.setText(path)
+
+    def _remoteServerProtocolCurrentIndexSlot(self, index):
+        if self.uiRemoteServerProtocolComboBox.currentText() == "SSH":
+            self.uiRemoteServerUserLineEdit.setText("")
+            self.uiRemoteServerUserLabel.show()
+            self.uiRemoteServerUserLineEdit.show()
+            self.uiRemoteServerSSHPortLabel.show()
+            self.uiRemoteServerSSHPortSpinBox.show()
+            self.uiRemoteServerSSHKeyLabel.show()
+            self.uiRemoteServerSSHKeyLineEdit.show()
+            self.uiRemoteServerSSHKeyPushButton.show()
+        else:
+            self.uiRemoteServerUserLabel.hide()
+            self.uiRemoteServerUserLineEdit.hide()
+            self.uiRemoteServerSSHPortLabel.hide()
+            self.uiRemoteServerSSHPortSpinBox.hide()
+            self.uiRemoteServerSSHKeyLabel.hide()
+            self.uiRemoteServerSSHKeyLineEdit.hide()
+            self.uiRemoteServerSSHKeyPushButton.hide()
 
     def _useLocalServerAutoStartSlot(self, state):
         """
@@ -110,14 +146,19 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         :param column: ignored
         """
 
-        host = item.text(0)
+        settings = item.settings
+        protocol = settings["protocol"].upper()
         try:
-            port = int(item.text(1))
+            port = int(settings["port"])
         except ValueError:
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid port")
             return
-        self.uiRemoteServerPortLineEdit.setText(host)
+        self.uiRemoteServerProtocolComboBox.setCurrentIndex(self.uiRemoteServerProtocolComboBox.findText(protocol))
+        self.uiRemoteServerPortLineEdit.setText(settings["host"])
         self.uiRemoteServerPortSpinBox.setValue(port)
+        self.uiRemoteServerUserLineEdit.setText(settings["user"])
+        self.uiRemoteServerSSHKeyLineEdit.setText(settings.get("ssh_key", None))
+        self.uiRemoteServerSSHPortSpinBox.setValue(settings.get("ssh_port", 22))
 
     def _remoteServerChangedSlot(self):
         """
@@ -135,8 +176,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Adds a new remote server.
         """
 
+        protocol = self.uiRemoteServerProtocolComboBox.currentText().lower()
         host = self.uiRemoteServerPortLineEdit.text().strip()
         port = self.uiRemoteServerPortSpinBox.value()
+        user = self.uiRemoteServerUserLineEdit.text().strip()
+        ssh_port = self.uiRemoteServerSSHPortSpinBox.value()
+        ssh_key = self.uiRemoteServerSSHKeyLineEdit.text().strip()
 
         if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
@@ -145,20 +190,38 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server port {}".format(port))
             return
 
-        # check if the remote server is already defined
-        remote_server = "{host}:{port}".format(host=host, port=port)
-        if remote_server in self._remote_servers:
-            QtWidgets.QMessageBox.critical(self, "Remote server", "Remote server {} is already defined.".format(remote_server))
+        if protocol == "ssh" and len(user) == 0:
+            QtWidgets.QMessageBox.critical(self, "Remote server", "Missing user login")
             return
+
+        if protocol == "ssh" and len(ssh_key) == 0:
+            QtWidgets.QMessageBox.critical(self, "Remote server", "Missing SSH key")
+            return
+
+        # check if the remote server is already defined
+        for server in self._remote_servers.values():
+            if server["protocol"] == protocol and server["host"] == host and server["port"] == port and server["user"] == user:
+                QtWidgets.QMessageBox.critical(self, "Remote server", "Remote server is already defined.")
+                return
+
+        settings = {"protocol": protocol,
+                    "host": host,
+                    "port": port,
+                    "user": user,
+                    "ssh_port": ssh_port,
+                    "ssh_key": ssh_key}
 
         # add a new entry in the tree widget
         item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-        item.setText(0, host)
-        item.setText(1, str(port))
+        item.setText(0, protocol)
+        item.setText(1, host)
+        item.setText(2, str(port))
+        item.setText(3, user)
+        item.settings = settings
+        item.server_id = uuid.uuid4()  #  Create a temporay unique server id
 
         # keep track of this remote server
-        self._remote_servers[remote_server] = {"host": host,
-                                               "port": port}
+        self._remote_servers[item.server_id] = settings
 
         self.uiRemoteServerPortSpinBox.setValue(self.uiRemoteServerPortSpinBox.value() + 1)
         self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
@@ -170,10 +233,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         item = self.uiRemoteServersTreeWidget.currentItem()
         if item:
-            host = item.text(0)
-            port = int(item.text(1))
-            remote_server = "{host}:{port}".format(host=host, port=port)
-            del self._remote_servers[remote_server]
+            protocol = item.text(0)
+            host = item.text(1)
+            port = int(item.text(2))
+            user = item.text(3).strip()
+            assert item.server_id in self._remote_servers, "Missing {} in {}".format(item.server_id, self._remote_servers)
+            del self._remote_servers[item.server_id]
             self.uiRemoteServersTreeWidget.takeTopLevelItem(self.uiRemoteServersTreeWidget.indexOfTopLevelItem(item))
 
     def _populateWidgets(self, settings):
@@ -210,13 +275,18 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self._remote_servers.clear()
         self.uiRemoteServersTreeWidget.clear()
         for server_id, server in servers.remoteServers().items():
-            host = server.host
-            port = server.port
-            self._remote_servers[server_id] = {"host": host,
-                                               "port": port}
+            protocol = server.protocol()
+            host = server.host()
+            port = server.port()
+            user = server.user()
+            self._remote_servers[server_id] = server.settings()
             item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, host)
-            item.setText(1, str(port))
+            item.setText(0, protocol)
+            item.setText(1, host)
+            item.setText(2, str(port))
+            item.setText(3, user)
+            item.settings = server.settings()
+            item.server_id = server_id
 
         self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
 

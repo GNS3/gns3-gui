@@ -462,7 +462,7 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():
                 server = next(iter(Servers.instance()))
-                server = "{}:{}".format(server.host, server.port)
+                server = server.url()
             else:
                 server = self.uiRemoteServersComboBox.currentText()
         else:  # Cloud is selected
