@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
 #
-# Created: Sun May 10 20:44:27 2015
+# Created: Mon May 18 17:26:07 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,9 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_QemuVMWizard:
-
+class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(585, 381)
@@ -295,3 +293,4 @@ class Ui_QemuVMWizard:
         self.uiNewImageRadioButton_5.setText(_translate("QemuVMWizard", "New Image"))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
+

@@ -58,7 +58,8 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology
-from .cloud.utils import UploadProjectThread, UploadFilesThread, ssh_client, DownloadImagesThread, DeleteInstanceThread
+from .utils.download_project import DownloadProjectThread
+from .cloud.utils import UploadProjectThread, ssh_client, DeleteInstanceThread
 from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
 from .project import Project
@@ -242,6 +243,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
+        self.uiDownloadRemoteProject.triggered.connect(self._downloadRemoteProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -1226,6 +1228,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
 
+    def _running_nodes(self):
+        """
+        :returns: Return the list of running nodes
+        """
+        topology = Topology.instance()
+        running_nodes = []
+        for node in topology.nodes():
+            if hasattr(node, "start") and node.status() == Node.started:
+                running_nodes.append(node.name())
+        return running_nodes
+
     def saveProjectAs(self):
         """
         Saves a project to another location/name.
@@ -1236,10 +1249,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # first check if any node that can be started is running
         topology = Topology.instance()
         topology.project = self._project
-        running_nodes = []
-        for node in topology.nodes():
-            if hasattr(node, "start") and node.status() == Node.started:
-                running_nodes.append(node.name())
+        running_nodes = self._running_nodes()
 
         if running_nodes:
             nodes = "\n".join(running_nodes)
@@ -1689,6 +1699,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         )
         progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
                                          parent=self)
+        progress_dialog.show()
+        progress_dialog.exec_()
+
+    def _downloadRemoteProjectActionSlot(self):
+        if self._project.temporary():
+            QtWidgets.QMessageBox.warning(self, "You can not download a temporary project")
+
+        running_nodes = self._running_nodes()
+
+        if running_nodes:
+            nodes = "\n".join(running_nodes)
+            MessageBox(self, "Download project", "Please stop the following nodes before downloading the project", nodes)
+            return
+
+        download_thread = DownloadProjectThread(self, self._project, Servers.instance())
+        progress_dialog = ProgressDialog(download_thread, "Download remote project", "Downloading project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 
