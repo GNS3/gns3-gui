@@ -252,6 +252,7 @@ class GraphicsView(QtGui.QGraphicsView):
         :param source_port: source Port instance
         :param destination_node: destination Node instance
         :param destination_port: destination Port instance
+        :returns: Link
         """
 
         link = Link(source_node, source_port, destination_node, destination_port)
@@ -261,6 +262,7 @@ class GraphicsView(QtGui.QGraphicsView):
         if self._topology.addLink(link):
             link.add_link_signal.connect(self.addLinkSlot)
             link.delete_link_signal.connect(self.deleteLinkSlot)
+        return link
 
     def addLinkSlot(self, link_id):
         """
