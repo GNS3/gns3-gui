@@ -299,14 +299,13 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
                 if index != -1:
                     self.uiNPEComboBox.setCurrentIndex(index)
 
-            if "sensors" in settings:
+            if node:
                 # load the sensor settings
                 self.uiSensor1SpinBox.setValue(settings["sensors"][0])
                 self.uiSensor2SpinBox.setValue(settings["sensors"][1])
                 self.uiSensor3SpinBox.setValue(settings["sensors"][2])
                 self.uiSensor4SpinBox.setValue(settings["sensors"][3])
 
-            if "power_supplies" in settings:
                 if settings["power_supplies"][0] == 1:
                     self.uiPowerSupply1ComboBox.setCurrentIndex(0)
                 else:
@@ -506,24 +505,25 @@ class IOSRouterConfigurationPage(QtGui.QWidget, Ui_iosRouterConfigPageWidget):
             settings["midplane"] = self.uiMidplaneComboBox.currentText()
             settings["npe"] = self.uiNPEComboBox.currentText()
 
-            sensors = []
-            sensors.append(self.uiSensor1SpinBox.value())
-            sensors.append(self.uiSensor2SpinBox.value())
-            sensors.append(self.uiSensor3SpinBox.value())
-            sensors.append(self.uiSensor4SpinBox.value())
-            settings["sensors"] = sensors
+            if node:
+                sensors = []
+                sensors.append(self.uiSensor1SpinBox.value())
+                sensors.append(self.uiSensor2SpinBox.value())
+                sensors.append(self.uiSensor3SpinBox.value())
+                sensors.append(self.uiSensor4SpinBox.value())
+                settings["sensors"] = sensors
 
-            power_supplies = []
-            if self.uiPowerSupply1ComboBox.currentIndex() == 0:
-                power_supplies.append(1)
-            else:
-                power_supplies.append(0)
+                power_supplies = []
+                if self.uiPowerSupply1ComboBox.currentIndex() == 0:
+                    power_supplies.append(1)
+                else:
+                    power_supplies.append(0)
 
-            if self.uiPowerSupply2ComboBox.currentIndex() == 0:
-                power_supplies.append(1)
-            else:
-                power_supplies.append(0)
-            settings["power_supplies"] = power_supplies
+                if self.uiPowerSupply2ComboBox.currentIndex() == 0:
+                    power_supplies.append(1)
+                else:
+                    power_supplies.append(0)
+                settings["power_supplies"] = power_supplies
         else:
             # save the I/O memory setting
             settings["iomem"] = self.uiIomemSpinBox.value()

@@ -146,7 +146,6 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
                     self._ios_routers[key][wic] = ios_settings[wic]
 
             self._ios_routers[key].update(ios_settings)
-            print(self._ios_routers[key])
             item = QtGui.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, self._ios_routers[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["default_symbol"]))
