@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>503</height>
+    <width>549</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,6 +26,18 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="text">
           <string>Enable local server</string>
          </property>
@@ -36,6 +48,12 @@
        </item>
        <item>
         <widget class="QGroupBox" name="uiGeneralSettingsGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>General settings</string>
          </property>

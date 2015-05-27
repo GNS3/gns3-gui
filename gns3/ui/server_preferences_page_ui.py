@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Fri Mar 13 15:09:36 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Wed May 27 11:07:47 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName(_fromUtf8("ServerPreferencesPageWidget"))
-        ServerPreferencesPageWidget.resize(430, 503)
+        ServerPreferencesPageWidget.resize(549, 536)
         self.vboxlayout = QtGui.QVBoxLayout(ServerPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(ServerPreferencesPageWidget)
@@ -36,10 +36,21 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.uiLocalTabWidget)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.uiLocalServerAutoStartCheckBox = QtGui.QCheckBox(self.uiLocalTabWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiLocalServerAutoStartCheckBox.sizePolicy().hasHeightForWidth())
+        self.uiLocalServerAutoStartCheckBox.setSizePolicy(sizePolicy)
+        self.uiLocalServerAutoStartCheckBox.setMinimumSize(QtCore.QSize(0, 40))
         self.uiLocalServerAutoStartCheckBox.setChecked(True)
         self.uiLocalServerAutoStartCheckBox.setObjectName(_fromUtf8("uiLocalServerAutoStartCheckBox"))
         self.verticalLayout_2.addWidget(self.uiLocalServerAutoStartCheckBox)
         self.uiGeneralSettingsGroupBox = QtGui.QGroupBox(self.uiLocalTabWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiGeneralSettingsGroupBox.sizePolicy().hasHeightForWidth())
+        self.uiGeneralSettingsGroupBox.setSizePolicy(sizePolicy)
         self.uiGeneralSettingsGroupBox.setObjectName(_fromUtf8("uiGeneralSettingsGroupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.uiGeneralSettingsGroupBox)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
