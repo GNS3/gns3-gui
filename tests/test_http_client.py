@@ -44,7 +44,7 @@ def response():
 @pytest.fixture
 def http_client(request, network_manager):
 
-    return HTTPClient("http://127.0.0.1:8000", network_manager)
+    return HTTPClient({"protocol": "http", "host": "127.0.0.1", "port": "8000"}, network_manager)
 
 
 @pytest.yield_fixture(autouse=True)

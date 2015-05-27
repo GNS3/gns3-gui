@@ -55,7 +55,7 @@ def test_download_project_without_server(download_thread):
 
 def test_download_project_with_one_server(download_thread, servers, tmpdir, project):
 
-    one = servers.getRemoteServer("127.0.0.1", 8000)
+    one = servers.getRemoteServer("http", "127.0.0.1", 8000, None)
     download_thread.run()
     project.get.assert_called_with(one, "/files", download_thread._fileListReceived)
     assert download_thread._get_file_lists == 1
@@ -64,8 +64,8 @@ def test_download_project_with_one_server(download_thread, servers, tmpdir, proj
 def test_fileListReceived(download_thread, servers):
 
     download_thread._get_file_lists = 3
-    one = servers.getRemoteServer("127.0.0.1", 8000)
-    two = servers.getRemoteServer("127.0.0.1", 8001)
+    one = servers.getRemoteServer("http", "127.0.0.1", 8000, None)
+    two = servers.getRemoteServer("http", "127.0.0.1", 8001, None)
 
     download_thread._fileListReceived([{"path": "a", "md5sum": "d8e8fca2dc0f896fd7cb4cb0031ba249"}], server=one)
     download_thread._fileListReceived([{"path": "b", "md5sum": "126a8a51b9d1bbd07fddc65819a542c3"}], server=two)
@@ -88,7 +88,7 @@ def test_downloadNextFile_empty_list(download_thread):
 
 def test_downloadNextFile_non_empty_list(download_thread, servers, project):
 
-    one = servers.getRemoteServer("127.0.0.1", 8000)
+    one = servers.getRemoteServer("http", "127.0.0.1", 8000, None)
 
     download_thread._files_to_download = [
         {"path": "a", "md5sum": "d8e8fca2dc0f896fd7cb4cb0031ba249", "server": one}
@@ -112,7 +112,7 @@ def test_downloadNextFile_non_empty_list(download_thread, servers, project):
 
 def test_downloadNextFile_file_exist_but_different(download_thread, servers, project):
 
-    one = servers.getRemoteServer("127.0.0.1", 8000)
+    one = servers.getRemoteServer("http", "127.0.0.1", 8000, None)
 
     download_thread._files_to_download = [
         {"path": "a", "md5sum": "d8e8fca2dc0f896fd7cb4cb0031ba249", "server": one}
@@ -135,7 +135,7 @@ def test_downloadNextFile_file_exist_but_different(download_thread, servers, pro
 
 def test_downloadNextFile_file_exist_and_the_same(download_thread, servers, project):
 
-    one = servers.getRemoteServer("127.0.0.1", 8000)
+    one = servers.getRemoteServer("http", "127.0.0.1", 8000, None)
 
     download_thread._files_to_download = [
         {"path": "a", "md5sum": "5d41402abc4b2a76b9719d911017c592", "server": one}
@@ -152,7 +152,7 @@ def test_downloadNextFile_file_exist_and_the_same(download_thread, servers, proj
 
 def test_downloadNextFile_subdirectory(download_thread, servers, project):
 
-    one = servers.getRemoteServer("127.0.0.1", 8000)
+    one = servers.getRemoteServer("http", "127.0.0.1", 8000, None)
 
     download_thread._files_to_download = [
         {"path": "a/b/c", "md5sum": "d8e8fca2dc0f896fd7cb4cb0031ba249", "server": one}

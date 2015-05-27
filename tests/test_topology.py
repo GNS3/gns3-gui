@@ -50,7 +50,7 @@ def test_dump(vpcs_device, project, local_server):
         "name": project.name(),
         "resources_type": "local",
         "version": __version__,
-        "revision": 3,
+        "revision": 4,
         "topology": {
             "nodes": [
                 {
@@ -79,6 +79,8 @@ def test_dump(vpcs_device, project, local_server):
                     "id": local_server.id(),
                     "local": True,
                     "port": 8000,
+                    "protocol": "http",
+                    "user": None
                 }
             ]
         },
@@ -134,7 +136,7 @@ def test_dump_random_id(vpcs_device, project, local_server):
             "name": project.name(),
             "resources_type": "local",
             "version": __version__,
-            "revision": 3,
+            "revision": 4,
             "topology": {
                 "nodes": [
                     {
@@ -162,6 +164,8 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         "id": local_server.id(),
                         "local": True,
                         "port": 8000,
+                        "protocol": "http",
+                        "user": None
                     }
                 ]
             },
