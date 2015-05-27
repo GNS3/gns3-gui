@@ -37,6 +37,7 @@ nosetests.xml
 
 # PyCharm
 .idea
+/.eggs
 
 # OSX
 .DS_Store
@@ -53,3 +54,6 @@ nosetests.xml
 
 # Licence keys
 keys
+
+# Custom config
+/gns3_server.ini
