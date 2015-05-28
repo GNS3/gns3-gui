@@ -71,6 +71,7 @@ class Port:
         self._data = {}
         self._destination_node = None
         self._destination_port = None
+        self._hot_pluggable = True
 
         self._capture_supported = False
         self._capture_file_path = ""
@@ -338,6 +339,22 @@ class Port:
         """
 
         return self._stub
+
+    def setHotPluggable(self, hot_pluggable):
+        """
+        :param hot_pluggable: either the port is hot pluggable.
+        """
+
+        self._hot_pluggable = hot_pluggable
+
+    def isHotPluggable(self):
+        """
+        Checks if this port is hot pluggable.
+
+        :returns: boolean
+        """
+
+        return self._hot_pluggable
 
     @staticmethod
     def linkType():

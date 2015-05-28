@@ -115,6 +115,7 @@ class LocalConfig(QtCore.QObject):
         Write the configuration file.
         """
 
+        self._settings["version"] = __version__
         try:
             with open(self._config_file, "w", encoding="utf-8") as f:
                 json.dump(self._settings, f, sort_keys=True, indent=4)
