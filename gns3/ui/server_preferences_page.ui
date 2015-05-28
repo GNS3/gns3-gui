@@ -6,14 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
-    <height>536</height>
+    <width>508</width>
+    <height>595</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Server</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="uiTabWidget">
      <property name="currentIndex">
@@ -23,7 +29,7 @@
       <attribute name="title">
        <string>Local server</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
          <property name="sizePolicy">
@@ -35,7 +41,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
          <property name="text">
@@ -47,9 +53,22 @@
         </widget>
        </item>
        <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="QGroupBox" name="uiGeneralSettingsGroupBox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -58,14 +77,14 @@
           <string>General settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="uiLocalServerPathLabel">
             <property name="text">
              <string>Server path:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QLineEdit" name="uiLocalServerPathLineEdit"/>
@@ -82,14 +101,14 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="uiUbridgePathLabel">
             <property name="text">
              <string>Ubridge path:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLineEdit" name="uiUbridgePathLineEdit"/>
@@ -106,24 +125,24 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="uiLocalServerHostLabel">
             <property name="text">
              <string>Host binding:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="6" column="0">
            <widget class="QComboBox" name="uiLocalServerHostComboBox"/>
           </item>
-          <item row="6" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="uiLocalServerPortLabel">
             <property name="text">
              <string>Port:</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
+          <item row="8" column="0">
            <widget class="QSpinBox" name="uiLocalServerPortSpinBox">
             <property name="suffix">
              <string notr="true"> TCP</string>
@@ -136,7 +155,7 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
+          <item row="9" column="0">
            <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
             <property name="text">
              <string>Allow console connections to any local IP address</string>
@@ -257,19 +276,26 @@
         </widget>
        </item>
        <item>
-        <spacer name="spacer">
+        <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>390</width>
-           <height>193</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
        </item>
       </layout>
+      <zorder>uiGeneralSettingsGroupBox</zorder>
+      <zorder>uiConsolePortRangeGroupBox</zorder>
+      <zorder>uiUDPPortRangeGroupBox</zorder>
+      <zorder>verticalSpacer</zorder>
+      <zorder>uiLocalServerAutoStartCheckBox</zorder>
+      <zorder>uiLocalServerAutoStartCheckBox</zorder>
+      <zorder>verticalSpacer_2</zorder>
      </widget>
      <widget class="QWidget" name="uiRemoteTabWidget">
       <attribute name="title">
@@ -323,7 +349,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="currentText" stdset="0">
+           <property name="currentText">
             <string>HTTP</string>
            </property>
            <item>
@@ -523,10 +549,11 @@
     </layout>
    </item>
   </layout>
+  <zorder>uiTabWidget</zorder>
+  <zorder>uiLocalServerAutoStartCheckBox</zorder>
  </widget>
  <tabstops>
   <tabstop>uiTabWidget</tabstop>
-  <tabstop>uiLocalServerAutoStartCheckBox</tabstop>
   <tabstop>uiLocalServerToolButton</tabstop>
   <tabstop>uiLocalServerHostComboBox</tabstop>
   <tabstop>uiLocalServerPortSpinBox</tabstop>
