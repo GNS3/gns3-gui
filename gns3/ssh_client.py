@@ -88,7 +88,7 @@ class SSHClient(HTTPClient):
 
         thread = SSHConnectionThread(self, parent=self)
         thread.error_signal.connect(lambda msg: self._connectionError(callback, msg))
-        thread.connected_signal.connect(lambda: HTTPClient.connect(self, query, callback))
+        thread.connected_signal.connect(lambda: super().connect(query, callback))
         thread.start()
 
     def getTunnel(self, port):

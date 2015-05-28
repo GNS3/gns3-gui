@@ -9,7 +9,9 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-class Ui_QemuImageWizard(object):
+
+class Ui_QemuImageWizard:
+
     def setupUi(self, QemuImageWizard):
         QemuImageWizard.setObjectName("QemuImageWizard")
         QemuImageWizard.resize(420, 300)
@@ -315,14 +317,14 @@ class Ui_QemuImageWizard(object):
         self.uiFormatQcowRadio.setToolTip(_translate("QemuImageWizard", "Qcow is a legacy Qemu format that is also supported by VirtualBox."))
         self.uiFormatQcowRadio.setText(_translate("QemuImageWizard", "Qcow"))
         self.uiFormatVpcRadio.setToolTip(_translate("QemuImageWizard", "VHD is the format used by Microsoft VirtualPC, and is also supported by Qemu and VirtualBox.\n"
-"On Windows 7 and above, it can be mounted on the host PC."))
+                                                    "On Windows 7 and above, it can be mounted on the host PC."))
         self.uiFormatVpcRadio.setText(_translate("QemuImageWizard", "VHD"))
         self.uiFormatVdiRadio.setToolTip(_translate("QemuImageWizard", "VDI is the native format of VirtualBox"))
         self.uiFormatVdiRadio.setText(_translate("QemuImageWizard", "VDI"))
         self.uiFormatVmdkRadio.setToolTip(_translate("QemuImageWizard", "VMDK is the native format for VMware and is also supported by Qemu and VirtualBox."))
         self.uiFormatVmdkRadio.setText(_translate("QemuImageWizard", "VMDK"))
         self.uiFormatRawRadio.setToolTip(_translate("QemuImageWizard", "Raw image files represent the actual data on the image, with zero special features.\n"
-"It can easily be converted to various other formats by various utilities, making it the most portable format."))
+                                                    "It can easily be converted to various other formats by various utilities, making it the most portable format."))
         self.uiFormatRawRadio.setText(_translate("QemuImageWizard", "Raw"))
         self.uiQcow2OptionsWizardPage.setTitle(_translate("QemuImageWizard", "Qcow2 options"))
         self.uiSizeOptionsGroupBox.setTitle(_translate("QemuImageWizard", "Size options"))
@@ -330,12 +332,12 @@ class Ui_QemuImageWizard(object):
         self.uiQcow2PreallocationOffRadio.setToolTip(_translate("QemuImageWizard", "The file only takes as much space from the host as needed. The VM will still see the full capacity you specify."))
         self.uiQcow2PreallocationOffRadio.setText(_translate("QemuImageWizard", "off"))
         self.uiQcow2PreallocationMetadataRadio.setToolTip(_translate("QemuImageWizard", "Same as \"off\", but preallocates enough space to hold any potenial metadata for the HDD.\n"
-"This improves performance when the image file needs to grow."))
+                                                                     "This improves performance when the image file needs to grow."))
         self.uiQcow2PreallocationMetadataRadio.setText(_translate("QemuImageWizard", "metadata"))
         self.uiQcow2PreallocationFallocRadio.setToolTip(_translate("QemuImageWizard", "Same as \"full\", but uses C\'s posix_fallocate() if available on the host, instead of zero filling the file."))
         self.uiQcow2PreallocationFallocRadio.setText(_translate("QemuImageWizard", "falloc"))
         self.uiQcow2PreallocationFullRadio.setToolTip(_translate("QemuImageWizard", "The file will start off at the full size you specify.\n"
-"Free space will be zero filled."))
+                                                                 "Free space will be zero filled."))
         self.uiQcow2PreallocationFullRadio.setText(_translate("QemuImageWizard", "full"))
         self.uiClusterSizeLabel.setText(_translate("QemuImageWizard", "Cluster size:"))
         self.uiQcow2ClusterSizeComboBox.setItemText(0, _translate("QemuImageWizard", "<default>"))
@@ -395,4 +397,3 @@ class Ui_QemuImageWizard(object):
         self.uiLocationBrowseToolButton.setText(_translate("QemuImageWizard", "Browse"))
         self.uiSizeLabel.setText(_translate("QemuImageWizard", "Disk size:"))
         self.uiSizeSpinBox.setSuffix(_translate("QemuImageWizard", " MiB"))
-

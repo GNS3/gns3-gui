@@ -59,7 +59,6 @@ Finding the right idle-pc value is a trial and error process, consisting of appl
 
 Select each value that appears in the list and click Apply, and note the CPU usage a few moments later. When you have found the value that minimises the CPU usage, apply that value.
 """
-
         QtWidgets.QMessageBox.information(self, "Hints for Idle-PC", help_text)
 
     def _applySlot(self):

@@ -238,6 +238,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param source_port: source Port instance
         :param destination_node: destination Node instance
         :param destination_port: destination Port instance
+        :returns: Link
         """
 
         link = Link(source_node, source_port, destination_node, destination_port)
@@ -247,6 +248,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if self._topology.addLink(link):
             link.add_link_signal.connect(self.addLinkSlot)
             link.delete_link_signal.connect(self.deleteLinkSlot)
+        return link
 
     def addLinkSlot(self, link_id):
         """
@@ -1166,6 +1168,21 @@ class GraphicsView(QtWidgets.QGraphicsView):
             router = item.node()
             router.computeAutoIdlepc(self._autoIdlepcCallback)
 
+    def autoIdlepcActionSlot(self):
+        """
+        Slot to receive events from the auto idlepc action in the
+        contextual menu.
+        """
+
+        items = self.scene().selectedItems()
+        if len(items) != 1:
+            QtWidgets.QMessageBox.critical(self, "Auto Idle-PC", "Please select only one router")
+            return
+        item = items[0]
+        if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
+            router = item.node()
+            router.computeAutoIdlepc(self._autoIdlepcCallback)
+
     def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
         """
         Slot to allow the user to select an idlepc value.
@@ -1181,7 +1198,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             # apply the idle-pc to templates with the same IOS image
             ios_image = os.path.basename(router.settings()["image"])
             router.module().updateImageIdlepc(ios_image, idlepc)
-            QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
+    QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
 
     def duplicateActionSlot(self):
         """

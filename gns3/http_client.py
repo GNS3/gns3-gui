@@ -243,8 +243,8 @@ class HTTPClient(QtCore.QObject):
                     log.debug("Running server is not a GNS3 local server (not started with --local)")
                     return False
                 return True
-        except (OSError, urllib.error.HTTPError, http.client.BadStatusLine) as e:
-            log.debug("No GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
+        except (OSError, urllib.error.HTTPError, http.client.BadStatusLine, ValueError) as e:
+            log.debug("A non GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
         return False
 
     def get(self, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True):

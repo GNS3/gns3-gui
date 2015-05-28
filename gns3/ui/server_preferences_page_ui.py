@@ -2,18 +2,20 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Wed May 27 19:21:10 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Thu May 28 11:58:27 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_ServerPreferencesPageWidget(object):
+
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(462, 563)
+        ServerPreferencesPageWidget.resize(549, 536)
         self.verticalLayout = QtWidgets.QVBoxLayout(ServerPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(ServerPreferencesPageWidget)
@@ -23,10 +25,21 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiLocalTabWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiLocalServerAutoStartCheckBox = QtWidgets.QCheckBox(self.uiLocalTabWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiLocalServerAutoStartCheckBox.sizePolicy().hasHeightForWidth())
+        self.uiLocalServerAutoStartCheckBox.setSizePolicy(sizePolicy)
+        self.uiLocalServerAutoStartCheckBox.setMinimumSize(QtCore.QSize(0, 40))
         self.uiLocalServerAutoStartCheckBox.setChecked(True)
         self.uiLocalServerAutoStartCheckBox.setObjectName("uiLocalServerAutoStartCheckBox")
         self.verticalLayout_2.addWidget(self.uiLocalServerAutoStartCheckBox)
         self.uiGeneralSettingsGroupBox = QtWidgets.QGroupBox(self.uiLocalTabWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiGeneralSettingsGroupBox.sizePolicy().hasHeightForWidth())
+        self.uiGeneralSettingsGroupBox.setSizePolicy(sizePolicy)
         self.uiGeneralSettingsGroupBox.setObjectName("uiGeneralSettingsGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiGeneralSettingsGroupBox)
         self.gridLayout.setObjectName("gridLayout")
@@ -290,4 +303,3 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
-

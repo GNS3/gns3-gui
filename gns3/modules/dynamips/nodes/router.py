@@ -711,8 +711,8 @@ class Router(VM):
         # for backward compatibility
         vm_id = dynamips_id = node_info.get("router_id")
         if not vm_id:
-            vm_id = node_info["vm_id"]
-            dynamips_id = node_info["dynamips_id"]
+            vm_id = node_info.get("vm_id")
+            dynamips_id = node_info.get("dynamips_id")
 
         vm_settings = {}
         for name, value in node_info["properties"].items():

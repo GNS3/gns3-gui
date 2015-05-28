@@ -264,7 +264,7 @@ class VPCSDevice(VM):
         # for backward compatibility
         vm_id = node_info.get("vpcs_id")
         if not vm_id:
-            vm_id = node_info["vm_id"]
+            vm_id = node_info.get("vm_id")
 
         # prepare the VM settings
         vm_settings = {}

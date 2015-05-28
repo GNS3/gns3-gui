@@ -87,7 +87,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
 
         if len(self.line) > 0:
             cmd, args, _ = self.parseline(line)
-            if cmd == '':
+            if cmd is None or cmd == '':
                 compfunc = self.completedefault
             else:
                 try:

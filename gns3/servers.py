@@ -216,13 +216,16 @@ class Servers(QtCore.QObject):
         path = self.localServerPath()
         host = self._local_server.host()
         port = self._local_server.port()
-        command = '"{executable}" --host {host} --port {port} --local'.format(executable=path,
+        command = '"{executable}" --host={host} --port={port} --local'.format(executable=path,
                                                                               host=host,
                                                                               port=port)
 
         if self._local_server_settings["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses
             command += " --allow"
+
+        if logging.getLogger().isEnabledFor(logging.DEBUG):
+            command += " --debug"
 
         log.info("Starting local server process with {}".format(command))
         try:

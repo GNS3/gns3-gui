@@ -75,7 +75,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         log.debug('Tunnel closed from %r' % (peername,))
 
 
-class Endpoint(object):
+class Endpoint:
 
     def __init__(self, local_address, remote_address, transport):
         """

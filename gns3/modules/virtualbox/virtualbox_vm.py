@@ -376,7 +376,7 @@ class VirtualBoxVM(VM):
         # for backward compatibility
         vm_id = node_info.get("vbox_id")
         if not vm_id:
-            vm_id = node_info["vm_id"]
+            vm_id = node_info.get("vm_id")
         linked_clone = node_info.get("linked_clone", False)
 
         vm_settings = {}

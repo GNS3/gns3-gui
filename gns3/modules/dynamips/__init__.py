@@ -283,9 +283,13 @@ class Dynamips(Module):
                 # must be an EtherSwitch router
                 base_name = "ESW"
 
+            # Older GNS3 versions may have the following invalid settings in the VM template
             if "console" in vm_settings:
-                # Older GNS3 versions may have a console setting in the VM template
                 del vm_settings["console"]
+            if "sensors" in vm_settings:
+                del vm_settings["sensors"]
+            if "power_supplies" in vm_settings:
+                del vm_settings["power_supplies"]
 
             ram = vm_settings.pop("ram")
             image = vm_settings.pop("image")

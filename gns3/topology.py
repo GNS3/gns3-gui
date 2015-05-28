@@ -97,6 +97,7 @@ class Topology:
         self._images = []
         self._topology = None
         self._initialized_nodes = []
+        self._initialized_links = []
         self._resources_type = "local"
         self._instances = []
         self._auto_start = False
@@ -386,6 +387,7 @@ class Topology:
         self._ellipses.clear()
         self._images.clear()
         self._initialized_nodes.clear()
+        self._initialized_links.clear()
         self._resources_type = "local"
         self._instances = []
         log.info("Topology reset")
@@ -848,18 +850,40 @@ class Topology:
                             break
 
                     if source_port and destination_port:
-                        view.addLink(source_node, source_port, destination_node, destination_port)
-
-        # Auto start
-        if self._auto_start and hasattr(node, "start"):
-            node.start()
+                        link = view.addLink(source_node, source_port, destination_node, destination_port)
+                        callback = partial(self._linkCreatedSlot, topology)
+                        link.add_link_signal.connect(callback)
 
         # We save at the end of initialization process in order to upgrade old topologies
         if len(topology["topology"]["nodes"]) == len(self._initialized_nodes):
+            self._autoStart(topology)
+
             self._load_images(topology)
             if "project_id" not in topology:
                 log.info("Saving converted topology...")
                 main_window.saveProject(self._project.topologyFile())
+
+    def _linkCreatedSlot(self, topology, link_id):
+        """
+        Called when a link is successfuly created
+        """
+        self._initialized_links.append(link_id)
+        if (len(topology["topology"]["links"]) == len(self._initialized_links)):
+            self._autoStart(topology)
+
+    def _autoStart(self, topology):
+        """
+        If everything is created auto start the topology
+        """
+        if (len(topology["topology"]["links"]) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes)):
+            # Auto start
+            if self._auto_start:
+                log.info("Auto start nodes")
+                for initialized_node in self._initialized_nodes:
+                    initialized_node = self.getNode(initialized_node)
+                    if hasattr(initialized_node, "start"):
+                        log.info("Auto start node %s", initialized_node.name())
+                        initialized_node.start()
 
     def _createPortLabel(self, node, label_info):
         """
