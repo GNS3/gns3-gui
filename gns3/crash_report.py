@@ -27,7 +27,7 @@ except ImportError:
     # raven is not installed with deb package in order to simplify packaging
     RAVEN_AVAILABLE = False
 
-
+from .utils.get_resource import get_resource
 from .version import __version__
 from .servers import Servers
 
@@ -43,7 +43,7 @@ class CrashReport:
 
     DSN = "sync+https://38097f3eda59454a9158a6847e2fdaca:f3d46b1e23aa459cbe9b193ac1635a5f@app.getsentry.com/38506"
     if hasattr(sys, "frozen"):
-        cacert = os.path.join(os.getcwd(), "cacert.pem")
+        cacert = get_resource("cacert.pem")
         if os.path.isfile(cacert):
             DSN += "?ca_certs={}".format(cacert)
         else:
