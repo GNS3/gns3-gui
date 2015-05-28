@@ -79,7 +79,7 @@ class Servers(QtCore.QObject):
         if sys.platform.startswith("win") and hasattr(sys, "frozen"):
             local_server_path = os.path.join(os.getcwd(), "gns3server.exe")
         elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-            local_server_path = os.path.join(os.getcwd(), "server/Contents/MacOS/gns3server")
+            local_server_path = os.path.join(os.getcwd(), "gns3server")
         else:
             local_server_path = shutil.which("gns3server")
 
