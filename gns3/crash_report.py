@@ -53,7 +53,7 @@ class CrashReport:
     DSN = "sync+https://38097f3eda59454a9158a6847e2fdaca:f3d46b1e23aa459cbe9b193ac1635a5f@app.getsentry.com/38506"
     if hasattr(sys, "frozen"):
         cacert = get_resource("cacert.pem")
-        if os.path.isfile(cacert):
+        if None and os.path.isfile(cacert):
             DSN += "?ca_certs={}".format(cacert)
         else:
             log.warning("The SSL certificate bundle file '{}' could not be found".format(cacert))
