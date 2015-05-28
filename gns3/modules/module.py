@@ -20,6 +20,8 @@ Base class (interface) for modules.
 """
 
 from ..qt import QtCore
+from ..local_config import LocalConfig
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -36,6 +38,15 @@ class Module(QtCore.QObject):
     def __init__(self):
 
         super().__init__()
+        LocalConfig.instance().config_changed_signal.connect(self.configChangedSlot)
+
+
+    def configChangedSlot(self):
+        """
+        Call when the configuration file has changed
+        """
+
+        raise NotImplementedError("Missing configChangedSlot in {}".format(self.__class__.__name__))
 
     @staticmethod
     def nodes(self):

@@ -18,13 +18,17 @@
 import sys
 import os
 import json
+
+from .qt import QtCore
 from .version import __version__
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class LocalConfig:
+class LocalConfig(QtCore.QObject):
+
+    config_changed_signal = QtCore.Signal()
 
     """
     Handles the local GUI settings.
@@ -32,6 +36,7 @@ class LocalConfig:
 
     def __init__(self):
 
+        super().__init__()
         self._settings = {}
 
         if sys.platform.startswith("win"):
@@ -87,6 +92,11 @@ class LocalConfig:
         self._settings.update(user_settings)
         self._writeConfig()
 
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(self._checkConfigChanged)
+        timer.setInterval(1000) # milliseconds
+        timer.start()
+
     def _readConfig(self, config_path):
         """
         Read the configuration file.
@@ -94,10 +104,10 @@ class LocalConfig:
 
         try:
             with open(config_path, "r", encoding="utf-8") as f:
+                self._last_config_changed = os.stat(config_path).st_mtime
                 return json.load(f)
         except (ValueError, OSError) as e:
             log.error("Could not read the config file {}: {}".format(self._config_file, e))
-
         return dict()
 
     def _writeConfig(self):
@@ -108,8 +118,16 @@ class LocalConfig:
         try:
             with open(self._config_file, "w", encoding="utf-8") as f:
                 json.dump(self._settings, f, sort_keys=True, indent=4)
+                self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
+
+    def _checkConfigChanged(self):
+        if self._last_config_changed < os.stat(self._config_file).st_mtime:
+            log.info("Config changed reloading...")
+            print("Config changed reloading {}...".format(self._config_file))
+            self._settings = self._readConfig(self._config_file)
+            self.config_changed_signal.emit()
 
     def configFilePath(self):
         """
@@ -137,7 +155,8 @@ class LocalConfig:
         :returns: settings (dict)
         """
 
-        return self._readConfig(self._config_file)
+        self._checkConfigChanged()
+        return self._settings
 
     def setSettings(self, settings):
         """

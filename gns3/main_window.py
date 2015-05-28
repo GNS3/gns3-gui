@@ -119,6 +119,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # restore the geometry and state of the main window.
         local_config = LocalConfig.instance()
+        local_config.config_changed_signal.connect(self._localConfigChangedSlot)
         gui_settings = local_config.loadSectionSettings("GUI", {"geometry": "",
                                                                 "state": ""})
         self.restoreGeometry(QtCore.QByteArray().fromBase64(gui_settings["geometry"]))
@@ -947,6 +948,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiNodesDockWidget.setVisible(True)
             self.uiNodesView.clear()
             self.uiNodesView.populateNodesView(category, self._project.type())
+
+    def _localConfigChangedSlot(self):
+        """
+        Called when the local config change
+        """
+        self.uiNodesView.refresh()
 
     def _browseRoutersActionSlot(self):
         """

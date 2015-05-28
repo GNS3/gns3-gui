@@ -51,6 +51,9 @@ class IOU(Module):
         self._iou_devices = {}
         self._iou_images_cache = {}
 
+        self.configChangedSlot()
+
+    def configChangedSlot(self):
         # load the settings
         self._loadSettings()
         self._loadIOUDevices()

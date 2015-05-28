@@ -50,6 +50,9 @@ class VMware(Module):
         self._vmware_vms = {}
         self._nodes = []
 
+        self.configChangedSlot()
+
+    def configChangedSlot(self):
         # load the settings
         self._loadSettings()
         self._loadVMwareVMs()

@@ -42,6 +42,9 @@ class Builtin(Module):
 
         self._nodes = []
 
+    def configChangedSlot(self):
+        pass
+
     def addNode(self, node):
         """
         Adds a node to this module.

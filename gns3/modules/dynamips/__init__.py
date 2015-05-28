@@ -75,6 +75,9 @@ class Dynamips(Module):
         self._nodes = []
         self._ios_images_cache = {}
 
+        self.configChangedSlot()
+
+    def configChangedSlot(self):
         # load the settings and IOS images.
         self._loadSettings()
         self._loadIOSRouters()

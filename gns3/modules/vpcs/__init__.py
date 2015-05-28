@@ -61,6 +61,10 @@ class VPCS(Module):
         self._vpcs_multi_host_process = None
         self._vpcs_multi_host_port = 0
 
+        self._loadSettings()
+
+
+    def configChangedSlot(self):
         # load the settings
         self._loadSettings()
 

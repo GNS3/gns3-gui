@@ -45,6 +45,9 @@ class Qemu(Module):
         self._qemu_vms = {}
         self._nodes = []
 
+        self.configChangedSlot()
+
+    def configChangedSlot(self):
         # load the settings
         self._loadSettings()
         self._loadQemuVMs()
