@@ -54,21 +54,7 @@ class Qemu(Module):
         Loads the settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the Qemu settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in QEMU_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=QEMU_SETTING_TYPES[name])
-        settings.remove("")
-        settings.endGroup()
-
-        if legacy_settings:
-            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
-        self._settings = local_config.loadSectionSettings(self.__class__.__name__, QEMU_SETTINGS)
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, QEMU_SETTINGS)
 
         # keep the config file sync
         self._saveSettings()
@@ -86,29 +72,7 @@ class Qemu(Module):
         Load the QEMU VMs from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the Qemu settings from QSettings (for backward compatibility)
-        qemu_vms = []
-        # load the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("QemuVMs")
-        # load the QEMU VMs
-        size = settings.beginReadArray("vm")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            vm = {}
-            for setting_name, default_value in QEMU_VM_SETTINGS.items():
-                vm[setting_name] = settings.value(setting_name, default_value, QEMU_VM_SETTING_TYPES[setting_name])
-            qemu_vms.append(vm)
-        settings.endArray()
-        settings.remove("")
-        settings.endGroup()
-
-        if qemu_vms:
-            local_config.saveSectionSettings(self.__class__.__name__, {"vms": qemu_vms})
-
-        settings = local_config.settings()
+        settings = LocalConfig.instance().settings()
         if "vms" in settings.get(self.__class__.__name__, {}):
             for vm in settings[self.__class__.__name__]["vms"]:
                 name = vm.get("name")

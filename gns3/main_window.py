@@ -166,19 +166,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         local_config = LocalConfig.instance()
-
-        # restore the general settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in GENERAL_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=GENERAL_SETTING_TYPES[name])
-        settings.remove("")
-        settings.endGroup()
-        if legacy_settings:
-            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
-
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, GENERAL_SETTINGS)
         self._cloud_settings = local_config.loadSectionSettings("Cloud", CLOUD_SETTINGS)
 

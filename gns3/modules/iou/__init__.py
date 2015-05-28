@@ -60,24 +60,7 @@ class IOU(Module):
         Loads the settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the IOU settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in IOU_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=IOU_SETTING_TYPES[name])
-        if "iourc" in legacy_settings:
-            legacy_settings["iourc_path"] = legacy_settings["iourc"]
-            del legacy_settings["iourc"]
-        settings.remove("")
-        settings.endGroup()
-
-        if legacy_settings:
-            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
-        self._settings = local_config.loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
 
         if sys.platform.startswith("linux") and not os.path.exists(self._settings["iouyap_path"]):
             iouyap_path = shutil.which("iouyap")

@@ -88,21 +88,7 @@ class VPCS(Module):
         Loads the settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the VPCS settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in VPCS_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=VPCS_SETTING_TYPES[name])
-        settings.remove("")
-        settings.endGroup()
-
-        if legacy_settings:
-            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
-        self._settings = local_config.loadSectionSettings(self.__class__.__name__, VPCS_SETTINGS)
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, VPCS_SETTINGS)
 
         if not self._settings["base_script_file"]:
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))

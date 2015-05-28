@@ -112,30 +112,6 @@ class Servers(QtCore.QObject):
         """
 
         local_config = LocalConfig.instance()
-
-        # restore the local server settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in LOCAL_SERVER_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=LOCAL_SERVER_SETTING_TYPES[name])
-
-        # load the remote servers
-        size = settings.beginReadArray("remote")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            host = settings.value("host", "")
-            port = settings.value("port", 0, type=int)
-            if host and port:
-                self._addRemoteServer("http", host, port, None)
-        settings.endArray()
-        settings.remove("")
-        settings.endGroup()
-
-        if legacy_settings:
-            local_config.saveSectionSettings("LocalServer", legacy_settings)
-
         self._local_server_settings = local_config.loadSectionSettings("LocalServer", LOCAL_SERVER_SETTINGS)
         if not os.path.exists(self._local_server_settings["path"]):
             self._local_server_settings["path"] = self._findLocalServer(self)

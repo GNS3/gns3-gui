@@ -133,21 +133,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         Loads the settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-        # restore the graphics view settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in GRAPHICS_VIEW_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=GRAPHICS_VIEW_SETTING_TYPES[name])
-        settings.remove("")
-        settings.endGroup()
-
-        if legacy_settings:
-            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
-
-        self._settings = local_config.loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
 
     def settings(self):
         """

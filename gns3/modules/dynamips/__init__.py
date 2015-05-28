@@ -103,21 +103,7 @@ class Dynamips(Module):
         Loads the settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-        # restore the Dynamips settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup(self.__class__.__name__)
-        for name in DYNAMIPS_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=DYNAMIPS_SETTING_TYPES[name])
-        settings.remove("")
-        settings.endGroup()
-
-        if legacy_settings:
-            local_config.saveSectionSettings(self.__class__.__name__, legacy_settings)
-        self._settings = local_config.loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
-
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
         if not os.path.exists(self._settings["dynamips_path"]):
             self._settings["dynamips_path"] = self._findDynamips(self)
 
@@ -150,68 +136,7 @@ class Dynamips(Module):
         Load the IOS routers from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the Dynamips VM settings from QSettings (for backward compatibility)
-        ios_routers = []
-        # load the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("IOSRouters")
-        # load the VMs
-        size = settings.beginReadArray("ios_router")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            router = {}
-            for setting_name, default_value in IOS_ROUTER_SETTINGS.items():
-                router[setting_name] = settings.value(setting_name, default_value, IOS_ROUTER_SETTING_TYPES[setting_name])
-
-            for slot_id in range(0, 7):
-                slot = "slot{}".format(slot_id)
-                if settings.contains(slot):
-                    router[slot] = settings.value(slot, "")
-
-            for wic_id in range(0, 3):
-                wic = "wic{}".format(wic_id)
-                if settings.contains(wic):
-                    router[wic] = settings.value(wic, "")
-
-            platform = router["platform"]
-            chassis = router["chassis"]
-
-            if platform == "c7200":
-                router["midplane"] = settings.value("midplane", "vxr")
-                router["npe"] = settings.value("npe", "npe-400")
-                router["slot0"] = settings.value("slot0", "C7200-IO-FE")
-            else:
-                router["iomem"] = 5
-
-            if platform in ("c3725", "c3725", "c2691"):
-                router["slot0"] = settings.value("slot0", "GT96100-FE")
-            elif platform == "c3600" and chassis == "3660":
-                router["slot0"] = settings.value("slot0", "Leopard-2FE")
-            elif platform == "c2600" and chassis == "2610":
-                router["slot0"] = settings.value("slot0", "C2600-MB-1E")
-            elif platform == "c2600" and chassis == "2611":
-                router["slot0"] = settings.value("slot0", "C2600-MB-2E")
-            elif platform == "c2600" and chassis in ("2620", "2610XM", "2620XM", "2650XM"):
-                router["slot0"] = settings.value("slot0", "C2600-MB-1FE")
-            elif platform == "c2600" and chassis in ("2621", "2611XM", "2621XM", "2651XM"):
-                router["slot0"] = settings.value("slot0", "C2600-MB-2FE")
-            elif platform == "c1700" and chassis in ("1720", "1721", "1750", "1751", "1760"):
-                router["slot0"] = settings.value("slot0", "C1700-MB-1FE")
-            elif platform == "c1700" and chassis in ("1751", "1760"):
-                router["slot0"] = settings.value("slot0", "C1700-MB-WIC1")
-
-            ios_routers.append(router)
-
-        settings.endArray()
-        settings.remove("")
-        settings.endGroup()
-
-        if ios_routers:
-            local_config.saveSectionSettings(self.__class__.__name__, {"routers": ios_routers})
-
-        settings = local_config.settings()
+        settings = LocalConfig.instance().settings()
         if "routers" in settings.get(self.__class__.__name__, {}):
             for router in settings[self.__class__.__name__]["routers"]:
                 name = router.get("name")

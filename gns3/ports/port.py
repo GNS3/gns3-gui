@@ -401,21 +401,7 @@ class Port:
         Loads the packet capture settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the packet capture settings from QSettings (for backward compatibility)
-        legacy_settings = {}
-        settings = QtCore.QSettings()
-        settings.beginGroup("PacketCapture")
-        for name in PACKET_CAPTURE_SETTINGS.keys():
-            if settings.contains(name):
-                legacy_settings[name] = settings.value(name, type=PACKET_CAPTURE_SETTING_TYPES[name])
-        settings.remove("")
-        settings.endGroup()
-        if legacy_settings:
-            local_config.saveSectionSettings("PacketCapture", legacy_settings)
-
-        cls._settings = local_config.loadSectionSettings("PacketCapture", PACKET_CAPTURE_SETTINGS)
+        cls._settings = LocalConfig.instance().loadSectionSettings("PacketCapture", PACKET_CAPTURE_SETTINGS)
 
     @classmethod
     def setPacketCaptureSettings(cls, new_settings):
