@@ -19,6 +19,7 @@ import sys
 import os
 import platform
 import struct
+import faulthandler
 
 try:
     import raven
@@ -33,6 +34,14 @@ from .servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
+
+
+# Dev build
+if __version__[4] != 0:
+    # Display a traceback in case of segfault crash. Usefull when frozen
+    # Not enabled by default for security reason
+    log.info("Enable catching segfault")
+    faulthandler.enable()
 
 
 class CrashReport:
