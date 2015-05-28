@@ -2,20 +2,18 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Tue May 12 10:29:01 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Wed May 27 19:21:10 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_ServerPreferencesPageWidget:
-
+class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(460, 536)
+        ServerPreferencesPageWidget.resize(462, 563)
         self.verticalLayout = QtWidgets.QVBoxLayout(ServerPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(ServerPreferencesPageWidget)
@@ -30,11 +28,11 @@ class Ui_ServerPreferencesPageWidget:
         self.verticalLayout_2.addWidget(self.uiLocalServerAutoStartCheckBox)
         self.uiGeneralSettingsGroupBox = QtWidgets.QGroupBox(self.uiLocalTabWidget)
         self.uiGeneralSettingsGroupBox.setObjectName("uiGeneralSettingsGroupBox")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.uiGeneralSettingsGroupBox)
-        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiGeneralSettingsGroupBox)
+        self.gridLayout.setObjectName("gridLayout")
         self.uiLocalServerPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsGroupBox)
         self.uiLocalServerPathLabel.setObjectName("uiLocalServerPathLabel")
-        self.gridLayout_3.addWidget(self.uiLocalServerPathLabel, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiLocalServerPathLabel, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiLocalServerPathLineEdit = QtWidgets.QLineEdit(self.uiGeneralSettingsGroupBox)
@@ -44,25 +42,38 @@ class Ui_ServerPreferencesPageWidget:
         self.uiLocalServerToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiLocalServerToolButton.setObjectName("uiLocalServerToolButton")
         self.horizontalLayout.addWidget(self.uiLocalServerToolButton)
-        self.gridLayout_3.addLayout(self.horizontalLayout, 1, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
+        self.uiUbridgePathLabel = QtWidgets.QLabel(self.uiGeneralSettingsGroupBox)
+        self.uiUbridgePathLabel.setObjectName("uiUbridgePathLabel")
+        self.gridLayout.addWidget(self.uiUbridgePathLabel, 2, 0, 1, 1)
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.uiUbridgePathLineEdit = QtWidgets.QLineEdit(self.uiGeneralSettingsGroupBox)
+        self.uiUbridgePathLineEdit.setObjectName("uiUbridgePathLineEdit")
+        self.horizontalLayout_5.addWidget(self.uiUbridgePathLineEdit)
+        self.uiUbridgeToolButton = QtWidgets.QToolButton(self.uiGeneralSettingsGroupBox)
+        self.uiUbridgeToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiUbridgeToolButton.setObjectName("uiUbridgeToolButton")
+        self.horizontalLayout_5.addWidget(self.uiUbridgeToolButton)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 3, 0, 1, 1)
         self.uiLocalServerHostLabel = QtWidgets.QLabel(self.uiGeneralSettingsGroupBox)
         self.uiLocalServerHostLabel.setObjectName("uiLocalServerHostLabel")
-        self.gridLayout_3.addWidget(self.uiLocalServerHostLabel, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiLocalServerHostLabel, 4, 0, 1, 1)
         self.uiLocalServerHostComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsGroupBox)
         self.uiLocalServerHostComboBox.setObjectName("uiLocalServerHostComboBox")
-        self.gridLayout_3.addWidget(self.uiLocalServerHostComboBox, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiLocalServerHostComboBox, 5, 0, 1, 1)
         self.uiLocalServerPortLabel = QtWidgets.QLabel(self.uiGeneralSettingsGroupBox)
         self.uiLocalServerPortLabel.setObjectName("uiLocalServerPortLabel")
-        self.gridLayout_3.addWidget(self.uiLocalServerPortLabel, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiLocalServerPortLabel, 6, 0, 1, 1)
         self.uiLocalServerPortSpinBox = QtWidgets.QSpinBox(self.uiGeneralSettingsGroupBox)
         self.uiLocalServerPortSpinBox.setSuffix(" TCP")
         self.uiLocalServerPortSpinBox.setMaximum(65535)
         self.uiLocalServerPortSpinBox.setProperty("value", 8000)
         self.uiLocalServerPortSpinBox.setObjectName("uiLocalServerPortSpinBox")
-        self.gridLayout_3.addWidget(self.uiLocalServerPortSpinBox, 5, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiLocalServerPortSpinBox, 7, 0, 1, 1)
         self.uiConsoleConnectionsToAnyIPCheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsGroupBox)
         self.uiConsoleConnectionsToAnyIPCheckBox.setObjectName("uiConsoleConnectionsToAnyIPCheckBox")
-        self.gridLayout_3.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 7, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 8, 0, 1, 1)
         self.verticalLayout_2.addWidget(self.uiGeneralSettingsGroupBox)
         self.uiConsolePortRangeGroupBox = QtWidgets.QGroupBox(self.uiLocalTabWidget)
         self.uiConsolePortRangeGroupBox.setObjectName("uiConsolePortRangeGroupBox")
@@ -221,7 +232,7 @@ class Ui_ServerPreferencesPageWidget:
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(ServerPreferencesPageWidget)
-        self.uiTabWidget.setCurrentIndex(1)
+        self.uiTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(ServerPreferencesPageWidget)
         ServerPreferencesPageWidget.setTabOrder(self.uiTabWidget, self.uiLocalServerAutoStartCheckBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerAutoStartCheckBox, self.uiLocalServerToolButton)
@@ -250,8 +261,10 @@ class Ui_ServerPreferencesPageWidget:
         ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "Server"))
         self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable local server"))
         self.uiGeneralSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "General settings"))
-        self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:"))
+        self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Server path:"))
         self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "&Browse..."))
+        self.uiUbridgePathLabel.setText(_translate("ServerPreferencesPageWidget", "Ubridge path:"))
+        self.uiUbridgeToolButton.setText(_translate("ServerPreferencesPageWidget", "&Browse..."))
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:"))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:"))
         self.uiConsoleConnectionsToAnyIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Allow console connections to any local IP address"))
@@ -262,7 +275,7 @@ class Ui_ServerPreferencesPageWidget:
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
-        self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
+        self.uiRemoteServerProtocolComboBox.setProperty("currentText", _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "SSH"))
         self.uiRemoteServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host:"))
@@ -277,3 +290,4 @@ class Ui_ServerPreferencesPageWidget:
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
+

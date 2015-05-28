@@ -87,6 +87,25 @@ class Servers(QtCore.QObject):
             return ""
         return local_server_path
 
+    @staticmethod
+    def _findUbridge(self):
+        """
+        Finds the ubridge executable path.
+
+        :return: path to the ubridge
+        """
+
+        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
+            ubridge_path = os.path.join(os.getcwd(), "ubridge.exe")
+        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+            ubridge_path = os.path.join(os.getcwd(), "ubridge")
+        else:
+            ubridge_path = shutil.which("ubridge")
+
+        if ubridge_path is None:
+            return ""
+        return ubridge_path
+
     def _loadSettings(self):
         """
         Loads the server settings from the persistent settings file.
@@ -121,6 +140,9 @@ class Servers(QtCore.QObject):
         if not os.path.exists(self._local_server_settings["path"]):
             self._local_server_settings["path"] = self._findLocalServer(self)
 
+        if not os.path.exists(self._local_server_settings["ubridge_path"]):
+            self._local_server_settings["ubridge_path"] = self._findUbridge(self)
+
         settings = local_config.settings()
         if "RemoteServers" in settings:
             for remote_server in settings["RemoteServers"]:
@@ -153,6 +175,7 @@ class Servers(QtCore.QObject):
         server_settings = OrderedDict([
             ("host", self._local_server_settings["host"]),
             ("port", self._local_server_settings["port"]),
+            ("ubridge_path", self._local_server_settings["ubridge_path"]),
             ("images_path", self._local_server_settings["images_path"]),
             ("projects_path", self._local_server_settings["projects_path"]),
             ("console_start_port_range", self._local_server_settings["console_start_port_range"]),

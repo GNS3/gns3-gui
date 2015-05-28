@@ -231,6 +231,7 @@ GRAPHICS_VIEW_SETTING_TYPES = {
 
 LOCAL_SERVER_SETTINGS = {
     "path": "",
+    "ubridge_path": "",
     "host": DEFAULT_LOCAL_SERVER_HOST,
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
@@ -246,6 +247,7 @@ LOCAL_SERVER_SETTINGS = {
 
 LOCAL_SERVER_SETTING_TYPES = {
     "path": str,
+    "ubridge_path": str,
     "host": str,
     "port": int,
     "images_path": str,

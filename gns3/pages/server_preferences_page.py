@@ -47,6 +47,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         # connect the slots
         self.uiLocalServerToolButton.clicked.connect(self._localServerBrowserSlot)
+        self.uiUbridgeToolButton.clicked.connect(self._ubridgeBrowserSlot)
         self.uiAddRemoteServerPushButton.clicked.connect(self._remoteServerAddSlot)
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
         self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
@@ -137,6 +138,20 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             return
 
         self.uiLocalServerPathLineEdit.setText(path)
+
+    def _ubridgeBrowserSlot(self):
+        """
+        Slot to open a file browser and select the ubridge executable path.
+        """
+
+        filter = ""
+        if sys.platform.startswith("win"):
+            filter = "Executable (*.exe);;All files (*.*)"
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select ubridge executable", ".", filter)
+        if not path:
+            return
+
+        self.uiUbridgePathLineEdit.setText(path)
 
     def _remoteServerClickedSlot(self, item, column):
         """
@@ -249,6 +264,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         self.uiLocalServerPathLineEdit.setText(settings["path"])
+        self.uiUbridgePathLineEdit.setText(settings["ubridge_path"])
         index = self.uiLocalServerHostComboBox.findData(settings["host"])
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
@@ -302,6 +318,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # save the local server preferences
         new_settings = {}
         new_settings["path"] = self.uiLocalServerPathLineEdit.text()
+        new_settings["ubridge_path"] = self.uiUbridgePathLineEdit.text()
         new_settings["host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
         new_settings["port"] = self.uiLocalServerPortSpinBox.value()
         new_settings["auto_start"] = self.uiLocalServerAutoStartCheckBox.isChecked()

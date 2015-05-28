@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>460</width>
-    <height>536</height>
+    <width>462</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="uiTabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="uiLocalTabWidget">
       <attribute name="title">
@@ -39,11 +39,11 @@
          <property name="title">
           <string>General settings</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
            <widget class="QLabel" name="uiLocalServerPathLabel">
             <property name="text">
-             <string>Path:</string>
+             <string>Server path:</string>
             </property>
            </widget>
           </item>
@@ -65,23 +65,47 @@
            </layout>
           </item>
           <item row="2" column="0">
+           <widget class="QLabel" name="uiUbridgePathLabel">
+            <property name="text">
+             <string>Ubridge path:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLineEdit" name="uiUbridgePathLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiUbridgeToolButton">
+              <property name="text">
+               <string>&amp;Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
            <widget class="QLabel" name="uiLocalServerHostLabel">
             <property name="text">
              <string>Host binding:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="5" column="0">
            <widget class="QComboBox" name="uiLocalServerHostComboBox"/>
           </item>
-          <item row="4" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="uiLocalServerPortLabel">
             <property name="text">
              <string>Port:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="7" column="0">
            <widget class="QSpinBox" name="uiLocalServerPortSpinBox">
             <property name="suffix">
              <string notr="true"> TCP</string>
@@ -94,7 +118,7 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
+          <item row="8" column="0">
            <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
             <property name="text">
              <string>Allow console connections to any local IP address</string>
@@ -281,7 +305,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="currentText">
+           <property name="currentText" stdset="0">
             <string>HTTP</string>
            </property>
            <item>
