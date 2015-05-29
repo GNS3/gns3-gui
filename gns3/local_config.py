@@ -156,7 +156,6 @@ class LocalConfig(QtCore.QObject):
         :returns: settings (dict)
         """
 
-        self._checkConfigChanged()
         return self._settings
 
     def setSettings(self, settings):
