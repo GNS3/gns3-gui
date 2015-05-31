@@ -125,8 +125,7 @@ class LocalConfig(QtCore.QObject):
 
     def _checkConfigChanged(self):
         if self._last_config_changed < os.stat(self._config_file).st_mtime:
-            log.info("Config changed reloading...")
-            print("Config changed reloading {}...".format(self._config_file))
+            log.info("Client config has changed, reloading it...")
             self._settings = self._readConfig(self._config_file)
             self.config_changed_signal.emit()
 

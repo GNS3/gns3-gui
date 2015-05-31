@@ -175,7 +175,7 @@ class VM(Node):
         """
 
         if error:
-            log.error("error while adding an UDP NIO for {}: {}".format(self.name(), result["message"]))
+            log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             self.nio_cancel_signal.emit(self.id())
         else:

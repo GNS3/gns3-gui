@@ -264,7 +264,7 @@ class VMware(Module):
 
         vmx_path = vm_settings.pop("vmx_path")
         name = vm_settings.pop("name")
-        node.setup(vmx_path, linked_clone=False, additional_settings=vm_settings, base_name=name)
+        node.setup(vmx_path, linked_clone=linked_base, additional_settings=vm_settings, base_name=name)
 
     def reset(self):
         """
