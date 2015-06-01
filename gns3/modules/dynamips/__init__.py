@@ -80,7 +80,7 @@ class Dynamips(Module):
         self._loadIOSRouters()
 
     @staticmethod
-    def _findDynamips(self):
+    def _findDynamips():
         """
         Finds the Dynamips path.
 
