@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NodeConfiguratorDialog</class>
- <widget class="QDialog" name="NodeConfiguratorDialog">
+ <class>NodePropertiesDialog</class>
+ <widget class="QDialog" name="NodePropertiesDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Node configurator</string>
+   <string>Node properties</string>
   </property>
   <layout class="QGridLayout">
    <item row="0" column="0">

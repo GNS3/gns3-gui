@@ -27,7 +27,7 @@ import functools
 from .qt import QtCore, QtGui, QtNetwork, QtWidgets
 from .servers import Servers
 from .items.node_item import NodeItem
-from .dialogs.node_configurator_dialog import NodeConfiguratorDialog
+from .dialogs.node_properties_dialog import NodePropertiesDialog
 from .link import Link
 from .node import Node
 from .modules import MODULES
@@ -612,15 +612,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def configureSlot(self, items=None):
         """
-        Opens the node configurator.
+        Opens the node properties dialog.
         """
 
         if not items:
             items = self.scene().selectedItems()
-        node_configurator = NodeConfiguratorDialog(items, self._main_window)
-        node_configurator.setModal(True)
-        node_configurator.show()
-        node_configurator.exec_()
+        node_properties = NodePropertiesDialog(items, self._main_window)
+        node_properties.setModal(True)
+        node_properties.show()
+        node_properties.exec_()
         for item in items:
             item.setSelected(False)
 

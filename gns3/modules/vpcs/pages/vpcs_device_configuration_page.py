@@ -65,7 +65,7 @@ class VPCSDeviceConfigurationPage(QtWidgets.QWidget, Ui_VPCSDeviceConfigPageWidg
         """
 
         # these settings cannot be shared by nodes and updated
-        # in the node configurator.
+        # in the node properties dialog.
         if not group:
 
             # set the device name

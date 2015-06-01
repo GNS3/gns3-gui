@@ -19,8 +19,8 @@
 Configuration page for Dynamips Ethernet hubs.
 """
 
-from gns3.qt import QtGui, QtWidgets
-from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.qt import QtWidgets
+from gns3.dialogs.node_properties_dialog import ConfigurationError
 from ..ui.ethernet_hub_configuration_page_ui import Ui_ethernetHubConfigPageWidget
 
 

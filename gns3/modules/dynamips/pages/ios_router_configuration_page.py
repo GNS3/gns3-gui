@@ -24,7 +24,7 @@ import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
-from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.dialogs.node_properties_dialog import ConfigurationError
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
@@ -382,7 +382,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         else:
             self.uiSparseMemoryCheckBox.hide()
 
-        self.server = Servers.instance().getServerFromString(settings["server"])
+        #FIXME
+        #self.server = Servers.instance().getServerFromString(settings["server"])
 
     def _checkForLinkConnectedToAdapter(self, slot_number, settings, node):
         """

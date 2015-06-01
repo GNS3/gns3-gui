@@ -19,9 +19,9 @@
 Dialog to configure and update node settings using widget pages.
 """
 
-from ..qt import QtGui, QtWidgets
+from ..qt import QtWidgets
 from ..ui.configuration_dialog_ui import Ui_configurationDialog
-from .node_configurator_dialog import ConfigurationError
+from .node_properties_dialog import ConfigurationError
 
 
 class ConfigurationDialog(QtWidgets.QDialog, Ui_configurationDialog):

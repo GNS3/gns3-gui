@@ -958,7 +958,7 @@ class Router(VM):
 
     def configPage(self):
         """
-        Returns the configuration page widget to be used by the node configurator.
+        Returns the configuration page widget to be used by the node properties dialog.
 
         :returns: QWidget object
         """

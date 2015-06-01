@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'node_configurator_dialog.ui'
+# Form implementation generated from reading ui file 'node_properties_dialog.ui'
 #
-# Created: Wed May  6 14:31:53 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Mon Jun  1 16:38:38 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_NodeConfiguratorDialog:
-
-    def setupUi(self, NodeConfiguratorDialog):
-        NodeConfiguratorDialog.setObjectName("NodeConfiguratorDialog")
-        NodeConfiguratorDialog.resize(689, 454)
-        self.gridlayout = QtWidgets.QGridLayout(NodeConfiguratorDialog)
+class Ui_NodePropertiesDialog(object):
+    def setupUi(self, NodePropertiesDialog):
+        NodePropertiesDialog.setObjectName("NodePropertiesDialog")
+        NodePropertiesDialog.resize(689, 454)
+        self.gridlayout = QtWidgets.QGridLayout(NodePropertiesDialog)
         self.gridlayout.setObjectName("gridlayout")
-        self.splitter = QtWidgets.QSplitter(NodeConfiguratorDialog)
+        self.splitter = QtWidgets.QSplitter(NodePropertiesDialog)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.uiNodesTreeWidget = QtWidgets.QTreeWidget(self.splitter)
@@ -70,22 +68,22 @@ class Ui_NodeConfiguratorDialog:
         self.uiConfigStackedWidget.addWidget(self.uiEmptyPageWidget)
         self.vboxlayout.addWidget(self.uiConfigStackedWidget)
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
-        self.uiButtonBox = QtWidgets.QDialogButtonBox(NodeConfiguratorDialog)
+        self.uiButtonBox = QtWidgets.QDialogButtonBox(NodePropertiesDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Reset)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Reset)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 
-        self.retranslateUi(NodeConfiguratorDialog)
+        self.retranslateUi(NodePropertiesDialog)
         self.uiConfigStackedWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(NodeConfiguratorDialog)
+        QtCore.QMetaObject.connectSlotsByName(NodePropertiesDialog)
 
-    def retranslateUi(self, NodeConfiguratorDialog):
+    def retranslateUi(self, NodePropertiesDialog):
         _translate = gns3.qt.translate
-        NodeConfiguratorDialog.setWindowTitle(_translate("NodeConfiguratorDialog", "Node configurator"))
-        self.uiNodesTreeWidget.headerItem().setText(0, _translate("NodeConfiguratorDialog", "Nodes"))
-        self.uiTitleLabel.setText(_translate("NodeConfiguratorDialog", "Node Configuration"))
-        self.textLabel.setText(_translate("NodeConfiguratorDialog", "Please select a node in the list \n"
-                                          "to display the configuration page."))
+        NodePropertiesDialog.setWindowTitle(_translate("NodePropertiesDialog", "Node properties"))
+        self.uiNodesTreeWidget.headerItem().setText(0, _translate("NodePropertiesDialog", "Nodes"))
+        self.uiTitleLabel.setText(_translate("NodePropertiesDialog", "Node Configuration"))
+        self.textLabel.setText(_translate("NodePropertiesDialog", "Please select a node in the list \n"
+"to display the configuration page."))
 
 from . import resources_rc

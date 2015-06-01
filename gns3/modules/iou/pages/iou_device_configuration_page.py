@@ -21,8 +21,8 @@ Configuration page for IOU devices.
 
 import os
 
-from gns3.qt import QtCore, QtGui, QtWidgets
-from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.qt import QtCore, QtWidgets
+from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
@@ -144,6 +144,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
         self.uiSerialAdaptersSpinBox.setValue(settings["serial_adapters"])
 
+        #FIXME
         self.server = Servers.instance().getServerFromString(settings["server"])
 
     def saveSettings(self, settings, node=None, group=False):
@@ -156,7 +157,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         """
 
         # these settings cannot be shared by nodes and updated
-        # in the node configurator.
+        # in the node properties dialog.
         if not group:
 
             # set the device name

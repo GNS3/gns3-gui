@@ -23,13 +23,13 @@ from gns3.http_client import HTTPClient
 from gns3.progress import Progress
 
 from ..qt import QtCore, QtGui, QtWidgets
-from ..ui.node_configurator_dialog_ui import Ui_NodeConfiguratorDialog
+from ..ui.node_properties_dialog_ui import Ui_NodePropertiesDialog
 
 
-class NodeConfiguratorDialog(QtWidgets.QDialog, Ui_NodeConfiguratorDialog):
+class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
 
     """
-    Node configurator implementation.
+    Node properties implementation.
 
     :param node_items: list of NodeItem instances
     :param parent: parent widget
@@ -61,7 +61,7 @@ class NodeConfiguratorDialog(QtWidgets.QDialog, Ui_NodeConfiguratorDialog):
 
     def _loadNodeItems(self):
         """
-        Loads the nodes into the Node configurator QTreeWidget
+        Loads the nodes into the Node properties QTreeWidget
         """
 
         # create the parent (group) items
@@ -249,7 +249,7 @@ class ConfigurationPageItem(QtWidgets.QTreeWidgetItem):
 
     def page(self):
         """
-        Returns the page widget to be displayed by the node configurator.
+        Returns the page widget to be displayed by the node properties dialog.
 
         :returns: QWidget instance
         """

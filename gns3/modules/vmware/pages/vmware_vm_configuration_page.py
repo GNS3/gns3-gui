@@ -20,7 +20,7 @@ Configuration page for VMware VMs.
 """
 
 from gns3.qt import QtWidgets
-from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.dialogs.node_properties_dialog import ConfigurationError
 from ..ui.vmware_vm_configuration_page_ui import Ui_VMwareVMConfigPageWidget
 
 
@@ -100,7 +100,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         """
 
         # these settings cannot be shared by nodes and updated
-        # in the node configurator.
+        # in the node properties dialog.
         if not group:
 
             if "name" in settings:

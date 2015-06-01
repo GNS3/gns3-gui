@@ -19,8 +19,8 @@
 Configuration page for VirtualBox VMs.
 """
 
-from gns3.qt import QtGui, QtWidgets
-from gns3.dialogs.node_configurator_dialog import ConfigurationError
+from gns3.qt import QtWidgets
+from gns3.dialogs.node_properties_dialog import ConfigurationError
 
 from ..ui.virtualbox_vm_configuration_page_ui import Ui_virtualBoxVMConfigPageWidget
 
@@ -104,7 +104,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         """
 
         # these settings cannot be shared by nodes and updated
-        # in the node configurator.
+        # in the node properties dialog.
         if not group:
 
             if "name" in settings:
