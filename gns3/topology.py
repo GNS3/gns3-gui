@@ -868,14 +868,14 @@ class Topology:
         Called when a link is successfuly created
         """
         self._initialized_links.append(link_id)
-        if (len(topology["topology"]["links"]) == len(self._initialized_links)):
+        if (len(topology["topology"].get("links", [])) == len(self._initialized_links)):
             self._autoStart(topology)
 
     def _autoStart(self, topology):
         """
         If everything is created auto start the topology
         """
-        if (len(topology["topology"]["links"]) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes)):
+        if (len(topology["topology"].get("links", [])) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes)):
             # Auto start
             if self._auto_start:
                 log.info("Auto start nodes")
