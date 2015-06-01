@@ -592,12 +592,21 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         item = self.itemAt(event.pos())
-        if not self._adding_link and isinstance(item, NodeItem) and item.node().initialized():
-            item.setSelected(True)
-            if item.node().status() == Node.stopped:
-                self.configureSlot()
-            else:
-                self.consoleFromItems(self.scene().selectedItems())
+
+        if not self._adding_link:
+            if isinstance(item, NodeItem) and item.node().initialized():
+                item.setSelected(True)
+                if item.node().status() == Node.stopped:
+                    self.configureSlot()
+                    return
+                else:
+                    self.consoleFromItems(self.scene().selectedItems())
+                    return
+            elif isinstance(item, NoteItem) and isinstance(item.parentItem(), NodeItem):
+                if item.parentItem().node().initialized():
+                    item.parentItem().setSelected(True)
+                    self.changeHostnameActionSlot()
+                return
         else:
             super().mouseDoubleClickEvent(event)
 
