@@ -163,9 +163,11 @@ class SnapshotsDialog(QtGui.QDialog, Ui_SnapshotsDialog):
                 progress_dialog.show()
                 progress_dialog.exec_()
 
-            os.remove(self._project_path)
-            shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
-
+            try:
+                os.remove(self._project_path)
+                shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
+            except OSError as e:
+                QtGui.QMessageBox.critical(self, "Restore snapshot", "Cannot restore snapshot: {}".format(e))
         else:
             worker = ProcessFilesWorker(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
             progress_dialog = ProgressDialog(worker, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)
