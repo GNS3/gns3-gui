@@ -119,7 +119,7 @@ class Dynamips(Module):
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
 
         if not os.path.exists(self._settings["dynamips_path"]):
-            self._settings["dynamips_path"] = self._findDynamips(self)
+            self._settings["dynamips_path"] = self._findDynamips()
 
         # keep the config file sync
         self._saveSettings()
