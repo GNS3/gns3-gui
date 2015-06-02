@@ -163,7 +163,10 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
                 progress_dialog.show()
                 progress_dialog.exec_()
 
-            os.remove(self._project_path)
+            try:
+                os.remove(self._project_path)
+            except FileNotFoundError:
+                pass
             shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
 
         else:
