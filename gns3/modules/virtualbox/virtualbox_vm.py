@@ -59,6 +59,7 @@ class VirtualBoxVM(VM):
                           "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
                           "ram": VBOX_VM_SETTINGS["ram"],
                           "headless": VBOX_VM_SETTINGS["headless"],
+                          "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
                           "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
 
     def _addAdapters(self, adapters):

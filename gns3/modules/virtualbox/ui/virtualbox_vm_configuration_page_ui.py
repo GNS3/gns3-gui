@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'virtualbox_vm_configuration_page.ui'
 #
-# Created: Thu May 21 21:37:50 2015
+# Created: Tue Jun  2 16:25:01 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,9 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_virtualBoxVMConfigPageWidget:
-
+class Ui_virtualBoxVMConfigPageWidget(object):
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
         virtualBoxVMConfigPageWidget.resize(509, 346)
@@ -66,13 +64,16 @@ class Ui_virtualBoxVMConfigPageWidget:
         self.uiHeadlessModeCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName("uiHeadlessModeCheckBox")
-        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 5, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 6, 0, 1, 2)
         self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName("uiBaseVMCheckBox")
-        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 6, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 8, 0, 1, 2)
         spacerItem = QtWidgets.QSpacerItem(20, 138, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 7, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem, 9, 1, 1, 1)
+        self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.tab)
+        self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
+        self.gridLayout.addWidget(self.uiACPIShutdownCheckBox, 5, 0, 1, 2)
         self.uiTabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -120,8 +121,10 @@ class Ui_virtualBoxVMConfigPageWidget:
         self.uiEnableConsoleCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Enable remote console"))
         self.uiHeadlessModeCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Start VM in headless mode"))
         self.uiBaseVMCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Use as a linked base VM (experimental)"))
+        self.uiACPIShutdownCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Enable ACPI shutdown"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("virtualBoxVMConfigPageWidget", "General settings"))
         self.uiAdaptersLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Adapters:"))
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Allow GNS3 to use any configured VirtualBox adapter"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network"))
+

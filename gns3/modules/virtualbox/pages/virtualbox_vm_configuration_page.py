@@ -92,6 +92,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiVMRamSpinBox.setValue(settings["ram"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
+        self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
         self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
     def saveSettings(self, settings, node=None, group=False):
@@ -130,6 +131,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         settings["ram"] = self.uiVMRamSpinBox.value()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
+        settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()

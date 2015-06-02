@@ -95,7 +95,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
          <property name="text">
           <string>Start VM in headless mode</string>
@@ -105,7 +105,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
+       <item row="8" column="0" colspan="2">
         <widget class="QCheckBox" name="uiBaseVMCheckBox">
          <property name="enabled">
           <bool>true</bool>
@@ -115,7 +115,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="9" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -127,6 +127,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
+         <property name="text">
+          <string>Enable ACPI shutdown</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
