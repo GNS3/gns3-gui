@@ -302,6 +302,14 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
+
+        # load the MAC address setting
+        self.uiMacAddrLineEdit.setInputMask("HH:HH:HH:HH:HH:HH;_")
+        if settings["mac_address"]:
+            self.uiMacAddrLineEdit.setText(settings["mac_address"])
+        else:
+            self.uiMacAddrLineEdit.clear()
+
         self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
         index = self.uiAdapterTypesComboBox.findData(settings["adapter_type"])
         if index != -1:
@@ -376,6 +384,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
+        settings["mac_address"] = self.uiMacAddrLineEdit.text()
         settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()

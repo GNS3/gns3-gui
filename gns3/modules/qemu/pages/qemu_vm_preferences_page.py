@@ -94,6 +94,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         section_item = self._createSectionItem("Network")
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(qemu_vm["adapters"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Type:", qemu_vm["adapter_type"]])
+        if qemu_vm["mac_address"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Base MAC address:", qemu_vm["mac_address"]])
 
         # fill out the Linux boot section
         if qemu_vm["initrd"] or qemu_vm["kernel_image"] or qemu_vm["kernel_command_line"]:
@@ -114,9 +116,11 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Process priority:", qemu_vm["process_priority"]])
 
         # fill out the Additional options section
+
+        section_item = self._createSectionItem("Additional options")
         if qemu_vm["options"]:
-            section_item = self._createSectionItem("Additional options")
             QtWidgets.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown:", "{}%".format(qemu_vm["acpi_shutdown"])])
 
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)

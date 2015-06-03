@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created: Tue Jun  2 17:09:57 2015
+# Created: Wed Jun  3 14:51:51 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -146,9 +146,15 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiAdaptersSpinBox.setMaximum(32)
         self.uiAdaptersSpinBox.setObjectName("uiAdaptersSpinBox")
         self.gridLayout_5.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
+        self.uiMacAddrLabel = QtWidgets.QLabel(self.tab_7)
+        self.uiMacAddrLabel.setObjectName("uiMacAddrLabel")
+        self.gridLayout_5.addWidget(self.uiMacAddrLabel, 1, 0, 1, 1)
+        self.uiMacAddrLineEdit = QtWidgets.QLineEdit(self.tab_7)
+        self.uiMacAddrLineEdit.setObjectName("uiMacAddrLineEdit")
+        self.gridLayout_5.addWidget(self.uiMacAddrLineEdit, 1, 1, 1, 1)
         self.uiAdapterTypesLabel = QtWidgets.QLabel(self.tab_7)
         self.uiAdapterTypesLabel.setObjectName("uiAdapterTypesLabel")
-        self.gridLayout_5.addWidget(self.uiAdapterTypesLabel, 1, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.uiAdapterTypesLabel, 2, 0, 1, 1)
         self.uiAdapterTypesComboBox = QtWidgets.QComboBox(self.tab_7)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -156,12 +162,12 @@ class Ui_QemuVMConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiAdapterTypesComboBox.sizePolicy().hasHeightForWidth())
         self.uiAdapterTypesComboBox.setSizePolicy(sizePolicy)
         self.uiAdapterTypesComboBox.setObjectName("uiAdapterTypesComboBox")
-        self.gridLayout_5.addWidget(self.uiAdapterTypesComboBox, 1, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.uiAdapterTypesComboBox, 2, 1, 1, 1)
         self.uiLegacyNetworkingCheckBox = QtWidgets.QCheckBox(self.tab_7)
         self.uiLegacyNetworkingCheckBox.setObjectName("uiLegacyNetworkingCheckBox")
-        self.gridLayout_5.addWidget(self.uiLegacyNetworkingCheckBox, 2, 0, 1, 2)
+        self.gridLayout_5.addWidget(self.uiLegacyNetworkingCheckBox, 3, 0, 1, 2)
         spacerItem2 = QtWidgets.QSpacerItem(20, 261, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem2, 3, 1, 1, 1)
+        self.gridLayout_5.addItem(spacerItem2, 4, 1, 1, 1)
         self.uiQemutabWidget.addTab(self.tab_7, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -280,6 +286,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiHddDiskImageCreateToolButton.setText(_translate("QemuVMConfigPageWidget", "Create..."))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_3), _translate("QemuVMConfigPageWidget", "HDD"))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:"))
+        self.uiMacAddrLabel.setText(_translate("QemuVMConfigPageWidget", "Base MAC:"))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:"))
         self.uiLegacyNetworkingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use the legacy networking mode"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_7), _translate("QemuVMConfigPageWidget", "Network"))
@@ -302,6 +309,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiProcessPriorityComboBox.setItemText(5, _translate("QemuVMConfigPageWidget", "Very low"))
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings"))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
-        self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown"))
+        self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings"))
 
