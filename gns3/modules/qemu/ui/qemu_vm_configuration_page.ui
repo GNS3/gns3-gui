@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>407</height>
+    <width>490</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -486,9 +486,17 @@
           <item row="0" column="2">
            <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
           </item>
+          <item row="1" column="0" colspan="3">
+           <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
+            <property name="text">
+             <string>Enable ACPI shutdown</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>uiQemuOptionsLineEdit</zorder>
          <zorder>uiQemuOptionsLabel</zorder>
+         <zorder>uiACPIShutdownCheckBox</zorder>
         </widget>
        </item>
        <item>

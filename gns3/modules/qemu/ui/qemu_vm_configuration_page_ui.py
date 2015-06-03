@@ -2,19 +2,18 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.1
+# Created: Tue Jun  2 17:09:57 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_QemuVMConfigPageWidget:
-
+class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
-        QemuVMConfigPageWidget.resize(486, 407)
+        QemuVMConfigPageWidget.resize(490, 453)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemutabWidget = QtWidgets.QTabWidget(QemuVMConfigPageWidget)
@@ -244,8 +243,9 @@ class Ui_QemuVMConfigPageWidget:
         self.uiQemuOptionsLineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.uiQemuOptionsLineEdit.setObjectName("uiQemuOptionsLineEdit")
         self.gridLayout_3.addWidget(self.uiQemuOptionsLineEdit, 0, 2, 1, 1)
-        self.uiQemuOptionsLineEdit.raise_()
-        self.uiQemuOptionsLabel.raise_()
+        self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.groupBox)
+        self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
+        self.gridLayout_3.addWidget(self.uiACPIShutdownCheckBox, 1, 0, 1, 3)
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem3 = QtWidgets.QSpacerItem(20, 90, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem3)
@@ -302,4 +302,6 @@ class Ui_QemuVMConfigPageWidget:
         self.uiProcessPriorityComboBox.setItemText(5, _translate("QemuVMConfigPageWidget", "Very low"))
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings"))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
+        self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+
