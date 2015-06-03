@@ -165,10 +165,9 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
             try:
                 os.remove(self._project_path)
-            except FileNotFoundError:
-                pass
-            shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
-
+                shutil.copy(os.path.join(snapshot_path, os.path.basename(self._project_path)), self._project_path)
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self, "Restore snapshot", "Cannot restore snapshot: {}".format(e))
         else:
             worker = ProcessFilesWorker(snapshot_path, os.path.dirname(self._project_path), skip_dirs=["snapshots"])
             progress_dialog = ProgressDialog(worker, "Restoring snapshot", "Copying project files...", "Cancel", parent=self)

@@ -21,6 +21,7 @@ import http
 import uuid
 import urllib.request
 import pathlib
+import base64
 from functools import partial
 
 from .version import __version__, __version_info__
@@ -65,6 +66,7 @@ class HTTPClient(QtCore.QObject):
         self._port = int(settings["port"])
         self._http_port = int(settings["port"])
         self._user = settings.get("user", None)
+        self._password = settings.get("password", None)
 
         self._connected = False
         self._local = True
@@ -436,6 +438,17 @@ class HTTPClient(QtCore.QObject):
         else:
             return None
 
+    def addAuth(self, request):
+        """
+        If require add basic auth header
+        """
+        if self._user:
+            auth_string = "{}:{}".format(self._user, self._password)
+            auth_string = base64.b64encode(auth_string.encode("utf-8"))
+            auth_string = "Basic {}".format(auth_string.decode())
+            request.setRawHeader("Authorization", auth_string)
+        return request
+
     def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False):
         """
         Call the remote server
@@ -461,6 +474,10 @@ class HTTPClient(QtCore.QObject):
         url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._scheme, host=self._host, port=self._http_port, path=path))
         request = self._request(url)
 
+        request = self.addAuth(request)
+
+        request.setRawHeader("Content-Type", "application/json")
+        request.setRawHeader("Content-Length", str(len(body)))
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
 
         # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
@@ -532,7 +549,12 @@ class HTTPClient(QtCore.QObject):
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
+
             log.info("Response error: {} for {}".format(error_message, response.request().url()))
+
+            if status == 401:
+                print(error_message)
+
             try:
                 body = bytes(response.readAll()).decode("utf-8").strip("\0")
                 # Some time antivirus intercept our query and reply with garbage content

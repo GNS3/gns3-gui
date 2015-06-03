@@ -83,7 +83,7 @@ class Dynamips(Module):
         self._loadIOSRouters()
 
     @staticmethod
-    def _findDynamips(self):
+    def _findDynamips():
         """
         Finds the Dynamips path.
 
@@ -265,7 +265,6 @@ class Dynamips(Module):
         log.info("configuring node {}".format(node))
 
         if isinstance(node, Router):
-
             ios_router = None
             if node_name:
                 for ios_key, info in self._ios_routers.items():
@@ -295,7 +294,9 @@ class Dynamips(Module):
                 del vm_settings["power_supplies"]
 
             ram = vm_settings.pop("ram")
-            image = vm_settings.pop("image")
+            image = vm_settings.pop("image", None)
+            if image is None:
+                raise ModuleError("No IOS image has been associated with this IOS router")
             node.setup(image, ram, additional_settings=vm_settings, base_name=base_name)
         else:
             node.setup()

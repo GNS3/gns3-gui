@@ -1,5 +1,22 @@
 # Change Log
 
+## 1.3.4 02/06/2015
+
+* Check if an IOS image is set in the IOS router template
+* Ensure the version number is written in configuration file
+* Prevent users to add links to running Qemu VMs and start a capture on running VirtualBox VMs.
+* Fix resize issue in server page
+* Fix segfault when starting OSX server with allow connection from anywhere
+* Fixes bug when editing c7200 templates.
+* Fixes IOS decompression. Fixes #370.
+* Topology auto start work for VPCS
+* Avoid moving .gns3_temporary files.
+* Handles MemoryError.
+* Fix crash when a process listen on GNS3 port return an empty JSON
+* Another fix for the topology None error
+* Fix a rare crash in completion
+* Fix crash when loading topology in rare conditions
+
 ## 1.3.3 14/05/2015
 
 * New inline help text for the idle-pc dialog.

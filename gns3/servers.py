@@ -25,6 +25,8 @@ import shlex
 import signal
 import urllib
 import shutil
+import string
+import random
 import subprocess
 
 from .qt import QtGui, QtCore, QtNetwork, QtWidgets
@@ -63,7 +65,9 @@ class Servers(QtCore.QObject):
         self._loadSettings()
 
         self._local_server = getNetworkClientInstance({"host": self._local_server_settings["host"],
-                                                       "port": self._local_server_settings["port"]},
+                                                       "port": self._local_server_settings["port"],
+                                                       "user": self._local_server_settings["user"],
+                                                       "password": self._local_server_settings["password"]},
                                                       self._network_manager)
         self._local_server.setLocal(True)
         log.info("New local server connection {} registered".format(self._local_server.url()))
@@ -106,6 +110,13 @@ class Servers(QtCore.QObject):
             return ""
         return ubridge_path
 
+    def _passwordGenerate(self):
+        """
+        Generate a random password
+        """
+        return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(64))
+
+
     def _loadSettings(self):
         """
         Loads the server settings from the persistent settings file.
@@ -118,6 +129,10 @@ class Servers(QtCore.QObject):
 
         if not os.path.exists(self._local_server_settings["ubridge_path"]):
             self._local_server_settings["ubridge_path"] = self._findUbridge(self)
+
+        if "user" not in self._local_server_settings:
+            self._local_server_settings["user"] = self._passwordGenerate()
+            self._local_server_settings["password"] = self._passwordGenerate()
 
         settings = local_config.settings()
         if "RemoteServers" in settings:
@@ -152,6 +167,8 @@ class Servers(QtCore.QObject):
             ("host", self._local_server_settings["host"]),
             ("port", self._local_server_settings["port"]),
             ("ubridge_path", self._local_server_settings["ubridge_path"]),
+            ("user", self._local_server_settings.get("user", "")),
+            ("password", self._local_server_settings.get("password", "")),
             ("images_path", self._local_server_settings["images_path"]),
             ("projects_path", self._local_server_settings["projects_path"]),
             ("console_start_port_range", self._local_server_settings["console_start_port_range"]),
