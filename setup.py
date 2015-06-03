@@ -19,6 +19,9 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
+# we only support Python 3 version >= 3.4
+if sys.version_info < (3, 4):
+    raise RuntimeError("Python 3.4 or higher is required")
 
 class Tox(TestCommand):
 
@@ -71,8 +74,8 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
 )

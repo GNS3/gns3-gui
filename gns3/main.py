@@ -140,9 +140,9 @@ def main():
     print("GNS3 GUI version {}".format(__version__))
     print("Copyright (c) 2007-{} GNS3 Technologies Inc.".format(current_year))
 
-    # we only support Python 3 version >= 3.3
-    if sys.version_info[0] == 3 and sys.version_info < (3, 3):
-        raise RuntimeError("Python 3.3 or higher is required")
+    # we only support Python 3 version >= 3.4
+    if sys.version_info < (3, 4):
+        raise RuntimeError("Python 3.4 or higher is required")
 
     def version(version_string):
         return [int(i) for i in version_string.split('.')]
