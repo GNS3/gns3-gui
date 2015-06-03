@@ -79,8 +79,7 @@ def test_dump(vpcs_device, project, local_server):
                     "id": local_server.id(),
                     "local": True,
                     "port": 8000,
-                    "protocol": "http",
-                    "user": None
+                    "protocol": "http"
                 }
             ]
         },
@@ -164,8 +163,7 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         "id": local_server.id(),
                         "local": True,
                         "port": 8000,
-                        "protocol": "http",
-                        "user": None
+                        "protocol": "http"
                     }
                 ]
             },

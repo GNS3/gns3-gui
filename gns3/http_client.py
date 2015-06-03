@@ -596,6 +596,8 @@ class HTTPClient(QtCore.QObject):
         server["id"] = self._id
         server["local"] = self._local
         server["cloud"] = self._cloud
+        if "user" in server and self._local:
+            del server["user"]
         return server
 
     def isCloud(self):
