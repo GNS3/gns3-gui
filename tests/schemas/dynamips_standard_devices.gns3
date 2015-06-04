@@ -1,0 +1,199 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "fe7ee04a-656d-462b-85b9-c6d3fe7a7420",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Ethernet hub",
+                "device_id": "c5a4c951-28b6-40dc-98c5-92411ff2a77a",
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "HUB1",
+                    "x": 17.9765625,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "id": 1,
+                        "name": "1",
+                        "port_number": 1
+                    },
+                    {
+                        "id": 2,
+                        "name": "2",
+                        "port_number": 2
+                    },
+                    {
+                        "id": 3,
+                        "name": "3",
+                        "port_number": 3
+                    },
+                    {
+                        "id": 4,
+                        "name": "4",
+                        "port_number": 4
+                    },
+                    {
+                        "id": 5,
+                        "name": "5",
+                        "port_number": 5
+                    },
+                    {
+                        "id": 6,
+                        "name": "6",
+                        "port_number": 6
+                    },
+                    {
+                        "id": 7,
+                        "name": "7",
+                        "port_number": 7
+                    },
+                    {
+                        "id": 8,
+                        "name": "8",
+                        "port_number": 8
+                    }
+                ],
+                "properties": {
+                    "name": "HUB1"
+                },
+                "server_id": 1,
+                "type": "EthernetHub",
+                "x": -73.0,
+                "y": -88.0
+            },
+            {
+                "description": "Ethernet switch",
+                "device_id": "35c8209c-2887-4cc6-8fdc-af79ad0fe961",
+                "id": 2,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "SW1",
+                    "x": 20.8359375,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "id": 9,
+                        "name": "1",
+                        "port_number": 1,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 10,
+                        "name": "2",
+                        "port_number": 2,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 11,
+                        "name": "3",
+                        "port_number": 3,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 12,
+                        "name": "4",
+                        "port_number": 4,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 13,
+                        "name": "5",
+                        "port_number": 5,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 14,
+                        "name": "6",
+                        "port_number": 6,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 15,
+                        "name": "7",
+                        "port_number": 7,
+                        "type": "access",
+                        "vlan": 1
+                    },
+                    {
+                        "id": 16,
+                        "name": "8",
+                        "port_number": 8,
+                        "type": "access",
+                        "vlan": 1
+                    }
+                ],
+                "properties": {
+                    "name": "SW1"
+                },
+                "server_id": 1,
+                "type": "EthernetSwitch",
+                "x": -70.5,
+                "y": -269.0
+            },
+            {
+                "description": "Frame Relay switch",
+                "device_id": "71099637-1279-4b70-8fc5-c14e78c19b94",
+                "id": 3,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "FR1",
+                    "x": 11.890625,
+                    "y": -25.0
+                },
+                "properties": {
+                    "name": "FR1"
+                },
+                "server_id": 1,
+                "type": "FrameRelaySwitch",
+                "x": 13.5,
+                "y": -213.5
+            },
+            {
+                "description": "ATM switch",
+                "device_id": "a16673ee-93e6-443c-b86b-8d3f9a3995d5",
+                "id": 4,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "ATM1",
+                    "x": 6.546875,
+                    "y": -25.0
+                },
+                "properties": {
+                    "name": "ATM1"
+                },
+                "server_id": 1,
+                "type": "ATMSwitch",
+                "x": -95.5,
+                "y": -195.5
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

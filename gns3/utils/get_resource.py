@@ -50,7 +50,11 @@ def get_resource(resource_name):
         resource_name = os.path.join(os.path.dirname(sys.executable), "../Resources", resource_name)
     if hasattr(sys, "frozen") and os.path.exists(resource_name):
         resource_path = os.path.normpath(os.path.join(os.path.dirname(sys.executable), resource_name))
-    elif not hasattr(sys, "frozen") and pkg_resources.resource_exists("gns3", resource_name):
-        resource_path = pkg_resources.resource_filename("gns3", resource_name)
-        resource_path = os.path.normpath(resource_path)
+    elif not hasattr(sys, "frozen"):
+        if pkg_resources.resource_exists("gns3", resource_name):
+            resource_path = pkg_resources.resource_filename("gns3", resource_name)
+            resource_path = os.path.normpath(resource_path)
+        else:
+            resource_path = os.path.dirname(os.path.realpath(__file__))
+            resource_path = os.path.join(resource_path, "..", "..", "resources", resource_name)
     return resource_path

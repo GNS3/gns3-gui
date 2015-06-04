@@ -1,0 +1,10 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": null,
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {},
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

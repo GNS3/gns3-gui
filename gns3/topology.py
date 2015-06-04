@@ -25,6 +25,7 @@ import json
 import uuid
 import glob
 import shutil
+import sys
 from .qt import QtGui, QtSvg, QtWidgets
 
 
@@ -40,12 +41,15 @@ from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
 from .version import __version__
+from .topology_check import getTopologyValidationErrors
 
 import logging
 log = logging.getLogger(__name__)
 
 # The topology version supported by client
 TOPOLOGY_REVISION = 4
+
+VALIDATION_ERROR_MESSAGE = "Validation error when dumping the topology.\nIt's probably a false positive but please send the .gns3 to developers@gns3.net.\nThanks !"
 
 
 class TopologyInstance:
@@ -528,6 +532,13 @@ class Topology:
         if random_id:
             topology = self._randomize_id(topology)
 
+        errors = getTopologyValidationErrors(topology)
+        if errors:
+            print(errors)
+            print(VALIDATION_ERROR_MESSAGE)
+            if hasattr(sys, '_called_from_test'):
+                raise Exception
+
         return topology
 
     def _randomize_id(self, topology):
@@ -568,6 +579,13 @@ class Topology:
 
         if "revision" in json_topology and json_topology["revision"] > TOPOLOGY_REVISION:
             raise ValueError("This topology is not supported by your version of GNS3 please use GNS3 {} or later".format(json_topology["version"]))
+
+        errors = getTopologyValidationErrors(json_topology)
+        if errors:
+            print(errors)
+            print(VALIDATION_ERROR_MESSAGE)
+            if hasattr(sys, '_called_from_test'):
+                raise Exception
 
         if "project_id" in json_topology:
             self._project.setId(json_topology["project_id"])

@@ -115,7 +115,7 @@ def test_randomize_id(project, tmpdir):
     assert top["topology"]["nodes"][0]["vm_id"] != vm_uuid1
 
     assert not os.path.exists(str(tmpdir / "project-files" / "vpcs" / vm_uuid1 / "test.log"))
-    assert os.path.exists(str(tmpdir / "project-files" / "vpcs" / top["topology"]["nodes"][0]["vm_id"]  / "test.log"))
+    assert os.path.exists(str(tmpdir / "project-files" / "vpcs" / top["topology"]["nodes"][0]["vm_id"] / "test.log"))
 
     assert top["topology"]["nodes"][1]["vm_id"] != vm_uuid2
     assert top["topology"]["nodes"][0]["vm_id"] != top["topology"]["nodes"][1]["vm_id"]
@@ -177,7 +177,7 @@ def test_loadFile(tmpdir):
 
     os.makedirs(str(tmpdir / "test"))
     with open(topo, 'w+') as f:
-        f.write('{"name": "test", "resources_type": "local"}')
+        f.write('{"name": "test", "resources_type": "local", "type": "topology", "auto_start": false, "project_id": null, "topology": {}}')
 
     with patch("gns3.topology.Topology._load") as mock:
         project = Project()
@@ -185,7 +185,7 @@ def test_loadFile(tmpdir):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == {"name": "test", "resources_type": "local"}
+        assert args[0] == {"name": "test", "resources_type": "local", "auto_start": False, "project_id": None, "topology": {}, "type": "topology"}
         assert topology._project.filesDir() == str(tmpdir / "test")
         assert topology._project.name() == "test"
         assert topology._project.type() == "local"

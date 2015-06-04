@@ -1,0 +1,543 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "GNS3 topology",
+
+    "definitions": {
+
+        "uuid" : {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+
+        "optional_uuid" : {
+            "oneOf": [
+                { "$ref": "#/definitions/uuid" },
+                { "type": "null" }
+            ]
+        },
+
+        "numeric_id": {
+            "type": "integer",
+            "minimum": 0
+        },
+
+        "mandatory_string": {
+            "type": "string",
+            "minLength": 1
+        },
+
+        "network_port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+        },
+
+        "rectangle": {
+            "type": "object",
+            "properties": {
+                "height": { "type": "number" },
+                "width": {"type": "number" },
+                "x": { "type": "number" },
+                "y": {"type": "number" }
+            },
+            "required": [
+                "height",
+                "width",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        },
+
+        "ellipse": {
+            "type": "object",
+            "properties": {
+                "border_style": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 6
+                },
+                "height": { "type": "number" },
+                "width": {"type": "number" },
+                "x": { "type": "number" },
+                "y": {"type": "number" }
+            },
+            "required": [
+                "border_style",
+                "height",
+                "width",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        },
+
+        "label": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-f]{8}$"
+                },
+                "font": { "$ref": "#/definitions/mandatory_string" },
+                "text": { "$ref": "#/definitions/mandatory_string" },
+                "x": { "type": "number" },
+                "y": {"type": "number" }
+            },
+            "required": [
+                "color",
+                "font",
+                "text",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        },
+
+        "port": {
+            "type": "object",
+            "properties": {
+                "adapter_number": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "description": { "$ref": "#/definitions/mandatory_string" },
+                "id": { "$ref": "#/definitions/numeric_id" },
+                "link_id": { "$ref": "#/definitions/numeric_id" },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "nio": {
+                    "enum": ["NIO_UDP"]
+                },
+                "port_number": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "vlan": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "type": {
+                    "enum": ["access"]
+                }
+            },
+            "required": [
+                "id",
+                "name",
+                "port_number"
+            ],
+            "additionalProperties": false
+        },
+
+        "link": {
+            "type": "object",
+            "properties": {
+                "description": { "$ref": "#/definitions/mandatory_string" },
+                "destination_node_id": { "$ref": "#/definitions/numeric_id" },
+                "destination_port_id": { "$ref": "#/definitions/numeric_id" },
+                "id": { "$ref": "#/definitions/numeric_id" },
+                "source_node_id": { "$ref": "#/definitions/numeric_id" },
+                "source_port_id": { "$ref": "#/definitions/numeric_id" }
+            },
+            "required": [
+                "description",
+                "destination_node_id",
+                "destination_port_id",
+                "id",
+                "source_node_id",
+                "source_port_id"
+            ],
+            "additionalProperties": false
+        },
+
+        "server_http": {
+            "properties": {
+                "protocol": { "enum": ["http", "https"] },
+                "cloud": { "type": "boolean" },
+                "host": { "$ref": "#/definitions/mandatory_string" },
+                "id": { "$ref": "#/definitions/numeric_id" },
+                "local": { "type": "boolean" },
+                "port": { "$ref": "#/definitions/network_port" },
+                "user": {
+                    "type": ["string", "null"]
+                }
+            },
+            "required": [
+                "protocol",
+                "cloud",
+                "host",
+                "id",
+                "local",
+                "port"
+            ],
+            "additionalProperties": false
+        },
+
+        "server_ssh": {
+            "properties": {
+                "protocol": { "enum": ["ssh"] },
+                "cloud": { "type": "boolean" },
+                "host": { "$ref": "#/definitions/mandatory_string" },
+                "id": { "$ref": "#/definitions/numeric_id" },
+                "local": { "type": "boolean" },
+                "port": { "$ref": "#/definitions/network_port" },
+                "ssh_key": { "$ref": "#/definitions/mandatory_string" },
+                "ssh_port": { "$ref": "#/definitions/network_port" },
+                "user": { "$ref": "#/definitions/mandatory_string" }
+            },
+            "required": [
+                "protocol",
+                "cloud",
+                "host",
+                "id",
+                "local",
+                "port",
+                "ssh_key",
+                "ssh_port",
+                "user"
+            ],
+            "additionalProperties": false
+        },
+
+        "node": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "IOUDevice",
+                        "VirtualBoxVM",
+                        "QemuVM",
+                        "VPCSDevice",
+                        "EthernetHub",
+                        "EthernetSwitch",
+                        "ATMSwitch",
+                        "FrameRelaySwitch",
+                        "C1700",
+                        "C2600",
+                        "C2691",
+                        "C3600",
+                        "C3725",
+                        "C3745",
+                        "C7200"
+                    ]
+                },
+                "description": { "$ref": "#/definitions/mandatory_string" },
+                "id": { "$ref": "#/definitions/numeric_id" },
+                "device_id": { "$ref": "#/definitions/optional_uuid" },
+                "label": { "$ref": "#/definitions/label" },
+                "hover_symbol": { "$ref": "#/definitions/mandatory_string" },
+                "default_symbol": { "$ref": "#/definitions/mandatory_string" },
+                "ports": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/port" }
+                },
+                "dynamips_id": { "$ref": "#/definitions/numeric_id" },
+                "server_id": { "$ref": "#/definitions/numeric_id" },
+                "vm_id": {
+                    "oneOf": [
+                        { "$ref": "#/definitions/uuid" },
+                        { "type": "null" }
+                    ]
+                },
+                "linked_clone": { "type" : "boolean" },
+                "x": { "type": "number" },
+                "y": { "type": "number" },
+                "properties": {
+                    "type": "object",
+                    "oneOf": [
+                        { "$ref": "#/definitions/properties_vpcs" },
+                        { "$ref": "#/definitions/properties_dynamips" },
+                        { "$ref": "#/definitions/properties_qemu" },
+                        { "$ref": "#/definitions/properties_virtualbox" },
+                        { "$ref": "#/definitions/properties_iou" }
+                    ]
+                },
+                "required": [
+                    "type",
+                    "description",
+                    "id",
+                    "label",
+                    "ports",
+                    "server_id",
+                    "vm_id",
+                    "x",
+                    "y",
+                    "properties"
+                ]
+            },
+            "additionalProperties": false
+        },
+
+
+        "properties_iou": {
+            "type": "object",
+            "properties": {
+                "console": { "$ref": "#/definitions/network_port" },
+                "ethernet_adapters": { "type": "integer", "minimum": 0 },
+                "initial_config": { "$ref": "#/definitions/mandatory_string" },
+                "l1_keepalives": { "type": "boolean" },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "nvram": { "type": "integer", "minimum": 1 },
+                "path": { "$ref": "#/definitions/mandatory_string" },
+                "ram": { "type": "integer", "minimum": 1 },
+                "serial_adapters": { "type": "integer", "minimum": 0 },
+                "use_default_iou_values": { "type": "boolean" }
+            },
+            "required": [
+                "console",
+                "ethernet_adapters",
+                "initial_config",
+                "l1_keepalives",
+                "name",
+                "nvram",
+                "path",
+                "ram",
+                "serial_adapters",
+                "use_default_iou_values"
+            ],
+            "additionalProperties": false
+        },
+
+        "properties_qemu": {
+            "type": "object",
+            "properties": {
+                "console": { "$ref": "#/definitions/network_port" },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "acpi_shutdown": { "type": "boolean" },
+                "adapter_type": {
+                    "enum": ["e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio"]
+                },
+                "adapters": {"type": "integer", "minimum": 1},
+                "cpu_throttling": {"type": "integer", "minimum": 0, "maximum": 100},
+                "hda_disk_image": { "type": "string" },
+                "hdb_disk_image": { "type": "string" },
+                "hdc_disk_image": { "type": "string" },
+                "hdd_disk_image": { "type": "string" },
+                "initrd": { "type": "string" },
+                "kernel_image": { "type": "string"},
+                "kernel_command_line": { "type": "string" },
+                "legacy_networking": { "type": "boolean" },
+                "mac_address": { "$ref": "#/definitions/mandatory_string" },
+                "options": { "type": "string" },
+                "process_priority": {
+                    "enum": ["realtime", "very high", "high", "normal", "low", "very low"]
+                },
+                "qemu_path": { "type": "string" },
+                "ram": {"type": "integer", "minimum": 1}
+            },
+            "required": [
+                "name",
+                "adapter_type",
+                "adapters",
+                "console",
+                "cpu_throttling",
+                "legacy_networking",
+                "mac_address",
+                "options",
+                "process_priority",
+                "qemu_path",
+                "ram"
+            ],
+            "additionalProperties": false
+        },
+
+        "properties_virtualbox": {
+            "type": "object",
+            "properties": {
+                "acpi_shutdown": { "type": "boolean" },
+                "adapters": { "type": "integer", "minimum": 0 },
+                "console": { "$ref": "#/definitions/network_port" },
+                "enable_remote_console": { "type": "boolean" },
+                "headless": { "type": "boolean" },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "ram": { "type": "integer", "minimum": 1 },
+                "use_any_adapter": { "type": "boolean" },
+                "vmname": { "$ref": "#/definitions/mandatory_string" },
+                "adapter_type": {
+                    "enum": [
+                        "PCnet-PCI II (Am79C970A)",
+                        "PCNet-FAST III (Am79C973)",
+                        "Intel PRO/1000 MT Desktop (82540EM)",
+                        "Intel PRO/1000 T Server (82543GC)",
+                        "Intel PRO/1000 MT Server (82545EM)",
+                        "Paravirtualized Network (virtio-net)"
+                    ]
+                }
+            },
+            "required": [
+                "adapter_type",
+                "adapters",
+                "console",
+                "enable_remote_console",
+                "headless",
+                "name",
+                "ram",
+                "use_any_adapter",
+                "vmname"
+            ],
+            "additionalProperties": false
+        },
+
+        "properties_vpcs": {
+            "type": "object",
+            "properties": {
+                "console": { "$ref": "#/definitions/network_port" },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "startup_script_path":{ "$ref": "#/definitions/mandatory_string" }
+            },
+            "required": [
+                "name"
+            ],
+            "additionalProperties": false
+        },
+
+        "dynamips_slot": {
+            "enum": ["C2600-MB-2FE", "C2600-MB-1E", "PA-A1", "PA-8E", "C1700-MB-1FE", "PA-8T", "PA-2FE-TX", "PA-FE-TX", "PA-GE", "C2600-MB-2E", "C7200-IO-FE", "NM-4T", "C2600-MB-1FE", "C7200-IO-2FE", "PA-POS-OC3", "PA-4T+", "C1700-MB-WIC1", "NM-16ESW", "C7200-IO-GE-E", "NM-4E", "GT96100-FE", "NM-1FE-TX", "Leopard-2FE", "NM-1E", "PA-4E"]
+        },
+
+        "properties_dynamips": {
+            "type": "object",
+            "properties": {
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "clock_divisor": {"type": "integer", "minimum": 1},
+                "console": { "$ref": "#/definitions/network_port" },
+                "disk0": {"type": "integer", "minimum": 0},
+                "disk1": {"type": "integer", "minimum": 0},
+                "exec_area": {"type": "integer", "minimum": 1},
+                "idlemax": {"type": "integer", "minimum": 1},
+                "idlepc": {"type": "string", "pattern": "^0x[0-9a-f]{8}"},
+                "idlesleep": {"type": "integer", "minimum": 1},
+                "image": { "$ref": "#/definitions/mandatory_string" },
+                "mac_addr": { "$ref": "#/definitions/mandatory_string" },
+                "midplane": { "enum": "vxr" },
+                "mmap": { "type": "boolean" },
+                "npe": {
+                    "enum": ["npe-100", "npe-150", "npe-175", "npe-200", "npe-225", "npe-300", "npe-400", "npe-g2"]
+                },
+                "nvram": {"type": "integer", "minimum": 1},
+                "platform": {
+                    "enum": ["c1700", "c2600", "c2691", "c3725", "c3745", "c3600", "c7200"]
+                },
+                "power_supplies": {
+                    "type": "array",
+                    "items": {"type": "integer", "minimum": 1}
+                },
+                "ram": {"type": "integer", "minimum": 1},
+                "sensors": {
+                    "type": "array",
+                    "items": {"type": "integer", "minimum": 1}
+                },
+                "slot0": { "$ref": "#/definitions/dynamips_slot" },
+                "slot1": { "$ref": "#/definitions/dynamips_slot" },
+                "slot2": { "$ref": "#/definitions/dynamips_slot" },
+                "slot3": { "$ref": "#/definitions/dynamips_slot" },
+                "slot4": { "$ref": "#/definitions/dynamips_slot" },
+                "slot5": { "$ref": "#/definitions/dynamips_slot" },
+                "slot6": { "$ref": "#/definitions/dynamips_slot" },
+                "sparsemem": {"type": "boolean"},
+                "startup_config": { "$ref": "#/definitions/mandatory_string" },
+                "system_id": { "$ref": "#/definitions/mandatory_string" }
+            },
+            "required": [
+                "name",
+                "clock_divisor",
+                "console",
+                "disk0",
+                "disk1",
+                "exec_area",
+                "idlemax",
+                "idlepc",
+                "idlesleep",
+                "image",
+                "mac_addr",
+                "midplane",
+                "mmap",
+                "npe",
+                "nvram",
+                "platform",
+                "power_supplies",
+                "ram",
+                "sensors",
+                "slot0",
+                "sparsemem",
+                "startup_config",
+                "system_id"
+            ],
+            "additionalProperties": false
+        },
+
+        "topology": {
+            "type": "object",
+            "properties": {
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "oneOf": [
+                            { "$ref": "#/definitions/link" }
+                        ]
+                    }
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/node" }
+                },
+                "ellipses": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/ellipse" }
+                },
+                "rectangles": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/rectangle" }
+                },
+                "notes": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/label" }
+                },
+                "servers": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "oneOf": [
+                            { "$ref": "#/definitions/server_http" },
+                            { "$ref": "#/definitions/server_ssh" }
+                        ]
+                    }
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+
+    "type": "object",
+    "properties": {
+        "auto_start": {
+            "type": "boolean"
+        },
+        "name": { "$ref": "#/definitions/mandatory_string" },
+        "project_id": { "$ref": "#/definitions/optional_uuid" },
+        "resources_type": {
+            "enum": ["local"]
+        },
+        "revision": {
+            "type": "integer",
+            "minimum": 3
+        },
+        "version": {
+            "type": "string",
+            "minLength": 5
+        },
+        "type": {
+            "enum": ["topology"]
+        },
+        "topology": { "$ref": "#/definitions/topology" }
+    },
+    "required": [
+        "auto_start",
+        "name",
+        "project_id",
+        "resources_type",
+        "topology",
+        "type"
+    ],
+    "additionalProperties": false
+}

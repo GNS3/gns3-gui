@@ -1,0 +1,28 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "fe7ee04a-656d-462b-85b9-c6d3fe7a7420",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "ellipses": [
+            {
+                "border_style": 2,
+                "height": 200.0,
+                "width": 200.0,
+                "x": -77.0,
+                "y": -134.0
+            }
+        ],
+        "rectangles": [
+            {
+                "height": 100.0,
+                "width": 200.0,
+                "x": -102.0,
+                "y": -278.0
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

@@ -1,0 +1,60 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "4a022469-be9f-44d2-be28-8a087b609ef8",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "VirtualBox VM",
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "Linux Microcore 4.7.1",
+                    "x": -26.4921875,
+                    "y": -25.0
+                },
+                "linked_clone": false,
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "id": 1,
+                        "name": "Ethernet0",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "acpi_shutdown": false,
+                    "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
+                    "adapters": 1,
+                    "console": 2001,
+                    "enable_remote_console": false,
+                    "headless": false,
+                    "name": "Linux Microcore 4.7.1",
+                    "ram": 64,
+                    "use_any_adapter": false,
+                    "vmname": "Linux Microcore 4.7.1"
+                },
+                "server_id": 1,
+                "type": "VirtualBoxVM",
+                "vm_id": "c90c9d69-3ad1-44a5-894f-092b21c8bff2",
+                "x": -41.5,
+                "y": -152.5
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}
