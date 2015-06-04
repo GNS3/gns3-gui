@@ -113,7 +113,7 @@ def recursive(function, path):
 if __name__ == '__main__':
 
     if not PYUIC or not PYRCC:
-        raise RuntimeError("pyuic5 or pyrcc5 could't be found, please install PyQt5 development tools (e.g. pyqt5-dev-tools)")
+        raise SystemExit("pyuic5 or pyrcc5 could't be found, please install PyQt5 development tools (e.g. pyqt5-dev-tools)")
 
     cwd = os.path.dirname(os.path.abspath(__file__))
     gns3_path = os.path.abspath(os.path.join(cwd, "../gns3/"))

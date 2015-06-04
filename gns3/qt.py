@@ -55,7 +55,7 @@ if DEFAULT_BINDING == 'PyQt5':
         from PyQt5 import QtSvg
         sys.modules[__name__ + '.QtSvg'] = QtSvg
     except ImportError:
-        raise RuntimeError("Please install the PyQt5.QtSvg module")
+        raise SystemExit("Please install the PyQt5.QtSvg module")
 
     try:
         from PyQt5 import QtWebKit

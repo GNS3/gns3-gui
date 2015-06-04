@@ -37,7 +37,7 @@ import argparse
 try:
     from gns3.qt import QtCore, QtGui, QtWidgets, DEFAULT_BINDING
 except ImportError:
-    raise RuntimeError("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
+    raise SystemExit("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
 from gns3.main_window import MainWindow
 
 from gns3.logger import init_logger
@@ -142,20 +142,20 @@ def main():
 
     # we only support Python 3 version >= 3.4
     if sys.version_info < (3, 4):
-        raise RuntimeError("Python 3.4 or higher is required")
+        raise SystemExit("Python 3.4 or higher is required")
 
     def version(version_string):
         return [int(i) for i in version_string.split('.')]
 
     if version(QtCore.QT_VERSION_STR) < version("4.6"):
-        raise RuntimeError("Requirement is Qt version 4.6 or higher, got version {}".format(QtCore.QT_VERSION_STR))
+        raise SystemExit("Requirement is Qt version 4.6 or higher, got version {}".format(QtCore.QT_VERSION_STR))
 
     # 4.8.3 because of QSettings (http://pyqt.sourceforge.net/Docs/PyQt4/pyqt_qsettings.html)
     if DEFAULT_BINDING == "PyQt4" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
-        raise RuntimeError("Requirement is PyQt version 4.8.3 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
+        raise SystemExit("Requirement is PyQt version 4.8.3 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
     if DEFAULT_BINDING == "PyQt5" and version(QtCore.BINDING_VERSION_STR) < version("5.0.0"):
-        raise RuntimeError("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
+        raise SystemExit("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
     # check for the correct locale
     # (UNIX/Linux only)
@@ -177,7 +177,7 @@ def main():
             import win32con
             import win32gui
         except ImportError:
-            raise RuntimeError("Python for Windows extensions must be installed.")
+            raise SystemExit("Python for Windows extensions must be installed.")
 
         if not options.debug:
             try:
