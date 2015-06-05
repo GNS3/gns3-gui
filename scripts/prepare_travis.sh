@@ -43,7 +43,7 @@ sudo make install
 # install PyQt
 if [ ! -d "PyQt-x11-gpl-${PYQT}" ]
 then
-    wget --quiet --output-document=pyqt.tar.gz "http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-${PYQT}/PyQt-x11-gpl-${PYQT}.tar.gz"
+    wget --quiet --output-document=pyqt.tar.gz "http://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-${PYQT}/PyQt-x11-gpl-${PYQT}.tar.gz"
     tar -xf pyqt.tar.gz
     cd "PyQt-x11-gpl-${PYQT}"
     python -B configure.py --confirm-license
