@@ -32,13 +32,19 @@ then
     wget --quiet --output-document=sip.tar.gz "http://downloads.sourceforge.net/project/pyqt/sip/sip-${SIP}/sip-${SIP}.tar.gz"
     tar -xf sip.tar.gz
     cd "sip-${SIP}"
+    echo "sip configure"
     python -B configure.py
+    echo "sip make"
     make
     cd ..
 fi
 
+
 cd "sip-${SIP}"
+echo "sip make install"
 sudo make install
+
+echo "Install PyQT"
 
 # install PyQt
 if [ ! -d "PyQt-x11-gpl-${PYQT}" ]
