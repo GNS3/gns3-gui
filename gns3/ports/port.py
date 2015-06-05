@@ -60,6 +60,10 @@ class Port(object):
         self._id = Port._instance_count
         Port._instance_count += 1
 
+        # In 1.3.3 and 1.3.4 we have issue with port name not a string
+        # see: https://github.com/gns3/gns3-gui/issues/393
+        assert isinstance(name, str)
+
         self._name = name
         self._short_name = None
         self._port_number = None
@@ -548,7 +552,6 @@ class Port(object):
                     print(msg)
                     log.error(msg)
                     return
-
 
             self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE, env=env)
             self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout, stdout=subprocess.PIPE)

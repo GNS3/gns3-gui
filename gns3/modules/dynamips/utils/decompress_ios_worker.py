@@ -20,6 +20,7 @@ Thread to wait for an IOS image to be decompressed.
 """
 
 import zipfile
+import zlib
 
 from gns3.qt import QtCore
 from .decompress_ios import decompressIOS
@@ -54,7 +55,7 @@ class DecompressIOSWorker(QtCore.QObject):
         self._is_running = True
         try:
             decompressIOS(self._ios_image, self._destination_file)
-        except zipfile.BadZipFile as e:
+        except (zipfile.BadZipFile, zlib.error) as e:
             self.error.emit("File {} is corrupted {}".format(self._ios_image, e), True)
             return
         except (OSError, MemoryError) as e:

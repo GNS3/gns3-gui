@@ -21,6 +21,7 @@ import http
 import uuid
 import urllib.parse
 import urllib.request
+import base64
 from functools import partial
 
 from .version import __version__, __version_info__
@@ -51,7 +52,7 @@ class HTTPClient(QtCore.QObject):
     connected_signal = QtCore.Signal()
     connection_error_signal = QtCore.Signal(str)
 
-    def __init__(self, url, network_manager):
+    def __init__(self, url, network_manager, user=None, password=None):
 
         super().__init__()
         self._url = url
@@ -61,6 +62,8 @@ class HTTPClient(QtCore.QObject):
         self.scheme = url_settings.scheme
         self.host = url_settings.netloc.split(":")[0]
         self.port = url_settings.port
+        self._user = user
+        self._password = password
 
         self._connected = False
         self._local = True
@@ -283,7 +286,10 @@ class HTTPClient(QtCore.QObject):
                 print("WARNING: Use a different client and server version can create bugs. Use it at your own risk.")
 
         if params["local"] != self.isLocal():
-            msg = "Running server is not a GNS3 local server (not started with --local)"
+            if self.isLocal():
+                msg = "Running server is not a GNS3 local server (not started with --local)"
+            else:
+                msg = "Remote running server is started with --local. It's forbidden for security reasons"
             log.error(msg)
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)
@@ -292,6 +298,17 @@ class HTTPClient(QtCore.QObject):
         self.executeHTTPQuery(method, path, callback, body, context=original_context)
         self._connected = True
         self._version = params["version"]
+
+    def addAuth(self, request):
+        """
+        If require add basic auth header
+        """
+        if self._user:
+            auth_string = "{}:{}".format(self._user, self._password)
+            auth_string = base64.b64encode(auth_string.encode("utf-8"))
+            auth_string = "Basic {}".format(auth_string.decode())
+            request.setRawHeader("Authorization", auth_string)
+        return request
 
     def executeHTTPQuery(self, method, path, callback, body, context={}):
         """
@@ -311,6 +328,8 @@ class HTTPClient(QtCore.QObject):
         log.debug("{method} {scheme}://{host}:{port}/v1{path} {body}".format(method=method, scheme=self.scheme, host=self.host, port=self.port, path=path, body=body))
         url = QtCore.QUrl("{scheme}://{host}:{port}/v1{path}".format(scheme=self.scheme, host=self.host, port=self.port, path=path))
         request = self._request(url)
+        request = self.addAuth(request)
+
         request.setRawHeader("Content-Type", "application/json")
         request.setRawHeader("Content-Length", str(len(body)))
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
@@ -360,6 +379,10 @@ class HTTPClient(QtCore.QObject):
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             error_message = response.errorString()
             log.info("Response error: {}".format(error_message))
+
+            if status == 401:
+                print(error_message)
+
             try:
                 body = bytes(response.readAll()).decode("utf-8")
             # Some time anti-virus intercept our query and reply with garbage content
