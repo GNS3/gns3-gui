@@ -397,7 +397,10 @@ class HTTPClient(QtCore.QObject):
                 print("WARNING: Use a different client and server version can create bugs. Use it at your own risk.")
 
         if params["local"] != self.isLocal():
-            msg = "Running server is not a GNS3 local server (not started with --local)"
+            if self.isLocal():
+                msg = "Running server is not a GNS3 local server (not started with --local)"
+            else:
+                msg = "Remote running server is started with --local. It's forbidden for security reasons"
             log.error(msg)
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)
