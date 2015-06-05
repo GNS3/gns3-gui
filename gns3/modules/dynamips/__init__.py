@@ -220,7 +220,9 @@ class Dynamips(Module):
                 key = "{server}:{name}".format(server=server, name=name)
                 if key in self._ios_routers or not name or not server:
                     continue
-                self._ios_routers[key] = router
+                router_settings = IOS_ROUTER_SETTINGS.copy()
+                router_settings.update(router)
+                self._ios_routers[key] = router_settings
 
         # keep things sync
         self._saveIOSRouters()
