@@ -339,6 +339,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiNvramSpinBox.setValue(settings["nvram"])
         self.uiDisk0SpinBox.setValue(settings["disk0"])
         self.uiDisk1SpinBox.setValue(settings["disk1"])
+        self.uiAutoDeleteCheckBox.setChecked(settings["auto_delete_disks"])
 
         # load all the slots with configured adapters
         self._loadAdapterConfig(platform, chassis, settings)
@@ -537,6 +538,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         settings["nvram"] = self.uiNvramSpinBox.value()
         settings["disk0"] = self.uiDisk0SpinBox.value()
         settings["disk1"] = self.uiDisk1SpinBox.value()
+        settings["auto_delete_disks"] = self.uiAutoDeleteCheckBox.isChecked()
 
         # save the system ID (processor board ID in IOS) setting
         settings["system_id"] = self.uiSystemIdLineEdit.text()

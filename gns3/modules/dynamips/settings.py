@@ -60,6 +60,7 @@ IOS_ROUTER_SETTINGS = {
     "mac_addr": "",
     "disk0": 0,
     "disk1": 0,
+    "auto_delete_disks": False,
     "system_id": "FTX0945W0MY",
     "server": "local"
 }
@@ -85,6 +86,7 @@ IOS_ROUTER_SETTING_TYPES = {
     "mac_addr": str,
     "disk0": int,
     "disk1": int,
+    "auto_delete_disks": bool,
     "system_id": str,
     "server": str
 }
