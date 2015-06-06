@@ -107,19 +107,19 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir, fake_iourc):
+def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_iourc):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
-    initial_config = str(tmpdir / "config.cfg")
-    with open(initial_config, "w+") as f:
+    startup_config = str(tmpdir / "config.cfg")
+    with open(startup_config, "w+") as f:
         f.write("hostname %h")
 
     with patch('gns3.node.Node.httpPost') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"initial_config": initial_config})
+        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/iou/vms"
@@ -127,7 +127,7 @@ def test_iou_device_setup_with_initial_config(iou_device, project, tmpdir, fake_
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
             "path": "/tmp/iou.bin",
-            "initial_config_content": "hostname %h",
+            "startup_config_content": "hostname %h",
             'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
         }
 
@@ -150,15 +150,15 @@ def test_update(iou_device):
         args[1]({})
 
 
-def test_update_initial_config(iou_device, tmpdir):
+def test_update_startup_config(iou_device, tmpdir):
 
-    initial_config = str(tmpdir / "config.cfg")
-    with open(initial_config, "w+") as f:
+    startup_config = str(tmpdir / "config.cfg")
+    with open(startup_config, "w+") as f:
         f.write("hostname %h")
 
     new_settings = {
         "name": "Unreal IOU",
-        "initial_config": initial_config
+        "startup_config": startup_config
     }
 
     with patch('gns3.node.Node.httpPut') as mock:
@@ -168,7 +168,7 @@ def test_update_initial_config(iou_device, tmpdir):
         args, kwargs = mock.call_args
         assert args[0] == "/iou/vms/{vm_id}".format(vm_id=iou_device.vm_id())
         assert kwargs["body"]["name"] == "Unreal IOU"
-        assert kwargs["body"]["initial_config_content"] == "hostname %h"
+        assert kwargs["body"]["startup_config_content"] == "hostname %h"
 
         # Callback
         args[1]({})
@@ -179,7 +179,7 @@ def test_dump(local_server, project):
     iou_device = IOUDevice(IOU(), local_server, project)
     iou_device._settings["name"] = "IOU 1"
     iou_device._settings["path"] = "test.bin"
-    iou_device._settings["initial_config"] = "/tmp"
+    iou_device._settings["startup_config"] = "/tmp"
     iou_device._settings["ethernet_adapters"] = 2
     iou_device._settings["serial_adapters"] = 2
     iou_device._settings["l1_keepalives"] = True
@@ -260,7 +260,7 @@ def test_dump(local_server, project):
         "properties": {
             "name": "IOU 1",
             "path": "test.bin",
-            "initial_config": "/tmp",
+            "startup_config": "/tmp",
             "ethernet_adapters": 2,
             "serial_adapters": 2,
             "l1_keepalives": True,
@@ -291,7 +291,7 @@ def test_load(local_server, project, fake_bin):
         "properties": {
             "name": "IOU 1",
             "path": fake_bin,
-            "initial_config": "/tmp",
+            "startup_config": "/tmp",
             "ethernet_adapters": 1,
             "serial_adapters": 0,
         },
@@ -308,7 +308,7 @@ def test_load(local_server, project, fake_bin):
         (path, name, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "initial_config": "/tmp"}
+        assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "startup_config": "/tmp"}
         assert vm_id == uuid
 
     iou_device.loaded_signal.emit()
@@ -332,7 +332,7 @@ def test_load_1_2(local_server, project, fake_bin):
         "properties": {
             "name": "IOU 1",
             "path": fake_bin,
-            "initial_config": "/tmp",
+            "startup_config": "/tmp",
             "ethernet_adapters": 1,
             "serial_adapters": 0,
         },
@@ -348,7 +348,7 @@ def test_load_1_2(local_server, project, fake_bin):
         (path, name, vm_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
-        assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "initial_config": "/tmp"}
+        assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "startup_config": "/tmp"}
         assert vm_id == uuid
 
     iou_device.loaded_signal.emit()
@@ -407,10 +407,10 @@ def test_exportConfig(iou_device, tmpdir):
         iou_device.exportConfig(path)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}/initial_config".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/vms/{vm_id}/configs".format(vm_id=iou_device.vm_id())
 
         # Callback
-        args[1]({"content": "TEST"}, context=kwargs["context"])
+        args[1]({"startup_config_content": "TEST"}, context=kwargs["context"])
 
         with open(path) as f:
             assert f.read() == "TEST"
@@ -424,11 +424,10 @@ def test_exportConfigToDirectory(iou_device, tmpdir):
         iou_device.exportConfigToDirectory(path)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}/initial_config".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/vms/{vm_id}/configs".format(vm_id=iou_device.vm_id())
 
         # Callback
-        args[1]({"content": "TEST"}, context=kwargs["context"])
+        args[1]({"startup_config_content": "TEST"}, context=kwargs["context"])
 
-        with open(os.path.join(path, normalize_filename(iou_device.name()) + "_initial-config.cfg"
-                               )) as f:
+        with open(os.path.join(path, normalize_filename(iou_device.name()) + "_startup-config.cfg")) as f:
             assert f.read() == "TEST"

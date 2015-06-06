@@ -53,7 +53,8 @@ class IOUDevice(VM):
         self._vm_id = None
         self._settings = {"name": "",
                           "path": "",
-                          "initial_config": "",
+                          "startup_config": "",
+                          "private_config": "",
                           "l1_keepalives": False,
                           "use_default_iou_values": IOU_DEVICE_SETTINGS["use_default_iou_values"],
                           "ram": IOU_DEVICE_SETTINGS["ram"],
@@ -125,13 +126,21 @@ class IOUDevice(VM):
         if vm_id:
             params["vm_id"] = vm_id
 
-        # push the initial-config
-        if "initial_config" in additional_settings:
-            if additional_settings["initial_config"] and os.path.isfile(additional_settings["initial_config"]):
-                base_config_content = self._readBaseConfig(additional_settings["initial_config"])
+        # push the startup-config
+        if "startup_config" in additional_settings:
+            if additional_settings["startup_config"] and os.path.isfile(additional_settings["startup_config"]):
+                base_config_content = self._readBaseConfig(additional_settings["startup_config"])
                 if base_config_content is not None:
-                    params["initial_config_content"] = base_config_content
-            del additional_settings["initial_config"]
+                    params["startup_config_content"] = base_config_content
+            del additional_settings["startup_config"]
+
+        # push the startup-config
+        if "private_config" in additional_settings:
+            if additional_settings["private_config"] and os.path.isfile(additional_settings["private_config"]):
+                base_config_content = self._readBaseConfig(additional_settings["private_config"])
+                if base_config_content is not None:
+                    params["private_config_content"] = base_config_content
+            del additional_settings["private_config"]
 
         # push the iourc file
         module_settings = self._module.settings()
@@ -197,12 +206,20 @@ class IOUDevice(VM):
             return
 
         params = {}
-        if "initial_config" in new_settings:
-            if new_settings["initial_config"] and os.path.isfile(new_settings["initial_config"]):
-                base_config_content = self._readBaseConfig(new_settings["initial_config"])
+        if "startup_config" in new_settings:
+            if new_settings["startup_config"] and os.path.isfile(new_settings["startup_config"]):
+                base_config_content = self._readBaseConfig(new_settings["startup_config"])
                 if base_config_content is not None:
-                    params["initial_config_content"] = base_config_content
-            del new_settings["initial_config"]
+                    params["startup_config_content"] = base_config_content
+            del new_settings["startup_config"]
+
+        if "private_config" in new_settings:
+            if new_settings["private_config"] and os.path.isfile(new_settings["private_config"]):
+                base_config_content = self._readBaseConfig(new_settings["private_config"])
+                if base_config_content is not None:
+                    params["private_config_content"] = base_config_content
+            del new_settings["private_config"]
+
 
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
@@ -422,6 +439,10 @@ class IOUDevice(VM):
         name = vm_settings.pop("name")
         path = vm_settings.pop("path")
 
+        if "initial_config" in vm_settings:
+            # transfer initial-config (post version 1.4) to startup-config
+            vm_settings["startup_config"] = vm_settings["initial_config"]
+
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
             updated_path = os.path.join(self._imageFilesDir(), path)
@@ -461,16 +482,33 @@ class IOUDevice(VM):
         self._loading = False
         self._node_info = None
 
-    def exportConfig(self, config_export_path):
+    def saveConfig(self):
         """
-        Exports the initial-config
-
-        :param config_export_path: export path for the initial-config
+        Save the configs
         """
 
-        self.httpGet("/iou/vms/{vm_id}/initial_config".format(vm_id=self._vm_id),
+        self.httpPost("/iou/vms/{vm_id}/configs/save".format(vm_id=self._vm_id), self._saveConfigCallback)
+
+    def _saveConfigCallback(self, result, error=False, context={}, **kwargs):
+
+        if error:
+            log.error("error while saving {} configs: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            log.info("{}: configs have been saved".format(self.name()))
+
+    def exportConfig(self, startup_config_export_path, private_config_export_path):
+        """
+        Exports the startup-config and private-config.
+
+        :param startup_config_export_path: export path for the startup-config
+        :param private_config_export_path: export path for the private-config
+        """
+
+        self.httpGet("/iou/vms/{vm_id}/configs".format(vm_id=self._vm_id),
                      self._exportConfigCallback,
-                     context={"path": config_export_path})
+                     context={"startup_config_path": startup_config_export_path,
+                              "private_config_path": private_config_export_path})
 
     def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -481,17 +519,28 @@ class IOUDevice(VM):
         """
 
         if error:
-            log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
+            log.error("error while exporting {} IOU configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        elif "content" in result:
-            path = context["path"]
-            try:
-                with open(path, "wb") as f:
-                    log.info("saving {} initial-config to {}".format(self.name(), path))
-                    if result["content"]:
-                        f.write(result["content"].encode("utf-8"))
-            except OSError as e:
-                self.error_signal.emit(self.id(), "Could not export initial-config to {}: {}".format(path, e))
+        else:
+            startup_config_path = context["startup_config_path"]
+            private_config_path = context["private_config_path"]
+            if startup_config_path:
+                try:
+                    with open(startup_config_path, "wb") as f:
+                        log.info("saving {} startup-config to {}".format(self.name(), startup_config_path))
+                        if "startup_config_content" in result and result["startup_config_content"]:
+                            f.write(result["startup_config_content"].encode("utf-8"))
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(startup_config_path, e))
+
+            if private_config_path:
+                try:
+                    with open(private_config_path, "wb") as f:
+                        log.info("saving {} private-config to {}".format(self.name(), private_config_path))
+                        if "private_config_content" in result and result["private_config_content"]:
+                            f.write(result["private_config_content"].encode("utf-8"))
+                except OSError as e:
+                    self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(private_config_path, e))
 
     def exportConfigToDirectory(self, directory):
         """
@@ -500,7 +549,7 @@ class IOUDevice(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/iou/vms/{vm_id}/initial_config".format(vm_id=self._vm_id),
+        self.httpGet("/iou/vms/{vm_id}/configs".format(vm_id=self._vm_id),
                      self._exportConfigToDirectoryCallback,
                      context={"directory": directory})
 
@@ -513,43 +562,70 @@ class IOUDevice(VM):
         """
 
         if error:
-            log.error("error while exporting {} initial-config: {}".format(self.name(), result["message"]))
+            log.error("error while exporting {} IOU configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         elif "content" in result:
             export_directory = context["directory"]
-            config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_initial-config.cfg"
+
+            startup_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup-config.cfg"
             try:
-                with open(config_path, "wb") as f:
-                    log.info("saving {} initial-config to {}".format(self.name(), config_path))
-                    if result["content"]:
-                        f.write(result["content"].encode("utf-8"))
+                with open(startup_config_path, "wb") as f:
+                    log.info("saving {} startup-config to {}".format(self.name(), startup_config_path))
+                    if result["startup_config_content"]:
+                        f.write(result["startup_config_content"].encode("utf-8"))
             except OSError as e:
-                self.error_signal.emit(self.id(), "could not export initial-config to {}: {}".format(config_path, e))
+                self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(startup_config_path, e))
+
+            private_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_private-config.cfg"
+            try:
+                with open(private_config_path, "wb") as f:
+                    log.info("saving {} private-config to {}".format(self.name(), private_config_path))
+                    if result["private_config_content"]:
+                        f.write(result["private_config_content"].encode("utf-8"))
+            except OSError as e:
+                self.error_signal.emit(self.id(), "could not export private-config to {}: {}".format(startup_config_path, e))
 
     def importConfig(self, path):
         """
-        Imports an initial-config.
+        Imports a startup-config.
 
-        :param path: path to the initial config
+        :param path: path to the startup-config
         """
 
-        new_settings = {"initial_config": path}
+        new_settings = {"startup_config": path}
+        self.update(new_settings)
+
+    def importPrivateConfig(self, path):
+        """
+        Imports a private-config.
+
+        :param path: path to the private-config
+        """
+
+        new_settings = {"private_config": path}
         self.update(new_settings)
 
     def importConfigFromDirectory(self, directory):
         """
-        Imports an initial-config from a directory.
+        Imports IOU configs from a directory.
 
         :param directory: source directory path
         """
 
         contents = os.listdir(directory)
-        initial_config = normalize_filename(self.name()) + "_initial-config.cfg"
+        startup_config = normalize_filename(self.name()) + "_startup-config.cfg"
+        private_config = normalize_filename(self.name()) + "_private-config.cfg"
         new_settings = {}
-        if initial_config in contents:
-            new_settings["initial_config"] = os.path.join(directory, initial_config)
+        if startup_config in contents:
+            new_settings["startup_config"] = os.path.join(directory, startup_config)
         else:
-            self.warning_signal.emit(self.id(), "no initial-config file could be found, expected file name: {}".format(initial_config))
+            self.warning_signal.emit(self.id(), "no startup-config file could be found, expected file name: {}".format(startup_config))
+
+        if private_config in contents:
+            new_settings["private_config"] = os.path.join(directory, private_config)
+        else:
+            self.warning_signal.emit(self.id(), "no private-config file could be found, expected file name: {}".format(private_config))
+
         if new_settings:
             self.update(new_settings)
 

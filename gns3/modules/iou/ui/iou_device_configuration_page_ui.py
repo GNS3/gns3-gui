@@ -2,20 +2,18 @@
 
 # Form implementation generated from reading ui file 'iou_device_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:56 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Fri Jun  5 17:12:32 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_iouDeviceConfigPageWidget:
-
+class Ui_iouDeviceConfigPageWidget(object):
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName("iouDeviceConfigPageWidget")
-        iouDeviceConfigPageWidget.resize(392, 473)
+        iouDeviceConfigPageWidget.resize(429, 516)
         self.verticalLayout = QtWidgets.QVBoxLayout(iouDeviceConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(iouDeviceConfigPageWidget)
@@ -48,26 +46,39 @@ class Ui_iouDeviceConfigPageWidget:
         self.uiIOUImageToolButton.setObjectName("uiIOUImageToolButton")
         self.horizontalLayout_5.addWidget(self.uiIOUImageToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_5, 1, 1, 1, 1)
-        self.uiInitialConfigLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
-        self.uiInitialConfigLabel.setObjectName("uiInitialConfigLabel")
-        self.gridLayout.addWidget(self.uiInitialConfigLabel, 2, 0, 1, 1)
+        self.uiStartupConfigLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
+        self.uiStartupConfigLabel.setObjectName("uiStartupConfigLabel")
+        self.gridLayout.addWidget(self.uiStartupConfigLabel, 2, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.uiInitialConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
-        self.uiInitialConfigLineEdit.setObjectName("uiInitialConfigLineEdit")
-        self.horizontalLayout_4.addWidget(self.uiInitialConfigLineEdit)
-        self.uiInitialConfigToolButton = QtWidgets.QToolButton(self.uiGeneralgroupBox)
-        self.uiInitialConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-        self.uiInitialConfigToolButton.setObjectName("uiInitialConfigToolButton")
-        self.horizontalLayout_4.addWidget(self.uiInitialConfigToolButton)
+        self.uiStartupConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
+        self.uiStartupConfigLineEdit.setObjectName("uiStartupConfigLineEdit")
+        self.horizontalLayout_4.addWidget(self.uiStartupConfigLineEdit)
+        self.uiStartupConfigToolButton = QtWidgets.QToolButton(self.uiGeneralgroupBox)
+        self.uiStartupConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiStartupConfigToolButton.setObjectName("uiStartupConfigToolButton")
+        self.horizontalLayout_4.addWidget(self.uiStartupConfigToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_4, 2, 1, 1, 1)
+        self.uiPrivateConfigLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
+        self.uiPrivateConfigLabel.setObjectName("uiPrivateConfigLabel")
+        self.gridLayout.addWidget(self.uiPrivateConfigLabel, 3, 0, 1, 1)
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.uiPrivateConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
+        self.uiPrivateConfigLineEdit.setObjectName("uiPrivateConfigLineEdit")
+        self.horizontalLayout_6.addWidget(self.uiPrivateConfigLineEdit)
+        self.uiPrivateConfigToolButton = QtWidgets.QToolButton(self.uiGeneralgroupBox)
+        self.uiPrivateConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiPrivateConfigToolButton.setObjectName("uiPrivateConfigToolButton")
+        self.horizontalLayout_6.addWidget(self.uiPrivateConfigToolButton)
+        self.gridLayout.addLayout(self.horizontalLayout_6, 3, 1, 1, 1)
         self.uiConsolePortLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout.addWidget(self.uiConsolePortLabel, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiConsolePortLabel, 4, 0, 1, 1)
         self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.uiGeneralgroupBox)
         self.uiConsolePortSpinBox.setMaximum(65535)
         self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 4, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.uiGeneralgroupBox)
         self.uiOtherSettingsGroupBox = QtWidgets.QGroupBox(self.tab)
         self.uiOtherSettingsGroupBox.setObjectName("uiOtherSettingsGroupBox")
@@ -169,8 +180,10 @@ class Ui_iouDeviceConfigPageWidget:
         self.uiNameLabel.setText(_translate("iouDeviceConfigPageWidget", "Name:"))
         self.uiIOUImageLabel.setText(_translate("iouDeviceConfigPageWidget", "IOU image path:"))
         self.uiIOUImageToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
-        self.uiInitialConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Initial startup-config:"))
-        self.uiInitialConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
+        self.uiStartupConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Startup-config:"))
+        self.uiStartupConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
+        self.uiPrivateConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Private-config:"))
+        self.uiPrivateConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:"))
         self.uiOtherSettingsGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Other settings"))
         self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages (testing only)"))
@@ -186,3 +199,4 @@ class Ui_iouDeviceConfigPageWidget:
         self.uiSerialAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Serial adapters:"))
         self.uiSerialAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter equals 4 serial interfaces"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("iouDeviceConfigPageWidget", "Network"))
+

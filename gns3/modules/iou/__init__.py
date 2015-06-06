@@ -127,6 +127,9 @@ class IOU(Module):
                     continue
                 device_settings = IOU_DEVICE_SETTINGS.copy()
                 device_settings.update(device)
+                if "initial_config" in device_settings:
+                    # transfer initial-config (post version 1.4) to startup-config
+                    device_settings["startup_config"] = device_settings["initial_config"]
                 self._iou_devices[key] = device_settings
 
         # keep things sync

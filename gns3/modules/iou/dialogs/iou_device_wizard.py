@@ -22,7 +22,7 @@ Wizard for IOU devices.
 import os
 import sys
 
-from gns3.qt import QtGui, QtWidgets, QtCore
+from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
 from gns3.servers import Servers
 from gns3.utils.get_resource import get_resource
@@ -64,13 +64,14 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
         if IOU.instance().settings()["use_local_server"]:
             # skip the server page if we use the local server
             self.uiLocalRadioButton.setEnabled(True)
+            self.uiLocalRadioButton.setChecked(True)
             self.setStartId(1)
 
         self.uiIOUImageLineEdit.textChanged.connect(self._imageLineEditTextChangedSlot)
 
         # location of the base config templates
-        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
-        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
+        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
+        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
 
         from ..pages.iou_device_preferences_page import IOUDevicePreferencesPage
         self.addImageSelector(self.uiExistingImageRadioButton, self.uiIOUImageListComboBox, self.uiIOUImageLineEdit, self.uiIOUImageToolButton, IOUDevicePreferencesPage.getIOUImage)
@@ -136,22 +137,22 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
 
         path = self.uiIOUImageLineEdit.text()
 
-        initial_config = ""
+        startup_config = ""
         if self.uiTypeComboBox.currentText() == "L2 image":
-            # set the default L2 base initial-config
+            # set the default L2 base startup-config
             default_base_config = get_default_base_config(self._base_iou_l2_config_template)
             if default_base_config:
-                initial_config = default_base_config
+                startup_config = default_base_config
             default_symbol = ":/symbols/multilayer_switch.normal.svg"
             hover_symbol = ":/symbols/multilayer_switch.selected.svg"
             category = Node.switches
             ethernet_adapters = 4
             serial_adapters = 0
         else:
-            # set the default L3 base initial-config
+            # set the default L3 base startup-config
             default_base_config = get_default_base_config(self._base_iou_l3_config_template)
             if default_base_config:
-                initial_config = default_base_config
+                startup_config = default_base_config
             default_symbol = ":/symbols/router.normal.svg"
             hover_symbol = ":/symbols/router.selected.svg"
             category = Node.routers
@@ -173,7 +174,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             "name": self.uiNameLineEdit.text(),
             "path": path,
             "image": os.path.basename(path),
-            "initial_config": initial_config,
+            "startup_config": startup_config,
             "ethernet_adapters": ethernet_adapters,
             "serial_adapters": serial_adapters,
             "default_symbol": default_symbol,

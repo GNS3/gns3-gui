@@ -39,14 +39,15 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         super().__init__()
         self.setupUi(self)
-        self.uiInitialConfigToolButton.clicked.connect(self._initialConfigBrowserSlot)
+        self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
+        self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
         self._current_iou_image = ""
 
         # location of the base config templates
-        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_initial-config.txt"))
-        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_initial-config.txt"))
+        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
+        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
 
     def _useDefaultValuesSlot(self, state):
         """
@@ -73,32 +74,49 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiIOUImageLineEdit.setText(path)
 
         if "l2" in path:
-            # set the default L2 base initial-config
+            # set the default L2 base startup-config
             default_base_config = get_default_base_config(self._base_iou_l2_config_template)
             if default_base_config:
-                self.uiInitialConfigLineEdit.setText(default_base_config)
+                self.uiStartupConfigLineEdit.setText(default_base_config)
         else:
-            # set the default L3 base initial-config
+            # set the default L3 base startup-config
             default_base_config = get_default_base_config(self._base_iou_l3_config_template)
             if default_base_config:
-                self.uiInitialConfigLineEdit.setText(default_base_config)
+                self.uiStartupConfigLineEdit.setText(default_base_config)
 
-    def _initialConfigBrowserSlot(self):
+    def _startupConfigBrowserSlot(self):
         """
-        Slot to open a file browser and select a initial-config file.
+        Slot to open a file browser and select a startup-config file.
         """
 
         config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select an initial configuration", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup-config file", config_dir)
         if not path:
             return
 
         if not os.access(path, os.R_OK):
-            QtWidgets.QMessageBox.critical(self, "Initial configuration", "Cannot read {}".format(path))
+            QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read {}".format(path))
             return
 
-        self.uiInitialConfigLineEdit.clear()
-        self.uiInitialConfigLineEdit.setText(path)
+        self.uiStartupConfigLineEdit.clear()
+        self.uiStartupConfigLineEdit.setText(path)
+
+    def _privateConfigBrowserSlot(self):
+        """
+        Slot to open a file browser and select a private-config file.
+        """
+
+        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private-config file", config_dir)
+        if not path:
+            return
+
+        if not os.access(path, os.R_OK):
+            QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read {}".format(path))
+            return
+
+        self.uiPrivateConfigLineEdit.clear()
+        self.uiPrivateConfigLineEdit.setText(path)
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -125,12 +143,16 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiGeneralgroupBox.hide()
 
         if not node:
-            # load the initial-config
-            self.uiInitialConfigLineEdit.setText(settings["initial_config"])
+            # load the startup-config and private-config
+            self.uiStartupConfigLineEdit.setText(settings["startup_config"])
+            self.uiPrivateConfigLineEdit.setText(settings["private_config"])
         else:
-            self.uiInitialConfigLabel.hide()
-            self.uiInitialConfigLineEdit.hide()
-            self.uiInitialConfigToolButton.hide()
+            self.uiStartupConfigLabel.hide()
+            self.uiStartupConfigLineEdit.hide()
+            self.uiStartupConfigToolButton.hide()
+            self.uiPrivateConfigLabel.hide()
+            self.uiPrivateConfigLineEdit.hide()
+            self.uiPrivateConfigToolButton.hide()
 
         # load advanced settings
         if "l1_keepalives" in settings:
@@ -181,14 +203,25 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             del settings["console"]
 
         if not node:
-            initial_config = self.uiInitialConfigLineEdit.text().strip()
-            if not initial_config:
-                settings["initial_config"] = ""
-            elif initial_config != settings["initial_config"]:
-                if os.access(initial_config, os.R_OK):
-                    settings["initial_config"] = initial_config
+            # save the startup-config
+            startup_config = self.uiStartupConfigLineEdit.text().strip()
+            if not startup_config:
+                settings["startup_config"] = ""
+            elif startup_config != settings["startup_config"]:
+                if os.access(startup_config, os.R_OK):
+                    settings["startup_config"] = startup_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Initial-config", "Cannot read the initial-config file")
+                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+
+            # save the private-config
+            private_config = self.uiPrivateConfigLineEdit.text().strip()
+            if not private_config:
+                settings["private_config"] = ""
+            elif private_config != settings["private_config"]:
+                if os.access(private_config, os.R_OK):
+                    settings["private_config"] = private_config
+                else:
+                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
 
         # save advanced settings
         settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()
