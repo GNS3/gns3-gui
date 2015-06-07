@@ -18,6 +18,7 @@
 import sys
 import os
 import json
+import shutil
 
 from .qt import QtCore
 from .version import __version__
@@ -70,9 +71,7 @@ class LocalConfig(QtCore.QObject):
 
         # First load system wide settings
         if os.path.exists(system_wide_config_file):
-            self._settings = self._readConfig(system_wide_config_file)
-            if not self._settings:
-                log.warning("No system wide settings loaded from {}".format(system_wide_config_file))
+            self._readConfig(system_wide_config_file)
 
         config_file_in_cwd = os.path.join(os.getcwd(), filename)
         if os.path.exists(config_file_in_cwd):
@@ -105,7 +104,8 @@ class LocalConfig(QtCore.QObject):
         try:
             with open(config_path, "r", encoding="utf-8") as f:
                 self._last_config_changed = os.stat(config_path).st_mtime
-                return json.load(f)
+                config = json.load(f)
+                self._settings.update(config)
         except (ValueError, OSError) as e:
             log.error("Could not read the config file {}: {}".format(self._config_file, e))
         return dict()
@@ -117,16 +117,19 @@ class LocalConfig(QtCore.QObject):
 
         self._settings["version"] = __version__
         try:
-            with open(self._config_file, "w", encoding="utf-8") as f:
+            temporary = os.path.join(os.path.dirname(self._config_file), "gns3_gui.tmp")
+            with open(temporary, "w", encoding="utf-8") as f:
                 json.dump(self._settings, f, sort_keys=True, indent=4)
-                self._last_config_changed = os.stat(self._config_file).st_mtime
+            shutil.move(temporary, self._config_file)
+            log.info("Configuration save to %s", self._config_file)
+            self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
 
     def _checkConfigChanged(self):
         if self._last_config_changed < os.stat(self._config_file).st_mtime:
             log.info("Client config has changed, reloading it...")
-            self._settings = self._readConfig(self._config_file)
+            self._readConfig(self._config_file)
             self.config_changed_signal.emit()
 
     def configFilePath(self):
@@ -145,7 +148,7 @@ class LocalConfig(QtCore.QObject):
         :returns: path to the config file.
         """
 
-        self._settings = self._readConfig(self._config_file)
+        self._readConfig(self._config_file)
         self._config_file = config_file
 
     def settings(self):
@@ -165,7 +168,8 @@ class LocalConfig(QtCore.QObject):
         """
 
         self._settings.update(settings)
-        self._writeConfig()
+        if self._settings != settings:
+            self._writeConfig()
 
     def loadSectionSettings(self, section, default_settings):
         """
@@ -198,8 +202,9 @@ class LocalConfig(QtCore.QObject):
 
         if section not in self._settings:
             self._settings[section] = {}
-        self._settings[section].update(settings)
-        self._writeConfig()
+        if self._settings[section] != settings:
+            self._settings[section].update(settings)
+            self._writeConfig()
 
     @staticmethod
     def instance():
