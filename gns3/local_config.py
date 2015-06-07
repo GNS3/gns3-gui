@@ -93,7 +93,7 @@ class LocalConfig(QtCore.QObject):
 
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self._checkConfigChanged)
-        timer.setInterval(1000) # milliseconds
+        timer.setInterval(1000)  #  milliseconds
         timer.start()
 
     def _readConfig(self, config_path):
@@ -204,6 +204,7 @@ class LocalConfig(QtCore.QObject):
             self._settings[section] = {}
         if self._settings[section] != settings:
             self._settings[section].update(settings)
+            log.info("Section %s has changed. Saving configuration", section)
             self._writeConfig()
 
     @staticmethod

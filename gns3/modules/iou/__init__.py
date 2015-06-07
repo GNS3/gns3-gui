@@ -140,8 +140,8 @@ class IOU(Module):
         Saves the IOU devices to the persistent settings file.
         """
 
-        # save the settings
-        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"devices": list(self._iou_devices.values())})
+        self._settings["devices"] = list(self._iou_devices.values())
+        self._saveSettings()
 
     def addNode(self, node):
         """

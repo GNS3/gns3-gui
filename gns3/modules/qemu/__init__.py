@@ -95,8 +95,8 @@ class Qemu(Module):
         Saves the QEMU VMs to the persistent settings file.
         """
 
-        # save the settings
-        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"vms": list(self._qemu_vms.values())})
+        self._settings["vms"] = list(self._qemu_vms.values())
+        self._saveSettings()
 
     def qemuVMs(self):
         """

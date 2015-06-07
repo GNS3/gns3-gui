@@ -160,8 +160,8 @@ class VirtualBox(Module):
         Saves the VirtualBox VMs to the client settings file.
         """
 
-        # save the settings
-        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"vms": list(self._virtualbox_vms.values())})
+        self._settings["vms"] = list(self._virtualbox_vms.values())
+        self._saveSettings()
 
     def virtualBoxVMs(self):
         """

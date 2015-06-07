@@ -138,8 +138,8 @@ class VMware(Module):
         Saves the VMware VMs to the client settings file.
         """
 
-        # save the settings
-        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"vms": list(self._vmware_vms.values())})
+        self._settings["vms"] = list(self._vmware_vms.values())
+        self._saveSettings()
 
     def vmwareVMs(self):
         """
@@ -255,7 +255,6 @@ class VMware(Module):
                 if other_node.settings()["vmx_path"] == self._vmware_vms[vm]["vmx_path"] and \
                         (self._vmware_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._vmware_vms[vm]["server"] == other_node.server().host):
                     raise ModuleError("Sorry a VMware VM that is not a linked base can only be used once in your topology")
-
 
         vm_settings = {}
         for setting_name, value in self._vmware_vms[vm].items():

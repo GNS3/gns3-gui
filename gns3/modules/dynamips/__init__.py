@@ -160,8 +160,8 @@ class Dynamips(Module):
         Saves the IOS routers to the persistent settings file.
         """
 
-        # save the settings
-        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, {"routers": list(self._ios_routers.values())})
+        self._settings["routers"] = list(self._ios_routers.values())
+        self._saveSettings()
 
     def addNode(self, node):
         """
