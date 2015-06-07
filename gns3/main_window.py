@@ -28,8 +28,6 @@ import shutil
 import json
 import glob
 import logging
-import posixpath
-import stat
 
 from pkg_resources import parse_version
 from .local_config import LocalConfig
@@ -51,7 +49,6 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.message_box import MessageBox
-from .utils.analytics import AnalyticsClient
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
@@ -486,7 +483,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Exports all configs to a directory.
         """
 
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", ".", QtWidgets.QFileDialog.ShowDirsOnly)
+        directory = self._project.filesDir() if self._project.filesDir() else self.projectsDirPath()
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
             for module in MODULES:
                 instance = module.instance()
@@ -498,7 +496,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Imports all configs from a directory.
         """
 
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", ".", QtWidgets.QFileDialog.ShowDirsOnly)
+        directory = self._project.filesDir() if self._project.filesDir() else self.projectsDirPath()
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
             for module in MODULES:
                 instance = module.instance()
@@ -534,11 +533,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff)"
 
-        screenshot_dir = self.projectsDirPath()
-        project_dir = self._project.filesDir()
-        if project_dir:
-            screenshot_dir = project_dir
-
+        screenshot_dir = self._project.filesDir() if self._project.filesDir() else self.projectsDirPath()
         screenshot_path = os.path.join(screenshot_dir, "screenshot")
         path, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self, "Screenshot", screenshot_path, file_formats)
         if not path:
