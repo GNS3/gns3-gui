@@ -59,7 +59,7 @@
           <string>Qcow2 is the current Qemu format, supporting many special features.</string>
          </property>
          <property name="text">
-          <string>Qcow2</string>
+          <string notr="true">Qcow2</string>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiFormatRadios</string>
@@ -72,7 +72,7 @@
           <string>Qcow is a legacy Qemu format that is also supported by VirtualBox.</string>
          </property>
          <property name="text">
-          <string>Qcow</string>
+          <string notr="true">Qcow</string>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiFormatRadios</string>
@@ -80,13 +80,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="uiFormatVpcRadio">
+        <widget class="QRadioButton" name="uiFormatVhdRadio">
          <property name="toolTip">
           <string>VHD is the format used by Microsoft VirtualPC, and is also supported by Qemu and VirtualBox.
 On Windows 7 and above, it can be mounted on the host PC.</string>
          </property>
          <property name="text">
-          <string>VHD</string>
+          <string notr="true">VHD</string>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiFormatRadios</string>
@@ -99,7 +99,7 @@ On Windows 7 and above, it can be mounted on the host PC.</string>
           <string>VDI is the native format of VirtualBox</string>
          </property>
          <property name="text">
-          <string>VDI</string>
+          <string notr="true">VDI</string>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiFormatRadios</string>
@@ -112,7 +112,7 @@ On Windows 7 and above, it can be mounted on the host PC.</string>
           <string>VMDK is the native format for VMware and is also supported by Qemu and VirtualBox.</string>
          </property>
          <property name="text">
-          <string>VMDK</string>
+          <string notr="true">VMDK</string>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiFormatRadios</string>
@@ -795,10 +795,10 @@ Free space will be zero filled.</string>
  </connections>
  <buttongroups>
   <buttongroup name="uiVmdkSizeModeRadios"/>
+  <buttongroup name="uiVhdSizeModeRadios"/>
   <buttongroup name="uiQcow2PreallocationRadios"/>
+  <buttongroup name="uiVdiSizeModeRadios"/>
   <buttongroup name="uiVmdkAdapterRadios"/>
   <buttongroup name="uiFormatRadios"/>
-  <buttongroup name="uiVdiSizeModeRadios"/>
-  <buttongroup name="uiVhdSizeModeRadios"/>
  </buttongroups>
 </ui>
