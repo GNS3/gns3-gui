@@ -18,6 +18,7 @@
 
 import json
 import http
+import ipaddress
 import uuid
 import urllib.request
 import pathlib
@@ -67,7 +68,6 @@ class HTTPClient(QtCore.QObject):
         self._http_port = int(settings["port"])
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
-
         self._connected = False
         self._local = True
         self._cloud = False
@@ -89,7 +89,7 @@ class HTTPClient(QtCore.QObject):
         :param port: Remote port
         :returns: Tuple host, port to connect
         """
-        return (self._host, port)
+        return self._host, port
 
     def releaseTunnel(self, port):
         """
@@ -473,8 +473,17 @@ class HTTPClient(QtCore.QObject):
         context["query_id"] = query_id
         if showProgress:
             self.notify_progress_start_query(context["query_id"])
-        log.debug("{method} {protocol}://{host}:{port}/v1{path} {body}".format(method=method, protocol=self._scheme, host=self._http_host, port=self._http_port, path=path, body=body))
-        url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._scheme, host=self._host, port=self._http_port, path=path))
+
+        try:
+            ip = self._http_host.rsplit('%', 1)[0]
+            ipaddress.IPv6Address(ip)  # remove any scope ID
+            # this is an IPv6 address, we must surround it with brackets to be used with QUrl.
+            host = "[{}]".format(ip)
+        except ipaddress.AddressValueError:
+            host = self._http_host
+
+        log.debug("{method} {protocol}://{host}:{port}/v1{path} {body}".format(method=method, protocol=self._scheme, host=host, port=self._http_port, path=path, body=body))
+        url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._scheme, host=host, port=self._http_port, path=path))
         request = self._request(url)
 
         request = self.addAuth(request)

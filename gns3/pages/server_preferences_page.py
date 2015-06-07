@@ -60,10 +60,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
             address_string = address.toString()
-            if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
-                continue  # FIXME: finish IPv6 support (problem with ws4py)
+            #if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
                 # we do not want the scope id when using an IPv6 address...
-                address.setScopeId("")
+                #address.setScopeId("")
             self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
 
         # default is 127.0.0.1

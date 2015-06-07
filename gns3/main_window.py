@@ -1162,9 +1162,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     return
 
                 try:
-                    # check if the local address still exists
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                        sock.bind((server.host(), 0))
+                    for res in socket.getaddrinfo(server.host(), 0, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+                        af, socktype, proto, _, sa = res
+                        # check if the local address still exists
+                        with socket.socket(af, socktype, proto) as sock:
+                            sock.bind(sa)
+                            break
                 except OSError as e:
                     QtWidgets.QMessageBox.critical(self, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host(), e))
                     return
@@ -1172,16 +1175,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 try:
                     # check if the port is already taken
                     find_unused_port = False
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                        sock.bind((server.host(), server.port()))
+                    for res in socket.getaddrinfo(server.host(), server.port(), socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+                        af, socktype, proto, _, sa = res
+                        with socket.socket(af, socktype, proto) as sock:
+                            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                            sock.bind(sa)
+                            break
                 except OSError as e:
                     log.warning("Could not use socket {}:{} {}".format(server.host(), server.port(), e))
                     find_unused_port = True
 
                 if find_unused_port:
                     # find an alternate port for the local server
-
                     old_port = server.port()
                     try:
                         server.setPort(self._findUnusedLocalPort(server.host()))

@@ -166,15 +166,11 @@ class Endpoint:
             if port in ignore_ports:
                 continue
             try:
-                if ":" in host:
-                    # IPv6 address support
-                    with socket.socket(socket.AF_INET6, socket_type) as s:
+                for res in socket.getaddrinfo(host, port, socket.AF_UNSPEC, socket_type, 0, socket.AI_PASSIVE):
+                    af, socktype, proto, _, sa = res
+                    with socket.socket(af, socktype, proto) as s:
                         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                        s.bind((host, port))  # the port is available if bind is a success
-                else:
-                    with socket.socket(socket.AF_INET, socket_type) as s:
-                        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                        s.bind((host, port))  # the port is available if bind is a success
+                        s.bind(sa)  # the port is available if bind is a success
                 return port
             except OSError as e:
                 last_exception = e
