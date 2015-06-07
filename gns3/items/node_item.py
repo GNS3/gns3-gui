@@ -22,6 +22,8 @@ Graphical representation of a node on the QGraphicsScene.
 from ..qt import QtCore, QtGui, QtSvg, QtWidgets
 from .note_item import NoteItem
 
+import logging
+log = logging.getLogger(__name__)
 
 class NodeItem(QtSvg.QGraphicsSvgItem):
 
@@ -376,6 +378,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # show a contextual menu for the user to choose a port
         for port in ports:
             port_object = ports_dict[port]
+            log.debug("Node '{}' Port {} Type {}".format(self.node(), port_object.name(), type(port_object.name())))
             if port in unavailable_ports:
                 # this port cannot be chosen by the user (grayed out)
                 action = menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port_object.name())
