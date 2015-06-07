@@ -1829,16 +1829,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         style = """QWidget {background-color: #535353}
 QToolBar {border:0px}
-QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
+QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
 QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 11px}
 QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
 QMenuBar::item {background-color: #535353}
 QMenu::item:selected {color: white; background-color: #5f5f5f}
 QToolButton:hover {background-color: #5f5f5f}
 QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
-QAbstractScrollArea::corner { background: #535353}
+QAbstractScrollArea::corner {background: #535353}
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none}
 QComboBox {selection-color: black; selection-background-color: #dedede}
+QComboBox QAbstractItemView {background-color: #dedede}
 """
 
         if sys.platform.startswith("darwin"):
