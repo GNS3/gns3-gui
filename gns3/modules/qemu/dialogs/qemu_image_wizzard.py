@@ -26,11 +26,9 @@ import sys
 from gns3.qt import QtCore, QtGui, QtWidgets, QFileDialog
 from gns3.local_config import LocalConfig
 from gns3.servers import Servers
-from gns3.modules.module_error import ModuleError
 
 from .. import Qemu
 from ..ui.qemu_image_wizard_ui import Ui_QemuImageWizard
-
 
 class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
     """
@@ -38,6 +36,8 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
     :param parent: parent widget
     :param filename: Default filename of image.
+    :param folder: Default folder for the image. If absent, defaults to Qemu's images folder.
+    :param size: Default size (in MiB) for the image.
     """
 
     _mappings = None
@@ -51,12 +51,12 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
         #Initialize "constants"
         self._mappings = {
-            "Qcow2": ("qcow2", ".qcow2", self.uiQcow2OptionsWizardPage),
-            "Qcow": ("qcow", ".qcow", None),
-            "VHD": ("vpc", ".vhd", self.uiVhdOptionsWizardPage),
-            "VDI": ("vdi", ".vdi", self.uiVdiOptionsWizardPage),
-            "VMDK": ("vmdk", ".vmdk", self.uiVmdkOptionsWizardPage),
-            "Raw": ("raw", ".img", None)
+            self.uiFormatQcow2Radio: ("qcow2", ".qcow2", self.uiQcow2OptionsWizardPage),
+            self.uiFormatQcowRadio: ("qcow", ".qcow", None),
+            self.uiFormatVhdRadio: ("vpc", ".vhd", self.uiVhdOptionsWizardPage),
+            self.uiFormatVdiRadio: ("vdi", ".vdi", self.uiVdiOptionsWizardPage),
+            self.uiFormatVmdkRadio: ("vmdk", ".vmdk", self.uiVmdkOptionsWizardPage),
+            self.uiFormatRawRadio: ("raw", ".img", None)
         }
 
         # isComplete() overrides
@@ -112,8 +112,10 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             self,
             'Image location',
             self.uiLocationLineEdit.text(),
-            self.uiFormatRadios.checkedButton().text() + ' files (*' +
-            self._mappings[self.uiFormatRadios.checkedButton().text()][1] + ');;All files (*)',
+            '{0} files (*{1});;All files (*)'.format(
+                self.uiFormatRadios.checkedButton().text(),
+                self._mappings[self.uiFormatRadios.checkedButton()][1]
+            ),
             options=QFileDialog.DontConfirmOverwrite
         )
         if path:
@@ -122,15 +124,15 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
     def _formatChangedSlot(self, new_format):
         dir, filename = os.path.split(self.uiLocationLineEdit.text())
         try:
-            filename = filename[:filename.rindex('.')] + self._mappings[new_format.text()][1]
+            filename = filename[:filename.rindex('.')] + self._mappings[new_format][1]
         except ValueError:
             # The file has no extension; Just give it one
-            filename = filename + self._mappings[new_format.text()][1]
+            filename = filename + self._mappings[new_format][1]
         self.uiLocationLineEdit.setText(os.path.join(dir, filename))
         self.uiBinaryWizardPage.completeChanged.emit()
 
     def _createDisk(self):
-        final_location = os.path.join(self._folder, self.uiLocationLineEdit.text());
+        final_location = os.path.join(self._folder, self.uiLocationLineEdit.text())
         if os.path.exists(final_location):
             overwrite_answer = QtWidgets.QMessageBox.question(
                 self,
@@ -152,11 +154,17 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                 return False
 
         format_options = []
-        selected_format = self.uiFormatRadios.checkedButton().text();
-        if selected_format == "Qcow2":
-            preallocation = self.uiQcow2PreallocationRadios.checkedButton();
-            if not None == preallocation:
-                format_options.extend(['-o', 'preallocation=' + preallocation.text()])
+        selected_format = self.uiFormatRadios.checkedButton()
+        if selected_format == self.uiFormatQcow2Radio:
+            preallocation = self.uiQcow2PreallocationRadios.checkedButton()
+            if preallocation is not None:
+                preallocation_mappings = {
+                    self.uiQcow2PreallocationOffRadio: 'off',
+                    self.uiQcow2PreallocationMetadataRadio: 'metadata',
+                    self.uiQcow2PreallocationFallocRadio: 'falloc',
+                    self.uiQcow2PreallocationFullRadio: 'full'
+                }
+                format_options.extend(['-o', 'preallocation=' + preallocation_mappings[preallocation]])
 
             cluster_size = self.uiQcow2ClusterSizeComboBox.currentText()
             if not '<default>' == cluster_size:
@@ -169,30 +177,34 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             lazy_refcounts = 'on' if QtCore.Qt.Checked == self.uiLazyRefcountsCheckBox.checkState() else 'off'
             format_options.extend(['-o', 'lazy_refcounts=' + lazy_refcounts])
 
-        elif selected_format == "VHD":
+        elif selected_format == self.uiFormatVhdRadio:
             size_mode = self.uiVhdSizeModeRadios.checkedButton()
-            if not None == size_mode:
-                format_options.extend(['-o', 'subformat=' + size_mode.text().lower()])
+            if size_mode is not None:
+                size_mode_mappings = {
+                    self.uiVhdFileSizeModeDynamicRadio: 'dynamic',
+                    self.uiVhdFileSizeModeFixedRadio: 'fixed'
+                }
+                format_options.extend(['-o', 'subformat=' + size_mode_mappings[size_mode]])
 
-        elif selected_format == "VDI":
+        elif selected_format == self.uiFormatVdiRadio:
             size_mode = self.uiVhdSizeModeRadios.checkedButton()
-            if not None == size_mode:
-                static_value = 'on' if 'Fixed' == size_mode.text() else 'off'
+            if size_mode is not None:
+                static_value = 'on' if size_mode == self.uiVhdFileSizeModeFixedRadio else 'off'
                 format_options.extend(['-o', 'static=' + static_value])
 
-        elif selected_format == "VMDK":
+        elif selected_format == self.uiFormatVmdkRadio:
             zeroed_grain = 'on' if QtCore.Qt.Checked == self.uiVmdkZeroedGrainCheckBox.checkState() else 'off'
             format_options.extend(['-o', 'zeroed_grain=' + zeroed_grain])
 
             adapter_type = self.uiVmdkAdapterRadios.checkedButton()
             if not None == adapter_type:
                 adapter_type_mappings = {
-                    'IDE': 'ide',
-                    'LSI Logic': 'lsilogic',
-                    'BusLogic': 'buslogic',
-                    'Legacy (ESX)': 'legacyESX'
+                    self.uiVmdkAdapterTypeIdeRadio: 'ide',
+                    self.uiVmdkAdapterTypeLsiRadio: 'lsilogic',
+                    self.uiVmdkAdapterTypeBusRadio: 'buslogic',
+                    self.uiVmdkAdapterTypeEsxRadio: 'legacyESX'
                 }
-                format_options.extend(['-o', 'adapter_type=' + adapter_type_mappings[adapter_type.text()]])
+                format_options.extend(['-o', 'adapter_type=' + adapter_type_mappings[adapter_type]])
 
             stream_optimized = self.uiVmdkStreamOptimizedCheckBox.checkState()
             if QtCore.Qt.Checked == stream_optimized:
@@ -200,13 +212,15 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             else:
                 two = 'twoGbMaxExtent' if QtCore.Qt.Checked == self.uiVmdkSplit2gCheckBox.checkState() else 'monolithic'
                 size_mode = self.uiVmdkSizeModeRadios.checkedButton()
+                if size_mode is not None or two == 'twoGbMaxExtent':
+                    if size_mode is None:
+                        size_mode = self.uiVmdkFileSizeModeSparseRadio
 
-                if size_mode or 'twoGbMaxExtent' == two:
-                    if not size_mode:
-                        size_mode = 'Sparse'
-                    else:
-                        size_mode = size_mode.text()
-                format_options.extend(['-o', 'subformat=' + two + size_mode])
+                    size_mode_mappings = {
+                        self.uiVmdkFileSizeModeSparseRadio: 'Sparse',
+                        self.uiVmdkFileSizeModeFlatRadio: 'Flat'
+                    }
+                    format_options.extend(['-o', 'subformat=' + two + size_mode_mappings[size_mode]])
 
         command = [self.uiBinaryComboBox.currentData(), 'create', '-f', self._mappings[selected_format][0]]
         command.extend(format_options)
@@ -215,6 +229,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             for i, arg in enumerate(command):
                 command[i] = '"' + arg.replace('"', '"""') + '"'
             command = ' '.join(command)
+
         qemu_img = subprocess.Popen(
             command,
             stderr=subprocess.PIPE,
@@ -239,7 +254,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             current_format = self.uiFormatRadios.checkedButton()
             if not current_format:
                 return self.currentId()
-            next_page = self._mappings[current_format.text()][2]
+            next_page = self._mappings[current_format][2]
             if next_page:
                 return next_page.nextId() - 1
         default_nextId = super().nextId()
