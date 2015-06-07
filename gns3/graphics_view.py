@@ -722,6 +722,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             change_symbol_action.triggered.connect(self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
 
+            # Action: Show in file manager
+            show_in_file_manager_action = QtWidgets.QAction("Show in file manager", menu)
+            show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/open.svg'))
+            show_in_file_manager_action.triggered.connect(self.showInFileManagerSlot)
+            menu.addAction(show_in_file_manager_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
             console_action = QtWidgets.QAction("Console", menu)
             console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
@@ -925,6 +931,24 @@ class GraphicsView(QtWidgets.QGraphicsView):
             dialog = SymbolSelectionDialog(self, items)
             dialog.show()
             dialog.exec_()
+
+    def showInFileManagerSlot(self):
+        """
+        Slot to receive events from the show in file manager action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and item.node().initialized():
+                node = item.node()
+                vm_dir = node.project().filesDir()  #FIXME: get the VM directory instead
+                if os.path.exists(vm_dir):
+                    if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(vm_dir)) is False:
+                        QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(vm_dir))
+                        break
+                else:
+                    #TODO: this is a remote server, show an info box
+                    pass
 
     def consoleToNode(self, node, aux=False):
         """
