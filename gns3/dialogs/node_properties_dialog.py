@@ -81,15 +81,16 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
             if not node_item.node().initialized():
                 continue
             parent = " {} group".format(str(node_item.node()))
-            item = ConfigurationPageItem(self._parent_items[parent], node_item)
+            ConfigurationPageItem(self._parent_items[parent], node_item)
 
         # sort the tree
         self.uiNodesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
         if len(self._node_items) == 1:
             parent = " {} group".format(str(node_item.node()))
-            item = self._parent_items[parent].child(0);
+            item = self._parent_items[parent].child(0)
             item.setSelected(True)
+            self.uiNodesTreeWidget.setCurrentItem(item)
             self.showConfigurationPageSlot(item, 0)
             self.splitter.setSizes([0, 600])
 
