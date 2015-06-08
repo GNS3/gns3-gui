@@ -20,6 +20,7 @@ Configuration page for QEMU VMs.
 """
 
 import os
+import re
 from functools import partial
 from collections import OrderedDict
 from gns3.modules.qemu.dialogs.qemu_image_wizzard import QemuImageWizard
@@ -356,6 +357,16 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["initrd"] = self.uiInitrdLineEdit.text().strip()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text().strip()
 
+            # check and save the MAC address
+            mac = self.uiMacAddrLineEdit.text()
+            if mac != ":::::":
+                if not re.search(r"""^([0-9a-fA-F]{2}[:]){5}[0-9a-fA-F]{2}$""", mac):
+                    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
+                else:
+                    settings["mac_address"] = mac
+            else:
+                settings["mac_address"] = None
+
         else:
             del settings["name"]
             if "console" in settings:
@@ -366,6 +377,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             del settings["hdd_disk_image"]
             del settings["initrd"]
             del settings["kernel_image"]
+            del settings["mac_address"]
 
         if self.uiQemuListComboBox.count():
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
@@ -384,7 +396,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
-        settings["mac_address"] = self.uiMacAddrLineEdit.text()
         settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()

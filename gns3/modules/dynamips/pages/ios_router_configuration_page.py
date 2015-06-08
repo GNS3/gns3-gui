@@ -235,11 +235,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
             # load the MAC address setting
             self.uiBaseMACLineEdit.setInputMask("HHHH.HHHH.HHHH;_")
-
-#             regexp = QtCore.QRegExp("([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}")
-#             validator = QtGui.QRegExpValidator(regexp)
-#             self.uiBaseMACLineEdit.setValidator(validator)
-
             if settings["mac_addr"]:
                 self.uiBaseMACLineEdit.setText(settings["mac_addr"])
             else:
@@ -461,11 +456,14 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                     settings["aux"] = aux
 
             # check and save the base MAC address
-            # mac = self.uiBaseMACLineEdit.text()
-            # if mac and not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
-            #    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
-            # elif mac != "":
-            #    settings["mac_addr"] = mac
+            mac = self.uiBaseMACLineEdit.text()
+            if mac != "..":
+                if not re.search(r"""^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$""", mac):
+                    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hhhh.hhhh.hhhh)")
+                else:
+                    settings["mac_addr"] = mac
+            elif not node:
+                settings["mac_addr"] = ""
 
             # save the IOS image path
             settings["image"] = self.uiIOSImageLineEdit.text()
