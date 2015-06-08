@@ -1169,11 +1169,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
         item = items[0]
         if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
             router = item.node()
-            # question = QtWidgets.QMessageBox.question(self, "Auto Idle-PC", "Would you like to automatically find a suitable Idle-PC value (but not optimal)?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-
-            # if question == QtWidgets.QMessageBox.Yes:
-            #    router.computeAutoIdlepc(self._autoIdlepcCallback)
-            # else:
             router.computeIdlepcs(self._idlepcCallback)
 
     def _idlepcCallback(self, result, error=False, context={}, **kwargs):
@@ -1209,21 +1204,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             router = item.node()
             router.computeAutoIdlepc(self._autoIdlepcCallback)
 
-    def autoIdlepcActionSlot(self):
-        """
-        Slot to receive events from the auto idlepc action in the
-        contextual menu.
-        """
-
-        items = self.scene().selectedItems()
-        if len(items) != 1:
-            QtWidgets.QMessageBox.critical(self, "Auto Idle-PC", "Please select only one router")
-            return
-        item = items[0]
-        if isinstance(item, NodeItem) and hasattr(item.node(), "idlepc") and item.node().initialized():
-            router = item.node()
-            router.computeAutoIdlepc(self._autoIdlepcCallback)
-
     def _autoIdlepcCallback(self, result, error=False, context={}, **kwargs):
         """
         Slot to allow the user to select an idlepc value.
@@ -1236,10 +1216,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
             idlepc = result["idlepc"]
             log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
             router.setIdlepc(idlepc)
-            # apply the idle-pc to templates with the same IOS image
+            # apply Idle-PC to all routers with the same IOS image
             ios_image = os.path.basename(router.settings()["image"])
+            for node in Topology.instance().nodes():
+                if hasattr(node, "idlepc") and node.settings()["image"] == ios_image:
+                    node.setIdlepc(idlepc)
+            # apply the idle-pc to templates with the same IOS image
             router.module().updateImageIdlepc(ios_image, idlepc)
-        QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {}".format(idlepc, router.name()))
+        QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {} and all routers with IOS image {}".format(idlepc,
+                                                                                                                                                   router.name(),
+                                                                                                                                                   ios_image))
 
     def duplicateActionSlot(self):
         """
