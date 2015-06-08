@@ -58,6 +58,7 @@ class QemuVM(VM):
                           "mac_address": QEMU_VM_SETTINGS["mac_address"],
                           "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
                           "acpi_shutdown": QEMU_VM_SETTINGS["acpi_shutdown"],
+                          "kvm": QEMU_VM_SETTINGS["kvm"],
                           "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
                           "process_priority": QEMU_VM_SETTINGS["process_priority"],
                           "initrd": "",

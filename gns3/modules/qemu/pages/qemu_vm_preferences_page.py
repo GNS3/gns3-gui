@@ -22,9 +22,9 @@ Configuration page for QEMU VM preferences.
 import ntpath
 import os
 import copy
+import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
-from gns3.node import Node
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -109,6 +109,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         # performance section
         section_item = self._createSectionItem("Optimizations")
+        if sys.platform.startswith("linux") or qemu_vm["server"] != "local":
+            QtWidgets.QTreeWidgetItem(section_item, ["KVM acceleration:", "{}".format(qemu_vm["kvm"])])
         if qemu_vm["cpu_throttling"]:
             QtWidgets.QTreeWidgetItem(section_item, ["CPU throttling:", "{}%".format(qemu_vm["cpu_throttling"])])
         else:
@@ -116,11 +118,10 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Process priority:", qemu_vm["process_priority"]])
 
         # fill out the Additional options section
-
         section_item = self._createSectionItem("Additional options")
         if qemu_vm["options"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown:", "{}%".format(qemu_vm["acpi_shutdown"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown:", "{}".format(qemu_vm["acpi_shutdown"])])
 
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)
