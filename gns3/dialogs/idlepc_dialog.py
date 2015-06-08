@@ -18,7 +18,7 @@
 import os
 import re
 
-from ..qt import QtGui, QtWidgets
+from ..qt import QtWidgets
 from ..topology import Topology
 from ..ui.idlepc_dialog_ui import Ui_IdlePCDialog
 

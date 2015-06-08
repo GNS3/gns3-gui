@@ -3,7 +3,7 @@ Dialog for importing cloud projects
 """
 
 from ..ui.import_cloud_project_dialog_ui import Ui_ImportCloudProjectDialog
-from ..qt import QtGui, QtWidgets
+from ..qt import QtWidgets
 from ..cloud.utils import get_cloud_projects, DownloadProjectThread, DeleteProjectThread
 from ..utils.progress_dialog import ProgressDialog
 

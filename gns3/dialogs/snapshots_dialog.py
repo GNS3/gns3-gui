@@ -24,7 +24,7 @@ import re
 import time
 import os
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtWidgets
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.process_files_worker import ProcessFilesWorker
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog

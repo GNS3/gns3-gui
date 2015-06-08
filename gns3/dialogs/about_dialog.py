@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtGui, QtWidgets
+from ..qt import QtWidgets
 from ..version import __version__
 from ..ui.about_dialog_ui import Ui_AboutDialog
 

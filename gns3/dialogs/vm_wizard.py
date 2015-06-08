@@ -17,7 +17,7 @@
 
 import sys
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.settings import ENABLE_CLOUD
 from gns3.servers import Servers
 

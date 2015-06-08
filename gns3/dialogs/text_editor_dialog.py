@@ -19,7 +19,7 @@
 Text editor to edit Note items.
 """
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtWidgets
 from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
