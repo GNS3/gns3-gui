@@ -21,6 +21,7 @@ Configuration page for VMware preferences.
 
 import os
 import sys
+import shutil
 from gns3.qt import QtWidgets
 
 from .. import VMware
@@ -65,7 +66,8 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         Slot to open a file browser and select vmrun.
         """
 
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select vmrun", ".")
+        vmrun_path = shutil.which("vmrun")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select vmrun", vmrun_path)
         if not path:
             return
 

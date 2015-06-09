@@ -21,8 +21,9 @@ Configuration page for IOU preferences.
 
 import os
 import sys
+import shutil
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtCore, QtWidgets
 
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
@@ -55,7 +56,8 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         Slot to open a file browser and select an iourc file
         """
 
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the IOURC file", ".")
+        documents_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the IOURC file", documents_path)
         if not path:
             return
 
@@ -73,7 +75,9 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select iouyap", ".", filter)
+
+        iouyap_path = shutil.which("iouyap")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select iouyap", iouyap_path, filter)
         if not path:
             return
 

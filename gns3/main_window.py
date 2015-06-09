@@ -34,7 +34,7 @@ from .local_config import LocalConfig
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .modules.vpcs import VPCS
-from .modules.qemu.dialogs.qemu_image_wizzard import QemuImageWizard
+from .modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from .version import __version__
 from .qt import QtGui, QtCore, QtNetwork, QtWidgets
 from .servers import Servers
@@ -126,6 +126,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
+
+        # default directories for QFileDialog
+        self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._screenshots_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
+        self._pictures_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
 
         # add recent file actions to the File menu
         for i in range(0, self._max_recent_files):
@@ -408,7 +414,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                         self.projectsDirPath(),
                                                         "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
                                                         "GNS3 project files (*.gns3)")
-        self._loadPath(path)
+        if path:
+            self._loadPath(path)
 
     def openRecentFileSlot(self):
         """
@@ -483,9 +490,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Exports all configs to a directory.
         """
 
-        directory = self._project.filesDir() if self._project.filesDir() else self.projectsDirPath()
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
+            self._export_configs_to_dir = os.path.dirname(path)
             for module in MODULES:
                 instance = module.instance()
                 if hasattr(instance, "exportConfigs"):
@@ -496,9 +503,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Imports all configs from a directory.
         """
 
-        directory = self._project.filesDir() if self._project.filesDir() else self.projectsDirPath()
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
+            self._import_configs_from_dir = os.path.dirname(path)
             for module in MODULES:
                 instance = module.instance()
                 if hasattr(instance, "importConfigs"):
@@ -532,12 +539,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff)"
-
-        screenshot_dir = self._project.filesDir() if self._project.filesDir() else self.projectsDirPath()
-        screenshot_path = os.path.join(screenshot_dir, "screenshot")
-        path, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self, "Screenshot", screenshot_path, file_formats)
+        path, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self, "Screenshot", self._screenshots_dir, file_formats)
         if not path:
             return
+        self._screenshots_dir = os.path.dirname(path)
 
         # add the extension if missing
         file_format = "." + selected_filter[:4].lower().strip()
@@ -783,9 +788,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff);;All files (*.*)"
 
-        path = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self.projectsDirPath(), file_formats)
+        path = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
             return
+        self._pictures_dir = os.path.dirname(path)
 
         pixmap = QtGui.QPixmap(path)
         if pixmap.isNull():

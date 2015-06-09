@@ -22,8 +22,8 @@ Configuration page for Dynamips IOS routers.
 import os
 import re
 
-from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -55,13 +55,14 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
-
+        self._server = None
         self._idle_valid = False
         idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
         validator = QtGui.QRegExpValidator(idle_pc_rgx, self)
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
+        self._default_configs_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
 
     def _idlePCValidateSlot(self):
         """
@@ -87,7 +88,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         """
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        path = IOSRouterPreferencesPage.getIOSImage(self, self.server)
+        path = IOSRouterPreferencesPage.getIOSImage(self, self._server)
         if not path:
             return
         self.uiIOSImageLineEdit.clear()
@@ -123,11 +124,11 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         Slot to open a file browser and select a startup-config file.
         """
 
-        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup configuration", self._default_configs_dir)
         if not path:
             return
 
+        self._default_configs_dir = os.path.dirname(path)
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(self, "Startup configuration", "Cannot read {}".format(path))
             return
@@ -140,11 +141,11 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         Slot to open a file browser and select a private-config file.
         """
 
-        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private configuration", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private configuration", self._default_configs_dir)
         if not path:
             return
 
+        self._default_configs_dir = os.path.dirname(path)
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(self, "Private configuration", "Cannot read {}".format(path))
             return
@@ -214,6 +215,11 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         :param node: Node instance
         :param group: indicates the settings apply to a group of routers
         """
+
+        if node:
+            self._server = node.server()
+        else:
+            self._server = Servers.instance().getServerFromString(settings["server"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -377,9 +383,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiSparseMemoryCheckBox.setChecked(settings["sparsemem"])
         else:
             self.uiSparseMemoryCheckBox.hide()
-
-        #FIXME
-        #self.server = Servers.instance().getServerFromString(settings["server"])
 
     def _checkForLinkConnectedToAdapter(self, slot_number, settings, node):
         """

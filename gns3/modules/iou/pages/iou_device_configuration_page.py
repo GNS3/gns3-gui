@@ -44,10 +44,12 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
         self._current_iou_image = ""
+        self._server = None
 
         # location of the base config templates
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
         self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
+        self._default_configs_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
 
     def _useDefaultValuesSlot(self, state):
         """
@@ -67,7 +69,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         """
 
         from .iou_device_preferences_page import IOUDevicePreferencesPage
-        path = IOUDevicePreferencesPage.getIOUImage(self)
+        path = IOUDevicePreferencesPage.getIOUImage(self, self._server)
         if not path:
             return
         self.uiIOUImageLineEdit.clear()
@@ -89,11 +91,11 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         Slot to open a file browser and select a startup-config file.
         """
 
-        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup-config file", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a startup-config file", self._default_configs_dir)
         if not path:
             return
 
+        self._default_configs_dir = os.path.dirname(path)
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read {}".format(path))
             return
@@ -106,11 +108,11 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         Slot to open a file browser and select a private-config file.
         """
 
-        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private-config file", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a private-config file", self._default_configs_dir)
         if not path:
             return
 
+        self._default_configs_dir = os.path.dirname(path)
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read {}".format(path))
             return
@@ -126,6 +128,11 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         :param node: Node instance
         :param group: indicates the settings apply to a group of routers
         """
+
+        if node:
+            self._server = node.server()
+        else:
+            self._server = Servers.instance().getServerFromString(settings["server"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -166,8 +173,6 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # load the number of adapters
         self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
         self.uiSerialAdaptersSpinBox.setValue(settings["serial_adapters"])
-
-        self.server = Servers.instance().getServerFromString(settings["server"])
 
     def saveSettings(self, settings, node=None, group=False):
         """

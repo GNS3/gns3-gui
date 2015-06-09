@@ -21,15 +21,12 @@ Configuration page for IOU device preferences.
 
 import copy
 import os
-import stat
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
-from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.image_manager import ImageManager
 
 from .. import IOU
@@ -44,6 +41,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
     """
     QWidget preference page for IOU image & device preferences.
     """
+
+    _default_images_dir = ""
 
     def __init__(self):
         super().__init__()
@@ -293,15 +292,18 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         :return: path to the IOU image or None
         """
 
-        destination_directory = cls.getImageDirectory()
+        if not cls._default_images_dir:
+            cls._default_images_dir = cls.getImageDirectory()
+
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
                                                         "Select an IOU image",
-                                                        destination_directory,
+                                                        cls._default_images_dir,
                                                         "All files (*)",
                                                         "IOU image (*.bin *.image)")
 
         if not path:
             return
+        cls._default_images_dir = os.path.dirname(path)
 
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(parent, "IOU image", "Cannot read {}".format(path))
@@ -322,11 +324,9 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             return
 
         try:
-            os.makedirs(destination_directory)
-        except FileExistsError:
-            pass
+            os.makedirs(cls.getImageDirectory(), exist_ok=True)
         except OSError as e:
-            QtWidgets.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(destination_directory, e))
+            QtWidgets.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(cls.getImageDirectory(), e))
             return
 
         path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/iou/vms")

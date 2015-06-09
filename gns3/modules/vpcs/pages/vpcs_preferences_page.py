@@ -21,6 +21,7 @@ Configuration page for VPCS preferences.
 
 import os
 import sys
+import shutil
 
 from gns3.qt import QtCore, QtWidgets
 
@@ -45,6 +46,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
+        self._default_configs_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
 
     def _vpcsPathBrowserSlot(self):
         """
@@ -54,7 +56,8 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select VPCS", ".", filter)
+        vpcs_path = shutil.which("vpcs")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select VPCS", vpcs_path, filter)
         if not path:
             return
 
@@ -69,11 +72,11 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         Slot to open a file browser and select a base script file for VPCS
         """
 
-        config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a script file", config_dir)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a script file", self._default_configs_dir)
         if not path:
             return
 
+        self._default_configs_dir = os.path.dirname(path)
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(self, "Script file", "{} cannot be read".format(os.path.basename(path)))
             return

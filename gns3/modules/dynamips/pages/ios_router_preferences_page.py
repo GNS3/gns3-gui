@@ -32,7 +32,6 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.image_manager import ImageManager
 
 from .. import Dynamips
@@ -52,6 +51,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
     """
     QWidget preference page for IOS routers.
     """
+
+    _default_images_dir = ""
 
     def __init__(self):
         super().__init__()
@@ -216,15 +217,18 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         :return: path to the IOS image or None
         """
 
-        destination_directory = cls.getImageDirectory()
+        if not cls._default_images_dir:
+            cls._default_images_dir = cls.getImageDirectory()
+
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
                                                         "Select an IOS image",
-                                                        destination_directory,
+                                                        cls._default_images_dir,
                                                         "All files (*.*);;IOS image (*.bin *.image)",
                                                         "IOS image (*.bin *.image)")
 
         if not path:
             return
+        cls._default_images_dir = os.path.dirname(path)
 
         if not os.access(path, os.R_OK):
             QtWidgets.QMessageBox.critical(parent, "IOS image", "Cannot read {}".format(path))
@@ -251,9 +255,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             return
 
         try:
-            os.makedirs(destination_directory)
-        except FileExistsError:
-            pass
+            os.makedirs(cls.getImageDirectory(), exist_ok=True)
         except OSError as e:
             QtWidgets.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, e))
             return
@@ -266,7 +268,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         if compressed:
             reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
-                decompressed_image_path = os.path.join(destination_directory, os.path.basename(os.path.splitext(path)[0] + ".image"))
+                decompressed_image_path = os.path.join(cls.getImageDirectory(), os.path.basename(os.path.splitext(path)[0] + ".image"))
                 worker = DecompressIOSWorker(path, decompressed_image_path)
                 progress_dialog = ProgressDialog(worker,
                                                  "IOS image",

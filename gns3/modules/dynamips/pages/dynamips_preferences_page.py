@@ -21,8 +21,8 @@ Configuration page for Dynamips preferences.
 
 import os
 import sys
-from gns3.qt import QtGui, QtWidgets
-from gns3.servers import Servers
+import shutil
+from gns3.qt import QtWidgets
 from .. import Dynamips
 from ..ui.dynamips_preferences_page_ui import Ui_DynamipsPreferencesPageWidget
 from ..settings import DYNAMIPS_SETTINGS
@@ -53,7 +53,9 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         file_filter = ""
         if sys.platform.startswith("win"):
             file_filter = "Executable (*.exe);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Dynamips", ".", file_filter)
+
+        dynamips_path = shutil.which("dynamips")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Dynamips", dynamips_path, file_filter)
         if not path:
             return
 

@@ -100,6 +100,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
 
+        # default directories for QFileDialog
+        self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._import_config_dir = ""
+        self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._export_config_dir = ""
+
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def reset(self):
@@ -1066,26 +1072,30 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
-        directory = self._main_window.project().filesDir()
         if len(items) > 1:
-            path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+            path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.ShowDirsOnly)
             if path:
+                self._import_configs_from_dir = os.path.dirname(path)
                 for item in items:
                     item.node().importConfigFromDirectory(path)
         else:
+            if not self._import_config_dir:
+                self._import_config_dir = self._main_window.project().filesDir()
+
             item = items[0]
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import config",
-                                                            directory,
+                                                            self._import_config_dir,
                                                             "All files (*.*);;Config files (*.cfg)",
                                                             "Config files (*.cfg)")
 
             if path:
+                self._import_config_dir = os.path.dirname(path)
                 item.node().importConfig(path)
             if hasattr(item.node(), "importPrivateConfig"):
                 path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                                 "Import private-config",
-                                                                directory,
+                                                                self._import_config_dir,
                                                                 "All files (*.*);;Config files (*.cfg)",
                                                                 "Config files (*.cfg)")
                 if path:
@@ -1106,20 +1116,24 @@ class GraphicsView(QtWidgets.QGraphicsView):
             return
 
         if len(items) > 1:
-            path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", ".", QtWidgets.QFileDialog.ShowDirsOnly)
+            path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
             if path:
+                self._export_configs_to_dir = os.path.dirname(path)
                 for item in items:
                     item.node().exportConfigToDirectory(path)
         else:
-            item = items[0]
+            if not self._export_config_dir:
+                self._export_config_dir = self._main_window.project().filesDir()
 
-            directory = self._main_window.project().filesDir()
+            item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
-                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export startup-config", directory)
-                private_config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config", directory)
+                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export startup-config", self._export_config_dir)
+                self._export_config_dir = os.path.dirname(config_path)
+                private_config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config", self._export_config_dir)
                 item.node().exportConfig(config_path, private_config_path)
             else:
-                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export config", directory)
+                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export config", self._export_config_dir)
+                self._export_config_dir = os.path.dirname(config_path)
                 item.node().exportConfig(config_path)
 
     def saveConfigActionSlot(self):

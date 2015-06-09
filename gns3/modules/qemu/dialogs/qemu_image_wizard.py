@@ -30,6 +30,7 @@ from gns3.servers import Servers
 from .. import Qemu
 from ..ui.qemu_image_wizard_ui import Ui_QemuImageWizard
 
+
 class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
     """
     Wizard to create a Qemu VM.

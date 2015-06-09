@@ -23,7 +23,9 @@ import os
 import sys
 import re
 import uuid
-from gns3.qt import QtNetwork, QtWidgets, QtCore
+import shutil
+
+from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
 from ..topology import Topology
@@ -78,7 +80,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         filter = ""
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the SSH key", ".", filter)
+        ssh_dir = os.path.join(os.path.expanduser("~"), ".ssh")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the SSH key", ssh_dir, filter)
         if not path:
             return
 
@@ -132,7 +135,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", ".", filter)
+        server_path = shutil.which("gns3server")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", server_path, filter)
         if not path:
             return
 
@@ -146,7 +150,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         filter = ""
         if sys.platform.startswith("win"):
             filter = "Executable (*.exe);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select ubridge executable", ".", filter)
+
+        ubridge_path = shutil.which("ubridge")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select ubridge executable", ubridge_path, filter)
         if not path:
             return
 
