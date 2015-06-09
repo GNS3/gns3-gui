@@ -34,7 +34,7 @@ class ColouredFormatter(logging.Formatter):
 
         message = super().format(record)
 
-        if not colour:
+        if not colour or sys.platform.startswith("win"):
             return message.replace("#RESET#", "")
 
         level_no = record.levelno
