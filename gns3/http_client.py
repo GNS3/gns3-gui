@@ -160,9 +160,9 @@ class HTTPClient(QtCore.QObject):
             if self._user is not None:
                 auth_handler = urllib.request.HTTPBasicAuthHandler()
                 auth_handler.add_password(realm="GNS3 server",
-                              uri=url,
-                              user=self._user,
-                              passwd=self._password)
+                                          uri=url,
+                                          user=self._user,
+                                          passwd=self._password)
                 opener = urllib.request.build_opener(auth_handler)
                 urllib.request.install_opener(opener)
 
@@ -382,15 +382,15 @@ class HTTPClient(QtCore.QObject):
             self.notify_progress_end_query(context["query_id"])
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
+            error_message = response.errorString()
+            log.info("Response error: {}".format(error_message))
+
             if error_code < 200:
                 self._connected = False
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
-            error_message = response.errorString()
-            log.info("Response error: {}".format(error_message))
-
-            if status == 401:
-                print(error_message)
+                if status == 401:
+                    print(error_message)
 
             try:
                 body = bytes(response.readAll()).decode("utf-8")

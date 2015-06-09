@@ -63,7 +63,12 @@ class Servers(QtCore.QObject):
         self._local_server_settings = {}
         self._remote_server_iter_pos = 0
         self._loadSettings()
+        self._initLocalServer()
 
+    def _initLocalServer(self):
+        """
+        Create a new local server
+        """
         host = self._local_server_settings["host"]
         port = self._local_server_settings["port"]
         user = self._local_server_settings["user"]
@@ -197,12 +202,8 @@ class Servers(QtCore.QObject):
         """
 
         if settings["host"] != self._local_server_settings["host"] or settings["port"] != self._local_server_settings["port"]:
-            url = "http://{host}:{port}".format(host=settings["host"], port=settings["port"])
-            self._local_server = HTTPClient(url, self._network_manager)
-            self._local_server.setLocal(True)
-            log.info("New local server connection {} registered".format(url))
-
-        self._local_server_settings.update(settings)
+            self._local_server_settings.update(settings)
+            self._initLocalServer()
 
     def localServerAutoStart(self):
         """
