@@ -49,6 +49,7 @@ setup(
     description="GNS3 graphical interface for the GNS3 server.",
     long_description=open("README.rst", "r").read(),
     install_requires=[
+        "jsonschema>=2.4.0",
         "apache-libcloud>=0.14.1",
         "requests>=2.4.3",
         "paramiko>=1.15.1",

@@ -1,0 +1,189 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "85376bb0-3f17-4b46-ae9d-76b393f9eb65",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Router c7200",
+                "dynamips_id": 1,
+                "id": 2,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "R1",
+                    "x": 22.2578125,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 5,
+                        "id": 2,
+                        "name": "Serial5/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 5,
+                        "id": 3,
+                        "name": "Serial5/1",
+                        "port_number": 1
+                    },
+                    {
+                        "adapter_number": 5,
+                        "id": 4,
+                        "name": "Serial5/2",
+                        "port_number": 2
+                    },
+                    {
+                        "adapter_number": 5,
+                        "id": 5,
+                        "name": "Serial5/3",
+                        "port_number": 3
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 6,
+                        "name": "Serial6/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 7,
+                        "name": "Serial6/1",
+                        "port_number": 1
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 8,
+                        "name": "Serial6/2",
+                        "port_number": 2
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 9,
+                        "name": "Serial6/3",
+                        "port_number": 3
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 10,
+                        "name": "Serial6/4",
+                        "port_number": 4
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 11,
+                        "name": "Serial6/5",
+                        "port_number": 5
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 12,
+                        "name": "Serial6/6",
+                        "port_number": 6
+                    },
+                    {
+                        "adapter_number": 6,
+                        "id": 13,
+                        "name": "Serial6/7",
+                        "port_number": 7
+                    },
+                    {
+                        "adapter_number": 1,
+                        "id": 14,
+                        "name": "ATM1/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 3,
+                        "id": 15,
+                        "name": "FastEthernet3/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 3,
+                        "id": 16,
+                        "name": "FastEthernet3/1",
+                        "port_number": 1
+                    },
+                    {
+                        "adapter_number": 2,
+                        "id": 17,
+                        "name": "FastEthernet2/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 0,
+                        "id": 18,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 4,
+                        "id": 19,
+                        "name": "GigabitEthernet4/0",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "clock_divisor": 4,
+                    "console": 2001,
+                    "disk0": 0,
+                    "disk1": 0,
+                    "exec_area": 64,
+                    "idlemax": 500,
+                    "idlepc": "0x606e056c",
+                    "idlesleep": 30,
+                    "image": "c7200-adventerprisek9-mz.124-24.T8.image",
+                    "mac_addr": "ca01.7778.0000",
+                    "midplane": "vxr",
+                    "mmap": true,
+                    "name": "R1",
+                    "npe": "npe-400",
+                    "nvram": 512,
+                    "platform": "c7200",
+                    "power_supplies": [
+                        1,
+                        1
+                    ],
+                    "ram": 512,
+                    "sensors": [
+                        22,
+                        22,
+                        22,
+                        22
+                    ],
+                    "slot0": "C7200-IO-FE",
+                    "slot1": "PA-A1",
+                    "slot2": "PA-FE-TX",
+                    "slot3": "PA-2FE-TX",
+                    "slot4": "PA-GE",
+                    "slot5": "PA-4T+",
+                    "slot6": "PA-8T",
+                    "sparsemem": true,
+                    "startup_config": "configs/i1_startup-config.cfg",
+                    "system_id": "FTX0945W0MY"
+                },
+                "server_id": 1,
+                "type": "C7200",
+                "vm_id": "466d182c-a6eb-4116-b8ce-9915d00a3d08",
+                "x": -70.0,
+                "y": -127.0
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

@@ -1,0 +1,62 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "85376bb0-3f17-4b46-ae9d-76b393f9eb65",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "QEMU VM",
+                "id": 3,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "Microcore-1",
+                    "x": -3.2890625,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "id": 20,
+                        "name": "Ethernet0",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "acpi_shutdown": false,
+                    "adapter_type": "e1000",
+                    "adapters": 1,
+                    "console": 2001,
+                    "cpu_throttling": 0,
+                    "hda_disk_image": "linux-microcore-3.4.1.img",
+                    "legacy_networking": false,
+                    "mac_address": "00:00:ab:6c:bc:00",
+                    "name": "Microcore-1",
+                    "options": "-nographic",
+                    "process_priority": "normal",
+                    "qemu_path": "/usr/local/bin/qemu-system-x86_64",
+                    "ram": 256
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "46d4334d-996c-4e9a-ad5a-81c4f5386cbc",
+                "x": -74.5,
+                "y": -169.5
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

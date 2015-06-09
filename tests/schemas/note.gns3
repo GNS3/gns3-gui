@@ -1,0 +1,20 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "fe7ee04a-656d-462b-85b9-c6d3fe7a7420",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "notes": [
+            {
+                "color": "#ff000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": "Hello",
+                "x": -90.0,
+                "y": -224.0
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}
