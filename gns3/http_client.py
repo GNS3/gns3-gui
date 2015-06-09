@@ -148,15 +148,24 @@ class HTTPClient(QtCore.QObject):
 
         self._connected = False
 
-    def isServerRunning(self):
+    def isLocalServerRunning(self):
         """
         Check if a server is already running on this host.
 
         :returns: boolean
         """
-
         try:
             url = "{scheme}://{host}:{port}/v1/version".format(scheme=self.scheme, host=self.host, port=self.port)
+
+            if self._user is not None:
+                auth_handler = urllib.request.HTTPBasicAuthHandler()
+                auth_handler.add_password(realm="GNS3 server",
+                              uri=url,
+                              user=self._user,
+                              passwd=self._password)
+                opener = urllib.request.build_opener(auth_handler)
+                urllib.request.install_opener(opener)
+
             response = urllib.request.urlopen(url, timeout=2)
             content_type = response.getheader("CONTENT-TYPE")
             if response.status == 200 and content_type == "application/json":
