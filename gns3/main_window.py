@@ -1142,7 +1142,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 log.info("Connecting to a server already running on this host")
             else:
                 if servers.initLocalServer() and servers.startLocalServer():
-                    worker = WaitForConnectionWorker(server.host, server.port)
+                    worker = WaitForConnectionWorker(server.host(), server.port())
                     progress_dialog = ProgressDialog(worker,
                                                      "Local server",
                                                      "Connecting to server {} on port {}...".format(server.host(), server.port()),
