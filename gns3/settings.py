@@ -224,6 +224,12 @@ PACKET_CAPTURE_SETTINGS = {
     "packet_capture_analyzer_command": DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND,
 }
 
+GNS3_VM_SETTINGS = {
+    "auto_start": True,
+    "vmname": "GNS3 VM",
+    "virtualization": "vmware"
+}
+
 ENABLE_CLOUD = False
 
 CLOUD_SETTINGS = {

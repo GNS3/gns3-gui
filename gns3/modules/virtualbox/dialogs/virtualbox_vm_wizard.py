@@ -21,8 +21,7 @@ Wizard for VirtualBox VMs.
 
 import sys
 
-from functools import partial
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
