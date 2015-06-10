@@ -52,7 +52,12 @@ def get_resource(resource_name):
         resource_path = os.path.normpath(os.path.join(os.path.dirname(sys.executable), resource_name))
     elif not hasattr(sys, "frozen"):
         if pkg_resources.resource_exists("gns3", resource_name):
-            resource_path = pkg_resources.resource_filename("gns3", resource_name)
+            try:
+                resource_path = pkg_resources.resource_filename("gns3", resource_name)
+            except pkg_resources.ExtractionError as e:
+                log.fatal(e)
+                sys.stderr.write(e)
+                sys.exit(1)
             resource_path = os.path.normpath(resource_path)
         else:
             resource_path = os.path.dirname(os.path.realpath(__file__))
