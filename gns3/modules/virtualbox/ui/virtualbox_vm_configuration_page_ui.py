@@ -10,7 +10,9 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_virtualBoxVMConfigPageWidget:
+
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
         virtualBoxVMConfigPageWidget.resize(509, 346)
@@ -127,4 +129,3 @@ class Ui_virtualBoxVMConfigPageWidget:
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Allow GNS3 to use any configured VirtualBox adapter"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network"))
-

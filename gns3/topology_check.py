@@ -17,6 +17,7 @@
 
 import jsonschema
 import json
+import os
 
 from gns3.utils.get_resource import get_resource
 
@@ -29,7 +30,7 @@ def getTopologyValidationErrors(topology):
     :returns: Return None if ok otherwise an error message
     """
 
-    with open(get_resource("topology_schema.json")) as f:
+    with open(get_resource(os.path.join("schemas", "topology.json"))) as f:
         schema = json.load(f)
 
     v = jsonschema.Draft4Validator(schema)

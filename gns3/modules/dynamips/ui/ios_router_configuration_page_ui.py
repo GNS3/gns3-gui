@@ -10,7 +10,9 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_iosRouterConfigPageWidget:
+
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName("iosRouterConfigPageWidget")
         iosRouterConfigPageWidget.resize(467, 493)
@@ -597,4 +599,3 @@ class Ui_iosRouterConfigPageWidget:
         self.uiSensor4Label.setText(_translate("iosRouterConfigPageWidget", "NPE outlet:"))
         self.uiSensor4SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " C"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiEnvironmentPageWidget), _translate("iosRouterConfigPageWidget", "Environment"))
-

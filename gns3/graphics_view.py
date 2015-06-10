@@ -947,13 +947,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and item.node().initialized():
                 node = item.node()
-                vm_dir = node.project().filesDir()  #FIXME: get the VM directory instead
+                vm_dir = node.project().filesDir()  # FIXME: get the VM directory instead
                 if os.path.exists(vm_dir):
                     if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(vm_dir)) is False:
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(vm_dir))
                         break
                 else:
-                    #TODO: this is a remote server, show an info box
+                    # TODO: this is a remote server, show an info box
                     pass
 
     def consoleToNode(self, node, aux=False):

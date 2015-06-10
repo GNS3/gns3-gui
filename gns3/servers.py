@@ -127,7 +127,6 @@ class Servers(QtCore.QObject):
         """
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(64))
 
-
     def _loadSettings(self):
         """
         Loads the server settings from the persistent settings file.

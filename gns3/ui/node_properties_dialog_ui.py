@@ -10,7 +10,9 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_NodePropertiesDialog:
+
     def setupUi(self, NodePropertiesDialog):
         NodePropertiesDialog.setObjectName("NodePropertiesDialog")
         NodePropertiesDialog.resize(689, 454)
@@ -70,7 +72,7 @@ class Ui_NodePropertiesDialog:
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NodePropertiesDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Reset)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Reset)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 
@@ -84,6 +86,6 @@ class Ui_NodePropertiesDialog:
         self.uiNodesTreeWidget.headerItem().setText(0, _translate("NodePropertiesDialog", "Nodes"))
         self.uiTitleLabel.setText(_translate("NodePropertiesDialog", "Node Configuration"))
         self.textLabel.setText(_translate("NodePropertiesDialog", "Please select a node in the list \n"
-"to display the configuration page."))
+                                          "to display the configuration page."))
 
 from . import resources_rc
