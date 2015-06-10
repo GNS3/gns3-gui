@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Wed May 27 11:07:47 2015
+# Created: Wed Jun 10 22:51:39 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName(_fromUtf8("ServerPreferencesPageWidget"))
-        ServerPreferencesPageWidget.resize(549, 536)
+        ServerPreferencesPageWidget.resize(497, 579)
         self.vboxlayout = QtGui.QVBoxLayout(ServerPreferencesPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(ServerPreferencesPageWidget)
@@ -54,9 +54,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiGeneralSettingsGroupBox.setObjectName(_fromUtf8("uiGeneralSettingsGroupBox"))
         self.gridLayout_3 = QtGui.QGridLayout(self.uiGeneralSettingsGroupBox)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
-        self.uiLocalServerPathLabel = QtGui.QLabel(self.uiGeneralSettingsGroupBox)
-        self.uiLocalServerPathLabel.setObjectName(_fromUtf8("uiLocalServerPathLabel"))
-        self.gridLayout_3.addWidget(self.uiLocalServerPathLabel, 0, 0, 1, 1)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.uiLocalServerPathLineEdit = QtGui.QLineEdit(self.uiGeneralSettingsGroupBox)
@@ -85,6 +82,12 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiConsoleConnectionsToAnyIPCheckBox = QtGui.QCheckBox(self.uiGeneralSettingsGroupBox)
         self.uiConsoleConnectionsToAnyIPCheckBox.setObjectName(_fromUtf8("uiConsoleConnectionsToAnyIPCheckBox"))
         self.gridLayout_3.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 7, 0, 1, 1)
+        self.uiLocalServerPathLabel = QtGui.QLabel(self.uiGeneralSettingsGroupBox)
+        self.uiLocalServerPathLabel.setObjectName(_fromUtf8("uiLocalServerPathLabel"))
+        self.gridLayout_3.addWidget(self.uiLocalServerPathLabel, 0, 0, 1, 1)
+        self.uiLocalServerAuthCheckBox = QtGui.QCheckBox(self.uiGeneralSettingsGroupBox)
+        self.uiLocalServerAuthCheckBox.setObjectName(_fromUtf8("uiLocalServerAuthCheckBox"))
+        self.gridLayout_3.addWidget(self.uiLocalServerAuthCheckBox, 8, 0, 1, 1)
         self.verticalLayout_2.addWidget(self.uiGeneralSettingsGroupBox)
         self.uiConsolePortRangeGroupBox = QtGui.QGroupBox(self.uiLocalTabWidget)
         self.uiConsolePortRangeGroupBox.setObjectName(_fromUtf8("uiConsolePortRangeGroupBox"))
@@ -186,16 +189,31 @@ class Ui_ServerPreferencesPageWidget(object):
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPathLineEdit, self.uiLocalServerToolButton)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerToolButton, self.uiLocalServerPortSpinBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPortSpinBox, self.uiRemoteServerPortSpinBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerPortSpinBox, self.uiTabWidget)
+        ServerPreferencesPageWidget.setTabOrder(self.uiTabWidget, self.uiLocalServerAutoStartCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerAutoStartCheckBox, self.uiLocalServerHostComboBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerHostComboBox, self.uiConsoleConnectionsToAnyIPCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiConsoleConnectionsToAnyIPCheckBox, self.uiLocalServerAuthCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerAuthCheckBox, self.uiConsoleStartPortSpinBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiConsoleStartPortSpinBox, self.uiConsoleEndPortSpinBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiConsoleEndPortSpinBox, self.uiUDPStartPortSpinBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiUDPStartPortSpinBox, self.uiUDPEndPortSpinBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiUDPEndPortSpinBox, self.uiRemoteServersTreeWidget)
+        ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServersTreeWidget, self.uiRemoteServerPortLineEdit)
+        ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerPortLineEdit, self.uiAddRemoteServerPushButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiAddRemoteServerPushButton, self.uiDeleteRemoteServerPushButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiDeleteRemoteServerPushButton, self.uiRestoreDefaultsPushButton)
 
     def retranslateUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setWindowTitle(_translate("ServerPreferencesPageWidget", "Server", None))
         self.uiLocalServerAutoStartCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable local server", None))
         self.uiGeneralSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "General settings", None))
-        self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:", None))
         self.uiLocalServerToolButton.setText(_translate("ServerPreferencesPageWidget", "&Browse...", None))
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:", None))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:", None))
         self.uiConsoleConnectionsToAnyIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Allow console connections to any local IP address", None))
+        self.uiLocalServerPathLabel.setText(_translate("ServerPreferencesPageWidget", "Path:", None))
+        self.uiLocalServerAuthCheckBox.setText(_translate("ServerPreferencesPageWidget", "Protect server with password (recommended)", None))
         self.uiConsolePortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Console port range", None))
         self.uiConsolePortRangeLabel.setText(_translate("ServerPreferencesPageWidget", "to", None))
         self.uiUDPPortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "UDP tunneling port range", None))

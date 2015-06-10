@@ -189,6 +189,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
         self.uiLocalServerPortSpinBox.setValue(settings["port"])
         self.uiLocalServerAutoStartCheckBox.setChecked(settings["auto_start"])
+        self.uiLocalServerAuthCheckBox.setChecked(settings["auth"])
         self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(settings["allow_console_from_anywhere"])
         self.uiConsoleStartPortSpinBox.setValue(settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(settings["console_end_port_range"])
@@ -236,6 +237,7 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["port"] = self.uiLocalServerPortSpinBox.value()
         new_settings["auto_start"] = self.uiLocalServerAutoStartCheckBox.isChecked()
         new_settings["allow_console_from_anywhere"] = self.uiConsoleConnectionsToAnyIPCheckBox.isChecked()
+        new_settings["auth"] = self.uiLocalServerAuthCheckBox.isChecked()
         new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
         new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
@@ -243,7 +245,6 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["images_path"] = current_settings["images_path"]
         new_settings["projects_path"] = current_settings["projects_path"]
         new_settings["report_errors"] = current_settings["report_errors"]
-
         if new_settings["console_end_port_range"] <= new_settings["console_start_port_range"]:
             QtGui.QMessageBox.critical(self, "Local", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
                                                                                                         new_settings["console_end_port_range"]))
