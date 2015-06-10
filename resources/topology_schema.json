@@ -422,6 +422,7 @@
                     "items": {"type": "integer", "minimum": 1}
                 },
                 "ram": {"type": "integer", "minimum": 1},
+                "iomem": {"type": "integer", "minimum": 0},
                 "sensors": {
                     "type": "array",
                     "items": {"type": "integer", "minimum": 1}
@@ -435,11 +436,11 @@
                 "slot6": { "$ref": "#/definitions/dynamips_slot" },
                 "sparsemem": {"type": "boolean"},
                 "startup_config": { "$ref": "#/definitions/mandatory_string" },
-                "system_id": { "$ref": "#/definitions/mandatory_string" }
+                "system_id": { "$ref": "#/definitions/mandatory_string" },
+                "auto_delete_disks": { "type": "boolean" }
             },
             "required": [
                 "name",
-                "clock_divisor",
                 "console",
                 "disk0",
                 "disk1",
@@ -449,14 +450,10 @@
                 "idlesleep",
                 "image",
                 "mac_addr",
-                "midplane",
                 "mmap",
-                "npe",
                 "nvram",
                 "platform",
-                "power_supplies",
                 "ram",
-                "sensors",
                 "slot0",
                 "sparsemem",
                 "startup_config",
