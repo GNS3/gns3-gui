@@ -19,14 +19,14 @@
 QEMU module implementation.
 """
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
 from .qemu_vm import QemuVM
-from .settings import QEMU_SETTINGS, QEMU_SETTING_TYPES
-from .settings import QEMU_VM_SETTINGS, QEMU_VM_SETTING_TYPES
+from .settings import QEMU_SETTINGS
+from .settings import QEMU_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)

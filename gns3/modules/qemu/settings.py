@@ -25,10 +25,6 @@ QEMU_SETTINGS = {
     "use_local_server": True,
 }
 
-QEMU_SETTING_TYPES = {
-    "use_local_server": bool,
-}
-
 QEMU_VM_SETTINGS = {
     "name": "",
     "default_symbol": ":/symbols/qemu_guest.normal.svg",
@@ -53,32 +49,6 @@ QEMU_VM_SETTINGS = {
     "kernel_image": "",
     "kernel_command_line": "",
     "server": "local"
-}
-
-QEMU_VM_SETTING_TYPES = {
-    "name": str,
-    "default_symbol": str,
-    "hover_symbol": str,
-    "category": int,
-    "qemu_path": str,
-    "hda_disk_image": str,
-    "hdb_disk_image": str,
-    "hdc_disk_image": str,
-    "hdd_disk_image": str,
-    "ram": int,
-    "adapters": int,
-    "adapter_type": str,
-    "mac_address": str,
-    "legacy_networking": bool,
-    "acpi_shutdown": bool,
-    "kvm": bool,
-    "cpu_throttling": int,
-    "process_priority": str,
-    "options": str,
-    "initrd": str,
-    "kernel_image": str,
-    "kernel_command_line": str,
-    "server": str
 }
 
 

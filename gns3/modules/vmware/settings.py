@@ -35,14 +35,6 @@ VMWARE_SETTINGS = {
     "use_local_server": True,
 }
 
-VMWARE_SETTING_TYPES = {
-    "vmrun_path": str,
-    "host_type": str,
-    "vmnet_start_range": int,
-    "vmnet_end_range": int,
-    "use_local_server": bool,
-}
-
 VMWARE_VM_SETTINGS = {
     "vmx_path": "",
     "default_symbol": ":/symbols/vmware_guest.normal.svg",
@@ -55,18 +47,4 @@ VMWARE_VM_SETTINGS = {
     "enable_remote_console": False,
     "linked_base": False,
     "server": "local"
-}
-
-VMWARE_VM_SETTING_TYPES = {
-    "vmx_path": str,
-    "default_symbol": str,
-    "hover_symbol": str,
-    "category": int,
-    "adapters": int,
-    "adapter_type": str,
-    "use_any_adapter": bool,
-    "headless": bool,
-    "enable_remote_console": bool,
-    "linked_base": bool,
-    "server": str
 }

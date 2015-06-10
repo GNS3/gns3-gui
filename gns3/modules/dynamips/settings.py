@@ -30,15 +30,6 @@ DYNAMIPS_SETTINGS = {
     "mmap_support": True,
 }
 
-DYNAMIPS_SETTING_TYPES = {
-    "dynamips_path": str,
-    "allocate_aux_console_ports": bool,
-    "use_local_server": bool,
-    "ghost_ios_support": bool,
-    "sparse_memory_support": bool,
-    "mmap_support": bool,
-}
-
 IOS_ROUTER_SETTINGS = {
     "name": "",
     "image": "",
@@ -63,32 +54,6 @@ IOS_ROUTER_SETTINGS = {
     "auto_delete_disks": False,
     "system_id": "FTX0945W0MY",
     "server": "local"
-}
-
-IOS_ROUTER_SETTING_TYPES = {
-    "name": str,
-    "image": str,
-    "default_symbol": str,
-    "hover_symbol": str,
-    "category": int,
-    "startup_config": str,
-    "private_config": str,
-    "platform": str,
-    "chassis": str,
-    "idlepc": str,
-    "idlemax": int,
-    "idlesleep": int,
-    "exec_area": int,
-    "mmap": bool,
-    "sparsemem": bool,
-    "ram": int,
-    "nvram": int,
-    "mac_addr": str,
-    "disk0": int,
-    "disk1": int,
-    "auto_delete_disks": bool,
-    "system_id": str,
-    "server": str
 }
 
 # supported platforms with the default RAM value

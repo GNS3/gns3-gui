@@ -43,8 +43,8 @@ from .nodes.ethernet_switch import EthernetSwitch
 from .nodes.ethernet_hub import EthernetHub
 from .nodes.frame_relay_switch import FrameRelaySwitch
 from .nodes.atm_switch import ATMSwitch
-from .settings import DYNAMIPS_SETTINGS, DYNAMIPS_SETTING_TYPES
-from .settings import IOS_ROUTER_SETTINGS, IOS_ROUTER_SETTING_TYPES
+from .settings import DYNAMIPS_SETTINGS
+from .settings import IOS_ROUTER_SETTINGS
 from .settings import PLATFORMS_DEFAULT_RAM
 
 PLATFORM_TO_CLASS = {

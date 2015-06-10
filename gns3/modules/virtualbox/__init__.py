@@ -23,15 +23,15 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
 from .virtualbox_vm import VirtualBoxVM
-from .settings import VBOX_SETTINGS, VBOX_SETTING_TYPES
-from .settings import VBOX_VM_SETTINGS, VBOX_VM_SETTING_TYPES
+from .settings import VBOX_SETTINGS
+from .settings import VBOX_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -118,29 +118,7 @@ class VirtualBox(Module):
         Load the VirtualBox VMs from the client settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the VirtualBox settings from QSettings (for backward compatibility)
-        virtualbox_vms = []
-        # load the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("VirtualBoxVMs")
-        # load the VMs
-        size = settings.beginReadArray("VM")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            vm = {}
-            for setting_name, default_value in VBOX_VM_SETTINGS.items():
-                vm[setting_name] = settings.value(setting_name, default_value, VBOX_VM_SETTING_TYPES[setting_name])
-            virtualbox_vms.append(vm)
-        settings.endArray()
-        settings.remove("")
-        settings.endGroup()
-
-        if virtualbox_vms:
-            local_config.saveSectionSettings(self.__class__.__name__, {"vms": virtualbox_vms})
-
-        settings = local_config.settings()
+        settings = LocalConfig.instance().settings()
         if "vms" in settings.get(self.__class__.__name__, {}):
             for vm in settings[self.__class__.__name__]["vms"]:
                 vmname = vm.get("vmname")

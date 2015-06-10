@@ -30,10 +30,10 @@ import random
 import socket
 import subprocess
 
-from .qt import QtGui, QtCore, QtNetwork, QtWidgets
+from .qt import QtCore, QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
 from .local_config import LocalConfig
-from .settings import LOCAL_SERVER_SETTINGS, LOCAL_SERVER_SETTING_TYPES
+from .settings import LOCAL_SERVER_SETTINGS
 from .local_server_config import LocalServerConfig
 from collections import OrderedDict
 

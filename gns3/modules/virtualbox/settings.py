@@ -27,12 +27,6 @@ VBOX_SETTINGS = {
     "use_local_server": True,
 }
 
-VBOX_SETTING_TYPES = {
-    "vboxmanage_path": str,
-    "vbox_user": str,
-    "use_local_server": bool,
-}
-
 VBOX_VM_SETTINGS = {
     "vmname": "",
     "default_symbol": ":/symbols/vbox_guest.normal.svg",
@@ -47,20 +41,4 @@ VBOX_VM_SETTINGS = {
     "enable_remote_console": False,
     "linked_base": False,
     "server": "local"
-}
-
-VBOX_VM_SETTING_TYPES = {
-    "vmname": str,
-    "default_symbol": str,
-    "hover_symbol": str,
-    "category": int,
-    "adapters": int,
-    "ram": int,
-    "use_any_adapter": bool,
-    "adapter_type": str,
-    "headless": bool,
-    "acpi_shutdown": bool,
-    "enable_remote_console": bool,
-    "linked_base": bool,
-    "server": str
 }

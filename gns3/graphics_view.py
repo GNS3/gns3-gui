@@ -33,7 +33,7 @@ from .node import Node
 from .modules import MODULES
 from .modules.builtin.cloud import Cloud
 from .modules.module_error import ModuleError
-from .settings import GRAPHICS_VIEW_SETTINGS, GRAPHICS_VIEW_SETTING_TYPES
+from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
 from .ports.port import Port
 from .dialogs.style_editor_dialog import StyleEditorDialog

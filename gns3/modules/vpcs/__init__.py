@@ -33,12 +33,11 @@ from gns3.local_config import LocalConfig
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.local_server_config import LocalServerConfig
-from gns3.qt import QtCore
 
 from ..module import Module
 from ..module_error import ModuleError
 from .vpcs_device import VPCSDevice
-from .settings import VPCS_SETTINGS, VPCS_SETTING_TYPES
+from .settings import VPCS_SETTINGS
 from ...settings import ENABLE_CLOUD
 
 import logging

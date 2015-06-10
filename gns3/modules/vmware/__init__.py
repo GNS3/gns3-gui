@@ -23,15 +23,15 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
 from .vmware_vm import VMwareVM
-from .settings import VMWARE_SETTINGS, VMWARE_SETTING_TYPES
-from .settings import VMWARE_VM_SETTINGS, VMWARE_VM_SETTING_TYPES
+from .settings import VMWARE_SETTINGS
+from .settings import VMWARE_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)

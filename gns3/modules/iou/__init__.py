@@ -23,15 +23,15 @@ import sys
 import os
 import shutil
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
 from ..module import Module
 from ..module_error import ModuleError
 from .iou_device import IOUDevice
-from .settings import IOU_SETTINGS, IOU_SETTING_TYPES
-from .settings import IOU_DEVICE_SETTINGS, IOU_DEVICE_SETTING_TYPES
+from .settings import IOU_SETTINGS
+from .settings import IOU_DEVICE_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -95,29 +95,7 @@ class IOU(Module):
         Load the IOU devices from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-
-        # restore the VirtualBox settings from QSettings (for backward compatibility)
-        iou_devices = []
-        # load the settings
-        settings = QtCore.QSettings()
-        settings.beginGroup("IOUDevices")
-        # load the IOU devices
-        size = settings.beginReadArray("iou_device")
-        for index in range(0, size):
-            settings.setArrayIndex(index)
-            device = {}
-            for setting_name, default_value in IOU_DEVICE_SETTINGS.items():
-                device[setting_name] = settings.value(setting_name, default_value, IOU_DEVICE_SETTING_TYPES[setting_name])
-            iou_devices.append(device)
-        settings.endArray()
-        settings.remove("")
-        settings.endGroup()
-
-        if iou_devices:
-            local_config.saveSectionSettings(self.__class__.__name__, {"devices": iou_devices})
-
-        settings = local_config.settings()
+        settings = LocalConfig.instance().settings()
         if "devices" in settings.get(self.__class__.__name__, {}):
             for device in settings[self.__class__.__name__]["devices"]:
                 name = device.get("name")
