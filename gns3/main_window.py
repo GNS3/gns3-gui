@@ -881,7 +881,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if network_reply.error() != QtNetwork.QNetworkReply.NoError and not is_silent:
             QtGui.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
         else:
-            latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
+            try:
+                latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
+            except UnicodeDecodeError:
+                log.warning("Invalid answer from the update server")
+                return
             if parse_version(__version__) < parse_version(latest_release):
                 reply = QtGui.QMessageBox.question(self,
                                                    "Check For Update",
