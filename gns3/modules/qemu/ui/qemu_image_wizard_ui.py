@@ -9,7 +9,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-class Ui_QemuImageWizard(object):
+class Ui_QemuImageWizard:
     def setupUi(self, QemuImageWizard):
         QemuImageWizard.setObjectName("QemuImageWizard")
         QemuImageWizard.resize(420, 300)

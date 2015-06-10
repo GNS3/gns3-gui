@@ -357,7 +357,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 QtWidgets.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(source_port.name()))
                 return
             if not source_port.isHotPluggable() and source_item.node().status() == Node.started:
-                QtGui.QMessageBox.critical(self, "Connection", "A new link cannot be added because {} is running".format(source_item.node().name()))
+                QtWidgets.QMessageBox.critical(self, "Connection", "A new link cannot be added because {} is running".format(source_item.node().name()))
                 return
             if source_port.linkType() == "Serial":
                 self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
@@ -381,7 +381,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 QtWidgets.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(destination_port.name()))
                 return
             if not destination_port.isHotPluggable() and destination_item.node().status() == Node.started:
-                QtGui.QMessageBox.critical(self, "Connection", "A new link cannot be added because {} is running".format(destination_item.node().name()))
+                QtWidgets.QMessageBox.critical(self, "Connection", "A new link cannot be added because {} is running".format(destination_item.node().name()))
                 return
             if source_port.isStub() or destination_port.isStub():
                 pass

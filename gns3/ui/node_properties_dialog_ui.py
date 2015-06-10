@@ -10,7 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-class Ui_NodePropertiesDialog(object):
+class Ui_NodePropertiesDialog:
     def setupUi(self, NodePropertiesDialog):
         NodePropertiesDialog.setObjectName("NodePropertiesDialog")
         NodePropertiesDialog.resize(689, 454)

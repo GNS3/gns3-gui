@@ -222,15 +222,24 @@ class HTTPClient(QtCore.QObject):
         log.info("Connection to %s closed", self.url())
         self._connected = False
 
-    def isServerRunning(self):
+    def isLocalServerRunning(self):
         """
         Check if a server is already running on this host.
 
         :returns: boolean
         """
-
         try:
             url = "{protocol}://{host}:{port}/v1/version".format(protocol=self._scheme, host=self._http_host, port=self._http_port)
+
+            if self._user is not None:
+                auth_handler = urllib.request.HTTPBasicAuthHandler()
+                auth_handler.add_password(realm="GNS3 server",
+                                          uri=url,
+                                          user=self._user,
+                                          passwd=self._password)
+                opener = urllib.request.build_opener(auth_handler)
+                urllib.request.install_opener(opener)
+
             response = urllib.request.urlopen(url, timeout=2)
             content_type = response.getheader("CONTENT-TYPE")
             if response.status == 200 and content_type == "application/json":
@@ -555,17 +564,16 @@ class HTTPClient(QtCore.QObject):
 
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
+            error_message = response.errorString()
+            log.info("Response error: {}".format(error_message))
+
             if error_code < 200:
                 if not ignore_errors:
                     self.close()
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
-            error_message = response.errorString()
-
-            log.info("Response error: {} for {}".format(error_message, response.request().url()))
-
-            if status == 401:
-                print(error_message)
+                if status == 401:
+                    print(error_message)
 
             try:
                 body = bytes(response.readAll()).decode("utf-8").strip("\0")

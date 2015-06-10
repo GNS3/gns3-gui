@@ -10,7 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-class Ui_QemuVMConfigPageWidget(object):
+class Ui_QemuVMConfigPageWidget:
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(490, 460)

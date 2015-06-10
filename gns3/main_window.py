@@ -863,7 +863,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if network_reply.error() != QtNetwork.QNetworkReply.NoError and not is_silent:
             QtWidgets.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
         else:
-            latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
+            try:
+                latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
+            except UnicodeDecodeError:
+                log.warning("Invalid answer from the update server")
+                return
             if parse_version(__version__) < parse_version(latest_release):
                 reply = QtWidgets.QMessageBox.question(self,
                                                        "Check For Update",
@@ -1113,19 +1117,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     return False
         return True
 
-    def _findUnusedLocalPort(self, host):
-        """
-        Find an unused port.
-
-        :param host: server hosts
-
-        :returns: port number
-        """
-
-        s = socket.socket()
-        s.bind((host, 0))
-        return s.getsockname()[1]
-
     def startupLoading(self):
         """
         Called by QTimer.singleShot to load everything needed at startup.
@@ -1147,58 +1138,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         server = servers.localServer()
 
         if servers.localServerAutoStart():
-            if server.isServerRunning():
+            if server.isLocalServerRunning():
                 log.info("Connecting to a server already running on this host")
             else:
-                # check the local server path
-                local_server_path = servers.localServerPath()
-                if not local_server_path:
-                    log.warn("No local server is configured")
-                    return
-                if not os.path.isfile(local_server_path):
-                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(local_server_path))
-                    return
-                elif not os.access(local_server_path, os.X_OK):
-                    QtWidgets.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
-                    return
-
-                try:
-                    for res in socket.getaddrinfo(server.host(), 0, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
-                        af, socktype, proto, _, sa = res
-                        # check if the local address still exists
-                        with socket.socket(af, socktype, proto) as sock:
-                            sock.bind(sa)
-                            break
-                except OSError as e:
-                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host(), e))
-                    return
-
-                try:
-                    # check if the port is already taken
-                    find_unused_port = False
-                    for res in socket.getaddrinfo(server.host(), server.port(), socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
-                        af, socktype, proto, _, sa = res
-                        with socket.socket(af, socktype, proto) as sock:
-                            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                            sock.bind(sa)
-                            break
-                except OSError as e:
-                    log.warning("Could not use socket {}:{} {}".format(server.host(), server.port(), e))
-                    find_unused_port = True
-
-                if find_unused_port:
-                    # find an alternate port for the local server
-                    old_port = server.port()
-                    try:
-                        server.setPort(self._findUnusedLocalPort(server.host()))
-                    except OSError as e:
-                        QtWidgets.QMessageBox.critical(self, "Local server", "Could not find an unused port for the local server: {}".format(e))
-                        return
-                    log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
-                    print("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
-
-                if servers.startLocalServer():
-                    worker = WaitForConnectionWorker(server.host(), server.port())
+                if servers.initLocalServer() and servers.startLocalServer():
+                    worker = WaitForConnectionWorker(server.host, server.port)
                     progress_dialog = ProgressDialog(worker,
                                                      "Local server",
                                                      "Connecting to server {} on port {}...".format(server.host(), server.port()),
