@@ -23,6 +23,8 @@ VPCS_SETTINGS = {
     "vpcs_path": "",
     "use_local_server": True,
     "base_script_file": "",
+    "default_symbol": ":/symbols/vpcs_guest.normal.svg",
+    "hover_symbol": ":/symbols/vpcs_guest.selected.svg",
 }
 
 VPCS_SETTING_TYPES = {
