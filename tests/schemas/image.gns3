@@ -1,0 +1,18 @@
+{
+    "auto_start": false,
+    "name": "sdf",
+    "project_id": "d6dbeb32-4db3-4a2a-ab58-609f5569c0b4",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "images": [
+            {
+                "path": "images/Capture d\u2019\u00e9cran 2014-11-07 \u00e0 12.16.53.png",
+                "x": -400.5,
+                "y": -306.0
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

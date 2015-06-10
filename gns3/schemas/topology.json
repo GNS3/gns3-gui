@@ -72,6 +72,21 @@
             "additionalProperties": false
         },
 
+        "image": {
+            "type": "object",
+            "properties": {
+                "path": { "$ref": "#/definitions/mandatory_string" },
+                "x": { "type": "number" },
+                "y": {"type": "number" }
+            },
+            "required": [
+                "path",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        },
+
         "label": {
             "type": "object",
             "properties": {
@@ -477,6 +492,10 @@
                 "nodes": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/node" }
+                },
+                "images": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/image" }
                 },
                 "ellipses": {
                     "type": "array",

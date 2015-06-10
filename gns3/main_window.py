@@ -791,6 +791,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
             return
+        path = path[0]
         self._pictures_dir = os.path.dirname(path)
 
         pixmap = QtGui.QPixmap(path)
