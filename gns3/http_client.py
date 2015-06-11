@@ -141,7 +141,10 @@ class HTTPClient(QtCore.QObject):
         Called when a query start
         """
         if HTTPClient._progress_callback:
-            HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {}".format(self.url()))
+            if self._local:
+                HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for local GNS3 server")
+            else:
+                HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {}".format(self.url()))
 
     def notify_progress_end_query(cls, query_id):
         """
