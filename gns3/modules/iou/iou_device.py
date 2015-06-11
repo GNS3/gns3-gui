@@ -220,7 +220,6 @@ class IOUDevice(VM):
                     params["private_config_content"] = base_config_content
             del new_settings["private_config"]
 
-
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
@@ -564,9 +563,10 @@ class IOUDevice(VM):
         if error:
             log.error("error while exporting {} IOU configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        elif "content" in result:
-            export_directory = context["directory"]
+            return
+        export_directory = context["directory"]
 
+        if "startup_config_content" in result:
             startup_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup-config.cfg"
             try:
                 with open(startup_config_path, "wb") as f:
@@ -576,6 +576,7 @@ class IOUDevice(VM):
             except OSError as e:
                 self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(startup_config_path, e))
 
+        if "private_config_content" in result:
             private_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_private-config.cfg"
             try:
                 with open(private_config_path, "wb") as f:
