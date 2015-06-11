@@ -661,7 +661,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
                 max_nodes_per_line = 10  # max number of nodes on a single line
                 offset = 100  # spacing between elements
-                integer, ok = QtWidgets.QInputDialog.getInteger(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
+                integer, ok = QtWidgets.QInputDialog.getInt(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
                 if ok:
                     for node_number in range(integer):
                         node_item = self.createNode(node_data, event.pos())
