@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Thu Jun 11 19:48:51 2015
+# Created: Thu Jun 11 19:55:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,10 +10,12 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
+
 class Ui_ServerPreferencesPageWidget(object):
+
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(508, 595)
+        ServerPreferencesPageWidget.resize(508, 609)
         ServerPreferencesPageWidget.setMinimumSize(QtCore.QSize(0, 0))
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(ServerPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -214,6 +216,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerProtocolComboBox.setObjectName("uiRemoteServerProtocolComboBox")
         self.uiRemoteServerProtocolComboBox.addItem("")
         self.uiRemoteServerProtocolComboBox.addItem("")
+        self.uiRemoteServerProtocolComboBox.addItem("")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiRemoteServerProtocolComboBox)
         self.uiRemoteServerHostLabel = QtWidgets.QLabel(self.uiRemoteTabWidget)
         self.uiRemoteServerHostLabel.setObjectName("uiRemoteServerHostLabel")
@@ -360,7 +363,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
         self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
-        self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "SSH"))
+        self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "HTTPS"))
+        self.uiRemoteServerProtocolComboBox.setItemText(2, _translate("ServerPreferencesPageWidget", "SSH"))
         self.uiRemoteServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host:"))
         self.uiRemoteServerPortLineEdit.setText(_translate("ServerPreferencesPageWidget", "192.168.56.101"))
         self.uiRemoteServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:"))
@@ -373,4 +377,3 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
-

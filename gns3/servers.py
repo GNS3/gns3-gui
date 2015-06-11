@@ -61,6 +61,7 @@ class Servers(QtCore.QObject):
         self._local_server_allow_console_from_anywhere = False
         self._local_server_proccess = None
         self._network_manager = QtNetwork.QNetworkAccessManager(self)
+        self._network_manager.sslErrors.connect(self._handleSslErrors)
         self._local_server_settings = {}
         self._remote_server_iter_pos = 0
         self._loadSettings()
@@ -121,6 +122,35 @@ class Servers(QtCore.QObject):
             return ""
         return ubridge_path
 
+    def _handleSslErrors(self, reply, errorList):
+        """
+        Called when an SSL error occur
+        """
+
+        server = self.getServerFromString(reply.url().toDisplayString())
+        if server.acceptInsecureCertificate():
+            reply.ignoreSslErrors()
+            return
+
+        server.progressCallbackDisable()
+
+        from .main_window import MainWindow
+        main_window = MainWindow.instance()
+        proceed = QtWidgets.QMessageBox.warning(
+            main_window,
+            "SSL Error",
+            "The SSL certificate for:\n {} is invalid or someone try to intercept the communication.\nContinue?".format(reply.url().toDisplayString()),
+            QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No)
+
+        if proceed == QtWidgets.QMessageBox.Yes:
+            server.setAcceptInsecureCertificate(True)
+            self._saveSettings()
+            reply.ignoreSslErrors()
+            log.info("SSL error ignored for %s", reply.url().toDisplayString())
+
+        server.progressCallbackEnable()
+
     def _passwordGenerate(self):
         """
         Generate a random password
@@ -152,7 +182,8 @@ class Servers(QtCore.QObject):
                                       remote_server["port"],
                                       user=remote_server.get("user", None),
                                       ssh_key=remote_server.get("ssh_key", None),
-                                      ssh_port=remote_server.get("ssh_port", None))
+                                      ssh_port=remote_server.get("ssh_port", None),
+                                      accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
 
         # keep the config file sync
         self._saveSettings()
@@ -381,7 +412,7 @@ class Servers(QtCore.QObject):
 
         return self._local_server
 
-    def _addRemoteServer(self, protocol, host, port, user=None, ssh_port=None, ssh_key=None):
+    def _addRemoteServer(self, protocol, host, port, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False):
         """
         Adds a new remote server.
 
@@ -391,15 +422,19 @@ class Servers(QtCore.QObject):
         :param user: user login or None
         :param ssh_port: ssh port or None
         :param ssh_key: ssh key
+        :param accept_insecure_certificate: Accept invalid SSL certificate
 
         :returns: the new remote server
         """
 
         server = {"host": host, "protocol": protocol, "user": user, "port": port, "ssh_port": ssh_port, "ssh_key": ssh_key}
+        if accept_insecure_certificate:
+            server["accept_insecure_certificate"] = accept_insecure_certificate
         server = getNetworkClientInstance(server, self._network_manager)
         server.setLocal(False)
         self._remote_servers[server.url()] = server
         log.info("New remote server connection {} registered".format(server.url()))
+
         return server
 
     def getRemoteServer(self, protocol, host, port, user, settings={}):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>508</width>
-    <height>595</height>
+    <height>609</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -463,6 +463,11 @@
            <item>
             <property name="text">
              <string>HTTP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>HTTPS</string>
             </property>
            </item>
            <item>

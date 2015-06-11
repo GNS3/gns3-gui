@@ -71,6 +71,7 @@ class HTTPClient(QtCore.QObject):
         self._connected = False
         self._local = True
         self._cloud = False
+        self._accept_insecure_certificate = settings.get("accept_insecure_certificate", False)
 
         self._network_manager = network_manager
 
@@ -104,10 +105,22 @@ class HTTPClient(QtCore.QObject):
         """
         Return a dictionnary with server settings
         """
-        return {"protocol": self.protocol(),
-                "host": self.host(),
-                "port": self.port(),
-                "user": self.user()}
+        settings = {"protocol": self.protocol(),
+                    "host": self.host(),
+                    "port": self.port(),
+                    "user": self.user()}
+        if self.protocol() == "https":
+            settings["accept_insecure_certificate"] = self.acceptInsecureCertificate()
+        return settings
+
+    def acceptInsecureCertificate(self):
+        """
+        Does the server accept insecure SSL certificate
+        """
+        return self._accept_insecure_certificate
+
+    def setAcceptInsecureCertificate(self, accept):
+        self._accept_insecure_certificate = accept
 
     def host(self):
         """
@@ -135,6 +148,18 @@ class HTTPClient(QtCore.QObject):
         User login display to GNS3 user
         """
         return self._user
+
+    def progressCallbackDisable(self):
+        """
+        Disable the progress callback
+        """
+        HTTPClient._progress_callback.disable()
+
+    def progressCallbackEnable(self):
+        """
+        Disable the progress callback
+        """
+        HTTPClient._progress_callback.enable()
 
     def notify_progress_start_query(self, query_id):
         """
@@ -621,6 +646,8 @@ class HTTPClient(QtCore.QObject):
         server["cloud"] = self._cloud
         if "user" in server and self._local:
             del server["user"]
+        if server["protocol"] == "https":
+            server["accept_insecure_certificate"] = self._accept_insecure_certificate
         return server
 
     def isCloud(self):

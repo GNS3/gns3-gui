@@ -38,6 +38,7 @@ class Progress(QtCore.QObject):
         self.add_query_signal.connect(self._add_query)
         self.remove_query_signal.connect(self._remove_query)
         self._minimum_duration = min_duration
+        self._enable = True
 
     def _add_query(self, query_id, explanation):
 
@@ -64,6 +65,18 @@ class Progress(QtCore.QObject):
             self._queries[query_id]["current"] = current
             self._queries[query_id]["maximum"] = maximum
             self.show()
+
+    def disable(self):
+        """
+        Prevent displaying the progress callback
+        """
+        self._enable = False
+
+    def enable(self):
+        """
+        Allow displaying the progress callback
+        """
+        self._enable = True
 
     def show(self):
 
@@ -93,7 +106,7 @@ class Progress(QtCore.QObject):
             progress_dialog.setLabelText(list(self._queries.values())[0]["explanation"])
 
     def _show_dialog(self):
-        if self._progress_dialog is not None:
+        if self._progress_dialog is not None and self._enable:
             self._progress_dialog.show()
 
     def hide(self):
