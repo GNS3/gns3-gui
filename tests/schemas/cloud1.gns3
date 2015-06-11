@@ -1,0 +1,51 @@
+{
+    "auto_start": false,
+    "name": "cloud1",
+    "project_id": null,
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Cloud",
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "Cloud 1",
+                    "x": 47.5,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "id": 1,
+                        "name": "nio_gen_eth:eth0",
+                        "stub": true
+                    }
+                ],
+                "properties": {
+                    "name": "Cloud 1",
+                    "nios": [
+                        "nio_gen_eth:eth0"
+                    ]
+                },
+                "server_id": 1,
+                "type": "Cloud",
+                "x": -183.5,
+                "y": -76.0
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "192.168.1.11",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

@@ -1,0 +1,76 @@
+{
+    "auto_start": false,
+    "name": "3725-no-idlepc",
+    "project_id": "287fe404-902d-45fa-8498-95c70c536cb3",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Router c3725",
+                "dynamips_id": 1,
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "R1",
+                    "x": 19.5,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "id": 1,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 0,
+                        "id": 2,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1
+                    }
+                ],
+                "properties": {
+                    "auto_delete_disks": false,
+                    "clock_divisor": 8,
+                    "console": 2001,
+                    "disk0": 0,
+                    "disk1": 0,
+                    "exec_area": 64,
+                    "idlemax": 500,
+                    "idlesleep": 30,
+                    "image": "c3725-adventerprisek9-mz.124-25d.image",
+                    "iomem": 5,
+                    "mac_addr": "c201.04ed.0000",
+                    "mmap": true,
+                    "name": "R1",
+                    "nvram": 256,
+                    "platform": "c3725",
+                    "ram": 128,
+                    "slot0": "GT96100-FE",
+                    "sparsemem": true,
+                    "startup_config": "configs/i1_startup-config.cfg",
+                    "system_id": "FTX0945W0MY"
+                },
+                "server_id": 1,
+                "type": "C3725",
+                "vm_id": "0f75d1af-ab48-4755-a077-54471c0098bb",
+                "x": -108.0,
+                "y": -68.0
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "192.168.1.11",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

@@ -1,0 +1,75 @@
+{
+    "auto_start": false,
+    "name": "host",
+    "project_id": null,
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Host",
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "Host1",
+                    "x": 7.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "id": 1,
+                        "name": "nio_gen_eth:lo",
+                        "stub": true
+                    },
+                    {
+                        "id": 2,
+                        "name": "nio_gen_eth:eth0",
+                        "stub": true
+                    },
+                    {
+                        "id": 3,
+                        "name": "nio_gen_eth:wlan0",
+                        "stub": true
+                    },
+                    {
+                        "id": 4,
+                        "name": "nio_tap:tap0",
+                        "stub": true
+                    },
+                    {
+                        "id": 5,
+                        "name": "nio_gen_eth:vboxnet0",
+                        "stub": true
+                    }
+                ],
+                "properties": {
+                    "name": "Host1",
+                    "nios": [
+                        "nio_gen_eth:lo",
+                        "nio_gen_eth:eth0",
+                        "nio_gen_eth:wlan0",
+                        "nio_tap:tap0",
+                        "nio_gen_eth:vboxnet0"
+                    ]
+                },
+                "server_id": 1,
+                "type": "Host",
+                "x": -83.5,
+                "y": -52.5
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "192.168.1.11",
+                "id": 1,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

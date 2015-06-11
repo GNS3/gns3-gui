@@ -40,6 +40,9 @@ def getTopologyValidationErrors(topology):
 
     error_message = ""
     for error in errors:
+        # Uncomment for more details
+        #for suberror in sorted(error.context, key=lambda e: e.schema_path):
+        #    print(list(suberror.schema_path), suberror.message, sep=", ")
         error_message += "{}\n".format(str(error))
     return error_message
 
@@ -52,12 +55,14 @@ if __name__ == "__main__":
 
     import sys
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("You need to pass a .gns3 file as parameter")
         sys.exit(1)
-    with open(sys.argv[1]) as f:
-        print(sys.argv[1])
-        errors = getTopologyValidationErrors(json.load(f))
-        if errors:
-            print(errors)
-            sys.exit(1)
+    sys.argv.pop(0)
+    for path in sys.argv:
+        with open(path) as f:
+            print(path)
+            errors = getTopologyValidationErrors(json.load(f))
+            if errors:
+                print(errors)
+                sys.exit(1)
