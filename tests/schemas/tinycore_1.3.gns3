@@ -1,0 +1,181 @@
+{
+    "auto_start": false,
+    "name": "tinycore",
+    "project_id": "d0221312-ef18-48d6-985e-8d8933916055",
+    "resources_type": "local",
+    "revision": 3,
+    "topology": {
+        "links": [
+            {
+                "description": "Link from TinyCore-1 port Ethernet0 to HUB1 port 1",
+                "destination_node_id": 3,
+                "destination_port_id": 3,
+                "id": 1,
+                "source_node_id": 1,
+                "source_port_id": 1
+            },
+            {
+                "description": "Link from TinyCore-2 port Ethernet0 to HUB1 port 2",
+                "destination_node_id": 3,
+                "destination_port_id": 4,
+                "id": 2,
+                "source_node_id": 2,
+                "source_port_id": 2
+            }
+        ],
+        "nodes": [
+            {
+                "description": "QEMU VM",
+                "id": 1,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "TinyCore-1",
+                    "x": -10.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to HUB1 on port 1",
+                        "id": 1,
+                        "link_id": 1,
+                        "name": "Ethernet0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "console": 5001,
+                    "hda_disk_image": "TinyCore.qcow2",
+                    "monitor": 5501,
+                    "name": "TinyCore-1",
+                    "options": "-vga none -display none",
+                    "process_priority": "low",
+                    "qemu_path": "/usr/bin/qemu-system-x86_64",
+                    "ram": 128
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "3377e5b5-eeb9-460e-8110-b9790e8117ce",
+                "x": -111.5,
+                "y": -117.5
+            },
+            {
+                "description": "QEMU VM",
+                "id": 2,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "TinyCore-2",
+                    "x": -10.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to HUB1 on port 2",
+                        "id": 2,
+                        "link_id": 2,
+                        "name": "Ethernet0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "console": 5002,
+                    "hda_disk_image": "TinyCore.qcow2",
+                    "monitor": 5502,
+                    "name": "TinyCore-2",
+                    "options": "-vga none -display none",
+                    "process_priority": "low",
+                    "qemu_path": "/usr/bin/qemu-system-x86_64",
+                    "ram": 128
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "1d02b4f2-5c8e-45ae-8649-974f7b0bf20f",
+                "x": 117.5,
+                "y": -114.5
+            },
+            {
+                "description": "Ethernet hub",
+                "device_id": "9247c84f-af9c-4483-8aa5-05b09b1c84ac",
+                "id": 3,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "HUB1",
+                    "x": 12.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "description": "connected to TinyCore-1 on port Ethernet0",
+                        "id": 3,
+                        "link_id": 1,
+                        "name": "1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1
+                    },
+                    {
+                        "description": "connected to TinyCore-2 on port Ethernet0",
+                        "id": 4,
+                        "link_id": 2,
+                        "name": "2",
+                        "nio": "NIO_UDP",
+                        "port_number": 2
+                    },
+                    {
+                        "id": 5,
+                        "name": "3",
+                        "port_number": 3
+                    },
+                    {
+                        "id": 6,
+                        "name": "4",
+                        "port_number": 4
+                    },
+                    {
+                        "id": 7,
+                        "name": "5",
+                        "port_number": 5
+                    },
+                    {
+                        "id": 8,
+                        "name": "6",
+                        "port_number": 6
+                    },
+                    {
+                        "id": 9,
+                        "name": "7",
+                        "port_number": 7
+                    },
+                    {
+                        "id": 10,
+                        "name": "8",
+                        "port_number": 8
+                    }
+                ],
+                "properties": {
+                    "name": "HUB1"
+                },
+                "server_id": 1,
+                "type": "EthernetHub",
+                "x": -2.0,
+                "y": -103.0
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "192.168.1.11",
+                "id": 1,
+                "local": true,
+                "port": 8000
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.3.0rc1"
+}

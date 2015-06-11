@@ -1,0 +1,193 @@
+{
+    "auto_start": false,
+    "name": "olive",
+    "project_id": "dbc42e1c-cd40-4f79-bb7b-6bcb4419f242",
+    "resources_type": "local",
+    "revision": 3,
+    "topology": {
+        "links": [
+            {
+                "description": "Link from JunOS-1 port Ethernet0 to HUB1 port 1",
+                "destination_node_id": 3,
+                "destination_port_id": 11,
+                "id": 1,
+                "source_node_id": 1,
+                "source_port_id": 2
+            },
+            {
+                "description": "Link from JunOS-2 port Ethernet0 to HUB1 port 2",
+                "destination_node_id": 3,
+                "destination_port_id": 12,
+                "id": 2,
+                "source_node_id": 2,
+                "source_port_id": 7
+            }
+        ],
+        "nodes": [
+            {
+                "default_symbol": ":/symbols/iosv_virl.normal.svg",
+                "description": "QEMU VM",
+                "hover_symbol": ":/symbols/iosv_virl.selected.svg",
+                "id": 1,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "JunOS-1",
+                    "x": 0.5,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to HUB1 on port 1",
+                        "id": 2,
+                        "link_id": 1,
+                        "name": "Ethernet0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 1,
+                        "id": 3,
+                        "name": "Ethernet1",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 2,
+                        "id": 4,
+                        "name": "Ethernet2",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 3,
+                        "id": 5,
+                        "name": "Ethernet3",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "adapters": 4,
+                    "console": 5001,
+                    "hda_disk_image": "junos-11.4R11.4.qcow2",
+                    "monitor": 5501,
+                    "name": "JunOS-1",
+                    "options": "-nographic -enable-kvm",
+                    "process_priority": "low",
+                    "qemu_path": "/usr/bin/qemu-system-x86_64",
+                    "ram": 512
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "66e6f051-8e9f-41c1-afb8-b94617b80c11",
+                "x": -129.5,
+                "y": -72.5
+            },
+            {
+                "default_symbol": ":/symbols/iosv_virl.normal.svg",
+                "description": "QEMU VM",
+                "hover_symbol": ":/symbols/iosv_virl.selected.svg",
+                "id": 2,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "JunOS-2",
+                    "x": 0.5,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to HUB1 on port 2",
+                        "id": 7,
+                        "link_id": 2,
+                        "name": "Ethernet0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 1,
+                        "id": 8,
+                        "name": "Ethernet1",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 2,
+                        "id": 9,
+                        "name": "Ethernet2",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 3,
+                        "id": 10,
+                        "name": "Ethernet3",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "adapters": 4,
+                    "console": 5002,
+                    "hda_disk_image": "junos-11.4R11.4.qcow2",
+                    "monitor": 5502,
+                    "name": "JunOS-2",
+                    "options": "-nographic -enable-kvm",
+                    "process_priority": "low",
+                    "qemu_path": "/usr/bin/qemu-system-x86_64",
+                    "ram": 512
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "116fa147-3121-4e90-8cfa-aea015537023",
+                "x": 138.5,
+                "y": -73.5
+            },
+            {
+                "description": "Ethernet hub",
+                "device_id": "e3d7e17c-8112-43d7-b588-6d5c86829f0b",
+                "id": 3,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "HUB1",
+                    "x": 12.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "description": "connected to JunOS-1 on port Ethernet0",
+                        "id": 11,
+                        "link_id": 1,
+                        "name": "1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1
+                    },
+                    {
+                        "description": "connected to JunOS-2 on port Ethernet0",
+                        "id": 12,
+                        "link_id": 2,
+                        "name": "2",
+                        "nio": "NIO_UDP",
+                        "port_number": 2
+                    }
+                ],
+                "properties": {
+                    "name": "HUB1"
+                },
+                "server_id": 1,
+                "type": "EthernetHub",
+                "x": -3.0,
+                "y": -61.0
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "192.168.1.11",
+                "id": 1,
+                "local": true,
+                "port": 8000
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.3.0rc1"
+}

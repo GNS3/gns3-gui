@@ -1,0 +1,249 @@
+{
+    "auto_start": false,
+    "name": "qtraffic",
+    "project_id": "43a01c16-9246-4be1-8aa9-f335f3a7456c",
+    "resources_type": "local",
+    "revision": 3,
+    "topology": {
+        "links": [
+            {
+                "description": "Link from ost-drone-1 port Ethernet0 to R1 port FastEthernet0/0",
+                "destination_node_id": 1,
+                "destination_port_id": 1,
+                "id": 1,
+                "source_node_id": 11,
+                "source_port_id": 56
+            },
+            {
+                "description": "Link from ost-drone-2 port Ethernet0 to R1 port FastEthernet0/1",
+                "destination_node_id": 1,
+                "destination_port_id": 2,
+                "id": 2,
+                "source_node_id": 12,
+                "source_port_id": 61
+            }
+        ],
+        "nodes": [
+            {
+                "description": "Router c3725",
+                "dynamips_id": 1,
+                "id": 1,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "R1",
+                    "x": 19.5,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to ost-drone-1 on port Ethernet0",
+                        "id": 1,
+                        "link_id": 1,
+                        "name": "FastEthernet0/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to ost-drone-2 on port Ethernet0",
+                        "id": 2,
+                        "link_id": 2,
+                        "name": "FastEthernet0/1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2501,
+                    "console": 2001,
+                    "disk0": 1,
+                    "idlepc": "0x602467a4",
+                    "image": "c3725-adventerprisek9-mz.124-25d.image",
+                    "mac_addr": "c201.0c16.0000",
+                    "name": "R1",
+                    "nvram": 256,
+                    "private_config": "configs/i1_private-config.cfg",
+                    "startup_config": "configs/i1_startup-config.cfg"
+                },
+                "server_id": 1,
+                "type": "C3725",
+                "vm_id": "7a3fc749-0796-4e22-9d9c-467e6df35915",
+                "x": -34.0,
+                "y": -43.0
+            },
+            {
+                "default_symbol": ":/symbols/server.normal.svg",
+                "description": "QEMU VM",
+                "hover_symbol": ":/symbols/server.selected.svg",
+                "id": 11,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "ost-drone-1",
+                    "x": -22.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to R1 on port FastEthernet0/0",
+                        "id": 56,
+                        "link_id": 1,
+                        "name": "Ethernet0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 1,
+                        "id": 57,
+                        "name": "Ethernet1",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 2,
+                        "id": 58,
+                        "name": "Ethernet2",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 3,
+                        "id": 59,
+                        "name": "Ethernet3",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "adapters": 4,
+                    "console": 2002,
+                    "hda_disk_image": "ost-drone-0.6-v4.qcow2",
+                    "monitor": 2003,
+                    "name": "ost-drone-1",
+                    "options": "-nographic -enable-kvm -net nic,vlan=999,model=e1000 -net user,vlan=999,hostfwd=tcp::50001-:7878",
+                    "process_priority": "low",
+                    "qemu_path": "/usr/bin/qemu-system-x86_64",
+                    "ram": 128
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "c206ddb0-1bdb-418e-828a-9db97f2a41d7",
+                "x": -172.5,
+                "y": -54.5
+            },
+            {
+                "default_symbol": ":/symbols/server.normal.svg",
+                "description": "QEMU VM",
+                "hover_symbol": ":/symbols/server.selected.svg",
+                "id": 12,
+                "label": {
+                    "color": "#000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "ost-drone-2",
+                    "x": -22.0,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "description": "connected to R1 on port FastEthernet0/1",
+                        "id": 61,
+                        "link_id": 2,
+                        "name": "Ethernet0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 1,
+                        "id": 62,
+                        "name": "Ethernet1",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 2,
+                        "id": 63,
+                        "name": "Ethernet2",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 3,
+                        "id": 64,
+                        "name": "Ethernet3",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "adapters": 4,
+                    "console": 2004,
+                    "hda_disk_image": "ost-drone-0.6-v4.qcow2",
+                    "monitor": 2005,
+                    "name": "ost-drone-2",
+                    "options": "-nographic -enable-kvm -net nic,vlan=999,model=e1000 -net user,vlan=999,hostfwd=tcp::50002-:7878",
+                    "process_priority": "low",
+                    "qemu_path": "/usr/bin/qemu-system-x86_64",
+                    "ram": 128
+                },
+                "server_id": 1,
+                "type": "QemuVM",
+                "vm_id": "ce76a02c-6c35-43ef-9460-e4718d6f7089",
+                "x": 125.5,
+                "y": -58.5
+            }
+        ],
+        "notes": [
+            {
+                "color": "#000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.1.0/24",
+                "x": -123.0,
+                "y": -48.5
+            },
+            {
+                "color": "#000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.2.0/24",
+                "x": 30.0,
+                "y": -52.5
+            },
+            {
+                "color": "#000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": ".10",
+                "x": -122.0,
+                "y": -20.5
+            },
+            {
+                "color": "#000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": ".1",
+                "x": -55.0,
+                "y": -20.5
+            },
+            {
+                "color": "#000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": ".1",
+                "x": 31.0,
+                "y": -23.5
+            },
+            {
+                "color": "#000000",
+                "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                "text": ".10",
+                "x": 90.0,
+                "y": -23.5
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "192.168.1.11",
+                "id": 1,
+                "local": true,
+                "port": 8000
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.3.0rc1"
+}

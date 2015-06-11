@@ -92,7 +92,7 @@
             "properties": {
                 "color": {
                     "type": "string",
-                    "pattern": "^#[0-9a-f]{8}$"
+                    "pattern": "^#[0-9a-f]{6,8}$"
                 },
                 "font": { "$ref": "#/definitions/mandatory_string" },
                 "text": { "$ref": "#/definitions/mandatory_string" },
@@ -121,7 +121,7 @@
                 "link_id": { "$ref": "#/definitions/numeric_id" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "nio": {
-                    "enum": ["NIO_UDP"]
+                    "enum": ["NIO_UDP", "NIO_Generic_Ethernet", "NIO_Linux_Ethernet", "NIO_NAT", "NIO_Null", "NIO_TAP", "NIO_VDE", "NIO_UNIX"]
                 },
                 "port_number": {
                     "type": "integer",
@@ -177,7 +177,6 @@
                 }
             },
             "required": [
-                "protocol",
                 "cloud",
                 "host",
                 "id",
@@ -333,6 +332,7 @@
             "type": "object",
             "properties": {
                 "console": { "$ref": "#/definitions/network_port" },
+                "monitor": { "$ref": "#/definitions/network_port" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "acpi_shutdown": { "type": "boolean" },
                 "adapter_type": {
@@ -360,12 +360,7 @@
             },
             "required": [
                 "name",
-                "adapter_type",
-                "adapters",
                 "console",
-                "cpu_throttling",
-                "legacy_networking",
-                "mac_address",
                 "options",
                 "process_priority",
                 "qemu_path",
@@ -438,6 +433,7 @@
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "clock_divisor": {"type": "integer", "minimum": 1},
                 "console": { "$ref": "#/definitions/network_port" },
+                "aux": { "$ref": "#/definitions/network_port" },
                 "disk0": {"type": "integer", "minimum": 0},
                 "disk1": {"type": "integer", "minimum": 0},
                 "exec_area": {"type": "integer", "minimum": 1},
@@ -484,21 +480,10 @@
             "required": [
                 "name",
                 "console",
-                "disk0",
-                "disk1",
-                "exec_area",
-                "idlemax",
-                "idlesleep",
                 "image",
                 "mac_addr",
-                "mmap",
                 "nvram",
-                "platform",
-                "ram",
-                "slot0",
-                "sparsemem",
-                "startup_config",
-                "system_id"
+                "startup_config"
             ],
             "additionalProperties": false
         },
