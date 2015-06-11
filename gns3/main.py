@@ -33,6 +33,7 @@ import traceback
 import time
 import locale
 import argparse
+import signal
 
 try:
     from gns3.qt import QtCore, QtGui, QtWidgets, DEFAULT_BINDING
@@ -220,6 +221,13 @@ def main():
 
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
+
+    # Manage Ctrl + C or kill command
+    def sigint_handler(*args):
+        log.info("Signal received exiting the application")
+        app.closeAllWindows()
+    signal.signal(signal.SIGINT, sigint_handler)
+    signal.signal(signal.SIGTERM, sigint_handler)
 
     mainwindow = MainWindow(options.project)
     mainwindow.show()
