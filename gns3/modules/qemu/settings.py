@@ -42,6 +42,7 @@ QEMU_VM_SETTINGS = {
     "legacy_networking": False,
     "acpi_shutdown": False,
     "kvm": True,
+    "platform": "",
     "cpu_throttling": 0,
     "process_priority": "normal",
     "options": "",

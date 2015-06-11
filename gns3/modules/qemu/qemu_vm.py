@@ -57,6 +57,7 @@ class QemuVM(VM):
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                           "mac_address": QEMU_VM_SETTINGS["mac_address"],
                           "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
+                          "platform": QEMU_VM_SETTINGS["platform"],
                           "acpi_shutdown": QEMU_VM_SETTINGS["acpi_shutdown"],
                           "kvm": QEMU_VM_SETTINGS["kvm"],
                           "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
