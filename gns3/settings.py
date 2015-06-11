@@ -212,6 +212,7 @@ LOCAL_SERVER_SETTINGS = {
     "report_errors": True,
     "auto_start": True,
     "allow_console_from_anywhere": False,
+    "auth": True,
     "console_start_port_range": 2001,
     "console_end_port_range": 5000,
     "udp_start_port_range": 10000,

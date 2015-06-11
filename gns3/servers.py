@@ -177,6 +177,7 @@ class Servers(QtCore.QObject):
             ("host", self._local_server_settings["host"]),
             ("port", self._local_server_settings["port"]),
             ("ubridge_path", self._local_server_settings["ubridge_path"]),
+            ("auth", self._local_server_settings.get("auth", False)),
             ("user", self._local_server_settings.get("user", "")),
             ("password", self._local_server_settings.get("password", "")),
             ("images_path", self._local_server_settings["images_path"]),
@@ -209,8 +210,8 @@ class Servers(QtCore.QObject):
         :param settings: local server settings (dict)
         """
 
+        self._local_server_settings.update(settings)
         if settings["host"] != self._local_server_settings["host"] or settings["port"] != self._local_server_settings["port"]:
-            self._local_server_settings.update(settings)
             self._initLocalServer()
 
     def localServerAutoStart(self):

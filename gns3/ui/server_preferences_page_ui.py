@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Wed Jun 10 16:49:43 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Thu Jun 11 19:48:51 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -85,7 +85,10 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout.addWidget(self.uiLocalServerPortSpinBox, 8, 0, 1, 1)
         self.uiConsoleConnectionsToAnyIPCheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsGroupBox)
         self.uiConsoleConnectionsToAnyIPCheckBox.setObjectName("uiConsoleConnectionsToAnyIPCheckBox")
-        self.gridLayout.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 9, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiConsoleConnectionsToAnyIPCheckBox, 10, 0, 1, 1)
+        self.uiLocalServerAuthCheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsGroupBox)
+        self.uiLocalServerAuthCheckBox.setObjectName("uiLocalServerAuthCheckBox")
+        self.gridLayout.addWidget(self.uiLocalServerAuthCheckBox, 9, 0, 1, 1)
         self.verticalLayout.addWidget(self.uiGeneralSettingsGroupBox)
         self.uiConsolePortRangeGroupBox = QtWidgets.QGroupBox(self.uiLocalTabWidget)
         self.uiConsolePortRangeGroupBox.setObjectName("uiConsolePortRangeGroupBox")
@@ -297,16 +300,26 @@ class Ui_ServerPreferencesPageWidget(object):
         self.retranslateUi(ServerPreferencesPageWidget)
         self.uiTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(ServerPreferencesPageWidget)
-        ServerPreferencesPageWidget.setTabOrder(self.uiTabWidget, self.uiLocalServerToolButton)
-        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerToolButton, self.uiLocalServerHostComboBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiTabWidget, self.uiLocalServerAutoStartCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerAutoStartCheckBox, self.uiLocalServerPathLineEdit)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPathLineEdit, self.uiLocalServerToolButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerToolButton, self.uiUbridgePathLineEdit)
+        ServerPreferencesPageWidget.setTabOrder(self.uiUbridgePathLineEdit, self.uiUbridgeToolButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiUbridgeToolButton, self.uiLocalServerHostComboBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerHostComboBox, self.uiLocalServerPortSpinBox)
-        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPortSpinBox, self.uiConsoleConnectionsToAnyIPCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPortSpinBox, self.uiLocalServerAuthCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerAuthCheckBox, self.uiConsoleConnectionsToAnyIPCheckBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiConsoleConnectionsToAnyIPCheckBox, self.uiConsoleStartPortSpinBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiConsoleStartPortSpinBox, self.uiConsoleEndPortSpinBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiConsoleEndPortSpinBox, self.uiUDPStartPortSpinBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiUDPStartPortSpinBox, self.uiUDPEndPortSpinBox)
-        ServerPreferencesPageWidget.setTabOrder(self.uiUDPEndPortSpinBox, self.uiLocalServerPathLineEdit)
-        ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPathLineEdit, self.uiRemoteServersTreeWidget)
+        ServerPreferencesPageWidget.setTabOrder(self.uiUDPEndPortSpinBox, self.uiRestoreDefaultsPushButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiRestoreDefaultsPushButton, self.uiEnableVMCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiEnableVMCheckBox, self.uiVmwareRadioButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiVmwareRadioButton, self.uiVirtualBoxRadioButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiVirtualBoxRadioButton, self.uiVMListComboBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiVMListComboBox, self.uiRefreshPushButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiRefreshPushButton, self.uiRemoteServersTreeWidget)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServersTreeWidget, self.uiRemoteServerProtocolComboBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerProtocolComboBox, self.uiRemoteServerPortLineEdit)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerPortLineEdit, self.uiRemoteServerPortSpinBox)
@@ -314,9 +327,8 @@ class Ui_ServerPreferencesPageWidget(object):
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerUserLineEdit, self.uiRemoteServerSSHPortSpinBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerSSHPortSpinBox, self.uiRemoteServerSSHKeyLineEdit)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerSSHKeyLineEdit, self.uiRemoteServerSSHKeyPushButton)
-        ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerSSHKeyPushButton, self.uiDeleteRemoteServerPushButton)
-        ServerPreferencesPageWidget.setTabOrder(self.uiDeleteRemoteServerPushButton, self.uiAddRemoteServerPushButton)
-        ServerPreferencesPageWidget.setTabOrder(self.uiAddRemoteServerPushButton, self.uiRestoreDefaultsPushButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerSSHKeyPushButton, self.uiAddRemoteServerPushButton)
+        ServerPreferencesPageWidget.setTabOrder(self.uiAddRemoteServerPushButton, self.uiDeleteRemoteServerPushButton)
 
     def retranslateUi(self, ServerPreferencesPageWidget):
         _translate = gns3.qt.translate
@@ -330,6 +342,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host binding:"))
         self.uiLocalServerPortLabel.setText(_translate("ServerPreferencesPageWidget", "Port:"))
         self.uiConsoleConnectionsToAnyIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Allow console connections to any local IP address"))
+        self.uiLocalServerAuthCheckBox.setText(_translate("ServerPreferencesPageWidget", "Protect server with password (recommended)"))
         self.uiConsolePortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Console port range"))
         self.uiConsolePortRangeLabel.setText(_translate("ServerPreferencesPageWidget", "to"))
         self.uiUDPPortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "UDP tunneling port range"))
@@ -345,7 +358,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
-        self.uiRemoteServerProtocolComboBox.setProperty("currentText", _translate("ServerPreferencesPageWidget", "HTTP"))
+        self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "SSH"))
         self.uiRemoteServerHostLabel.setText(_translate("ServerPreferencesPageWidget", "Host:"))

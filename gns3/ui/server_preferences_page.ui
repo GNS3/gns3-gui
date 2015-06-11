@@ -142,10 +142,17 @@
             </property>
            </widget>
           </item>
-          <item row="9" column="0">
+          <item row="10" column="0">
            <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
             <property name="text">
              <string>Allow console connections to any local IP address</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QCheckBox" name="uiLocalServerAuthCheckBox">
+            <property name="text">
+             <string>Protect server with password (recommended)</string>
             </property>
            </widget>
           </item>
@@ -450,7 +457,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="currentText" stdset="0">
+           <property name="currentText">
             <string>HTTP</string>
            </property>
            <item>
@@ -653,15 +660,25 @@
  </widget>
  <tabstops>
   <tabstop>uiTabWidget</tabstop>
+  <tabstop>uiLocalServerAutoStartCheckBox</tabstop>
+  <tabstop>uiLocalServerPathLineEdit</tabstop>
   <tabstop>uiLocalServerToolButton</tabstop>
+  <tabstop>uiUbridgePathLineEdit</tabstop>
+  <tabstop>uiUbridgeToolButton</tabstop>
   <tabstop>uiLocalServerHostComboBox</tabstop>
   <tabstop>uiLocalServerPortSpinBox</tabstop>
+  <tabstop>uiLocalServerAuthCheckBox</tabstop>
   <tabstop>uiConsoleConnectionsToAnyIPCheckBox</tabstop>
   <tabstop>uiConsoleStartPortSpinBox</tabstop>
   <tabstop>uiConsoleEndPortSpinBox</tabstop>
   <tabstop>uiUDPStartPortSpinBox</tabstop>
   <tabstop>uiUDPEndPortSpinBox</tabstop>
-  <tabstop>uiLocalServerPathLineEdit</tabstop>
+  <tabstop>uiRestoreDefaultsPushButton</tabstop>
+  <tabstop>uiEnableVMCheckBox</tabstop>
+  <tabstop>uiVmwareRadioButton</tabstop>
+  <tabstop>uiVirtualBoxRadioButton</tabstop>
+  <tabstop>uiVMListComboBox</tabstop>
+  <tabstop>uiRefreshPushButton</tabstop>
   <tabstop>uiRemoteServersTreeWidget</tabstop>
   <tabstop>uiRemoteServerProtocolComboBox</tabstop>
   <tabstop>uiRemoteServerPortLineEdit</tabstop>
@@ -670,9 +687,8 @@
   <tabstop>uiRemoteServerSSHPortSpinBox</tabstop>
   <tabstop>uiRemoteServerSSHKeyLineEdit</tabstop>
   <tabstop>uiRemoteServerSSHKeyPushButton</tabstop>
-  <tabstop>uiDeleteRemoteServerPushButton</tabstop>
   <tabstop>uiAddRemoteServerPushButton</tabstop>
-  <tabstop>uiRestoreDefaultsPushButton</tabstop>
+  <tabstop>uiDeleteRemoteServerPushButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
