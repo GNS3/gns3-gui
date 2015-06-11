@@ -1,0 +1,1742 @@
+{
+    "name": "unsaved",
+    "resources_type": "local",
+    "topology": {
+        "ellipses": [
+            {
+                "border_color": "#325d56",
+                "border_style": 2,
+                "color": "#c4d6d3",
+                "height": 439.82041789803264,
+                "width": 551.5432893255077,
+                "x": -387.494516090228,
+                "y": -397.3940110268398,
+                "z": -3.0
+            },
+            {
+                "border_color": "#325d56",
+                "border_style": 2,
+                "color": "#fffbef",
+                "height": 425.6782822743016,
+                "width": 480.8326112068522,
+                "x": -564.2712113868648,
+                "y": -48.08326112068523,
+                "z": -7.0
+            }
+        ],
+        "links": [
+            {
+                "description": "Link from DSW1 port FastEthernet1/9 to ASW1 port FastEthernet1/9",
+                "destination_node_id": 1,
+                "destination_port_id": 12,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/9",
+                    "x": 78.49987624126146,
+                    "y": -21.099502179704643
+                },
+                "id": 1,
+                "source_node_id": 3,
+                "source_port_id": 48,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/9",
+                    "x": -46.499876241261475,
+                    "y": -18.400497820295357
+                }
+            },
+            {
+                "description": "Link from DSW1 port FastEthernet1/10 to ASW1 port FastEthernet1/10",
+                "destination_node_id": 1,
+                "destination_port_id": 13,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/10",
+                    "x": -49.50146541006416,
+                    "y": -7.604846526795207
+                },
+                "id": 2,
+                "source_node_id": 3,
+                "source_port_id": 49,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/10",
+                    "x": 75.27367651636617,
+                    "y": -4.400513290137667
+                }
+            },
+            {
+                "description": "Link from DSW1 port FastEthernet1/11 to ASW2 port FastEthernet1/11",
+                "destination_node_id": 2,
+                "destination_port_id": 32,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/11",
+                    "x": 38.8536913452385,
+                    "y": -51.05097736588769
+                },
+                "id": 3,
+                "source_node_id": 3,
+                "source_port_id": 50,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/11",
+                    "x": -40.85369134523851,
+                    "y": 43.55097736588769
+                }
+            },
+            {
+                "description": "Link from DSW1 port FastEthernet1/12 to ASW2 port FastEthernet1/12",
+                "destination_node_id": 2,
+                "destination_port_id": 33,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/12",
+                    "x": -40.555131678721494,
+                    "y": 54.93507363320434
+                },
+                "id": 4,
+                "source_node_id": 3,
+                "source_port_id": 51,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/12",
+                    "x": 34.57320489744166,
+                    "y": -34.84665079689472
+                }
+            },
+            {
+                "description": "Link from ASW2 port FastEthernet1/9 to DSW2 port FastEthernet1/9",
+                "destination_node_id": 4,
+                "destination_port_id": 66,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/9",
+                    "x": -38.48935336459175,
+                    "y": 26.422831231490576
+                },
+                "id": 5,
+                "source_node_id": 2,
+                "source_port_id": 30,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/9",
+                    "x": 69.48935336459175,
+                    "y": 17.077168768509424
+                }
+            },
+            {
+                "description": "Link from ASW2 port FastEthernet1/10 to DSW2 port FastEthernet1/10",
+                "destination_node_id": 4,
+                "destination_port_id": 67,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/10",
+                    "x": 67.13509220764351,
+                    "y": 30.655510990547725
+                },
+                "id": 6,
+                "source_node_id": 2,
+                "source_port_id": 31,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/10",
+                    "x": -36.091820067898965,
+                    "y": 40.594486229680186
+                }
+            },
+            {
+                "description": "Link from ASW1 port FastEthernet1/11 to DSW2 port FastEthernet1/11",
+                "destination_node_id": 4,
+                "destination_port_id": 68,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/11",
+                    "x": -33.74229557982633,
+                    "y": -57.47836998090075
+                },
+                "id": 7,
+                "source_node_id": 1,
+                "source_port_id": 14,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/11",
+                    "x": 28.742295579826333,
+                    "y": 39.97836998090075
+                }
+            },
+            {
+                "description": "Link from ASW1 port FastEthernet1/12 to DSW2 port FastEthernet1/12",
+                "destination_node_id": 4,
+                "destination_port_id": 69,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/12",
+                    "x": 28.760558160368547,
+                    "y": 53.32416928430294
+                },
+                "id": 8,
+                "source_node_id": 1,
+                "source_port_id": 15,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/12",
+                    "x": -28.505307910646806,
+                    "y": -43.887407617883696
+                }
+            },
+            {
+                "description": "Link from DSW1 port FastEthernet1/13 to DSW2 port FastEthernet1/13",
+                "destination_node_id": 4,
+                "destination_port_id": 70,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/13\n.14 :2",
+                    "x": 29.80746312624848,
+                    "y": -56.63614008288076
+                },
+                "id": 9,
+                "source_node_id": 3,
+                "source_port_id": 52,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/13\n.13 :1",
+                    "x": 31.19253687375152,
+                    "y": 50.49400445914981
+                }
+            },
+            {
+                "description": "Link from R1 port Serial1/0 to FR1 port 1",
+                "destination_node_id": 13,
+                "destination_port_id": 194,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "1",
+                    "x": 8.318963393351197,
+                    "y": 27.258417333060834
+                },
+                "id": 10,
+                "source_node_id": 5,
+                "source_port_id": 150,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "s1/0\ns1/0.12 .1 :1",
+                    "x": 62.1810366066488,
+                    "y": 23.241582666939166
+                }
+            },
+            {
+                "description": "Link from FR1 port 2 to R2 port Serial1/0",
+                "destination_node_id": 6,
+                "destination_port_id": 154,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "s1/0\ns1/0.12 .2 :2 DLCI 201\ns1/0.23 .5 :1 DLCI 203",
+                    "x": 52.33164282776693,
+                    "y": 48.1401789128536
+                },
+                "id": 11,
+                "source_node_id": 13,
+                "source_port_id": 195,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "2",
+                    "x": 69.16835717223307,
+                    "y": 1.3598210871464005
+                }
+            },
+            {
+                "description": "Link from R3 port Serial1/0 to FR1 port 3",
+                "destination_node_id": 13,
+                "destination_port_id": 192,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "3",
+                    "x": 127.62538913769106,
+                    "y": 18.664713032714673
+                },
+                "id": 12,
+                "source_node_id": 7,
+                "source_port_id": 158,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "s1/0\ns1/0.23 .6 :3 DLCI 302\ns1/0.34 .9 :1 DLCI 304",
+                    "x": -36.95381626243724,
+                    "y": 35.42107340491225
+                }
+            },
+            {
+                "description": "Link from R4 port FastEthernet0/0 to DSW1 port FastEthernet0/0",
+                "destination_node_id": 3,
+                "destination_port_id": 37,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f0/0\n.6 :2",
+                    "x": 59.591572086914596,
+                    "y": -14.15215254868324
+                },
+                "id": 13,
+                "source_node_id": 8,
+                "source_port_id": 127,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f0/0\n.5 :1",
+                    "x": -44.71501405385425,
+                    "y": 20.228376889936264
+                }
+            },
+            {
+                "description": "Link from R4 port FastEthernet0/1 to DSW2 port FastEthernet0/0",
+                "destination_node_id": 4,
+                "destination_port_id": 55,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f0/0\n.10",
+                    "x": 62.851091298837275,
+                    "y": -0.7218852353987728
+                },
+                "id": 14,
+                "source_node_id": 8,
+                "source_port_id": 128,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "f0/1\n.9",
+                    "x": -13.451596362225445,
+                    "y": 57.46452592251808
+                }
+            },
+            {
+                "description": "Link from FR1 port 4 to R4 port Serial1/0",
+                "destination_node_id": 8,
+                "destination_port_id": 162,
+                "destination_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "s1/0\ns1/0.34 .10 :2",
+                    "x": 46.637913737374845,
+                    "y": -63.81806130617426
+                },
+                "id": 15,
+                "source_node_id": 13,
+                "source_port_id": 193,
+                "source_port_label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "4",
+                    "x": 76.86208626262518,
+                    "y": 46.31806130617426
+                }
+            },
+            {
+                "description": "Link from eBGPpeer port Serial1/1 to R1 port Serial1/1",
+                "destination_node_id": 5,
+                "destination_port_id": 151,
+                "destination_port_label": {
+                    "color": "#000000",
+                    "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                    "text": "s1/1\n.225",
+                    "x": -32.73659760423328,
+                    "y": 31.043299107345632
+                },
+                "id": 16,
+                "source_node_id": 19,
+                "source_port_id": 315,
+                "source_port_label": {
+                    "color": "#000000",
+                    "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                    "text": "s1/1\n.226",
+                    "x": 69.34789994714299,
+                    "y": 21.18553623663962
+                }
+            },
+            {
+                "description": "Link from Client1 port FastEthernet0/0 to ASW1 port FastEthernet1/0",
+                "destination_node_id": 1,
+                "destination_port_id": 3,
+                "destination_port_label": {
+                    "color": "#000000",
+                    "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                    "text": "f1/0",
+                    "x": -41.46522217236088,
+                    "y": 24.320241859804007
+                },
+                "id": 17,
+                "source_node_id": 20,
+                "source_port_id": 312,
+                "source_port_label": {
+                    "color": "#000000",
+                    "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                    "text": "f0/0",
+                    "x": 75.8743328901362,
+                    "y": -6.30455626662534
+                }
+            }
+        ],
+        "nodes": [
+            {
+                "default_symbol": ":/symbols/ethernet_switch.normal.svg",
+                "description": "Router c3600",
+                "hover_symbol": ":/symbols/ethernet_switch.selected.svg",
+                "id": 1,
+                "label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "ASW1",
+                    "x": 13.5,
+                    "y": -23.0
+                },
+                "ports": [
+                    {
+                        "id": 1,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 2,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "description": "connected to Client1 on port FastEthernet0/0",
+                        "id": 3,
+                        "link_id": 17,
+                        "name": "FastEthernet1/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 4,
+                        "name": "FastEthernet1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 5,
+                        "name": "FastEthernet1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 6,
+                        "name": "FastEthernet1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 7,
+                        "name": "FastEthernet1/4",
+                        "port_number": 4,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 8,
+                        "name": "FastEthernet1/5",
+                        "port_number": 5,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 9,
+                        "name": "FastEthernet1/6",
+                        "port_number": 6,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 10,
+                        "name": "FastEthernet1/7",
+                        "port_number": 7,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 11,
+                        "name": "FastEthernet1/8",
+                        "port_number": 8,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW1 on port FastEthernet1/9",
+                        "id": 12,
+                        "link_id": 1,
+                        "name": "FastEthernet1/9",
+                        "nio": "NIO_UDP",
+                        "port_number": 9,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW1 on port FastEthernet1/10",
+                        "id": 13,
+                        "link_id": 2,
+                        "name": "FastEthernet1/10",
+                        "nio": "NIO_UDP",
+                        "port_number": 10,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW2 on port FastEthernet1/11",
+                        "id": 14,
+                        "link_id": 7,
+                        "name": "FastEthernet1/11",
+                        "nio": "NIO_UDP",
+                        "port_number": 11,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW2 on port FastEthernet1/12",
+                        "id": 15,
+                        "link_id": 8,
+                        "name": "FastEthernet1/12",
+                        "nio": "NIO_UDP",
+                        "port_number": 12,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 16,
+                        "name": "FastEthernet1/13",
+                        "port_number": 13,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 17,
+                        "name": "FastEthernet1/14",
+                        "port_number": 14,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 18,
+                        "name": "FastEthernet1/15",
+                        "port_number": 15,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2501,
+                    "chassis": "3660",
+                    "console": 2001,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc01.25f8.0000",
+                    "name": "ASW1",
+                    "nvram": 256,
+                    "private_config": "configs/i1_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-16ESW",
+                    "startup_config": "configs/i1_startup-config.cfg"
+                },
+                "router_id": 1,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -676.1168824543139,
+                "y": 29.972654789530132
+            },
+            {
+                "default_symbol": ":/symbols/ethernet_switch.normal.svg",
+                "description": "Router c3600",
+                "hover_symbol": ":/symbols/ethernet_switch.selected.svg",
+                "id": 2,
+                "label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "ASW2",
+                    "x": 6.5,
+                    "y": 36.0
+                },
+                "ports": [
+                    {
+                        "id": 19,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 20,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 21,
+                        "name": "FastEthernet1/0",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 22,
+                        "name": "FastEthernet1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 23,
+                        "name": "FastEthernet1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 24,
+                        "name": "FastEthernet1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 25,
+                        "name": "FastEthernet1/4",
+                        "port_number": 4,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 26,
+                        "name": "FastEthernet1/5",
+                        "port_number": 5,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 27,
+                        "name": "FastEthernet1/6",
+                        "port_number": 6,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 28,
+                        "name": "FastEthernet1/7",
+                        "port_number": 7,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 29,
+                        "name": "FastEthernet1/8",
+                        "port_number": 8,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW2 on port FastEthernet1/9",
+                        "id": 30,
+                        "link_id": 5,
+                        "name": "FastEthernet1/9",
+                        "nio": "NIO_UDP",
+                        "port_number": 9,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW2 on port FastEthernet1/10",
+                        "id": 31,
+                        "link_id": 6,
+                        "name": "FastEthernet1/10",
+                        "nio": "NIO_UDP",
+                        "port_number": 10,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW1 on port FastEthernet1/11",
+                        "id": 32,
+                        "link_id": 3,
+                        "name": "FastEthernet1/11",
+                        "nio": "NIO_UDP",
+                        "port_number": 11,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW1 on port FastEthernet1/12",
+                        "id": 33,
+                        "link_id": 4,
+                        "name": "FastEthernet1/12",
+                        "nio": "NIO_UDP",
+                        "port_number": 12,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 34,
+                        "name": "FastEthernet1/13",
+                        "port_number": 13,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 35,
+                        "name": "FastEthernet1/14",
+                        "port_number": 14,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 36,
+                        "name": "FastEthernet1/15",
+                        "port_number": 15,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2502,
+                    "chassis": "3660",
+                    "console": 2002,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc02.1534.0000",
+                    "name": "ASW2",
+                    "nvram": 256,
+                    "private_config": "configs/i2_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-16ESW",
+                    "startup_config": "configs/i2_startup-config.cfg"
+                },
+                "router_id": 2,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -666.1168824543139,
+                "y": 264.97265478953017
+            },
+            {
+                "default_symbol": ":/symbols/multilayer_switch.normal.svg",
+                "description": "Router c3600",
+                "hover_symbol": ":/symbols/multilayer_switch.selected.svg",
+                "id": 3,
+                "label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "DSW1",
+                    "x": 2.5,
+                    "y": -24.0
+                },
+                "ports": [
+                    {
+                        "description": "connected to R4 on port FastEthernet0/0",
+                        "id": 37,
+                        "link_id": 13,
+                        "name": "FastEthernet0/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 38,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 39,
+                        "name": "FastEthernet1/0",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 40,
+                        "name": "FastEthernet1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 41,
+                        "name": "FastEthernet1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 42,
+                        "name": "FastEthernet1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 43,
+                        "name": "FastEthernet1/4",
+                        "port_number": 4,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 44,
+                        "name": "FastEthernet1/5",
+                        "port_number": 5,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 45,
+                        "name": "FastEthernet1/6",
+                        "port_number": 6,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 46,
+                        "name": "FastEthernet1/7",
+                        "port_number": 7,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 47,
+                        "name": "FastEthernet1/8",
+                        "port_number": 8,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW1 on port FastEthernet1/9",
+                        "id": 48,
+                        "link_id": 1,
+                        "name": "FastEthernet1/9",
+                        "nio": "NIO_UDP",
+                        "port_number": 9,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW1 on port FastEthernet1/10",
+                        "id": 49,
+                        "link_id": 2,
+                        "name": "FastEthernet1/10",
+                        "nio": "NIO_UDP",
+                        "port_number": 10,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW2 on port FastEthernet1/11",
+                        "id": 50,
+                        "link_id": 3,
+                        "name": "FastEthernet1/11",
+                        "nio": "NIO_UDP",
+                        "port_number": 11,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW2 on port FastEthernet1/12",
+                        "id": 51,
+                        "link_id": 4,
+                        "name": "FastEthernet1/12",
+                        "nio": "NIO_UDP",
+                        "port_number": 12,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW2 on port FastEthernet1/13",
+                        "id": 52,
+                        "link_id": 9,
+                        "name": "FastEthernet1/13",
+                        "nio": "NIO_UDP",
+                        "port_number": 13,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 53,
+                        "name": "FastEthernet1/14",
+                        "port_number": 14,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 54,
+                        "name": "FastEthernet1/15",
+                        "port_number": 15,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2503,
+                    "chassis": "3660",
+                    "console": 2003,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc03.23bc.0000",
+                    "name": "DSW1",
+                    "nvram": 256,
+                    "private_config": "configs/i3_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-16ESW",
+                    "startup_config": "configs/i3_startup-config.cfg"
+                },
+                "router_id": 3,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -426.1168824543139,
+                "y": 24.972654789530132
+            },
+            {
+                "default_symbol": ":/symbols/multilayer_switch.normal.svg",
+                "description": "Router c3600",
+                "hover_symbol": ":/symbols/multilayer_switch.selected.svg",
+                "id": 4,
+                "label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "DSW2",
+                    "x": 3.843145750507631,
+                    "y": 47.0
+                },
+                "ports": [
+                    {
+                        "description": "connected to R4 on port FastEthernet0/1",
+                        "id": 55,
+                        "link_id": 14,
+                        "name": "FastEthernet0/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 56,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 57,
+                        "name": "FastEthernet1/0",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 58,
+                        "name": "FastEthernet1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 59,
+                        "name": "FastEthernet1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 60,
+                        "name": "FastEthernet1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 61,
+                        "name": "FastEthernet1/4",
+                        "port_number": 4,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 62,
+                        "name": "FastEthernet1/5",
+                        "port_number": 5,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 63,
+                        "name": "FastEthernet1/6",
+                        "port_number": 6,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 64,
+                        "name": "FastEthernet1/7",
+                        "port_number": 7,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 65,
+                        "name": "FastEthernet1/8",
+                        "port_number": 8,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW2 on port FastEthernet1/9",
+                        "id": 66,
+                        "link_id": 5,
+                        "name": "FastEthernet1/9",
+                        "nio": "NIO_UDP",
+                        "port_number": 9,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW2 on port FastEthernet1/10",
+                        "id": 67,
+                        "link_id": 6,
+                        "name": "FastEthernet1/10",
+                        "nio": "NIO_UDP",
+                        "port_number": 10,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW1 on port FastEthernet1/11",
+                        "id": 68,
+                        "link_id": 7,
+                        "name": "FastEthernet1/11",
+                        "nio": "NIO_UDP",
+                        "port_number": 11,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to ASW1 on port FastEthernet1/12",
+                        "id": 69,
+                        "link_id": 8,
+                        "name": "FastEthernet1/12",
+                        "nio": "NIO_UDP",
+                        "port_number": 12,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to DSW1 on port FastEthernet1/13",
+                        "id": 70,
+                        "link_id": 9,
+                        "name": "FastEthernet1/13",
+                        "nio": "NIO_UDP",
+                        "port_number": 13,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 71,
+                        "name": "FastEthernet1/14",
+                        "port_number": 14,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 72,
+                        "name": "FastEthernet1/15",
+                        "port_number": 15,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2504,
+                    "chassis": "3660",
+                    "console": 2004,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc04.1304.0000",
+                    "name": "DSW2",
+                    "nvram": 256,
+                    "private_config": "configs/i4_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-16ESW",
+                    "startup_config": "configs/i4_startup-config.cfg"
+                },
+                "router_id": 4,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -422.1168824543139,
+                "y": 255.97265478953017
+            },
+            {
+                "description": "Router c3600",
+                "id": 5,
+                "label": {
+                    "color": "#ffffff",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "R1",
+                    "x": 21.5,
+                    "y": 23.526643718850806
+                },
+                "ports": [
+                    {
+                        "id": 73,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 74,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "description": "connected to FR1 on port 1",
+                        "id": 150,
+                        "link_id": 10,
+                        "name": "Serial1/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to eBGPpeer on port Serial1/1",
+                        "id": 151,
+                        "link_id": 16,
+                        "name": "Serial1/1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 152,
+                        "name": "Serial1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 153,
+                        "name": "Serial1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2505,
+                    "chassis": "3660",
+                    "console": 2005,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc05.0510.0000",
+                    "name": "R1",
+                    "nvram": 256,
+                    "private_config": "configs/i5_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-4T",
+                    "startup_config": "configs/i5_startup-config.cfg"
+                },
+                "router_id": 5,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -433.2173875177024,
+                "y": -226.5075759508251
+            },
+            {
+                "description": "Router c3600",
+                "id": 6,
+                "label": {
+                    "color": "#ffffff",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "R2",
+                    "x": 23.738665656089466,
+                    "y": 21.76530937494033
+                },
+                "ports": [
+                    {
+                        "id": 91,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 92,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "description": "connected to FR1 on port 2",
+                        "id": 154,
+                        "link_id": 11,
+                        "name": "Serial1/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 155,
+                        "name": "Serial1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 156,
+                        "name": "Serial1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 157,
+                        "name": "Serial1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2506,
+                    "chassis": "3660",
+                    "console": 2006,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc06.17b4.0000",
+                    "name": "R2",
+                    "nvram": 256,
+                    "private_config": "configs/i6_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-4T",
+                    "startup_config": "configs/i6_startup-config.cfg"
+                },
+                "router_id": 6,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -156.56053326821018,
+                "y": -420.649711574556
+            },
+            {
+                "description": "Router c3600",
+                "id": 7,
+                "label": {
+                    "color": "#ffffff",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "R3",
+                    "x": 22.5,
+                    "y": 24.351095812567223
+                },
+                "ports": [
+                    {
+                        "id": 109,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 110,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "description": "connected to FR1 on port 3",
+                        "id": 158,
+                        "link_id": 12,
+                        "name": "Serial1/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 159,
+                        "name": "Serial1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 160,
+                        "name": "Serial1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 161,
+                        "name": "Serial1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2507,
+                    "chassis": "3660",
+                    "console": 2007,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc07.1d14.0000",
+                    "name": "R3",
+                    "nvram": 256,
+                    "private_config": "configs/i7_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-4T",
+                    "startup_config": "configs/i7_startup-config.cfg"
+                },
+                "router_id": 7,
+                "server_id": 1,
+                "type": "C3600",
+                "x": 149.38059222874418,
+                "y": -221.40707088743665
+            },
+            {
+                "description": "Router c3600",
+                "id": 8,
+                "label": {
+                    "color": "#ffffff",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "R4",
+                    "x": 22.14890418743279,
+                    "y": 23.52664371885082
+                },
+                "ports": [
+                    {
+                        "description": "connected to DSW1 on port FastEthernet0/0",
+                        "id": 127,
+                        "link_id": 13,
+                        "name": "FastEthernet0/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "description": "connected to DSW2 on port FastEthernet0/0",
+                        "id": 128,
+                        "link_id": 14,
+                        "name": "FastEthernet0/1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "description": "connected to FR1 on port 4",
+                        "id": 162,
+                        "link_id": 15,
+                        "name": "Serial1/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 163,
+                        "name": "Serial1/1",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 164,
+                        "name": "Serial1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 165,
+                        "name": "Serial1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2508,
+                    "chassis": "3660",
+                    "console": 2008,
+                    "disk0": 1,
+                    "exec_area": 16,
+                    "idlepc": "0x60606f54",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc08.17e8.0000",
+                    "name": "R4",
+                    "nvram": 256,
+                    "private_config": "configs/i8_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-4T",
+                    "startup_config": "configs/i8_startup-config.cfg"
+                },
+                "router_id": 8,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -134.62762604904583,
+                "y": 31.12940314351833
+            },
+            {
+                "description": "Cloud",
+                "id": 10,
+                "label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "WebServer",
+                    "x": 40.0,
+                    "y": 30.0
+                },
+                "properties": {
+                    "name": "WebServer",
+                    "nios": []
+                },
+                "server_id": 1,
+                "type": "Cloud",
+                "x": -871.4747468305831,
+                "y": -238.33600307557126,
+                "z": 0.0
+            },
+            {
+                "default_symbol": ":/symbols/cloud.normal.svg",
+                "description": "Frame Relay switch",
+                "hover_symbol": ":/symbols/cloud.selected.svg",
+                "id": 13,
+                "label": {
+                    "color": "#161616",
+                    "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                    "text": "FR1",
+                    "x": 65.0,
+                    "y": 22.0
+                },
+                "ports": [
+                    {
+                        "description": "connected to R3 on port Serial1/0",
+                        "id": 192,
+                        "link_id": 12,
+                        "name": "3",
+                        "nio": "NIO_UDP",
+                        "port_number": 3
+                    },
+                    {
+                        "description": "connected to R4 on port Serial1/0",
+                        "id": 193,
+                        "link_id": 15,
+                        "name": "4",
+                        "nio": "NIO_UDP",
+                        "port_number": 4
+                    },
+                    {
+                        "description": "connected to R1 on port Serial1/0",
+                        "id": 194,
+                        "link_id": 10,
+                        "name": "1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1
+                    },
+                    {
+                        "description": "connected to R2 on port Serial1/0",
+                        "id": 195,
+                        "link_id": 11,
+                        "name": "2",
+                        "nio": "NIO_UDP",
+                        "port_number": 2
+                    }
+                ],
+                "properties": {
+                    "mappings": {
+                        "1:102": "2:201",
+                        "2:203": "3:302",
+                        "3:304": "4:403"
+                    },
+                    "name": "FR1"
+                },
+                "server_id": 1,
+                "type": "FrameRelaySwitch",
+                "x": -192.06053326821012,
+                "y": -234.14971157455602
+            },
+            {
+                "description": "Router c3600",
+                "id": 19,
+                "label": {
+                    "color": "#000000",
+                    "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                    "text": "eBGPpeer",
+                    "x": 8.26061262459666,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "id": 310,
+                        "name": "FastEthernet0/0",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 311,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 314,
+                        "name": "Serial1/0",
+                        "port_number": 0,
+                        "slot_number": 1
+                    },
+                    {
+                        "description": "connected to R1 on port Serial1/1",
+                        "id": 315,
+                        "link_id": 16,
+                        "name": "Serial1/1",
+                        "nio": "NIO_UDP",
+                        "port_number": 1,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 316,
+                        "name": "Serial1/2",
+                        "port_number": 2,
+                        "slot_number": 1
+                    },
+                    {
+                        "id": 317,
+                        "name": "Serial1/3",
+                        "port_number": 3,
+                        "slot_number": 1
+                    }
+                ],
+                "properties": {
+                    "aux": 2509,
+                    "chassis": "3660",
+                    "console": 2009,
+                    "disk0": 1,
+                    "idlepc": "0x6057efc8",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc09.06db.0000",
+                    "name": "eBGPpeer",
+                    "nvram": 256,
+                    "private_config": "configs/i9_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "slot1": "NM-4T",
+                    "startup_config": "configs/i9_startup-config.cfg"
+                },
+                "router_id": 9,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -726.573264707329,
+                "y": -223.01869197449705
+            },
+            {
+                "default_symbol": ":/symbols/computer.normal.svg",
+                "description": "Router c3600",
+                "hover_symbol": ":/symbols/computer.selected.svg",
+                "id": 20,
+                "label": {
+                    "color": "#000000",
+                    "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                    "text": "Client1",
+                    "x": 10.611708437163884,
+                    "y": -23.82445209371639
+                },
+                "ports": [
+                    {
+                        "description": "connected to ASW1 on port FastEthernet1/0",
+                        "id": 312,
+                        "link_id": 17,
+                        "name": "FastEthernet0/0",
+                        "nio": "NIO_UDP",
+                        "port_number": 0,
+                        "slot_number": 0
+                    },
+                    {
+                        "id": 313,
+                        "name": "FastEthernet0/1",
+                        "port_number": 1,
+                        "slot_number": 0
+                    }
+                ],
+                "properties": {
+                    "aux": 2510,
+                    "chassis": "3660",
+                    "console": 2010,
+                    "disk0": 1,
+                    "idlepc": "0x6057efc8",
+                    "image": "c3660-a3jk9s-mz.124-25c.image",
+                    "mac_addr": "cc0a.06e6.0000",
+                    "name": "Client1",
+                    "nvram": 256,
+                    "private_config": "configs/i10_private-config.cfg",
+                    "slot0": "Leopard-2FE",
+                    "startup_config": "configs/i10_startup-config.cfg"
+                },
+                "router_id": 10,
+                "server_id": 1,
+                "type": "C3600",
+                "x": -828.3832333599601,
+                "y": 142.5767068797052
+            }
+        ],
+        "notes": [
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "209.65.200.241",
+                "x": -834.9747468305832,
+                "y": -169.2649352637058
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "209.65.200.224/30",
+                "x": -609.146319705837,
+                "y": -244.5786437626906
+            },
+            {
+                "color": "#161616",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "rotation": -45.0,
+                "text": "GRE Tunnel ",
+                "x": 39.00000000000001,
+                "y": -20.0
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "rotation": -45.0,
+                "text": "===============================================",
+                "x": -51.17554790628371,
+                "y": 45.47335628114928
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.1.4/30\n2026::1:/122",
+                "x": -37.0,
+                "y": -314.0
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.1.0/30\n2026::12:/122",
+                "x": -282.0,
+                "y": -314.0
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.1.8/30\n2026::34:/122",
+                "x": -41.07106781186547,
+                "y": -150.21320343559643
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.4.4/30\n2026::2:/122",
+                "x": -290.55634918610406,
+                "y": 62.622366364086155
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "10.2.4.12/30\n2026::3:/122",
+                "x": -393.55634918610406,
+                "y": 146.62236636408616
+            },
+            {
+                "color": "#aa0000",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "10.1.4.8/30",
+                "x": -269.55634918610406,
+                "y": 178.6223663640862
+            },
+            {
+                "color": "#343434",
+                "font": "Helvetica,14,-1,5,75,0,0,0,0,0",
+                "text": "OSPF 1",
+                "x": -248.90158697766466,
+                "y": -116.65180361560901
+            },
+            {
+                "color": "#343434",
+                "font": "Helvetica,14,-1,5,75,0,0,0,0,0",
+                "text": "EIGRP 10",
+                "x": -242.74167097976994,
+                "y": 245.2344196693973
+            },
+            {
+                "color": "#325d56",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "Area12",
+                "x": -248.0,
+                "y": -269.0
+            },
+            {
+                "color": "#325d56",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "Area0",
+                "x": -14.82445209371639,
+                "y": -268.7021916251344
+            },
+            {
+                "color": "#325d56",
+                "font": "MS Shell Dlg 2,10,-1,5,75,0,0,0,0,0",
+                "text": "Area34",
+                "x": -18.0,
+                "y": -102.0
+            },
+            {
+                "color": "#000000",
+                "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                "text": "BGP 65001",
+                "x": -487.0313711863573,
+                "y": -263.82445209371645
+            },
+            {
+                "color": "#000000",
+                "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                "text": "BGP 65002",
+                "x": -811.1755479062837,
+                "y": -266.5266437188509
+            },
+            {
+                "color": "#aa060f",
+                "font": "Helvetica,10,-1,5,75,0,0,0,0,0",
+                "text": "VLAN 10\n10.2.1.0/24",
+                "x": -662.3981525921033,
+                "y": -31.36355712889859
+            },
+            {
+                "color": "#000000",
+                "font": "Helvetica,10,-1,5,75,0,0,0,0,0",
+                "text": "po3",
+                "x": -527.371728660758,
+                "y": 52.63322193120641
+            },
+            {
+                "color": "#000000",
+                "font": "Helvetica,10,-1,5,75,0,0,0,0,0",
+                "text": "po4",
+                "x": -486.0338021861618,
+                "y": 136.561739319023
+            },
+            {
+                "color": "#000000",
+                "font": "Helvetica,10,-1,5,75,0,0,0,0,0",
+                "text": "po5",
+                "x": -592.5102794692126,
+                "y": 116.51910830103695
+            },
+            {
+                "color": "#000000",
+                "font": "Helvetica,10,-1,5,75,0,0,0,0,0",
+                "text": "po6",
+                "x": -524.8663997835097,
+                "y": 258.07018986556335
+            },
+            {
+                "color": "#006060",
+                "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                "text": "NAT",
+                "x": -426.0,
+                "y": -179.0
+            },
+            {
+                "color": "#006060",
+                "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                "text": "DHCP Server",
+                "x": -85.0,
+                "y": 72.0
+            },
+            {
+                "color": "#006060",
+                "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                "text": "RIPng RIP_ZONE",
+                "x": -332.0,
+                "y": 107.0
+            },
+            {
+                "color": "#006060",
+                "font": "Lucida Sans,10,-1,5,75,0,0,0,0,0",
+                "text": "OSPFv3 6",
+                "x": -198.0,
+                "y": -90.0
+            }
+        ],
+        "servers": [
+            {
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": true,
+                "port": 8000
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.2.1"
+}

@@ -41,8 +41,8 @@ def getTopologyValidationErrors(topology):
     error_message = ""
     for error in errors:
         # Uncomment for more details
-        for suberror in sorted(error.context, key=lambda e: e.schema_path):
-            print(list(suberror.schema_path), suberror.message, sep=", ")
+        #for suberror in sorted(error.context, key=lambda e: e.schema_path):
+        #    print(list(suberror.schema_path), suberror.message, sep=", ")
         error_message += "{}\n".format(str(error))
     return error_message
 
