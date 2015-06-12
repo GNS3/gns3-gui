@@ -38,6 +38,7 @@ from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
+from .utils.glob import glob_escape
 from .version import __version__
 
 import logging
@@ -533,7 +534,7 @@ class Topology(object):
                 new_uuid = str(uuid.uuid4())
                 topology["topology"]["nodes"][key]["vm_id"] = new_uuid
                 if old_uuid:
-                    for path in glob.glob(os.path.join(self.project.filesDir(), "project-files", "*", old_uuid)):
+                    for path in glob.glob(os.path.join(glob_escape(self.project.filesDir()), "project-files", "*", old_uuid)):
                         new_path = path.replace(old_uuid, new_uuid)
                         shutil.move(path, new_path)
         return topology
