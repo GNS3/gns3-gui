@@ -309,7 +309,6 @@ class VirtualBox(Module):
                 {"class": VirtualBoxVM.__name__,
                  "name": vbox_vm["vmname"],
                  "server": vbox_vm["server"],
-                 "categories": VirtualBoxVM.categories(),
                  "default_symbol": vbox_vm["default_symbol"],
                  "hover_symbol": vbox_vm["hover_symbol"],
                  "categories": [vbox_vm["category"]]}

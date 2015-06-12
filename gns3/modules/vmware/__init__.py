@@ -307,7 +307,6 @@ class VMware(Module):
                 {"class": VMwareVM.__name__,
                  "name": vmware_vm["name"],
                  "server": vmware_vm["server"],
-                 "categories": VMwareVM.categories(),
                  "default_symbol": vmware_vm["default_symbol"],
                  "hover_symbol": vmware_vm["hover_symbol"],
                  "categories": [vmware_vm["category"]]}
