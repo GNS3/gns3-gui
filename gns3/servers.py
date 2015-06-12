@@ -60,7 +60,7 @@ class Servers(QtCore.QObject):
         self._local_server_auto_start = True
         self._local_server_allow_console_from_anywhere = False
         self._local_server_proccess = None
-        self._network_manager = QtNetwork.QNetworkAccessManager(self)
+        self._network_manager = QtNetwork.QNetworkAccessManager()
         self._network_manager.sslErrors.connect(self._handleSslErrors)
         self._local_server_settings = {}
         self._remote_server_iter_pos = 0

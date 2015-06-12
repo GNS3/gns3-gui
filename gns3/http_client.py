@@ -593,11 +593,15 @@ class HTTPClient(QtCore.QObject):
         if response.error() != QtNetwork.QNetworkReply.NoError:
             error_code = response.error()
             error_message = response.errorString()
-            log.info("Response error: {}".format(error_message))
+
+            if not ignore_errors:
+                log.info("Response error: %s (error: %d)", error_message, error_code)
 
             if error_code < 200:
                 if not ignore_errors:
                     self.close()
+                    callback({"message": error_message}, error=True, server=self, context=context)
+                return
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
                 if status == 401:

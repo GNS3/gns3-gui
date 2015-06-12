@@ -150,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
         # Network Manager (used to check for update)
-        self._network_manager = QtNetwork.QNetworkAccessManager(self)
+        self._network_manager = QtNetwork.QNetworkAccessManager()
 
         # restore the style
         self._setStyle(self._settings.get("style"))
