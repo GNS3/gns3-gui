@@ -49,6 +49,7 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.message_box import MessageBox
+from .utils.glob import glob_escape
 from .ports.port import Port
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
@@ -910,7 +911,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.critical(self, "Lab instructions", "Sorry, lab instructions are not supported with temporary projects")
             return
 
-        project_dir = os.path.dirname(self._project.topologyFile())
+        project_dir = glob_escape(os.path.dirname(self._project.topologyFile()))
         instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
         if len(instructions_files):
