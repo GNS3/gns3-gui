@@ -226,6 +226,9 @@ class Servers(QtCore.QObject):
         return self._local_server_settings["path"]
 
     def initLocalServer(self):
+        from .main_window import MainWindow
+        main_window = MainWindow.instance()
+
         # check the local server path
         local_server_path = self.localServerPath()
         server = self.localServer()
@@ -233,10 +236,10 @@ class Servers(QtCore.QObject):
             log.warn("No local server is configured")
             return
         if not os.path.isfile(local_server_path):
-            QtGui.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(local_server_path))
+            QtGui.QMessageBox.critical(main_window, "Local server", "Could not find local server {}".format(local_server_path))
             return
         elif not os.access(local_server_path, os.X_OK):
-            QtGui.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_path))
+            QtGui.QMessageBox.critical(main_window, "Local server", "{} is not an executable".format(local_server_path))
             return
 
         try:
@@ -244,7 +247,7 @@ class Servers(QtCore.QObject):
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 sock.bind((server.host, 0))
         except OSError as e:
-            QtGui.QMessageBox.critical(self, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host, e))
+            QtGui.QMessageBox.critical(main_window, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host, e))
             return False
 
         try:
@@ -264,7 +267,7 @@ class Servers(QtCore.QObject):
             try:
                 server.port = self._findUnusedLocalPort(server.host)
             except OSError as e:
-                QtGui.QMessageBox.critical(self, "Local server", "Could not find an unused port for the local server: {}".format(e))
+                QtGui.QMessageBox.critical(main_window, "Local server", "Could not find an unused port for the local server: {}".format(e))
                 return False
             log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
             print("The server port {} is already in use, fallback to port {}".format(old_port, server.port))
