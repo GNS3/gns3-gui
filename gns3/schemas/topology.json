@@ -191,7 +191,8 @@
                 "port": { "$ref": "#/definitions/network_port" },
                 "user": {
                     "type": ["string", "null"]
-                }
+                },
+                "accept_insecure_certificate": { "type": "boolean" }
             },
             "required": [
                 "host",

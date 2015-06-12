@@ -1,0 +1,56 @@
+{
+    "auto_start": false,
+    "name": "dfd",
+    "project_id": "85b9f189-2b42-498e-aa44-450f974ce7c3",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "default_symbol": ":/symbols/vpcs_guest.normal.svg",
+                "description": "VPCS device",
+                "hover_symbol": ":/symbols/vpcs_guest.selected.svg",
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "PC1",
+                    "x": 18.5859375,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "id": 1,
+                        "name": "Ethernet0",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "console": 2001,
+                    "name": "PC1",
+                    "startup_script_path": "startup.vpc"
+                },
+                "server_id": 1,
+                "type": "VPCSDevice",
+                "vm_id": "9220d6cf-e098-4e3f-a406-17a2e674d39d",
+                "x": -131.5,
+                "y": -169.5
+            }
+        ],
+        "servers": [
+            {
+                "accept_insecure_certificate": true,
+                "cloud": false,
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": false,
+                "port": 8000,
+                "protocol": "https",
+                "user": ""
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}
