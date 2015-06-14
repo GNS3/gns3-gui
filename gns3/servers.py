@@ -308,7 +308,6 @@ class Servers(QtCore.QObject):
 
         if find_unused_port:
             # find an alternate port for the local server
-
             old_port = server.port()
             try:
                 server.setPort(self._findUnusedLocalPort(server.host()))
@@ -328,9 +327,9 @@ class Servers(QtCore.QObject):
         :returns: port number
         """
 
-        s = socket.socket()
-        s.bind((host, 0))
-        return s.getsockname()[1]
+        with socket.socket() as s:
+            s.bind((host, 0))
+            return s.getsockname()[1]
 
     def startLocalServer(self):
         """
