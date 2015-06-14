@@ -117,6 +117,7 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
             project_name = self.uiNameLineEdit.text()
             project_location = self.uiLocationLineEdit.text()
             if self.uiCloudRadioButton.isChecked():
+                #FIXME: check for usefulness
                 project_type = "cloud"
             else:
                 project_type = "local"

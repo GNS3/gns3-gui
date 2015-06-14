@@ -426,13 +426,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["password"] = current_settings["password"]
 
         if new_settings["console_end_port_range"] <= new_settings["console_start_port_range"]:
-            QtWidgets.QMessageBox.critical(self, "Local", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
-                                                                                                            new_settings["console_end_port_range"]))
+            QtWidgets.QMessageBox.critical(self, "Port range", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
+                                                                                                                 new_settings["console_end_port_range"]))
             return
 
         if new_settings["udp_end_port_range"] <= new_settings["udp_start_port_range"]:
-            QtWidgets.QMessageBox.critical(self, "Local", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
-                                                                                                        new_settings["udp_end_port_range"]))
+            QtWidgets.QMessageBox.critical(self, "Port range", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
+                                                                                                             new_settings["udp_end_port_range"]))
             return
 
         if new_settings["auto_start"]:

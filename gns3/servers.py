@@ -35,6 +35,7 @@ from .network_client import getNetworkClientInstance, getNetworkUrl
 from .local_config import LocalConfig
 from .settings import LOCAL_SERVER_SETTINGS
 from .local_server_config import LocalServerConfig
+from .gns3_vm import GNS3VM
 from collections import OrderedDict
 
 import logging
@@ -54,6 +55,7 @@ class Servers(QtCore.QObject):
 
         super().__init__()
         self._local_server = None
+        self._vm_server = None
         self._remote_servers = {}
         self._cloud_servers = {}
         self._local_server_path = ""
@@ -75,11 +77,7 @@ class Servers(QtCore.QObject):
         port = self._local_server_settings["port"]
         user = self._local_server_settings["user"]
         password = self._local_server_settings["password"]
-        url = "http://{host}:{port}".format(host=host, port=port)
-        self._local_server = getNetworkClientInstance({"host": self._local_server_settings["host"],
-                                                       "port": self._local_server_settings["port"],
-                                                       "user": self._local_server_settings["user"],
-                                                       "password": self._local_server_settings["password"]},
+        self._local_server = getNetworkClientInstance({"host": host, "port": port, "user": user, "password": password},
                                                       self._network_manager)
         self._local_server.setLocal(True)
         log.info("New local server connection {} registered".format(self._local_server.url()))
@@ -139,7 +137,7 @@ class Servers(QtCore.QObject):
         proceed = QtWidgets.QMessageBox.warning(
             main_window,
             "SSL Error",
-            "The SSL certificate for:\n {} is invalid or someone try to intercept the communication.\nContinue?".format(reply.url().toDisplayString()),
+            "SSL certificate for:\n {} is invalid or someone is trying to intercept the communication.\nContinue?".format(reply.url().toDisplayString()),
             QtWidgets.QMessageBox.Yes,
             QtWidgets.QMessageBox.No)
 
@@ -421,6 +419,22 @@ class Servers(QtCore.QObject):
 
         return self._local_server
 
+    def vmServer(self):
+        """
+        Returns the GNS3 VM server.
+
+        :returns: Server instance
+        """
+
+        if self._vm_server is None:
+            gns3_vm = GNS3VM.instance().server_host()
+            server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
+            server = getNetworkClientInstance(server_info, self._network_manager)
+            server.setLocal(False)
+            self._vm_server = server
+            log.info("New GNS3 VM server connection {}".format(server.url()))
+        return self._vm_server
+
     def _addRemoteServer(self, protocol, host, port, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False):
         """
         Adds a new remote server.
@@ -466,16 +480,18 @@ class Servers(QtCore.QObject):
 
         return self._addRemoteServer(protocol, host, port, user)
 
-    def getServerFromString(self, string):
+    def getServerFromString(self, server_name):
         """
         Finds a server instance from its string representation.
         """
 
-        if string == "local":
+        if server_name == "local":
             return self._local_server
+        elif server_name == "vm":
+            return self._vm_server
 
-        if "://" in string:
-            url_settings = urllib.parse.urlparse(string)
+        if "://" in server_name:
+            url_settings = urllib.parse.urlparse(server_name)
             if url_settings.scheme == "ssh":
                 _, ssh_port, port = url_settings.netloc.split(":")
                 settings = {"ssh_port": int(ssh_port)}
@@ -484,7 +500,7 @@ class Servers(QtCore.QObject):
                 port = url_settings.port
             return self.getRemoteServer(url_settings.scheme, url_settings.hostname, port, url_settings.username, settings=settings)
         else:
-            (host, port) = string.split(":")
+            (host, port) = string.server_name(":")
             return self.getRemoteServer("http", host, port, None)
 
     def updateRemoteServers(self, servers):

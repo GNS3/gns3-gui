@@ -41,13 +41,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="uiCloudRadioButton">
-         <property name="text">
-          <string>Cloud</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QRadioButton" name="uiLocalRadioButton">
          <property name="text">
           <string>Local</string>

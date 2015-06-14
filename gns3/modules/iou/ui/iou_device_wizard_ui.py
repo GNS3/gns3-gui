@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'iou_device_wizard.ui'
 #
-# Created: Wed May  6 14:31:56 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sun Jun 14 14:52:26 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_IOUDeviceWizard:
-
+class Ui_IOUDeviceWizard(object):
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
         IOUDeviceWizard.resize(585, 423)
@@ -29,9 +27,9 @@ class Ui_IOUDeviceWizard:
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
-        self.uiCloudRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
-        self.uiCloudRadioButton.setObjectName("uiCloudRadioButton")
-        self.horizontalLayout.addWidget(self.uiCloudRadioButton)
+        self.uiVMRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiVMRadioButton.setObjectName("uiVMRadioButton")
+        self.horizontalLayout.addWidget(self.uiVMRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
         self.horizontalLayout.addWidget(self.uiLocalRadioButton)
@@ -132,7 +130,7 @@ class Ui_IOUDeviceWizard:
         self.uiServerWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a server type to run your new IOU device."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOUDeviceWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Remote"))
-        self.uiCloudRadioButton.setText(_translate("IOUDeviceWizard", "Cloud"))
+        self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Local"))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUDeviceWizard", "Remote servers"))
         self.uiLoadBalanceCheckBox.setText(_translate("IOUDeviceWizard", "Load balance across all available remote servers"))
@@ -146,3 +144,4 @@ class Ui_IOUDeviceWizard:
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:"))
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:"))
         self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse..."))
+

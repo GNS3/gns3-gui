@@ -18,7 +18,6 @@
 import sys
 
 from gns3.qt import QtWidgets
-from gns3.settings import ENABLE_CLOUD
 from gns3.servers import Servers
 
 
@@ -39,9 +38,6 @@ class VMWizard(QtWidgets.QWizard):
         self._server = Servers.instance().localServer()
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
-
-        if not ENABLE_CLOUD:
-            self.uiCloudRadioButton.hide()
 
         # The list of images combo box (Qemu support multiple images)
         self._images_combo_boxes = set()

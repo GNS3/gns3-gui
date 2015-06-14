@@ -230,6 +230,8 @@ GNS3_VM_SETTINGS = {
     "headless": True,
     "vmname": "GNS3 VM",
     "vmx_path": "",
+    "server_host": "",
+    "server_port": 8000,
     "virtualization": "VMware"
 }
 

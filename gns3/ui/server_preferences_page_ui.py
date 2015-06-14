@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Sat Jun 13 17:00:46 2015
+# Created: Sun Jun 14 14:37:46 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!

@@ -196,9 +196,6 @@ def main():
     app.setApplicationName("GNS3")
     app.setApplicationVersion(__version__)
 
-    formatter = logging.Formatter("[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s",
-                                  datefmt="%y%m%d %H:%M:%S")
-
     # on debug enable logging to stdout
     if options.debug:
         root_logger = init_logger(logging.DEBUG)

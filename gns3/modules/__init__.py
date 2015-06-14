@@ -23,4 +23,4 @@ from gns3.modules.virtualbox import VirtualBox
 from gns3.modules.qemu import Qemu
 from gns3.modules.vmware import VMware
 
-MODULES = [VPCS, Dynamips, IOU, VirtualBox, Qemu, VMware, Builtin]
+MODULES = [VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Builtin]

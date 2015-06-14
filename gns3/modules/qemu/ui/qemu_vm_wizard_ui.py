@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
 #
-# Created: Mon May 18 17:26:07 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sun Jun 14 14:52:26 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_QemuVMWizard:
-
+class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(585, 381)
@@ -29,9 +27,9 @@ class Ui_QemuVMWizard:
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
-        self.uiCloudRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
-        self.uiCloudRadioButton.setObjectName("uiCloudRadioButton")
-        self.horizontalLayout.addWidget(self.uiCloudRadioButton)
+        self.uiVMRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
+        self.uiVMRadioButton.setObjectName("uiVMRadioButton")
+        self.horizontalLayout.addWidget(self.uiVMRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
         self.horizontalLayout.addWidget(self.uiLocalRadioButton)
@@ -258,7 +256,7 @@ class Ui_QemuVMWizard:
         self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("QemuVMWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Remote"))
-        self.uiCloudRadioButton.setText(_translate("QemuVMWizard", "Cloud"))
+        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Local"))
         self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote servers"))
         self.uiLoadBalanceCheckBox.setText(_translate("QemuVMWizard", "Load balance across all available remote servers"))
@@ -295,3 +293,4 @@ class Ui_QemuVMWizard:
         self.uiNewImageRadioButton_5.setText(_translate("QemuVMWizard", "New Image"))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
+

@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'virtualbox_vm_wizard.ui'
 #
-# Created: Wed May  6 14:31:58 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sun Jun 14 14:54:00 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_VirtualBoxVMWizard:
-
+class Ui_VirtualBoxVMWizard(object):
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName("VirtualBoxVMWizard")
         VirtualBoxVMWizard.resize(514, 367)
@@ -29,9 +27,6 @@ class Ui_VirtualBoxVMWizard:
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
-        self.uiCloudRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
-        self.uiCloudRadioButton.setObjectName("uiCloudRadioButton")
-        self.horizontalLayout.addWidget(self.uiCloudRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
         self.horizontalLayout.addWidget(self.uiLocalRadioButton)
@@ -87,7 +82,6 @@ class Ui_VirtualBoxVMWizard:
         self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run your new VirtualBox VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("VirtualBoxVMWizard", "Remote"))
-        self.uiCloudRadioButton.setText(_translate("VirtualBoxVMWizard", "Cloud"))
         self.uiLocalRadioButton.setText(_translate("VirtualBoxVMWizard", "Local"))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Remote servers"))
         self.uiRemoteServersLabel.setText(_translate("VirtualBoxVMWizard", "Run on server:"))
@@ -95,3 +89,4 @@ class Ui_VirtualBoxVMWizard:
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a VirtualBox virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VirtualBoxVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VirtualBoxVMWizard", "Use as a linked base VM (experimental)"))
+

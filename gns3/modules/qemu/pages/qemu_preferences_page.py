@@ -19,7 +19,7 @@
 Configuration page for QEMU preferences.
 """
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from .. import Qemu
 from ..ui.qemu_preferences_page_ui import Ui_QemuPreferencesPageWidget
 from ..settings import QEMU_SETTINGS

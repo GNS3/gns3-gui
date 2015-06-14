@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'vmware_vm_wizard.ui'
 #
-# Created: Wed May  6 14:31:58 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sun Jun 14 14:54:00 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_VMwareVMWizard:
-
+class Ui_VMwareVMWizard(object):
     def setupUi(self, VMwareVMWizard):
         VMwareVMWizard.setObjectName("VMwareVMWizard")
         VMwareVMWizard.resize(514, 367)
@@ -29,9 +27,6 @@ class Ui_VMwareVMWizard:
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
-        self.uiCloudRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
-        self.uiCloudRadioButton.setObjectName("uiCloudRadioButton")
-        self.horizontalLayout.addWidget(self.uiCloudRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
         self.horizontalLayout.addWidget(self.uiLocalRadioButton)
@@ -87,7 +82,6 @@ class Ui_VMwareVMWizard:
         self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("VMwareVMWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("VMwareVMWizard", "Remote"))
-        self.uiCloudRadioButton.setText(_translate("VMwareVMWizard", "Cloud"))
         self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Local"))
         self.uiRemoteServersGroupBox.setTitle(_translate("VMwareVMWizard", "Remote servers"))
         self.uiRemoteServersLabel.setText(_translate("VMwareVMWizard", "Run on server:"))
@@ -95,3 +89,4 @@ class Ui_VMwareVMWizard:
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a VMware virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VMwareVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMWizard", "Use as a linked base VM (experimental)"))
+

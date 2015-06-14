@@ -84,6 +84,24 @@ class GNS3VM:
 
         return self._settings["auto_start"]
 
+    def server_host(self):
+        """
+        Returns the IP address or hostname of server running in the GNS3 VM.
+
+        :returns: boolean
+        """
+
+        return self._settings["server_host"]
+
+    def server_port(self):
+        """
+        Returns the port of server running in the GNS3 VM.
+
+        :returns: boolean
+        """
+
+        return self._settings["server_port"]
+
     @staticmethod
     def instance():
         """

@@ -1400,6 +1400,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 server = node_module.allocateServer(node_class)
             elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
+            elif node_data["server"] == "vm":
+                server = Servers.instance().vmServer()
             elif node_data["server"] == "cloud":
                 server = Servers.instance().anyCloudServer()
             else:

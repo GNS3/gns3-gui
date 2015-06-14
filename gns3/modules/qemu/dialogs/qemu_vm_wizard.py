@@ -186,8 +186,8 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
             server = self.uiRemoteServersComboBox.currentText()
-        else:  # Cloud is selected
-            server = "cloud"
+        elif self.uiVMRadioButton.isChecked():
+            server = "vm"
 
         qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
         settings = {

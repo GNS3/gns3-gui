@@ -167,8 +167,8 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
                 server = server.url()
             else:
                 server = self.uiRemoteServersComboBox.currentText()
-        else:  # Cloud is selected
-            server = "cloud"
+        elif self.uiVMRadioButton.isChecked():
+            server = "vm"
 
         settings = {
             "name": self.uiNameLineEdit.text(),

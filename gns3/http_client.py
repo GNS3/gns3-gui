@@ -415,7 +415,7 @@ class HTTPClient(QtCore.QObject):
             return
 
         if "version" not in params or "local" not in params:
-            msg = "The remote server {} is not a GNS 3 server".format(self.url())
+            msg = "The remote server {} is not a GNS3 server".format(self.url())
             log.error(msg)
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)
@@ -437,7 +437,7 @@ class HTTPClient(QtCore.QObject):
             if self.isLocal():
                 msg = "Running server is not a GNS3 local server (not started with --local)"
             else:
-                msg = "Remote running server is started with --local. It's forbidden for security reasons"
+                msg = "Remote running server is started with --local. It is forbidden for security reasons"
             log.error(msg)
             if callback is not None:
                 callback({"message": msg}, error=True, server=self)

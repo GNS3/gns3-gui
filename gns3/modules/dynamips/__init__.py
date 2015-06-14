@@ -425,7 +425,7 @@ class Dynamips(Module):
 
         server = "local"
         if not self._settings["use_local_server"]:
-            # pick up a remote server (round-robin method)
+            # pick up a remote server (round-robin method) #FIXME: review this
             remote_server = next(iter(Servers.instance()))
             if remote_server:
                 server = remote_server.url()

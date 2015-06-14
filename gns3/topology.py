@@ -642,6 +642,8 @@ class Topology:
             for topology_server in servers:
                 if "local" in topology_server and topology_server["local"]:
                     self._servers[topology_server["id"]] = server_manager.localServer()
+                if "vm" in topology_server and topology_server["vm"]:
+                    self._servers[topology_server["id"]] = server_manager.vmServer()
                 elif "cloud" in topology_server and topology_server["cloud"]:
                     self._servers[topology_server["id"]] = server_manager.anyCloudServer()
                 else:

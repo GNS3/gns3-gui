@@ -49,12 +49,13 @@ class WaitForVMWorker(QtCore.QObject):
 
         super().__init__()
         self._is_running = False
+        self._vm_settings = vm_settings
         self._vmname = vm_settings["vmname"]
         self._vmx_path = vm_settings["vmx_path"]
         self._headless = vm_settings["headless"]
         self._virtualization = vm_settings["virtualization"]
         self._ip_address = ""
-        self._port = 8000
+        self._port = vm_settings["server_port"]
 
     def _execute_vmrun(self, subcommand, args):
 
@@ -227,6 +228,8 @@ class WaitForVMWorker(QtCore.QObject):
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute VBoxManage: {}".format(e), True)
                 return
+
+        self._vm_settings["server_host"] = self._ip_address
 
         try:
             log.info("Connecting to GNS3 VM on {}:{}".format(self._ip_address, self._port))

@@ -41,9 +41,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="uiCloudRadioButton">
+        <widget class="QRadioButton" name="uiVMRadioButton">
          <property name="text">
-          <string>Cloud</string>
+          <string>GNS3 VM</string>
          </property>
         </widget>
        </item>
