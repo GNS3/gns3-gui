@@ -75,6 +75,15 @@ class GNS3VM:
         self._settings.update(settings)
         self._saveSettings()
 
+    def autoStart(self):
+        """
+        Automatically start the GNS3 VM at startup.
+
+        :returns: boolean
+        """
+
+        return self._settings["auto_start"]
+
     @staticmethod
     def instance():
         """

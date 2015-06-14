@@ -23,7 +23,6 @@ import traceback
 import sys
 import os
 import time
-import socket
 import shutil
 import json
 import glob
@@ -38,6 +37,7 @@ from .modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from .version import __version__
 from .qt import QtGui, QtCore, QtNetwork, QtWidgets
 from .servers import Servers
+from .gns3_vm import GNS3VM
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .dialogs.about_dialog import AboutDialog
@@ -48,6 +48,7 @@ from .settings import GENERAL_SETTINGS, CLOUD_SETTINGS, ENABLE_CLOUD
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
+from .utils.wait_for_vm_worker import WaitForVMWorker
 from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
@@ -1123,8 +1124,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+
         # restore the style
         self._setStyle(self._settings.get("style"))
+
+        gns3_vm = GNS3VM.instance()
+        if gns3_vm.autoStart():
+            # automatically start the GNS3 VM
+            worker = WaitForVMWorker(gns3_vm.settings())
+            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+            progress_dialog.show()
+            if progress_dialog.exec_():
+                QtWidgets.QMessageBox.information(self, "GNS3 VM", "GNS3 VM IP ADDRESS = {}".format(worker.ip_address()))
 
         if self._settings["debug_level"]:
             root = logging.getLogger()

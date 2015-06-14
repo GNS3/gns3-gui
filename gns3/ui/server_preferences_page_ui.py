@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Thu Jun 11 19:55:32 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sat Jun 13 17:00:46 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_ServerPreferencesPageWidget(object):
-
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
         ServerPreferencesPageWidget.resize(508, 609)
@@ -159,7 +157,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiVMNameLabel = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
         self.uiVMNameLabel.setObjectName("uiVMNameLabel")
-        self.gridLayout_2.addWidget(self.uiVMNameLabel, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiVMNameLabel, 3, 0, 1, 1)
         self.uiVMListComboBox = QtWidgets.QComboBox(self.uiGNS3VMSettingsGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -167,7 +165,7 @@ class Ui_ServerPreferencesPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiVMListComboBox.sizePolicy().hasHeightForWidth())
         self.uiVMListComboBox.setSizePolicy(sizePolicy)
         self.uiVMListComboBox.setObjectName("uiVMListComboBox")
-        self.gridLayout_2.addWidget(self.uiVMListComboBox, 3, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiVMListComboBox, 4, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.uiVmwareRadioButton = QtWidgets.QRadioButton(self.uiGNS3VMSettingsGroupBox)
@@ -183,12 +181,12 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiVirtualizationSoftwarLabel = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
         self.uiVirtualizationSoftwarLabel.setObjectName("uiVirtualizationSoftwarLabel")
         self.gridLayout_2.addWidget(self.uiVirtualizationSoftwarLabel, 0, 0, 1, 1)
-        self.uiRefreshPushButton = QtWidgets.QPushButton(self.uiGNS3VMSettingsGroupBox)
-        self.uiRefreshPushButton.setObjectName("uiRefreshPushButton")
-        self.gridLayout_2.addWidget(self.uiRefreshPushButton, 3, 1, 1, 1)
+        self.uiHeadlessCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
+        self.uiHeadlessCheckBox.setObjectName("uiHeadlessCheckBox")
+        self.gridLayout_2.addWidget(self.uiHeadlessCheckBox, 5, 0, 1, 1)
         self.gridLayout_3.addWidget(self.uiGNS3VMSettingsGroupBox, 1, 0, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 320, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem4, 2, 0, 1, 1)
+        self.gridLayout_3.addItem(spacerItem4, 3, 0, 1, 1)
         self.uiTabWidget.addTab(self.tab, "")
         self.uiRemoteTabWidget = QtWidgets.QWidget()
         self.uiRemoteTabWidget.setObjectName("uiRemoteTabWidget")
@@ -321,8 +319,7 @@ class Ui_ServerPreferencesPageWidget(object):
         ServerPreferencesPageWidget.setTabOrder(self.uiEnableVMCheckBox, self.uiVmwareRadioButton)
         ServerPreferencesPageWidget.setTabOrder(self.uiVmwareRadioButton, self.uiVirtualBoxRadioButton)
         ServerPreferencesPageWidget.setTabOrder(self.uiVirtualBoxRadioButton, self.uiVMListComboBox)
-        ServerPreferencesPageWidget.setTabOrder(self.uiVMListComboBox, self.uiRefreshPushButton)
-        ServerPreferencesPageWidget.setTabOrder(self.uiRefreshPushButton, self.uiRemoteServersTreeWidget)
+        ServerPreferencesPageWidget.setTabOrder(self.uiVMListComboBox, self.uiRemoteServersTreeWidget)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServersTreeWidget, self.uiRemoteServerProtocolComboBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerProtocolComboBox, self.uiRemoteServerPortLineEdit)
         ServerPreferencesPageWidget.setTabOrder(self.uiRemoteServerPortLineEdit, self.uiRemoteServerPortSpinBox)
@@ -357,11 +354,11 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiVmwareRadioButton.setText(_translate("ServerPreferencesPageWidget", "VMware (recommended)"))
         self.uiVirtualBoxRadioButton.setText(_translate("ServerPreferencesPageWidget", "VirtualBox"))
         self.uiVirtualizationSoftwarLabel.setText(_translate("ServerPreferencesPageWidget", "Virtulization software:"))
-        self.uiRefreshPushButton.setText(_translate("ServerPreferencesPageWidget", "&Refresh"))
+        self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
-        self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
+        self.uiRemoteServerProtocolComboBox.setProperty("currentText", _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "HTTPS"))
         self.uiRemoteServerProtocolComboBox.setItemText(2, _translate("ServerPreferencesPageWidget", "SSH"))
@@ -377,3 +374,4 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
+

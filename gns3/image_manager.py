@@ -18,7 +18,7 @@
 import os
 import pathlib
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
 

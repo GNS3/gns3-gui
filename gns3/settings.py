@@ -226,9 +226,11 @@ PACKET_CAPTURE_SETTINGS = {
 }
 
 GNS3_VM_SETTINGS = {
-    "auto_start": True,
+    "auto_start": False,
+    "headless": True,
     "vmname": "GNS3 VM",
-    "virtualization": "vmware"
+    "vmx_path": "",
+    "virtualization": "VMware"
 }
 
 ENABLE_CLOUD = False

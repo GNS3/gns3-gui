@@ -132,7 +132,7 @@
        <item row="2" column="0" colspan="2">
         <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
          <property name="text">
-          <string>Allow GNS3 to use any configured VirtualBox adapter</string>
+          <string>Allow GNS3 to use any configured VMware adapter</string>
          </property>
         </widget>
        </item>
