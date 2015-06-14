@@ -353,6 +353,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         if gns3_vm_settings["auto_start"] and Servers.instance().localServerIsRunning():
             self._refreshVMList()
         self.uiEnableVMCheckBox.setChecked(gns3_vm_settings["auto_start"])
+        self.uiShutdownCheckBox.setChecked(gns3_vm_settings["auto_stop"])
         index = self.uiVMListComboBox.findText(gns3_vm_settings["vmname"])
         if index != -1:
             self.uiVMListComboBox.setCurrentIndex(index)
@@ -467,6 +468,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # save the GNS3 VM preferences
         new_settings = {}
         new_settings["auto_start"] = self.uiEnableVMCheckBox.isChecked()
+        new_settings["auto_stop"] = self.uiShutdownCheckBox.isChecked()
         new_settings["vmname"] = self.uiVMListComboBox.currentText()
         new_settings["vmx_path"] = self.uiVMListComboBox.currentData()
         new_settings["headless"] = self.uiHeadlessCheckBox.isChecked()

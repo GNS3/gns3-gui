@@ -27,6 +27,7 @@ import json
 
 from ..qt import QtCore
 from ..version import __version__
+from ..gns3_vm import GNS3VM
 
 import logging
 log = logging.getLogger(__name__)
@@ -36,8 +37,6 @@ class WaitForVMWorker(QtCore.QObject):
 
     """
     Thread to wait for the GNS3 VM to be started.
-
-    :param vm_settings: GNS3 VM settings
     """
 
     # signals to update the progress dialog.
@@ -45,40 +44,19 @@ class WaitForVMWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, vm_settings):
+    def __init__(self):
 
         super().__init__()
         self._is_running = False
-        self._vm_settings = vm_settings
+        self._vm = GNS3VM.instance()
+
+        vm_settings = self._vm.settings()
         self._vmname = vm_settings["vmname"]
         self._vmx_path = vm_settings["vmx_path"]
         self._headless = vm_settings["headless"]
         self._virtualization = vm_settings["virtualization"]
-        self._ip_address = ""
-        self._port = vm_settings["server_port"]
-
-    def _execute_vmrun(self, subcommand, args):
-
-        from gns3.modules.vmware import VMware
-        vmware_settings = VMware.instance().settings()
-        vmrun_path = vmware_settings["vmrun_path"]
-        host_type = vmware_settings["host_type"]
-        command = [vmrun_path, "-T", host_type, subcommand]
-        command.extend(args)
-        log.debug("Executing vmrun with command: {}".format(command))
-        output = subprocess.check_output(command)
-        return output.decode("utf-8", errors="ignore").strip()
-
-    def _execute_vboxmanage(self, subcommand, args):
-
-        from gns3.modules.virtualbox import VirtualBox
-        virtualbox_settings = VirtualBox.instance().settings()
-        vboxmanage_path = virtualbox_settings["vboxmanage_path"]
-        command = [vboxmanage_path, "--nologo", subcommand]
-        command.extend(args)
-        log.debug("Executing VBoxManage with command: {}".format(command))
-        output = subprocess.check_output(command)
-        return output.decode("utf-8", errors="ignore").strip()
+        self._server_host = vm_settings["server_host"]
+        self._server_port = vm_settings["server_port"]
 
     def _get_vbox_vm_state(self):
         """
@@ -87,7 +65,7 @@ class WaitForVMWorker(QtCore.QObject):
         :returns: state (string)
         """
 
-        result = self._execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
+        result = self._vm.execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
         for info in result.splitlines():
             if '=' in info:
                 name, value = info.split('=', 1)
@@ -102,7 +80,7 @@ class WaitForVMWorker(QtCore.QObject):
         :returns: nat interface number or -1 if none is found
         """
 
-        result = self._execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
+        result = self._vm.execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
         interface = -1
         for info in result.splitlines():
             if '=' in info:
@@ -122,7 +100,7 @@ class WaitForVMWorker(QtCore.QObject):
         :returns: boolean
         """
 
-        result = self._execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
+        result = self._vm.execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
         for info in result.splitlines():
             if '=' in info:
                 name, value = info.split('=', 1)
@@ -171,16 +149,17 @@ class WaitForVMWorker(QtCore.QObject):
                 args = [self._vmx_path]
                 if self._headless:
                     args.extend(["nogui"])
-                self._execute_vmrun("start", args)
+                self._vm.execute_vmrun("start", args)
+                self._vm.setRunning(True)
 
                 # check if the VMware guest tools are installed
-                vmware_tools_state = self._execute_vmrun("checkToolsState", [self._vmx_path])
+                vmware_tools_state = self._vm.execute_vmrun("checkToolsState", [self._vmx_path])
                 if vmware_tools_state not in ("installed", "running"):
                     self.error.emit("VMware tools are not installed in {}".format(self._vmname), True)
                     return
 
                 # get the guest IP address (first adapter only)
-                self._ip_address = self._execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"])
+                self._server_host = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"])
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute vmrun: {}".format(e), True)
                 return
@@ -202,14 +181,15 @@ class WaitForVMWorker(QtCore.QObject):
                     args = [self._vmname]
                     if self._headless:
                         args.extend(["--type", "headless"])
-                    self._execute_vboxmanage("startvm", args)
+                    self._vm.execute_vboxmanage("startvm", args)
+                self._vm.setRunning(True)
 
-                self._ip_address = "127.0.0.1"
+                ip_address = "127.0.0.1"
                 try:
                     # get a random port on localhost
                     with socket.socket() as s:
-                        s.bind((self._ip_address, 0))
-                        self._port = s.getsockname()[1]
+                        s.bind((ip_address, 0))
+                        port = s.getsockname()[1]
                 except OSError as e:
                     self.error.emit("Error while getting random port: {}".format(e), True)
                     return
@@ -217,44 +197,34 @@ class WaitForVMWorker(QtCore.QObject):
                 if self._check_vbox_port_forwarding():
                     # delete the GNS3VM NAT port forwarding rule if it exists
                     log.debug("Removing GNS3VM NAT port forwarding rule from interface {}".format(nat_interface_number))
-                    self._execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "delete", "GNS3VM"])
+                    self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "delete", "GNS3VM"])
 
                 # add a GNS3VM NAT port forwarding rule to redirect 127.0.0.1 with random port to port 8000 in the VM
-                log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(self._port, nat_interface_number))
-                self._execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,127.0.0.1,{},,8000".format(self._port)])
+                log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
+                self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
 
                 # TODO: get the guest IP address
+                self._server_host = ip_address
 
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute VBoxManage: {}".format(e), True)
                 return
 
-        self._vm_settings["server_host"] = self._ip_address
-
+        log.info("GNS3 VM is started and server is running on {}:{}".format(self._server_host, self._server_port))
         try:
-            log.info("Connecting to GNS3 VM on {}:{}".format(self._ip_address, self._port))
-            status, json_data = self._server_request(self._ip_address, self._port, "/v1/version")
+            status, json_data = self._server_request(self._server_host, self._server_port, "/v1/version")
             if status != 200:
                 self.error.emit("Server has replied with status code {} when retrieving version number".format(status), True)
                 return
             server_version = json_data["version"]
             if __version__ != server_version:
-                self.error.emit("Client version {} differs with server version {}".format(__version__, server_version), True)
+                self.error.emit("Client version {} differs with server version {} in the GNS3 VM, please upgrade...".format(__version__, server_version), True)
                 return
         except OSError as e:
             self.error.emit("Request error {}".format(e), True)
             return
 
         self.finished.emit()
-
-    def ip_address(self):
-        """
-        Returns the GNS3 VM IP address.
-
-        :returns: IP address
-        """
-
-        return self._ip_address
 
     def cancel(self):
         """

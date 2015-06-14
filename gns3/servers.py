@@ -263,6 +263,9 @@ class Servers(QtCore.QObject):
         return self._local_server_settings["path"]
 
     def initLocalServer(self):
+        """
+        Initialize the local server.
+        """
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
@@ -433,6 +436,19 @@ class Servers(QtCore.QObject):
 
         return self._local_server
 
+    def initVMServer(self):
+        """
+        Initialize the GNS3 VM server.
+        """
+
+        #TODO: handle authentication and/or SSH?
+        gns3_vm = GNS3VM.instance().server_host()
+        server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
+        server = getNetworkClientInstance(server_info, self._network_manager)
+        server.setLocal(False)
+        self._vm_server = server
+        log.info("GNS3 VM server initialized {}".format(server.url()))
+
     def vmServer(self):
         """
         Returns the GNS3 VM server.
@@ -440,13 +456,6 @@ class Servers(QtCore.QObject):
         :returns: Server instance
         """
 
-        if self._vm_server is None:
-            gns3_vm = GNS3VM.instance().server_host()
-            server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
-            server = getNetworkClientInstance(server_info, self._network_manager)
-            server.setLocal(False)
-            self._vm_server = server
-            log.info("New GNS3 VM server connection {}".format(server.url()))
         return self._vm_server
 
     def _addRemoteServer(self, protocol, host, port, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False):

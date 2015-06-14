@@ -227,6 +227,7 @@ PACKET_CAPTURE_SETTINGS = {
 
 GNS3_VM_SETTINGS = {
     "auto_start": False,
+    "auto_stop": True,
     "headless": True,
     "vmname": "GNS3 VM",
     "vmx_path": "",

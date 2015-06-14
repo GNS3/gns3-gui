@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Sun Jun 14 14:37:46 2015
+# Created: Sun Jun 14 16:51:26 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -184,6 +184,9 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiHeadlessCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
         self.uiHeadlessCheckBox.setObjectName("uiHeadlessCheckBox")
         self.gridLayout_2.addWidget(self.uiHeadlessCheckBox, 5, 0, 1, 1)
+        self.uiShutdownCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
+        self.uiShutdownCheckBox.setObjectName("uiShutdownCheckBox")
+        self.gridLayout_2.addWidget(self.uiShutdownCheckBox, 6, 0, 1, 1)
         self.gridLayout_3.addWidget(self.uiGNS3VMSettingsGroupBox, 1, 0, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 320, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem4, 3, 0, 1, 1)
@@ -355,6 +358,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiVirtualBoxRadioButton.setText(_translate("ServerPreferencesPageWidget", "VirtualBox"))
         self.uiVirtualizationSoftwarLabel.setText(_translate("ServerPreferencesPageWidget", "Virtulization software:"))
         self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
+        self.uiShutdownCheckBox.setText(_translate("ServerPreferencesPageWidget", "ACPI shutdown VM when closing GNS3"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))

@@ -1069,6 +1069,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         log.debug("_finish_application_closing")
         VPCS.instance().stopMultiHostVPCS()
 
+        GNS3VM.instance().shutdown()
+
         local_config = LocalConfig.instance()
         local_config.saveSectionSettings("GUI", {"geometry": bytes(self.saveGeometry().toBase64()).decode(),
                                                  "state": bytes(self.saveState().toBase64()).decode()})
@@ -1128,14 +1130,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart():
+        servers = Servers.instance()
+        if GNS3VM.instance().autoStart():
             # automatically start the GNS3 VM
-            worker = WaitForVMWorker(gns3_vm.settings())
+            worker = WaitForVMWorker()
             progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
             progress_dialog.show()
             if progress_dialog.exec_():
-                QtWidgets.QMessageBox.information(self, "GNS3 VM", "GNS3 VM IP ADDRESS = {}".format(worker.ip_address()))
+                servers.initVMServer()
 
         if self._settings["debug_level"]:
             root = logging.getLogger()
@@ -1147,9 +1149,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._gettingStartedActionSlot(auto=True)
 
         # connect to the local server
-        servers = Servers.instance()
         server = servers.localServer()
-
         if servers.localServerAutoStart():
             if server.isLocalServerRunning():
                 log.info("Connecting to a server already running on this host")

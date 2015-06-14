@@ -19,6 +19,8 @@
 Manages the GNS3 VM.
 """
 
+import subprocess
+
 from .settings import GNS3_VM_SETTINGS
 from .local_config import LocalConfig
 
@@ -36,6 +38,7 @@ class GNS3VM:
 
         self._settings = {}
         self._loadSettings()
+        self._is_running = False
 
     def _loadSettings(self):
         """
@@ -75,6 +78,31 @@ class GNS3VM:
         self._settings.update(settings)
         self._saveSettings()
 
+    @staticmethod
+    def execute_vmrun(subcommand, args):
+
+        from gns3.modules.vmware import VMware
+        vmware_settings = VMware.instance().settings()
+        vmrun_path = vmware_settings["vmrun_path"]
+        host_type = vmware_settings["host_type"]
+        command = [vmrun_path, "-T", host_type, subcommand]
+        command.extend(args)
+        log.debug("Executing vmrun with command: {}".format(command))
+        output = subprocess.check_output(command)
+        return output.decode("utf-8", errors="ignore").strip()
+
+    @staticmethod
+    def execute_vboxmanage(subcommand, args):
+
+        from gns3.modules.virtualbox import VirtualBox
+        virtualbox_settings = VirtualBox.instance().settings()
+        vboxmanage_path = virtualbox_settings["vboxmanage_path"]
+        command = [vboxmanage_path, "--nologo", subcommand]
+        command.extend(args)
+        log.debug("Executing VBoxManage with command: {}".format(command))
+        output = subprocess.check_output(command)
+        return output.decode("utf-8", errors="ignore").strip()
+
     def autoStart(self):
         """
         Automatically start the GNS3 VM at startup.
@@ -101,6 +129,38 @@ class GNS3VM:
         """
 
         return self._settings["server_port"]
+
+    def setRunning(self, value):
+        """
+        Sets either the GNS3 VM is running or not.
+
+        :param value: boolean
+        """
+
+        self._is_running = value
+
+    def isRunning(self):
+        """
+        Returns either the GNS3 VM is running or not.
+
+        :returns: boolean
+        """
+
+        return self._is_running
+
+    def shutdown(self):
+        """
+        Gracefully shutdowns the GNS3 VM.
+        """
+
+        if self._is_running and self._settings["auto_stop"]:
+            try:
+                if self._settings["virtualization"] == "VMware":
+                    self.execute_vmrun("stop", [self._settings["vmx_path"], "soft"])
+                elif self._settings["virtualization"] == "VirtualBox":
+                    self.execute_vboxmanage("controlvm", [self._settings["vmname"], "acpipowerbutton"])
+            except (OSError, subprocess.SubprocessError):
+                pass
 
     @staticmethod
     def instance():

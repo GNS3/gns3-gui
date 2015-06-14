@@ -1402,6 +1402,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 server = Servers.instance().localServer()
             elif node_data["server"] == "vm":
                 server = Servers.instance().vmServer()
+                if server is None:
+                    QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The GNS3 VM is not running")
+                    return
             elif node_data["server"] == "cloud":
                 server = Servers.instance().anyCloudServer()
             else:
