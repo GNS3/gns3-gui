@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/news_dock_widget.ui'
 #
-# Created: Wed Jul 15 12:22:30 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,9 +18,9 @@ class Ui_NewsDockWidget(object):
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.dockWidgetContents)
-        self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.horizontalLayout.setContentsMargins(1, 0, 2, 0)
+        self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiWebView = QtWebKitWidgets.QWebView(self.dockWidgetContents)
         self.uiWebView.setMinimumSize(QtCore.QSize(200, 200))

@@ -1005,6 +1005,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
             except (OSError, ValueError) as e:
                 QtWidgets.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
                 return False
+        elif hasattr(node, "shellExecCmd"):
+            try:
+                from .shell_console import shellConsole
+                shellConsole(node.name(), node.shellExecCmd())
+            except (OSError, ValueError) as e:
+                QtWidgets.QMessageBox.critical(
+                    self, "Console",
+                    "Cannot start console application: {}".format(e))
+                return False
         else:
             name = node.name()
             if aux:

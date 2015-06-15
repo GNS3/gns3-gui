@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Wed Jul 15 12:22:31 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -135,6 +134,10 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout.addWidget(self.uiUDPPortRangeGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem2)
+        self.uiGeneralSettingsGroupBox.raise_()
+        self.uiConsolePortRangeGroupBox.raise_()
+        self.uiUDPPortRangeGroupBox.raise_()
+        self.uiLocalServerAutoStartCheckBox.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiGNS3VMTabWidget = QtWidgets.QWidget()
         self.uiGNS3VMTabWidget.setObjectName("uiGNS3VMTabWidget")
@@ -327,6 +330,22 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerPasswordLabel = QtWidgets.QLabel(self.uiRemoteTabWidget)
         self.uiRemoteServerPasswordLabel.setObjectName("uiRemoteServerPasswordLabel")
         self.gridLayout_5.addWidget(self.uiRemoteServerPasswordLabel, 6, 0, 1, 1)
+        self.uiRemoteServerProtocolComboBox.raise_()
+        self.uiRemoteServerHostLabel.raise_()
+        self.uiRemoteServerPortLineEdit.raise_()
+        self.uiRemoteServerPortLabel.raise_()
+        self.uiRemoteServerPortSpinBox.raise_()
+        self.uiRAMLimitLabel.raise_()
+        self.uiRAMLimitSpinBox.raise_()
+        self.uiRemoteServerUserLabel.raise_()
+        self.uiRemoteServerUserLineEdit.raise_()
+        self.uiRemoteServerSSHPortLabel.raise_()
+        self.uiRemoteServerSSHPortSpinBox.raise_()
+        self.uiRemoteServerSSHKeyLabel.raise_()
+        self.uiRemoteServersTreeWidget.raise_()
+        self.uiRemoteServerProtocolLabel.raise_()
+        self.uiRemoteServerPasswordLineEdit.raise_()
+        self.uiRemoteServerPasswordLabel.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.uiLoadBalancingTabWidget = QtWidgets.QWidget()
         self.uiLoadBalancingTabWidget.setObjectName("uiLoadBalancingTabWidget")

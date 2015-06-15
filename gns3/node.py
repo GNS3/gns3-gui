@@ -525,7 +525,6 @@ class Node(QtCore.QObject):
 
         :param port_id: port identifier
         """
-
         log.debug("{} is requesting an UDP port allocation".format(self.name()))
         self.httpPost("/ports/udp", self._allocateUDPPortCallback, context={"port_id": port_id})
 

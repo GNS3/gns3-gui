@@ -196,7 +196,6 @@ class VM(Node):
         :param port: Port instance
         :param nio: NIO instance
         """
-
         params = self.getNIOInfo(nio)
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self.httpPost("/{prefix}/vms/{vm_id}/adapters/{adapter}/ports/{port}/nio".format(

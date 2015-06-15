@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/configuration_dialog.ui'
 #
-# Created: Wed Jul 15 12:22:29 2015
-#      by: PyQt5 UI code generator 5.4
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -22,8 +21,8 @@ class Ui_configurationDialog(object):
         self.verticalLayout = QtWidgets.QWidget(self.splitter)
         self.verticalLayout.setObjectName("verticalLayout")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.verticalLayout)
-        self.vboxlayout.setSpacing(4)
         self.vboxlayout.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout.setSpacing(4)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTitleLabel = QtWidgets.QLabel(self.verticalLayout)
         font = QtGui.QFont()
@@ -46,8 +45,8 @@ class Ui_configurationDialog(object):
         self.uiEmptyPageWidget = QtWidgets.QWidget()
         self.uiEmptyPageWidget.setObjectName("uiEmptyPageWidget")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiEmptyPageWidget)
-        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setContentsMargins(0, 4, 0, 0)
+        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConfigStackedWidget.addWidget(self.uiEmptyPageWidget)
         self.vboxlayout.addWidget(self.uiConfigStackedWidget)

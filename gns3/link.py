@@ -73,11 +73,9 @@ class Link(QtCore.QObject):
             self._stub = True
         else:
             self._stub = False
-
         # we must request UDP information if the NIO is a NIO UDP and before
         # it can be created.
         if not self._stub:
-
             # connect signals used when a NIO has been created by a node
             # and this NIO need to be attached to a port connected to this link
             source_node.nio_signal.connect(self.newNIOSlot)
@@ -209,7 +207,6 @@ class Link(QtCore.QObject):
         :param port_id: port identifier
         :param lport: local UDP port
         """
-
         # check that the node is connected to this link as a source
         if node_id == self._source_node.id() and port_id == self._source_port.id():
             laddr = self._source_node.server().host()
@@ -233,7 +230,6 @@ class Link(QtCore.QObject):
                                                                         laddr))
 
         if self._source_udp and self._destination_udp:
-
             # we got UDP info from both source and destination nodes
             # meaning we can proceed with the creation of UDP NIOs
             lport, laddr = self._source_udp
