@@ -245,7 +245,6 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["images_path"] = current_settings["images_path"]
         new_settings["projects_path"] = current_settings["projects_path"]
         new_settings["report_errors"] = current_settings["report_errors"]
-        new_settings["ubridge_path"] = current_settings["ubridge_path"]
         new_settings["user"] = current_settings["user"]
         new_settings["password"] = current_settings["password"]
 
