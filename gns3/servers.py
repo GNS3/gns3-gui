@@ -409,7 +409,12 @@ class Servers(QtCore.QObject):
                 except subprocess.TimeoutExpired:
                     # the local server couldn't be stopped with the normal procedure
                     if sys.platform.startswith("win"):
-                        self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
+                        try:
+                            self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
+                        # If the process is already dead we received a permission error
+                        # it's a race condition between the timeout and send signal
+                        except PermissionError:
+                            pass
                     else:
                         self._local_server_proccess.send_signal(signal.SIGINT)
                     try:
