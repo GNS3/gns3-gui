@@ -426,7 +426,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         new_local_server_settings["user"] = current_settings["user"]
         new_local_server_settings["password"] = current_settings["password"]
 
-
         if new_local_server_settings["console_end_port_range"] <= new_local_server_settings["console_start_port_range"]:
             QtWidgets.QMessageBox.critical(self, "Port range", "Invalid console port range from {} to {}".format(new_local_server_settings["console_start_port_range"],
                                                                                                                  new_local_server_settings["console_end_port_range"]))
