@@ -245,6 +245,10 @@ class ServerPreferencesPage(QtGui.QWidget, Ui_ServerPreferencesPageWidget):
         new_settings["images_path"] = current_settings["images_path"]
         new_settings["projects_path"] = current_settings["projects_path"]
         new_settings["report_errors"] = current_settings["report_errors"]
+        new_settings["ubridge_path"] = current_settings["ubridge_path"]
+        new_settings["user"] = current_settings["user"]
+        new_settings["password"] = current_settings["password"]
+
         if new_settings["console_end_port_range"] <= new_settings["console_start_port_range"]:
             QtGui.QMessageBox.critical(self, "Local", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
                                                                                                         new_settings["console_end_port_range"]))
