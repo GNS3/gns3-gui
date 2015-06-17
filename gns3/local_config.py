@@ -182,6 +182,11 @@ class LocalConfig(QtCore.QObject):
 
         settings = self.settings().get(section, dict())
 
+        # do not load settings that we don't need
+        for name in settings.copy().keys():
+            if name not in default_settings:
+                del settings[name]
+
         # use default values for missing settings
         for name, value in default_settings.items():
             if name not in settings:
