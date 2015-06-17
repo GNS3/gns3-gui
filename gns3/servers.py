@@ -442,7 +442,7 @@ class Servers(QtCore.QObject):
         """
 
         #TODO: handle authentication and/or SSH?
-        gns3_vm = GNS3VM.instance().server_host()
+        gns3_vm = GNS3VM.instance()
         server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
         server = getNetworkClientInstance(server_info, self._network_manager)
         server.setLocal(False)
