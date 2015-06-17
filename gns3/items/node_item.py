@@ -363,7 +363,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 # make the port number unique (special case with WICs).
                 port_number = port.portNumber()
                 if port_number >= 16:
-                    port_number *= 4
+                    port_number *= 8
                 ports_dict[(port.adapterNumber() * 16) + port_number] = port
             elif port.portNumber()is not None:
                 ports_dict[port.portNumber()] = port
