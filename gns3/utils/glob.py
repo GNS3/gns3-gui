@@ -21,7 +21,7 @@ import os
 import glob
 
 
-def glob_escape(path):
+def glob_escape(pathname):
     """
     Escape all special chars for glob.
     For Python after 3.4 we use the glob.escape method.
@@ -42,5 +42,4 @@ def glob_escape(path):
             pathname = magic_check.sub(r'[\1]', pathname)
         return drive + pathname
     else:
-        return glob.escape(path)
-
+        return glob.escape(pathname)
