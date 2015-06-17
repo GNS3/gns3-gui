@@ -238,6 +238,7 @@
                         "Cloud",
                         "IOUDevice",
                         "VirtualBoxVM",
+                        "VMwareVM",
                         "QemuVM",
                         "VPCSDevice",
                         "EthernetHub",
@@ -288,6 +289,7 @@
                         { "$ref": "#/definitions/properties_dynamips_frame_relay" },
                         { "$ref": "#/definitions/properties_qemu" },
                         { "$ref": "#/definitions/properties_virtualbox" },
+                        { "$ref": "#/definitions/properties_vmware" },
                         { "$ref": "#/definitions/properties_iou" },
                         { "$ref": "#/definitions/properties_cloud_host" }
                     ]
@@ -420,6 +422,42 @@
                 "ram",
                 "use_any_adapter",
                 "vmname"
+            ],
+            "additionalProperties": false
+        },
+
+        "properties_vmware": {
+            "type": "object",
+            "properties": {
+                "adapters": { "type": "integer", "minimum": 0 },
+                "console": { "$ref": "#/definitions/network_port" },
+                "enable_remote_console": { "type": "boolean" },
+                "headless": { "type": "boolean" },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "vmx_path": { "$ref": "#/definitions/mandatory_string" },
+                "use_any_adapter": { "type": "boolean" },
+                "adapter_type": {
+                    "enum": [
+                        "default",
+                        "e1000",
+                        "e1000e",
+                        "flexible",
+                        "vlance",
+                        "vmxnet",
+                        "vmxnet2",
+                        "vmxnet3"
+                    ]
+                }
+            },
+            "required": [
+                "adapter_type",
+                "adapters",
+                "console",
+                "enable_remote_console",
+                "headless",
+                "name",
+                "use_any_adapter",
+                "vmx_path"
             ],
             "additionalProperties": false
         },
