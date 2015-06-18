@@ -372,6 +372,7 @@ class HTTPClient(QtCore.QObject):
 
         return QtNetwork.QNetworkRequest(url)
 
+    #FIXME: connect is a method in parent class (QObject)
     def connect(self, query, callback):
         """
         Initialize the connection

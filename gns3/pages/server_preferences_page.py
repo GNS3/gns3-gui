@@ -60,6 +60,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServerProtocolComboBox.currentIndexChanged.connect(self._remoteServerProtocolCurrentIndexSlot)
         self.uiRemoteServerSSHKeyPushButton.clicked.connect(self._remoteServerSSHKeyPushButtonSlot)
         self.uiEnableVMCheckBox.stateChanged.connect(self._enableGNS3VMSlot)
+        self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
 
@@ -83,24 +84,24 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to refresh the VMware VMs list.
         """
 
-        self._refreshVMList()
+        self._refreshVMListSlot()
 
     def _listVirtualBoxVMsSlot(self):
         """
         Slot to refresh the VirtualBox VMs list.
         """
 
-        self._refreshVMList()
+        self._refreshVMListSlot()
 
-    def _refreshVMList(self):
+    def _refreshVMListSlot(self):
         """
         Refresh the list of VM available in VMware or VirtualBox.
         """
 
-        if not Servers.instance().localServerIsRunning():
-            QtWidgets.QMessageBox.critical(self, "Local server", "{}".format("Local server is not running"))
-            return
         server = Servers.instance().localServer()
+        if not server.connected():
+            QtWidgets.QMessageBox.critical(self, "Local server", "{}".format("Not connected to the local server"))
+            return
         if self.uiVmwareRadioButton.isChecked():
             server.get("/vmware/vms", self._getVMsFromServerCallback)
         elif self.uiVirtualBoxRadioButton.isChecked():
@@ -128,6 +129,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
             if index != -1:
                 self.uiVMListComboBox.setCurrentIndex(index)
+                index = self.uiVMListComboBox.findText("GNS3 VM")
+                if index != -1:
+                    self.uiVMListComboBox.setCurrentIndex(index)
 
     def _enableGNS3VMSlot(self, state):
         """
@@ -350,8 +354,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiUDPEndPortSpinBox.setValue(local_server_settings["udp_end_port_range"])
 
         # GNS3 VM settings
-        if gns3_vm_settings["auto_start"] and Servers.instance().localServerIsRunning():
-            self._refreshVMList()
         self.uiEnableVMCheckBox.setChecked(gns3_vm_settings["auto_start"])
         self.uiShutdownCheckBox.setChecked(gns3_vm_settings["auto_stop"])
         index = self.uiVMListComboBox.findText(gns3_vm_settings["vmname"])

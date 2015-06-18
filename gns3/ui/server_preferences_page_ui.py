@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Thu Jun 18 14:44:06 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Thu Jun 18 14:29:18 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -187,6 +187,9 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiShutdownCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
         self.uiShutdownCheckBox.setObjectName("uiShutdownCheckBox")
         self.gridLayout_2.addWidget(self.uiShutdownCheckBox, 6, 0, 1, 1)
+        self.uiRefreshPushButton = QtWidgets.QPushButton(self.uiGNS3VMSettingsGroupBox)
+        self.uiRefreshPushButton.setObjectName("uiRefreshPushButton")
+        self.gridLayout_2.addWidget(self.uiRefreshPushButton, 4, 1, 1, 1)
         self.gridLayout_3.addWidget(self.uiGNS3VMSettingsGroupBox, 1, 0, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 320, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem4, 3, 0, 1, 1)
@@ -359,10 +362,11 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiVirtualizationSoftwarLabel.setText(_translate("ServerPreferencesPageWidget", "Virtualization software:"))
         self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
         self.uiShutdownCheckBox.setText(_translate("ServerPreferencesPageWidget", "ACPI shutdown VM when closing GNS3"))
+        self.uiRefreshPushButton.setText(_translate("ServerPreferencesPageWidget", "&Refresh"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
-        self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
+        self.uiRemoteServerProtocolComboBox.setProperty("currentText", _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "HTTPS"))
         self.uiRemoteServerProtocolComboBox.setItemText(2, _translate("ServerPreferencesPageWidget", "SSH"))
