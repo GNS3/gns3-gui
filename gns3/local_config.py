@@ -19,6 +19,7 @@ import sys
 import os
 import json
 import shutil
+import copy
 
 from .qt import QtCore
 from .version import __version__
@@ -158,7 +159,7 @@ class LocalConfig(QtCore.QObject):
         :returns: settings (dict)
         """
 
-        return self._settings
+        return copy.deepcopy(self._settings)
 
     def setSettings(self, settings):
         """
@@ -167,8 +168,8 @@ class LocalConfig(QtCore.QObject):
         :param settings: settings to save (dict)
         """
 
-        self._settings.update(settings)
         if self._settings != settings:
+            self._settings.update(settings)
             self._writeConfig()
 
     def loadSectionSettings(self, section, default_settings):
@@ -195,7 +196,7 @@ class LocalConfig(QtCore.QObject):
         if section not in self._settings:
             self._settings[section] = {}
         self._settings[section].update(settings)
-        return settings
+        return copy.deepcopy(settings)
 
     def saveSectionSettings(self, section, settings):
         """
@@ -211,6 +212,8 @@ class LocalConfig(QtCore.QObject):
             self._settings[section].update(settings)
             log.info("Section %s has changed. Saving configuration", section)
             self._writeConfig()
+        else:
+            log.debug("Section %s has not changed. Skip saving configuration", section)
 
     @staticmethod
     def instance():
