@@ -620,7 +620,8 @@ class HTTPClient(QtCore.QObject):
             if error_code < 200:
                 if not ignore_errors:
                     self.close()
-                    callback({"message": error_message}, error=True, server=self, context=context)
+                    if callback is not None:
+                        callback({"message": error_message}, error=True, server=self, context=context)
                 return
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
