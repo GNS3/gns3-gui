@@ -209,6 +209,7 @@ class HTTPClient(QtCore.QObject):
 
     def url(self):
         """Returns current server url"""
+
         return getNetworkUrl(self.protocol(), self.host(), self.port(), self.user(), self.settings())
 
     def id(self):

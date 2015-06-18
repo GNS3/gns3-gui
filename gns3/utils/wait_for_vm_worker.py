@@ -210,6 +210,7 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("Could not execute VBoxManage: {}".format(e), True)
                 return
 
+        self._vm.setSettings({"server_host": self._server_host})
         log.info("GNS3 VM is started and server is running on {}:{}".format(self._server_host, self._server_port))
         try:
             status, json_data = self._server_request(self._server_host, self._server_port, "/v1/version")

@@ -79,6 +79,8 @@ class VMWizard(QtWidgets.QWizard):
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered for this type of VM in preferences")
                     return False
                 self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
+            elif self.uiVMRadioButton.isChecked():
+                self._server = Servers.instance().vmServer()
             else:
                 self._server = Servers.instance().localServer()
         return True
