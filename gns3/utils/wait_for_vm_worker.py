@@ -73,11 +73,11 @@ class WaitForVMWorker(QtCore.QObject):
                     return value.strip('"')
         return "unknown"
 
-    def _look_for_nat_interface(self):
+    def _look_for_interface(self, network_backend):
         """
-        Look for a NAT interface.
+        Look for an interface with a specific network backend.
 
-        :returns: nat interface number or -1 if none is found
+        :returns: interface number or -1 if none is found
         """
 
         result = self._vm.execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
@@ -85,7 +85,7 @@ class WaitForVMWorker(QtCore.QObject):
         for info in result.splitlines():
             if '=' in info:
                 name, value = info.split('=', 1)
-                if name.startswith("nic") and value.strip('"') == "nat":
+                if name.startswith("nic") and value.strip('"') == network_backend:
                     try:
                         interface = int(name[3:])
                         break
@@ -169,9 +169,14 @@ class WaitForVMWorker(QtCore.QObject):
 
             try:
                 # get a NAT interface number
-                nat_interface_number = self._look_for_nat_interface()
+                nat_interface_number = self._look_for_interface("nat")
                 if nat_interface_number < 0:
                     self.error.emit("The GNS3 VM must have a NAT interface configured in order to start", True)
+                    return
+
+                hostonly_interface_number = self._look_for_interface("hostonly")
+                if hostonly_interface_number < 0:
+                    self.error.emit("The GNS3 VM must have a host only interface configured in order to start", True)
                     return
 
                 vm_state = self._get_vbox_vm_state()
@@ -203,8 +208,31 @@ class WaitForVMWorker(QtCore.QObject):
                 log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
                 self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
 
-                # TODO: get the guest IP address
                 self._server_host = ip_address
+
+                # ask the server all a list of all its interfaces along with IP addresses
+                try:
+                    status, json_data = self._server_request(self._server_host, port, "/v1/interfaces")
+                    if status != 200:
+                        self.error.emit("Server has replied with status code {} when retrieving the network interfaces".format(status), True)
+                        return
+
+                    # find the ip address for the first hostonly interface
+                    hostonly_ip_address_found = False
+                    for interface in json_data:
+                        if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
+                            if "ip_address" in interface:
+                                self._server_host = interface["ip_address"]
+                                hostonly_ip_address_found = True
+                                break
+
+                    if not hostonly_ip_address_found:
+                        self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
+                        return
+
+                except OSError as e:
+                    self.error.emit("Request error {}".format(e), True)
+                    return
 
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute VBoxManage: {}".format(e), True)
