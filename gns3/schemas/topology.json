@@ -443,6 +443,7 @@
         "properties_vmware": {
             "type": "object",
             "properties": {
+                "acpi_shutdown": { "type": "boolean" },
                 "adapters": { "type": "integer", "minimum": 0 },
                 "console": { "$ref": "#/definitions/network_port" },
                 "enable_remote_console": { "type": "boolean" },

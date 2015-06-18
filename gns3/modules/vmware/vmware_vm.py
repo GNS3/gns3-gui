@@ -59,6 +59,7 @@ class VMwareVM(VM):
                           "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                           "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                           "headless": VMWARE_VM_SETTINGS["headless"],
+                          "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
                           "enable_remote_console": VMWARE_VM_SETTINGS["enable_remote_console"]}
 
     def _addAdapters(self, adapters):

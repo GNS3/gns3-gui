@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'vmware_vm_configuration_page.ui'
 #
-# Created: Sat Jun 13 17:12:34 2015
+# Created: Thu Jun 18 14:55:16 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,13 +41,16 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiHeadlessModeCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName("uiHeadlessModeCheckBox")
-        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 4, 0, 1, 2)
         self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName("uiBaseVMCheckBox")
-        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 4, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 6, 0, 1, 2)
         spacerItem = QtWidgets.QSpacerItem(20, 138, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 5, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem, 7, 1, 1, 1)
+        self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.tab)
+        self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
+        self.gridLayout.addWidget(self.uiACPIShutdownCheckBox, 3, 0, 1, 2)
         self.uiTabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -92,6 +95,7 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiEnableConsoleCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Enable remote console"))
         self.uiHeadlessModeCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Start VM in headless mode"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Use as a linked base VM (experimental)"))
+        self.uiACPIShutdownCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Enable ACPI shutdown"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("VMwareVMConfigPageWidget", "General settings"))
         self.uiAdaptersLabel.setText(_translate("VMwareVMConfigPageWidget", "Adapters:"))
         self.label.setText(_translate("VMwareVMConfigPageWidget", "Type:"))

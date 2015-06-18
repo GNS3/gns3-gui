@@ -88,6 +88,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
+        self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
         self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
     def saveSettings(self, settings, node=None, group=False):
@@ -126,6 +127,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
+        settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()
         if node:
