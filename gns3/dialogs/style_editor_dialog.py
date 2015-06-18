@@ -19,7 +19,7 @@
 Style editor to edit Shape items.
 """
 
-from ..qt import QtCore, QtWidgets
+from ..qt import QtCore, QtWidgets, QtGui
 from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 
 
