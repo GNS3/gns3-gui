@@ -21,6 +21,7 @@
 
 import logging
 import sys
+import os
 
 
 class ColouredFormatter(logging.Formatter):
@@ -81,7 +82,7 @@ class ColouredStreamHandler(logging.StreamHandler):
             self.handleError(record)
 
 
-def init_logger(level, quiet=False):
+def init_logger(level, logfile, quiet=False):
     if sys.platform.startswith("win"):
         stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.formatter = ColouredFormatter("{asctime} {levelname} {filename}:{lineno} {message}", "%Y-%m-%d %H:%M:%S", "{")
@@ -89,5 +90,20 @@ def init_logger(level, quiet=False):
         stream_handler = ColouredStreamHandler(sys.stdout)
         stream_handler.formatter = ColouredFormatter("{asctime} {levelname} {filename}:{lineno}#RESET# {message}", "%Y-%m-%d %H:%M:%S", "{")
     logging.basicConfig(level=level, handlers=[stream_handler])
-    logging.getLogger().addHandler(stream_handler)
+    log = logging.getLogger()
+    log.addHandler(stream_handler)
+
+    try:
+        try:
+            os.makedirs(os.path.dirname(logfile))
+        except FileExistsError:
+            pass
+        handler = logging.FileHandler(logfile, "w")
+        handler.formatter = logging.Formatter("{asctime} {levelname} {filename}:{lineno} {message}", "%Y-%m-%d %H:%M:%S", "{")
+        log.addHandler(handler)
+    except OSError as e:
+        log.warn("could not log to {}: {}".format(logfile, e))
+
+    log.info('Log level: {}'.format(logging.getLevelName(level)))
+
     return logging.getLogger()
