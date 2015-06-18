@@ -408,42 +408,42 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         restart_local_server = False
 
         # save the local server preferences
-        new_settings = {}
-        new_settings["path"] = self.uiLocalServerPathLineEdit.text()
-        new_settings["ubridge_path"] = self.uiUbridgePathLineEdit.text()
-        new_settings["host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
-        new_settings["port"] = self.uiLocalServerPortSpinBox.value()
-        new_settings["auto_start"] = self.uiLocalServerAutoStartCheckBox.isChecked()
-        new_settings["allow_console_from_anywhere"] = self.uiConsoleConnectionsToAnyIPCheckBox.isChecked()
-        new_settings["auth"] = self.uiLocalServerAuthCheckBox.isChecked()
-        new_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
-        new_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
-        new_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
-        new_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
-        new_settings["images_path"] = current_settings["images_path"]
-        new_settings["projects_path"] = current_settings["projects_path"]
-        new_settings["report_errors"] = current_settings["report_errors"]
-        new_settings["user"] = current_settings["user"]
-        new_settings["password"] = current_settings["password"]
+        new_local_server_settings = {}
+        new_local_server_settings["path"] = self.uiLocalServerPathLineEdit.text()
+        new_local_server_settings["ubridge_path"] = self.uiUbridgePathLineEdit.text()
+        new_local_server_settings["host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
+        new_local_server_settings["port"] = self.uiLocalServerPortSpinBox.value()
+        new_local_server_settings["auto_start"] = self.uiLocalServerAutoStartCheckBox.isChecked()
+        new_local_server_settings["allow_console_from_anywhere"] = self.uiConsoleConnectionsToAnyIPCheckBox.isChecked()
+        new_local_server_settings["auth"] = self.uiLocalServerAuthCheckBox.isChecked()
+        new_local_server_settings["console_start_port_range"] = self.uiConsoleStartPortSpinBox.value()
+        new_local_server_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
+        new_local_server_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
+        new_local_server_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
+        new_local_server_settings["images_path"] = current_settings["images_path"]
+        new_local_server_settings["projects_path"] = current_settings["projects_path"]
+        new_local_server_settings["report_errors"] = current_settings["report_errors"]
+        new_local_server_settings["user"] = current_settings["user"]
+        new_local_server_settings["password"] = current_settings["password"]
 
-        if new_settings["console_end_port_range"] <= new_settings["console_start_port_range"]:
-            QtWidgets.QMessageBox.critical(self, "Port range", "Invalid console port range from {} to {}".format(new_settings["console_start_port_range"],
-                                                                                                                 new_settings["console_end_port_range"]))
+        if new_local_server_settings["console_end_port_range"] <= new_local_server_settings["console_start_port_range"]:
+            QtWidgets.QMessageBox.critical(self, "Port range", "Invalid console port range from {} to {}".format(new_local_server_settings["console_start_port_range"],
+                                                                                                                 new_local_server_settings["console_end_port_range"]))
             return
 
-        if new_settings["udp_end_port_range"] <= new_settings["udp_start_port_range"]:
-            QtWidgets.QMessageBox.critical(self, "Port range", "Invalid UDP port range from {} to {}".format(new_settings["udp_start_port_range"],
-                                                                                                             new_settings["udp_end_port_range"]))
+        if new_local_server_settings["udp_end_port_range"] <= new_local_server_settings["udp_start_port_range"]:
+            QtWidgets.QMessageBox.critical(self, "Port range", "Invalid UDP port range from {} to {}".format(new_local_server_settings["udp_start_port_range"],
+                                                                                                             new_local_server_settings["udp_end_port_range"]))
             return
 
-        if new_settings["auto_start"]:
-            if not os.path.isfile(new_settings["path"]):
-                QtWidgets.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_settings["path"]))
+        if new_local_server_settings["auto_start"]:
+            if not os.path.isfile(new_local_server_settings["path"]):
+                QtWidgets.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_local_server_settings["path"]))
                 return
-            if not os.access(new_settings["path"], os.X_OK):
-                QtWidgets.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_settings["path"]))
+            if not os.access(new_local_server_settings["path"], os.X_OK):
+                QtWidgets.QMessageBox.critical(self, "Local server", "{} is not an executable".format(new_local_server_settings["path"]))
 
-            if new_settings != current_settings:
+            if new_local_server_settings != current_settings:
                 # first check if we have nodes on the local server
                 local_nodes = []
                 topology = Topology.instance()
@@ -460,32 +460,32 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             servers.stopLocalServer(wait=True)
 
         # save the local server preferences
-        servers.setLocalServerSettings(new_settings)
+        servers.setLocalServerSettings(new_local_server_settings)
         # save the remote server preferences
         servers.updateRemoteServers(self._remote_servers)
         servers.save()
 
         # save the GNS3 VM preferences
-        new_settings = {}
-        new_settings["auto_start"] = self.uiEnableVMCheckBox.isChecked()
-        new_settings["auto_stop"] = self.uiShutdownCheckBox.isChecked()
-        new_settings["vmname"] = self.uiVMListComboBox.currentText()
-        new_settings["vmx_path"] = self.uiVMListComboBox.currentData()
-        new_settings["headless"] = self.uiHeadlessCheckBox.isChecked()
+        new_gns3vm_settings = {}
+        new_gns3vm_settings["auto_start"] = self.uiEnableVMCheckBox.isChecked()
+        new_gns3vm_settings["auto_stop"] = self.uiShutdownCheckBox.isChecked()
+        new_gns3vm_settings["vmname"] = self.uiVMListComboBox.currentText()
+        new_gns3vm_settings["vmx_path"] = self.uiVMListComboBox.currentData()
+        new_gns3vm_settings["headless"] = self.uiHeadlessCheckBox.isChecked()
         if self.uiVmwareRadioButton.isChecked():
-            new_settings["virtualization"] = "VMware"
+            new_gns3vm_settings["virtualization"] = "VMware"
         elif self.uiVirtualBoxRadioButton.isChecked():
-            new_settings["virtualization"] = "VirtualBox"
+            new_gns3vm_settings["virtualization"] = "VirtualBox"
         gns3_vm = GNS3VM.instance()
-        gns3_vm.setSettings(new_settings)
+        gns3_vm.setSettings(new_gns3vm_settings)
 
         # restart the local server if required
         if restart_local_server:
             servers.stopLocalServer(wait=True)
             if servers.startLocalServer():
-                worker = WaitForConnectionWorker(new_settings["host"], new_settings["port"])
+                worker = WaitForConnectionWorker(new_local_server_settings["host"], new_local_server_settings["port"])
                 dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
                 dialog.show()
                 dialog.exec_()
             else:
-                QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_settings["path"]))
+                QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
