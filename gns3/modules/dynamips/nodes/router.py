@@ -58,6 +58,7 @@ class Router(VM):
         self._settings = {"name": "",
                           "platform": platform,
                           "image": "",
+                          "image_md5sum": "",
                           "startup_config": "",
                           "private_config": "",
                           "ram": 128,

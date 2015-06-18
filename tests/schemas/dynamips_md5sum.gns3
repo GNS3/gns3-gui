@@ -1,0 +1,73 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "1897f811-8c62-4b41-9907-c3036529be10",
+    "resources_type": "local",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Router c1700",
+                "dynamips_id": 1,
+                "id": 3,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "R1",
+                    "x": 22.2578125,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "id": 18,
+                        "name": "FastEthernet0",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "auto_delete_disks": true,
+                    "chassis": "1720",
+                    "clock_divisor": 8,
+                    "console": 2001,
+                    "disk0": 0,
+                    "disk1": 0,
+                    "exec_area": 64,
+                    "idlemax": 500,
+                    "idlepc": "0x89ff7838",
+                    "idlesleep": 30,
+                    "image": "c1700-adventerprisek9-mz.124-25d.bin",
+                    "image_md5sum": "3ed8d56a8757771105a56070e4147716",
+                    "iomem": 5,
+                    "mac_addr": "d001.58dd.0000",
+                    "mmap": true,
+                    "name": "R1",
+                    "nvram": 128,
+                    "platform": "c1700",
+                    "ram": 160,
+                    "slot0": "C1700-MB-1FE",
+                    "sparsemem": true,
+                    "startup_config": "configs/i1_startup-config.cfg",
+                    "system_id": "FTX0945W0MY"
+                },
+                "server_id": 2,
+                "type": "C1700",
+                "vm_id": "78b3f036-4b1b-4fff-a421-9b63c2a1cda4",
+                "x": -51.0,
+                "y": -255.0
+            }
+        ],
+        "servers": [
+            {
+                "cloud": false,
+                "host": "127.0.0.1",
+                "id": 2,
+                "local": true,
+                "port": 8000,
+                "protocol": "http"
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0.dev1"
+}

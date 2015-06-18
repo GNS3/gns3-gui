@@ -50,6 +50,10 @@ class QemuVM(VM):
                           "hdb_disk_image": "",
                           "hdc_disk_image": "",
                           "hdd_disk_image": "",
+                          "hda_disk_image_md5sum": "",
+                          "hdb_disk_image_md5sum": "",
+                          "hdc_disk_image_md5sum": "",
+                          "hdd_disk_image_md5sum": "",
                           "options": "",
                           "ram": QEMU_VM_SETTINGS["ram"],
                           "console": None,
@@ -64,6 +68,8 @@ class QemuVM(VM):
                           "process_priority": QEMU_VM_SETTINGS["process_priority"],
                           "initrd": "",
                           "kernel_image": "",
+                          "initrd_md5sum": "",
+                          "kernel_image_md5sum": "",
                           "kernel_command_line": ""}
 
     def _addAdapters(self, adapters):

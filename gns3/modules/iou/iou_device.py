@@ -53,6 +53,7 @@ class IOUDevice(VM):
         self._vm_id = None
         self._settings = {"name": "",
                           "path": "",
+                          "md5sum": "",
                           "startup_config": "",
                           "private_config": "",
                           "l1_keepalives": False,

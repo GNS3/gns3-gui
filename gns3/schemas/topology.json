@@ -9,6 +9,11 @@
             "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
         },
 
+        "md5" : {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+        },
+
         "optional_uuid" : {
             "oneOf": [
                 { "$ref": "#/definitions/uuid" },
@@ -317,10 +322,12 @@
                 "console": { "$ref": "#/definitions/network_port" },
                 "ethernet_adapters": { "type": "integer", "minimum": 0 },
                 "initial_config": { "$ref": "#/definitions/mandatory_string" },
+                "startup_config": { "$ref": "#/definitions/mandatory_string" },
                 "l1_keepalives": { "type": "boolean" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "nvram": { "type": "integer", "minimum": 1 },
                 "path": { "$ref": "#/definitions/mandatory_string" },
+                "md5sum":  { "$ref": "#/definitions/md5" },
                 "ram": { "type": "integer", "minimum": 1 },
                 "serial_adapters": { "type": "integer", "minimum": 0 },
                 "use_default_iou_values": { "type": "boolean" }
@@ -365,8 +372,14 @@
                 "hdb_disk_image": { "type": "string" },
                 "hdc_disk_image": { "type": "string" },
                 "hdd_disk_image": { "type": "string" },
+                "hda_disk_image_md5sum": { "$ref": "#/definitions/md5" },
+                "hdb_disk_image_md5sum": { "$ref": "#/definitions/md5" },
+                "hdc_disk_image_md5sum": { "$ref": "#/definitions/md5" },
+                "hdd_disk_image_md5sum": { "$ref": "#/definitions/md5" },
                 "initrd": { "type": "string" },
+                "initrd_md5sum": { "$ref": "#/definitions/md5" },                
                 "kernel_image": { "type": "string"},
+                "kernel_image_md5sum": { "$ref": "#/definitions/md5" },
                 "kernel_command_line": { "type": "string" },
                 "legacy_networking": { "type": "boolean" },
                 "mac_address": { "$ref": "#/definitions/mandatory_string" },
@@ -514,6 +527,7 @@
                 "idlepc": {"type": "string", "pattern": "^0x[0-9a-f]{8}"},
                 "idlesleep": {"type": "integer", "minimum": 1},
                 "image": { "$ref": "#/definitions/mandatory_string" },
+                "image_md5sum": { "$ref": "#/definitions/md5" },                
                 "mac_addr": { "$ref": "#/definitions/mandatory_string" },
                 "midplane": { "enum": ["std", "vxr"] },
                 "chassis": {

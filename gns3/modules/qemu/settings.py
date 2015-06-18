@@ -46,10 +46,8 @@ QEMU_VM_SETTINGS = {
     "cpu_throttling": 0,
     "process_priority": "normal",
     "options": "",
-    "initrd": "",
     "kernel_image": "",
+    "initrd": "",
     "kernel_command_line": "",
     "server": "local"
 }
-
-
