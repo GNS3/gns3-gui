@@ -446,7 +446,7 @@ class Servers(QtCore.QObject):
         Initialize the GNS3 VM server.
         """
 
-        #TODO: handle authentication and/or SSH?
+        # TODO: handle authentication and/or SSH?
         gns3_vm = GNS3VM.instance()
         server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
         server = getNetworkClientInstance(server_info, self._network_manager)
@@ -529,7 +529,7 @@ class Servers(QtCore.QObject):
                 port = url_settings.port
             return self.getRemoteServer(url_settings.scheme, url_settings.hostname, port, url_settings.username, settings=settings)
         else:
-            (host, port) = string.server_name(":")
+            (host, port) = server_name.split(":")
             return self.getRemoteServer("http", host, port, None)
 
     def updateRemoteServers(self, servers):
