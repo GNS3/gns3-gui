@@ -74,7 +74,7 @@ def test_dump(vpcs_device, project, local_server):
             ],
             "servers": [
                 {
-                    "cloud": False,
+                    "vm": False,
                     "host": "127.0.0.1",
                     "id": local_server.id(),
                     "local": True,
@@ -158,12 +158,12 @@ def test_dump_random_id(vpcs_device, project, local_server):
                 ],
                 "servers": [
                     {
-                        "cloud": False,
                         "host": "127.0.0.1",
                         "id": local_server.id(),
                         "local": True,
                         "port": 8000,
-                        "protocol": "http"
+                        "protocol": "http",
+                        "vm": False
                     }
                 ]
             },
