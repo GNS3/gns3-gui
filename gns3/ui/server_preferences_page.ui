@@ -376,7 +376,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
             <property name="text">
-             <string>Virtulization software:</string>
+             <string>Virtualization software:</string>
             </property>
            </widget>
           </item>
@@ -464,7 +464,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="currentText" stdset="0">
+           <property name="currentText">
             <string>HTTP</string>
            </property>
            <item>

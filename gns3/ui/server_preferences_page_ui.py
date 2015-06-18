@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Sun Jun 14 16:51:26 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Thu Jun 18 14:44:06 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -356,13 +356,13 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiVMNameLabel.setText(_translate("ServerPreferencesPageWidget", "VM name:"))
         self.uiVmwareRadioButton.setText(_translate("ServerPreferencesPageWidget", "VMware (recommended)"))
         self.uiVirtualBoxRadioButton.setText(_translate("ServerPreferencesPageWidget", "VirtualBox"))
-        self.uiVirtualizationSoftwarLabel.setText(_translate("ServerPreferencesPageWidget", "Virtulization software:"))
+        self.uiVirtualizationSoftwarLabel.setText(_translate("ServerPreferencesPageWidget", "Virtualization software:"))
         self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
         self.uiShutdownCheckBox.setText(_translate("ServerPreferencesPageWidget", "ACPI shutdown VM when closing GNS3"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
-        self.uiRemoteServerProtocolComboBox.setProperty("currentText", _translate("ServerPreferencesPageWidget", "HTTP"))
+        self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "HTTPS"))
         self.uiRemoteServerProtocolComboBox.setItemText(2, _translate("ServerPreferencesPageWidget", "SSH"))
