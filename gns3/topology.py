@@ -643,7 +643,11 @@ class Topology:
                 if "local" in topology_server and topology_server["local"]:
                     self._servers[topology_server["id"]] = server_manager.localServer()
                 if "vm" in topology_server and topology_server["vm"]:
-                    self._servers[topology_server["id"]] = server_manager.vmServer()
+                    gns3_vm_server = server_manager.vmServer()
+                    if gns3_vm_server is None:
+                        QtWidgets.QMessageBox.critical(main_window, "GNS3 VM", "The GNS3 VM is not running")
+                        return
+                    self._servers[topology_server["id"]] = gns3_vm_server
                 elif "cloud" in topology_server and topology_server["cloud"]:
                     self._servers[topology_server["id"]] = server_manager.anyCloudServer()
                 else:

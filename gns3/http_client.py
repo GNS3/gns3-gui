@@ -71,6 +71,7 @@ class HTTPClient(QtCore.QObject):
         self._connected = False
         self._local = True
         self._cloud = False
+        self._gns3_vm = False
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", False)
 
         self._network_manager = network_manager
@@ -235,6 +236,24 @@ class HTTPClient(QtCore.QObject):
         """
 
         return self._local
+
+    def setGNS3VM(self, value):
+        """
+        Sets either this is a connection to the GNS3 VM or not.
+
+        :param value: boolean
+        """
+
+        self._gns3_vm = value
+
+    def isGNS3VM(self):
+        """
+        Returns either this is a connection to the GNS3 VM or not.
+
+        :returns: boolean
+        """
+
+        return self._gns3_vm
 
     def connected(self):
         """
@@ -648,7 +667,8 @@ class HTTPClient(QtCore.QObject):
         server = self.settings()
         server["id"] = self._id
         server["local"] = self._local
-        server["cloud"] = self._cloud
+        server["vm"] = self._gns3_vm
+        #server["cloud"] = self._cloud
         if "user" in server and self._local:
             del server["user"]
         if server["protocol"] == "https":

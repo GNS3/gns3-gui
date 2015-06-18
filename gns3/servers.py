@@ -446,6 +446,7 @@ class Servers(QtCore.QObject):
         server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
         server = getNetworkClientInstance(server_info, self._network_manager)
         server.setLocal(False)
+        server.setGNS3VM(True)
         self._vm_server = server
         log.info("GNS3 VM server initialized {}".format(server.url()))
 

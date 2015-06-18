@@ -158,6 +158,9 @@ class WaitForVMWorker(QtCore.QObject):
                     self.error.emit("VMware tools are not installed in {}".format(self._vmname), True)
                     return
 
+                if not self._is_running:
+                    return
+
                 # get the guest IP address (first adapter only)
                 self._server_host = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"])
             except (OSError, subprocess.SubprocessError) as e:
@@ -210,6 +213,9 @@ class WaitForVMWorker(QtCore.QObject):
 
                 self._server_host = ip_address
 
+                if not self._is_running:
+                    return
+
                 # ask the server all a list of all its interfaces along with IP addresses
                 try:
                     status, json_data = self._server_request(self._server_host, port, "/v1/interfaces")
@@ -237,6 +243,9 @@ class WaitForVMWorker(QtCore.QObject):
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute VBoxManage: {}".format(e), True)
                 return
+
+        if not self._is_running:
+            return
 
         self._vm.setSettings({"server_host": self._server_host})
         log.info("GNS3 VM is started and server is running on {}:{}".format(self._server_host, self._server_port))

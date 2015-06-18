@@ -96,7 +96,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         """
 
         if stop:
-            QtWidgets.QMessageBox.critical(self, "Error", "{}".format(message))
+            QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
             self.cancel()
         else:
             self._errors.append(message)

@@ -185,6 +185,7 @@
             "properties": {
                 "protocol": { "enum": ["http", "https"] },
                 "cloud": { "type": "boolean" },
+                "vm": { "type": "boolean" },
                 "host": { "$ref": "#/definitions/mandatory_string" },
                 "id": { "$ref": "#/definitions/numeric_id" },
                 "local": { "type": "boolean" },
