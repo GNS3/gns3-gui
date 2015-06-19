@@ -72,7 +72,7 @@ class VMware(Module):
                 vmrun_vix = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware VIX\vmrun.exe")
                 if os.path.exists(vmrun_ws):
                     vmrun_path = vmrun_ws
-                elif os.path.exist(vmrun_vix):
+                elif os.path.exists(vmrun_vix):
                     vmrun_path = vmrun_vix
         elif sys.platform.startswith("darwin"):
             vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
