@@ -73,6 +73,7 @@ class Servers(QtCore.QObject):
         """
         Create a new local server
         """
+
         host = self._local_server_settings["host"]
         port = self._local_server_settings["port"]
         user = self._local_server_settings["user"]
@@ -239,8 +240,11 @@ class Servers(QtCore.QObject):
         :param settings: local server settings (dict)
         """
 
-        self._local_server_settings.update(settings)
+        init_local_server = False
         if settings["host"] != self._local_server_settings["host"] or settings["port"] != self._local_server_settings["port"]:
+            init_local_server = True
+        self._local_server_settings.update(settings)
+        if init_local_server:
             self._initLocalServer()
 
     def localServerAutoStart(self):

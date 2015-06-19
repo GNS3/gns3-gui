@@ -410,7 +410,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         restart_local_server = False
 
         # save the local server preferences
-        new_local_server_settings = {}
+        new_local_server_settings = current_settings.copy()
         new_local_server_settings["path"] = self.uiLocalServerPathLineEdit.text()
         new_local_server_settings["ubridge_path"] = self.uiUbridgePathLineEdit.text()
         new_local_server_settings["host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
@@ -422,11 +422,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         new_local_server_settings["console_end_port_range"] = self.uiConsoleEndPortSpinBox.value()
         new_local_server_settings["udp_start_port_range"] = self.uiUDPStartPortSpinBox.value()
         new_local_server_settings["udp_end_port_range"] = self.uiUDPEndPortSpinBox.value()
-        new_local_server_settings["images_path"] = current_settings["images_path"]
-        new_local_server_settings["projects_path"] = current_settings["projects_path"]
-        new_local_server_settings["report_errors"] = current_settings["report_errors"]
-        new_local_server_settings["user"] = current_settings["user"]
-        new_local_server_settings["password"] = current_settings["password"]
 
         if new_local_server_settings["console_end_port_range"] <= new_local_server_settings["console_start_port_range"]:
             QtWidgets.QMessageBox.critical(self, "Port range", "Invalid console port range from {} to {}".format(new_local_server_settings["console_start_port_range"],
