@@ -546,8 +546,6 @@ class HTTPClient(QtCore.QObject):
 
         request = self.addAuth(request)
 
-        request.setRawHeader("Content-Type", "application/json")
-        request.setRawHeader("Content-Length", str(len(body)))
         request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
 
         # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
