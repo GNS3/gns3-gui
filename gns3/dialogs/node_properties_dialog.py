@@ -57,7 +57,6 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         self._loadNodeItems()
 
         self.uiNodesTreeWidget.itemClicked.connect(self.showConfigurationPageSlot)
-        HTTPClient.setProgressCallback(Progress(self, min_duration=0))
 
     def _loadNodeItems(self):
         """
@@ -144,17 +143,14 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         """
 
         try:
-            from gns3.main_window import MainWindow
             if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply):
                 self.applySettings()
             elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset):
                 self.resetSettings()
             elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel):
-                HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
                 QtWidgets.QDialog.reject(self)
             else:
                 self.applySettings()
-                HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
                 QtWidgets.QDialog.accept(self)
         except ConfigurationError:
             pass

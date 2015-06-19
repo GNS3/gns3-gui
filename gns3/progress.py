@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtCore, QtWidgets
+from contextlib import contextmanager
+
+from .qt import QtCore, QtWidgets, Qt
 
 
 class Progress(QtCore.QObject):
@@ -27,11 +29,14 @@ class Progress(QtCore.QObject):
     add_query_signal = QtCore.Signal(str, str)
     remove_query_signal = QtCore.Signal(str)
 
-    def __init__(self, parent, min_duration=1000):
+    def __init__(self, min_duration=1000):
 
         super().__init__()
         self._progress_dialog = None
-        self._parent = parent
+
+        from .main_window import MainWindow
+        self._parent = MainWindow.instance()
+
         self._stimer = QtCore.QTimer()
         self._finished_query_during_display = 0
         self._queries = {}
@@ -66,23 +71,11 @@ class Progress(QtCore.QObject):
             self._queries[query_id]["maximum"] = maximum
             self.show()
 
-    def disable(self):
-        """
-        Prevent displaying the progress callback
-        """
-        self._enable = False
-
-    def enable(self):
-        """
-        Allow displaying the progress callback
-        """
-        self._enable = True
-
     def show(self):
 
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
             progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
-            progress_dialog.setModal(True)
+            progress_dialog.setWindowModality(Qt.Qt.ApplicationModal)
             progress_dialog.setCancelButton(None)
             progress_dialog.setWindowTitle("Please wait")
             progress_dialog.setMinimumDuration(self._minimum_duration)
@@ -110,7 +103,42 @@ class Progress(QtCore.QObject):
             self._progress_dialog.show()
 
     def hide(self):
+        """
+        Hide and cancel the progress dialog
+        """
         if self._progress_dialog is not None:
             progress_dialog = self._progress_dialog
             self._progress_dialog = None
             progress_dialog.cancel()
+
+    @contextmanager
+    def context(self, **kwargs):
+        """
+        Change the behavior of the progress dialog when in this block
+        and restore it at the end of the block.
+
+        :param kwargs: Options to change (possible: min_duration, enable)
+        """
+        if 'min_duration' in kwargs:
+            old_minimum_duration = self._minimum_duration
+            self._minimum_duration = kwargs['min_duration']
+        if 'enable' in kwargs:
+            old_enable = self._enable
+            self._enable = kwargs['enable']
+        yield
+        if 'min_duration' in kwargs:
+            self._minimum_duration = old_minimum_duration
+        if 'enable' in kwargs:
+            self._enable = old_enable
+
+    @staticmethod
+    def instance():
+        """
+        Singleton to return only one instance of Progress.
+
+        :returns: instance of Progress
+        """
+
+        if not hasattr(Progress, "_instance") or Progress._instance is None:
+            Progress._instance = Progress()
+        return Progress._instance

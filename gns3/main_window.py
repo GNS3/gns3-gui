@@ -91,7 +91,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         MainWindow._instance = self
 
         self._settings = {}
-        HTTPClient.setProgressCallback(Progress(self))
+        HTTPClient.setProgressCallback(Progress().instance())
 
         self._project = None
         self._createTemporaryProject()
@@ -1014,9 +1014,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to show the preferences dialog.
         """
 
-        dialog = PreferencesDialog(self)
-        dialog.show()
-        dialog.exec_()
+        with Progress.instance().context(min_duration=0):
+            dialog = PreferencesDialog(self)
+            dialog.show()
+            dialog.exec_()
 
     def keyPressEvent(self, event):
         """

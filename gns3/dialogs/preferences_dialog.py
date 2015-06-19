@@ -51,7 +51,6 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
 
         # select the first available page
         self.uiTreeWidget.setCurrentItem(self._items[0])
-        HTTPClient.setProgressCallback(Progress(self, min_duration=0))
 
     def _loadPreferencePages(self):
         """
@@ -139,8 +138,6 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         Closes this dialog.
         """
 
-        from gns3.main_window import MainWindow
-        HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
         QtWidgets.QDialog.reject(self)
 
     def accept(self):
@@ -154,6 +151,4 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         main_window.uiNodesDockWidget.setWindowTitle("")
 
         if self._applyPreferences():
-            from gns3.main_window import MainWindow
-            HTTPClient.setProgressCallback(Progress(MainWindow.instance()))
             QtWidgets.QDialog.accept(self)
