@@ -45,7 +45,7 @@ else:
 
 if DEFAULT_BINDING == 'PyQt5':
 
-    from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
+    from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
     sys.modules[__name__ + '.QtCore'] = QtCore
     sys.modules[__name__ + '.QtGui'] = QtGui
     sys.modules[__name__ + '.QtNetwork'] = QtNetwork
@@ -117,7 +117,7 @@ elif DEFAULT_BINDING == 'PyQt4':
     sip.setapi('QUrl', 2)
     sip.setapi('QVariant', 2)
 
-    from PyQt4 import QtCore, QtGui, QtNetwork, QtSvg
+    from PyQt4 import QtCore, QtGui, QtNetwork, QtSvg, Qt
     sys.modules[__name__ + '.QtCore'] = QtCore
     sys.modules[__name__ + '.QtGui'] = QtGui
     sys.modules[__name__ + '.QtNetwork'] = QtNetwork

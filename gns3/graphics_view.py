@@ -41,6 +41,7 @@ from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
 from .local_config import LocalConfig
+from .progress import Progress
 
 # link items
 from .items.link_item import LinkItem
@@ -623,10 +624,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if not items:
             items = self.scene().selectedItems()
-        node_properties = NodePropertiesDialog(items, self._main_window)
-        node_properties.setModal(True)
-        node_properties.show()
-        node_properties.exec_()
+        with Progress.instance().context(min_duration=0):
+            node_properties = NodePropertiesDialog(items, self._main_window)
+            node_properties.setModal(True)
+            node_properties.show()
+            node_properties.exec_()
         for item in items:
             item.setSelected(False)
 

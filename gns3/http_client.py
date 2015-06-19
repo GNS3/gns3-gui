@@ -150,18 +150,6 @@ class HTTPClient(QtCore.QObject):
         """
         return self._user
 
-    def progressCallbackDisable(self):
-        """
-        Disable the progress callback
-        """
-        HTTPClient._progress_callback.disable()
-
-    def progressCallbackEnable(self):
-        """
-        Disable the progress callback
-        """
-        HTTPClient._progress_callback.enable()
-
     def notify_progress_start_query(self, query_id):
         """
         Called when a query start

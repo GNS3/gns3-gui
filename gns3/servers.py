@@ -35,6 +35,7 @@ from .network_client import getNetworkClientInstance, getNetworkUrl
 from .local_config import LocalConfig
 from .settings import LOCAL_SERVER_SETTINGS
 from .local_server_config import LocalServerConfig
+from .progress import Progress
 from .gns3_vm import GNS3VM
 from collections import OrderedDict
 
@@ -131,24 +132,21 @@ class Servers(QtCore.QObject):
             reply.ignoreSslErrors()
             return
 
-        server.progressCallbackDisable()
+        with Progress.instance().context(enable=False):
+            from .main_window import MainWindow
+            main_window = MainWindow.instance()
+            proceed = QtWidgets.QMessageBox.warning(
+                main_window,
+                "SSL Error",
+                "SSL certificate for:\n {} is invalid or someone is trying to intercept the communication.\nContinue?".format(reply.url().toDisplayString()),
+                QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No)
 
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        proceed = QtWidgets.QMessageBox.warning(
-            main_window,
-            "SSL Error",
-            "SSL certificate for:\n {} is invalid or someone is trying to intercept the communication.\nContinue?".format(reply.url().toDisplayString()),
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No)
-
-        if proceed == QtWidgets.QMessageBox.Yes:
-            server.setAcceptInsecureCertificate(True)
-            self._saveSettings()
-            reply.ignoreSslErrors()
-            log.info("SSL error ignored for %s", reply.url().toDisplayString())
-
-        server.progressCallbackEnable()
+            if proceed == QtWidgets.QMessageBox.Yes:
+                server.setAcceptInsecureCertificate(True)
+                self._saveSettings()
+                reply.ignoreSslErrors()
+                log.info("SSL error ignored for %s", reply.url().toDisplayString())
 
     def _passwordGenerate(self):
         """
