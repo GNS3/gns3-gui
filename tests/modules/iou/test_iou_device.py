@@ -69,9 +69,45 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "path": "iou.bin",
+            "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
         args[1](params)
+
+        assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+
+
+def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
+    """
+    It should notify the user asking him to upload the image
+    """
+
+    with patch('gns3.node.Node.httpPost') as mock:
+        iou_device._module._settings["iourc_path"] = fake_iourc
+
+        iou_device.setup("/tmp/iou.bin", name="PC 1")
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/iou/vms"
+        assert kwargs["body"] == {
+            "name": "PC 1",
+            "path": "/tmp/iou.bin",
+            "iourc_content": "[license]\r\ngns42 = dsfdsfdsfdsf;\r\n"
+        }
+
+        # Callback
+        params = {
+            "console": 2000,
+            "name": "PC1",
+            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "path": "iou.bin",
+        }
+
+        with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
+            args[1](params)
+            assert mock.called
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -100,7 +136,9 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "path": "iou.bin",
+            "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
         args[1](params)
 
@@ -186,6 +224,7 @@ def test_dump(local_server, project):
     iou_device._settings["ram"] = 256
     iou_device._settings["nvram"] = 128
     iou_device._settings["use_default_iou_values"] = True
+    iou_device._settings["md5sum"] = "0cc175b9c0f1b6a831c399e269772661"
     iou_device._addAdapters(iou_device._settings["ethernet_adapters"], iou_device._settings["serial_adapters"])
 
     assert iou_device.dump() == {
@@ -260,6 +299,7 @@ def test_dump(local_server, project):
         "properties": {
             "name": "IOU 1",
             "path": "test.bin",
+            "md5sum": "0cc175b9c0f1b6a831c399e269772661",
             "startup_config": "/tmp",
             "ethernet_adapters": 2,
             "serial_adapters": 2,

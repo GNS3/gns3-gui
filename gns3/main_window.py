@@ -65,6 +65,7 @@ from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
 from .licence import checkLicence
+from .image_manager import ImageManager
 
 log = logging.getLogger(__name__)
 
@@ -1509,15 +1510,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return Servers.instance().localServerSettings()["projects_path"]
 
-    def imagesDirPath(self):
-        """
-        Returns the images directory path.
-
-        :returns: path to the default images directory
-        """
-
-        return Servers.instance().localServerSettings()["images_path"]
-
     @staticmethod
     def instance():
         """
@@ -1656,7 +1648,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self,
             self._cloud_settings,
             self._project.topologyFile(),
-            self.imagesDirPath()
+            ImageManager.instance().getDirectory()
         )
         progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
                                          parent=self)
@@ -1683,7 +1675,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog = ImportCloudProjectDialog(
             self,
             self.projectsDirPath(),
-            self.imagesDirPath(),
+            ImageManager.instance().getDirectory(),
             self._cloud_settings
         )
 

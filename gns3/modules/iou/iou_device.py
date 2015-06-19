@@ -28,6 +28,7 @@ from gns3.packet_capture import PacketCapture
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
 from gns3.utils.normalize_filename import normalize_filename
+from gns3.image_manager import ImageManager
 from .settings import IOU_DEVICE_SETTINGS
 
 import logging
@@ -194,6 +195,10 @@ class IOUDevice(VM):
             log.info("IOU instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
+
+        # The image is missing on remote server
+        if "md5sum" not in result or result["md5sum"] is None or len(result["md5sum"]) == 0:
+            ImageManager.instance().addMissingImage(result["path"], self._server, "IOU")
 
     def update(self, new_settings):
         """
@@ -410,15 +415,6 @@ class IOUDevice(VM):
 
         return iou
 
-    def _imageFilesDir(self):
-        """
-        Returns the location of IOU images.
-        """
-
-        servers = Servers.instance()
-        local_server = servers.localServerSettings()
-        return os.path.join(local_server["images_path"], "IOU")
-
     def load(self, node_info):
         """
         Loads an IOU device representation
@@ -445,7 +441,7 @@ class IOUDevice(VM):
 
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
-            updated_path = os.path.join(self._imageFilesDir(), path)
+            updated_path = os.path.join(ImageManager.instance().getDirectoryForType("IOU"), path)
             if os.path.isfile(updated_path):
                 path = updated_path
             elif not os.path.isfile(path):

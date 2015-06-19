@@ -21,9 +21,11 @@ QEMU VM implementation.
 
 from gns3.vm import VM
 from gns3.node import Node
+from gns3.image_manager import ImageManager
 from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import QEMU_VM_SETTINGS
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -153,6 +155,13 @@ class QemuVM(VM):
             log.info("QEMU VM instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
+
+        for image_field in ["hda_disk_image", "hdb_disk_image", "hdc_disk_image", "hdd_disk_image", "initrd", "kernel_image"]:
+            if image_field in result and result[image_field] is not None and result[image_field] != "":
+                # The image is missing on remote server
+                field = "{}_md5sum".format(image_field)
+                if field not in result or result[field] is None or len(result[field]) == 0:
+                    ImageManager.instance().addMissingImage(result[image_field], self._server, "QEMU")
 
     def delete(self):
         """

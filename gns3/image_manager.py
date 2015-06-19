@@ -18,6 +18,7 @@
 import os
 import pathlib
 
+from gns3.servers import Servers
 from gns3.qt import QtWidgets
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
@@ -25,8 +26,11 @@ from gns3.utils.progress_dialog import ProgressDialog
 
 class ImageManager:
 
-    @classmethod
-    def askCopyUploadImage(cls, parent, path, server, destination_directory, upload_endpoint):
+    def __init__(self):
+        # Remember if we already ask the user about this image for this server
+        self._asked_for_this_image = {}
+
+    def askCopyUploadImage(self, parent, path, server, vm_type):
         """
         Ask user for copying the image to the default directory or upload
         it to remote server.
@@ -34,44 +38,116 @@ class ImageManager:
         :param parent: Parent window
         :param path: File path on computer
         :param server: The server where the images should be located
-        :param destination_directory: Local destination directory
-        :param upload_endpoint: Remote upload endpoint
+        :param vm_type: Remote upload endpoint
         :returns path: Final path
         """
 
         if server and not server.isLocal():
-            return cls._uploadImageToRemoteServer(path, server, upload_endpoint)
+            return self._uploadImageToRemoteServer(path, server, vm_type)
         else:
+            destination_directory = self.getDirectoryForType(vm_type)
             if os.path.normpath(os.path.dirname(path)) != destination_directory:
                 # the IOS image is not in the default images directory
                 reply = QtWidgets.QMessageBox.question(parent,
-                                                       "Image",
-                                                       "Would you like to copy {} to the default images directory".format(os.path.basename(path)),
+                                                       'Image',
+                                                       'Would you like to copy {} to the default images directory'.format(os.path.basename(path)),
                                                        QtWidgets.QMessageBox.Yes,
                                                        QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
                     destination_path = os.path.join(destination_directory, os.path.basename(path))
                     worker = FileCopyWorker(path, destination_path)
-                    progress_dialog = ProgressDialog(worker, "Image", "Copying {}".format(os.path.basename(path)), "Cancel", busy=True, parent=parent)
+                    progress_dialog = ProgressDialog(worker, 'Image', 'Copying {}'.format(os.path.basename(path)), 'Cancel', busy=True, parent=parent)
                     progress_dialog.show()
                     progress_dialog.exec_()
                     errors = progress_dialog.errors()
                     if errors:
-                        QtWidgets.QMessageBox.critical(parent, "Image", "{}".format("".join(errors)))
+                        QtWidgets.QMessageBox.critical(parent, 'Image', '{}'.format(''.join(errors)))
                     else:
                         path = destination_path
             return path
 
-    @staticmethod
-    def _uploadImageToRemoteServer(path, server, upload_endpoint):
+    def _uploadImageToRemoteServer(self, path, server, vm_type):
         """
         Upload image to remote server
 
         :param path: File path on computer
         :param server: The server where the images should be located
+        :param vm_type: Image vm_type
         :returns path: Final path
         """
 
+        if vm_type == 'QEMU':
+            upload_endpoint = '/qemu/vms'
+        elif vm_type == 'IOU':
+            upload_endpoint = '/iou/vms'
+        elif vm_type == 'DYNAMIPS':
+            upload_endpoint = '/dynamips/vms'
+        else:
+            raise Exception('Invalid image vm_type')
+
         filename = os.path.basename(path)
-        server.post("{}/{}".format(upload_endpoint, filename), None, body=pathlib.Path(path))
+        server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path))
         return filename
+
+    def addMissingImage(self, filename, server, vm_type):
+        """
+        Add a missing image to the queue of images require to be upload on remote server
+        :param filename: Filename of the image
+        :param server: Server where image should be uploaded
+        :param vm_type: Type of the image
+        """
+
+        if self._asked_for_this_image.setdefault(server.id(), {}).setdefault(filename, False):
+            return
+        self._asked_for_this_image[server.id()][filename] = True
+
+        if server.isLocal():
+            return
+        path = os.path.join(self.getDirectoryForType(vm_type), filename)
+        if os.path.exists(path):
+            if self._askForUploadMissingImage(filename, server):
+                self._uploadImageToRemoteServer(path, server, vm_type)
+                del self._asked_for_this_image[server.id()][filename]
+
+    def _askForUploadMissingImage(self, filename, server):
+        from gns3.main_window import MainWindow
+        parent = MainWindow.instance()
+        reply = QtWidgets.QMessageBox.warning(parent,
+                                              'Image',
+                                              '{} is missing on server {} but exist on your computer. Do you want to upload it?'.format(filename, server.url()),
+                                              QtWidgets.QMessageBox.Yes,
+                                              QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            return True
+        return False
+
+    def getDirectory(self):
+        """
+        Returns the images directory path.
+
+        :returns: path to the default images directory
+        """
+
+        return Servers.instance().localServerSettings()['images_path']
+
+    def getDirectoryForType(self, vm_type):
+        """
+        Return the path of local directory of the images
+        of a specific vm_type
+        """
+        if vm_type == 'DYNAMIPS':
+            return os.path.join(self.getDirectory(), 'IOS')
+        else:
+            return os.path.join(self.getDirectory(), vm_type)
+
+    @staticmethod
+    def instance():
+        """
+        Singleton to return only on instance of ImageManager.
+
+        :returns: instance of ImageManager
+        """
+
+        if not hasattr(ImageManager, '_instance') or ImageManager._instance is None:
+            ImageManager._instance = ImageManager()
+        return ImageManager._instance

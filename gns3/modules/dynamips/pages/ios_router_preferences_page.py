@@ -205,7 +205,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
     @staticmethod
     def getImageDirectory():
-        return os.path.join(MainWindow.instance().imagesDirPath(), "IOS")
+        return ImageManager.instance().getDirectoryForType("DYNAMIPS")
 
     @classmethod
     def getIOSImage(cls, parent, server):
@@ -278,7 +278,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                 if progress_dialog.exec_() is not False:
                     path = decompressed_image_path
 
-        path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/dynamips/vms")
+        path = ImageManager.instance().askCopyUploadImage(parent, path, server, "DYNAMIPS")
 
         return path
 

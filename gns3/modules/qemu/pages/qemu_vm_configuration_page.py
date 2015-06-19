@@ -108,7 +108,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
     @staticmethod
     def getImageDirectory():
-        return os.path.join(MainWindow.instance().imagesDirPath(), "QEMU")
+        return ImageManager.instance().getDirectoryForType("QEMU")
 
     @classmethod
     def getDiskImage(cls, parent, server):
@@ -125,7 +125,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.critical(parent, "QEMU disk image", "Cannot read {}".format(path))
             return
 
-        path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/qemu/vms")
+        path = ImageManager.instance().askCopyUploadImage(parent, path, server, "QEMU")
 
         return path
 

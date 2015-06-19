@@ -280,7 +280,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
     @staticmethod
     def getImageDirectory():
-        return os.path.join(MainWindow.instance().imagesDirPath(), "IOU")
+        return ImageManager.instance().getDirectoryForType("IOU")
 
     @classmethod
     def getIOUImage(cls, parent, server):
@@ -329,7 +329,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             QtWidgets.QMessageBox.critical(parent, "IOU images directory", "Could not create the IOU images directory {}: {}".format(cls.getImageDirectory(), e))
             return
 
-        path = ImageManager.askCopyUploadImage(parent, path, server, cls.getImageDirectory(), "/iou/vms")
+        path = ImageManager.instance().askCopyUploadImage(parent, path, server, "IOU")
 
         if os.path.exists(path) and not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))
