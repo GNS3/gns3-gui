@@ -29,6 +29,9 @@ DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 # Default images directory location
 DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
+# Default configs directory location
+DEFAULT_CONFIGS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/configs"))
+
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
 DEFAULT_LOCAL_SERVER_PORT = 8000
 
@@ -209,6 +212,7 @@ LOCAL_SERVER_SETTINGS = {
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,
+    "configs_path": DEFAULT_CONFIGS_PATH,
     "report_errors": True,
     "auto_start": True,
     "allow_console_from_anywhere": False,

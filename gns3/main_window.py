@@ -1501,7 +1501,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if size:
             self._recent_file_actions_separator.setVisible(True)
 
-    def projectsDirPath(self):
+    @staticmethod
+    def projectsDirPath():
         """
         Returns the projects directory path.
 
@@ -1657,7 +1658,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _downloadRemoteProjectActionSlot(self):
         if self._project.temporary():
-            QtWidgets.QMessageBox.warning(self, "You can not download a temporary project")
+            QtWidgets.QMessageBox.warning(self, "Download project", "You can not download a temporary project")
 
         running_nodes = self._running_nodes()
 

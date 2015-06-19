@@ -17,9 +17,10 @@
 
 import os
 import shutil
-import logging
-from gns3.qt import QtCore
 
+from gns3.servers import Servers
+
+import logging
 log = logging.getLogger(__name__)
 
 
@@ -32,12 +33,11 @@ def get_default_base_config(base_config_template_path):
     :return: path to the base config
     """
 
-    config_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
+    servers = Servers.instance()
+    config_dir = servers.localServerSettings()["configs_path"]
     if base_config_template_path:
         try:
-            os.makedirs(config_dir)
-        except FileExistsError:
-            pass
+            os.makedirs(config_dir, exist_ok=True)
         except OSError as e:
             log.error("could not create the base configs directory {}: {}".format(config_dir, e))
             return ""

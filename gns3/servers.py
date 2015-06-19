@@ -212,6 +212,7 @@ class Servers(QtCore.QObject):
             ("password", self._local_server_settings.get("password", "")),
             ("images_path", self._local_server_settings["images_path"]),
             ("projects_path", self._local_server_settings["projects_path"]),
+            ("configs_path", self._local_server_settings["configs_path"]),
             ("console_start_port_range", self._local_server_settings["console_start_port_range"]),
             ("console_end_port_range", self._local_server_settings["console_end_port_range"]),
             ("udp_start_port_range", self._local_server_settings["udp_start_port_range"]),

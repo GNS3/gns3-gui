@@ -2,43 +2,33 @@
 
 # Form implementation generated from reading ui file 'general_preferences_page.ui'
 #
-# Created: Wed May  6 14:31:52 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Fri Jun 19 12:31:25 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_GeneralPreferencesPageWidget:
-
+class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(450, 480)
+        GeneralPreferencesPageWidget.resize(502, 549)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
         self.uiMiscTabWidget.setObjectName("uiMiscTabWidget")
         self.uiGeneralTab = QtWidgets.QWidget()
         self.uiGeneralTab.setObjectName("uiGeneralTab")
-        self.gridLayout_6 = QtWidgets.QGridLayout(self.uiGeneralTab)
-        self.gridLayout_6.setObjectName("gridLayout_6")
-        self.uiStyleGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
-        self.uiStyleGroupBox.setObjectName("uiStyleGroupBox")
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.uiStyleGroupBox)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.uiStyleComboBox = QtWidgets.QComboBox(self.uiStyleGroupBox)
-        self.uiStyleComboBox.setObjectName("uiStyleComboBox")
-        self.verticalLayout_4.addWidget(self.uiStyleComboBox)
-        self.gridLayout_6.addWidget(self.uiStyleGroupBox, 1, 0, 1, 1)
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.uiGeneralTab)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.uiLocalPathsGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
         self.uiLocalPathsGroupBox.setObjectName("uiLocalPathsGroupBox")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.uiLocalPathsGroupBox)
-        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiLocalPathsGroupBox)
+        self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiProjectsPathLabel = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
         self.uiProjectsPathLabel.setObjectName("uiProjectsPathLabel")
-        self.gridLayout_3.addWidget(self.uiProjectsPathLabel, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiProjectsPathLabel, 0, 0, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiProjectsPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
@@ -53,10 +43,10 @@ class Ui_GeneralPreferencesPageWidget:
         self.uiProjectsPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiProjectsPathToolButton.setObjectName("uiProjectsPathToolButton")
         self.horizontalLayout_2.addWidget(self.uiProjectsPathToolButton)
-        self.gridLayout_3.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
         self.uiImagesPathLabel = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
         self.uiImagesPathLabel.setObjectName("uiImagesPathLabel")
-        self.gridLayout_3.addWidget(self.uiImagesPathLabel, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiImagesPathLabel, 2, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.uiImagesPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
@@ -71,8 +61,34 @@ class Ui_GeneralPreferencesPageWidget:
         self.uiImagesPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiImagesPathToolButton.setObjectName("uiImagesPathToolButton")
         self.horizontalLayout_4.addWidget(self.uiImagesPathToolButton)
-        self.gridLayout_3.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
-        self.gridLayout_6.addWidget(self.uiLocalPathsGroupBox, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
+        self.uiConfigsPathLabel = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
+        self.uiConfigsPathLabel.setObjectName("uiConfigsPathLabel")
+        self.gridLayout_2.addWidget(self.uiConfigsPathLabel, 4, 0, 1, 1)
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.uiConfigsPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiConfigsPathLineEdit.sizePolicy().hasHeightForWidth())
+        self.uiConfigsPathLineEdit.setSizePolicy(sizePolicy)
+        self.uiConfigsPathLineEdit.setObjectName("uiConfigsPathLineEdit")
+        self.horizontalLayout_7.addWidget(self.uiConfigsPathLineEdit)
+        self.uiConfigsPathToolButton = QtWidgets.QToolButton(self.uiLocalPathsGroupBox)
+        self.uiConfigsPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiConfigsPathToolButton.setObjectName("uiConfigsPathToolButton")
+        self.horizontalLayout_7.addWidget(self.uiConfigsPathToolButton)
+        self.gridLayout_2.addLayout(self.horizontalLayout_7, 5, 0, 1, 1)
+        self.verticalLayout_5.addWidget(self.uiLocalPathsGroupBox)
+        self.uiStyleGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
+        self.uiStyleGroupBox.setObjectName("uiStyleGroupBox")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.uiStyleGroupBox)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.uiStyleComboBox = QtWidgets.QComboBox(self.uiStyleGroupBox)
+        self.uiStyleComboBox.setObjectName("uiStyleComboBox")
+        self.verticalLayout_4.addWidget(self.uiStyleComboBox)
+        self.verticalLayout_5.addWidget(self.uiStyleGroupBox)
         self.uiConfigurationFileGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
         self.uiConfigurationFileGroupBox.setObjectName("uiConfigurationFileGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiConfigurationFileGroupBox)
@@ -91,9 +107,9 @@ class Ui_GeneralPreferencesPageWidget:
         self.uiConfigurationFileLabel = QtWidgets.QLabel(self.uiConfigurationFileGroupBox)
         self.uiConfigurationFileLabel.setObjectName("uiConfigurationFileLabel")
         self.gridLayout.addWidget(self.uiConfigurationFileLabel, 0, 0, 1, 1)
-        self.gridLayout_6.addWidget(self.uiConfigurationFileGroupBox, 2, 0, 1, 1)
+        self.verticalLayout_5.addWidget(self.uiConfigurationFileGroupBox)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem1, 3, 0, 1, 1)
+        self.verticalLayout_5.addItem(spacerItem1)
         self.uiMiscTabWidget.addTab(self.uiGeneralTab, "")
         self.uiConsoleTab = QtWidgets.QWidget()
         self.uiConsoleTab.setObjectName("uiConsoleTab")
@@ -293,7 +309,6 @@ class Ui_GeneralPreferencesPageWidget:
     def retranslateUi(self, GeneralPreferencesPageWidget):
         _translate = gns3.qt.translate
         GeneralPreferencesPageWidget.setWindowTitle(_translate("GeneralPreferencesPageWidget", "General"))
-        self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style"))
         self.uiLocalPathsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Local paths"))
         self.uiProjectsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My projects:"))
         self.uiProjectsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your GNS3 projects are stored"))
@@ -301,6 +316,10 @@ class Ui_GeneralPreferencesPageWidget:
         self.uiImagesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My binary images:"))
         self.uiImagesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored"))
         self.uiImagesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse..."))
+        self.uiConfigsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My configs:"))
+        self.uiConfigsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored"))
+        self.uiConfigsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse..."))
+        self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style"))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file"))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import"))
         self.uiExportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Export"))
@@ -343,3 +362,4 @@ class Ui_GeneralPreferencesPageWidget:
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.tab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
+

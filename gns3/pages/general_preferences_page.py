@@ -55,6 +55,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         self.uiProjectsPathToolButton.clicked.connect(self._projectsPathSlot)
         self.uiImagesPathToolButton.clicked.connect(self._imagesPathSlot)
+        self.uiConfigsPathToolButton.clicked.connect(self._configsPathSlot)
         self.uiImportConfigurationFilePushButton.clicked.connect(self._importConfigurationFileSlot)
         self.uiExportConfigurationFilePushButton.clicked.connect(self._exportConfigurationFileSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
@@ -90,6 +91,19 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if path:
             self.uiImagesPathLineEdit.setText(path)
             self.uiImagesPathLineEdit.setCursorPosition(0)
+
+    def _configsPathSlot(self):
+        """
+        Slot to select the configs directory path.
+        """
+
+        servers = Servers.instance()
+        local_server = servers.localServerSettings()
+        directory = local_server["configs_path"]
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My configs directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        if path:
+            self.uiConfigsPathLineEdit.setText(path)
+            self.uiConfigsPathLineEdit.setCursorPosition(0)
 
     def _restoreDefaultsSlot(self):
         """
@@ -205,6 +219,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         local_server = Servers.instance().localServerSettings()
         self.uiProjectsPathLineEdit.setText(local_server["projects_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
+        self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
@@ -269,6 +284,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         local_server = Servers.instance().localServerSettings()
         local_server["images_path"] = self.uiImagesPathLineEdit.text()
         local_server["projects_path"] = self.uiProjectsPathLineEdit.text()
+        local_server["configs_path"] = self.uiConfigsPathLineEdit.text()
         local_server["report_errors"] = self.uiCrashReportCheckBox.isChecked()
         servers.setLocalServerSettings(local_server)
 
