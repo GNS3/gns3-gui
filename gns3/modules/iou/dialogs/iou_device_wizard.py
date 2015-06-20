@@ -163,8 +163,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():
-                server = next(iter(Servers.instance()))
-                server = server.url()
+                server = "load-balance"
             else:
                 server = self.uiRemoteServersComboBox.currentText()
         elif self.uiVMRadioButton.isChecked():

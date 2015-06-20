@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QTabWidget" name="uiTabWidget">
+    <widget class="QTabWidget" name="uiLTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -289,7 +289,7 @@
       <zorder>verticalSpacer</zorder>
       <zorder>uiLocalServerAutoStartCheckBox</zorder>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="uiGNS3VMTabWidget">
       <attribute name="title">
        <string>GNS3 VM</string>
       </attribute>
@@ -649,6 +649,59 @@
       <zorder>uiRemoteServersTreeWidget</zorder>
       <zorder></zorder>
      </widget>
+     <widget class="QWidget" name="uiLoadBalancingTabWidget">
+      <attribute name="title">
+       <string>Load Balancing</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="uiMethodGroupBox">
+         <property name="title">
+          <string>Method</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="uiRAMUsageRadioButton">
+            <property name="text">
+             <string>RAM usage</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="uiRoundRobinRadioButton">
+            <property name="text">
+             <string>Round-Robin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="uiRendezVousHashingRadioButton">
+            <property name="text">
+             <string>Rendezvous hashing</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>382</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -678,7 +731,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>uiTabWidget</tabstop>
+  <tabstop>uiLTabWidget</tabstop>
   <tabstop>uiLocalServerAutoStartCheckBox</tabstop>
   <tabstop>uiLocalServerPathLineEdit</tabstop>
   <tabstop>uiLocalServerToolButton</tabstop>

@@ -1407,8 +1407,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if server is None:
                     QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The GNS3 VM is not running")
                     return
-            elif node_data["server"] == "cloud":
-                server = Servers.instance().anyCloudServer()
+            elif node_data["server"] == "load-balance":
+                server = Servers.instance().anyRemoteServer()
+                if server is None:
+                    QtWidgets.QMessageBox.critical(self, "Remote server", "Cannot load balance: no remote server configured")
+                    return
             else:
                 server = Servers.instance().getServerFromString(node_data["server"])
 

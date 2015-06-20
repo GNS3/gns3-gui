@@ -76,7 +76,7 @@ class VMWizard(QtWidgets.QWizard):
         if self.currentPage() == self.uiServerWizardPage:
             if self.uiRemoteRadioButton.isChecked():
                 if not Servers.instance().remoteServers():
-                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered for this type of VM in preferences")
+                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
                 self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
             elif self.uiVMRadioButton.isChecked():

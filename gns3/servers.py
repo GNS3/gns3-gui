@@ -521,6 +521,8 @@ class Servers(QtCore.QObject):
             return self._local_server
         elif server_name == "vm":
             return self._vm_server
+        elif server_name == "load-balance":
+            return self.anyRemoteServer()
 
         if "://" in server_name:
             url_settings = urllib.parse.urlparse(server_name)
@@ -534,6 +536,16 @@ class Servers(QtCore.QObject):
         else:
             (host, port) = server_name.split(":")
             return self.getRemoteServer("http", host, port, None)
+
+    def anyRemoteServer(self):
+        """
+        Returns a remote server for load balancing.
+
+        :returns: remote server (HTTPClient instance)
+        """
+
+        #FIXME: only round-robin method is used for now.
+        return next(iter(self))
 
     def updateRemoteServers(self, servers):
         """

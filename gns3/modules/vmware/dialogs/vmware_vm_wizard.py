@@ -102,7 +102,7 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
                 server = Servers.instance().localServer()
             else:
                 if not Servers.instance().remoteServers():
-                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in VMware preferences")
+                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
                 server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
             self._server = server

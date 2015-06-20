@@ -33,7 +33,7 @@ from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_connection_worker import WaitForConnectionWorker
-from ..settings import LOCAL_SERVER_SETTINGS, GNS3_VM_SETTINGS
+from ..settings import LOCAL_SERVER_SETTINGS, GNS3_VM_SETTINGS, GENERAL_SETTINGS
 
 
 class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
@@ -194,7 +194,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to restore default settings
         """
 
-        self._populateWidgets(LOCAL_SERVER_SETTINGS, GNS3_VM_SETTINGS)
+        self._populateWidgets(GENERAL_SETTINGS, LOCAL_SERVER_SETTINGS, GNS3_VM_SETTINGS)
 
     def _localServerBrowserSlot(self):
         """
@@ -330,13 +330,22 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             del self._remote_servers[item.server_id]
             self.uiRemoteServersTreeWidget.takeTopLevelItem(self.uiRemoteServersTreeWidget.indexOfTopLevelItem(item))
 
-    def _populateWidgets(self, local_server_settings, gns3_vm_settings):
+    def _populateWidgets(self, general_settings, local_server_settings, gns3_vm_settings):
         """
         Populates the widgets with the settings.
 
+        :param general_settings: General settings
         :param local_server_settings: Local server settings
         :param gns3_vm_settings: GNS3 VM settings
         """
+
+        # General settings
+        if general_settings["load_balancing_method"] == "ram_usage":
+            self.uiRAMUsageRadioButton.setChecked(True)
+        elif general_settings["load_balancing_method"] == "round_robin":
+            self.uiRoundRobinRadioButton.setChecked(True)
+        elif general_settings["load_balancing_method"] == "rendezvous_hashing":
+            self.uiRendezVousHashingRadioButton.setChecked(True)
 
         # local server settings
         self.uiLocalServerPathLineEdit.setText(local_server_settings["path"])
@@ -373,13 +382,15 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Loads the server preferences.
         """
 
+        from gns3.main_window import MainWindow
         servers = Servers.instance()
         gns3_vm = GNS3VM.instance()
 
         # load the local server and GNS3 VM preferences
         local_server_settings = servers.localServerSettings()
         gns3_vm_settings = gns3_vm.settings()
-        self._populateWidgets(local_server_settings, gns3_vm_settings)
+        general_settings = MainWindow.instance().settings()
+        self._populateWidgets(general_settings, local_server_settings, gns3_vm_settings)
 
         # load remote server preferences
         self._remote_servers.clear()
@@ -475,6 +486,18 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             new_gns3vm_settings["virtualization"] = "VirtualBox"
         gns3_vm = GNS3VM.instance()
         gns3_vm.setSettings(new_gns3vm_settings)
+
+        # save the General preferences
+        from gns3.main_window import MainWindow
+        main_window = MainWindow.instance()
+        new_general_settings = main_window.settings()
+        if self.uiRAMUsageRadioButton.isChecked():
+            new_general_settings["load_balancing_method"] = "ram_usage"
+        elif self.uiRoundRobinRadioButton.isChecked():
+            new_general_settings["load_balancing_method"] = "round_robin"
+        elif self.uiRendezVousHashingRadioButton.isChecked():
+            new_general_settings["load_balancing_method"] = "rendezvous_hashing"
+        main_window.setSettings(new_general_settings)
 
         # restart the local server if required
         if restart_local_server:

@@ -194,6 +194,7 @@ GENERAL_SETTINGS = {
     "default_local_news": False,
     "hide_news_dock_widget": False,
     "debug_level": 0,
+    "load_balancing_method": "ram_usage",
 }
 
 GRAPHICS_VIEW_SETTINGS = {
