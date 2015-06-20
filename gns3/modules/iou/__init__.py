@@ -56,7 +56,6 @@ class IOU(Module):
     def configChangedSlot(self):
         # load the settings
         self._loadSettings()
-        self._loadIOUDevices()
 
     def _loadSettings(self):
         """
@@ -70,8 +69,7 @@ class IOU(Module):
             if iouyap_path:
                 self._settings["iouyap_path"] = iouyap_path
 
-        # keep the config file sync
-        self._saveSettings()
+        self._loadIOUDevices()
 
     def _saveSettings(self):
         """

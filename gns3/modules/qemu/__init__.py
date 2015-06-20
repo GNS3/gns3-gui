@@ -50,7 +50,6 @@ class Qemu(Module):
     def configChangedSlot(self):
         # load the settings
         self._loadSettings()
-        self._loadQemuVMs()
 
     def _loadSettings(self):
         """
@@ -58,9 +57,7 @@ class Qemu(Module):
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, QEMU_SETTINGS)
-
-        # keep the config file sync
-        self._saveSettings()
+        self._loadQemuVMs()
 
     def _saveSettings(self):
         """

@@ -55,7 +55,6 @@ class VMware(Module):
     def configChangedSlot(self):
         # load the settings
         self._loadSettings()
-        self._loadVMwareVMs()
 
     @staticmethod
     def _findVmrun(self):
@@ -94,8 +93,7 @@ class VMware(Module):
         if not os.path.exists(self._settings["vmrun_path"]):
             self._settings["vmrun_path"] = self._findVmrun(self)
 
-        # keep the config file sync
-        self._saveSettings()
+        self._loadVMwareVMs()
 
     def _saveSettings(self):
         """

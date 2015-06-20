@@ -55,7 +55,6 @@ class VirtualBox(Module):
     def configChangedSlot(self):
         # load the settings
         self._loadSettings()
-        self._loadVirtualBoxVMs()
 
     @staticmethod
     def _findVBoxManage(self):
@@ -91,8 +90,7 @@ class VirtualBox(Module):
         if not os.path.exists(self._settings["vboxmanage_path"]):
             self._settings["vboxmanage_path"] = self._findVBoxManage(self)
 
-        # keep the config file sync
-        self._saveSettings()
+        self._loadVirtualBoxVMs()
 
     def _saveSettings(self):
         """

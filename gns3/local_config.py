@@ -109,6 +109,12 @@ class LocalConfig(QtCore.QObject):
                 self._settings.update(config)
         except (ValueError, OSError) as e:
             log.error("Could not read the config file {}: {}".format(self._config_file, e))
+
+        # Update already loaded section
+        for section in self._settings.keys():
+            if isinstance(self._settings[section], dict):
+                self.loadSectionSettings(section, self._settings[section])
+
         return dict()
 
     def _writeConfig(self):
@@ -149,8 +155,8 @@ class LocalConfig(QtCore.QObject):
         :returns: path to the config file.
         """
 
-        self._readConfig(self._config_file)
         self._config_file = config_file
+        self._readConfig(self._config_file)
 
     def settings(self):
         """
@@ -208,6 +214,7 @@ class LocalConfig(QtCore.QObject):
 
         if section not in self._settings:
             self._settings[section] = {}
+
         if self._settings[section] != settings:
             self._settings[section].update(settings)
             log.info("Section %s has changed. Saving configuration", section)

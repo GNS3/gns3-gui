@@ -80,7 +80,6 @@ class Dynamips(Module):
     def configChangedSlot(self):
         # load the settings and IOS images.
         self._loadSettings()
-        self._loadIOSRouters()
 
     @staticmethod
     def _findDynamips():
@@ -110,8 +109,7 @@ class Dynamips(Module):
         if not os.path.exists(self._settings["dynamips_path"]):
             self._settings["dynamips_path"] = self._findDynamips()
 
-        # keep the config file sync
-        self._saveSettings()
+        self._loadIOSRouters()
 
     def _saveSettings(self):
         """
