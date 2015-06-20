@@ -62,7 +62,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
-        self._default_configs_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
+        self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
 
     def _idlePCValidateSlot(self):
         """

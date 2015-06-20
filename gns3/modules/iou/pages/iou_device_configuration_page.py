@@ -21,7 +21,7 @@ Configuration page for IOU devices.
 
 import os
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.servers import Servers
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.utils.get_resource import get_resource
@@ -49,7 +49,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # location of the base config templates
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
         self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
-        self._default_configs_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
+        self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
 
     def _useDefaultValuesSlot(self, state):
         """

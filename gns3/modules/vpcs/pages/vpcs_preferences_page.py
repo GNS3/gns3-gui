@@ -23,7 +23,8 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
+from gns3.servers import Servers
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -46,7 +47,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
-        self._default_configs_dir = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "base_configs")
+        self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
 
     def _vpcsPathBrowserSlot(self):
         """
