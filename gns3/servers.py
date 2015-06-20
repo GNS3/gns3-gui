@@ -320,7 +320,7 @@ class Servers(QtCore.QObject):
                     pass
                 except OSError as e:
                     log.warn("could not delete server log file {}: {}".format(logpath, e))
-            command += " --log={}".format(logpath)
+            command += ' --log="{}"'.format(logpath)
 
         log.info("Starting local server process with {}".format(command))
         try:
