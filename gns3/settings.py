@@ -192,9 +192,12 @@ GENERAL_SETTINGS = {
     "bring_console_to_front": True,
     "delay_console_all": 500,
     "default_local_news": False,
-    "hide_news_dock_widget": False,
+    "hide_getting_started_dialog": True,
     "debug_level": 0,
     "load_balancing_method": "ram_usage",
+    "recent_files": [],
+    "geometry": "",
+    "state": ""
 }
 
 GRAPHICS_VIEW_SETTINGS = {

@@ -90,13 +90,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         MainWindow._instance = self
-
         self._settings = {}
         HTTPClient.setProgressCallback(Progress().instance())
 
         self._project = None
         self._createTemporaryProject()
-
         self._project_from_cmdline = project
         self._cloud_settings = {}
         self._loadSettings()
@@ -106,6 +104,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._recent_file_actions = []
         self._start_time = time.time()
         self.loading_cloud_project = False
+        local_config = LocalConfig.instance()
+        local_config.config_changed_signal.connect(self._localConfigChangedSlot)
 
         self._uiNewsDockWidget = None
         if not checkLicence():
@@ -117,12 +117,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 pass
 
         # restore the geometry and state of the main window.
-        local_config = LocalConfig.instance()
-        local_config.config_changed_signal.connect(self._localConfigChangedSlot)
-        gui_settings = local_config.loadSectionSettings("GUI", {"geometry": "",
-                                                                "state": ""})
-        self.restoreGeometry(QtCore.QByteArray().fromBase64(gui_settings["geometry"]))
-        self.restoreState(QtCore.QByteArray().fromBase64(gui_settings["state"]))
+        self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"]))
+        self.restoreState(QtCore.QByteArray().fromBase64(self._settings["state"]))
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
@@ -894,7 +890,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # QtWebKit which is used by GettingStartedDialog is not installed
             # by default on FreeBSD, Solaris and possibly other systems.
             from .dialogs.getting_started_dialog import GettingStartedDialog
-        except ImportError:
+        except ImportError as e:
+            print(e)
             return
 
         dialog = GettingStartedDialog(self)
@@ -961,6 +958,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when the local config change
         """
+
         self.uiNodesView.refresh()
 
     def _browseRoutersActionSlot(self):
@@ -1073,9 +1071,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         GNS3VM.instance().shutdown()
 
-        local_config = LocalConfig.instance()
-        local_config.saveSectionSettings("GUI", {"geometry": bytes(self.saveGeometry().toBase64()).decode(),
-                                                 "state": bytes(self.saveState().toBase64()).decode()})
+        self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
+        self._settings["state"] = bytes(self.saveState().toBase64()).decode()
+        self.setSettings(self._settings)
 
         servers = Servers.instance()
         servers.stopLocalServer(wait=True)
@@ -1456,15 +1454,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         recent_files = []
-        # read the recent file list
-        local_config = LocalConfig.instance()
-        settings = local_config.settings()
-        if "RecentFiles" in settings:
-            for file_path in settings["RecentFiles"]:
-                if file_path:
-                    file_path = os.path.normpath(file_path)
-                    if file_path not in recent_files and os.path.exists(file_path):
-                        recent_files.append(file_path)
+        for file_path in self._settings["recent_files"]:
+            if file_path:
+                file_path = os.path.normpath(file_path)
+                if file_path not in recent_files and os.path.exists(file_path):
+                    recent_files.append(file_path)
 
         # update the recent file list
         if path in recent_files:
@@ -1474,27 +1468,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             recent_files.pop()
 
         # write the recent file list
-        settings["RecentFiles"] = recent_files
-        local_config.setSettings(settings)
+        self._settings["recent_files"] = recent_files
+        self.setSettings(self._settings)
 
     def _updateRecentFileActions(self):
         """
         Updates recent file actions.
         """
 
-        local_config = LocalConfig.instance()
-        settings = local_config.settings()
-        size = 0
-        if "RecentFiles" in settings:
-            index = 0
-            size = len(settings["RecentFiles"])
-            for file_path in settings["RecentFiles"]:
-                if file_path and os.path.exists(file_path):
-                    action = self._recent_file_actions[index]
-                    action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
-                    action.setData(file_path)
-                    action.setVisible(True)
-                    index += 1
+        index = 0
+        size = len(self._settings["recent_files"])
+        for file_path in self._settings["recent_files"]:
+            if file_path and os.path.exists(file_path):
+                action = self._recent_file_actions[index]
+                action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                action.setData(file_path)
+                action.setVisible(True)
+                index += 1
 
         for index in range(size + 1, self._max_recent_files):
             self._recent_file_actions[index].setVisible(False)

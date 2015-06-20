@@ -68,8 +68,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def __init__(self, parent):
 
-        # Our parent is the central widget which parent
-        # is the main window.
+        # Our parent is the central widget which parent is the main window.
         self._main_window = parent.parent()
 
         super().__init__(parent)

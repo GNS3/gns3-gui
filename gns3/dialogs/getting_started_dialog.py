@@ -34,15 +34,14 @@ class GettingStartedDialog(QtWidgets.QDialog, Ui_GettingStartedDialog):
 
         super().__init__(parent)
         self.setupUi(self)
-
         self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
         self.uiWebView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
         self.adjustSize()
         self.uiWebView.page().setLinkDelegationPolicy(QtWebKitWidgets.QWebPage.DelegateAllLinks)
         self.uiWebView.linkClicked.connect(self._urlClickedSlot)
         self._local_config = LocalConfig.instance()
-        gui_settings = self._local_config.loadSectionSettings("GUI", {"hide_getting_started_dialog": False})
-        self.uiCheckBox.setChecked(gui_settings["hide_getting_started_dialog"])
+        settings = parent.settings()
+        self.uiCheckBox.setChecked(settings["hide_getting_started_dialog"])
         getting_started = get_resource(os.path.join("static", "getting_started.html"))
         if getting_started and not (sys.platform.startswith("win") and not sys.maxsize > 2 ** 32):
             # do not show the page on Windows 32-bit (crash when no Internet connection)
@@ -67,7 +66,9 @@ class GettingStartedDialog(QtWidgets.QDialog, Ui_GettingStartedDialog):
         :param result: ignored
         """
 
-        self._local_config.saveSectionSettings("GUI", {"hide_getting_started_dialog": self.uiCheckBox.isChecked()})
+        settings = self.parentWidget().settings()
+        settings["hide_getting_started_dialog"] = self.uiCheckBox.isChecked()
+        self.parentWidget().setSettings(settings)
         super().done(result)
 
     def _urlClickedSlot(self, url):
