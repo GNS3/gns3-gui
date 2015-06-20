@@ -354,7 +354,7 @@ class Servers(QtCore.QObject):
         if logging.getLogger().isEnabledFor(logging.DEBUG):
             command += " --debug"
 
-        settings_dir = os.path.dirname(QtCore.QSettings().fileName())
+        settings_dir = os.path.normpath(os.path.dirname(QtCore.QSettings().fileName()))
         if os.path.isdir(settings_dir):
             # save server logging info to a file in the settings directory
             logpath = os.path.join(settings_dir, "gns3_server.log")

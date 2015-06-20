@@ -197,7 +197,7 @@ def main():
     app.setApplicationVersion(__version__)
 
     # save client logging info to a file
-    logfile = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "gns3_gui.log")
+    logfile = os.path.normpath(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "gns3_gui.log"))
 
     # on debug enable logging to stdout
     if options.debug:
@@ -206,7 +206,7 @@ def main():
         root_logger = init_logger(logging.INFO, logfile)
 
     # update the exception file path to have it in the same directory as the settings file.
-    exception_file_path = os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path)
+    exception_file_path = os.path.normpath(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path))
 
     # Manage Ctrl + C or kill command
     def sigint_handler(*args):
