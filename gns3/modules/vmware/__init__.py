@@ -134,9 +134,6 @@ class VMware(Module):
                 vm_settings.update(vm)
                 self._vmware_vms[key] = vm_settings
 
-        # keep things sync
-        self._saveVMwareVMs()
-
     def _saveVMwareVMs(self):
         """
         Saves the VMware VMs to the client settings file.

@@ -151,9 +151,6 @@ class Dynamips(Module):
                 router_settings.update(router)
                 self._ios_routers[key] = router_settings
 
-        # keep things sync
-        self._saveIOSRouters()
-
     def _saveIOSRouters(self):
         """
         Saves the IOS routers to the persistent settings file.

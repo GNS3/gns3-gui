@@ -128,9 +128,6 @@ class VirtualBox(Module):
                 vm_settings.update(vm)
                 self._virtualbox_vms[key] = vm_settings
 
-        # keep things sync
-        self._saveVirtualBoxVMs()
-
     def _saveVirtualBoxVMs(self):
         """
         Saves the VirtualBox VMs to the client settings file.

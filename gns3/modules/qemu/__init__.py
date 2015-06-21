@@ -84,9 +84,6 @@ class Qemu(Module):
                 vm_settings.update(vm)
                 self._qemu_vms[key] = vm_settings
 
-        # keep things sync
-        self._saveQemuVMs()
-
     def _saveQemuVMs(self):
         """
         Saves the QEMU VMs to the persistent settings file.

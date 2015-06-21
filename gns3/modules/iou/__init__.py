@@ -108,9 +108,6 @@ class IOU(Module):
                     device_settings["startup_config"] = device_settings["initial_config"]
                 self._iou_devices[key] = device_settings
 
-        # keep things sync
-        self._saveIOUDevices()
-
     def _saveIOUDevices(self):
         """
         Saves the IOU devices to the persistent settings file.
