@@ -33,10 +33,9 @@ import subprocess
 from .qt import QtCore, QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
 from .local_config import LocalConfig
-from .settings import LOCAL_SERVER_SETTINGS
+from .settings import SERVERS_SETTINGS
 from .local_server_config import LocalServerConfig
 from .progress import Progress
-from .gns3_vm import GNS3VM
 from collections import OrderedDict
 
 import logging
@@ -55,6 +54,7 @@ class Servers(QtCore.QObject):
     def __init__(self):
 
         super().__init__()
+        self._settings = {}
         self._local_server = None
         self._vm_server = None
         self._remote_servers = {}
@@ -65,20 +65,20 @@ class Servers(QtCore.QObject):
         self._local_server_proccess = None
         self._network_manager = QtNetwork.QNetworkAccessManager()
         self._network_manager.sslErrors.connect(self._handleSslErrors)
-        self._local_server_settings = {}
         self._remote_server_iter_pos = 0
         self._loadSettings()
-        self._initLocalServer()
+        self.registerLocalServer()
 
-    def _initLocalServer(self):
+    def registerLocalServer(self):
         """
-        Create a new local server
+        Register a new local server.
         """
 
-        host = self._local_server_settings["host"]
-        port = self._local_server_settings["port"]
-        user = self._local_server_settings["user"]
-        password = self._local_server_settings["password"]
+        local_server_settings = self._settings["local_server"]
+        host = local_server_settings["host"]
+        port = local_server_settings["port"]
+        user = local_server_settings["user"]
+        password = local_server_settings["password"]
         self._local_server = getNetworkClientInstance({"host": host, "port": port, "user": user, "password": password},
                                                       self._network_manager)
         self._local_server.setLocal(True)
@@ -159,69 +159,80 @@ class Servers(QtCore.QObject):
         Loads the server settings from the persistent settings file.
         """
 
-        local_config = LocalConfig.instance()
-        self._local_server_settings = local_config.loadSectionSettings("LocalServer", LOCAL_SERVER_SETTINGS)
-        if not os.path.exists(self._local_server_settings["path"]):
-            self._local_server_settings["path"] = self._findLocalServer(self)
+        self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
+        local_server_settings = self._settings["local_server"]
+        if not os.path.exists(local_server_settings["path"]):
+            local_server_settings["path"] = self._findLocalServer(self)
 
-        if not os.path.exists(self._local_server_settings["ubridge_path"]):
-            self._local_server_settings["ubridge_path"] = self._findUbridge(self)
+        if not os.path.exists(local_server_settings["ubridge_path"]):
+            local_server_settings["ubridge_path"] = self._findUbridge(self)
 
-        if "user" not in self._local_server_settings:
-            self._local_server_settings["user"] = self._passwordGenerate()
-            self._local_server_settings["password"] = self._passwordGenerate()
+        if "user" not in local_server_settings:
+            local_server_settings["user"] = self._passwordGenerate()
+            local_server_settings["password"] = self._passwordGenerate()
 
-        settings = local_config.settings()
-        if "RemoteServers" in settings:
-            for remote_server in settings["RemoteServers"]:
-                self._addRemoteServer(remote_server.get("protocol", "http"),
-                                      remote_server["host"],
-                                      remote_server["port"],
-                                      user=remote_server.get("user", None),
-                                      ssh_key=remote_server.get("ssh_key", None),
-                                      ssh_port=remote_server.get("ssh_port", None),
-                                      accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
-
-        # keep the config file sync
-        self._saveSettings()
-        return settings
+        for remote_server in self._settings["remote_servers"]:
+            self._addRemoteServer(remote_server.get("protocol", "http"),
+                                  remote_server["host"],
+                                  remote_server["port"],
+                                  user=remote_server.get("user", None),
+                                  ssh_key=remote_server.get("ssh_key", None),
+                                  ssh_port=remote_server.get("ssh_port", None),
+                                  accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
 
     def _saveSettings(self):
         """
         Saves the server settings to a persistent settings file.
         """
 
-        # save the settings
-        LocalConfig.instance().saveSectionSettings("LocalServer", self._local_server_settings)
-
         # save the remote servers
-        remote_servers = []
         for server in self._remote_servers.values():
-            remote_servers.append(server.settings())
-        LocalConfig.instance().setSettings({"RemoteServers": remote_servers})
+            self._settings["remote_servers"].append(server.settings())
+
+        # save the settings
+        LocalConfig.instance().saveSectionSettings("Servers", self._settings)
 
         # save some settings to the local server config files
+        local_server_settings = self._settings["local_server"]
         server_settings = OrderedDict([
-            ("host", self._local_server_settings["host"]),
-            ("port", self._local_server_settings["port"]),
-            ("ubridge_path", self._local_server_settings["ubridge_path"]),
-            ("auth", self._local_server_settings.get("auth", False)),
-            ("user", self._local_server_settings.get("user", "")),
-            ("password", self._local_server_settings.get("password", "")),
-            ("images_path", self._local_server_settings["images_path"]),
-            ("projects_path", self._local_server_settings["projects_path"]),
-            ("configs_path", self._local_server_settings["configs_path"]),
-            ("console_start_port_range", self._local_server_settings["console_start_port_range"]),
-            ("console_end_port_range", self._local_server_settings["console_end_port_range"]),
-            ("udp_start_port_range", self._local_server_settings["udp_start_port_range"]),
-            ("udp_start_end_range", self._local_server_settings["udp_end_port_range"]),
-            ("report_errors", self._local_server_settings["report_errors"]),
+            ("host", local_server_settings["host"]),
+            ("port", local_server_settings["port"]),
+            ("ubridge_path", local_server_settings["ubridge_path"]),
+            ("auth", local_server_settings.get("auth", False)),
+            ("user", local_server_settings.get("user", "")),
+            ("password", local_server_settings.get("password", "")),
+            ("images_path", local_server_settings["images_path"]),
+            ("projects_path", local_server_settings["projects_path"]),
+            ("configs_path", local_server_settings["configs_path"]),
+            ("console_start_port_range", local_server_settings["console_start_port_range"]),
+            ("console_end_port_range", local_server_settings["console_end_port_range"]),
+            ("udp_start_port_range", local_server_settings["udp_start_port_range"]),
+            ("udp_start_end_range", local_server_settings["udp_end_port_range"]),
+            ("report_errors", local_server_settings["report_errors"]),
         ])
         config = LocalServerConfig.instance()
         config.saveSettings("Server", server_settings)
 
         if self._local_server and self._local_server.connected():
             self._local_server.post("/config/reload", None)
+
+    def settings(self):
+        """
+        Returns the servers settings.
+
+        :returns: settings dictionary
+        """
+
+        return self._settings
+
+    def setSettings(self, settings):
+        """
+        Set the servers settings.
+
+        :param settings: settings dictionary
+        """
+
+        self._settings.update(settings)
 
     def localServerSettings(self):
         """
@@ -230,7 +241,7 @@ class Servers(QtCore.QObject):
         :returns: local server settings (dict)
         """
 
-        return self._local_server_settings
+        return self._settings["local_server"]
 
     def setLocalServerSettings(self, settings):
         """
@@ -239,12 +250,27 @@ class Servers(QtCore.QObject):
         :param settings: local server settings (dict)
         """
 
-        init_local_server = False
-        if settings["host"] != self._local_server_settings["host"] or settings["port"] != self._local_server_settings["port"]:
-            init_local_server = True
-        self._local_server_settings.update(settings)
-        if init_local_server:
-            self._initLocalServer()
+        local_server_settings = self._settings["local_server"]
+        local_server_settings.update(settings)
+
+    def vmSettings(self):
+        """
+        Returns the GNS3 VM settings.
+
+        :returns: GNS3 VM settings (dict)
+        """
+
+        return self._settings["vm"]
+
+    def setVMsettings(self, settings):
+        """
+        Set new GNS3 VM settings.
+
+        :param settings: GNS3 VM settings (dict)
+        """
+
+        vm_settings = self._settings["vm"]
+        vm_settings.update(settings)
 
     def localServerAutoStart(self):
         """
@@ -254,7 +280,7 @@ class Servers(QtCore.QObject):
         :returns: boolean
         """
 
-        return self._local_server_settings["auto_start"]
+        return self._settings["local_server"]["auto_start"]
 
     def localServerPath(self):
         """
@@ -263,7 +289,7 @@ class Servers(QtCore.QObject):
         :returns: path to local server program.
         """
 
-        return self._local_server_settings["path"]
+        return self._settings["local_server"]["path"]
 
     def initLocalServer(self):
         """
@@ -347,7 +373,7 @@ class Servers(QtCore.QObject):
                                                                               host=host,
                                                                               port=port)
 
-        if self._local_server_settings["allow_console_from_anywhere"]:
+        if self._settings["local_server"]["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses
             command += " --allow"
 
@@ -450,8 +476,8 @@ class Servers(QtCore.QObject):
         """
 
         # TODO: handle authentication and/or SSH?
-        gns3_vm = GNS3VM.instance()
-        server_info = {"host": gns3_vm.server_host(), "port": gns3_vm.server_port(), "protocol": "http"}
+        gns3_vm_settings = self._settings["vm"]
+        server_info = {"host": gns3_vm_settings["server_host"], "port": gns3_vm_settings["server_port"], "protocol": "http"}
         server = getNetworkClientInstance(server_info, self._network_manager)
         server.setLocal(False)
         server.setGNS3VM(True)

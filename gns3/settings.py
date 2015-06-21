@@ -192,9 +192,8 @@ GENERAL_SETTINGS = {
     "bring_console_to_front": True,
     "delay_console_all": 500,
     "default_local_news": False,
-    "hide_getting_started_dialog": True,
+    "hide_getting_started_dialog": False,
     "debug_level": 0,
-    "load_balancing_method": "ram_usage",
     "recent_files": [],
     "geometry": "",
     "state": ""
@@ -209,41 +208,44 @@ GRAPHICS_VIEW_SETTINGS = {
     "default_label_color": "#000000",
 }
 
-LOCAL_SERVER_SETTINGS = {
-    "path": "",
-    "ubridge_path": "",
-    "host": DEFAULT_LOCAL_SERVER_HOST,
-    "port": DEFAULT_LOCAL_SERVER_PORT,
-    "images_path": DEFAULT_IMAGES_PATH,
-    "projects_path": DEFAULT_PROJECTS_PATH,
-    "configs_path": DEFAULT_CONFIGS_PATH,
-    "report_errors": True,
-    "auto_start": True,
-    "allow_console_from_anywhere": False,
-    "auth": True,
-    "user": "",
-    "password": "",
-    "console_start_port_range": 2001,
-    "console_end_port_range": 5000,
-    "udp_start_port_range": 10000,
-    "udp_end_port_range": 20000,
+SERVERS_SETTINGS = {
+    "local_server": {
+        "path": "",
+        "ubridge_path": "",
+        "host": DEFAULT_LOCAL_SERVER_HOST,
+        "port": DEFAULT_LOCAL_SERVER_PORT,
+        "images_path": DEFAULT_IMAGES_PATH,
+        "projects_path": DEFAULT_PROJECTS_PATH,
+        "configs_path": DEFAULT_CONFIGS_PATH,
+        "report_errors": True,
+        "auto_start": True,
+        "allow_console_from_anywhere": False,
+        "auth": True,
+        "user": "",
+        "password": "",
+        "console_start_port_range": 2001,
+        "console_end_port_range": 5000,
+        "udp_start_port_range": 10000,
+        "udp_end_port_range": 20000,
+    },
+    "vm": {
+        "auto_start": False,
+        "auto_stop": True,
+        "headless": True,
+        "vmname": "GNS3 VM",
+        "vmx_path": "",
+        "server_host": "",
+        "server_port": 8000,
+        "virtualization": "VMware"
+    },
+    "load_balancing_method": "ram_usage",
+    "remote_servers": [],
 }
 
 PACKET_CAPTURE_SETTINGS = {
     "packet_capture_reader_command": DEFAULT_PACKET_CAPTURE_READER_COMMAND,
     "command_auto_start": True,
     "packet_capture_analyzer_command": DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND,
-}
-
-GNS3_VM_SETTINGS = {
-    "auto_start": False,
-    "auto_stop": True,
-    "headless": True,
-    "vmname": "GNS3 VM",
-    "vmx_path": "",
-    "server_host": "",
-    "server_port": 8000,
-    "virtualization": "VMware"
 }
 
 ENABLE_CLOUD = False

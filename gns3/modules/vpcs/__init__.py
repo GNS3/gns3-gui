@@ -99,9 +99,6 @@ class VPCS(Module):
         if not os.path.exists(self._settings["vpcs_path"]):
             self._settings["vpcs_path"] = self._findVPCS(self)
 
-        # keep the config file sync
-        self._saveSettings()
-
     def _saveSettings(self):
         """
         Saves the settings to the persistent settings file.

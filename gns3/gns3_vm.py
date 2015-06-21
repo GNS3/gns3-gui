@@ -21,8 +21,7 @@ Manages the GNS3 VM.
 
 import subprocess
 
-from .settings import GNS3_VM_SETTINGS
-from .local_config import LocalConfig
+from .servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
@@ -36,28 +35,7 @@ class GNS3VM:
 
     def __init__(self):
 
-        self._settings = {}
-        self._loadSettings()
         self._is_running = False
-
-    def _loadSettings(self):
-        """
-        Loads the server settings from the persistent settings file.
-        """
-
-        local_config = LocalConfig.instance()
-        self._settings = local_config.loadSectionSettings("GNS3VM", GNS3_VM_SETTINGS)
-
-        # keep the config file sync
-        self._saveSettings()
-
-    def _saveSettings(self):
-        """
-        Saves the server settings to a persistent settings file.
-        """
-
-        # save the settings
-        LocalConfig.instance().saveSectionSettings("GNS3VM", self._settings)
 
     def settings(self):
         """
@@ -66,7 +44,7 @@ class GNS3VM:
         :returns: GNS3 VM settings (dict)
         """
 
-        return self._settings
+        return Servers.instance().vmSettings()
 
     def setSettings(self, settings):
         """
@@ -75,8 +53,7 @@ class GNS3VM:
         :param settings: GNS3 VM settings (dict)
         """
 
-        self._settings.update(settings)
-        self._saveSettings()
+        Servers.instance().setVMsettings(settings)
 
     @staticmethod
     def execute_vmrun(subcommand, args):
@@ -110,25 +87,8 @@ class GNS3VM:
         :returns: boolean
         """
 
-        return self._settings["auto_start"]
-
-    def server_host(self):
-        """
-        Returns the IP address or hostname of server running in the GNS3 VM.
-
-        :returns: boolean
-        """
-
-        return self._settings["server_host"]
-
-    def server_port(self):
-        """
-        Returns the port of server running in the GNS3 VM.
-
-        :returns: boolean
-        """
-
-        return self._settings["server_port"]
+        vm_settings = Servers.instance().vmSettings()
+        return vm_settings["auto_start"]
 
     def setRunning(self, value):
         """
@@ -153,12 +113,13 @@ class GNS3VM:
         Gracefully shutdowns the GNS3 VM.
         """
 
-        if self._is_running and self._settings["auto_stop"]:
+        vm_settings = self.settings()
+        if self._is_running and vm_settings["auto_stop"]:
             try:
-                if self._settings["virtualization"] == "VMware":
-                    self.execute_vmrun("stop", [self._settings["vmx_path"], "soft"])
-                elif self._settings["virtualization"] == "VirtualBox":
-                    self.execute_vboxmanage("controlvm", [self._settings["vmname"], "acpipowerbutton"])
+                if vm_settings["virtualization"] == "VMware":
+                    self.execute_vmrun("stop", [vm_settings["vmx_path"], "soft"])
+                elif vm_settings["virtualization"] == "VirtualBox":
+                    self.execute_vboxmanage("controlvm", [vm_settings["vmname"], "acpipowerbutton"])
             except (OSError, subprocess.SubprocessError):
                 pass
 

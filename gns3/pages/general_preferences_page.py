@@ -279,36 +279,32 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         """
         Saves the general preferences.
         """
-        servers = Servers.instance()
 
-        local_server = Servers.instance().localServerSettings()
-        local_server["images_path"] = self.uiImagesPathLineEdit.text()
-        local_server["projects_path"] = self.uiProjectsPathLineEdit.text()
-        local_server["configs_path"] = self.uiConfigsPathLineEdit.text()
-        local_server["report_errors"] = self.uiCrashReportCheckBox.isChecked()
-        servers.setLocalServerSettings(local_server)
+        new_local_server_settings = {"images_path": self.uiImagesPathLineEdit.text(),
+                                     "projects_path": self.uiProjectsPathLineEdit.text(),
+                                     "configs_path": self.uiConfigsPathLineEdit.text(),
+                                     "report_errors": self.uiCrashReportCheckBox.isChecked()}
+        Servers.instance().setLocalServerSettings(new_local_server_settings)
 
-        new_settings = {}
-        new_settings["auto_launch_project_dialog"] = self.uiLaunchNewProjectDialogCheckBox.isChecked()
-        new_settings["auto_screenshot"] = self.uiAutoScreenshotCheckBox.isChecked()
-        new_settings["style"] = self.uiStyleComboBox.currentText()
-        new_settings["check_for_update"] = self.uiCheckForUpdateCheckBox.isChecked()
-        new_settings["link_manual_mode"] = self.uiLinkManualModeCheckBox.isChecked()
-        new_settings["slow_device_start_all"] = self.uiSlowStartAllSpinBox.value()
-        new_settings["telnet_console_command"] = self.uiTelnetConsoleCommandLineEdit.text()
-        new_settings["serial_console_command"] = self.uiSerialConsoleCommandLineEdit.text()
-        new_settings["auto_close_console"] = self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked()
-        new_settings["bring_console_to_front"] = self.uiBringConsoleWindowToFrontCheckBox.isChecked()
-        new_settings["delay_console_all"] = self.uiDelayConsoleAllSpinBox.value()
+        new_general_settings = {"auto_launch_project_dialog": self.uiLaunchNewProjectDialogCheckBox.isChecked(),
+                                "auto_screenshot": self.uiAutoScreenshotCheckBox.isChecked(),
+                                "style": self.uiStyleComboBox.currentText(),
+                                "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
+                                "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
+                                "slow_device_start_all": self.uiSlowStartAllSpinBox.value(),
+                                "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
+                                "serial_console_command": self.uiSerialConsoleCommandLineEdit.text(),
+                                "auto_close_console": self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked(),
+                                "bring_console_to_front": self.uiBringConsoleWindowToFrontCheckBox.isChecked(),
+                                "delay_console_all": self.uiDelayConsoleAllSpinBox.value()}
 
         from ..main_window import MainWindow
-        MainWindow.instance().setSettings(new_settings)
+        MainWindow.instance().setSettings(new_general_settings)
 
-        new_settings = {}
-        new_settings["scene_width"] = self.uiSceneWidthSpinBox.value()
-        new_settings["scene_height"] = self.uiSceneHeightSpinBox.value()
-        new_settings["draw_rectangle_selected_item"] = self.uiRectangleSelectedItemCheckBox.isChecked()
-        new_settings["draw_link_status_points"] = self.uiDrawLinkStatusPointsCheckBox.isChecked()
-        new_settings["default_label_font"] = self.uiDefaultLabelStylePlainTextEdit.font().toString()
-        new_settings["default_label_color"] = self._default_label_color.name()
-        MainWindow.instance().uiGraphicsView.setSettings(new_settings)
+        new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
+                                      "scene_height": self.uiSceneHeightSpinBox.value(),
+                                      "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
+                                      "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
+                                      "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
+                                      "default_label_color": self._default_label_color.name()}
+        MainWindow.instance().uiGraphicsView.setSettings(new_graphics_view_settings)
