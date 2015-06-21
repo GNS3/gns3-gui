@@ -23,10 +23,11 @@ import sys
 import os
 import shutil
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
+from gns3.gns3_vm import GNS3VM
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -178,6 +179,8 @@ class Dynamips(Module):
         """
 
         if node in self._nodes:
+            if "ram" in node.settings():
+                node.server().decreaseAllocatedRAM(node.settings()["ram"])
             self._nodes.remove(node)
 
     def iosRouters(self):
@@ -217,28 +220,6 @@ class Dynamips(Module):
 
         self._settings.update(settings)
         self._saveSettings()
-
-    def allocateServer(self, node_class):
-        """
-        Allocates a server.
-
-        :param node_class: Node object
-
-        :returns: allocated server (HTTPClient instance)
-        """
-
-        # allocate a server for the node
-        servers = Servers.instance()
-
-        if self._settings["use_local_server"]:
-            # use the local server
-            server = servers.localServer()
-        else:
-            # pick up a remote server (round-robin method)
-            server = next(iter(servers))
-            if not server:
-                raise ModuleError("No remote server is configured")
-        return server
 
     def createNode(self, node_class, server, project):
         """
@@ -423,10 +404,13 @@ class Dynamips(Module):
 
         server = "local"
         if not self._settings["use_local_server"]:
-            # pick up a remote server (round-robin method) #FIXME: review this
-            remote_server = next(iter(Servers.instance()))
-            if remote_server:
-                server = remote_server.url()
+            if GNS3VM.instance().isRunning():
+                server = "vm"
+            else:
+                # pick up a remote server (round-robin method) #FIXME: review this
+                remote_server = next(iter(Servers.instance()))
+                if remote_server:
+                    server = remote_server.url()
 
         nodes = []
         for node_class in [EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
@@ -444,6 +428,7 @@ class Dynamips(Module):
             nodes.append(
                 {"class": node_class.__name__,
                  "name": ios_router["name"],
+                 "ram": ios_router["ram"],
                  "server": ios_router["server"],
                  "default_symbol": ios_router["default_symbol"],
                  "hover_symbol": ios_router["hover_symbol"],

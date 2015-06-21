@@ -136,6 +136,8 @@ class IOU(Module):
         """
 
         if node in self._nodes:
+            if "ram" in node.settings():
+                node.server().decreaseAllocatedRAM(node.settings()["ram"])
             self._nodes.remove(node)
 
     def iouDevices(self):
@@ -349,6 +351,7 @@ class IOU(Module):
             nodes.append(
                 {"class": IOUDevice.__name__,
                  "name": iou_device["name"],
+                 "ram": iou_device["ram"],
                  "server": iou_device["server"],
                  "default_symbol": iou_device["default_symbol"],
                  "hover_symbol": iou_device["hover_symbol"],

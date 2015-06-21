@@ -244,6 +244,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServerProtocolComboBox.setCurrentIndex(self.uiRemoteServerProtocolComboBox.findText(protocol))
         self.uiRemoteServerPortLineEdit.setText(settings["host"])
         self.uiRemoteServerPortSpinBox.setValue(port)
+        self.uiRAMLimitSpinBox.setValue(settings["ram_limit"])
         self.uiRemoteServerUserLineEdit.setText(settings["user"])
         self.uiRemoteServerSSHKeyLineEdit.setText(settings.get("ssh_key", None))
         self.uiRemoteServerSSHPortSpinBox.setValue(settings.get("ssh_port", 22))
@@ -267,6 +268,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         protocol = self.uiRemoteServerProtocolComboBox.currentText().lower()
         host = self.uiRemoteServerPortLineEdit.text().strip()
         port = self.uiRemoteServerPortSpinBox.value()
+        ram_limit = self.uiRAMLimitSpinBox.value()
         user = self.uiRemoteServerUserLineEdit.text().strip()
         ssh_port = self.uiRemoteServerSSHPortSpinBox.value()
         ssh_key = self.uiRemoteServerSSHKeyLineEdit.text().strip()
@@ -295,6 +297,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         settings = {"protocol": protocol,
                     "host": host,
                     "port": port,
+                    "ram_limit": ram_limit,
                     "user": user,
                     "ssh_port": ssh_port,
                     "ssh_key": ssh_key}
@@ -306,7 +309,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         item.setText(2, str(port))
         item.setText(3, user)
         item.settings = settings
-        item.server_id = uuid.uuid4()  #  Create a temporay unique server id
+        item.server_id = uuid.uuid4()  # Create a temporary unique server id
 
         # keep track of this remote server
         self._remote_servers[item.server_id] = settings

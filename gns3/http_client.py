@@ -72,6 +72,8 @@ class HTTPClient(QtCore.QObject):
         self._local = True
         self._cloud = False
         self._gns3_vm = False
+        self._ram_limit = settings.get("ram_limit", 0)
+        self._allocated_ram = 0
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", False)
 
         self._network_manager = network_manager
@@ -107,6 +109,7 @@ class HTTPClient(QtCore.QObject):
         Return a dictionnary with server settings
         """
         settings = {"protocol": self.protocol(),
+                    "ram_limit": self.RAMLimit(),
                     "host": self.host(),
                     "port": self.port(),
                     "user": self.user()}
@@ -645,6 +648,46 @@ class HTTPClient(QtCore.QObject):
         # response.deleteLater()
         if status == 400:
             raise HttpBadRequest(body)
+
+    def RAMLimit(self):
+        """
+        Returns the RAM limit for this server (used for RAM usage load balancing).
+
+        :returns: RAM limit (integer)
+        """
+
+        return self._ram_limit
+
+    def allocatedRAM(self):
+        """
+        Amount of allocated RAM on this server (used for RAM usage load balancing).
+
+        :returns: allocated RAM (integer)
+        """
+
+        return self._allocated_ram
+
+    def increaseAllocatedRAM(self, ram):
+        """
+        Increase the amount of allocated RAM on this server (used for RAM usage load balancing).
+
+        :param ram: amount of RAM (integer)
+        """
+
+        log.info("RAM usage on {} has increased by {} MB (total load is now {} MB)".format(self.url(), ram, self._allocated_ram + ram))
+        self._allocated_ram += ram
+
+    def decreaseAllocatedRAM(self, ram):
+        """
+        Decrease the amount of allocated RAM on this server (used for RAM usage load balancing).
+
+        :param ram: amount of RAM (integer)
+        """
+
+        log.info("RAM usage on {} has decreased by {} MB (total load is now {} MB)".format(self.url(), ram, self._allocated_ram - ram))
+        self._allocated_ram -= ram
+        if self._allocated_ram < 0:
+            self._allocated_ram = 0
 
     def dump(self):
         """

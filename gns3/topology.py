@@ -648,12 +648,6 @@ class Topology:
                         QtWidgets.QMessageBox.critical(main_window, "GNS3 VM", "The GNS3 VM is not running")
                         return
                     self._servers[topology_server["id"]] = gns3_vm_server
-                elif "load-balance" in topology_server and topology_server["load-balance"]:
-                    remote_server = server_manager.anyRemoteServer()
-                    if remote_server is None:
-                        QtWidgets.QMessageBox.critical(main_window, "Remote server", "Cannot load balance: no remote server configured")
-                        return
-                    self._servers[topology_server["id"]] = remote_server
                 else:
                     protocol = topology_server.get("protocol", "http")
                     host = topology_server["host"]

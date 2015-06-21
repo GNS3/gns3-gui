@@ -29,7 +29,6 @@ from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from gns3.qt import QtCore, QtWidgets
 from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
-from gns3.main_window import MainWindow
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.image_manager import ImageManager
 

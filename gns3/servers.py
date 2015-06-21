@@ -42,18 +42,14 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Servers(QtCore.QObject):
+class Servers():
 
     """
     Server management class.
     """
 
-    # to let other pages know about remote server updates
-    updated_signal = QtCore.Signal()
-
     def __init__(self):
 
-        super().__init__()
         self._settings = {}
         self._local_server = None
         self._vm_server = None
@@ -175,6 +171,7 @@ class Servers(QtCore.QObject):
             self._addRemoteServer(remote_server.get("protocol", "http"),
                                   remote_server["host"],
                                   remote_server["port"],
+                                  ram_limit=remote_server.get("ram_limit", 0),
                                   user=remote_server.get("user", None),
                                   ssh_key=remote_server.get("ssh_key", None),
                                   ssh_port=remote_server.get("ssh_port", None),
@@ -186,6 +183,7 @@ class Servers(QtCore.QObject):
         """
 
         # save the remote servers
+        self._settings["remote_servers"] = []
         for server in self._remote_servers.values():
             self._settings["remote_servers"].append(server.settings())
 
@@ -493,13 +491,14 @@ class Servers(QtCore.QObject):
 
         return self._vm_server
 
-    def _addRemoteServer(self, protocol, host, port, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False):
+    def _addRemoteServer(self, protocol, host, port, ram_limit=0, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False):
         """
         Adds a new remote server.
 
         :param protocol: Server protocol
         :param host: host or address of the server
         :param port: port of the server (integer)
+        :param ram_limit: maximum RAM to be used (integer)
         :param user: user login or None
         :param ssh_port: ssh port or None
         :param ssh_key: ssh key
@@ -508,7 +507,13 @@ class Servers(QtCore.QObject):
         :returns: the new remote server
         """
 
-        server = {"host": host, "protocol": protocol, "user": user, "port": port, "ssh_port": ssh_port, "ssh_key": ssh_key}
+        server = {"host": host,
+                  "port": port,
+                  "ram_limit": ram_limit,
+                  "protocol": protocol,
+                  "user": user,
+                  "ssh_port": ssh_port,
+                  "ssh_key": ssh_key}
         if accept_insecure_certificate:
             server["accept_insecure_certificate"] = accept_insecure_certificate
         server = getNetworkClientInstance(server, self._network_manager)
@@ -563,15 +568,25 @@ class Servers(QtCore.QObject):
             (host, port) = server_name.split(":")
             return self.getRemoteServer("http", host, port, None)
 
-    def anyRemoteServer(self):
+    def anyRemoteServer(self, ram=0):
         """
         Returns a remote server for load balancing.
+
+        :param ram: RAM amount to be allocated by the node
 
         :returns: remote server (HTTPClient instance)
         """
 
-        #FIXME: only round-robin method is used for now.
-        return next(iter(self))
+        if self._settings["load_balancing_method"] == "ram_usage":
+            for server in self._remote_servers.values():
+                if not server.RAMLimit():
+                    return server
+                if (server.allocatedRAM() + ram) <= server.RAMLimit():
+                    server.increaseAllocatedRAM(ram)
+                    return server
+        elif self._settings["load_balancing_method"] == "round_robin":
+            return next(iter(self))
+        return next(iter(self))  # default is Round-Robin
 
     def updateRemoteServers(self, servers):
         """
@@ -595,8 +610,6 @@ class Servers(QtCore.QObject):
             new_server.setLocal(False)
             self._remote_servers[server_id] = new_server
             log.info("New remote server connection {} registered".format(new_server.url()))
-
-        self.updated_signal.emit()
 
     def remoteServers(self):
         """

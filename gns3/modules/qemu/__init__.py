@@ -131,6 +131,8 @@ class Qemu(Module):
         """
 
         if node in self._nodes:
+            if "ram" in node.settings():
+                node.server().decreaseAllocatedRAM(node.settings()["ram"])
             self._nodes.remove(node)
 
     def settings(self):
@@ -272,6 +274,7 @@ class Qemu(Module):
             nodes.append(
                 {"class": QemuVM.__name__,
                  "name": qemu_vm["name"],
+                 "ram": qemu_vm["ram"],
                  "server": qemu_vm["server"],
                  "default_symbol": qemu_vm["default_symbol"],
                  "hover_symbol": qemu_vm["hover_symbol"],
