@@ -201,19 +201,16 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["default_symbol"] = ":/symbols/iosv_virl.normal.svg"
-            settings["hover_symbol"] = ":/symbols/iosv_virl.selected.svg"
             settings["category"] = Node.routers
         elif self.uiTypeComboBox.currentText() == "IOSv-L2":
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["default_symbol"] = ":/symbols/iosv_l2_virl.normal.svg"
-            settings["hover_symbol"] = ":/symbols/iosv_l2_virl.selected.svg"
             settings["category"] = Node.switches
         elif self.uiTypeComboBox.currentText() == "IOS-XRv":
             settings["adapters"] = 16
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["default_symbol"] = ":/symbols/router.normal.svg"
-            settings["hover_symbol"] = ":/symbols/router.selected.svg"
             settings["category"] = Node.routers
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
@@ -225,7 +222,6 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
                 settings["cpu_throttling"] = 80  # limit to 80% CPU usage
             settings["process_priority"] = "low"
             settings["default_symbol"] = ":/symbols/asa.normal.svg"
-            settings["hover_symbol"] = ":/symbols/asa.selected.svg"
             settings["category"] = Node.security_devices
         elif self.uiTypeComboBox.currentText() == "IDS":
             settings["adapters"] = 3
@@ -233,7 +229,6 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
             settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text()
             settings["options"] = "-smbios type=1,product=IDS-4215"
             settings["default_symbol"] = ":/symbols/ids.normal.svg"
-            settings["hover_symbol"] = ":/symbols/ids.selected.svg"
             settings["category"] = Node.security_devices
         else:
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()

@@ -329,8 +329,7 @@ class VPCS(Module):
                  "name": node_class.symbolName(),
                  "server": server,
                  "categories": node_class.categories(),
-                 "default_symbol": self._settings["default_symbol"],
-                 "hover_symbol": self._settings["hover_symbol"]}
+                 "default_symbol": self._settings["default_symbol"]}
             )
             if ENABLE_CLOUD:
                 nodes.append(
@@ -338,8 +337,7 @@ class VPCS(Module):
                      "name": node_class.symbolName() + " (cloud)",
                      "server": "cloud",
                      "categories": node_class.categories(),
-                     "default_symbol": self._settings["default_symbol"],
-                     "hover_symbol": self._settings["hover_symbol"]}
+                     "default_symbol": self._settings["default_symbol"]}
                 )
         return nodes
 

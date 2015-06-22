@@ -351,7 +351,6 @@ class IOU(Module):
                  "ram": iou_device["ram"],
                  "server": iou_device["server"],
                  "default_symbol": iou_device["default_symbol"],
-                 "hover_symbol": iou_device["hover_symbol"],
                  "categories": [iou_device["category"]]
                  }
             )

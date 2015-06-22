@@ -416,8 +416,7 @@ class Dynamips(Module):
                  "name": node_class.symbolName(),
                  "server": server,
                  "categories": node_class.categories(),
-                 "default_symbol": node_class.defaultSymbol(),
-                 "hover_symbol": node_class.hoverSymbol()}
+                 "default_symbol": node_class.defaultSymbol()}
             )
 
         for ios_router in self._ios_routers.values():
@@ -428,7 +427,6 @@ class Dynamips(Module):
                  "ram": ios_router["ram"],
                  "server": ios_router["server"],
                  "default_symbol": ios_router["default_symbol"],
-                 "hover_symbol": ios_router["hover_symbol"],
                  "categories": [ios_router["category"]]}
             )
 

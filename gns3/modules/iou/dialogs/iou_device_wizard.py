@@ -144,7 +144,6 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             if default_base_config:
                 startup_config = default_base_config
             default_symbol = ":/symbols/multilayer_switch.normal.svg"
-            hover_symbol = ":/symbols/multilayer_switch.selected.svg"
             category = Node.switches
             ethernet_adapters = 4
             serial_adapters = 0
@@ -154,7 +153,6 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             if default_base_config:
                 startup_config = default_base_config
             default_symbol = ":/symbols/router.normal.svg"
-            hover_symbol = ":/symbols/router.selected.svg"
             category = Node.routers
             ethernet_adapters = 2
             serial_adapters = 2
@@ -178,7 +176,6 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             "serial_adapters": serial_adapters,
             "default_symbol": default_symbol,
             "category": category,
-            "hover_symbol": hover_symbol,
             "server": server,
         }
 

@@ -274,7 +274,6 @@ class Qemu(Module):
                  "ram": qemu_vm["ram"],
                  "server": qemu_vm["server"],
                  "default_symbol": qemu_vm["default_symbol"],
-                 "hover_symbol": qemu_vm["hover_symbol"],
                  "categories": [qemu_vm["category"]]
                  }
             )

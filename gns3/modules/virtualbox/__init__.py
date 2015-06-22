@@ -305,7 +305,6 @@ class VirtualBox(Module):
                  "name": vbox_vm["vmname"],
                  "server": vbox_vm["server"],
                  "default_symbol": vbox_vm["default_symbol"],
-                 "hover_symbol": vbox_vm["hover_symbol"],
                  "categories": [vbox_vm["category"]]}
             )
         return nodes

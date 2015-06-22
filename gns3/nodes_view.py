@@ -76,6 +76,7 @@ class NodesView(QtWidgets.QTreeWidget):
                 if svg_renderer.isValid():
                     svg_renderer.render(QtGui.QPainter(image))
                 else:
+                    #FIXME: Cannot read file '...', because: Encountered incorrectly encoded content. (line 1)
                     image.load(node["default_symbol"])
                     if image.isNull():
                         continue

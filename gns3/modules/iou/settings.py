@@ -38,7 +38,6 @@ IOU_DEVICE_SETTINGS = {
     "name": "",
     "path": "",
     "default_symbol": ":/symbols/multilayer_switch.normal.svg",
-    "hover_symbol": ":/symbols/multilayer_switch.selected.svg",
     "category": Node.routers,
     "image": "",
     "startup_config": "",

@@ -309,7 +309,6 @@ class VMware(Module):
                  "name": vmware_vm["name"],
                  "server": vmware_vm["server"],
                  "default_symbol": vmware_vm["default_symbol"],
-                 "hover_symbol": vmware_vm["hover_symbol"],
                  "categories": [vmware_vm["category"]]}
             )
         return nodes

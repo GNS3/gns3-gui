@@ -483,7 +483,6 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
         if self.uiEtherSwitchCheckBox.isChecked():
             settings["startup_config"] = get_default_base_config(self._base_etherswitch_startup_config_template)
             settings["default_symbol"] = ":/symbols/multilayer_switch.normal.svg"
-            settings["hover_symbol"] = ":/symbols/multilayer_switch.selected.svg"
             settings["disk0"] = 1  # adds 1MB disk to store vlan.dat
             settings["category"] = Node.switches
         else:

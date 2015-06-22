@@ -204,8 +204,7 @@ class Builtin(Module):
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
                  "categories": node_class.categories(),
-                 "default_symbol": node_class.defaultSymbol(),
-                 "hover_symbol": node_class.hoverSymbol()}
+                 "default_symbol": node_class.defaultSymbol()}
             )
         return nodes
 

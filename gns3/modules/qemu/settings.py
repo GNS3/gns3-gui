@@ -28,7 +28,6 @@ QEMU_SETTINGS = {
 QEMU_VM_SETTINGS = {
     "name": "",
     "default_symbol": ":/symbols/qemu_guest.normal.svg",
-    "hover_symbol": ":/symbols/qemu_guest.selected.svg",
     "category": Node.end_devices,
     "qemu_path": "",
     "hda_disk_image": "",

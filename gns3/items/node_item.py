@@ -32,8 +32,6 @@ class NodeItem():
     Node for the scene.
 
     :param node: Node instance
-    :param default_symbol: Default symbol for the node representation on the scene
-    :param hover_symbol: Hover symbol when the node is hovered on the scene
     """
 
     show_layer = False

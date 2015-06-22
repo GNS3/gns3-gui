@@ -30,7 +30,6 @@ VBOX_SETTINGS = {
 VBOX_VM_SETTINGS = {
     "vmname": "",
     "default_symbol": ":/symbols/vbox_guest.normal.svg",
-    "hover_symbol": ":/symbols/vbox_guest.selected.svg",
     "category": Node.end_devices,
     "adapters": 1,
     "ram": 0,
