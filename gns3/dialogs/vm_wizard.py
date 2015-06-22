@@ -37,6 +37,8 @@ class VMWizard(QtWidgets.QWizard):
 
         self._server = Servers.instance().localServer()
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
+        self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
+        self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
         self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
 
         # The list of images combo box (Qemu support multiple images)
@@ -44,6 +46,18 @@ class VMWizard(QtWidgets.QWizard):
 
         # The list of button opening file browser for images
         self._images_browser_buttons = set()
+
+    def _vmToggledSlot(self, checked):
+        """
+        Slot for when the VM radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+        if checked:
+            self.uiRemoteServersGroupBox.setEnabled(False)
+            self.uiRemoteServersGroupBox.hide()
+            for button in self._images_browser_buttons:
+                button.hide()
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -54,10 +68,19 @@ class VMWizard(QtWidgets.QWizard):
 
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(True)
+            self.uiRemoteServersGroupBox.show()
             for button in self._images_browser_buttons:
                 button.hide()
-        else:
+
+    def _localToggledSlot(self, checked):
+        """
+        Slot for when the local server radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+        if checked:
             self.uiRemoteServersGroupBox.setEnabled(False)
+            self.uiRemoteServersGroupBox.hide()
             for button in self._images_browser_buttons:
                 button.show()
 
