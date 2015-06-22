@@ -6,27 +6,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-debug = True
-
-if logging.getLogger().getEffectiveLevel() < 20:
-    enable_debug = True
-
-if debug:
-    enable_debug = True
-
-if enable_debug:
-    log_format = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-    log_level = logging.DEBUG
-    log.setLevel(log_level)
-
-    log_console = logging.StreamHandler()
-    log_console.setFormatter(log_format)
-    log_console.setLevel(log_level)
-    log.addHandler(log_console)
-    log.debug("DEBUG IS ENABLED")
-
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True

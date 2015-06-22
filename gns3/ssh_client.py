@@ -76,6 +76,7 @@ class SSHClient(HTTPClient):
         self._ssh_key = settings["ssh_key"]
         self._endpoints = {}
         assert settings["ssh_port"] is not None
+        assert settings["ssh_key"] is not None
         super().__init__(settings, network_manager)
 
     def connect(self, query, callback):

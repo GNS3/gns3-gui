@@ -541,7 +541,7 @@ class Servers():
             if server.url() == url:
                 return server
 
-        return self._addRemoteServer(protocol, host, port, user)
+        return self._addRemoteServer(protocol, host, port, user=user, **settings)
 
     def getServerFromString(self, server_name):
         """

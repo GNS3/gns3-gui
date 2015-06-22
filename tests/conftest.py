@@ -95,6 +95,14 @@ def remote_server():
     return Servers.instance().getRemoteServer("http", "127.0.0.1", 8001, None)
 
 
+@pytest.fixture(scope="session")
+def ssh_server():
+
+    from gns3.servers import Servers
+
+    return Servers.instance().getRemoteServer("ssh", "127.0.0.1", 8001, "gns3", settings={"ssh_port": 22, "ssh_key": "/tmp/key.ssh"})
+
+
 @pytest.fixture
 def vpcs_device(local_server, project):
 

@@ -194,6 +194,10 @@
                 "host": { "$ref": "#/definitions/mandatory_string" },
                 "id": { "$ref": "#/definitions/numeric_id" },
                 "local": { "type": "boolean" },
+                "ram_limit": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "port": { "$ref": "#/definitions/network_port" },
                 "user": {
                     "type": ["string", "null"]
@@ -213,9 +217,14 @@
             "properties": {
                 "protocol": { "enum": ["ssh"] },
                 "cloud": { "type": "boolean" },
+                "vm": { "type": "boolean" },                
                 "host": { "$ref": "#/definitions/mandatory_string" },
                 "id": { "$ref": "#/definitions/numeric_id" },
                 "local": { "type": "boolean" },
+                "ram_limit": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "port": { "$ref": "#/definitions/network_port" },
                 "ssh_key": { "$ref": "#/definitions/mandatory_string" },
                 "ssh_port": { "$ref": "#/definitions/network_port" },
@@ -223,7 +232,6 @@
             },
             "required": [
                 "protocol",
-                "cloud",
                 "host",
                 "id",
                 "local",
