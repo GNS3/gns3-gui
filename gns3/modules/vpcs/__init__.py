@@ -328,7 +328,7 @@ class VPCS(Module):
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
                  "server": server,
-                 "categories": node_class.categories(),
+                 "categories": [self._settings["category"]],
                  "symbol": self._settings["symbol"]}
             )
             if ENABLE_CLOUD:

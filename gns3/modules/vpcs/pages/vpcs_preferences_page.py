@@ -23,8 +23,10 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -43,11 +45,28 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
         self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
 
     def _vpcsPathBrowserSlot(self):
         """
@@ -110,9 +129,13 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         :param settings: VPCS settings
         """
 
+        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
+        self.uiSymbolLineEdit.setText(settings["symbol"])
+        index = self.uiCategoryComboBox.findData(settings["category"])
+        if index != -1:
+            self.uiCategoryComboBox.setCurrentIndex(index)
 
     def loadPreferences(self):
         """
@@ -127,8 +150,16 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         Saves VPCS preferences.
         """
 
-        new_settings = {}
-        new_settings["vpcs_path"] = self.uiVPCSPathLineEdit.text()
-        new_settings["base_script_file"] = self.uiScriptFileEdit.text()
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
+        new_settings = {"vpcs_path": self.uiVPCSPathLineEdit.text(),
+                        "base_script_file": self.uiScriptFileEdit.text(),
+                        "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
+                        "category": self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())}
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        pixmap = QtGui.QPixmap(symbol_path)
+        if pixmap.isNull():
+            QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+        else:
+            new_settings["symbol"] = symbol_path
+
         VPCS.instance().setSettings(new_settings)

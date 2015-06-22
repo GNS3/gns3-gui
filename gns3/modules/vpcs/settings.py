@@ -19,9 +19,12 @@
 Default VPCS settings.
 """
 
+from gns3.node import Node
+
 VPCS_SETTINGS = {
     "vpcs_path": "",
     "use_local_server": True,
     "base_script_file": "",
     "symbol": ":/symbols/vpcs_guest.svg",
+    "category": Node.end_devices,
 }

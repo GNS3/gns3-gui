@@ -2,20 +2,18 @@
 
 # Form implementation generated from reading ui file 'vpcs_preferences_page.ui'
 #
-# Created: Wed May  6 14:31:59 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Mon Jun 22 17:45:21 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_VPCSPreferencesPageWidget:
-
+class Ui_VPCSPreferencesPageWidget(object):
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")
-        VPCSPreferencesPageWidget.resize(450, 200)
+        VPCSPreferencesPageWidget.resize(469, 392)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VPCSPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VPCSPreferencesPageWidget)
@@ -52,11 +50,8 @@ class Ui_VPCSPreferencesPageWidget:
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.uiVPCSTabWidget = QtWidgets.QWidget()
         self.uiVPCSTabWidget.setObjectName("uiVPCSTabWidget")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiVPCSTabWidget)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.uiScriptFileLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
-        self.uiScriptFileLabel.setObjectName("uiScriptFileLabel")
-        self.verticalLayout_3.addWidget(self.uiScriptFileLabel)
+        self.gridLayout = QtWidgets.QGridLayout(self.uiVPCSTabWidget)
+        self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.uiScriptFileEdit = QtWidgets.QLineEdit(self.uiVPCSTabWidget)
@@ -71,9 +66,31 @@ class Ui_VPCSPreferencesPageWidget:
         self.uiScriptFileToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiScriptFileToolButton.setObjectName("uiScriptFileToolButton")
         self.horizontalLayout_6.addWidget(self.uiScriptFileToolButton)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_6)
+        self.gridLayout.addLayout(self.horizontalLayout_6, 0, 1, 1, 1)
+        self.uiSymbolLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
+        self.uiSymbolLabel.setObjectName("uiSymbolLabel")
+        self.gridLayout.addWidget(self.uiSymbolLabel, 3, 0, 1, 1)
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.uiVPCSTabWidget)
+        self.uiSymbolLineEdit.setObjectName("uiSymbolLineEdit")
+        self.horizontalLayout_7.addWidget(self.uiSymbolLineEdit)
+        self.uiSymbolToolButton = QtWidgets.QToolButton(self.uiVPCSTabWidget)
+        self.uiSymbolToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiSymbolToolButton.setObjectName("uiSymbolToolButton")
+        self.horizontalLayout_7.addWidget(self.uiSymbolToolButton)
+        self.gridLayout.addLayout(self.horizontalLayout_7, 3, 1, 1, 1)
+        self.uiCategoryLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
+        self.uiCategoryLabel.setObjectName("uiCategoryLabel")
+        self.gridLayout.addWidget(self.uiCategoryLabel, 4, 0, 1, 1)
+        self.uiCategoryComboBox = QtWidgets.QComboBox(self.uiVPCSTabWidget)
+        self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
+        self.gridLayout.addWidget(self.uiCategoryComboBox, 4, 1, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(20, 387, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem1)
+        self.gridLayout.addItem(spacerItem1, 5, 0, 1, 2)
+        self.uiScriptFileLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
+        self.uiScriptFileLabel.setObjectName("uiScriptFileLabel")
+        self.gridLayout.addWidget(self.uiScriptFileLabel, 0, 0, 1, 1)
         self.uiTabWidget.addTab(self.uiVPCSTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -93,10 +110,14 @@ class Ui_VPCSPreferencesPageWidget:
         _translate = gns3.qt.translate
         VPCSPreferencesPageWidget.setWindowTitle(_translate("VPCSPreferencesPageWidget", "VPCS"))
         self.uiUseLocalServercheckBox.setText(_translate("VPCSPreferencesPageWidget", "Use the local server"))
-        self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS:"))
+        self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS executable:"))
         self.uiVPCSPathToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "General settings"))
-        self.uiScriptFileLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS base script file:"))
         self.uiScriptFileToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse..."))
+        self.uiSymbolLabel.setText(_translate("VPCSPreferencesPageWidget", "Symbol:"))
+        self.uiSymbolToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse..."))
+        self.uiCategoryLabel.setText(_translate("VPCSPreferencesPageWidget", "Category:"))
+        self.uiScriptFileLabel.setText(_translate("VPCSPreferencesPageWidget", "Base script file:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiVPCSTabWidget), _translate("VPCSPreferencesPageWidget", "VPCS VM settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults"))
+

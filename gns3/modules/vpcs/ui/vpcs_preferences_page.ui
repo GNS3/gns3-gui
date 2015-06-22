@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>200</height>
+    <width>469</width>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
        <item>
         <widget class="QLabel" name="uiVPCSPathLabel">
          <property name="text">
-          <string>Path to VPCS:</string>
+          <string>Path to VPCS executable:</string>
          </property>
         </widget>
        </item>
@@ -87,15 +87,8 @@
       <attribute name="title">
        <string>VPCS VM settings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="uiScriptFileLabel">
-         <property name="text">
-          <string>Path to VPCS base script file:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QLineEdit" name="uiScriptFileEdit">
@@ -119,7 +112,41 @@
          </item>
         </layout>
        </item>
-       <item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiSymbolToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
+         <property name="text">
+          <string>Category:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="5" column="0" colspan="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -131,6 +158,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiScriptFileLabel">
+         <property name="text">
+          <string>Base script file:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
