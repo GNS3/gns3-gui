@@ -623,7 +623,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to reset the zoom.
         """
 
-        self.uiGraphicsView.resetMatrix()
+        self.uiGraphicsView.resetTransform()
 
     def _fitInViewActionSlot(self):
         """
