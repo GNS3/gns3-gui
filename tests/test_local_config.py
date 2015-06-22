@@ -18,8 +18,6 @@
 import pytest
 import json
 
-from gns3.local_config import LocalConfig
-
 
 @pytest.fixture
 def config_file(tmpdir):
@@ -37,26 +35,45 @@ def config_file(tmpdir):
     return str(tmpdir / "test.cfg")
 
 
-def test_readConfig(config_file):
-    config = LocalConfig()
-    config._settings = {}
-    config.setConfigFilePath(config_file)
-    assert config.configFilePath() == config_file
+def test_loadSectionSettingsEmptyFile(local_config):
 
-    section = config.loadSectionSettings("VirtualBox", {
+    assert local_config.loadSectionSettings("Test", {}) == {}
+    assert local_config.loadSectionSettings("Test2", {"a": "b"}) == {"a": "b"}
+    assert local_config.loadSectionSettings("Test3", {"a": {"b": 1}}) == {"a": {"b": 1}}
+
+
+def test_loadSectionSettingsPartialConfig(local_config):
+
+    local_config._settings = {
+        "Test": {"a": "b"},
+        "Test2": {"a": "c"},
+        "Test3": {"a": {"b": 1}},
+        "Servers": {"local_server": {"user": "root"}}
+    }
+
+    assert local_config.loadSectionSettings("Test", {}) == {}
+    assert local_config.loadSectionSettings("Test2", {"a": "b"}) == {"a": "c"}
+    assert local_config.loadSectionSettings("Test3", {"a": {"b": 1}}) == {"a": {"b": 1}}
+    assert local_config.loadSectionSettings("Servers", {"local_server": {"user": "", "password": ""}}) == {"local_server": {"user": "root", "password": ""}}
+
+
+def test_readConfig(config_file, local_config):
+    local_config.setConfigFilePath(config_file)
+    assert local_config.configFilePath() == config_file
+
+    section = local_config.loadSectionSettings("VirtualBox", {
         "use_local_server": False
     })
     assert section["use_local_server"] == True
     assert "invalid_key" not in section
 
 
-def test_readConfigReload(config_file, tmpdir):
-    config = LocalConfig()
-    config._settings = {}
-    config.setConfigFilePath(config_file)
-    assert config.configFilePath() == config_file
+def test_readConfigReload(config_file, tmpdir, local_config):
 
-    section = config.loadSectionSettings("VirtualBox", {
+    local_config.setConfigFilePath(config_file)
+    assert local_config.configFilePath() == config_file
+
+    section = local_config.loadSectionSettings("VirtualBox", {
         "use_local_server": False
     })
 
@@ -70,5 +87,5 @@ def test_readConfigReload(config_file, tmpdir):
             "type": "settings",
             "version": "1.4.0.dev1"}))
 
-    config._readConfig(config_file)
-    assert config._settings["VirtualBox"]["use_local_server"] == False
+    local_config._readConfig(config_file)
+    assert local_config._settings["VirtualBox"]["use_local_server"] == False

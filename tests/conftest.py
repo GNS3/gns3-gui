@@ -164,6 +164,13 @@ def qemu_vm(local_server, project):
     vm.setInitialized(True)
     return vm
 
+@pytest.fixture
+def local_config():
+    from gns3.local_config import LocalConfig
+    LocalConfig._instance = None
+    config = LocalConfig.instance()
+    config._settings = {}
+    return config
 
 @pytest.fixture
 def main_window():

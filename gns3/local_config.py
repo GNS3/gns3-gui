@@ -189,15 +189,25 @@ class LocalConfig(QtCore.QObject):
 
         settings = self.settings().get(section, dict())
 
-        # do not load settings that we don't need
-        for name in settings.copy().keys():
-            if name not in default_settings:
-                del settings[name]
+        def _copySettings(local, default):
+            """
+            Copy only existing settings, ignore the other.
+            Add default values if require.
+            """
+            # do not load settings that we don't need
+            for name in local.copy().keys():
+                if name not in default:
+                    del local[name]
 
-        # use default values for missing settings
-        for name, value in default_settings.items():
-            if name not in settings:
-                settings[name] = value
+            # use default values for missing settings
+            for name, value in default.items():
+                if name not in local:
+                    local[name] = value
+                elif isinstance(value, dict):
+                    local[name] = _copySettings(local[name], default[name])
+            return local
+
+        settings = _copySettings(settings, default_settings)
 
         if section not in self._settings:
             self._settings[section] = {}
@@ -230,6 +240,6 @@ class LocalConfig(QtCore.QObject):
         :returns: instance of LocalConfig
         """
 
-        if not hasattr(LocalConfig, "_instance"):
+        if not hasattr(LocalConfig, "_instance") or LocalConfig._instance is None:
             LocalConfig._instance = LocalConfig()
         return LocalConfig._instance

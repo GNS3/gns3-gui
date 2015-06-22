@@ -156,6 +156,7 @@ class Servers():
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
+
         local_server_settings = self._settings["local_server"]
         if not os.path.exists(local_server_settings["path"]):
             local_server_settings["path"] = self._findLocalServer(self)
@@ -163,7 +164,7 @@ class Servers():
         if not os.path.exists(local_server_settings["ubridge_path"]):
             local_server_settings["ubridge_path"] = self._findUbridge(self)
 
-        if "user" not in local_server_settings:
+        if "user" not in local_server_settings or len(local_server_settings["user"]) == 0:
             local_server_settings["user"] = self._passwordGenerate()
             local_server_settings["password"] = self._passwordGenerate()
 

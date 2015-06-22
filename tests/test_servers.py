@@ -15,8 +15,40 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+import pytest
 
 from gns3.servers import Servers
+
+
+def test_loadSettings_EmptySettings(local_config):
+
+    Servers._instance = None
+    servers = Servers.instance()
+
+    assert servers.localServerSettings()["port"] == 8000
+    assert len(servers.localServerSettings()["password"]) == 64
+    assert len(servers.localServerSettings()["user"]) == 64
+
+
+def test_loadSettings(tmpdir, local_config):
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        json.dump({
+            "Servers": {
+                "local_server": {
+                    "auth": True,
+                    "user": "world",
+                    "password": "hello"
+                }
+            },
+            "version": "1.4"
+        }, f)
+
+    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
+    Servers._instance = None
+    servers = Servers.instance()
+
+    assert servers.localServerSettings()["password"] == "hello"
 
 
 def test_getRemoteServer():
