@@ -101,7 +101,7 @@ class EthernetHub(Device):
             ports = new_settings["ports"]
             for port_number in ports:
                 if port_number not in ports_to_create:
-                    ports_to_create.append(port_number)
+                    ports_to_create.append(str(port_number))
 
             for port in self._ports.copy():
                 if port.isFree():
