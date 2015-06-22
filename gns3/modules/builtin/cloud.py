@@ -432,17 +432,7 @@ This is a pseudo-device for external connections
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/cloud.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when the cloud is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/cloud.selected.svg"
+        return ":/symbols/cloud.svg"
 
     @staticmethod
     def symbolName():

@@ -349,17 +349,7 @@ class ATMSwitch(Device):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/atm_switch.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/atm_switch.selected.svg"
+        return ":/symbols/atm_switch.svg"
 
     @staticmethod
     def symbolName():

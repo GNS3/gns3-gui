@@ -143,12 +143,15 @@ class Dynamips(Module):
             for router in settings[self.__class__.__name__]["routers"]:
                 name = router.get("name")
                 server = router.get("server")
-                router["image"] = router.get("path", router["image"])  # for compatibility before version 1.3
+                router["image"] = router.get("path", router["image"])  # for backward compatibility before version 1.3
                 key = "{server}:{name}".format(server=server, name=name)
                 if key in self._ios_routers or not name or not server:
                     continue
                 router_settings = IOS_ROUTER_SETTINGS.copy()
                 router_settings.update(router)
+                # for backward compatibility before version 1.4
+                router_settings["symbol"] = router_settings.get("default_symbol", router_settings["symbol"])
+                router_settings["symbol"] = router_settings["symbol"][:-11] + ".svg" if router_settings["symbol"].endswith("normal.svg") else router_settings["symbol"]
                 self._ios_routers[key] = router_settings
 
     def _saveIOSRouters(self):
@@ -416,7 +419,7 @@ class Dynamips(Module):
                  "name": node_class.symbolName(),
                  "server": server,
                  "categories": node_class.categories(),
-                 "default_symbol": node_class.defaultSymbol()}
+                 "symbol": node_class.defaultSymbol()}
             )
 
         for ios_router in self._ios_routers.values():
@@ -426,7 +429,7 @@ class Dynamips(Module):
                  "name": ios_router["name"],
                  "ram": ios_router["ram"],
                  "server": ios_router["server"],
-                 "default_symbol": ios_router["default_symbol"],
+                 "symbol": ios_router["symbol"],
                  "categories": [ios_router["category"]]}
             )
 

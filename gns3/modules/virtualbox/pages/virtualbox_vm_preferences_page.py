@@ -117,7 +117,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, self._virtualbox_vms[key]["vmname"])
-            item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiVirtualBoxVMsTreeWidget.setCurrentItem(item)
@@ -135,7 +135,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(vbox_vm["default_symbol"]))
+                item.setIcon(0, QtGui.QIcon(vbox_vm["symbol"]))
                 if vbox_vm["vmname"] != item.text(0):
                     new_key = "{server}:{vmname}".format(server=vbox_vm["server"], name=vbox_vm["vmname"])
                     if new_key in self._virtualbox_vms:
@@ -172,7 +172,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         for key, vbox_vm in self._virtualbox_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["vmname"])
-            item.setIcon(0, QtGui.QIcon(vbox_vm["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(vbox_vm["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

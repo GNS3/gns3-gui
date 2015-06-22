@@ -126,6 +126,9 @@ class VirtualBox(Module):
                     continue
                 vm_settings = VBOX_VM_SETTINGS.copy()
                 vm_settings.update(vm)
+                # for backward compatibility before version 1.4
+                vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
+                vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
                 self._virtualbox_vms[key] = vm_settings
 
     def _saveVirtualBoxVMs(self):
@@ -304,7 +307,7 @@ class VirtualBox(Module):
                 {"class": VirtualBoxVM.__name__,
                  "name": vbox_vm["vmname"],
                  "server": vbox_vm["server"],
-                 "default_symbol": vbox_vm["default_symbol"],
+                 "symbol": vbox_vm["symbol"],
                  "categories": [vbox_vm["category"]]}
             )
         return nodes

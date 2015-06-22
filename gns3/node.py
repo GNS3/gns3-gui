@@ -440,17 +440,6 @@ class Node(QtCore.QObject):
         raise NotImplementedError()
 
     @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when the node is hovered.
-        Must be overloaded.
-
-        :returns: symbol path (or resource).
-        """
-
-        raise NotImplementedError()
-
-    @staticmethod
     def symbolName():
         """
         Returns the symbol name (for the nodes view).

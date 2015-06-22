@@ -161,7 +161,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, self._qemu_vms[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._qemu_vms[key]["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(self._qemu_vms[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
@@ -183,7 +183,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(qemu_vm["default_symbol"]))
+                item.setIcon(0, QtGui.QIcon(qemu_vm["symbol"]))
                 if qemu_vm["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
                     if new_key in self._qemu_vms:
@@ -224,7 +224,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         for key, qemu_vm in self._qemu_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, qemu_vm["name"])
-            item.setIcon(0, QtGui.QIcon(qemu_vm["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(qemu_vm["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

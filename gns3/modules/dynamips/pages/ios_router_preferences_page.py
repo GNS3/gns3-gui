@@ -147,7 +147,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             self._ios_routers[key].update(ios_settings)
             item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, self._ios_routers[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOSRoutersTreeWidget.setCurrentItem(item)
@@ -165,7 +165,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(ios_router["default_symbol"]))
+                item.setIcon(0, QtGui.QIcon(ios_router["symbol"]))
                 if ios_router["name"] != item.text(0):
                     # rename the IOS router
                     new_key = "{server}:{name}".format(server=ios_router["server"], name=ios_router["name"])
@@ -426,7 +426,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         for key, ios_router in self._ios_routers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, ios_router["name"])
-            item.setIcon(0, QtGui.QIcon(ios_router["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(ios_router["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

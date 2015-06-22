@@ -116,7 +116,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
             item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMsTreeWidget)
             item.setText(0, self._vmware_vms[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._vmware_vms[key]["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(self._vmware_vms[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiVMwareVMsTreeWidget.setCurrentItem(item)
@@ -134,7 +134,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(vmware_vm["default_symbol"]))
+                item.setIcon(0, QtGui.QIcon(vmware_vm["symbol"]))
                 if vmware_vm["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=vmware_vm["server"], name=vmware_vm["name"])
                     if new_key in self._vmware_vms:
@@ -171,7 +171,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         for key, vmware_vm in self._vmware_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMsTreeWidget)
             item.setText(0, vmware_vm["name"])
-            item.setIcon(0, QtGui.QIcon(vmware_vm["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(vmware_vm["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

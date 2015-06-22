@@ -82,6 +82,9 @@ class Qemu(Module):
                     continue
                 vm_settings = QEMU_VM_SETTINGS.copy()
                 vm_settings.update(vm)
+                # for backward compatibility before version 1.4
+                vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
+                vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
                 self._qemu_vms[key] = vm_settings
 
     def _saveQemuVMs(self):
@@ -273,7 +276,7 @@ class Qemu(Module):
                  "name": qemu_vm["name"],
                  "ram": qemu_vm["ram"],
                  "server": qemu_vm["server"],
-                 "default_symbol": qemu_vm["default_symbol"],
+                 "symbol": qemu_vm["symbol"],
                  "categories": [qemu_vm["category"]]
                  }
             )

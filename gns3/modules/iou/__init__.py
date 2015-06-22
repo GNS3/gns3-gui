@@ -103,9 +103,10 @@ class IOU(Module):
                     continue
                 device_settings = IOU_DEVICE_SETTINGS.copy()
                 device_settings.update(device)
-                if "initial_config" in device_settings:
-                    # transfer initial-config (post version 1.4) to startup-config
-                    device_settings["startup_config"] = device_settings["initial_config"]
+                # for backward compatibility before version 1.4
+                device_settings["symbol"] = device_settings.get("default_symbol", device_settings["symbol"])
+                device_settings["symbol"] = device_settings["symbol"][:-11] + ".svg" if device_settings["symbol"].endswith("normal.svg") else device_settings["symbol"]
+                device_settings["startup_config"] = device_settings.get("initial_config", device_settings["startup_config"])
                 self._iou_devices[key] = device_settings
 
     def _saveIOUDevices(self):
@@ -350,7 +351,7 @@ class IOU(Module):
                  "name": iou_device["name"],
                  "ram": iou_device["ram"],
                  "server": iou_device["server"],
-                 "default_symbol": iou_device["default_symbol"],
+                 "symbol": iou_device["symbol"],
                  "categories": [iou_device["category"]]
                  }
             )

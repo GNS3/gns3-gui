@@ -19,7 +19,7 @@
 Built-in module implementation.
 """
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.servers import Servers
 from ..module import Module
 from ..module_error import ModuleError
@@ -204,7 +204,7 @@ class Builtin(Module):
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
                  "categories": node_class.categories(),
-                 "default_symbol": node_class.defaultSymbol()}
+                 "symbol": node_class.defaultSymbol()}
             )
         return nodes
 

@@ -499,17 +499,7 @@ class VirtualBoxVM(VM):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/vbox_guest.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/vbox_guest.selected.svg"
+        return ":/symbols/vbox_guest.svg"
 
     @staticmethod
     def symbolName():

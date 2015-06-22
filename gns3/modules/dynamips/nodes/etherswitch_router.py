@@ -56,17 +56,7 @@ class EtherSwitchRouter(Router):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/multilayer_switch.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/multilayer_switch.selected.svg"
+        return ":/symbols/multilayer_switch.svg"
 
     @staticmethod
     def categories():

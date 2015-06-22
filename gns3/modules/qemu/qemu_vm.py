@@ -471,17 +471,7 @@ class QemuVM(VM):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/qemu_guest.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/qemu_guest.selected.svg"
+        return ":/symbols/qemu_guest.svg"
 
     @staticmethod
     def symbolName():

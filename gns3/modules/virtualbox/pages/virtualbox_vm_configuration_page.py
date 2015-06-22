@@ -106,7 +106,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
         if not node:
             # load the symbol
-            self.uiSymbolLineEdit.setText(settings["default_symbol"])
+            self.uiSymbolLineEdit.setText(settings["symbol"])
 
             # load the category
             index = self.uiCategoryComboBox.findData(settings["category"])
@@ -169,7 +169,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             if pixmap.isNull():
                 QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
             else:
-                settings["default_symbol"] = symbol_path
+                settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 

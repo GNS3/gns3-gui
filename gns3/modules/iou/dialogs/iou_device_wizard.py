@@ -44,7 +44,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
     def __init__(self, iou_devices, parent):
 
         super().__init__(parent)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
 
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
@@ -95,10 +95,10 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
 
         if image_type == "L2 image":
             #  L2 image
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
         else:
             #  L3 image
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
 
     def initializePage(self, page_id):
 
@@ -143,7 +143,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             default_base_config = get_default_base_config(self._base_iou_l2_config_template)
             if default_base_config:
                 startup_config = default_base_config
-            default_symbol = ":/symbols/multilayer_switch.normal.svg"
+            symbol = ":/symbols/multilayer_switch.svg"
             category = Node.switches
             ethernet_adapters = 4
             serial_adapters = 0
@@ -152,7 +152,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             default_base_config = get_default_base_config(self._base_iou_l3_config_template)
             if default_base_config:
                 startup_config = default_base_config
-            default_symbol = ":/symbols/router.normal.svg"
+            symbol = ":/symbols/router.svg"
             category = Node.routers
             ethernet_adapters = 2
             serial_adapters = 2
@@ -174,7 +174,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
             "startup_config": startup_config,
             "ethernet_adapters": ethernet_adapters,
             "serial_adapters": serial_adapters,
-            "default_symbol": default_symbol,
+            "symbol": symbol,
             "category": category,
             "server": server,
         }

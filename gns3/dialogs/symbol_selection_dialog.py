@@ -19,6 +19,8 @@
 Dialog to change node symbols.
 """
 
+import os
+
 from ..qt import QtSvg, QtCore, QtGui, QtWidgets
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 
@@ -55,8 +57,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
         for symbol in symbol_resources.children():
-            if symbol.endswith(".normal.svg"):
-                name = symbol[:-11]
+            if symbol.endswith(".svg"):
+                name = os.path.splitext(symbol)[0]
                 item = QtWidgets.QListWidgetItem(self.uiSymbolListWidget)
                 item.setText(name)
                 resource_path = ":/symbols/" + symbol
@@ -78,7 +80,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         current = self.uiSymbolListWidget.currentItem()
         if current:
             name = current.text()
-            path = ":/symbols/{}.normal.svg".format(name)
+            path = ":/symbols/{}.svg".format(name)
             renderer = QtSvg.QSvgRenderer(path)
             renderer.setObjectName(path)
             for item in self._items:
@@ -89,7 +91,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         if self.uiSymbolListWidget.isEnabled():
             current = self.uiSymbolListWidget.currentItem()
             name = current.text()
-            normal_symbol = ":/symbols/{}.normal.svg".format(name)
+            normal_symbol = ":/symbols/{}.svg".format(name)
         else:
             normal_symbol = self.uiSymbolLineEdit.text()
         return normal_symbol

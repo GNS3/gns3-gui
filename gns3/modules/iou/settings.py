@@ -37,7 +37,7 @@ if not sys.platform.startswith("linux"):
 IOU_DEVICE_SETTINGS = {
     "name": "",
     "path": "",
-    "default_symbol": ":/symbols/multilayer_switch.normal.svg",
+    "symbol": ":/symbols/multilayer_switch.svg",
     "category": Node.routers,
     "image": "",
     "startup_config": "",

@@ -77,22 +77,22 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         """
 
         if vm_type == "IOSv":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.svg"))
             self.uiNameLineEdit.setText("vIOS")
             self.uiHdaDiskImageLabel.setText("IOSv VDMK file:")
         elif vm_type == "IOSv-L2":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.svg"))
             self.uiNameLineEdit.setText("vIOS-L2")
             self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
         elif vm_type == "IOS-XRv":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
             self.uiNameLineEdit.setText("IOS-XRv")
             self.uiHdaDiskImageLabel.setText("IOS-XRv VDMK file:")
         elif vm_type == "ASA 8.4(2)":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.svg"))
             self.uiNameLineEdit.setText("ASA")
         elif vm_type == "IDS":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.normal.svg"))
+            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.svg"))
             self.uiNameLineEdit.setText("IDS")
             self.uiHdaDiskImageLabel.setText("Disk image (hda):")
         else:
@@ -200,17 +200,17 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         if self.uiTypeComboBox.currentText() == "IOSv":
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["default_symbol"] = ":/symbols/iosv_virl.normal.svg"
+            settings["symbol"] = ":/symbols/iosv_virl.svg"
             settings["category"] = Node.routers
         elif self.uiTypeComboBox.currentText() == "IOSv-L2":
             settings["adapters"] = 8
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["default_symbol"] = ":/symbols/iosv_l2_virl.normal.svg"
+            settings["symbol"] = ":/symbols/iosv_l2_virl.svg"
             settings["category"] = Node.switches
         elif self.uiTypeComboBox.currentText() == "IOS-XRv":
             settings["adapters"] = 16
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["default_symbol"] = ":/symbols/router.normal.svg"
+            settings["symbol"] = ":/symbols/router.svg"
             settings["category"] = Node.routers
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
@@ -221,14 +221,14 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
             if not sys.platform.startswith("darwin"):
                 settings["cpu_throttling"] = 80  # limit to 80% CPU usage
             settings["process_priority"] = "low"
-            settings["default_symbol"] = ":/symbols/asa.normal.svg"
+            settings["symbol"] = ":/symbols/asa.svg"
             settings["category"] = Node.security_devices
         elif self.uiTypeComboBox.currentText() == "IDS":
             settings["adapters"] = 3
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text()
             settings["options"] = "-smbios type=1,product=IDS-4215"
-            settings["default_symbol"] = ":/symbols/ids.normal.svg"
+            settings["symbol"] = ":/symbols/ids.svg"
             settings["category"] = Node.security_devices
         else:
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()

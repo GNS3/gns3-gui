@@ -1424,10 +1424,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
-            if QtSvg.QSvgRenderer(node_data["default_symbol"]).isValid():
-                node_item = SvgNodeItem(node, node_data["default_symbol"])
+            if QtSvg.QSvgRenderer(node_data["symbol"]).isValid():
+                node_item = SvgNodeItem(node, node_data["symbol"])
             else:
-                node_item = PixmapNodeItem(node, node_data["default_symbol"])
+                node_item = PixmapNodeItem(node, node_data["symbol"])
             node_module.setupNode(node, node_data["name"])
         except ModuleError as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))

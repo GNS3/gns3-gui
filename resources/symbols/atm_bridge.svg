@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1998"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   width="72.139786"
+   height="32.198273"
+   version="1.0"
+   sodipodi:docname="atm_bridge.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <metadata
+     id="metadata2003">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Hub</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jeremy Grossmann</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>GNS-3</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:description>Created for the GNS-3 project (www.gns3.net)</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2001">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient6603">
+      <stop
+         style="stop-color:#506eaa;stop-opacity:1;"
+         offset="0"
+         id="stop6605" />
+      <stop
+         style="stop-color:#506eaa;stop-opacity:0;"
+         offset="1"
+         id="stop6607" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient6587">
+      <stop
+         style="stop-color:#6e8caa;stop-opacity:1;"
+         offset="0"
+         id="stop6589" />
+      <stop
+         style="stop-color:#edeff3;stop-opacity:1;"
+         offset="1"
+         id="stop6591" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow2Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         id="path11918"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(1.1,0,0,1.1,1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path11921"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path11936"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6587"
+       id="linearGradient6593"
+       x1="3.95626"
+       y1="0.64267641"
+       x2="-1.2664427"
+       y2="0.62730032"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.119123,0,0,1.09281,-7.833718e-3,-0.353953)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6603"
+       id="linearGradient6609"
+       x1="2.2801981"
+       y1="1.4519272"
+       x2="-0.41311559"
+       y2="1.4649135"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.119124,0,0,1.09281,-7.8336875e-3,-0.353953)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6587"
+       id="linearGradient11856"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(15.191599,0,0,15.33747,-2.531938,3.061917e-2)"
+       x1="3.95626"
+       y1="0.64267641"
+       x2="-1.2664427"
+       y2="0.62730032" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="979"
+     inkscape:window-width="1400"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="15.791667"
+     inkscape:cx="33.948451"
+     inkscape:cy="14.842697"
+     inkscape:window-x="5"
+     inkscape:window-y="49"
+     inkscape:current-layer="svg1998" />
+  <path
+     style="fill:#000000;fill-opacity:0.39215686;stroke:none;stroke-width:0.001"
+     d="M 2.2772683,16.455363 L 2.2772683,32.151128 L 54.874392,32.151128 L 54.874392,16.455363 L 2.2772683,16.455363"
+     id="path13703" />
+  <path
+     style="fill:#000000;fill-opacity:0.39215686;stroke:none;stroke-width:0.001"
+     d="M 54.835664,18.785244 L 71.22016,2.975988 L 71.22016,16.389017 L 54.835664,32.198271 L 54.835664,18.785244"
+     id="path14592" />
+  <path
+     style="fill:#6e8296;fill-opacity:1;stroke:none;stroke-width:0.001"
+     d="M 54.766167,16.462321 L 71.967339,2.4980018e-15 L 71.967339,13.967109 L 54.766167,30.42943 L 54.766167,16.462321"
+     id="path2009" />
+  <path
+     style="fill:#6e8caa;fill-opacity:1;stroke:none;stroke-width:0.00110589"
+     d="M 0.26240697,16.276497 L 0.26240697,30.176133 L 55.117276,30.176133 L 55.117276,16.276497 L 0.26240697,16.276497"
+     id="path2007" />
+  <path
+     style="fill:url(#linearGradient11856);fill-opacity:1;stroke:none;stroke-width:0.01505287;stroke-opacity:1"
+     d="M 55.175888,16.63586 L 72.266438,0.04072379 L 17.044975,0.04072379 L 0,16.63586 L 55.175888,16.63586"
+     id="path2013" />
+  <path
+     d="M 30.805278,24.557898 L 9.0588129,24.576613 L 9.0588129,21.825614 L 30.805278,21.825614 L 30.805278,17.540044 L 40.474397,23.191756 L 30.805278,28.843468 L 30.805278,24.557898"
+     id="path2179"
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 31.406861,24.937229 L 9.660396,24.955944 L 9.660396,22.204946 L 31.406861,22.204946 L 31.406861,17.919375 L 41.07598,23.571087 L 31.406861,29.2228 L 31.406861,24.937229"
+     id="path2271"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 10.182443,21.844327 L 10.164335,17.558758 L 0.49521577,23.210469 L 10.164335,28.862183 L 10.182443,24.576613 L 10.182443,21.844327"
+     id="path2181"
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 10.784026,22.223658 L 10.765918,17.93809 L 1.0967991,23.589801 L 10.765918,29.241514 L 10.784026,24.955944 L 10.784026,22.223658"
+     id="path2275"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 52.06415,21.782664 L 52.06415,17.497096 L 42.39503,23.148807 L 52.06415,28.80052 L 52.06415,24.51495 L 52.06415,21.782664"
+     id="path2183"
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.001" />
+  <path
+     d="M 52.665733,22.161996 L 52.665733,17.876427 L 42.996613,23.528138 L 52.665733,29.179851 L 52.665733,24.894282 L 52.665733,22.161996"
+     id="path2279"
+     style="fill:#ffffff;stroke:none;stroke-width:0.001" />
+</svg>

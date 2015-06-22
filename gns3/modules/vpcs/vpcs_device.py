@@ -450,17 +450,7 @@ class VPCSDevice(VM):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/computer.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/computer.selected.svg"
+        return ":/symbols/computer.svg"
 
     @staticmethod
     def symbolName():

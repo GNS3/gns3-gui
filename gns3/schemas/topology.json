@@ -272,8 +272,7 @@
                 "id": { "$ref": "#/definitions/numeric_id" },
                 "device_id": { "$ref": "#/definitions/optional_uuid" },
                 "label": { "$ref": "#/definitions/label" },
-                "hover_symbol": { "$ref": "#/definitions/mandatory_string" },
-                "default_symbol": { "$ref": "#/definitions/mandatory_string" },
+                "symbol": { "$ref": "#/definitions/mandatory_string" },
                 "ports": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/port" }

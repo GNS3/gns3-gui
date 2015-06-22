@@ -37,7 +37,7 @@ VMWARE_SETTINGS = {
 
 VMWARE_VM_SETTINGS = {
     "vmx_path": "",
-    "default_symbol": ":/symbols/vmware_guest.normal.svg",
+    "symbol": ":/symbols/vmware_guest.svg",
     "category": Node.end_devices,
     "adapters": 1,
     "adapter_type": "default",

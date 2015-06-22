@@ -131,7 +131,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, self._iou_devices[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOUDevicesTreeWidget.setCurrentItem(item)
@@ -171,7 +171,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(iou_device["default_symbol"]))
+                item.setIcon(0, QtGui.QIcon(iou_device["symbol"]))
                 if iou_device["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
                     if new_key in self._iou_devices:
@@ -208,7 +208,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         for key, iou_device in self._iou_devices.items():
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, iou_device["name"])
-            item.setIcon(0, QtGui.QIcon(iou_device["default_symbol"]))
+            item.setIcon(0, QtGui.QIcon(iou_device["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

@@ -425,7 +425,7 @@ class Topology:
                             elif isinstance(item, PixmapNodeItem):
                                 symbol_path = item.pixmapSymbolPath()
                             if symbol_path:
-                                node["default_symbol"] = symbol_path
+                                node["symbol"] = symbol_path
                 if isinstance(item, LinkItem):
                     if item.link() is not None:
                         for link in topology["topology"]["links"]:
@@ -713,15 +713,20 @@ class Topology:
                 # load the settings
                 node.load(topology_node)
 
+                # for backward compatibility before version 1.4
                 if "default_symbol" in topology_node:
-                    symbol_path = topology_node["default_symbol"]
+                    topology_node["symbol"] = topology_node["default_symbol"]
+                    topology_node["symbol"] = topology_node["symbol"][:-11] + ".svg" if topology_node["symbol"].endswith("normal.svg") else topology_node["symbol"]
+
+                if "symbol" in topology_node:
+                    symbol_path = topology_node["symbol"]
                     renderer = QtSvg.QSvgRenderer(symbol_path)
                     if renderer.isValid():
                         node_item = SvgNodeItem(node, symbol_path)
                     else:
-                        pixmap = QtGui.QPixmap(topology_node["default_symbol"])
+                        pixmap = QtGui.QPixmap(topology_node["symbol"])
                         if not pixmap.isNull():
-                            node_item = PixmapNodeItem(node, topology_node["default_symbol"])
+                            node_item = PixmapNodeItem(node, topology_node["symbol"])
                         else:
                             node_item = SvgNodeItem(node)
                 else:

@@ -295,17 +295,7 @@ class EthernetHub(Device):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/hub.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/hub.selected.svg"
+        return ":/symbols/hub.svg"
 
     @staticmethod
     def symbolName():

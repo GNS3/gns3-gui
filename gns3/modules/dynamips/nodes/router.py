@@ -997,17 +997,7 @@ class Router(VM):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/router.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when the router is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/router.selected.svg"
+        return ":/symbols/router.svg"
 
     @staticmethod
     def categories():

@@ -430,17 +430,7 @@ class VMwareVM(VM):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/vmware_guest.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """
-        Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-
-        return ":/symbols/vmware_guest.selected.svg"
+        return ":/symbols/vmware_guest.svg"
 
     @staticmethod
     def symbolName():
