@@ -18,8 +18,8 @@
 
 set -e
 
-SIP=4.16.7
-PYQT=5.4.1
+SIP=4.16.8
+PYQT=5.4.2
 
 echo "Install sip $SIP and PyQT $PYQT"
 
@@ -43,6 +43,8 @@ fi
 cd "sip-${SIP}"
 echo "sip make install"
 sudo make install
+
+cd ..
 
 echo "Install PyQT"
 
