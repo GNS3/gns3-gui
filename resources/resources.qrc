@@ -1,83 +1,44 @@
 <RCC>
   <qresource>
     <file>symbols/router.normal.svg</file>
-    <file>symbols/router.selected.svg</file>
     <file>symbols/gateway.normal.svg</file>
-    <file>symbols/gateway.selected.svg</file>
     <file>symbols/iosv_virl.normal.svg</file>
-    <file>symbols/iosv_virl.selected.svg</file>
     <file>symbols/label_switch_router.normal.svg</file>
-    <file>symbols/label_switch_router.selected.svg</file>
     <file>symbols/optical_router.normal.svg</file>
-    <file>symbols/optical_router.selected.svg</file>
     <file>symbols/edge_label_switch_router.normal.svg</file>
-    <file>symbols/edge_label_switch_router.selected.svg</file>
     <file>symbols/router_firewall.normal.svg</file>
-    <file>symbols/router_firewall.selected.svg</file>
     <file>symbols/router.normal.awp.svg</file>
-    <file>symbols/router.selected.awp.svg</file>
     <file>symbols/PIX_firewall.normal.svg</file>
-    <file>symbols/PIX_firewall.selected.svg</file>
     <file>symbols/computer.normal.svg</file>
-    <file>symbols/computer.selected.svg</file>
     <file>symbols/qemu_guest.normal.svg</file>
-    <file>symbols/qemu_guest.selected.svg</file>
     <file>symbols/vbox_guest.normal.svg</file>
-    <file>symbols/vbox_guest.selected.svg</file>
     <file>symbols/vpcs_guest.normal.svg</file>
-    <file>symbols/vpcs_guest.selected.svg</file>
     <file>symbols/vmware_guest.normal.svg</file>
-    <file>symbols/vmware_guest.selected.svg</file>
     <file>symbols/server.normal.svg</file>
-    <file>symbols/server.selected.svg</file>
     <file>symbols/router_netflow.normal.svg</file>
-    <file alias="symbols/router_netflow.selected.svg">symbols/router.selected.svg</file>
     <file>symbols/access_server.normal.svg</file>
-    <file>symbols/access_server.selected.svg</file>
     <file>symbols/printer.normal.svg</file>
-    <file>symbols/printer.selected.svg</file>
     <file>symbols/dslam.normal.svg</file>
-    <file>symbols/dslam.selected.svg</file>
     <file>symbols/sip_server.normal.svg</file>
-    <file>symbols/sip_server.selected.svg</file>
     <file>symbols/PBX.normal.svg</file>
-    <file>symbols/PBX.selected.svg</file>
     <file>symbols/ip_phone.normal.svg</file>
-    <file>symbols/ip_phone.selected.svg</file>
     <file>symbols/voice_access_server.normal.svg</file>
-    <file>symbols/voice_access_server.selected.svg</file>
     <file>symbols/call_manager.normal.svg</file>
-    <file>symbols/call_manager.selected.svg</file>
     <file>symbols/voice_router.normal.svg</file>
-    <file>symbols/voice_router.selected.svg</file>
     <file>symbols/ids.normal.svg</file>
-    <file>symbols/ids.selected.svg</file>
     <file>symbols/asa.normal.svg</file>
-    <file>symbols/asa.selected.svg</file>
     <file>symbols/route_switch_processor.normal.svg</file>
-    <file>symbols/route_switch_processor.selected.svg</file>
     <file>symbols/multilayer_switch.normal.svg</file>
-    <file>symbols/multilayer_switch.selected.svg</file>
     <file>symbols/iosv_l2_virl.normal.svg</file>
-    <file>symbols/iosv_l2_virl.selected.svg</file>
     <file>symbols/lightweight_ap.normal.svg</file>
-    <file>symbols/lightweight_ap.selected.svg</file>
     <file>symbols/wlan_controller.normal.svg</file>
-    <file>symbols/wlan_controller.selected.svg</file>
     <file>symbols/atm_switch.normal.svg</file>
-    <file>symbols/atm_switch.selected.svg</file>
     <file>symbols/atm_bridge.normal.svg</file>
-    <file>symbols/atm_bridge.selected.svg</file>
     <file>symbols/frame_relay_switch.normal.svg</file>
-    <file>symbols/frame_relay_switch.selected.svg</file>
     <file>symbols/ethernet_switch.normal.svg</file>
-    <file>symbols/ethernet_switch.selected.svg</file>
     <file>symbols/access_point.normal.svg</file>
-    <file>symbols/access_point.selected.svg</file>
     <file>symbols/cloud.normal.svg</file>
-    <file>symbols/cloud.selected.svg</file>
     <file>symbols/hub.normal.svg</file>
-    <file>symbols/hub.selected.svg</file>
     <file alias="icons/default.svg">icons/cancel.svg</file>
     <file>icons/configuration.svg</file>
     <file>icons/cancel.svg</file>
