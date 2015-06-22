@@ -175,19 +175,20 @@ class Project(QtCore.QObject):
         for server in list(self._created_servers):
             server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
-    def get(self, server, path, callback, context={}, downloadProgressCallback=None):
+    def get(self, server, path, callback, **kwargs):
         """
         HTTP GET on the remote server
 
         :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
-        :param context: Pass a context to the response callback
-        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
-        """
-        self._projectHTTPQuery(server, "GET", path, callback, context=context, downloadProgressCallback=downloadProgressCallback)
+        :param body: params to send (dictionary)
 
-    def post(self, server, path, callback, body={}, context={}):
+        Full arg list in createHTTPQuery
+        """
+        self._projectHTTPQuery(server, "GET", path, callback, **kwargs)
+
+    def post(self, server, path, callback, body={}, **kwargs):
         """
         HTTP POST on the remote server
 
@@ -195,11 +196,12 @@ class Project(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
-        :param context: Pass a context to the response callback
-        """
-        self._projectHTTPQuery(server, "POST", path, callback, body=body, context=context)
 
-    def put(self, server, path, callback, body={}, context={}):
+        Full arg list in createHTTPQuery
+        """
+        self._projectHTTPQuery(server, "POST", path, callback, body=body, **kwargs)
+
+    def put(self, server, path, callback, body={}, **kwargs):
         """
         HTTP PUT on the remote server
 
@@ -207,22 +209,25 @@ class Project(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
-        :param context: Pass a context to the response callback
-        """
-        self._projectHTTPQuery(server, "PUT", path, callback, body=body, context=context)
 
-    def delete(self, server, path, callback, context={}):
+        Full arg list in createHTTPQuery
+        """
+        self._projectHTTPQuery(server, "PUT", path, callback, body=body, **kwargs)
+
+    def delete(self, server, path, callback, body={}, **kwargs):
         """
         HTTP DELETE on the remote server
 
         :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
-        :param context: Pass a context to the response callback
-        """
-        self._projectHTTPQuery(server, "DELETE", path, callback, context=context)
+        :param body: params to send (dictionary)
 
-    def _projectHTTPQuery(self, server, method, path, callback, body={}, context={}, downloadProgressCallback=None):
+        Full arg list in createHTTPQuery
+        """
+        self._projectHTTPQuery(server, "DELETE", path, callback, body=body, **kwargs)
+
+    def _projectHTTPQuery(self, server, method, path, callback, body={}, **kwargs):
         """
         HTTP query on the remote server
 
@@ -231,17 +236,17 @@ class Project(QtCore.QObject):
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
-        :param context: Pass a context to the response callback
-        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+
+        Full arg list in createHTTPQuery
         """
 
         if server not in self._created_servers:
-            func = functools.partial(self._projectOnServerCreated, method, path, callback, body, context=context, server=server)
+            func = functools.partial(self._projectOnServerCreated, method, path, callback, body, server=server, **kwargs)
 
             if server not in self._callback_finish_creating_on_server:
                 # The project is currently in creation on first server we wait for project id
                 if self._creating_first_server is not None:
-                    func = functools.partial(self._projectHTTPQuery, server, method, path, callback, body=body, context=context, downloadProgressCallback=downloadProgressCallback)
+                    func = functools.partial(self._projectHTTPQuery, server, method, path, callback, body=body, **kwargs)
                     self._callback_finish_creating_on_server[self._creating_first_server].append(func)
                 else:
                     if len(self._created_servers) == 0:
@@ -256,14 +261,14 @@ class Project(QtCore.QObject):
                     if server == self._servers.localServer():
                         body["path"] = self.filesDir()
 
-                    server.post("/projects", func, body)
+                    server.post("/projects", func, body=body)
             else:
                 # If the project creation is already in progress we bufferize the query
                 self._callback_finish_creating_on_server[server].append(func)
         else:
-            self._projectOnServerCreated(method, path, callback, body, params={}, server=server, context=context, downloadProgressCallback=downloadProgressCallback)
+            self._projectOnServerCreated(method, path, callback, body, params={}, server=server, **kwargs)
 
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, context={}, downloadProgressCallback=None, **kwargs):
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, **kwargs):
         """
         The project is created on the server continue
         the query
@@ -275,8 +280,8 @@ class Project(QtCore.QObject):
         :param params: Answer from the creation on server
         :param server: Server instance
         :param error: HTTP error
-        :param context: Pass a context to the response callback
-        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+
+        Full arg list in createHTTPQuery
         """
 
         self._creating_first_server = None
@@ -299,7 +304,7 @@ class Project(QtCore.QObject):
             self._startListenNotifications(server)
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        server.createHTTPQuery(method, path, callback, body=body, context=context, downloadProgressCallback=downloadProgressCallback)
+        server.createHTTPQuery(method, path, callback, body=body, **kwargs)
 
         # Call all operations waiting for project creation:
         if server in self._callback_finish_creating_on_server:

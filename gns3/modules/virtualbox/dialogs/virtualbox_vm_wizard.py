@@ -63,7 +63,7 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}".format(server.url()), server)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
-            self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback)
+            self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback, progressText="List VirtualBox VMs")
 
     def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
         """
