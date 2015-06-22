@@ -19,13 +19,14 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui, QtSvg, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets
 from .note_item import NoteItem
 
 import logging
 log = logging.getLogger(__name__)
 
-class NodeItem(QtSvg.QGraphicsSvgItem):
+
+class NodeItem():
 
     """
     Node for the scene.
@@ -37,9 +38,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     show_layer = False
 
-    def __init__(self, node, default_symbol=None, hover_symbol=None):
-
-        super().__init__()
+    def __init__(self, node):
 
         # attached node
         self._node = node
@@ -50,28 +49,23 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # link items connected to this node item.
         self._links = []
 
+        effect = QtWidgets.QGraphicsColorizeEffect()
+        effect.setColor(QtGui.QColor("black"))
+        effect.setStrength(0.8)
+        #effect = QtWidgets.QGraphicsDropShadowEffect()
+        #effect.setColor(QtGui.QColor("darkGray"))
+        #effect.setBlurRadius(0)
+        #effect.setOffset(3, 3)
+        self.setGraphicsEffect(effect)
+        self.graphicsEffect().setEnabled(False)
+
         # set graphical settings for this node
-        self.setFlag(QtSvg.QGraphicsSvgItem.ItemIsMovable)
-        self.setFlag(QtSvg.QGraphicsSvgItem.ItemIsSelectable)
-        self.setFlag(QtSvg.QGraphicsSvgItem.ItemIsFocusable)
-        self.setFlag(QtSvg.QGraphicsSvgItem.ItemSendsGeometryChanges)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
         self.setZValue(1)
-
-        # create renderers using symbols paths/resources
-        if default_symbol:
-            self._default_renderer = QtSvg.QSvgRenderer(default_symbol)
-            if default_symbol != node.defaultSymbol():
-                self._default_renderer.setObjectName(default_symbol)
-        else:
-            self._default_renderer = QtSvg.QSvgRenderer(node.defaultSymbol())
-        if hover_symbol:
-            self._hover_renderer = QtSvg.QSvgRenderer(hover_symbol)
-            if hover_symbol != node.hoverSymbol():
-                self._hover_renderer.setObjectName(hover_symbol)
-        else:
-            self._hover_renderer = QtSvg.QSvgRenderer(node.hoverSymbol())
-        self.setSharedRenderer(self._default_renderer)
 
         # connect signals to know about some events
         # e.g. when the node has been started, stopped or suspended etc.
@@ -99,43 +93,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
-
-    def defaultRenderer(self):
-        """
-        Returns the default QSvgRenderer.
-
-        :return: QSvgRenderer instance
-        """
-
-        return self._default_renderer
-
-    def setDefaultRenderer(self, default_renderer):
-        """
-        Sets new default QSvgRenderer.
-
-        :param default_renderer: QSvgRenderer instance
-        """
-
-        self._default_renderer = default_renderer
-        self.setSharedRenderer(self._default_renderer)
-
-    def hoverRenderer(self):
-        """
-        Returns the hover QSvgRenderer.
-
-        :return: QSvgRenderer instance
-        """
-
-        return self._hover_renderer
-
-    def setHoverRenderer(self, hover_renderer):
-        """
-        Sets new hover QSvgRenderer.
-
-        :param hover_renderer: QSvgRenderer instance
-        """
-
-        self._hover_renderer = hover_renderer
 
     def setUnsavedState(self):
         """
@@ -417,14 +374,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         # dynamically change the renderer when this node item is selected/unselected.
-        if change == QtSvg.QGraphicsSvgItem.ItemSelectedChange:
+        if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
             if value:
-                self.setSharedRenderer(self._hover_renderer)
+                self.graphicsEffect().setEnabled(True)
             else:
-                self.setSharedRenderer(self._default_renderer)
+                self.graphicsEffect().setEnabled(False)
 
         # adjust link item positions when this node is moving or has changed.
-        if change == QtSvg.QGraphicsSvgItem.ItemPositionChange or change == QtSvg.QGraphicsSvgItem.ItemPositionHasChanged:
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange or change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:
             self.setUnsavedState()
             for link in self._links:
                 link.adjust()
@@ -491,13 +448,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         self.setCustomToolTip()
-        # dynamically change the renderer when this node item is hovered.
         if not self.isSelected():
-            self.setSharedRenderer(self._hover_renderer)
-            # effect = QtWidgets.QGraphicsColorizeEffect()
-            # effect.setColor(QtGui.QColor("black"))
-            # effect.setStrength(0.8)
-            # self.setGraphicsEffect(effect)
+            self.graphicsEffect().setEnabled(True)
 
     def hoverLeaveEvent(self, event):
         """
@@ -506,7 +458,5 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # dynamically change the renderer back to the default when this node item is not hovered anymore.
         if not self.isSelected():
-            self.setSharedRenderer(self._default_renderer)
-            # self.graphicsEffect().setEnabled(False)
+            self.graphicsEffect().setEnabled(False)

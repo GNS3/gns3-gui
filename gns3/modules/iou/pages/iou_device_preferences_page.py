@@ -24,7 +24,6 @@ import os
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
-from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 from gns3.image_manager import ImageManager
@@ -56,7 +55,6 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self.uiEditIOUDevicePushButton.clicked.connect(self._iouDeviceEditSlot)
         self.uiDeleteIOUDevicePushButton.clicked.connect(self._iouDeviceDeleteSlot)
         self.uiIOUDevicesTreeWidget.itemSelectionChanged.connect(self._iouDeviceChangedSlot)
-        self.uiIOUDevicesTreeWidget.itemPressed.connect(self._iouDevicePressedSlot)
 
     def _createSectionItem(self, name):
 
@@ -172,6 +170,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             dialog = ConfigurationDialog(iou_device["name"], iou_device, iouDeviceConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
+                # update the icon
+                item.setIcon(0, QtGui.QIcon(iou_device["default_symbol"]))
                 if iou_device["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
                     if new_key in self._iou_devices:
@@ -195,55 +195,6 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                 key = item.data(0, QtCore.Qt.UserRole)
                 del self._iou_devices[key]
                 self.uiIOUDevicesTreeWidget.takeTopLevelItem(self.uiIOUDevicesTreeWidget.indexOfTopLevelItem(item))
-
-    def _iouDevicePressedSlot(self, item, column):
-        """
-        Slot for item pressed.
-
-        :param item: ignored
-        :param column: ignored
-        """
-
-        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
-            self._showContextualMenu()
-
-    def _showContextualMenu(self):
-        """
-        Contextual menu.
-        """
-
-        menu = QtWidgets.QMenu()
-
-        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        change_symbol_action.setEnabled(len(self.uiIOUDevicesTreeWidget.selectedItems()) == 1)
-        change_symbol_action.triggered.connect(self._changeSymbolSlot)
-        menu.addAction(change_symbol_action)
-
-        delete_action = QtWidgets.QAction("Delete", menu)
-        delete_action.triggered.connect(self._iouDeviceDeleteSlot)
-        menu.addAction(delete_action)
-
-        menu.exec_(QtGui.QCursor.pos())
-
-    def _changeSymbolSlot(self):
-        """
-        Change a symbol for an IOU device.
-        """
-
-        item = self.uiIOUDevicesTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            iou_device = self._iou_devices[key]
-            dialog = SymbolSelectionDialog(self, symbol=iou_device["default_symbol"], category=iou_device["category"])
-            dialog.show()
-            if dialog.exec_():
-                normal_symbol, selected_symbol = dialog.getSymbols()
-                category = dialog.getCategory()
-                item.setIcon(0, QtGui.QIcon(normal_symbol))
-                iou_device["default_symbol"] = normal_symbol
-                iou_device["hover_symbol"] = selected_symbol
-                iou_device["category"] = category
 
     def loadPreferences(self):
         """

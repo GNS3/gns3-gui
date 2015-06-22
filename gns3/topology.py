@@ -26,11 +26,13 @@ import uuid
 import glob
 import shutil
 import sys
+
 from .qt import QtGui, QtSvg, QtWidgets
-
-
 from functools import partial
 from .items.node_item import NodeItem
+from .items.svg_node_item import SvgNodeItem
+from .items.pixmap_node_item import PixmapNodeItem
+from .items.svg_node_item import SvgNodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
 from .items.rectangle_item import RectangleItem
@@ -417,12 +419,13 @@ class Topology:
                                 node["z"] = item.zValue()
                             if item.label():
                                 node["label"] = item.label().dump()
-                            default_symbol_path = item.defaultRenderer().objectName()
-                            if default_symbol_path:
-                                node["default_symbol"] = default_symbol_path
-                            hover_symbol_path = item.hoverRenderer().objectName()
-                            if hover_symbol_path:
-                                node["hover_symbol"] = hover_symbol_path
+                            symbol_path = None
+                            if isinstance(item, SvgNodeItem):
+                                symbol_path = item.renderer().objectName()
+                            elif isinstance(item, PixmapNodeItem):
+                                symbol_path = item.pixmapSymbolPath()
+                            if symbol_path:
+                                node["default_symbol"] = symbol_path
                 if isinstance(item, LinkItem):
                     if item.link() is not None:
                         for link in topology["topology"]["links"]:
@@ -710,8 +713,21 @@ class Topology:
                 # load the settings
                 node.load(topology_node)
 
+                if "default_symbol" in topology_node:
+                    symbol_path = topology_node["default_symbol"]
+                    renderer = QtSvg.QSvgRenderer(symbol_path)
+                    if renderer.isValid():
+                        node_item = SvgNodeItem(node, symbol_path)
+                    else:
+                        pixmap = QtGui.QPixmap(topology_node["default_symbol"])
+                        if not pixmap.isNull():
+                            node_item = PixmapNodeItem(node, topology_node["default_symbol"])
+                        else:
+                            node_item = SvgNodeItem(node)
+                else:
+                    node_item = SvgNodeItem(node)
+
                 # create the node item and restore GUI settings
-                node_item = NodeItem(node)
                 node_item.setPos(topology_node["x"], topology_node["y"])
 
                 # create the node label if present
@@ -724,21 +740,6 @@ class Topology:
 
                 if "z" in topology_node:
                     node_item.setZValue(topology_node["z"])
-
-                if "default_symbol" in topology_node:
-                    path = topology_node["default_symbol"]
-                    default_renderer = QtSvg.QSvgRenderer(path)
-                    if default_renderer.isValid():
-                        default_renderer.setObjectName(path)
-                        node_item.setDefaultRenderer(default_renderer)
-
-                if "hover_symbol" in topology_node:
-                    path = topology_node["hover_symbol"]
-                    hover_renderer = QtSvg.QSvgRenderer(path)
-                    if hover_renderer.isValid() and default_renderer.isValid():
-                        # default renderer must be valid too
-                        hover_renderer.setObjectName(path)
-                        node_item.setHoverRenderer(hover_renderer)
 
                 view.scene().addItem(node_item)
                 main_window.uiTopologySummaryTreeWidget.addNode(node)

@@ -16,12 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Dialog to change the topology symbol of NodeItems
+Dialog to change node symbols.
 """
 
 from ..qt import QtSvg, QtCore, QtGui, QtWidgets
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
-from ..node import Node
 
 
 class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
@@ -33,36 +32,20 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
     :param items: list of items
     """
 
-    def __init__(self, parent, items=None, symbol=None, category=None):
+    def __init__(self, parent, items=None, symbol=None):
 
         super().__init__(parent)
         self.setupUi(self)
 
         self._items = items
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
 
         selected_symbol = symbol
-        selected_category = category
         if not self._items:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
-
-            # current categories
-            categories = {"Routers": Node.routers,
-                          "Switches": Node.switches,
-                          "End devices": Node.end_devices,
-                          "Security devices": Node.security_devices
-                          }
-
-            index = 0
-            for name, category in categories.items():
-                self.uiCategoryComboBox.addItem(name, category)
-                if category == selected_category:
-                    self.uiCategoryComboBox.setCurrentIndex(index)
-                index += 1
         else:
-            self.uiCategoryLabel.hide()
-            self.uiCategoryComboBox.hide()
-            custom_symbol = items[0].defaultRenderer().objectName()
+            custom_symbol = items[0].renderer().objectName()
             if not custom_symbol:
                 symbol_name = items[0].node().defaultSymbol()
             else:
@@ -96,27 +79,32 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         if current:
             name = current.text()
             path = ":/symbols/{}.normal.svg".format(name)
-            default_renderer = QtSvg.QSvgRenderer(path)
-            default_renderer.setObjectName(path)
-            path = ":/symbols/{}.selected.svg".format(name)
-            hover_renderer = QtSvg.QSvgRenderer(path)
-            hover_renderer.setObjectName(path)
+            renderer = QtSvg.QSvgRenderer(path)
+            renderer.setObjectName(path)
             for item in self._items:
-                item.setDefaultRenderer(default_renderer)
-                item.setHoverRenderer(hover_renderer)
+                item.setSharedRenderer(renderer)
 
-    def getSymbols(self):
+    def getSymbol(self):
 
-        current = self.uiSymbolListWidget.currentItem()
-        if current:
+        if self.uiSymbolListWidget.isEnabled():
+            current = self.uiSymbolListWidget.currentItem()
             name = current.text()
             normal_symbol = ":/symbols/{}.normal.svg".format(name)
-            selected_symbol = ":/symbols/{}.selected.svg".format(name)
-        return normal_symbol, selected_symbol
+        else:
+            normal_symbol = self.uiSymbolLineEdit.text()
+        return normal_symbol
 
-    def getCategory(self):
+    def _symbolBrowserSlot(self):
 
-        return self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+        # supported image file formats
+        file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff);;All files (*.*)"
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", ".", file_formats)  # TODO: handle default dir
+        if not path:
+            return
+
+        self.uiSymbolListWidget.setEnabled(False)
+        self.uiSymbolLineEdit.clear()
+        self.uiSymbolLineEdit.setText(path)
 
     def done(self, result):
         """

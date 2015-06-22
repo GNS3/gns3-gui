@@ -23,7 +23,6 @@ import copy
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
-from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 
 from .. import VMware
@@ -51,7 +50,6 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiEditVMwareVMPushButton.clicked.connect(self._vmwareVMEditSlot)
         self.uiDeleteVMwareVMPushButton.clicked.connect(self._vmwareVMDeleteSlot)
         self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
-        self.uiVMwareVMsTreeWidget.itemPressed.connect(self._vmwareVMPressedSlot)
 
     def _createSectionItem(self, name):
 
@@ -135,6 +133,8 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
             dialog = ConfigurationDialog(vmware_vm["name"], vmware_vm, VMwareVMConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
+                # update the icon
+                item.setIcon(0, QtGui.QIcon(vmware_vm["default_symbol"]))
                 if vmware_vm["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=vmware_vm["server"], name=vmware_vm["name"])
                     if new_key in self._vmware_vms:
@@ -158,55 +158,6 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
                 key = item.data(0, QtCore.Qt.UserRole)
                 del self._vmware_vms[key]
                 self.uiVMwareVMsTreeWidget.takeTopLevelItem(self.uiVMwareVMsTreeWidget.indexOfTopLevelItem(item))
-
-    def _vmwareVMPressedSlot(self, item, column):
-        """
-        Slot for item pressed.
-
-        :param item: ignored
-        :param column: ignored
-        """
-
-        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
-            self._showContextualMenu()
-
-    def _showContextualMenu(self):
-        """
-        Contextual menu.
-        """
-
-        menu = QtWidgets.QMenu()
-
-        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        change_symbol_action.setEnabled(len(self.uiVMwareVMsTreeWidget.selectedItems()) == 1)
-        change_symbol_action.triggered.connect(self._changeSymbolSlot)
-        menu.addAction(change_symbol_action)
-
-        delete_action = QtWidgets.QAction("Delete", menu)
-        delete_action.triggered.connect(self._vmwareVMDeleteSlot)
-        menu.addAction(delete_action)
-
-        menu.exec_(QtGui.QCursor.pos())
-
-    def _changeSymbolSlot(self):
-        """
-        Change a symbol for a VMware VM.
-        """
-
-        item = self.uiVMwareVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            vmware_vm = self._vmware_vms[key]
-            dialog = SymbolSelectionDialog(self, symbol=vmware_vm["default_symbol"], category=vmware_vm["category"])
-            dialog.show()
-            if dialog.exec_():
-                normal_symbol, selected_symbol = dialog.getSymbols()
-                category = dialog.getCategory()
-                item.setIcon(0, QtGui.QIcon(normal_symbol))
-                vmware_vm["default_symbol"] = normal_symbol
-                vmware_vm["hover_symbol"] = selected_symbol
-                vmware_vm["category"] = category
 
     def loadPreferences(self):
         """

@@ -19,8 +19,10 @@
 Configuration page for VirtualBox VMs.
 """
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
 
 from ..ui.virtualbox_vm_configuration_page_ui import Ui_virtualBoxVMConfigPageWidget
 
@@ -36,6 +38,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         super().__init__()
         self.setupUi(self)
 
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiAdapterTypesComboBox.clear()
         self.uiAdapterTypesComboBox.addItems(["PCnet-PCI II (Am79C970A)",
                                               "PCNet-FAST III (Am79C973)",
@@ -47,6 +50,22 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         # TODO: finish VM name change
         self.uiVMListLabel.hide()
         self.uiVMListComboBox.hide()
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -84,6 +103,22 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             self.uiConsolePortSpinBox.hide()
             self.uiVMListLabel.hide()
             self.uiVMListComboBox.hide()
+
+        if not node:
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["default_symbol"])
+
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
+        else:
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
 
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
@@ -127,6 +162,16 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             del settings["name"]
             del settings["console"]
             del settings["enable_remote_console"]
+
+        if not node:
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["default_symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         settings["ram"] = self.uiVMRamSpinBox.value()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()

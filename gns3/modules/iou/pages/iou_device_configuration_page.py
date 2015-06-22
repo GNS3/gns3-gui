@@ -21,9 +21,11 @@ Configuration page for IOU devices.
 
 import os
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.dialogs.node_properties_dialog import ConfigurationError
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
@@ -39,6 +41,8 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         super().__init__()
         self.setupUi(self)
+
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
@@ -50,6 +54,10 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
         self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
         self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
 
     def _useDefaultValuesSlot(self, state):
         """
@@ -120,6 +128,18 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiPrivateConfigLineEdit.clear()
         self.uiPrivateConfigLineEdit.setText(path)
 
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the IOU device settings.
@@ -153,6 +173,14 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             # load the startup-config and private-config
             self.uiStartupConfigLineEdit.setText(settings["startup_config"])
             self.uiPrivateConfigLineEdit.setText(settings["private_config"])
+
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["default_symbol"])
+
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
         else:
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
@@ -160,6 +188,12 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiPrivateConfigLabel.hide()
             self.uiPrivateConfigLineEdit.hide()
             self.uiPrivateConfigToolButton.hide()
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
 
         # load advanced settings
         if "l1_keepalives" in settings:
@@ -227,6 +261,15 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                     settings["private_config"] = private_config
                 else:
                     QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["default_symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         # save advanced settings
         settings["l1_keepalives"] = self.uiL1KeepalivesCheckBox.isChecked()

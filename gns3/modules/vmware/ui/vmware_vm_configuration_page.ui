@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>509</width>
-    <height>346</height>
+    <width>494</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,64 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="5" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
+         <property name="text">
+          <string>Enable ACPI shutdown</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiConsolePortLabel">
+         <property name="text">
+          <string>Console port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiEnableConsoleCheckBox">
+         <property name="text">
+          <string>Enable remote console</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+         <property name="text">
+          <string>Start VM in headless mode</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiBaseVMCheckBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Use as a linked base VM (experimental)</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiNameLabel">
          <property name="text">
@@ -34,48 +92,31 @@
        <item row="0" column="1">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiConsolePortLabel">
-         <property name="text">
-          <string>Console port:</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiSymbolToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiEnableConsoleCheckBox">
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string>Enable remote console</string>
+          <string>Category:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
-         <property name="text">
-          <string>Start VM in headless mode</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiBaseVMCheckBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Use as a linked base VM (experimental)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
+       <item row="8" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -87,13 +128,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
-         <property name="text">
-          <string>Enable ACPI shutdown</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

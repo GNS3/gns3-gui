@@ -26,7 +26,6 @@ import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
-from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.cloud.utils import UploadFilesThread
 
@@ -55,7 +54,6 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiEditQemuVMPushButton.clicked.connect(self._qemuVMEditSlot)
         self.uiDeleteQemuVMPushButton.clicked.connect(self._qemuVMDeleteSlot)
         self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
-        self.uiQemuVMsTreeWidget.itemPressed.connect(self._qemuVMPressedSlot)
 
     def _createSectionItem(self, name):
 
@@ -184,6 +182,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             dialog = ConfigurationDialog(qemu_vm["name"], qemu_vm, QemuVMConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
+                # update the icon
+                item.setIcon(0, QtGui.QIcon(qemu_vm["default_symbol"]))
                 if qemu_vm["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
                     if new_key in self._qemu_vms:
@@ -211,55 +211,6 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
                 key = item.data(0, QtCore.Qt.UserRole)
                 del self._qemu_vms[key]
                 self.uiQemuVMsTreeWidget.takeTopLevelItem(self.uiQemuVMsTreeWidget.indexOfTopLevelItem(item))
-
-    def _qemuVMPressedSlot(self, item, column):
-        """
-        Slot for item pressed.
-
-        :param item: ignored
-        :param column: ignored
-        """
-
-        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
-            self._showContextualMenu()
-
-    def _showContextualMenu(self):
-        """
-        Contextual menu.
-        """
-
-        menu = QtWidgets.QMenu()
-
-        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        change_symbol_action.setEnabled(len(self.uiQemuVMsTreeWidget.selectedItems()) == 1)
-        change_symbol_action.triggered.connect(self._changeSymbolSlot)
-        menu.addAction(change_symbol_action)
-
-        delete_action = QtWidgets.QAction("Delete", menu)
-        delete_action.triggered.connect(self._qemuVMDeleteSlot)
-        menu.addAction(delete_action)
-
-        menu.exec_(QtGui.QCursor.pos())
-
-    def _changeSymbolSlot(self):
-        """
-        Change a symbol for a QEMU VM.
-        """
-
-        item = self.uiQemuVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            qemu_vm = self._qemu_vms[key]
-            dialog = SymbolSelectionDialog(self, symbol=qemu_vm["default_symbol"], category=qemu_vm["category"])
-            dialog.show()
-            if dialog.exec_():
-                normal_symbol, selected_symbol = dialog.getSymbols()
-                category = dialog.getCategory()
-                item.setIcon(0, QtGui.QIcon(normal_symbol))
-                qemu_vm["default_symbol"] = normal_symbol
-                qemu_vm["hover_symbol"] = selected_symbol
-                qemu_vm["category"] = category
 
     def loadPreferences(self):
         """

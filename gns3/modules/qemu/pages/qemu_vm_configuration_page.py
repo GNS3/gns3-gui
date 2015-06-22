@@ -22,11 +22,13 @@ Configuration page for QEMU VMs.
 import os
 import sys
 import re
+
 from functools import partial
 from collections import OrderedDict
 from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
-
-from gns3.qt import QtCore, QtWidgets
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
+from gns3.qt import QtGui, QtCore, QtWidgets
 from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.dialogs.node_properties_dialog import ConfigurationError
@@ -60,10 +62,15 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdcDiskImageCreateToolButton.clicked.connect(self._hdcDiskImageCreateSlot)
         self.uiHddDiskImageCreateToolButton.clicked.connect(self._hddDiskImageCreateSlot)
 
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
         self.uiLegacyNetworkingCheckBox.stateChanged.connect(self._legacyNetworkingChangedSlot)
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
 
         self._legacy_devices = ("e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio")
         self._qemu_network_devices = OrderedDict([("e1000", "Intel Gigabit Ethernet"),
@@ -88,6 +95,18 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                                                   ("vmxnet3", "VMWare Paravirtualized Ethernet v3")])
 
         self._refreshQemuNetworkDevices()
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
 
     def _refreshQemuNetworkDevices(self, legacy_networking=False):
         """
@@ -309,6 +328,22 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiKernelImageLineEdit.hide()
             self.uiKernelImageToolButton.hide()
 
+        if not node:
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["default_symbol"])
+
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
+        else:
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
+
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
@@ -387,6 +422,16 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             del settings["initrd"]
             del settings["kernel_image"]
             del settings["mac_address"]
+
+        if not node:
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["default_symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         if self.uiQemuListComboBox.count():
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())

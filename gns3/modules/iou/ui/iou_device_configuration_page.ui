@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>516</height>
+    <width>461</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,13 +44,47 @@
            <widget class="QLineEdit" name="uiNameLineEdit"/>
           </item>
           <item row="1" column="0">
+           <widget class="QLabel" name="uiSymbolLabel">
+            <property name="text">
+             <string>Symbol:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiSymbolToolButton">
+              <property name="text">
+               <string>&amp;Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiCategoryLabel">
+            <property name="text">
+             <string>Category:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="uiCategoryComboBox"/>
+          </item>
+          <item row="3" column="0">
            <widget class="QLabel" name="uiIOUImageLabel">
             <property name="text">
              <string>IOU image path:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="3" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
@@ -67,14 +101,14 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="uiStartupConfigLabel">
             <property name="text">
              <string>Startup-config:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="4" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QLineEdit" name="uiStartupConfigLineEdit"/>
@@ -91,14 +125,14 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="uiPrivateConfigLabel">
             <property name="text">
              <string>Private-config:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="5" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
              <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
@@ -115,14 +149,14 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="uiConsolePortLabel">
             <property name="text">
              <string>Console port:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="6" column="1">
            <widget class="QSpinBox" name="uiConsolePortSpinBox">
             <property name="maximum">
              <number>65535</number>

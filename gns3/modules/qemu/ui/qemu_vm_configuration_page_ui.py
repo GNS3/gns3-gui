@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created: Mon Jun  8 14:44:42 2015
+# Created: Mon Jun 22 14:28:27 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,9 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_QemuVMConfigPageWidget:
-
+class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(490, 460)
@@ -24,14 +22,9 @@ class Ui_QemuVMConfigPageWidget:
         self.tab.setObjectName("tab")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.tab)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.uiQemuListLabel = QtWidgets.QLabel(self.tab)
-        self.uiQemuListLabel.setObjectName("uiQemuListLabel")
-        self.gridLayout_4.addWidget(self.uiQemuListLabel, 2, 0, 1, 2)
-        self.uiNameLineEdit = QtWidgets.QLineEdit(self.tab)
-        self.uiNameLineEdit.setObjectName("uiNameLineEdit")
-        self.gridLayout_4.addWidget(self.uiNameLineEdit, 0, 2, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(263, 94, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_4.addItem(spacerItem, 4, 1, 1, 2)
+        self.uiSymbolLabel = QtWidgets.QLabel(self.tab)
+        self.uiSymbolLabel.setObjectName("uiSymbolLabel")
+        self.gridLayout_4.addWidget(self.uiSymbolLabel, 2, 0, 1, 1)
         self.uiQemuListComboBox = QtWidgets.QComboBox(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -39,26 +32,50 @@ class Ui_QemuVMConfigPageWidget:
         sizePolicy.setHeightForWidth(self.uiQemuListComboBox.sizePolicy().hasHeightForWidth())
         self.uiQemuListComboBox.setSizePolicy(sizePolicy)
         self.uiQemuListComboBox.setObjectName("uiQemuListComboBox")
-        self.gridLayout_4.addWidget(self.uiQemuListComboBox, 2, 2, 1, 1)
+        self.gridLayout_4.addWidget(self.uiQemuListComboBox, 5, 2, 1, 1)
         self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.tab)
         self.uiConsolePortSpinBox.setMaximum(65535)
         self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout_4.addWidget(self.uiConsolePortSpinBox, 3, 2, 1, 1)
+        self.gridLayout_4.addWidget(self.uiConsolePortSpinBox, 6, 2, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(263, 94, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_4.addItem(spacerItem, 7, 2, 1, 1)
+        self.uiQemuListLabel = QtWidgets.QLabel(self.tab)
+        self.uiQemuListLabel.setObjectName("uiQemuListLabel")
+        self.gridLayout_4.addWidget(self.uiQemuListLabel, 5, 0, 1, 2)
         self.uiConsolePortLabel = QtWidgets.QLabel(self.tab)
         self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout_4.addWidget(self.uiConsolePortLabel, 3, 0, 1, 2)
-        self.uiNameLabel = QtWidgets.QLabel(self.tab)
-        self.uiNameLabel.setObjectName("uiNameLabel")
-        self.gridLayout_4.addWidget(self.uiNameLabel, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.uiConsolePortLabel, 6, 0, 1, 2)
         self.uiRamLabel = QtWidgets.QLabel(self.tab)
         self.uiRamLabel.setObjectName("uiRamLabel")
-        self.gridLayout_4.addWidget(self.uiRamLabel, 1, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.uiRamLabel, 4, 0, 1, 1)
         self.uiRamSpinBox = QtWidgets.QSpinBox(self.tab)
         self.uiRamSpinBox.setMinimum(32)
         self.uiRamSpinBox.setMaximum(65535)
         self.uiRamSpinBox.setProperty("value", 256)
         self.uiRamSpinBox.setObjectName("uiRamSpinBox")
-        self.gridLayout_4.addWidget(self.uiRamSpinBox, 1, 2, 1, 1)
+        self.gridLayout_4.addWidget(self.uiRamSpinBox, 4, 2, 1, 1)
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.tab)
+        self.uiSymbolLineEdit.setObjectName("uiSymbolLineEdit")
+        self.horizontalLayout_7.addWidget(self.uiSymbolLineEdit)
+        self.uiSymbolToolButton = QtWidgets.QToolButton(self.tab)
+        self.uiSymbolToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiSymbolToolButton.setObjectName("uiSymbolToolButton")
+        self.horizontalLayout_7.addWidget(self.uiSymbolToolButton)
+        self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 2, 1, 1)
+        self.uiNameLabel = QtWidgets.QLabel(self.tab)
+        self.uiNameLabel.setObjectName("uiNameLabel")
+        self.gridLayout_4.addWidget(self.uiNameLabel, 0, 0, 1, 1)
+        self.uiNameLineEdit = QtWidgets.QLineEdit(self.tab)
+        self.uiNameLineEdit.setObjectName("uiNameLineEdit")
+        self.gridLayout_4.addWidget(self.uiNameLineEdit, 0, 2, 1, 1)
+        self.uiCategoryLabel = QtWidgets.QLabel(self.tab)
+        self.uiCategoryLabel.setObjectName("uiCategoryLabel")
+        self.gridLayout_4.addWidget(self.uiCategoryLabel, 3, 0, 1, 1)
+        self.uiCategoryComboBox = QtWidgets.QComboBox(self.tab)
+        self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
+        self.gridLayout_4.addWidget(self.uiCategoryComboBox, 3, 2, 1, 1)
         self.uiQemutabWidget.addTab(self.tab, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -271,11 +288,14 @@ class Ui_QemuVMConfigPageWidget:
     def retranslateUi(self, QemuVMConfigPageWidget):
         _translate = gns3.qt.translate
         QemuVMConfigPageWidget.setWindowTitle(_translate("QemuVMConfigPageWidget", "QEMU VM configuration"))
+        self.uiSymbolLabel.setText(_translate("QemuVMConfigPageWidget", "Symbol:"))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:"))
         self.uiConsolePortLabel.setText(_translate("QemuVMConfigPageWidget", "Console port:"))
-        self.uiNameLabel.setText(_translate("QemuVMConfigPageWidget", "VM name:"))
         self.uiRamLabel.setText(_translate("QemuVMConfigPageWidget", "RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("QemuVMConfigPageWidget", " MB"))
+        self.uiSymbolToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
+        self.uiNameLabel.setText(_translate("QemuVMConfigPageWidget", "VM name:"))
+        self.uiCategoryLabel.setText(_translate("QemuVMConfigPageWidget", "Category:"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab), _translate("QemuVMConfigPageWidget", "General settings"))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hda):"))
         self.uiHdaDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
@@ -317,3 +337,4 @@ class Ui_QemuVMConfigPageWidget:
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab_2), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>509</width>
-    <height>346</height>
+    <width>510</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,13 +35,47 @@
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
        <item row="1" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiSymbolToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
+         <property name="text">
+          <string>Category:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="uiVMListLabel">
          <property name="text">
           <string>VM name:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <widget class="QComboBox" name="uiVMListComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -51,14 +85,14 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="uiVMRamLabel">
          <property name="text">
           <string>RAM:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="4" column="1">
         <widget class="QSpinBox" name="uiVMRamSpinBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -74,28 +108,35 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="uiConsolePortLabel">
          <property name="text">
           <string>Console port:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="5" column="1">
         <widget class="QSpinBox" name="uiConsolePortSpinBox">
          <property name="maximum">
           <number>65535</number>
          </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QCheckBox" name="uiEnableConsoleCheckBox">
          <property name="text">
           <string>Enable remote console</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
+         <property name="text">
+          <string>Enable ACPI shutdown</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
         <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
          <property name="text">
           <string>Start VM in headless mode</string>
@@ -105,7 +146,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0" colspan="2">
+       <item row="9" column="0" colspan="2">
         <widget class="QCheckBox" name="uiBaseVMCheckBox">
          <property name="enabled">
           <bool>true</bool>
@@ -115,7 +156,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="10" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -127,13 +168,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
-         <property name="text">
-          <string>Enable ACPI shutdown</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

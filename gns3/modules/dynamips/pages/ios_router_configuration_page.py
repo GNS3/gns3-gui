@@ -25,6 +25,8 @@ import re
 from gns3.servers import Servers
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
@@ -54,6 +56,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         self.uiStartupConfigToolButton.clicked.connect(self._startupConfigBrowserSlot)
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
         self._server = None
         self._idle_valid = False
@@ -63,6 +66,10 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
         self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
 
     def _idlePCValidateSlot(self):
         """
@@ -152,6 +159,18 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         self.uiPrivateConfigLineEdit.clear()
         self.uiPrivateConfigLineEdit.setText(path)
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
 
     def _loadAdapterConfig(self, platform, chassis, settings):
         """
@@ -263,8 +282,17 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if not node:
             # load the startup-config
             self.uiStartupConfigLineEdit.setText(settings["startup_config"])
+
             # load the private-config
             self.uiPrivateConfigLineEdit.setText(settings["private_config"])
+
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["default_symbol"])
+
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
         else:
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
@@ -272,6 +300,12 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiPrivateConfigLabel.hide()
             self.uiPrivateConfigLineEdit.hide()
             self.uiPrivateConfigToolButton.hide()
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
 
         # show the platform and chassis if applicable
         platform = settings["platform"]
@@ -501,6 +535,15 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 else:
                     QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
 
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["default_symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+
         # get the platform and chassis if applicable
         platform = settings["platform"]
         if "chassis" in settings:
@@ -548,7 +591,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         settings["exec_area"] = self.uiExecAreaSpinBox.value()
 
         # save the Idle-PC setting
-        # TODO: check the format?
         settings["idlepc"] = self.uiIdlepcLineEdit.text()
 
         # save the idlemax setting

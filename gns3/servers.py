@@ -583,7 +583,8 @@ class Servers():
                 if not server.RAMLimit():
                     return server
                 if (server.allocatedRAM() + ram) <= server.RAMLimit():
-                    server.increaseAllocatedRAM(ram)
+                    if ram > 0:
+                        server.increaseAllocatedRAM(ram)
                     return server
         elif self._settings["load_balancing_method"] == "round_robin":
             return next(iter(self))

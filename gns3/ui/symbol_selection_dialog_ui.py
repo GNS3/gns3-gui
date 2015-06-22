@@ -2,48 +2,60 @@
 
 # Form implementation generated from reading ui file 'symbol_selection_dialog.ui'
 #
-# Created: Wed May  6 14:31:54 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sun Jun 21 16:11:42 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_SymbolSelectionDialog:
-
+class Ui_SymbolSelectionDialog(object):
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName("SymbolSelectionDialog")
-        SymbolSelectionDialog.resize(319, 389)
+        SymbolSelectionDialog.resize(356, 466)
         SymbolSelectionDialog.setModal(True)
-        self.gridLayout = QtWidgets.QGridLayout(SymbolSelectionDialog)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(SymbolSelectionDialog)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.groupBox = QtWidgets.QGroupBox(SymbolSelectionDialog)
+        self.groupBox.setObjectName("groupBox")
+        self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName("gridLayout")
-        self.uiSymbolListWidget = QtWidgets.QListWidget(SymbolSelectionDialog)
+        self.uiSymbolLabel = QtWidgets.QLabel(self.groupBox)
+        self.uiSymbolLabel.setObjectName("uiSymbolLabel")
+        self.gridLayout.addWidget(self.uiSymbolLabel, 0, 0, 1, 1)
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.groupBox)
+        self.uiSymbolLineEdit.setObjectName("uiSymbolLineEdit")
+        self.horizontalLayout_7.addWidget(self.uiSymbolLineEdit)
+        self.uiSymbolToolButton = QtWidgets.QToolButton(self.groupBox)
+        self.uiSymbolToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiSymbolToolButton.setObjectName("uiSymbolToolButton")
+        self.horizontalLayout_7.addWidget(self.uiSymbolToolButton)
+        self.gridLayout.addLayout(self.horizontalLayout_7, 0, 1, 1, 1)
+        self.verticalLayout_2.addWidget(self.groupBox)
+        self.uiBuiltInGroupBox = QtWidgets.QGroupBox(SymbolSelectionDialog)
+        self.uiBuiltInGroupBox.setObjectName("uiBuiltInGroupBox")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiBuiltInGroupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.uiSymbolListWidget = QtWidgets.QListWidget(self.uiBuiltInGroupBox)
         self.uiSymbolListWidget.setMinimumSize(QtCore.QSize(0, 300))
         self.uiSymbolListWidget.setObjectName("uiSymbolListWidget")
-        self.gridLayout.addWidget(self.uiSymbolListWidget, 0, 0, 1, 2)
-        self.uiCategoryLabel = QtWidgets.QLabel(SymbolSelectionDialog)
-        self.uiCategoryLabel.setObjectName("uiCategoryLabel")
-        self.gridLayout.addWidget(self.uiCategoryLabel, 1, 0, 1, 1)
-        self.uiCategoryComboBox = QtWidgets.QComboBox(SymbolSelectionDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiCategoryComboBox.sizePolicy().hasHeightForWidth())
-        self.uiCategoryComboBox.setSizePolicy(sizePolicy)
-        self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
-        self.gridLayout.addWidget(self.uiCategoryComboBox, 1, 1, 1, 1)
+        self.verticalLayout.addWidget(self.uiSymbolListWidget)
+        self.verticalLayout_2.addWidget(self.uiBuiltInGroupBox)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(SymbolSelectionDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
-        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 34, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem1)
 
         self.retranslateUi(SymbolSelectionDialog)
         self.uiButtonBox.accepted.connect(SymbolSelectionDialog.accept)
@@ -53,6 +65,9 @@ class Ui_SymbolSelectionDialog:
     def retranslateUi(self, SymbolSelectionDialog):
         _translate = gns3.qt.translate
         SymbolSelectionDialog.setWindowTitle(_translate("SymbolSelectionDialog", "Symbol selection"))
-        self.uiCategoryLabel.setText(_translate("SymbolSelectionDialog", "Category:"))
+        self.groupBox.setTitle(_translate("SymbolSelectionDialog", "Custom symbol"))
+        self.uiSymbolLabel.setText(_translate("SymbolSelectionDialog", "Path:"))
+        self.uiSymbolToolButton.setText(_translate("SymbolSelectionDialog", "&Browse..."))
+        self.uiBuiltInGroupBox.setTitle(_translate("SymbolSelectionDialog", "Built-in symbols"))
 
 from . import resources_rc
