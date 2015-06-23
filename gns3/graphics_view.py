@@ -590,6 +590,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 # show item coords in the status bar
                 coords = "X: {} Y: {} Z: {}".format(item.x(), item.y(), item.zValue())
                 self._main_window.uiStatusBar.showMessage(coords, 2000)
+
+            # force the children to redraw because of a problem with QGraphicsEffect
+            for item in self.scene().selectedItems():
+                for child in item.childItems():
+                    child.update()
             super().mouseMoveEvent(event)
 
     def mouseDoubleClickEvent(self, event):
