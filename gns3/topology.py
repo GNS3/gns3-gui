@@ -424,6 +424,14 @@ class Topology:
                                 symbol_path = item.renderer().objectName()
                             elif isinstance(item, PixmapNodeItem):
                                 symbol_path = item.pixmapSymbolPath()
+                                symbol_dir_path = os.path.join(self._project.filesDir(), "project-files", "symbols")
+                                os.makedirs(symbol_dir_path, exist_ok=True)
+                                new_symbol_path = os.path.join(symbol_dir_path, os.path.basename(symbol_path))
+                                try:
+                                    shutil.copyfile(symbol_path, new_symbol_path)
+                                except shutil.SameFileError:
+                                    pass
+                                symbol_path = os.path.join("symbols", os.path.basename(symbol_path))
                             if symbol_path:
                                 node["symbol"] = symbol_path
                 if isinstance(item, LinkItem):
@@ -724,10 +732,19 @@ class Topology:
                     if renderer.isValid():
                         node_item = SvgNodeItem(node, symbol_path)
                     else:
-                        pixmap = QtGui.QPixmap(topology_node["symbol"])
-                        if not pixmap.isNull():
-                            node_item = PixmapNodeItem(node, topology_node["symbol"])
+                        updated_symbol_path = os.path.join(self._project.filesDir(), "project-files", topology_node["symbol"])
+                        if os.path.exists(updated_symbol_path):
+                            symbol_path = updated_symbol_path
                         else:
+                            symbol_path = topology_node["symbol"]
+                        symbol_path = os.path.normpath(symbol_path)
+                        if not os.path.isfile(symbol_path):
+                            topology_file_errors.append("Path to symbol {} doesn't exist".format(symbol_path))
+                        pixmap = QtGui.QPixmap(symbol_path)
+                        if not pixmap.isNull():
+                            node_item = PixmapNodeItem(node,  symbol_path)
+                        else:
+                            topology_file_errors.append("Symbol {} is invalid".format(symbol_path))
                             node_item = SvgNodeItem(node)
                 else:
                     node_item = SvgNodeItem(node)
