@@ -88,10 +88,70 @@ def test_dump(vpcs_device, project, local_server):
     }
 
 
-def test_dump_ssh_server(project, ssh_server):
+def test_dump_http_auth(vpcs_device, project, remote_server):
+
+    remote_server.setUser("hello")
+    remote_server.setPassword("world")
+
+    from gns3.modules.vpcs.vpcs_device import VPCSDevice
+    from gns3.modules.vpcs import VPCS
+
+    vpcs_device = VPCSDevice(VPCS(), remote_server, project)
+    vpcs_device._vpcs_device_id = str(uuid.uuid4())
+    vpcs_device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
+    vpcs_device.setInitialized(True)
+
     topology = Topology()
     topology.project = project
+    topology.addNode(vpcs_device)
 
+    dump = topology.dump(include_gui_data=False)
+    assert dict(dump) == {
+        "project_id": project.id(),
+        "auto_start": False,
+        "name": project.name(),
+        "resources_type": "local",
+        "version": __version__,
+        "revision": 4,
+        "topology": {
+            "nodes": [
+                {
+                    "description": "VPCS device",
+                    "id": vpcs_device.id(),
+                    "ports": [
+                        {
+                            "id": vpcs_device.ports()[0].id(),
+                            "name": "Ethernet0",
+                            "port_number": 0,
+                            "adapter_number": 0
+                        }
+                    ],
+                    "properties": {
+                        "name": vpcs_device.name()
+                    },
+                    "server_id": remote_server.id(),
+                    "type": "VPCSDevice",
+                    "vm_id": None
+                }
+            ],
+            "servers": [
+                {
+                    "vm": False,
+                    "host": "127.0.0.1",
+                    "id": remote_server.id(),
+                    "local": False,
+                    "port": 8001,
+                    "protocol": "http",
+                    "ram_limit": 0,
+                    "user": "hello"
+                }
+            ]
+        },
+        "type": "topology"
+    }
+
+
+def test_dump_ssh_server(project, ssh_server):
 
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.vpcs import VPCS
@@ -101,6 +161,8 @@ def test_dump_ssh_server(project, ssh_server):
     vpcs_device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
     vpcs_device.setInitialized(True)
 
+    topology = Topology()
+    topology.project = project
     topology.addNode(vpcs_device)
 
     dump = topology.dump(include_gui_data=False)

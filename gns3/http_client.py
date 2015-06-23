@@ -112,7 +112,8 @@ class HTTPClient(QtCore.QObject):
                     "ram_limit": self.RAMLimit(),
                     "host": self.host(),
                     "port": self.port(),
-                    "user": self.user()}
+                    "user": self.user(),
+                    "password": self._password}
         if self.protocol() == "https":
             settings["accept_insecure_certificate"] = self.acceptInsecureCertificate()
         return settings
@@ -152,6 +153,12 @@ class HTTPClient(QtCore.QObject):
         User login display to GNS3 user
         """
         return self._user
+
+    def setUser(self, user):
+        self._user = user
+
+    def setPassword(self, password):
+        self._password = password
 
     def notify_progress_start_query(self, query_id, progress_text):
         """
@@ -701,6 +708,8 @@ class HTTPClient(QtCore.QObject):
         #server["cloud"] = self._cloud
         if "user" in server and self._local:
             del server["user"]
+        if "password" in server:
+            del server["password"]
         if server["protocol"] == "https":
             server["accept_insecure_certificate"] = self._accept_insecure_certificate
         return server

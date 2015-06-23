@@ -211,3 +211,15 @@ def test_processDownloadProgressPartialBytes(http_client):
     assert callback.call_count == 1
     args, kwargs = callback.call_args
     assert args[0] == b'hello'
+
+
+def test_dump(http_client):
+
+    assert http_client.dump() == {
+        'host': '127.0.0.1',
+        'id': 0,
+        'local': True,
+        'port': 8000,
+        'protocol': 'http',
+        'ram_limit': 0,
+        'vm': False}
