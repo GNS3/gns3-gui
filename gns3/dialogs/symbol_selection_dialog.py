@@ -22,7 +22,12 @@ Dialog to change node symbols.
 import os
 
 from ..qt import QtSvg, QtCore, QtGui, QtWidgets
+from ..items.svg_node_item import SvgNodeItem
+from ..items.pixmap_node_item import PixmapNodeItem
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
@@ -48,12 +53,16 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         if not self._items:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
         else:
-            custom_symbol = items[0].renderer().objectName()
-            if not custom_symbol:
-                symbol_name = items[0].node().defaultSymbol()
-            else:
-                symbol_name = custom_symbol
-            selected_symbol = symbol_name
+            first_item = items[0]
+            if isinstance(first_item, SvgNodeItem):
+                custom_symbol = first_item.renderer().objectName()
+                if not custom_symbol:
+                    symbol_name = first_item.node().defaultSymbol()
+                else:
+                    symbol_name = custom_symbol
+                selected_symbol = symbol_name
+            elif isinstance(first_item, PixmapNodeItem):
+                self.uiSymbolLineEdit.setText(first_item.pixmapSymbolPath())
 
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
@@ -85,7 +94,19 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             renderer = QtSvg.QSvgRenderer(path)
             renderer.setObjectName(path)
             for item in self._items:
-                item.setSharedRenderer(renderer)
+                if isinstance(item, SvgNodeItem):
+                    item.setSharedRenderer(renderer)
+                else:
+                    log.warning("Built-in SVG symbol cannot be applied on Pixmap node item")
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        pixmap = QtGui.QPixmap(symbol_path)
+        if not pixmap.isNull():
+            for item in self._items:
+                if isinstance(item, PixmapNodeItem):
+                    item.setPixmap(pixmap)
+                else:
+                    log.warning("Custom pixmap symbol cannot be applied on SVG node item")
 
     def getSymbol(self):
 
