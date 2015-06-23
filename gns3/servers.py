@@ -167,6 +167,7 @@ class Servers():
         if "user" not in local_server_settings or len(local_server_settings["user"]) == 0:
             local_server_settings["user"] = self._passwordGenerate()
             local_server_settings["password"] = self._passwordGenerate()
+            self._saveSettings()
 
         for remote_server in self._settings["remote_servers"]:
             self._addRemoteServer(remote_server.get("protocol", "http"),

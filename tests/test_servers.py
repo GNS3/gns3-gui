@@ -21,7 +21,14 @@ import pytest
 from gns3.servers import Servers
 
 
-def test_loadSettings_EmptySettings(local_config):
+def test_loadSettings_EmptySettings(local_config, tmpdir):
+
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        json.dump({
+            "version": "1.4"
+        }, f)
+
+    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
 
     Servers._instance = None
     servers = Servers.instance()
@@ -29,6 +36,11 @@ def test_loadSettings_EmptySettings(local_config):
     assert servers.localServerSettings()["port"] == 8000
     assert len(servers.localServerSettings()["password"]) == 64
     assert len(servers.localServerSettings()["user"]) == 64
+
+    with open(str(tmpdir / "test.cfg")) as f:
+        conf = json.load(f)
+        assert servers.localServerSettings()["password"] == conf["Servers"]["local_server"]["password"]
+        assert servers.localServerSettings()["user"] == conf["Servers"]["local_server"]["user"]
 
 
 def test_loadSettings(tmpdir, local_config):
