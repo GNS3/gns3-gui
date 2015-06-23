@@ -460,6 +460,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                 servers.registerLocalServer()
                 restart_local_server = True
         else:
+            servers.setLocalServerSettings(new_local_server_settings)
             servers.stopLocalServer(wait=True)
 
         # save the GNS3 VM preferences
