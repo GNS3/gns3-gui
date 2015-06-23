@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>591</height>
+    <height>609</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -424,6 +424,98 @@
        <string>Remote servers</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiRemoteServerUserLabel">
+         <property name="text">
+          <string>User:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="uiRemoteServerUserLineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="uiRemoteServerSSHPortLabel">
+         <property name="text">
+          <string>SSH port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiRemoteServerSSHKeyLabel">
+         <property name="text">
+          <string>SSH key:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <layout class="QHBoxLayout" name="uiRemoteServerSSHKeyHorizontalLayout">
+         <item>
+          <widget class="QLineEdit" name="uiRemoteServerSSHKeyLineEdit"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiRemoteServerSSHKeyPushButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="uiAddRemoteServerPushButton">
+           <property name="text">
+            <string>&amp;Add</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiDeleteRemoteServerPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>206</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <spacer name="spacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>390</width>
+           <height>12</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="0" column="0" colspan="2">
         <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
          <property name="columnCount">
@@ -466,7 +558,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="currentText" stdset="0">
+         <property name="currentText">
           <string>HTTP</string>
          </property>
          <item>
@@ -546,31 +638,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiRemoteServerUserLabel">
-         <property name="text">
-          <string>User:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerUserLineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiRemoteServerSSHPortLabel">
-         <property name="text">
-          <string>SSH port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
+       <item row="7" column="1">
         <widget class="QSpinBox" name="uiRemoteServerSSHPortSpinBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -589,73 +657,25 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiRemoteServerSSHKeyLabel">
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
+         <property name="inputMethodHints">
+          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+         </property>
          <property name="text">
-          <string>SSH key:</string>
+          <string/>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
-        <layout class="QHBoxLayout" name="uiRemoteServerSSHKeyHorizontalLayout">
-         <item>
-          <widget class="QLineEdit" name="uiRemoteServerSSHKeyLineEdit"/>
-         </item>
-         <item>
-          <widget class="QPushButton" name="uiRemoteServerSSHKeyPushButton">
-           <property name="text">
-            <string>Browse</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QPushButton" name="uiAddRemoteServerPushButton">
-           <property name="text">
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="uiDeleteRemoteServerPushButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>206</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <spacer name="spacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiRemoteServerPasswordLabel">
+         <property name="text">
+          <string>Password:</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>390</width>
-           <height>12</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
       <zorder>uiRemoteServerProtocolComboBox</zorder>
@@ -673,6 +693,8 @@
       <zorder>spacer_2</zorder>
       <zorder>uiRemoteServersTreeWidget</zorder>
       <zorder>uiRemoteServerProtocolLabel</zorder>
+      <zorder>uiRemoteServerPasswordLineEdit</zorder>
+      <zorder>uiRemoteServerPasswordLabel</zorder>
      </widget>
      <widget class="QWidget" name="uiLoadBalancingTabWidget">
       <attribute name="title">
@@ -778,16 +800,24 @@
   <tabstop>uiVmwareRadioButton</tabstop>
   <tabstop>uiVirtualBoxRadioButton</tabstop>
   <tabstop>uiVMListComboBox</tabstop>
+  <tabstop>uiRefreshPushButton</tabstop>
+  <tabstop>uiHeadlessCheckBox</tabstop>
+  <tabstop>uiShutdownCheckBox</tabstop>
   <tabstop>uiRemoteServersTreeWidget</tabstop>
   <tabstop>uiRemoteServerProtocolComboBox</tabstop>
   <tabstop>uiRemoteServerPortLineEdit</tabstop>
   <tabstop>uiRemoteServerPortSpinBox</tabstop>
   <tabstop>uiRemoteServerUserLineEdit</tabstop>
+  <tabstop>uiRemoteServerPasswordLineEdit</tabstop>
   <tabstop>uiRemoteServerSSHPortSpinBox</tabstop>
   <tabstop>uiRemoteServerSSHKeyLineEdit</tabstop>
   <tabstop>uiRemoteServerSSHKeyPushButton</tabstop>
   <tabstop>uiAddRemoteServerPushButton</tabstop>
   <tabstop>uiDeleteRemoteServerPushButton</tabstop>
+  <tabstop>uiRAMLimitSpinBox</tabstop>
+  <tabstop>uiRAMUsageRadioButton</tabstop>
+  <tabstop>uiRoundRobinRadioButton</tabstop>
+  <tabstop>uiRendezVousHashingRadioButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

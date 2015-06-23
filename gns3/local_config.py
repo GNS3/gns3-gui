@@ -194,10 +194,6 @@ class LocalConfig(QtCore.QObject):
             Copy only existing settings, ignore the other.
             Add default values if require.
             """
-            # do not load settings that we don't need
-            for name in local.copy().keys():
-                if name not in default:
-                    del local[name]
 
             # use default values for missing settings
             for name, value in default.items():

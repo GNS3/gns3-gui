@@ -66,9 +66,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
             address_string = address.toString()
-            #if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
-                # we do not want the scope id when using an IPv6 address...
-                #address.setScopeId("")
+            # if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
+            # we do not want the scope id when using an IPv6 address...
+            # address.setScopeId("")
             self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
 
         # default is 127.0.0.1
@@ -157,17 +157,16 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
     def _remoteServerProtocolCurrentIndexSlot(self, index):
         if self.uiRemoteServerProtocolComboBox.currentText() == "SSH":
-            self.uiRemoteServerUserLineEdit.setText("")
-            self.uiRemoteServerUserLabel.show()
-            self.uiRemoteServerUserLineEdit.show()
+            self.uiRemoteServerPasswordLabel.hide()
+            self.uiRemoteServerPasswordLineEdit.hide()
             self.uiRemoteServerSSHPortLabel.show()
             self.uiRemoteServerSSHPortSpinBox.show()
             self.uiRemoteServerSSHKeyLabel.show()
             self.uiRemoteServerSSHKeyLineEdit.show()
             self.uiRemoteServerSSHKeyPushButton.show()
         else:
-            self.uiRemoteServerUserLabel.hide()
-            self.uiRemoteServerUserLineEdit.hide()
+            self.uiRemoteServerPasswordLabel.show()
+            self.uiRemoteServerPasswordLineEdit.show()
             self.uiRemoteServerSSHPortLabel.hide()
             self.uiRemoteServerSSHPortSpinBox.hide()
             self.uiRemoteServerSSHKeyLabel.hide()
@@ -270,6 +269,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         port = self.uiRemoteServerPortSpinBox.value()
         ram_limit = self.uiRAMLimitSpinBox.value()
         user = self.uiRemoteServerUserLineEdit.text().strip()
+        password = self.uiRemoteServerPasswordLineEdit.text().strip()
         ssh_port = self.uiRemoteServerSSHPortSpinBox.value()
         ssh_key = self.uiRemoteServerSSHKeyLineEdit.text().strip()
 
@@ -299,6 +299,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                     "port": port,
                     "ram_limit": ram_limit,
                     "user": user,
+                    "password": password,
                     "ssh_port": ssh_port,
                     "ssh_key": ssh_key}
 
