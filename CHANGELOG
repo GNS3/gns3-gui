@@ -1,5 +1,14 @@
 # Change Log
 
+## 1.3.7 22/06/2015
+
+* Makes sure Hub Ethernet port names are string.
+* Support spaces in the local server log path.
+* Fixes issue when setting the local server settings.
+* Fix a crash with Python 3.3
+* Fixes WICs are not displayed correctly. Fixes #434.
+* Do not load settings that the GUI doesn't use.
+
 ## 1.3.6 16/06/2015
 
 * Fix an issue with 1.4dev compatibility
