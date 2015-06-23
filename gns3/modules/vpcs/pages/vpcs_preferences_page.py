@@ -67,6 +67,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         if dialog.exec_():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
     def _vpcsPathBrowserSlot(self):
         """
@@ -133,6 +134,8 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiSymbolLineEdit.setText(settings["symbol"])
+        self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
+
         index = self.uiCategoryComboBox.findData(settings["category"])
         if index != -1:
             self.uiCategoryComboBox.setCurrentIndex(index)

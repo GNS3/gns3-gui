@@ -42,6 +42,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self._items = items
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+        self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
 
         selected_symbol = symbol
         if not self._items:
@@ -100,13 +101,15 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
 
         # supported image file formats
         file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", ".", file_formats)  # TODO: handle default dir
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._symbols_dir, file_formats)
         if not path:
             return
 
+        self._symbols_dir = os.path.dirname(path)
         self.uiSymbolListWidget.setEnabled(False)
         self.uiSymbolLineEdit.clear()
         self.uiSymbolLineEdit.setText(path)
+        self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(path))
 
     def done(self, result):
         """
