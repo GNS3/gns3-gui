@@ -32,3 +32,10 @@ def test_context():
         assert progress._minimum_duration == 500
         assert progress._enable is False
     assert progress._enable
+
+    with progress.context(allow_cancel_query=True, cancel_button_text="Hello"):
+        assert progress._cancel_button_text == "Hello"
+        assert progress._allow_cancel_query is True
+    assert progress._cancel_button_text == ""
+    assert progress._allow_cancel_query is False
+

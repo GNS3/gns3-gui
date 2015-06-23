@@ -160,18 +160,18 @@ class HTTPClient(QtCore.QObject):
     def setPassword(self, password):
         self._password = password
 
-    def notify_progress_start_query(self, query_id, progress_text):
+    def notify_progress_start_query(self, query_id, progress_text, response):
         """
         Called when a query start
         """
         if HTTPClient._progress_callback:
             if progress_text:
-                HTTPClient._progress_callback.add_query_signal.emit(query_id, progress_text)
+                HTTPClient._progress_callback.add_query_signal.emit(query_id, progress_text, response)
             else:
                 if self._local:
-                    HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for local GNS3 server")
+                    HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for local GNS3 server", response)
                 else:
-                    HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {}".format(self.url()))
+                    HTTPClient._progress_callback.add_query_signal.emit(query_id, "Waiting for {}".format(self.url()), response)
 
     def notify_progress_end_query(cls, query_id):
         """
@@ -522,12 +522,6 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
-        import copy
-        context = copy.copy(context)
-        query_id = str(uuid.uuid4())
-        context["query_id"] = query_id
-        if showProgress:
-            self.notify_progress_start_query(context["query_id"], progressText)
 
         try:
             ip = self._http_host.rsplit('%', 1)[0]
@@ -550,7 +544,12 @@ class HTTPClient(QtCore.QObject):
 
         response = self._network_manager.sendCustomRequest(request, method, body)
 
+        import copy
+        context = copy.copy(context)
+        query_id = str(uuid.uuid4())
+        context["query_id"] = query_id
         if showProgress:
+            self.notify_progress_start_query(context["query_id"], progressText, response)
             response.uploadProgress.connect(partial(self.notify_progress_upload, query_id))
             response.downloadProgress.connect(partial(self.notify_progress_download, query_id))
 

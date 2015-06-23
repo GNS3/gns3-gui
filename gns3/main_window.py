@@ -1039,6 +1039,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
+        progress = Progress.instance()
+        progress.setAllowCancelQuery(True)
+        progress.setCancelButtonText("Force quit")
+
         log.debug("Close the main Windows")
         servers = Servers.instance()
         if self._project.closed() and not servers.localServerIsRunning():
