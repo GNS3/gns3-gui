@@ -370,6 +370,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         # GNS3 VM settings
         vm_settings = servers_settings["vm"]
+        self.uiVMUserLineEdit.setText(vm_settings["user"])
+        self.uiVMPasswordLineEdit.setText(vm_settings["password"])
         self.uiEnableVMCheckBox.setChecked(vm_settings["auto_start"])
         self.uiShutdownCheckBox.setChecked(vm_settings["auto_stop"])
         index = self.uiVMListComboBox.findText(vm_settings["vmname"])
@@ -478,7 +480,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                                "auto_stop": self.uiShutdownCheckBox.isChecked(),
                                "vmname": self.uiVMListComboBox.currentText(),
                                "vmx_path": self.uiVMListComboBox.currentData(),
-                               "headless": self.uiHeadlessCheckBox.isChecked()}
+                               "headless": self.uiHeadlessCheckBox.isChecked(),
+                               "user": self.uiVMUserLineEdit.text(),
+                               "password": self.uiVMPasswordLineEdit.text()}
         if self.uiVmwareRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VMware"
         elif self.uiVirtualBoxRadioButton.isChecked():

@@ -236,7 +236,9 @@ SERVERS_SETTINGS = {
         "vmx_path": "",
         "server_host": "",
         "server_port": 8000,
-        "virtualization": "VMware"
+        "virtualization": "VMware",
+        "user": "",
+        "password": ""
     },
     "load_balancing_method": "ram_usage",
     "remote_servers": [],

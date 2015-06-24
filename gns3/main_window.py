@@ -1135,16 +1135,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         servers = Servers.instance()
         if GNS3VM.instance().autoStart():
+            servers.initVMServer()
+
             # automatically start the GNS3 VM
             worker = WaitForVMWorker()
             progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
             progress_dialog.show()
-            if progress_dialog.exec_():
-                servers.initVMServer()
-
-        if self._settings["debug_level"]:
-            root = logging.getLogger()
-            root.addHandler(logging.StreamHandler(sys.stdout))
+            progress_dialog.exec_()
 
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)

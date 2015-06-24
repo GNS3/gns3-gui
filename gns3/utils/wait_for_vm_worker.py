@@ -28,6 +28,7 @@ import json
 from ..qt import QtCore
 from ..version import __version__
 from ..gns3_vm import GNS3VM
+from ..servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
@@ -55,8 +56,6 @@ class WaitForVMWorker(QtCore.QObject):
         self._vmx_path = vm_settings["vmx_path"]
         self._headless = vm_settings["headless"]
         self._virtualization = vm_settings["virtualization"]
-        self._server_host = vm_settings["server_host"]
-        self._server_port = vm_settings["server_port"]
 
     def _get_vbox_vm_state(self):
         """
@@ -108,29 +107,12 @@ class WaitForVMWorker(QtCore.QObject):
                     return True
         return False
 
-    def _server_request(self, host, port, endpoint, timeout=120):
-        """
-        Sends an HTTP request to a server.
-
-        :param host: server host
-        :param port: server port
-        :param endpoint: server endpoint
-        :returns: response code, json data
-        """
-
-        url = "{protocol}://{host}:{port}{endpoint}".format(protocol="http", host=host, port=port, endpoint=endpoint)
-        response = urllib.request.urlopen(url, timeout=timeout)
-        content_type = response.getheader("CONTENT-TYPE")
-        if response.status == 200 and content_type == "application/json":
-            content = response.read()
-            json_data = json.loads(content.decode("utf-8"))
-            return response.status, json_data
-        return response.status, None
-
     def run(self):
         """
         Worker starting point.
         """
+
+        server = Servers.instance().vmServer()
 
         self._is_running = True
         if self._virtualization == "VMware":
@@ -162,7 +144,7 @@ class WaitForVMWorker(QtCore.QObject):
                     return
 
                 # get the guest IP address (first adapter only)
-                self._server_host = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"])
+                server.setHost(self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"]))
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute vmrun: {}".format(e), True)
                 return
@@ -211,33 +193,28 @@ class WaitForVMWorker(QtCore.QObject):
                 log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
                 self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
 
-                self._server_host = ip_address
+                self.server.setHost(ip_address)
 
                 if not self._is_running:
                     return
 
                 # ask the server all a list of all its interfaces along with IP addresses
-                try:
-                    status, json_data = self._server_request(self._server_host, port, "/v1/interfaces")
-                    if status != 200:
-                        self.error.emit("Server has replied with status code {} when retrieving the network interfaces".format(status), True)
-                        return
+                status, json_data = server.getSynchronous("interfaces", timeout=120)
+                if status != 200:
+                    self.error.emit("Server has replied with status code {} when retrieving the network interfaces".format(status), True)
+                    return
 
-                    # find the ip address for the first hostonly interface
-                    hostonly_ip_address_found = False
-                    for interface in json_data:
-                        if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
-                            if "ip_address" in interface:
-                                self._server_host = interface["ip_address"]
-                                hostonly_ip_address_found = True
-                                break
+                # find the ip address for the first hostonly interface
+                hostonly_ip_address_found = False
+                for interface in json_data:
+                    if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
+                        if "ip_address" in interface:
+                            server.setHost(interface["ip_address"])
+                            hostonly_ip_address_found = True
+                            break
 
-                    if not hostonly_ip_address_found:
-                        self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
-                        return
-
-                except OSError as e:
-                    self.error.emit("Request error {}".format(e), True)
+                if not hostonly_ip_address_found:
+                    self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
                     return
 
             except (OSError, subprocess.SubprocessError) as e:
@@ -247,11 +224,13 @@ class WaitForVMWorker(QtCore.QObject):
         if not self._is_running:
             return
 
-        self._vm.setSettings({"server_host": self._server_host})
-        log.info("GNS3 VM is started and server is running on {}:{}".format(self._server_host, self._server_port))
+        log.info("GNS3 VM is started and server is running on {}:{}".format(server.host(), server.port()))
         try:
-            status, json_data = self._server_request(self._server_host, self._server_port, "/v1/version")
-            if status != 200:
+            status, json_data = server.getSynchronous("version", timeout=120)
+            if status == 401:
+                self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
+                return
+            elif status != 200:
                 self.error.emit("Server has replied with status code {} when retrieving version number".format(status), True)
                 return
             server_version = json_data["version"]

@@ -133,6 +133,9 @@ class HTTPClient(QtCore.QObject):
         """
         return self._host
 
+    def setHost(self, host):
+        self._host = host
+
     def port(self):
         """
         Port display to user
@@ -273,14 +276,34 @@ class HTTPClient(QtCore.QObject):
 
     def isLocalServerRunning(self):
         """
-        Check if a server is already running on this host.
+        Synchronous check if a server is already running on this host.
 
         :returns: boolean
         """
-        try:
-            url = "{protocol}://{host}:{port}/v1/version".format(protocol=self._scheme, host=self._http_host, port=self._http_port)
+        status, json_data = self.getSynchronous("version", timeout=2)
+        if json_data is None or status != 200:
+            return False
+        else:
+            version = json_data.get("version")
+            local_server = json_data.get("local", False)
+            if version != __version__:
+                log.debug("Client version {} differs with server version {}".format(__version__, version))
+                return False
+            if not local_server:
+                log.debug("Running server is not a GNS3 local server (not started with --local)")
+                return False
 
-            if self._user is not None:
+    def getSynchronous(self, endpoint, timeout=2):
+        """
+        Synchronous check if a server is running
+
+        :returns: Tuple (Status code, json of anwser). Status 0 is a non HTTP error
+        """
+        try:
+            url = "{protocol}://{host}:{port}/v1/{endpoint}".format(protocol=self._scheme, host=self._http_host, port=self._http_port, endpoint=endpoint)
+
+            log.debug("Synchronous get %s with user %s", url, self._user)
+            if self._user is not None and len(self._user) > 0:
                 auth_handler = urllib.request.HTTPBasicAuthHandler()
                 auth_handler.add_password(realm="GNS3 server",
                                           uri=url,
@@ -291,21 +314,20 @@ class HTTPClient(QtCore.QObject):
 
             response = urllib.request.urlopen(url, timeout=2)
             content_type = response.getheader("CONTENT-TYPE")
-            if response.status == 200 and content_type == "application/json":
-                content = response.read()
-                json_data = json.loads(content.decode("utf-8"))
-                version = json_data.get("version")
-                local_server = json_data.get("local", False)
-                if version != __version__:
-                    log.debug("Client version {} differs with server version {}".format(__version__, version))
-                    return False
-                if not local_server:
-                    log.debug("Running server is not a GNS3 local server (not started with --local)")
-                    return False
-                return True
-        except (OSError, urllib.error.HTTPError, http.client.BadStatusLine, ValueError) as e:
-            log.debug("A non GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
-        return False
+            if response.status == 200:
+                if content_type == "application/json":
+                    content = response.read()
+                    json_data = json.loads(content.decode("utf-8"))
+                    local_server = json_data.get("local", False)
+                    return response.status, json_data
+            else:
+                return response.status, None
+        except urllib.error.HTTPError as e:
+            log.debug("Error during get on {}:{}: {}".format(self._host, self._port, e))
+            return e.code, None
+        except (OSError, http.client.BadStatusLine, ValueError) as e:
+            log.debug("Error during get on {}:{}: {}".format(self._host, self._port, e))
+            return 0, None
 
     def get(self, path, callback, **kwargs):
         """
@@ -521,7 +543,6 @@ class HTTPClient(QtCore.QObject):
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :returns: QNetworkReply
         """
-
 
         try:
             ip = self._http_host.rsplit('%', 1)[0]

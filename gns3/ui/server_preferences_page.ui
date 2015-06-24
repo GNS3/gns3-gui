@@ -293,8 +293,8 @@
       <attribute name="title">
        <string>GNS3 VM</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
         <widget class="QCheckBox" name="uiEnableVMCheckBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -316,26 +316,16 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item>
         <widget class="QGroupBox" name="uiGNS3VMSettingsGroupBox">
          <property name="title">
           <string>Settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="3" column="0">
-           <widget class="QLabel" name="uiVMNameLabel">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
             <property name="text">
-             <string>VM name:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QComboBox" name="uiVMListComboBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+             <string>Virtualization software:</string>
             </property>
            </widget>
           </item>
@@ -373,10 +363,27 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiVMNameLabel">
             <property name="text">
-             <string>Virtualization software:</string>
+             <string>VM name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QComboBox" name="uiVMListComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="uiRefreshPushButton">
+            <property name="text">
+             <string>&amp;Refresh</string>
             </property>
            </widget>
           </item>
@@ -394,17 +401,46 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="uiRefreshPushButton">
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Authentication (optional)</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiVMUserLabel">
             <property name="text">
-             <string>&amp;Refresh</string>
+             <string>User:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiVMUserLineEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiVMPasswordLabel">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="uiVMPasswordLineEdit">
+            <property name="inputMethodHints">
+             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+            </property>
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -803,6 +839,8 @@
   <tabstop>uiRefreshPushButton</tabstop>
   <tabstop>uiHeadlessCheckBox</tabstop>
   <tabstop>uiShutdownCheckBox</tabstop>
+  <tabstop>uiVMUserLineEdit</tabstop>
+  <tabstop>uiVMPasswordLineEdit</tabstop>
   <tabstop>uiRemoteServersTreeWidget</tabstop>
   <tabstop>uiRemoteServerProtocolComboBox</tabstop>
   <tabstop>uiRemoteServerPortLineEdit</tabstop>

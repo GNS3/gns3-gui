@@ -475,9 +475,14 @@ class Servers():
         Initialize the GNS3 VM server.
         """
 
-        # TODO: handle authentication and/or SSH?
         gns3_vm_settings = self._settings["vm"]
-        server_info = {"host": gns3_vm_settings["server_host"], "port": gns3_vm_settings["server_port"], "protocol": "http"}
+        server_info = {
+            "host": gns3_vm_settings["server_host"],
+            "port": gns3_vm_settings["server_port"],
+            "protocol": "http",
+            "user": gns3_vm_settings["user"],
+            "password": gns3_vm_settings["password"]
+        }
         server = getNetworkClientInstance(server_info, self._network_manager)
         server.setLocal(False)
         server.setGNS3VM(True)
