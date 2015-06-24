@@ -211,7 +211,13 @@ class Qemu(Module):
 
         qemu_path = vm_settings.pop("qemu_path")
         name = vm_settings.pop("name")
-        node.setup(qemu_path, additional_settings=vm_settings, base_name=name)
+        port_name_format = self._qemu_vms[vm]["port_name_format"]
+        port_segment_size = self._qemu_vms[vm]["port_segment_size"]
+        node.setup(qemu_path,
+                   port_name_format=port_name_format,
+                   port_segment_size=port_segment_size,
+                   additional_settings=vm_settings,
+                   base_name=name)
 
     def reset(self):
         """

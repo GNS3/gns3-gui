@@ -263,7 +263,13 @@ class VirtualBox(Module):
                 vm_settings[setting_name] = value
 
         vmname = self._virtualbox_vms[vm]["vmname"]
-        node.setup(vmname, linked_clone=linked_base, additional_settings=vm_settings)
+        port_name_format = self._virtualbox_vms[vm]["port_name_format"]
+        port_segment_size = self._virtualbox_vms[vm]["port_segment_size"]
+        node.setup(vmname,
+                   port_name_format=port_name_format,
+                   port_segment_size=port_segment_size,
+                   linked_clone=linked_base,
+                   additional_settings=vm_settings)
 
     def reset(self):
         """

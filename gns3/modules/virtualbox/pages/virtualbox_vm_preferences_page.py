@@ -77,6 +77,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         # fill out the Network section
         section_item = self._createSectionItem("Network")
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(vbox_vm["adapters"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Name format:", vbox_vm["port_name_format"]])
+        if vbox_vm["port_segment_size"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Segment size:", str(vbox_vm["port_segment_size"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Use any adapter:", "{}".format(vbox_vm["use_any_adapter"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
 

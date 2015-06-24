@@ -281,6 +281,8 @@
                     "description": "The node symbol when hover. Deprecated in 1.4",
                     "$ref": "#/definitions/mandatory_string"
                 },
+                "port_name_format": { "$ref": "#/definitions/mandatory_string" },
+                "port_segment_size": { "type": "number" },
                 "ports": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/port" }

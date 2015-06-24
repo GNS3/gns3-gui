@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'vmware_vm_configuration_page.ui'
 #
-# Created: Mon Jun 22 14:28:27 2015
+# Created: Tue Jun 23 17:38:16 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -83,9 +83,24 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiAdaptersSpinBox.setMaximum(10)
         self.uiAdaptersSpinBox.setObjectName("uiAdaptersSpinBox")
         self.gridLayout_2.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
+        self.uiPortNameFormatLabel = QtWidgets.QLabel(self.tab_2)
+        self.uiPortNameFormatLabel.setObjectName("uiPortNameFormatLabel")
+        self.gridLayout_2.addWidget(self.uiPortNameFormatLabel, 1, 0, 1, 1)
+        self.uiPortNameFormatLineEdit = QtWidgets.QLineEdit(self.tab_2)
+        self.uiPortNameFormatLineEdit.setText("")
+        self.uiPortNameFormatLineEdit.setObjectName("uiPortNameFormatLineEdit")
+        self.gridLayout_2.addWidget(self.uiPortNameFormatLineEdit, 1, 1, 1, 1)
+        self.uiPortSegmentSizeLabel = QtWidgets.QLabel(self.tab_2)
+        self.uiPortSegmentSizeLabel.setObjectName("uiPortSegmentSizeLabel")
+        self.gridLayout_2.addWidget(self.uiPortSegmentSizeLabel, 2, 0, 1, 1)
+        self.uiPortSegmentSizeSpinBox = QtWidgets.QSpinBox(self.tab_2)
+        self.uiPortSegmentSizeSpinBox.setMaximum(128)
+        self.uiPortSegmentSizeSpinBox.setSingleStep(4)
+        self.uiPortSegmentSizeSpinBox.setObjectName("uiPortSegmentSizeSpinBox")
+        self.gridLayout_2.addWidget(self.uiPortSegmentSizeSpinBox, 2, 1, 1, 1)
         self.label = QtWidgets.QLabel(self.tab_2)
         self.label.setObjectName("label")
-        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label, 3, 0, 1, 1)
         self.uiAdapterTypesComboBox = QtWidgets.QComboBox(self.tab_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -93,12 +108,12 @@ class Ui_VMwareVMConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiAdapterTypesComboBox.sizePolicy().hasHeightForWidth())
         self.uiAdapterTypesComboBox.setSizePolicy(sizePolicy)
         self.uiAdapterTypesComboBox.setObjectName("uiAdapterTypesComboBox")
-        self.gridLayout_2.addWidget(self.uiAdapterTypesComboBox, 1, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.uiAdapterTypesComboBox, 3, 1, 1, 1)
         self.uiUseAnyAdapterCheckBox = QtWidgets.QCheckBox(self.tab_2)
         self.uiUseAnyAdapterCheckBox.setObjectName("uiUseAnyAdapterCheckBox")
-        self.gridLayout_2.addWidget(self.uiUseAnyAdapterCheckBox, 2, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiUseAnyAdapterCheckBox, 4, 0, 1, 2)
         spacerItem1 = QtWidgets.QSpacerItem(248, 178, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem1, 3, 0, 1, 2)
+        self.gridLayout_2.addItem(spacerItem1, 5, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab_2, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
@@ -120,6 +135,8 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiCategoryLabel.setText(_translate("VMwareVMConfigPageWidget", "Category:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("VMwareVMConfigPageWidget", "General settings"))
         self.uiAdaptersLabel.setText(_translate("VMwareVMConfigPageWidget", "Adapters:"))
+        self.uiPortNameFormatLabel.setText(_translate("VMwareVMConfigPageWidget", "Name format:"))
+        self.uiPortSegmentSizeLabel.setText(_translate("VMwareVMConfigPageWidget", "Segment size:"))
         self.label.setText(_translate("VMwareVMConfigPageWidget", "Type:"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Allow GNS3 to use any configured VMware adapter"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))

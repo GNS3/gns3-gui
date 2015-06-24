@@ -112,6 +112,9 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             index = self.uiCategoryComboBox.findData(settings["category"])
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
+
+            self.uiPortNameFormatLineEdit.setText(settings["port_name_format"])
+            self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
         else:
             self.uiSymbolLabel.hide()
             self.uiSymbolLineEdit.hide()
@@ -119,6 +122,10 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiCategoryComboBox.hide()
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
+            self.uiPortNameFormatLabel.hide()
+            self.uiPortNameFormatLineEdit.hide()
+            self.uiPortSegmentSizeLabel.hide()
+            self.uiPortSegmentSizeSpinBox.hide()
 
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
@@ -171,6 +178,17 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
                 settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+            port_name_format = self.uiPortNameFormatLineEdit.text()
+            if '{0}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain at least {0}")
+            else:
+                settings["port_name_format"] = self.uiPortNameFormatLineEdit.text()
+
+            port_segment_size = self.uiPortSegmentSizeSpinBox.value()
+            if port_segment_size and '{1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain {1} if the segment size is not 0")
+            else:
+                settings["port_segment_size"] = port_segment_size
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()

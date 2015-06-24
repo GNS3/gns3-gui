@@ -39,6 +39,8 @@ VMWARE_VM_SETTINGS = {
     "vmx_path": "",
     "symbol": ":/symbols/vmware_guest.svg",
     "category": Node.end_devices,
+    "port_name_format": "Ethernet{0}",
+    "port_segment_size": 0,
     "adapters": 1,
     "adapter_type": "default",
     "use_any_adapter": False,

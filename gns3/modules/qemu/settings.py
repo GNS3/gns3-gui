@@ -29,6 +29,8 @@ QEMU_VM_SETTINGS = {
     "name": "",
     "symbol": ":/symbols/qemu_guest.svg",
     "category": Node.end_devices,
+    "port_name_format": "Ethernet{0}",
+    "port_segment_size": 0,
     "qemu_path": "",
     "hda_disk_image": "",
     "hdb_disk_image": "",

@@ -175,7 +175,7 @@
       <attribute name="title">
        <string>Network</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
         <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
@@ -194,13 +194,61 @@
         </widget>
        </item>
        <item row="1" column="0">
+        <widget class="QLabel" name="uiPortNameFormatLabel">
+         <property name="text">
+          <string>Name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiPortSegmentSizeLabel">
+         <property name="text">
+          <string>Segment size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Type:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item row="3" column="1">
+        <widget class="QComboBox" name="uiAdapterTypesComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
+         <property name="text">
+          <string>Allow GNS3 to use any configured VirtualBox adapter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -212,23 +260,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="uiAdapterTypesComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
-         <property name="text">
-          <string>Allow GNS3 to use any configured VirtualBox adapter</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

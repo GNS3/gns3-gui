@@ -338,6 +338,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             index = self.uiCategoryComboBox.findData(settings["category"])
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
+
+            self.uiPortNameFormatLineEdit.setText(settings["port_name_format"])
+            self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
         else:
             self.uiSymbolLabel.hide()
             self.uiSymbolLineEdit.hide()
@@ -345,9 +348,14 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiCategoryComboBox.hide()
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
+            self.uiPortNameFormatLabel.hide()
+            self.uiPortNameFormatLineEdit.hide()
+            self.uiPortSegmentSizeLabel.hide()
+            self.uiPortSegmentSizeSpinBox.hide()
 
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
+
         self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
 
         # load the MAC address setting
@@ -408,6 +416,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             if mac != ":::::":
                 if not re.search(r"""^([0-9a-fA-F]{2}[:]){5}[0-9a-fA-F]{2}$""", mac):
                     QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
+                    if node:
+                        raise ConfigurationError()
                 else:
                     settings["mac_address"] = mac
             else:
@@ -434,6 +444,17 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+            port_name_format = self.uiPortNameFormatLineEdit.text()
+            if '{0}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain at least {0}")
+            else:
+                settings["port_name_format"] = self.uiPortNameFormatLineEdit.text()
+
+            port_segment_size = self.uiPortSegmentSizeSpinBox.value()
+            if port_segment_size and '{1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain {1} if the segment size is not 0")
+            else:
+                settings["port_segment_size"] = port_segment_size
 
         if self.uiQemuListComboBox.count():
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())

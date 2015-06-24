@@ -91,6 +91,9 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         # fill out the Network section
         section_item = self._createSectionItem("Network")
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(qemu_vm["adapters"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Name format:", qemu_vm["port_name_format"]])
+        if qemu_vm["port_segment_size"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Segment size:", str(qemu_vm["port_segment_size"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Type:", qemu_vm["adapter_type"]])
         if qemu_vm["mac_address"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Base MAC address:", qemu_vm["mac_address"]])

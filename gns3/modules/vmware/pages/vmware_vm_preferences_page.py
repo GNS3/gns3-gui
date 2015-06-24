@@ -76,6 +76,9 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         # fill out the Network section
         section_item = self._createSectionItem("Network")
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(vmware_vm["adapters"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Name format:", vmware_vm["port_name_format"]])
+        if vmware_vm["port_segment_size"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Segment size:", str(vmware_vm["port_segment_size"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Use any adapter:", "{}".format(vmware_vm["use_any_adapter"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Type:", vmware_vm["adapter_type"]])
 

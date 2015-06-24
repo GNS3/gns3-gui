@@ -267,7 +267,14 @@ class VMware(Module):
 
         vmx_path = vm_settings.pop("vmx_path")
         name = vm_settings.pop("name")
-        node.setup(vmx_path, linked_clone=linked_base, additional_settings=vm_settings, base_name=name)
+        port_name_format = self._vmware_vms[vm]["port_name_format"]
+        port_segment_size = self._vmware_vms[vm]["port_segment_size"]
+        node.setup(vmx_path,
+                   port_name_format=port_name_format,
+                   port_segment_size=port_segment_size,
+                   linked_clone=linked_base,
+                   additional_settings=vm_settings,
+                   base_name=name)
 
     def reset(self):
         """
