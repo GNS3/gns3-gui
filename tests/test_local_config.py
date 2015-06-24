@@ -16,7 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import sys
+import os
 import json
+from unittest.mock import patch
+
+from gns3.local_config import LocalConfig
 
 
 @pytest.fixture
@@ -89,3 +94,26 @@ def test_readConfigReload(config_file, tmpdir, local_config):
 
     local_config._readConfig(config_file)
     assert local_config._settings["VirtualBox"]["use_local_server"] == False
+
+
+@pytest.mark.skipif(sys.platform.startswith('darwin') is False, reason='Only on MacOS')
+def test_migrateOldConfigOSX(tmpdir):
+
+    with patch('os.path.expanduser', return_value=str(tmpdir)):
+
+        os.makedirs(str(tmpdir / '.config' / 'gns3.net'))
+        open(str(tmpdir / '.config' / 'gns3.net' / 'hello'), 'w+').close()
+
+        local_config = LocalConfig()
+
+        assert os.path.exists(str(tmpdir / '.config' / 'GNS3'))
+        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'hello'))
+        assert not os.path.exists(str(tmpdir / '.config' / 'gns3.net'))
+
+        # It should migrate only one time
+        os.makedirs(str(tmpdir / '.config' / 'gns3.net'))
+        open(str(tmpdir / '.config' / 'gns3.net' / 'world'), 'w+').close()
+
+        local_config._migrateOldConfig()
+        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'hello'))
+        assert not os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'world'))

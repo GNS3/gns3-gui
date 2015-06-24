@@ -42,10 +42,7 @@ def checkLicence():
     """
     Return true if the user as correctly installed the licence file
     """
-    if sys.platform.startswith("darwin"):
-        appname = "gns3.net"
-    else:
-        appname = "GNS3"
+    appname = "GNS3"
 
     filename = "licence.txt"
 

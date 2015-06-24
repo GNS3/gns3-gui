@@ -46,10 +46,9 @@ class LocalConfig(QtCore.QObject):
         else:
             filename = "gns3_gui.conf"
 
-        if sys.platform.startswith("darwin"):
-            appname = "gns3.net"
-        else:
-            appname = "GNS3"
+        self._migrateOldConfig()
+
+        appname = "GNS3"
 
         if sys.platform.startswith("win"):
 
@@ -96,6 +95,22 @@ class LocalConfig(QtCore.QObject):
         timer.timeout.connect(self._checkConfigChanged)
         timer.setInterval(1000)  #  milliseconds
         timer.start()
+
+    def _migrateOldConfig(self):
+        """
+        Migrate pre 1.4 config
+        """
+
+        # In < 1.4 on Mac the config was in a gns3.net directory
+        # We have move to same location as Linux
+        if sys.platform.startswith("darwin"):
+            old_path = os.path.join(os.path.expanduser("~"), ".config", "gns3.net")
+            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
+            if os.path.exists(old_path) and not os.path.exists(new_path):
+                try:
+                    shutil.move(old_path, new_path)
+                except OSError:
+                    pass
 
     def _readConfig(self, config_path):
         """
