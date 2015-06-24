@@ -98,6 +98,35 @@ class VM(Node):
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
 
+    def _setupCallback(self, result, error=False, **kwargs):
+        """
+        Callback for setup.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        :returns: Boolean success or not
+        """
+
+        if error:
+            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
+
+        self._vm_id = result["vm_id"]
+        if not self._vm_id:
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return False
+
+        # update the settings using the defaults sent by the server
+        for name, value in result.items():
+            if name in self._settings and self._settings[name] != value:
+                log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(),
+                                                                                               name,
+                                                                                               self._settings[name],
+                                                                                               value))
+                self._settings[name] = value
+        return True
+
     def stop(self):
         """
         Stops this VM instance.
