@@ -108,7 +108,7 @@ class LocalConfig(QtCore.QObject):
             new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
-                    shutil.move(old_path, new_path)
+                    shutil.copytree(old_path, new_path)
                 except OSError:
                     pass
 

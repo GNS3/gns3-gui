@@ -108,10 +108,9 @@ def test_migrateOldConfigOSX(tmpdir):
 
         assert os.path.exists(str(tmpdir / '.config' / 'GNS3'))
         assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'hello'))
-        assert not os.path.exists(str(tmpdir / '.config' / 'gns3.net'))
+        assert os.path.exists(str(tmpdir / '.config' / 'gns3.net'))
 
         # It should migrate only one time
-        os.makedirs(str(tmpdir / '.config' / 'gns3.net'))
         open(str(tmpdir / '.config' / 'gns3.net' / 'world'), 'w+').close()
 
         local_config._migrateOldConfig()
