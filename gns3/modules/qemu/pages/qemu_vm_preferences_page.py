@@ -94,6 +94,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Name format:", qemu_vm["port_name_format"]])
         if qemu_vm["port_segment_size"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Segment size:", str(qemu_vm["port_segment_size"])])
+        if qemu_vm["first_port_name"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["First port name:", qemu_vm["first_port_name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Type:", qemu_vm["adapter_type"]])
         if qemu_vm["mac_address"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Base MAC address:", qemu_vm["mac_address"]])

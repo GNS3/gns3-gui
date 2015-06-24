@@ -136,14 +136,28 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiAdaptersLabel">
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
          <property name="text">
-          <string>Adapters:</string>
+          <string/>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiPortNameFormatLabel">
+         <property name="text">
+          <string>Name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiPortSegmentSizeLabel">
+         <property name="text">
+          <string>Segment size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
         <widget class="QSpinBox" name="uiAdaptersSpinBox">
          <property name="minimum">
           <number>0</number>
@@ -153,28 +167,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiPortNameFormatLabel">
-         <property name="text">
-          <string>Name format:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiPortSegmentSizeLabel">
-         <property name="text">
-          <string>Segment size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
+       <item row="3" column="2">
         <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
          <property name="maximum">
           <number>128</number>
@@ -184,14 +177,14 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
-          <string>Type:</string>
+          <string>Adapters:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="5" column="2">
         <widget class="QComboBox" name="uiAdapterTypesComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -201,14 +194,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
-         <property name="text">
-          <string>Allow GNS3 to use any configured VMware adapter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
+       <item row="7" column="1" colspan="2">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -220,6 +206,30 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
+         <property name="text">
+          <string>Allow GNS3 to use any configured VMware adapter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiFirstPortNameLabel">
+         <property name="text">
+          <string>First port name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
        </item>
       </layout>
      </widget>

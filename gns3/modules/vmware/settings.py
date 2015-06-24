@@ -41,6 +41,7 @@ VMWARE_VM_SETTINGS = {
     "category": Node.end_devices,
     "port_name_format": "Ethernet{0}",
     "port_segment_size": 0,
+    "first_port_name": "",
     "adapters": 1,
     "adapter_type": "default",
     "use_any_adapter": False,

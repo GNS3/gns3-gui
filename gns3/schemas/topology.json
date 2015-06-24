@@ -283,6 +283,7 @@
                 },
                 "port_name_format": { "$ref": "#/definitions/mandatory_string" },
                 "port_segment_size": { "type": "number" },
+                "first_port_name": { "$ref": "#/definitions/mandatory_string" },
                 "ports": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/port" }

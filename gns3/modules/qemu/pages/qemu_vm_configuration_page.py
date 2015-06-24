@@ -341,6 +341,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
             self.uiPortNameFormatLineEdit.setText(settings["port_name_format"])
             self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
+            self.uiFirstPortNameLineEdit.setText(settings["first_port_name"])
         else:
             self.uiSymbolLabel.hide()
             self.uiSymbolLineEdit.hide()
@@ -352,6 +353,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiPortNameFormatLineEdit.hide()
             self.uiPortSegmentSizeLabel.hide()
             self.uiPortSegmentSizeSpinBox.hide()
+            self.uiFirstPortNameLabel.hide()
+            self.uiFirstPortNameLineEdit.hide()
 
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
@@ -455,6 +458,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain {1} if the segment size is not 0")
             else:
                 settings["port_segment_size"] = port_segment_size
+
+            settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
 
         if self.uiQemuListComboBox.count():
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())

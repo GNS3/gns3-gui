@@ -52,6 +52,8 @@ class VMwareVM(VM):
         self._linked_clone = False
         self._port_name_format = None
         self._port_segment_size = 0
+        self._first_port_name = None
+
         self._settings = {"name": "",
                           "vmx_path": "",
                           "console": None,
@@ -71,18 +73,22 @@ class VMwareVM(VM):
 
         interface_number = segment_number = 0
         for adapter_number in range(0, adapters):
-            port_name = self._port_name_format.format(interface_number, segment_number)
-            interface_number += 1
-            if self._port_segment_size and interface_number % self._port_segment_size == 0:
-                segment_number += 1
-                interface_number = 0
+            if self._first_port_name and adapter_number == 0:
+                port_name = self._first_port_name
+            else:
+                port_name = self._port_name_format.format(interface_number, segment_number)
+                interface_number += 1
+                if self._port_segment_size and interface_number % self._port_segment_size == 0:
+                    segment_number += 1
+                    interface_number = 0
             new_port = EthernetPort(port_name)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, vmx_path, name=None, vm_id=None, port_name_format="Ethernet{0}", port_segment_size=0, linked_clone=False, additional_settings={}, base_name=None):
+    def setup(self, vmx_path, name=None, vm_id=None, port_name_format="Ethernet{0}",
+              port_segment_size=0, first_port_name="", linked_clone=False, additional_settings={}, base_name=None):
         """
         Setups this VMware VM.
 
@@ -116,6 +122,7 @@ class VMwareVM(VM):
 
         self._port_name_format = port_name_format
         self._port_segment_size = port_segment_size
+        self._first_port_name = first_port_name
         params.update(additional_settings)
         self.httpPost("/vmware/vms", self._setupCallback, body=params)
 
@@ -292,8 +299,12 @@ class VMwareVM(VM):
                      "description": str(self),
                      "properties": {},
                      "port_name_format": self._port_name_format,
-                     "port_segment_size": self._port_segment_size,
                      "server_id": self._server.id()}
+
+        if self._port_segment_size:
+            vmware_vm["port_segment_size"] = self._port_segment_size
+        if self._first_port_name:
+            vmware_vm["first_port_name"] = self._first_port_name
 
         # add the properties
         for name, value in self._settings.items():
@@ -321,6 +332,7 @@ class VMwareVM(VM):
         linked_clone = node_info.get("linked_clone", False)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")
         port_segment_size = node_info.get("port_segment_size", 0)
+        first_port_name = node_info.get("first_port_name", "")
 
         vm_settings = {}
         for name, value in node_info["properties"].items():
@@ -334,7 +346,7 @@ class VMwareVM(VM):
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
-        self.setup(vmx_path, name, vm_id, port_name_format, port_segment_size, linked_clone, vm_settings)
+        self.setup(vmx_path, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def _updatePortSettings(self):
         """

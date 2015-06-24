@@ -265,9 +265,11 @@ class VirtualBox(Module):
         vmname = self._virtualbox_vms[vm]["vmname"]
         port_name_format = self._virtualbox_vms[vm]["port_name_format"]
         port_segment_size = self._virtualbox_vms[vm]["port_segment_size"]
+        first_port_name = self._virtualbox_vms[vm]["first_port_name"]
         node.setup(vmname,
                    port_name_format=port_name_format,
                    port_segment_size=port_segment_size,
+                   first_port_name=first_port_name,
                    linked_clone=linked_base,
                    additional_settings=vm_settings)
 

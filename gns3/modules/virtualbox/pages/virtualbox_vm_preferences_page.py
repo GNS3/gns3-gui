@@ -80,6 +80,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         QtWidgets.QTreeWidgetItem(section_item, ["Name format:", vbox_vm["port_name_format"]])
         if vbox_vm["port_segment_size"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Segment size:", str(vbox_vm["port_segment_size"])])
+        if vbox_vm["first_port_name"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["First port name:", vbox_vm["first_port_name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Use any adapter:", "{}".format(vbox_vm["use_any_adapter"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Type:", vbox_vm["adapter_type"]])
 

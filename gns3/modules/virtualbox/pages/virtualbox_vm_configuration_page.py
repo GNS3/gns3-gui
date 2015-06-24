@@ -117,6 +117,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
             self.uiPortNameFormatLineEdit.setText(settings["port_name_format"])
             self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
+            self.uiFirstPortNameLineEdit.setText(settings["first_port_name"])
         else:
             self.uiSymbolLabel.hide()
             self.uiSymbolLineEdit.hide()
@@ -128,6 +129,8 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             self.uiPortNameFormatLineEdit.hide()
             self.uiPortSegmentSizeLabel.hide()
             self.uiPortSegmentSizeSpinBox.hide()
+            self.uiFirstPortNameLabel.hide()
+            self.uiFirstPortNameLineEdit.hide()
 
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
@@ -192,6 +195,8 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
                 QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain {1} if the segment size is not 0")
             else:
                 settings["port_segment_size"] = port_segment_size
+
+            settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
 
         settings["ram"] = self.uiVMRamSpinBox.value()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
