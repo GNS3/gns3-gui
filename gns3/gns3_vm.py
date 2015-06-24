@@ -19,6 +19,7 @@
 Manages the GNS3 VM.
 """
 
+import sys
 import subprocess
 
 from .servers import Servers
@@ -61,7 +62,11 @@ class GNS3VM:
         from gns3.modules.vmware import VMware
         vmware_settings = VMware.instance().settings()
         vmrun_path = vmware_settings["vmrun_path"]
-        command = [vmrun_path, subcommand]
+        if sys.platform.startswith("darwin"):
+            command = [vmrun_path, "-T", "fusion", subcommand]
+        else:
+            host_type = vmware_settings["host_type"]
+            command = [vmrun_path, "-T", host_type, subcommand]
         command.extend(args)
         log.debug("Executing vmrun with command: {}".format(command))
         output = subprocess.check_output(command)
