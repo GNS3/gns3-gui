@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Tue Jun 23 16:31:18 2015
+# Created: Wed Jun 24 15:00:42 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,17 +10,15 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_ServerPreferencesPageWidget(object):
-
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
         ServerPreferencesPageWidget.resize(500, 609)
         ServerPreferencesPageWidget.setMinimumSize(QtCore.QSize(0, 0))
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(ServerPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiLTabWidget = QtWidgets.QTabWidget(ServerPreferencesPageWidget)
-        self.uiLTabWidget.setObjectName("uiLTabWidget")
+        self.uiServerPreferenceTabWidget = QtWidgets.QTabWidget(ServerPreferencesPageWidget)
+        self.uiServerPreferenceTabWidget.setObjectName("uiServerPreferenceTabWidget")
         self.uiLocalTabWidget = QtWidgets.QWidget()
         self.uiLocalTabWidget.setObjectName("uiLocalTabWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiLocalTabWidget)
@@ -138,7 +136,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout.addWidget(self.uiUDPPortRangeGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem2)
-        self.uiLTabWidget.addTab(self.uiLocalTabWidget, "")
+        self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiGNS3VMTabWidget = QtWidgets.QWidget()
         self.uiGNS3VMTabWidget.setObjectName("uiGNS3VMTabWidget")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.uiGNS3VMTabWidget)
@@ -195,7 +193,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_3.addWidget(self.uiGNS3VMSettingsGroupBox, 1, 0, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 320, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem4, 3, 0, 1, 1)
-        self.uiLTabWidget.addTab(self.uiGNS3VMTabWidget, "")
+        self.uiServerPreferenceTabWidget.addTab(self.uiGNS3VMTabWidget, "")
         self.uiRemoteTabWidget = QtWidgets.QWidget()
         self.uiRemoteTabWidget.setObjectName("uiRemoteTabWidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.uiRemoteTabWidget)
@@ -300,7 +298,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerSSHPortSpinBox.setObjectName("uiRemoteServerSSHPortSpinBox")
         self.gridLayout_5.addWidget(self.uiRemoteServerSSHPortSpinBox, 7, 1, 1, 1)
         self.uiRemoteServerPasswordLineEdit = QtWidgets.QLineEdit(self.uiRemoteTabWidget)
-        self.uiRemoteServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText | QtCore.Qt.ImhNoAutoUppercase | QtCore.Qt.ImhNoPredictiveText | QtCore.Qt.ImhSensitiveData)
+        self.uiRemoteServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText|QtCore.Qt.ImhSensitiveData)
         self.uiRemoteServerPasswordLineEdit.setText("")
         self.uiRemoteServerPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiRemoteServerPasswordLineEdit.setObjectName("uiRemoteServerPasswordLineEdit")
@@ -308,7 +306,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerPasswordLabel = QtWidgets.QLabel(self.uiRemoteTabWidget)
         self.uiRemoteServerPasswordLabel.setObjectName("uiRemoteServerPasswordLabel")
         self.gridLayout_5.addWidget(self.uiRemoteServerPasswordLabel, 6, 0, 1, 1)
-        self.uiLTabWidget.addTab(self.uiRemoteTabWidget, "")
+        self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.uiLoadBalancingTabWidget = QtWidgets.QWidget()
         self.uiLoadBalancingTabWidget.setObjectName("uiLoadBalancingTabWidget")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.uiLoadBalancingTabWidget)
@@ -331,8 +329,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout_4.addWidget(self.uiMethodGroupBox)
         spacerItem7 = QtWidgets.QSpacerItem(20, 382, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem7)
-        self.uiLTabWidget.addTab(self.uiLoadBalancingTabWidget, "")
-        self.verticalLayout_2.addWidget(self.uiLTabWidget)
+        self.uiServerPreferenceTabWidget.addTab(self.uiLoadBalancingTabWidget, "")
+        self.verticalLayout_2.addWidget(self.uiServerPreferenceTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem8 = QtWidgets.QSpacerItem(164, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -343,9 +341,9 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(ServerPreferencesPageWidget)
-        self.uiLTabWidget.setCurrentIndex(0)
+        self.uiServerPreferenceTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(ServerPreferencesPageWidget)
-        ServerPreferencesPageWidget.setTabOrder(self.uiLTabWidget, self.uiLocalServerAutoStartCheckBox)
+        ServerPreferencesPageWidget.setTabOrder(self.uiServerPreferenceTabWidget, self.uiLocalServerAutoStartCheckBox)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerAutoStartCheckBox, self.uiLocalServerPathLineEdit)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerPathLineEdit, self.uiLocalServerToolButton)
         ServerPreferencesPageWidget.setTabOrder(self.uiLocalServerToolButton, self.uiUbridgePathLineEdit)
@@ -399,7 +397,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiConsolePortRangeLabel.setText(_translate("ServerPreferencesPageWidget", "to"))
         self.uiUDPPortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "UDP tunneling port range"))
         self.uiUDPPortRangeLabel.setText(_translate("ServerPreferencesPageWidget", "to"))
-        self.uiLTabWidget.setTabText(self.uiLTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server"))
+        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server"))
         self.uiEnableVMCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable the GNS3 VM"))
         self.uiGNS3VMSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Settings"))
         self.uiVMNameLabel.setText(_translate("ServerPreferencesPageWidget", "VM name:"))
@@ -409,7 +407,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
         self.uiShutdownCheckBox.setText(_translate("ServerPreferencesPageWidget", "ACPI shutdown VM when closing GNS3"))
         self.uiRefreshPushButton.setText(_translate("ServerPreferencesPageWidget", "&Refresh"))
-        self.uiLTabWidget.setTabText(self.uiLTabWidget.indexOf(self.uiGNS3VMTabWidget), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
+        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiGNS3VMTabWidget), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
         self.uiRemoteServerUserLabel.setText(_translate("ServerPreferencesPageWidget", "User:"))
         self.uiRemoteServerSSHPortLabel.setText(_translate("ServerPreferencesPageWidget", "SSH port:"))
         self.uiRemoteServerSSHKeyLabel.setText(_translate("ServerPreferencesPageWidget", "SSH key:"))
@@ -429,10 +427,11 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRAMLimitSpinBox.setSuffix(_translate("ServerPreferencesPageWidget", " MB"))
         self.uiRemoteServerSSHPortSpinBox.setSuffix(_translate("ServerPreferencesPageWidget", " TCP"))
         self.uiRemoteServerPasswordLabel.setText(_translate("ServerPreferencesPageWidget", "Password:"))
-        self.uiLTabWidget.setTabText(self.uiLTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
+        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiMethodGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Method"))
         self.uiRAMUsageRadioButton.setText(_translate("ServerPreferencesPageWidget", "RAM usage"))
         self.uiRoundRobinRadioButton.setText(_translate("ServerPreferencesPageWidget", "Round-Robin"))
         self.uiRendezVousHashingRadioButton.setText(_translate("ServerPreferencesPageWidget", "Rendezvous hashing"))
-        self.uiLTabWidget.setTabText(self.uiLTabWidget.indexOf(self.uiLoadBalancingTabWidget), _translate("ServerPreferencesPageWidget", "Load Balancing"))
+        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiLoadBalancingTabWidget), _translate("ServerPreferencesPageWidget", "Load Balancing"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
+

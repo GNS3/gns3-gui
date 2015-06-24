@@ -48,6 +48,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self._remote_servers = {}
 
         # connect the slots
+        self.uiServerPreferenceTabWidget.currentChanged.connect(self._tabChangedSlot)
         self.uiLocalServerToolButton.clicked.connect(self._localServerBrowserSlot)
         self.uiUbridgeToolButton.clicked.connect(self._ubridgeBrowserSlot)
         self.uiAddRemoteServerPushButton.clicked.connect(self._remoteServerAddSlot)
@@ -78,6 +79,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         self._remoteServerProtocolCurrentIndexSlot(0)
 
+    def _tabChangedSlot(self, index):
+        if index == 1:
+            self._refreshVMListSlot()
+
     def _listVMwareVMsSlot(self):
         """
         Slot to refresh the VMware VMs list.
@@ -96,6 +101,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
         Refresh the list of VM available in VMware or VirtualBox.
         """
+
+        if not self.uiEnableVMCheckBox.isChecked():
+            return
 
         if not Servers.instance().localServerIsRunning():
             QtWidgets.QMessageBox.critical(self, "Local server", "{}".format("Local server is not running"))
@@ -139,6 +147,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         if state:
             self.uiGNS3VMSettingsGroupBox.setEnabled(True)
+            self._refreshVMListSlot()
         else:
             self.uiGNS3VMSettingsGroupBox.setEnabled(False)
 

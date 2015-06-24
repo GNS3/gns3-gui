@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QTabWidget" name="uiLTabWidget">
+    <widget class="QTabWidget" name="uiServerPreferenceTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -781,7 +781,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>uiLTabWidget</tabstop>
+  <tabstop>uiServerPreferenceTabWidget</tabstop>
   <tabstop>uiLocalServerAutoStartCheckBox</tabstop>
   <tabstop>uiLocalServerPathLineEdit</tabstop>
   <tabstop>uiLocalServerToolButton</tabstop>
