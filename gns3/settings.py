@@ -143,6 +143,31 @@ else:
         if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
             DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Gnome Terminal + socat"]
 
+# Pre-configured VNC console commands on various OSes
+if sys.platform.startswith("win"):
+    # Windows
+    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p'}
+
+    # default Windows VNC console command
+    DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['TightVNC (included with GNS3)']
+
+elif sys.platform.startswith("darwin"):
+    # Mac OS X
+    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
+        'Screen sharing': "osascript -e 'tell application \"Screen Sharing\"'"
+                          " -e 'open location \"vnc://%h:%p\"'"
+                          " -e 'end tell'",
+        }
+
+    # default Mac OS X VNC console command
+    DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['Screen sharing']
+
+else:
+    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {'TightVNC': 'vncviewer %h:%p'}
+
+    # default VNC console command on other systems
+    DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['TightVNC']
+
 # Pre-configured packet capture reader commands on various OSes
 WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
@@ -188,6 +213,7 @@ GENERAL_SETTINGS = {
     "link_manual_mode": True,
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
     "serial_console_command": DEFAULT_SERIAL_CONSOLE_COMMAND,
+    "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
     "auto_close_console": True,
     "bring_console_to_front": True,
     "delay_console_all": 500,

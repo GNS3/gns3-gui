@@ -62,6 +62,7 @@ class QemuVM(VM):
                           "options": "",
                           "ram": QEMU_VM_SETTINGS["ram"],
                           "console": None,
+                          "console_type": QEMU_VM_SETTINGS["console_type"],
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                           "mac_address": QEMU_VM_SETTINGS["mac_address"],
@@ -364,14 +365,16 @@ class QemuVM(VM):
 
         info = """QEMU VM {name} is {state}
   Node ID is {id}, server's QEMU VM ID is {vm_id}
-  QEMU VM's server runs on {host}:{port}, console is on port {console}
+  QEMU VM's server runs on {host}:{port}
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            vm_id=self._vm_id,
            state=state,
            host=self._server.host(),
            port=self._server.port(),
-           console=self._settings["console"])
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:

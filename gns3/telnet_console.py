@@ -19,7 +19,7 @@
 Functions to start external console terminals.
 """
 
-from .qt import QtCore, QtGui, QtWidgets
+from .qt import QtCore
 
 import sys
 import shlex

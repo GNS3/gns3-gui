@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created: Tue Jun 23 21:51:01 2015
+# Created: Wed Jun 24 17:19:47 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,15 +36,15 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.tab)
         self.uiConsolePortSpinBox.setMaximum(65535)
         self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout_4.addWidget(self.uiConsolePortSpinBox, 6, 2, 1, 1)
+        self.gridLayout_4.addWidget(self.uiConsolePortSpinBox, 7, 2, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(263, 94, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_4.addItem(spacerItem, 7, 2, 1, 1)
+        self.gridLayout_4.addItem(spacerItem, 9, 2, 1, 1)
         self.uiQemuListLabel = QtWidgets.QLabel(self.tab)
         self.uiQemuListLabel.setObjectName("uiQemuListLabel")
         self.gridLayout_4.addWidget(self.uiQemuListLabel, 5, 0, 1, 2)
         self.uiConsolePortLabel = QtWidgets.QLabel(self.tab)
         self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout_4.addWidget(self.uiConsolePortLabel, 6, 0, 1, 2)
+        self.gridLayout_4.addWidget(self.uiConsolePortLabel, 7, 0, 1, 2)
         self.uiRamLabel = QtWidgets.QLabel(self.tab)
         self.uiRamLabel.setObjectName("uiRamLabel")
         self.gridLayout_4.addWidget(self.uiRamLabel, 4, 0, 1, 1)
@@ -76,6 +76,14 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiCategoryComboBox = QtWidgets.QComboBox(self.tab)
         self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
         self.gridLayout_4.addWidget(self.uiCategoryComboBox, 3, 2, 1, 1)
+        self.uiConsoleTypeLabel = QtWidgets.QLabel(self.tab)
+        self.uiConsoleTypeLabel.setObjectName("uiConsoleTypeLabel")
+        self.gridLayout_4.addWidget(self.uiConsoleTypeLabel, 6, 0, 1, 1)
+        self.uiConsoleTypeComboBox = QtWidgets.QComboBox(self.tab)
+        self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.gridLayout_4.addWidget(self.uiConsoleTypeComboBox, 6, 2, 1, 1)
         self.uiQemutabWidget.addTab(self.tab, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -317,6 +325,9 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiSymbolToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
         self.uiNameLabel.setText(_translate("QemuVMConfigPageWidget", "VM name:"))
         self.uiCategoryLabel.setText(_translate("QemuVMConfigPageWidget", "Category:"))
+        self.uiConsoleTypeLabel.setText(_translate("QemuVMConfigPageWidget", "Console type:"))
+        self.uiConsoleTypeComboBox.setItemText(0, _translate("QemuVMConfigPageWidget", "telnet"))
+        self.uiConsoleTypeComboBox.setItemText(1, _translate("QemuVMConfigPageWidget", "vnc"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.tab), _translate("QemuVMConfigPageWidget", "General settings"))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image (hda):"))
         self.uiHdaDiskImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))

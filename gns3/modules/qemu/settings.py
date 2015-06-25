@@ -37,6 +37,7 @@ QEMU_VM_SETTINGS = {
     "hdb_disk_image": "",
     "hdc_disk_image": "",
     "hdd_disk_image": "",
+    "console_type": "telnet",
     "ram": 256,
     "adapters": 1,
     "adapter_type": "e1000",

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2015 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Functions to start external serial console terminals.
+Functions to start VNC console programs.
 """
 
 import sys
@@ -27,27 +27,25 @@ from .main_window import MainWindow
 import logging
 log = logging.getLogger(__name__)
 
-# TODO: support more than just Vbox (Qemu maybe?)
 
-
-def serialConsole(vmname, pipe_path):
+def vncConsole(host, port):
     """
-    :param vmname: Virtual machine name.
-    :param pipe_path: Virtual machine serial pipe path.
+    Start a VNC console program.
 
-    Start a Serial console program.
+    :param host: host or IP address
+    :param port: port number
     """
 
-    command = MainWindow.instance().serialConsoleCommand()
+    command = MainWindow.instance().vncConsoleCommand()
     if not command:
         return
 
     # replace the place-holders by the actual values
-    command = command.replace("%s", pipe_path)
-    command = command.replace("%d", vmname)
-    log.info('starting serial console "{}"'.format(command))
+    command = command.replace("%h", host)
+    command = command.replace("%p", str(port))
 
     try:
+        log.info('starting VNC program "{}"'.format(command))
         if sys.platform.startswith("win"):
             # use the string on Windows
             subprocess.Popen(command)
@@ -55,6 +53,6 @@ def serialConsole(vmname, pipe_path):
             # use arguments on other platforms
             args = shlex.split(command)
             subprocess.Popen(args)
-    except (OSError, subprocess.SubprocessError) as e:
-        log.warning('could not start serial console "{}": {}'.format(command, e))
+    except (OSError, ValueError, subprocess.SubprocessError) as e:
+        log.warning('could not start VNC program "{}": {}'.format(command, e))
         raise

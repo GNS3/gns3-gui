@@ -998,11 +998,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     return False
             else:
                 console_port = node.console()
-            console_host = node.server().host()
+
+            console_type = "telnet"
+            if "console_type" in node.settings():
+                console_type = node.settings()["console_type"]
+
             try:
                 from .telnet_console import nodeTelnetConsole
+                from .vnc_console import vncConsole
 
-                nodeTelnetConsole(name, node.server(), console_port)
+                if console_type == "telnet":
+                    nodeTelnetConsole(name, node.server(), console_port)
+                elif console_type == "vnc":
+                    vncConsole(node.server().host(), console_port)
             except (OSError, ValueError) as e:
                 QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
                 return False
