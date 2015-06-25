@@ -378,6 +378,7 @@
             "type": "object",
             "properties": {
                 "console": { "$ref": "#/definitions/network_port" },
+                "console_type": { "$ref": "#/definitions/mandatory_string" },
                 "monitor": { "$ref": "#/definitions/network_port" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "acpi_shutdown": { "type": "boolean" },
