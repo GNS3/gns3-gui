@@ -32,7 +32,9 @@ from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_connection_worker import WaitForConnectionWorker
+from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..settings import SERVERS_SETTINGS
+from ..gns3_vm import GNS3VM
 
 
 class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
@@ -513,3 +515,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                 dialog.exec_()
             else:
                 QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
+
+        # start the GNS3 VM if required
+        gns3_vm = GNS3VM.instance()
+        if gns3_vm.autoStart() and not gns3_vm.isRunning():
+            servers.initVMServer()
+            worker = WaitForVMWorker()
+            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+            progress_dialog.show()
+            progress_dialog.exec_()
