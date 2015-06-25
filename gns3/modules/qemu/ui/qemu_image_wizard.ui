@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>300</height>
+    <width>466</width>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
    <property name="subTitle">
     <string>Please select a qemu-img binary, and the format for your new image.</string>
    </property>
-   <layout class="QFormLayout" name="formLayout_2">
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QLabel" name="uiBinaryLabel">
       <property name="text">
@@ -35,7 +35,14 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="uiBinaryComboBox"/>
+     <widget class="QComboBox" name="uiBinaryComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="uiFormatLabel">
@@ -45,96 +52,88 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QFrame" name="uiFormatFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QRadioButton" name="uiFormatQcow2Radio">
-         <property name="toolTip">
-          <string>Qcow2 is the current Qemu format, supporting many special features.</string>
-         </property>
-         <property name="text">
-          <string notr="true">Qcow2</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">uiFormatRadios</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="uiFormatQcowRadio">
-         <property name="toolTip">
-          <string>Qcow is a legacy Qemu format that is also supported by VirtualBox.</string>
-         </property>
-         <property name="text">
-          <string notr="true">Qcow</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">uiFormatRadios</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="uiFormatVhdRadio">
-         <property name="toolTip">
-          <string>VHD is the format used by Microsoft VirtualPC, and is also supported by Qemu and VirtualBox.
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="uiFormatQcow2Radio">
+        <property name="toolTip">
+         <string>Qcow2 is the current Qemu format, supporting many special features.</string>
+        </property>
+        <property name="text">
+         <string notr="true">Qcow2</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">uiFormatRadios</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiFormatQcowRadio">
+        <property name="toolTip">
+         <string>Qcow is a legacy Qemu format that is also supported by VirtualBox.</string>
+        </property>
+        <property name="text">
+         <string notr="true">Qcow</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">uiFormatRadios</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiFormatVhdRadio">
+        <property name="toolTip">
+         <string>VHD is the format used by Microsoft VirtualPC, and is also supported by Qemu and VirtualBox.
 On Windows 7 and above, it can be mounted on the host PC.</string>
-         </property>
-         <property name="text">
-          <string notr="true">VHD</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">uiFormatRadios</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="uiFormatVdiRadio">
-         <property name="toolTip">
-          <string>VDI is the native format of VirtualBox</string>
-         </property>
-         <property name="text">
-          <string notr="true">VDI</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">uiFormatRadios</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="uiFormatVmdkRadio">
-         <property name="toolTip">
-          <string>VMDK is the native format for VMware and is also supported by Qemu and VirtualBox.</string>
-         </property>
-         <property name="text">
-          <string notr="true">VMDK</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">uiFormatRadios</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="uiFormatRawRadio">
-         <property name="toolTip">
-          <string>Raw image files represent the actual data on the image, with zero special features.
+        </property>
+        <property name="text">
+         <string notr="true">VHD</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">uiFormatRadios</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiFormatVdiRadio">
+        <property name="toolTip">
+         <string>VDI is the native format of VirtualBox</string>
+        </property>
+        <property name="text">
+         <string notr="true">VDI</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">uiFormatRadios</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiFormatVmdkRadio">
+        <property name="toolTip">
+         <string>VMDK is the native format for VMware and is also supported by Qemu and VirtualBox.</string>
+        </property>
+        <property name="text">
+         <string notr="true">VMDK</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">uiFormatRadios</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiFormatRawRadio">
+        <property name="toolTip">
+         <string>Raw image files represent the actual data on the image, with zero special features.
 It can easily be converted to various other formats by various utilities, making it the most portable format.</string>
-         </property>
-         <property name="text">
-          <string>Raw</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">uiFormatRadios</string>
-         </attribute>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+        </property>
+        <property name="text">
+         <string>Raw</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">uiFormatRadios</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -148,7 +147,7 @@ It can easily be converted to various other formats by various utilities, making
       <property name="title">
        <string>Size options</string>
       </property>
-      <layout class="QFormLayout" name="uiQcow2SizeOptionsLayout">
+      <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <widget class="QLabel" name="uiPreallocationLabel">
          <property name="text">
@@ -157,82 +156,62 @@ It can easily be converted to various other formats by various utilities, making
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QFrame" name="uiQcow2PreallocationFrame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="uiQcow2PreallocationOffRadio">
-            <property name="toolTip">
-             <string>The file only takes as much space from the host as needed. The VM will still see the full capacity you specify.</string>
-            </property>
-            <property name="text">
-             <string>off</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">uiQcow2PreallocationRadios</string>
-            </attribute>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="uiQcow2PreallocationMetadataRadio">
-            <property name="toolTip">
-             <string>Same as &quot;off&quot;, but preallocates enough space to hold any potenial metadata for the HDD.
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QRadioButton" name="uiQcow2PreallocationOffRadio">
+           <property name="toolTip">
+            <string>The file only takes as much space from the host as needed. The VM will still see the full capacity you specify.</string>
+           </property>
+           <property name="text">
+            <string>off</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">uiQcow2PreallocationRadios</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="uiQcow2PreallocationMetadataRadio">
+           <property name="toolTip">
+            <string>Same as &quot;off&quot;, but preallocates enough space to hold any potenial metadata for the HDD.
 This improves performance when the image file needs to grow.</string>
-            </property>
-            <property name="text">
-             <string>metadata</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">uiQcow2PreallocationRadios</string>
-            </attribute>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="uiQcow2PreallocationFallocRadio">
-            <property name="toolTip">
-             <string>Same as &quot;full&quot;, but uses C's posix_fallocate() if available on the host, instead of zero filling the file.</string>
-            </property>
-            <property name="text">
-             <string>falloc</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">uiQcow2PreallocationRadios</string>
-            </attribute>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="uiQcow2PreallocationFullRadio">
-            <property name="toolTip">
-             <string>The file will start off at the full size you specify.
+           </property>
+           <property name="text">
+            <string>metadata</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">uiQcow2PreallocationRadios</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="uiQcow2PreallocationFallocRadio">
+           <property name="toolTip">
+            <string>Same as &quot;full&quot;, but uses C's posix_fallocate() if available on the host, instead of zero filling the file.</string>
+           </property>
+           <property name="text">
+            <string>falloc</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">uiQcow2PreallocationRadios</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="uiQcow2PreallocationFullRadio">
+           <property name="toolTip">
+            <string>The file will start off at the full size you specify.
 Free space will be zero filled.</string>
-            </property>
-            <property name="text">
-             <string>full</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">uiQcow2PreallocationRadios</string>
-            </attribute>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+           </property>
+           <property name="text">
+            <string>full</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">uiQcow2PreallocationRadios</string>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="uiClusterSizeLabel">
@@ -243,6 +222,12 @@ Free space will be zero filled.</string>
        </item>
        <item row="1" column="1">
         <widget class="QComboBox" name="uiQcow2ClusterSizeComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <item>
           <property name="text">
            <string>&lt;default&gt;</string>
@@ -323,63 +308,65 @@ Free space will be zero filled.</string>
       <property name="title">
        <string>Refcounts</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QFormLayout" name="uiRefcountEntryFormLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="uiRefcountEntrySizeLabel">
-           <property name="text">
-            <string>Refcount entry size:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="uiRefcountEntrySizeComboBox">
-           <item>
-            <property name="text">
-             <string>&lt;default&gt;</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>1</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>2</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>4</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>8</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>16</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>32</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>64</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiRefcountEntrySizeLabel">
+         <property name="text">
+          <string>Refcount entry size:</string>
+         </property>
+        </widget>
        </item>
-       <item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="uiRefcountEntrySizeComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <item>
+          <property name="text">
+           <string>&lt;default&gt;</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>4</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>8</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>64</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
         <widget class="QCheckBox" name="uiLazyRefcountsCheckBox">
          <property name="text">
           <string>Lazy refcounts</string>
@@ -603,46 +590,12 @@ Free space will be zero filled.</string>
    <property name="title">
     <string>Size and location</string>
    </property>
-   <layout class="QFormLayout" name="formLayout">
+   <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
      <widget class="QLabel" name="uiLocationLabel">
       <property name="text">
        <string>File location:</string>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QFrame" name="uiLocationFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLineEdit" name="uiLocationLineEdit"/>
-       </item>
-       <item>
-        <widget class="QToolButton" name="uiLocationBrowseToolButton">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </widget>
     </item>
     <item row="1" column="0">
@@ -652,76 +605,70 @@ Free space will be zero filled.</string>
       </property>
      </widget>
     </item>
+    <item row="0" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLineEdit" name="uiLocationLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiLocationBrowseToolButton">
+        <property name="text">
+         <string>Browse</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="1" column="1">
-     <widget class="QFrame" name="uiSizeFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QSlider" name="uiSizeSlider">
-         <property name="maximum">
-          <number>2000000</number>
-         </property>
-         <property name="singleStep">
-          <number>1000</number>
-         </property>
-         <property name="pageStep">
-          <number>10000</number>
-         </property>
-         <property name="value">
-          <number>30000</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval">
-          <number>100000</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="uiSizeSpinBox">
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="showGroupSeparator" stdset="0">
-          <bool>true</bool>
-         </property>
-         <property name="suffix">
-          <string> MiB</string>
-         </property>
-         <property name="maximum">
-          <number>2000000</number>
-         </property>
-         <property name="singleStep">
-          <number>1000</number>
-         </property>
-         <property name="value">
-          <number>30000</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <widget class="QSlider" name="uiSizeSlider">
+        <property name="maximum">
+         <number>2000000</number>
+        </property>
+        <property name="singleStep">
+         <number>1000</number>
+        </property>
+        <property name="pageStep">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>30000</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>100000</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="uiSizeSpinBox">
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::UpDownArrows</enum>
+        </property>
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
+        <property name="suffix">
+         <string> MiB</string>
+        </property>
+        <property name="maximum">
+         <number>2000000</number>
+        </property>
+        <property name="singleStep">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>30000</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -794,11 +741,11 @@ Free space will be zero filled.</string>
   </connection>
  </connections>
  <buttongroups>
+  <buttongroup name="uiVmdkAdapterRadios"/>
+  <buttongroup name="uiFormatRadios"/>
   <buttongroup name="uiVmdkSizeModeRadios"/>
   <buttongroup name="uiVhdSizeModeRadios"/>
   <buttongroup name="uiQcow2PreallocationRadios"/>
   <buttongroup name="uiVdiSizeModeRadios"/>
-  <buttongroup name="uiVmdkAdapterRadios"/>
-  <buttongroup name="uiFormatRadios"/>
  </buttongroups>
 </ui>

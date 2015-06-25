@@ -24,14 +24,15 @@ import subprocess
 import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets, QFileDialog
-from gns3.local_config import LocalConfig
 from gns3.servers import Servers
+from gns3.image_manager import ImageManager
 
 from .. import Qemu
 from ..ui.qemu_image_wizard_ui import Ui_QemuImageWizard
 
 
 class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
+
     """
     Wizard to create a Qemu VM.
 
@@ -50,7 +51,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
         self.setupUi(self)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
 
-        #Initialize "constants"
+        # Initialize "constants"
         self._mappings = {
             self.uiFormatQcow2Radio: ("qcow2", ".qcow2", self.uiQcow2OptionsWizardPage),
             self.uiFormatQcowRadio: ("qcow", ".qcow", None),
@@ -73,7 +74,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
         self.page(self.pageIds()[-1]).validatePage = self._createDisk
 
         # Default values
-        self._folder = folder or os.path.join(LocalConfig.instance().settings()["LocalServer"]["images_path"], "QEMU")
+        self._folder = folder or os.path.join(ImageManager.instance().getDirectoryForType("QEMU"))
         Qemu.instance().getQemuImgBinariesFromServer(Servers.instance().localServer(),
                                                      self._getQemuImgBinariesFromServerCallback)
         self.uiLocationLineEdit.setText(os.path.join(self._folder, filename))
@@ -198,7 +199,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             format_options.extend(['-o', 'zeroed_grain=' + zeroed_grain])
 
             adapter_type = self.uiVmdkAdapterRadios.checkedButton()
-            if not None == adapter_type:
+            if adapter_type is not None:
                 adapter_type_mappings = {
                     self.uiVmdkAdapterTypeIdeRadio: 'ide',
                     self.uiVmdkAdapterTypeLsiRadio: 'lsilogic',
