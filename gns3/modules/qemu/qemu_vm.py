@@ -101,7 +101,7 @@ class QemuVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self,qemu_path, name=None, vm_id=None, port_name_format="Ethernet{0}",
+    def setup(self, qemu_path, name=None, vm_id=None, port_name_format="Ethernet{0}",
               port_segment_size=0, first_port_name="", additional_settings={}, base_name=None):
         """
         Setups this QEMU VM.
@@ -139,24 +139,8 @@ class QemuVM(VM):
         :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
+        if not super()._setupCallback(result, error=error, **kwargs):
             return
-
-        self._vm_id = result["vm_id"]
-        if not self._vm_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return
-
-        # update the settings using the defaults sent by the server
-        for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.info("QEMU VM instance {} setting up and updating {} from '{}' to '{}'".format(self.name(),
-                                                                                                   name,
-                                                                                                   self._settings[name],
-                                                                                                   value))
-                self._settings[name] = value
 
         # create the ports on the client side
         self._addAdapters(self._settings.get("adapters", 0))

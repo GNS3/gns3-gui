@@ -315,7 +315,6 @@ class VMwareVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-
         vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")

@@ -955,14 +955,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and item.node().initialized():
                 node = item.node()
-                vm_dir = node.project().filesDir()  # FIXME: get the VM directory instead
+                vm_dir = node.vmDir()
+                if vm_dir is None:
+                    QtWidgets.QMessageBox.critical(self, "Show in file manager", "This VM has no working directory")
+                    break
+
                 if os.path.exists(vm_dir):
+                    log.debug("Open %s in file manage" )
                     if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(vm_dir)) is False:
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(vm_dir))
                         break
                 else:
-                    # TODO: this is a remote server, show an info box
-                    pass
+                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(vm_dir, node.server().url()))
+                    break
 
     def consoleToNode(self, node, aux=False):
         """

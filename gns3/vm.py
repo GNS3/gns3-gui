@@ -32,6 +32,7 @@ class VM(Node):
         super().__init__(module, server, project)
 
         self._vm_id = None
+        self._vm_directory = None
 
     def vm_id(self):
         """
@@ -41,6 +42,15 @@ class VM(Node):
         """
 
         return self._vm_id
+
+    def vmDir(self):
+        """
+        Return the working directory of the VM
+
+        :returns: identifier (string)
+        """
+
+        return self._vm_directory
 
     def delete(self):
         """
@@ -117,13 +127,16 @@ class VM(Node):
             self.error_signal.emit(self.id(), "returned ID from server is null")
             return False
 
+        if "vm_directory" in result:
+            self._vm_directory = result["vm_directory"]
+
         # update the settings using the defaults sent by the server
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(),
-                                                                                               name,
-                                                                                               self._settings[name],
-                                                                                               value))
+                                                                                  name,
+                                                                                  self._settings[name],
+                                                                                  value))
                 self._settings[name] = value
         return True
 
