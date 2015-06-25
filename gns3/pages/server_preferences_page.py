@@ -138,6 +138,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
             if index != -1:
                 self.uiVMListComboBox.setCurrentIndex(index)
+            else:
                 index = self.uiVMListComboBox.findText("GNS3 VM")
                 if index != -1:
                     self.uiVMListComboBox.setCurrentIndex(index)
@@ -426,6 +427,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         servers_settings = servers.settings()
         local_server_settings = servers_settings["local_server"]
         restart_local_server = False
+        restart_gns3_vm = False
 
         # save the local server preferences
         new_local_server_settings = local_server_settings.copy()
@@ -478,17 +480,20 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             servers.stopLocalServer(wait=True)
 
         # save the GNS3 VM preferences
-        new_gns3vm_settings = {"auto_start": self.uiEnableVMCheckBox.isChecked(),
-                               "auto_stop": self.uiShutdownCheckBox.isChecked(),
-                               "vmname": self.uiVMListComboBox.currentText(),
-                               "vmx_path": self.uiVMListComboBox.currentData(),
-                               "headless": self.uiHeadlessCheckBox.isChecked(),
-                               "user": self.uiVMUserLineEdit.text(),
-                               "password": self.uiVMPasswordLineEdit.text()}
+        new_gns3vm_settings = servers_settings["vm"].copy()
+        new_gns3vm_settings.update({"auto_start": self.uiEnableVMCheckBox.isChecked(),
+                                    "auto_stop": self.uiShutdownCheckBox.isChecked(),
+                                    "vmname": self.uiVMListComboBox.currentText(),
+                                    "vmx_path": self.uiVMListComboBox.currentData(),
+                                    "headless": self.uiHeadlessCheckBox.isChecked(),
+                                    "user": self.uiVMUserLineEdit.text(),
+                                    "password": self.uiVMPasswordLineEdit.text()})
         if self.uiVmwareRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VMware"
         elif self.uiVirtualBoxRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VirtualBox"
+        if new_gns3vm_settings != servers_settings["vm"]:
+            restart_gns3_vm = True
         servers_settings["vm"].update(new_gns3vm_settings)
 
         # save the load-balancing preference
@@ -505,7 +510,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         servers.updateRemoteServers(self._remote_servers)
         servers.save()
 
-        # restart the local server if required
+        # start or restart the local server if required
         if restart_local_server:
             servers.stopLocalServer(wait=True)
             if servers.startLocalServer():
@@ -516,11 +521,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             else:
                 QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
 
-        # start the GNS3 VM if required
-        gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart() and not gns3_vm.isRunning():
-            servers.initVMServer()
-            worker = WaitForVMWorker()
-            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
-            progress_dialog.show()
-            progress_dialog.exec_()
+        # start or restart the GNS3 VM if required
+        if restart_gns3_vm:
+            gns3_vm = GNS3VM.instance()
+            gns3_vm.shutdown(force=True)
+            if gns3_vm.autoStart():
+                servers.initVMServer()
+                worker = WaitForVMWorker()
+                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+                progress_dialog.show()
+                progress_dialog.exec_()

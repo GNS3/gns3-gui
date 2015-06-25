@@ -112,13 +112,13 @@ class GNS3VM:
 
         return self._is_running
 
-    def shutdown(self):
+    def shutdown(self, force=False):
         """
         Gracefully shutdowns the GNS3 VM.
         """
 
         vm_settings = self.settings()
-        if self._is_running and vm_settings["auto_stop"]:
+        if self._is_running and (vm_settings["auto_stop"] or force):
             try:
                 if vm_settings["virtualization"] == "VMware":
                     self.execute_vmrun("stop", [vm_settings["vmx_path"], "soft"])
