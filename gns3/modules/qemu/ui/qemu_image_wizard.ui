@@ -598,13 +598,6 @@ Free space will be zero filled.</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="uiSizeLabel">
-      <property name="text">
-       <string>Disk size:</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -619,33 +612,15 @@ Free space will be zero filled.</string>
       </item>
      </layout>
     </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiSizeLabel">
+      <property name="text">
+       <string>Disk size:</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QSlider" name="uiSizeSlider">
-        <property name="maximum">
-         <number>2000000</number>
-        </property>
-        <property name="singleStep">
-         <number>1000</number>
-        </property>
-        <property name="pageStep">
-         <number>10000</number>
-        </property>
-        <property name="value">
-         <number>30000</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksBothSides</enum>
-        </property>
-        <property name="tickInterval">
-         <number>100000</number>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QSpinBox" name="uiSizeSpinBox">
         <property name="buttonSymbols">
@@ -656,6 +631,9 @@ Free space will be zero filled.</string>
         </property>
         <property name="suffix">
          <string> MiB</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
         </property>
         <property name="maximum">
          <number>2000000</number>
@@ -671,42 +649,13 @@ Free space will be zero filled.</string>
      </layout>
     </item>
    </layout>
+   <zorder>uiLocationLabel</zorder>
+   <zorder>uiSizeLabel</zorder>
+   <zorder>uiSizeSpinBox</zorder>
   </widget>
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>uiSizeSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>uiSizeSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>242</x>
-     <y>161</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>436</x>
-     <y>166</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>uiSizeSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>uiSizeSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>436</x>
-     <y>166</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>239</x>
-     <y>166</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>uiVmdkStreamOptimizedCheckBox</sender>
    <signal>toggled(bool)</signal>
@@ -714,12 +663,12 @@ Free space will be zero filled.</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>265</y>
+     <x>114</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
-     <x>270</x>
-     <y>209</y>
+     <x>438</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
@@ -730,22 +679,22 @@ Free space will be zero filled.</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>265</y>
+     <x>114</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
-     <x>198</x>
-     <y>265</y>
+     <x>306</x>
+     <y>214</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="uiVmdkAdapterRadios"/>
-  <buttongroup name="uiFormatRadios"/>
   <buttongroup name="uiVmdkSizeModeRadios"/>
-  <buttongroup name="uiVhdSizeModeRadios"/>
-  <buttongroup name="uiQcow2PreallocationRadios"/>
   <buttongroup name="uiVdiSizeModeRadios"/>
+  <buttongroup name="uiVmdkAdapterRadios"/>
+  <buttongroup name="uiQcow2PreallocationRadios"/>
+  <buttongroup name="uiFormatRadios"/>
+  <buttongroup name="uiVhdSizeModeRadios"/>
  </buttongroups>
 </ui>

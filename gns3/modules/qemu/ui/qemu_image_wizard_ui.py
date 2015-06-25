@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_image_wizard.ui'
 #
-# Created: Thu Jun 25 14:58:09 2015
+# Created: Thu Jun 25 16:01:36 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,9 +10,7 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuImageWizard(object):
-
     def setupUi(self, QemuImageWizard):
         QemuImageWizard.setObjectName("QemuImageWizard")
         QemuImageWizard.resize(466, 297)
@@ -262,9 +260,6 @@ class Ui_QemuImageWizard(object):
         self.uiLocationLabel = QtWidgets.QLabel(self.uiSizeAndLocationWizardPage)
         self.uiLocationLabel.setObjectName("uiLocationLabel")
         self.gridLayout_4.addWidget(self.uiLocationLabel, 0, 0, 1, 1)
-        self.uiSizeLabel = QtWidgets.QLabel(self.uiSizeAndLocationWizardPage)
-        self.uiSizeLabel.setObjectName("uiSizeLabel")
-        self.gridLayout_4.addWidget(self.uiSizeLabel, 1, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiLocationLineEdit = QtWidgets.QLineEdit(self.uiSizeAndLocationWizardPage)
@@ -274,21 +269,15 @@ class Ui_QemuImageWizard(object):
         self.uiLocationBrowseToolButton.setObjectName("uiLocationBrowseToolButton")
         self.horizontalLayout.addWidget(self.uiLocationBrowseToolButton)
         self.gridLayout_4.addLayout(self.horizontalLayout, 0, 1, 1, 1)
+        self.uiSizeLabel = QtWidgets.QLabel(self.uiSizeAndLocationWizardPage)
+        self.uiSizeLabel.setObjectName("uiSizeLabel")
+        self.gridLayout_4.addWidget(self.uiSizeLabel, 1, 0, 1, 1)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.uiSizeSlider = QtWidgets.QSlider(self.uiSizeAndLocationWizardPage)
-        self.uiSizeSlider.setMaximum(2000000)
-        self.uiSizeSlider.setSingleStep(1000)
-        self.uiSizeSlider.setPageStep(10000)
-        self.uiSizeSlider.setProperty("value", 30000)
-        self.uiSizeSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.uiSizeSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
-        self.uiSizeSlider.setTickInterval(100000)
-        self.uiSizeSlider.setObjectName("uiSizeSlider")
-        self.horizontalLayout_7.addWidget(self.uiSizeSlider)
         self.uiSizeSpinBox = QtWidgets.QSpinBox(self.uiSizeAndLocationWizardPage)
         self.uiSizeSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.UpDownArrows)
         self.uiSizeSpinBox.setProperty("showGroupSeparator", True)
+        self.uiSizeSpinBox.setMinimum(0)
         self.uiSizeSpinBox.setMaximum(2000000)
         self.uiSizeSpinBox.setSingleStep(1000)
         self.uiSizeSpinBox.setProperty("value", 30000)
@@ -298,8 +287,6 @@ class Ui_QemuImageWizard(object):
         QemuImageWizard.addPage(self.uiSizeAndLocationWizardPage)
 
         self.retranslateUi(QemuImageWizard)
-        self.uiSizeSlider.valueChanged['int'].connect(self.uiSizeSpinBox.setValue)
-        self.uiSizeSpinBox.valueChanged['int'].connect(self.uiSizeSlider.setValue)
         self.uiVmdkStreamOptimizedCheckBox.toggled['bool'].connect(self.uiVmdkFileSizeModeFlatRadio.setDisabled)
         self.uiVmdkStreamOptimizedCheckBox.toggled['bool'].connect(self.uiVmdkSplit2gCheckBox.setDisabled)
         QtCore.QMetaObject.connectSlotsByName(QemuImageWizard)
@@ -314,11 +301,11 @@ class Ui_QemuImageWizard(object):
         self.uiFormatQcow2Radio.setToolTip(_translate("QemuImageWizard", "Qcow2 is the current Qemu format, supporting many special features."))
         self.uiFormatQcowRadio.setToolTip(_translate("QemuImageWizard", "Qcow is a legacy Qemu format that is also supported by VirtualBox."))
         self.uiFormatVhdRadio.setToolTip(_translate("QemuImageWizard", "VHD is the format used by Microsoft VirtualPC, and is also supported by Qemu and VirtualBox.\n"
-                                                    "On Windows 7 and above, it can be mounted on the host PC."))
+"On Windows 7 and above, it can be mounted on the host PC."))
         self.uiFormatVdiRadio.setToolTip(_translate("QemuImageWizard", "VDI is the native format of VirtualBox"))
         self.uiFormatVmdkRadio.setToolTip(_translate("QemuImageWizard", "VMDK is the native format for VMware and is also supported by Qemu and VirtualBox."))
         self.uiFormatRawRadio.setToolTip(_translate("QemuImageWizard", "Raw image files represent the actual data on the image, with zero special features.\n"
-                                                    "It can easily be converted to various other formats by various utilities, making it the most portable format."))
+"It can easily be converted to various other formats by various utilities, making it the most portable format."))
         self.uiFormatRawRadio.setText(_translate("QemuImageWizard", "Raw"))
         self.uiQcow2OptionsWizardPage.setTitle(_translate("QemuImageWizard", "Qcow2 options"))
         self.uiSizeOptionsGroupBox.setTitle(_translate("QemuImageWizard", "Size options"))
@@ -326,12 +313,12 @@ class Ui_QemuImageWizard(object):
         self.uiQcow2PreallocationOffRadio.setToolTip(_translate("QemuImageWizard", "The file only takes as much space from the host as needed. The VM will still see the full capacity you specify."))
         self.uiQcow2PreallocationOffRadio.setText(_translate("QemuImageWizard", "off"))
         self.uiQcow2PreallocationMetadataRadio.setToolTip(_translate("QemuImageWizard", "Same as \"off\", but preallocates enough space to hold any potenial metadata for the HDD.\n"
-                                                                     "This improves performance when the image file needs to grow."))
+"This improves performance when the image file needs to grow."))
         self.uiQcow2PreallocationMetadataRadio.setText(_translate("QemuImageWizard", "metadata"))
         self.uiQcow2PreallocationFallocRadio.setToolTip(_translate("QemuImageWizard", "Same as \"full\", but uses C\'s posix_fallocate() if available on the host, instead of zero filling the file."))
         self.uiQcow2PreallocationFallocRadio.setText(_translate("QemuImageWizard", "falloc"))
         self.uiQcow2PreallocationFullRadio.setToolTip(_translate("QemuImageWizard", "The file will start off at the full size you specify.\n"
-                                                                 "Free space will be zero filled."))
+"Free space will be zero filled."))
         self.uiQcow2PreallocationFullRadio.setText(_translate("QemuImageWizard", "full"))
         self.uiClusterSizeLabel.setText(_translate("QemuImageWizard", "Cluster size:"))
         self.uiQcow2ClusterSizeComboBox.setItemText(0, _translate("QemuImageWizard", "<default>"))
@@ -388,6 +375,7 @@ class Ui_QemuImageWizard(object):
         self.uiVmdkZeroedGrainCheckBox.setText(_translate("QemuImageWizard", "Zeroed grain"))
         self.uiSizeAndLocationWizardPage.setTitle(_translate("QemuImageWizard", "Size and location"))
         self.uiLocationLabel.setText(_translate("QemuImageWizard", "File location:"))
-        self.uiSizeLabel.setText(_translate("QemuImageWizard", "Disk size:"))
         self.uiLocationBrowseToolButton.setText(_translate("QemuImageWizard", "Browse"))
+        self.uiSizeLabel.setText(_translate("QemuImageWizard", "Disk size:"))
         self.uiSizeSpinBox.setSuffix(_translate("QemuImageWizard", " MiB"))
+
