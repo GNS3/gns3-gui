@@ -23,6 +23,7 @@ from gns3.node import Node
 
 QEMU_SETTINGS = {
     "use_local_server": True,
+    "enable_kvm": True,
 }
 
 QEMU_VM_SETTINGS = {
@@ -44,7 +45,6 @@ QEMU_VM_SETTINGS = {
     "mac_address": "",
     "legacy_networking": False,
     "acpi_shutdown": False,
-    "kvm": True,
     "platform": "",
     "cpu_throttling": 0,
     "process_priority": "normal",

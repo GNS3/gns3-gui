@@ -32,7 +32,6 @@
                     "cpu_throttling": 0,
                     "hda_disk_image": "linux-microcore-3.4.1.img",
                     "hda_disk_image_md5sum": "fa2ec4b1fffad67d8103c3391bbf9df2",
-                    "kvm": true,
                     "legacy_networking": false,
                     "mac_address": "00:00:ab:c3:91:00",
                     "name": "test-1",

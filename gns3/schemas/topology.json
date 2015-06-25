@@ -408,7 +408,6 @@
                 },
                 "qemu_path": { "type": "string" },
                 "platform": { "type": "string" },
-                "kvm": { "type": "boolean" },
                 "ram": {"type": "integer", "minimum": 1}
             },
             "required": [

@@ -19,8 +19,11 @@
 QEMU module implementation.
 """
 
+import sys
+
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
+from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -66,6 +69,14 @@ class Qemu(Module):
 
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
+        # save some settings to the local server config file
+        if sys.platform.startswith("linux"):
+            server_settings = {
+                "enable_kvm": self._settings["enable_kvm"],
+            }
+
+            LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
 
     def _loadQemuVMs(self):
         """

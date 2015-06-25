@@ -19,6 +19,8 @@
 Configuration page for QEMU preferences.
 """
 
+import sys
+
 from gns3.qt import QtWidgets
 from .. import Qemu
 from ..ui.qemu_preferences_page_ui import Ui_QemuPreferencesPageWidget
@@ -39,6 +41,10 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         # connect signals
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
 
+        if not sys.platform.startswith("linux"):
+            # KVM can only run on Linux
+            self.uiKVMAccelerationCheckBox.hide()
+
     def _restoreDefaultsSlot(self):
         """
         Slot to populate the page widgets with the default settings.
@@ -54,6 +60,7 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         """
 
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
+        self.uiKVMAccelerationCheckBox.setChecked(settings["enable_kvm"])
 
     def loadPreferences(self):
         """
@@ -68,6 +75,6 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         Saves QEMU preferences.
         """
 
-        new_settings = {}
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
+        new_settings = {"use_local_server": self.uiUseLocalServercheckBox.isChecked(),
+                        "enable_kvm": self.uiKVMAccelerationCheckBox.isChecked()}
         Qemu.instance().setSettings(new_settings)

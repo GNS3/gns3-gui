@@ -490,7 +490,7 @@
           <string>Optimizations</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="0" colspan="2">
+          <item row="0" column="0" colspan="2">
            <widget class="QCheckBox" name="uiActivateCPUThrottlingCheckBox">
             <property name="text">
              <string>Activate CPU throttling</string>
@@ -500,14 +500,14 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="uiCPUThrottlingLabel">
             <property name="text">
              <string>Percentage of CPU allowed:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="1">
            <widget class="QSpinBox" name="uiCPUThrottlingSpinBox">
             <property name="suffix">
              <string> %</string>
@@ -523,14 +523,14 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="uiProcessPriorityLabel">
             <property name="text">
              <string>Process priority:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
            <widget class="QComboBox" name="uiProcessPriorityComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -571,13 +571,6 @@
               <string>Very low</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiKVMAccelerationCheckBox">
-            <property name="text">
-             <string>Enable KVM acceleration</string>
-            </property>
            </widget>
           </item>
          </layout>

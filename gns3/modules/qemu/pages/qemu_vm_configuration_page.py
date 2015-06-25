@@ -294,9 +294,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
             self.uiQemuListComboBox.clear()
 
-        if self._server.isLocal() and not sys.platform.startswith("linux"):
-            self.uiKVMAccelerationCheckBox.hide()
-
         if not group:
             # set the device name
             self.uiNameLineEdit.setText(settings["name"])
@@ -378,7 +375,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiRamSpinBox.setValue(settings["ram"])
 
-        self.uiKVMAccelerationCheckBox.setChecked(settings["kvm"])
         if settings["cpu_throttling"]:
             self.uiActivateCPUThrottlingCheckBox.setChecked(True)
             self.uiCPUThrottlingSpinBox.setValue(settings["cpu_throttling"])
@@ -484,7 +480,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         settings["adapters"] = adapters
         settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
-        settings["kvm"] = self.uiKVMAccelerationCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
         settings["ram"] = self.uiRamSpinBox.value()
         if self.uiActivateCPUThrottlingCheckBox.isChecked():

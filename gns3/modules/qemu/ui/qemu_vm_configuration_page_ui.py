@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
 #
-# Created: Wed Jun 24 17:19:47 2015
+# Created: Wed Jun 24 22:00:03 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -259,19 +259,19 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiActivateCPUThrottlingCheckBox = QtWidgets.QCheckBox(self.uiOptimizationGroupBox)
         self.uiActivateCPUThrottlingCheckBox.setChecked(True)
         self.uiActivateCPUThrottlingCheckBox.setObjectName("uiActivateCPUThrottlingCheckBox")
-        self.gridLayout.addWidget(self.uiActivateCPUThrottlingCheckBox, 1, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiActivateCPUThrottlingCheckBox, 0, 0, 1, 2)
         self.uiCPUThrottlingLabel = QtWidgets.QLabel(self.uiOptimizationGroupBox)
         self.uiCPUThrottlingLabel.setObjectName("uiCPUThrottlingLabel")
-        self.gridLayout.addWidget(self.uiCPUThrottlingLabel, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiCPUThrottlingLabel, 1, 0, 1, 1)
         self.uiCPUThrottlingSpinBox = QtWidgets.QSpinBox(self.uiOptimizationGroupBox)
         self.uiCPUThrottlingSpinBox.setMinimum(1)
         self.uiCPUThrottlingSpinBox.setMaximum(800)
         self.uiCPUThrottlingSpinBox.setProperty("value", 100)
         self.uiCPUThrottlingSpinBox.setObjectName("uiCPUThrottlingSpinBox")
-        self.gridLayout.addWidget(self.uiCPUThrottlingSpinBox, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiCPUThrottlingSpinBox, 1, 1, 1, 1)
         self.uiProcessPriorityLabel = QtWidgets.QLabel(self.uiOptimizationGroupBox)
         self.uiProcessPriorityLabel.setObjectName("uiProcessPriorityLabel")
-        self.gridLayout.addWidget(self.uiProcessPriorityLabel, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiProcessPriorityLabel, 2, 0, 1, 1)
         self.uiProcessPriorityComboBox = QtWidgets.QComboBox(self.uiOptimizationGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -285,10 +285,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiProcessPriorityComboBox.addItem("")
         self.uiProcessPriorityComboBox.addItem("")
         self.uiProcessPriorityComboBox.addItem("")
-        self.gridLayout.addWidget(self.uiProcessPriorityComboBox, 3, 1, 1, 1)
-        self.uiKVMAccelerationCheckBox = QtWidgets.QCheckBox(self.uiOptimizationGroupBox)
-        self.uiKVMAccelerationCheckBox.setObjectName("uiKVMAccelerationCheckBox")
-        self.gridLayout.addWidget(self.uiKVMAccelerationCheckBox, 0, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiProcessPriorityComboBox, 2, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.uiOptimizationGroupBox)
         self.groupBox = QtWidgets.QGroupBox(self.tab_2)
         self.groupBox.setObjectName("groupBox")
@@ -367,7 +364,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiProcessPriorityComboBox.setItemText(3, _translate("QemuVMConfigPageWidget", "Normal"))
         self.uiProcessPriorityComboBox.setItemText(4, _translate("QemuVMConfigPageWidget", "Low"))
         self.uiProcessPriorityComboBox.setItemText(5, _translate("QemuVMConfigPageWidget", "Very low"))
-        self.uiKVMAccelerationCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable KVM acceleration"))
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Aditional settings"))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))

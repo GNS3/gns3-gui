@@ -38,7 +38,6 @@
                     "process_priority": "normal",
                     "qemu_path": "/usr/local/bin/qemu-system-x86_64",
                     "ram": 256,
-                    "kvm": false,
                     "platform": "x86_64"
                 },
                 "server_id": 1,

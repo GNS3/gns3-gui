@@ -114,8 +114,6 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         # performance section
         section_item = self._createSectionItem("Optimizations")
-        if sys.platform.startswith("linux") or qemu_vm["server"] != "local":
-            QtWidgets.QTreeWidgetItem(section_item, ["KVM acceleration:", "{}".format(qemu_vm["kvm"])])
         if qemu_vm["cpu_throttling"]:
             QtWidgets.QTreeWidgetItem(section_item, ["CPU throttling:", "{}%".format(qemu_vm["cpu_throttling"])])
         else:

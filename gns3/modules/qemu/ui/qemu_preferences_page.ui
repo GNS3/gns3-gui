@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
-    <height>200</height>
+    <width>366</width>
+    <height>336</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,13 @@
          </property>
          <property name="checked">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiKVMAccelerationCheckBox">
+         <property name="text">
+          <string>Enable KVM acceleration</string>
          </property>
         </widget>
        </item>
