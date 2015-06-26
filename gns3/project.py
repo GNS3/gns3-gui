@@ -390,3 +390,7 @@ class Project(QtCore.QObject):
                 elif result["action"] == "vm.stopped":
                     vm.setStatus(Node.stopped)
                     vm.stopped_signal.emit()
+        elif result["action"] == "log.error":
+            log.error(result["event"]["message"])
+            print(result["event"]["message"])
+
