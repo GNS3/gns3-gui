@@ -22,7 +22,6 @@ Wizard for IOS routers.
 import sys
 import os
 import re
-import hashlib
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
@@ -33,7 +32,7 @@ from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
-from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, DEFAULT_IDLEPC, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
+from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 from .. import Dynamips
 from ..nodes.c1700 import C1700
 from ..nodes.c2600 import C2600
@@ -367,17 +366,6 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
                 wic_list = list(wics)
                 self._widget_wics[wic_number].addItems([""] + wic_list)
 
-    def _md5sum(self, filename):
-
-        with open(filename, "rb") as fd:
-            m = hashlib.md5()
-            while True:
-                data = fd.read(8192)
-                if not data:
-                    break
-                m.update(data)
-            return m.hexdigest()
-
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
@@ -416,13 +404,9 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
         elif self.page(page_id) == self.uiIdlePCWizardPage:
             path = self.uiIOSImageLineEdit.text()
-            if os.path.isfile(path):
-                try:
-                    md5sum = self._md5sum(path)
-                    if md5sum in DEFAULT_IDLEPC:
-                        self.uiIdlepcLineEdit.setText(DEFAULT_IDLEPC[md5sum])
-                except OSError:
-                    pass
+            idle_pc = Dynamips.getDefaultIdlePC(path)
+            if idle_pc is not None:
+                self.uiIdlepcLineEdit.setText(idle_pc)
 
     def validateCurrentPage(self):
         """

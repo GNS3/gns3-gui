@@ -28,6 +28,7 @@ from gns3.ports.port import Port
 from gns3.servers import Servers
 from gns3.packet_capture import PacketCapture
 from gns3.utils.normalize_filename import normalize_filename
+from gns3.image_manager import ImageManager
 
 from ..settings import PLATFORMS_DEFAULT_RAM
 from ..adapters import ADAPTER_MATRIX
@@ -685,15 +686,6 @@ class Router(VM):
 
         return router
 
-    def _imageFilesDir(self):
-        """
-        Returns the location of IOS images.
-        """
-
-        servers = Servers.instance()
-        local_server = servers.localServerSettings()
-        return os.path.join(local_server["images_path"], "IOS")
-
     def load(self, node_info):
         """
         Loads a router representation
@@ -718,7 +710,7 @@ class Router(VM):
 
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
-            updated_image_path = os.path.join(self._imageFilesDir(), image)
+            updated_image_path = os.path.join(ImageManager.instance().getDirectoryForType("DYNAMIPS"), image)
             if os.path.isfile(updated_image_path):
                 image = updated_image_path
             elif not os.path.isfile(image):

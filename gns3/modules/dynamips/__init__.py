@@ -22,10 +22,12 @@ Dynamips module implementation.
 import sys
 import os
 import shutil
+import hashlib
 
 from gns3.qt import QtWidgets
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
+from gns3.image_manager import ImageManager
 from gns3.local_server_config import LocalServerConfig
 from gns3.gns3_vm import GNS3VM
 
@@ -47,6 +49,7 @@ from .nodes.atm_switch import ATMSwitch
 from .settings import DYNAMIPS_SETTINGS
 from .settings import IOS_ROUTER_SETTINGS
 from .settings import PLATFORMS_DEFAULT_RAM
+from .settings import DEFAULT_IDLEPC
 
 PLATFORM_TO_CLASS = {
     "c1700": C1700,
@@ -81,6 +84,36 @@ class Dynamips(Module):
     def configChangedSlot(self):
         # load the settings and IOS images.
         self._loadSettings()
+
+    @staticmethod
+    def getDefaultIdlePC(path):
+        """
+        Return the default IDLE PC for an image if the image
+        exists or None otherwise
+        """
+        if not os.path.isfile(path):
+            path = os.path.join(ImageManager.instance().getDirectoryForType("DYNAMIPS"), path)
+            if not os.path.isfile(path):
+                return None
+        try:
+            md5sum = Dynamips._md5sum(path)
+            log.debug("Get idlePC for %s. md5sum %s", path, md5sum)
+            if md5sum in DEFAULT_IDLEPC:
+                log.debug("IDLEPC found for %s", path)
+                return DEFAULT_IDLEPC[md5sum]
+        except OSError:
+            return None
+
+    @staticmethod
+    def _md5sum(path):
+        with open(path, "rb") as fd:
+            m = hashlib.md5()
+            while True:
+                data = fd.read(8192)
+                if not data:
+                    break
+                m.update(data)
+            return m.hexdigest()
 
     @staticmethod
     def _findDynamips():
