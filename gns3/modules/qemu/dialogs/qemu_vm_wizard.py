@@ -76,6 +76,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         :param vm_type: type of VM
         """
 
+        self.uiASADeprecatedWarningLabel.hide()
         if vm_type == "IOSv":
             self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.svg"))
             self.uiNameLineEdit.setText("vIOS")
@@ -91,6 +92,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         elif vm_type == "ASA 8.4(2)":
             self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.svg"))
             self.uiNameLineEdit.setText("ASA")
+            self.uiASADeprecatedWarningLabel.show()
         elif vm_type == "IDS":
             self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.svg"))
             self.uiNameLineEdit.setText("IDS")
@@ -253,6 +255,11 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
 
         current_id = self.currentId()
         if self.page(current_id) == self.uiTypeWizardPage:
+
+            if sys.platform.startswith("linux") or not self.uiLocalRadioButton.isChecked():
+                self.uiOSDeprecatedWarningLabel.hide()
+            else:
+                self.uiOSDeprecatedWarningLabel.show()
 
             if self.uiTypeComboBox.currentText().startswith("IOSv"):
                 self.uiRamSpinBox.setValue(384)

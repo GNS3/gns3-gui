@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
 #
-# Created: Mon Jun 29 10:27:45 2015
+# Created: Mon Jun 29 15:19:08 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,8 +17,8 @@ class Ui_QemuVMWizard(object):
         QemuVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.uiServerWizardPage)
-        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiServerWizardPage)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiServerTypeGroupBox.setObjectName("uiServerTypeGroupBox")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiServerTypeGroupBox)
@@ -35,7 +35,7 @@ class Ui_QemuVMWizard(object):
         self.horizontalLayout.addWidget(self.uiLocalRadioButton)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.verticalLayout_7.addWidget(self.uiServerTypeGroupBox)
+        self.verticalLayout_3.addWidget(self.uiServerTypeGroupBox)
         self.uiRemoteServersGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
@@ -56,11 +56,25 @@ class Ui_QemuVMWizard(object):
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
         self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
-        self.verticalLayout_7.addWidget(self.uiRemoteServersGroupBox)
+        self.verticalLayout_3.addWidget(self.uiRemoteServersGroupBox)
         QemuVMWizard.addPage(self.uiServerWizardPage)
         self.uiTypeWizardPage = QtWidgets.QWizardPage()
         self.uiTypeWizardPage.setObjectName("uiTypeWizardPage")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.uiTypeWizardPage)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiTypeWizardPage)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.uiOSDeprecatedWarningLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
+        self.uiOSDeprecatedWarningLabel.setStyleSheet("color: red;\n"
+"font: 18pt;")
+        self.uiOSDeprecatedWarningLabel.setWordWrap(True)
+        self.uiOSDeprecatedWarningLabel.setObjectName("uiOSDeprecatedWarningLabel")
+        self.verticalLayout.addWidget(self.uiOSDeprecatedWarningLabel)
+        self.uiASADeprecatedWarningLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
+        self.uiASADeprecatedWarningLabel.setStyleSheet("color: red;\n"
+"font: 18pt;")
+        self.uiASADeprecatedWarningLabel.setWordWrap(True)
+        self.uiASADeprecatedWarningLabel.setObjectName("uiASADeprecatedWarningLabel")
+        self.verticalLayout.addWidget(self.uiASADeprecatedWarningLabel)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiTypeLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
         self.uiTypeLabel.setObjectName("uiTypeLabel")
@@ -73,6 +87,7 @@ class Ui_QemuVMWizard(object):
         self.uiTypeComboBox.setSizePolicy(sizePolicy)
         self.uiTypeComboBox.setObjectName("uiTypeComboBox")
         self.horizontalLayout_2.addWidget(self.uiTypeComboBox)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         QemuVMWizard.addPage(self.uiTypeWizardPage)
         self.uiNameWizardPage = QtWidgets.QWizardPage()
         self.uiNameWizardPage.setObjectName("uiNameWizardPage")
@@ -269,6 +284,8 @@ class Ui_QemuVMWizard(object):
         self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on server:"))
         self.uiTypeWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM type"))
         self.uiTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a type of QEMU VM to help with pre-configuration."))
+        self.uiOSDeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<b>WARNING</b>: The recommended way for QEMU on Windows and OSX is with the GNS3 VM"))
+        self.uiASADeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<b>WARNING</b>: The recommended way for ASA is to use ASAv with VMware"))
         self.uiTypeLabel.setText(_translate("QemuVMWizard", "Type:"))
         self.uiNameWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM name"))
         self.uiNameWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for your new QEMU virtual machine."))
