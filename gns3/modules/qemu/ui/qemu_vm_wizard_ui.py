@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
 #
-# Created: Sun Jun 14 14:52:26 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Mon Jun 29 10:27:45 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ from gns3.qt import QtCore, QtGui, QtWidgets
 class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
-        QemuVMWizard.resize(585, 381)
+        QemuVMWizard.resize(623, 417)
         QemuVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -147,6 +147,9 @@ class Ui_QemuVMWizard(object):
         self.uiHdaDiskImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiHdaDiskImageToolButton.setObjectName("uiHdaDiskImageToolButton")
         self.horizontalLayout_8.addWidget(self.uiHdaDiskImageToolButton)
+        self.uiHdaDiskImageCreateToolButton = QtWidgets.QToolButton(self.uiDiskWizardPage)
+        self.uiHdaDiskImageCreateToolButton.setObjectName("uiHdaDiskImageCreateToolButton")
+        self.horizontalLayout_8.addWidget(self.uiHdaDiskImageCreateToolButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout_8)
         QemuVMWizard.addPage(self.uiDiskWizardPage)
         self.uiASAWizardPage = QtWidgets.QWizardPage()
@@ -239,6 +242,9 @@ class Ui_QemuVMWizard(object):
         self.uiHdbDiskImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiHdbDiskImageToolButton.setObjectName("uiHdbDiskImageToolButton")
         self.horizontalLayout_5.addWidget(self.uiHdbDiskImageToolButton)
+        self.uiHdbDiskImageCreateToolButton = QtWidgets.QToolButton(self.uiDiskImageHdbWizardPage)
+        self.uiHdbDiskImageCreateToolButton.setObjectName("uiHdbDiskImageCreateToolButton")
+        self.horizontalLayout_5.addWidget(self.uiHdbDiskImageCreateToolButton)
         self.verticalLayout_6.addLayout(self.horizontalLayout_5)
         QemuVMWizard.addPage(self.uiDiskImageHdbWizardPage)
 
@@ -278,6 +284,7 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_2.setText(_translate("QemuVMWizard", "New Image"))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hda):"))
         self.uiHdaDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
+        self.uiHdaDiskImageCreateToolButton.setText(_translate("QemuVMWizard", "Create"))
         self.uiASAWizardPage.setTitle(_translate("QemuVMWizard", "ASA VM"))
         self.uiASAWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a initrd and a kernel image."))
         self.uiLinuxBootGroupBox.setTitle(_translate("QemuVMWizard", "Linux boot specific settings"))
@@ -293,4 +300,5 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_5.setText(_translate("QemuVMWizard", "New Image"))
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
+        self.uiHdbDiskImageCreateToolButton.setText(_translate("QemuVMWizard", "Create"))
 

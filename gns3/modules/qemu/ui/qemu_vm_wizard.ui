@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>381</height>
+    <width>623</width>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -285,6 +285,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QToolButton" name="uiHdaDiskImageCreateToolButton">
+        <property name="text">
+         <string>Create</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -470,6 +477,13 @@
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiHdbDiskImageCreateToolButton">
+        <property name="text">
+         <string>Create</string>
         </property>
        </widget>
       </item>

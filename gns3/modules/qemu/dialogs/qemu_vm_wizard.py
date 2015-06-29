@@ -29,7 +29,7 @@ from gns3.dialogs.vm_wizard import VMWizard
 from .. import Qemu
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
-
+from .qemu_image_wizard import QemuImageWizard
 
 class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
 
@@ -60,8 +60,8 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         self._qemu_vms = qemu_vms
 
         # Fill image combo boxes
-        self.addImageSelector(self.uiHdaDiskExistingImageRadioButton, self.uiHdaDiskImageListComboBox, self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton, QemuVMConfigurationPage.getDiskImage)
-        self.addImageSelector(self.uiHdbDiskExistingImageRadioButton, self.uiHdbDiskImageListComboBox, self.uiHdbDiskImageLineEdit, self.uiHdbDiskImageToolButton, QemuVMConfigurationPage.getDiskImage)
+        self.addImageSelector(self.uiHdaDiskExistingImageRadioButton, self.uiHdaDiskImageListComboBox, self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton, QemuVMConfigurationPage.getDiskImage, create_image_wizard=QemuImageWizard, create_button=self.uiHdaDiskImageCreateToolButton)
+        self.addImageSelector(self.uiHdbDiskExistingImageRadioButton, self.uiHdbDiskImageListComboBox, self.uiHdbDiskImageLineEdit, self.uiHdbDiskImageToolButton, QemuVMConfigurationPage.getDiskImage, create_image_wizard=QemuImageWizard, create_button=self.uiHdbDiskImageCreateToolButton)
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiInitrdImageListComboBox, self.uiInitrdImageLineEdit, self.uiInitrdImageToolButton, QemuVMConfigurationPage.getDiskImage)
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiKernelImageListComboBox, self.uiKernelImageLineEdit, self.uiKernelImageToolButton, QemuVMConfigurationPage.getDiskImage)
 

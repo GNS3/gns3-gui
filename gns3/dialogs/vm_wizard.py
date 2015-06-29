@@ -44,8 +44,16 @@ class VMWizard(QtWidgets.QWizard):
         # The list of images combo box (Qemu support multiple images)
         self._images_combo_boxes = set()
 
-        # The list of button opening file browser for images
-        self._images_browser_buttons = set()
+        # The list of radio button for existing image or new images
+        self._radio_existing_images_buttons = set()
+
+    def refreshImageStepsButtons(self):
+        """
+        When changing the server type (remote or local)
+        Refresh all the image selectors
+        """
+        for radio_button in self._radio_existing_images_buttons:
+            radio_button.setChecked(radio_button.isChecked())
 
     def _vmToggledSlot(self, checked):
         """
@@ -56,8 +64,7 @@ class VMWizard(QtWidgets.QWizard):
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(False)
             self.uiRemoteServersGroupBox.hide()
-            for button in self._images_browser_buttons:
-                button.hide()
+            self.refreshImageStepsButtons()
 
     def _remoteServerToggledSlot(self, checked):
         """
@@ -69,8 +76,7 @@ class VMWizard(QtWidgets.QWizard):
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(True)
             self.uiRemoteServersGroupBox.show()
-            for button in self._images_browser_buttons:
-                button.hide()
+            self.refreshImageStepsButtons()
 
     def _localToggledSlot(self, checked):
         """
@@ -81,8 +87,17 @@ class VMWizard(QtWidgets.QWizard):
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(False)
             self.uiRemoteServersGroupBox.hide()
-            for button in self._images_browser_buttons:
-                button.show()
+            self.refreshImageStepsButtons()
+
+    def setStartId(self, index):
+        """
+        Which page should we use when starting the Wizard
+        """
+        super().setStartId(index)
+        # If we skip the initial page (choosing a server)
+        # we check the settings
+        if index != 0:
+            self.uiLocalRadioButton.setChecked(True)
 
     def initializePage(self, page_id):
 
@@ -124,7 +139,7 @@ class VMWizard(QtWidgets.QWizard):
         else:
             self.uiRemoteServersComboBox.setEnabled(True)
 
-    def addImageSelector(self, radio_button, combo_box, line_edit, browser, image_selector):
+    def addImageSelector(self, radio_button, combo_box, line_edit, browser, image_selector, create_button=None, create_image_wizard=None):
         """
         Add a remote image selector
 
@@ -133,6 +148,8 @@ class VMWizard(QtWidgets.QWizard):
         :param line_edit: The edit for the image
         :param browser: file upload browser button
         :param image_selector: function which display an image selector and return path
+        :param create_button: Image create button None if you don't need one
+        :param create_image_wizard: Wizard Class for creating a new image
         """
 
         combo_box.currentIndexChanged.connect(lambda index: self._imageListIndexChangedSlot(index, combo_box, line_edit))
@@ -140,10 +157,18 @@ class VMWizard(QtWidgets.QWizard):
 
         browser.clicked.connect(lambda: self._imageBrowserSlot(line_edit, image_selector))
 
-        self._images_browser_buttons.add(browser)
+        if create_button:
+            assert create_image_wizard is not None
+            create_button.clicked.connect(lambda: self._imageCreateSlot(line_edit, create_image_wizard))
 
-        self._existingImageToggledSlot(True, combo_box, line_edit, browser)
-        radio_button.toggled.connect(lambda checked: self._existingImageToggledSlot(checked, combo_box, line_edit, browser))
+        self._existingImageToggledSlot(True, combo_box, line_edit, browser, create_button)
+        radio_button.toggled.connect(lambda checked: self._existingImageToggledSlot(checked, combo_box, line_edit, browser, create_button))
+        self._radio_existing_images_buttons.add(radio_button)
+
+    def _imageCreateSlot(self, line_edit, create_image_wizard):
+        create_dialog = create_image_wizard(self, self.uiNameLineEdit.text())
+        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+            line_edit.setText(create_dialog.uiLocationLineEdit.text())
 
     def _imageBrowserSlot(self, line_edit, image_selector):
         """
@@ -167,10 +192,13 @@ class VMWizard(QtWidgets.QWizard):
         else:
             line_edit.setText("")
 
-    def _existingImageToggledSlot(self, checked, combo_box, line_edit, browser):
+    def _existingImageToggledSlot(self, checked, combo_box, line_edit, browser, create_button):
         """
         User select the option of using an existing image
         """
+
+        if create_button:
+            create_button.hide()
 
         if checked:
             combo_box.show()
@@ -183,6 +211,8 @@ class VMWizard(QtWidgets.QWizard):
             line_edit.setText("")
             line_edit.show()
             browser.show()
+            if create_button and self.uiLocalRadioButton.isChecked():
+                create_button.show()
 
     def loadImagesList(self, endpoint):
         """
