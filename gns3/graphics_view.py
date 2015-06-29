@@ -56,6 +56,8 @@ from .items.shape_item import ShapeItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
+from .items.pixmap_image_item import PixmapImageItem
+from .items.svg_image_item import SvgImageItem
 
 log = logging.getLogger(__name__)
 
@@ -222,15 +224,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_ellipse = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
-    def addImage(self, pixmap, image_path):
+    def addImage(self, image, image_path):
         """
         Adds an image.
 
-        :param pixmap: QPixmap instance
+        :param image: QPixmap or QSvgRenderer instance
         :param image_path: path to the image
         """
 
-        image_item = ImageItem(pixmap, image_path)
+        if isinstance(image, QtSvg.QSvgRenderer):
+            # use a SVG image item if this is a valid SVG file
+            image_item = SvgImageItem(image, image_path)
+        else:
+            image_item = PixmapImageItem(image, image_path)
         # center the image on the scene
         x = image_item.pos().x() - (image_item.boundingRect().width() / 2)
         y = image_item.pos().y() - (image_item.boundingRect().height() / 2)

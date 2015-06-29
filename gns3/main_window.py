@@ -35,7 +35,7 @@ from .modules.module_error import ModuleError
 from .modules.vpcs import VPCS
 from .modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from .version import __version__
-from .qt import QtGui, QtCore, QtNetwork, QtWidgets
+from .qt import QtGui, QtCore, QtNetwork, QtWidgets, QtSvg
 from .servers import Servers
 from .gns3_vm import GNS3VM
 from .node import Node
@@ -793,15 +793,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         # supported image file formats
-        file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff);;All files (*.*)"
+        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
             return
         self._pictures_dir = os.path.dirname(path)
 
-        pixmap = QtGui.QPixmap(path)
-        if pixmap.isNull():
+        image = QtGui.QPixmap(path)
+        if image.isNull():
             QtWidgets.QMessageBox.critical(self, "Image", "Image file format not supported")
             return
 
@@ -822,8 +822,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 QtWidgets.QMessageBox.critical(self, "Image", "Could not copy the image to the project image directory: {}".format(e))
                 return
 
+        renderer = QtSvg.QSvgRenderer(path)
+        if renderer.isValid():
+            # use a SVG image item if this is a valid SVG file
+            image = renderer
+
         # path to the image is relative to the project-files dir
-        self.uiGraphicsView.addImage(pixmap, os.path.join("images", image_filename))
+        self.uiGraphicsView.addImage(image, os.path.join("images", image_filename))
 
     def _drawRectangleActionSlot(self):
         """

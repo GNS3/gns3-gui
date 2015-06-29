@@ -30,14 +30,14 @@ import sys
 from .qt import QtGui, QtSvg, QtWidgets
 from functools import partial
 from .items.node_item import NodeItem
-from .items.svg_node_item import SvgNodeItem
 from .items.pixmap_node_item import PixmapNodeItem
 from .items.svg_node_item import SvgNodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
-from .items.image_item import ImageItem
+from .items.svg_image_item import SvgImageItem
+from .items.pixmap_image_item import PixmapImageItem
 from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
@@ -835,7 +835,12 @@ class Topology:
                     topology_file_errors.append("Image format not supported for {}".format(image_path))
                     continue
 
-                image_item = ImageItem(pixmap, image_path)
+                renderer = QtSvg.QSvgRenderer(image_path)
+                if renderer.isValid():
+                    # use a SVG image item if this is a valid SVG file
+                    image_item = SvgImageItem(renderer, image_path)
+                else:
+                    image_item = PixmapImageItem(pixmap, image_path)
                 image_item.load(topology_image)
                 view.scene().addItem(image_item)
                 self.addImage(image_item)

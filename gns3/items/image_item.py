@@ -19,10 +19,10 @@
 Graphical representation of an image on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtWidgets
+from ..qt import QtCore
 
 
-class ImageItem(QtWidgets.QGraphicsPixmapItem):
+class ImageItem():
 
     """
     Class to insert an image on the scene.
@@ -30,11 +30,9 @@ class ImageItem(QtWidgets.QGraphicsPixmapItem):
 
     show_layer = False
 
-    def __init__(self, pixmap, image_path, pos=None):
+    def __init__(self, image_path, pos=None):
 
-        super().__init__(pixmap)
         self.setFlags(self.ItemIsMovable | self.ItemIsSelectable)
-        self.setTransformationMode(QtCore.Qt.SmoothTransformation)
         self._image_path = image_path
         if pos:
             self.setPos(pos)
@@ -47,17 +45,6 @@ class ImageItem(QtWidgets.QGraphicsPixmapItem):
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeImage(self)
-
-    def duplicate(self):
-        """
-        Duplicates this image item.
-
-        :return: ImageItem instance
-        """
-
-        image_item = ImageItem(self.pixmap(), self._image_path, QtCore.QPointF(self.x() + 20, self.y() + 20))
-        image_item.setZValue(self.zValue())
-        return image_item
 
     def paint(self, painter, option, widget=None):
         """
