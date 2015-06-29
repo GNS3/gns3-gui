@@ -77,8 +77,10 @@ class PyCutExt(QtWidgets.QTextEdit):
             self.eofKey = None
 
         # capture all interactive input/output
+        self._old_stdout = sys.stdout
         sys.stdout = MultipleRedirection(self, sys.stdout)
         # sys.stderr = MultipleRedirection((sys.stderr, self))
+        self._old_stdin = sys.stdin
         sys.stdin = self
 
         # last line + last incomplete lines
@@ -112,6 +114,14 @@ class PyCutExt(QtWidgets.QTextEdit):
 
         self.write(message + '\n\n')
         self.write(sys.ps1)
+
+    def closeIO(self):
+        """
+        Call when parent is closing we need to stop writing in the windows
+        and go back to the standard output
+        """
+        sys.stdout = self._old_stdout
+        sys.stdin = self._old_stdin
 
     def get_interpreter(self):
         """

@@ -221,6 +221,12 @@ def main():
     delattr(MainWindow, "_instance")
     app.deleteLater()
 
+    # We force a full garbage collect before exit
+    # for unknow reason otherwise Qt Segfault on OSX in some
+    # conditions
+    import gc
+    gc.collect()
+
     sys.exit(exit_code)
 
 if __name__ == '__main__':

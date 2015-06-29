@@ -1056,6 +1056,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         if self._project.closed() and not servers.localServerIsRunning():
             event.accept()
+            self.uiConsoleTextEdit.closeIO()
         elif self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
             if servers.localServerIsRunning():
@@ -1067,6 +1068,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 log.debug("Disconnect all servers")
                 servers.disconnectAllServers()
                 event.accept()
+                self.uiConsoleTextEdit.closeIO()
             else:
                 event.ignore()
         else:
