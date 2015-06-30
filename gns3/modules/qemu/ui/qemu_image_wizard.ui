@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>297</height>
+    <width>535</width>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,6 +60,9 @@
         </property>
         <property name="text">
          <string notr="true">Qcow2</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">uiFormatRadios</string>
@@ -165,6 +168,9 @@ It can easily be converted to various other formats by various utilities, making
            <property name="text">
             <string>off</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
            <attribute name="buttonGroup">
             <string notr="true">uiQcow2PreallocationRadios</string>
            </attribute>
@@ -210,6 +216,19 @@ Free space will be zero filled.</string>
             <string notr="true">uiQcow2PreallocationRadios</string>
            </attribute>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -400,6 +419,9 @@ Free space will be zero filled.</string>
          <property name="text">
           <string>Dynamic</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
          <attribute name="buttonGroup">
           <string notr="true">uiVhdSizeModeRadios</string>
          </attribute>
@@ -417,6 +439,19 @@ Free space will be zero filled.</string>
           <string notr="true">uiVhdSizeModeRadios</string>
          </attribute>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>293</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -442,6 +477,9 @@ Free space will be zero filled.</string>
          <property name="text">
           <string>Dynamic</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
          <attribute name="buttonGroup">
           <string notr="true">uiVdiSizeModeRadios</string>
          </attribute>
@@ -459,6 +497,19 @@ Free space will be zero filled.</string>
           <string notr="true">uiVdiSizeModeRadios</string>
          </attribute>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -480,6 +531,9 @@ Free space will be zero filled.</string>
         <widget class="QRadioButton" name="uiVmdkAdapterTypeIdeRadio">
          <property name="text">
           <string>IDE</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiVmdkAdapterRadios</string>
@@ -516,6 +570,19 @@ Free space will be zero filled.</string>
          </attribute>
         </widget>
        </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>86</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </item>
@@ -532,6 +599,9 @@ Free space will be zero filled.</string>
          </property>
          <property name="text">
           <string>Sparse</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
          <attribute name="buttonGroup">
           <string notr="true">uiVmdkSizeModeRadios</string>
@@ -550,6 +620,19 @@ Free space will be zero filled.</string>
           <string notr="true">uiVmdkSizeModeRadios</string>
          </attribute>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -580,6 +663,19 @@ Free space will be zero filled.</string>
           <string>Zeroed grain</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>36</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -626,9 +722,6 @@ Free space will be zero filled.</string>
         <property name="buttonSymbols">
          <enum>QAbstractSpinBox::UpDownArrows</enum>
         </property>
-        <property name="showGroupSeparator" stdset="0">
-         <bool>true</bool>
-        </property>
         <property name="suffix">
          <string> MiB</string>
         </property>
@@ -644,14 +737,14 @@ Free space will be zero filled.</string>
         <property name="value">
          <number>30000</number>
         </property>
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
     </item>
    </layout>
-   <zorder>uiLocationLabel</zorder>
-   <zorder>uiSizeLabel</zorder>
-   <zorder>uiSizeSpinBox</zorder>
   </widget>
  </widget>
  <resources/>
@@ -690,11 +783,11 @@ Free space will be zero filled.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="uiVmdkSizeModeRadios"/>
-  <buttongroup name="uiVdiSizeModeRadios"/>
-  <buttongroup name="uiVmdkAdapterRadios"/>
   <buttongroup name="uiQcow2PreallocationRadios"/>
+  <buttongroup name="uiVmdkAdapterRadios"/>
   <buttongroup name="uiFormatRadios"/>
+  <buttongroup name="uiVdiSizeModeRadios"/>
+  <buttongroup name="uiVmdkSizeModeRadios"/>
   <buttongroup name="uiVhdSizeModeRadios"/>
  </buttongroups>
 </ui>

@@ -2,20 +2,18 @@
 
 # Form implementation generated from reading ui file 'qemu_image_wizard.ui'
 #
-# Created: Thu Jun 25 16:01:36 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Tue Jun 30 17:16:24 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuImageWizard(object):
-
     def setupUi(self, QemuImageWizard):
         QemuImageWizard.setObjectName("QemuImageWizard")
-        QemuImageWizard.resize(466, 297)
+        QemuImageWizard.resize(535, 369)
         QemuImageWizard.setModal(True)
         QemuImageWizard.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         self.uiBinaryWizardPage = QtWidgets.QWizardPage()
@@ -40,6 +38,7 @@ class Ui_QemuImageWizard(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiFormatQcow2Radio = QtWidgets.QRadioButton(self.uiBinaryWizardPage)
         self.uiFormatQcow2Radio.setText("Qcow2")
+        self.uiFormatQcow2Radio.setChecked(True)
         self.uiFormatQcow2Radio.setObjectName("uiFormatQcow2Radio")
         self.uiFormatRadios = QtWidgets.QButtonGroup(QemuImageWizard)
         self.uiFormatRadios.setObjectName("uiFormatRadios")
@@ -85,6 +84,7 @@ class Ui_QemuImageWizard(object):
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.uiQcow2PreallocationOffRadio = QtWidgets.QRadioButton(self.uiSizeOptionsGroupBox)
+        self.uiQcow2PreallocationOffRadio.setChecked(True)
         self.uiQcow2PreallocationOffRadio.setObjectName("uiQcow2PreallocationOffRadio")
         self.uiQcow2PreallocationRadios = QtWidgets.QButtonGroup(QemuImageWizard)
         self.uiQcow2PreallocationRadios.setObjectName("uiQcow2PreallocationRadios")
@@ -102,6 +102,8 @@ class Ui_QemuImageWizard(object):
         self.uiQcow2PreallocationFullRadio.setObjectName("uiQcow2PreallocationFullRadio")
         self.uiQcow2PreallocationRadios.addButton(self.uiQcow2PreallocationFullRadio)
         self.horizontalLayout_9.addWidget(self.uiQcow2PreallocationFullRadio)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem)
         self.gridLayout_3.addLayout(self.horizontalLayout_9, 0, 1, 1, 1)
         self.uiClusterSizeLabel = QtWidgets.QLabel(self.uiSizeOptionsGroupBox)
         self.uiClusterSizeLabel.setObjectName("uiClusterSizeLabel")
@@ -167,6 +169,7 @@ class Ui_QemuImageWizard(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.uiVhdFileSizeModeGroupBox)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiVhdFileSizeModeDynamicRadio = QtWidgets.QRadioButton(self.uiVhdFileSizeModeGroupBox)
+        self.uiVhdFileSizeModeDynamicRadio.setChecked(True)
         self.uiVhdFileSizeModeDynamicRadio.setObjectName("uiVhdFileSizeModeDynamicRadio")
         self.uiVhdSizeModeRadios = QtWidgets.QButtonGroup(QemuImageWizard)
         self.uiVhdSizeModeRadios.setObjectName("uiVhdSizeModeRadios")
@@ -176,6 +179,8 @@ class Ui_QemuImageWizard(object):
         self.uiVhdFileSizeModeFixedRadio.setObjectName("uiVhdFileSizeModeFixedRadio")
         self.uiVhdSizeModeRadios.addButton(self.uiVhdFileSizeModeFixedRadio)
         self.horizontalLayout_2.addWidget(self.uiVhdFileSizeModeFixedRadio)
+        spacerItem1 = QtWidgets.QSpacerItem(293, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.verticalLayout_4.addWidget(self.uiVhdFileSizeModeGroupBox)
         QemuImageWizard.addPage(self.uiVhdOptionsWizardPage)
         self.uiVdiOptionsWizardPage = QtWidgets.QWizardPage()
@@ -187,6 +192,7 @@ class Ui_QemuImageWizard(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.uiVdiFileSizeModeGroupBox)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.uiVdiFileSizeModeDynamicRadio = QtWidgets.QRadioButton(self.uiVdiFileSizeModeGroupBox)
+        self.uiVdiFileSizeModeDynamicRadio.setChecked(True)
         self.uiVdiFileSizeModeDynamicRadio.setObjectName("uiVdiFileSizeModeDynamicRadio")
         self.uiVdiSizeModeRadios = QtWidgets.QButtonGroup(QemuImageWizard)
         self.uiVdiSizeModeRadios.setObjectName("uiVdiSizeModeRadios")
@@ -196,6 +202,8 @@ class Ui_QemuImageWizard(object):
         self.uiVdiFileSizeModeFixedRadio.setObjectName("uiVdiFileSizeModeFixedRadio")
         self.uiVdiSizeModeRadios.addButton(self.uiVdiFileSizeModeFixedRadio)
         self.horizontalLayout_3.addWidget(self.uiVdiFileSizeModeFixedRadio)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem2)
         self.verticalLayout_5.addWidget(self.uiVdiFileSizeModeGroupBox)
         QemuImageWizard.addPage(self.uiVdiOptionsWizardPage)
         self.uiVmdkOptionsWizardPage = QtWidgets.QWizardPage()
@@ -207,6 +215,7 @@ class Ui_QemuImageWizard(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.uiVmdkAdapterTypeGroupBox)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.uiVmdkAdapterTypeIdeRadio = QtWidgets.QRadioButton(self.uiVmdkAdapterTypeGroupBox)
+        self.uiVmdkAdapterTypeIdeRadio.setChecked(True)
         self.uiVmdkAdapterTypeIdeRadio.setObjectName("uiVmdkAdapterTypeIdeRadio")
         self.uiVmdkAdapterRadios = QtWidgets.QButtonGroup(QemuImageWizard)
         self.uiVmdkAdapterRadios.setObjectName("uiVmdkAdapterRadios")
@@ -224,12 +233,15 @@ class Ui_QemuImageWizard(object):
         self.uiVmdkAdapterTypeEsxRadio.setObjectName("uiVmdkAdapterTypeEsxRadio")
         self.uiVmdkAdapterRadios.addButton(self.uiVmdkAdapterTypeEsxRadio)
         self.horizontalLayout_4.addWidget(self.uiVmdkAdapterTypeEsxRadio)
+        spacerItem3 = QtWidgets.QSpacerItem(86, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_6.addWidget(self.uiVmdkAdapterTypeGroupBox)
         self.uiVmdkFileSizeModeGroupBox = QtWidgets.QGroupBox(self.uiVmdkOptionsWizardPage)
         self.uiVmdkFileSizeModeGroupBox.setObjectName("uiVmdkFileSizeModeGroupBox")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.uiVmdkFileSizeModeGroupBox)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.uiVmdkFileSizeModeSparseRadio = QtWidgets.QRadioButton(self.uiVmdkFileSizeModeGroupBox)
+        self.uiVmdkFileSizeModeSparseRadio.setChecked(True)
         self.uiVmdkFileSizeModeSparseRadio.setObjectName("uiVmdkFileSizeModeSparseRadio")
         self.uiVmdkSizeModeRadios = QtWidgets.QButtonGroup(QemuImageWizard)
         self.uiVmdkSizeModeRadios.setObjectName("uiVmdkSizeModeRadios")
@@ -239,6 +251,8 @@ class Ui_QemuImageWizard(object):
         self.uiVmdkFileSizeModeFlatRadio.setObjectName("uiVmdkFileSizeModeFlatRadio")
         self.uiVmdkSizeModeRadios.addButton(self.uiVmdkFileSizeModeFlatRadio)
         self.horizontalLayout_5.addWidget(self.uiVmdkFileSizeModeFlatRadio)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem4)
         self.verticalLayout_6.addWidget(self.uiVmdkFileSizeModeGroupBox)
         self.uiVmdkMiscGroupBox = QtWidgets.QGroupBox(self.uiVmdkOptionsWizardPage)
         self.uiVmdkMiscGroupBox.setObjectName("uiVmdkMiscGroupBox")
@@ -253,6 +267,8 @@ class Ui_QemuImageWizard(object):
         self.uiVmdkZeroedGrainCheckBox = QtWidgets.QCheckBox(self.uiVmdkMiscGroupBox)
         self.uiVmdkZeroedGrainCheckBox.setObjectName("uiVmdkZeroedGrainCheckBox")
         self.horizontalLayout_6.addWidget(self.uiVmdkZeroedGrainCheckBox)
+        spacerItem5 = QtWidgets.QSpacerItem(36, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem5)
         self.verticalLayout_6.addWidget(self.uiVmdkMiscGroupBox)
         QemuImageWizard.addPage(self.uiVmdkOptionsWizardPage)
         self.uiSizeAndLocationWizardPage = QtWidgets.QWizardPage()
@@ -278,11 +294,11 @@ class Ui_QemuImageWizard(object):
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.uiSizeSpinBox = QtWidgets.QSpinBox(self.uiSizeAndLocationWizardPage)
         self.uiSizeSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.UpDownArrows)
-        self.uiSizeSpinBox.setProperty("showGroupSeparator", True)
         self.uiSizeSpinBox.setMinimum(0)
         self.uiSizeSpinBox.setMaximum(2000000)
         self.uiSizeSpinBox.setSingleStep(1000)
         self.uiSizeSpinBox.setProperty("value", 30000)
+        self.uiSizeSpinBox.setProperty("showGroupSeparator", True)
         self.uiSizeSpinBox.setObjectName("uiSizeSpinBox")
         self.horizontalLayout_7.addWidget(self.uiSizeSpinBox)
         self.gridLayout_4.addLayout(self.horizontalLayout_7, 1, 1, 1, 1)
@@ -303,11 +319,11 @@ class Ui_QemuImageWizard(object):
         self.uiFormatQcow2Radio.setToolTip(_translate("QemuImageWizard", "Qcow2 is the current Qemu format, supporting many special features."))
         self.uiFormatQcowRadio.setToolTip(_translate("QemuImageWizard", "Qcow is a legacy Qemu format that is also supported by VirtualBox."))
         self.uiFormatVhdRadio.setToolTip(_translate("QemuImageWizard", "VHD is the format used by Microsoft VirtualPC, and is also supported by Qemu and VirtualBox.\n"
-                                                    "On Windows 7 and above, it can be mounted on the host PC."))
+"On Windows 7 and above, it can be mounted on the host PC."))
         self.uiFormatVdiRadio.setToolTip(_translate("QemuImageWizard", "VDI is the native format of VirtualBox"))
         self.uiFormatVmdkRadio.setToolTip(_translate("QemuImageWizard", "VMDK is the native format for VMware and is also supported by Qemu and VirtualBox."))
         self.uiFormatRawRadio.setToolTip(_translate("QemuImageWizard", "Raw image files represent the actual data on the image, with zero special features.\n"
-                                                    "It can easily be converted to various other formats by various utilities, making it the most portable format."))
+"It can easily be converted to various other formats by various utilities, making it the most portable format."))
         self.uiFormatRawRadio.setText(_translate("QemuImageWizard", "Raw"))
         self.uiQcow2OptionsWizardPage.setTitle(_translate("QemuImageWizard", "Qcow2 options"))
         self.uiSizeOptionsGroupBox.setTitle(_translate("QemuImageWizard", "Size options"))
@@ -315,12 +331,12 @@ class Ui_QemuImageWizard(object):
         self.uiQcow2PreallocationOffRadio.setToolTip(_translate("QemuImageWizard", "The file only takes as much space from the host as needed. The VM will still see the full capacity you specify."))
         self.uiQcow2PreallocationOffRadio.setText(_translate("QemuImageWizard", "off"))
         self.uiQcow2PreallocationMetadataRadio.setToolTip(_translate("QemuImageWizard", "Same as \"off\", but preallocates enough space to hold any potenial metadata for the HDD.\n"
-                                                                     "This improves performance when the image file needs to grow."))
+"This improves performance when the image file needs to grow."))
         self.uiQcow2PreallocationMetadataRadio.setText(_translate("QemuImageWizard", "metadata"))
         self.uiQcow2PreallocationFallocRadio.setToolTip(_translate("QemuImageWizard", "Same as \"full\", but uses C\'s posix_fallocate() if available on the host, instead of zero filling the file."))
         self.uiQcow2PreallocationFallocRadio.setText(_translate("QemuImageWizard", "falloc"))
         self.uiQcow2PreallocationFullRadio.setToolTip(_translate("QemuImageWizard", "The file will start off at the full size you specify.\n"
-                                                                 "Free space will be zero filled."))
+"Free space will be zero filled."))
         self.uiQcow2PreallocationFullRadio.setText(_translate("QemuImageWizard", "full"))
         self.uiClusterSizeLabel.setText(_translate("QemuImageWizard", "Cluster size:"))
         self.uiQcow2ClusterSizeComboBox.setItemText(0, _translate("QemuImageWizard", "<default>"))
@@ -380,3 +396,4 @@ class Ui_QemuImageWizard(object):
         self.uiLocationBrowseToolButton.setText(_translate("QemuImageWizard", "Browse"))
         self.uiSizeLabel.setText(_translate("QemuImageWizard", "Disk size:"))
         self.uiSizeSpinBox.setSuffix(_translate("QemuImageWizard", " MiB"))
+
