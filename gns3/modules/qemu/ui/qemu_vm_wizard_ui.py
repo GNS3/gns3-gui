@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
 #
-# Created: Mon Jun 29 15:19:08 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Tue Jun 30 17:19:55 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -189,10 +189,11 @@ class Ui_QemuVMWizard(object):
         self.horizontalLayout_7.addItem(spacerItem2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_7)
         self.formLayout_2 = QtWidgets.QFormLayout()
+        self.formLayout_2.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout_2.setObjectName("formLayout_2")
         self.uiInitrdLabel = QtWidgets.QLabel(self.uiLinuxBootGroupBox)
         self.uiInitrdLabel.setObjectName("uiInitrdLabel")
-        self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.uiInitrdLabel)
+        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.uiInitrdLabel)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.uiInitrdImageListComboBox = QtWidgets.QComboBox(self.uiLinuxBootGroupBox)
@@ -205,10 +206,10 @@ class Ui_QemuVMWizard(object):
         self.uiInitrdImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiInitrdImageToolButton.setObjectName("uiInitrdImageToolButton")
         self.horizontalLayout_11.addWidget(self.uiInitrdImageToolButton)
-        self.formLayout_2.setLayout(4, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_11)
+        self.formLayout_2.setLayout(0, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_11)
         self.uiKernelImageLabel = QtWidgets.QLabel(self.uiLinuxBootGroupBox)
         self.uiKernelImageLabel.setObjectName("uiKernelImageLabel")
-        self.formLayout_2.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.uiKernelImageLabel)
+        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.uiKernelImageLabel)
         self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         self.uiKernelImageListComboBox = QtWidgets.QComboBox(self.uiLinuxBootGroupBox)
@@ -221,8 +222,10 @@ class Ui_QemuVMWizard(object):
         self.uiKernelImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiKernelImageToolButton.setObjectName("uiKernelImageToolButton")
         self.horizontalLayout_14.addWidget(self.uiKernelImageToolButton)
-        self.formLayout_2.setLayout(5, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_14)
+        self.formLayout_2.setLayout(1, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_14)
         self.verticalLayout_4.addLayout(self.formLayout_2)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem3)
         self.horizontalLayout_10.addWidget(self.uiLinuxBootGroupBox)
         QemuVMWizard.addPage(self.uiASAWizardPage)
         self.uiDiskImageHdbWizardPage = QtWidgets.QWizardPage()
@@ -239,8 +242,8 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_5.setChecked(False)
         self.uiNewImageRadioButton_5.setObjectName("uiNewImageRadioButton_5")
         self.horizontalLayout_9.addWidget(self.uiNewImageRadioButton_5)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem3)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem4)
         self.verticalLayout_6.addLayout(self.horizontalLayout_9)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
@@ -284,8 +287,8 @@ class Ui_QemuVMWizard(object):
         self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on server:"))
         self.uiTypeWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM type"))
         self.uiTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a type of QEMU VM to help with pre-configuration."))
-        self.uiOSDeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<b>WARNING</b>: The recommended way for QEMU on Windows and OSX is with the GNS3 VM"))
-        self.uiASADeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<b>WARNING</b>: The recommended way for ASA is to use ASAv with VMware"))
+        self.uiOSDeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<html><head/><body><p><span style=\" font-weight:600;\">WARNING</span>: The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM</p></body></html>"))
+        self.uiASADeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<html><head/><body><p><span style=\" font-weight:600;\">Note</span>: The recommended way to run ASA is to use ASAv with VMware.</p></body></html>"))
         self.uiTypeLabel.setText(_translate("QemuVMWizard", "Type:"))
         self.uiNameWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM name"))
         self.uiNameWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for your new QEMU virtual machine."))
@@ -301,7 +304,7 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_2.setText(_translate("QemuVMWizard", "New Image"))
         self.uiHdaDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hda):"))
         self.uiHdaDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
-        self.uiHdaDiskImageCreateToolButton.setText(_translate("QemuVMWizard", "Create"))
+        self.uiHdaDiskImageCreateToolButton.setText(_translate("QemuVMWizard", "&Create"))
         self.uiASAWizardPage.setTitle(_translate("QemuVMWizard", "ASA VM"))
         self.uiASAWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a initrd and a kernel image."))
         self.uiLinuxBootGroupBox.setTitle(_translate("QemuVMWizard", "Linux boot specific settings"))

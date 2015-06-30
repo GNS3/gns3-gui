@@ -126,7 +126,7 @@
 font: 18pt;</string>
       </property>
       <property name="text">
-       <string>&lt;b&gt;WARNING&lt;/b&gt;: The recommended way for QEMU on Windows and OSX is with the GNS3 VM</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WARNING&lt;/span&gt;: The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -140,7 +140,7 @@ font: 18pt;</string>
 font: 18pt;</string>
       </property>
       <property name="text">
-       <string>&lt;b&gt;WARNING&lt;/b&gt;: The recommended way for ASA is to use ASAv with VMware</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note&lt;/span&gt;: The recommended way to run ASA is to use ASAv with VMware.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -320,7 +320,7 @@ font: 18pt;</string>
       <item>
        <widget class="QToolButton" name="uiHdaDiskImageCreateToolButton">
         <property name="text">
-         <string>Create</string>
+         <string>&amp;Create</string>
         </property>
        </widget>
       </item>
@@ -381,14 +381,17 @@ font: 18pt;</string>
        </item>
        <item>
         <layout class="QFormLayout" name="formLayout_2">
-         <item row="4" column="0">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
           <widget class="QLabel" name="uiInitrdLabel">
            <property name="text">
             <string>Initial RAM disk (initrd):</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="0" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_11">
            <item>
             <widget class="QComboBox" name="uiInitrdImageListComboBox"/>
@@ -408,14 +411,14 @@ font: 18pt;</string>
            </item>
           </layout>
          </item>
-         <item row="5" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="uiKernelImageLabel">
            <property name="text">
             <string>Kernel image (vmlinuz):</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="1" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_14">
            <item>
             <widget class="QComboBox" name="uiKernelImageListComboBox"/>
@@ -436,6 +439,19 @@ font: 18pt;</string>
           </layout>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
