@@ -123,12 +123,7 @@ class Dynamips(Module):
         :return: path to Dynamips
         """
 
-        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
-            dynamips_path = os.path.join(os.getcwd(), "dynamips", "dynamips.exe")
-        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-            dynamips_path = os.path.join(os.getcwd(), "dynamips")
-        else:
-            dynamips_path = shutil.which("dynamips")
+        dynamips_path = shutil.which("dynamips")
 
         if dynamips_path is None:
             return ""

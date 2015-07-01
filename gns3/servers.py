@@ -88,12 +88,7 @@ class Servers():
         :return: path to the local server
         """
 
-        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
-            local_server_path = os.path.join(os.getcwd(), "gns3server.exe")
-        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-            local_server_path = os.path.join(os.getcwd(), "gns3server")
-        else:
-            local_server_path = shutil.which("gns3server")
+        local_server_path = shutil.which("gns3server")
 
         if local_server_path is None:
             return ""
@@ -107,12 +102,7 @@ class Servers():
         :return: path to the ubridge
         """
 
-        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
-            ubridge_path = os.path.join(os.getcwd(), "ubridge.exe")
-        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-            ubridge_path = os.path.join(os.getcwd(), "ubridge")
-        else:
-            ubridge_path = shutil.which("ubridge")
+        ubridge_path = shutil.which("ubridge")
 
         if ubridge_path is None:
             return ""

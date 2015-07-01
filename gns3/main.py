@@ -63,6 +63,7 @@ log = logging.getLogger(__name__)
 from gns3.version import __version__
 
 
+
 def locale_check():
     """
     Checks if this application runs with a correct locale (i.e. supports UTF-8 encoding) and attempt to fix
@@ -114,8 +115,15 @@ def main():
     options = parser.parse_args()
     exception_file_path = "exceptions.log"
 
-    if options.project and hasattr(sys, "frozen"):
-        os.chdir(os.path.dirname(os.path.abspath(sys.executable)))
+    if hasattr(sys, "frozen"):
+        frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
+        # We add to the path where the OS search executable our binary location starting by GNS3
+        # packaged binary
+        os.environ["PATH"] =  frozen_dir + os.pathsep + os.environ.get("PATH", "")
+
+        if options.project:
+            os.chdir(frozen_dir)
+
 
     def exceptionHook(exception, value, tb):
 

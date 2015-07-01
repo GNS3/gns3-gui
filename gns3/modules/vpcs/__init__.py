@@ -75,12 +75,7 @@ class VPCS(Module):
         :return: path to VPCS
         """
 
-        if sys.platform.startswith("win") and hasattr(sys, "frozen"):
-            vpcs_path = os.path.join(os.getcwd(), "vpcs", "vpcs.exe")
-        elif sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-            vpcs_path = os.path.join(os.getcwd(), "vpcs")
-        else:
-            vpcs_path = shutil.which("vpcs")
+        vpcs_path = shutil.which("vpcs")
 
         if vpcs_path is None:
             return ""
