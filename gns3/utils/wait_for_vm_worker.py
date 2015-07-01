@@ -22,8 +22,6 @@ Thread to wait for the GNS3 VM.
 import os
 import socket
 import subprocess
-import urllib.request
-import json
 
 from ..qt import QtCore
 from ..version import __version__
@@ -112,7 +110,7 @@ class WaitForVMWorker(QtCore.QObject):
         Worker starting point.
         """
 
-        server = Servers.instance().vmServer()
+        vm_server = Servers.instance().vmServer()
 
         self._is_running = True
         if self._virtualization == "VMware":
@@ -144,7 +142,7 @@ class WaitForVMWorker(QtCore.QObject):
                     return
 
                 # get the guest IP address (first adapter only)
-                server.setHost(self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"]))
+                vm_server.setHost(self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"]))
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute vmrun: {}".format(e), True)
                 return
@@ -199,7 +197,7 @@ class WaitForVMWorker(QtCore.QObject):
                     return
 
                 # ask the server all a list of all its interfaces along with IP addresses
-                status, json_data = server.getSynchronous("interfaces", timeout=120)
+                status, json_data = vm_server.getSynchronous("interfaces", timeout=120)
                 if status != 200:
                     self.error.emit("Server has replied with status code {} when retrieving the network interfaces".format(status), True)
                     return
@@ -209,7 +207,7 @@ class WaitForVMWorker(QtCore.QObject):
                 for interface in json_data:
                     if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
                         if "ip_address" in interface:
-                            server.setHost(interface["ip_address"])
+                            vm_server.setHost(interface["ip_address"])
                             hostonly_ip_address_found = True
                             break
 
@@ -224,9 +222,9 @@ class WaitForVMWorker(QtCore.QObject):
         if not self._is_running:
             return
 
-        log.info("GNS3 VM is started and server is running on {}:{}".format(server.host(), server.port()))
+        log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
-            status, json_data = server.getSynchronous("version", timeout=120)
+            status, json_data = vm_server.getSynchronous("version", timeout=120)
             if status == 401:
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return

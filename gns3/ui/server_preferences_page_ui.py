@@ -2,17 +2,15 @@
 
 # Form implementation generated from reading ui file 'server_preferences_page.ui'
 #
-# Created: Wed Jun 24 15:13:54 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Tue Jun 30 22:05:09 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
 class Ui_ServerPreferencesPageWidget(object):
-
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
         ServerPreferencesPageWidget.resize(500, 609)
@@ -192,6 +190,9 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiShutdownCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
         self.uiShutdownCheckBox.setObjectName("uiShutdownCheckBox")
         self.gridLayout_2.addWidget(self.uiShutdownCheckBox, 6, 0, 1, 1)
+        self.uiAdjustLocalServerIPCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
+        self.uiAdjustLocalServerIPCheckBox.setObjectName("uiAdjustLocalServerIPCheckBox")
+        self.gridLayout_2.addWidget(self.uiAdjustLocalServerIPCheckBox, 7, 0, 1, 2)
         self.verticalLayout_3.addWidget(self.uiGNS3VMSettingsGroupBox)
         self.groupBox = QtWidgets.QGroupBox(self.uiGNS3VMTabWidget)
         self.groupBox.setObjectName("groupBox")
@@ -207,7 +208,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiVMPasswordLabel.setObjectName("uiVMPasswordLabel")
         self.gridLayout_3.addWidget(self.uiVMPasswordLabel, 1, 0, 1, 1)
         self.uiVMPasswordLineEdit = QtWidgets.QLineEdit(self.groupBox)
-        self.uiVMPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText | QtCore.Qt.ImhNoAutoUppercase | QtCore.Qt.ImhNoPredictiveText | QtCore.Qt.ImhSensitiveData)
+        self.uiVMPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText)
         self.uiVMPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiVMPasswordLineEdit.setObjectName("uiVMPasswordLineEdit")
         self.gridLayout_3.addWidget(self.uiVMPasswordLineEdit, 1, 1, 1, 1)
@@ -319,7 +320,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerSSHPortSpinBox.setObjectName("uiRemoteServerSSHPortSpinBox")
         self.gridLayout_5.addWidget(self.uiRemoteServerSSHPortSpinBox, 7, 1, 1, 1)
         self.uiRemoteServerPasswordLineEdit = QtWidgets.QLineEdit(self.uiRemoteTabWidget)
-        self.uiRemoteServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText | QtCore.Qt.ImhNoAutoUppercase | QtCore.Qt.ImhNoPredictiveText | QtCore.Qt.ImhSensitiveData)
+        self.uiRemoteServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText)
         self.uiRemoteServerPasswordLineEdit.setText("")
         self.uiRemoteServerPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiRemoteServerPasswordLineEdit.setObjectName("uiRemoteServerPasswordLineEdit")
@@ -430,6 +431,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRefreshPushButton.setText(_translate("ServerPreferencesPageWidget", "&Refresh"))
         self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
         self.uiShutdownCheckBox.setText(_translate("ServerPreferencesPageWidget", "ACPI shutdown VM when closing GNS3"))
+        self.uiAdjustLocalServerIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Adjust the local server IP to be in the same subnet"))
         self.groupBox.setTitle(_translate("ServerPreferencesPageWidget", "Authentication (optional)"))
         self.uiVMUserLabel.setText(_translate("ServerPreferencesPageWidget", "User:"))
         self.uiVMPasswordLabel.setText(_translate("ServerPreferencesPageWidget", "Password:"))
@@ -442,7 +444,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiRemoteServersTreeWidget.headerItem().setText(3, _translate("ServerPreferencesPageWidget", "User"))
         self.uiRemoteServerProtocolLabel.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
-        self.uiRemoteServerProtocolComboBox.setCurrentText(_translate("ServerPreferencesPageWidget", "HTTP"))
+        self.uiRemoteServerProtocolComboBox.setProperty("currentText", _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "HTTP"))
         self.uiRemoteServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "HTTPS"))
         self.uiRemoteServerProtocolComboBox.setItemText(2, _translate("ServerPreferencesPageWidget", "SSH"))
@@ -460,3 +462,4 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRendezVousHashingRadioButton.setText(_translate("ServerPreferencesPageWidget", "Rendezvous hashing"))
         self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiLoadBalancingTabWidget), _translate("ServerPreferencesPageWidget", "Load Balancing"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
+

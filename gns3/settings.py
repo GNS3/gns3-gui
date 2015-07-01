@@ -258,6 +258,7 @@ SERVERS_SETTINGS = {
         "auto_start": False,
         "auto_stop": True,
         "headless": True,
+        "adjust_local_server_ip": True,
         "vmname": "GNS3 VM",
         "vmx_path": "",
         "server_host": "",

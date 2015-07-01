@@ -22,6 +22,7 @@ Manages the GNS3 VM.
 import sys
 import subprocess
 
+from .qt import QtNetwork
 from .servers import Servers
 
 import logging
@@ -93,6 +94,34 @@ class GNS3VM:
 
         vm_settings = Servers.instance().vmSettings()
         return vm_settings["auto_start"]
+
+    def adjustLocalServerIP(self):
+        """
+        Adjust the local server IP address to be in the same subnet as the GNS3 VM.
+
+        :returns: the local server IP/host address
+        """
+
+        servers = Servers.instance()
+        local_server_settings = servers.localServerSettings()
+        if Servers.instance().vmSettings()["adjust_local_server_ip"]:
+            vm_server = servers.vmServer()
+            vm_ip_address = vm_server.host()
+            log.info("GNS3 VM IP address is {}".format(vm_ip_address))
+
+            for interface in QtNetwork.QNetworkInterface.allInterfaces():
+                for address in interface.addressEntries():
+                    ip = address.ip().toString()
+                    prefix_length = address.prefixLength()
+                    subnet = QtNetwork.QHostAddress.parseSubnet("{}/{}".format(ip, prefix_length))
+                    if QtNetwork.QHostAddress(vm_ip_address).isInSubnet(subnet):
+                        if local_server_settings["host"] != ip:
+                            log.info("Adjust local server IP address to {}".format(ip))
+                            servers.setLocalServerSettings({"host": ip})
+                            servers.registerLocalServer()
+                            servers.save()
+                            return ip
+        return local_server_settings["host"]
 
     def setRunning(self, value):
         """

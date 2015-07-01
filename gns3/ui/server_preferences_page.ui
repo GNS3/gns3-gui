@@ -401,6 +401,13 @@
             </property>
            </widget>
           </item>
+          <item row="7" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiAdjustLocalServerIPCheckBox">
+            <property name="text">
+             <string>Adjust the local server IP to be in the same subnet</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -430,7 +437,7 @@
           <item row="1" column="1">
            <widget class="QLineEdit" name="uiVMPasswordLineEdit">
             <property name="inputMethodHints">
-             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
             </property>
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
@@ -594,7 +601,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="currentText">
+         <property name="currentText" stdset="0">
           <string>HTTP</string>
          </property>
          <item>
@@ -696,7 +703,7 @@
        <item row="6" column="1">
         <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
          <property name="inputMethodHints">
-          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
          </property>
          <property name="text">
           <string/>

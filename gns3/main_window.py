@@ -1150,14 +1150,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._setStyle(self._settings.get("style"))
 
         servers = Servers.instance()
-        if GNS3VM.instance().autoStart():
+        gns3_vm = GNS3VM.instance()
+        if gns3_vm.autoStart():
             servers.initVMServer()
 
             # automatically start the GNS3 VM
             worker = WaitForVMWorker()
             progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
             progress_dialog.show()
-            progress_dialog.exec_()
+            if progress_dialog.exec_():
+                gns3_vm.adjustLocalServerIP()
 
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
