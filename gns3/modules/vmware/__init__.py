@@ -88,6 +88,8 @@ class VMware(Module):
 
         if sys.platform.startswith("win"):
             output = self._settings["vmrun_path"]
+        elif sys.platform.startswith("darwin"):
+            return "fusion"
         else:
             vmware_path = shutil.which("vmware")
             if vmware_path:
@@ -98,6 +100,9 @@ class VMware(Module):
                 except (OSError, subprocess.SubprocessError) as e:
                     log.error("Could not execute {}: {}".format("".join(command), e))
                     return "ws"
+            else:
+                log.error("vmware command not found")
+                return "ws"
         if "VMware Workstation" in output:
             return "ws"
         else:
