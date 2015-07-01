@@ -659,7 +659,11 @@ class HTTPClient(QtCore.QObject):
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
-            body = bytes(response.readAll()).decode("utf-8").strip("\0")
+            try:
+                body = bytes(response.readAll()).decode("utf-8").strip("\0")
+            # Some time anti-virus intercept our query and reply with garbage content
+            except UnicodeDecodeError:
+                body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             log.debug(body)
             if body and len(body.strip(" \n\t")) > 0 and content_type == "application/json":

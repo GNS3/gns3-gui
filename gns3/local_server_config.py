@@ -33,12 +33,21 @@ class LocalServerConfig:
 
     def __init__(self):
 
+        appname = "GNS3"
+
         self._config = configparser.RawConfigParser()
         if sys.platform.startswith("win"):
             filename = "gns3_server.ini"
         else:
             filename = "gns3_server.conf"
-        self._config_file = os.path.normpath(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), filename))
+
+        if sys.platform.startswith("win"):
+            appdata = os.path.expandvars("%APPDATA%")
+            self._config_file = os.path.join(appdata, appname, filename)
+        else:
+            home = os.path.expanduser("~")
+            self._config_file = os.path.join(home, ".config", appname, filename)
+
         try:
             # create the config file if it doesn't exist
             open(self._config_file, "a").close()
