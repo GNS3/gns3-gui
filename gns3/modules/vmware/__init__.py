@@ -22,6 +22,7 @@ VMware module implementation.
 import os
 import sys
 import shutil
+import subprocess
 
 from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
@@ -82,6 +83,26 @@ class VMware(Module):
             return ""
         return vmrun_path
 
+    @staticmethod
+    def _determineHostType(self):
+
+        if sys.platform.startswith("win"):
+            output = self._settings["vmrun_path"]
+        else:
+            vmware_path = shutil.which("vmware")
+            if vmware_path:
+                command = [vmware_path, "-v"]
+                log.debug("Executing vmware with command: {}".format(command))
+                try:
+                    output = subprocess.check_output(command).decode("utf-8", errors="ignore").strip()
+                except (OSError, subprocess.SubprocessError) as e:
+                    log.error("Could not execute {}: {}".format("".join(command), e))
+                    return "ws"
+        if "VMware Workstation" in output:
+            return "ws"
+        else:
+            return "player"
+
     def _loadSettings(self):
         """
         Loads the settings from the server settings file.
@@ -89,10 +110,9 @@ class VMware(Module):
 
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, VMWARE_SETTINGS)
-
         if not os.path.exists(self._settings["vmrun_path"]):
             self._settings["vmrun_path"] = self._findVmrun(self)
-
+            self._settings["host_type"] = self._determineHostType(self)
         self._loadVMwareVMs()
 
     def _saveSettings(self):
