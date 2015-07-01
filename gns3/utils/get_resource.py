@@ -46,7 +46,7 @@ def clean_egg_cache():
 def get_resource(resource_name):
 
     resource_path = None
-    if hasattr(sys, "frozen") and os.path.exists(resource_name):
+    if hasattr(sys, "frozen"):
         resource_path = os.path.normpath(os.path.join(os.path.dirname(sys.executable), resource_name))
     elif not hasattr(sys, "frozen"):
         if pkg_resources.resource_exists("gns3", resource_name):
