@@ -66,6 +66,7 @@ from .http_client import HTTPClient
 from .progress import Progress
 from .licence import checkLicence
 from .image_manager import ImageManager
+from .update_manager import UpdateManager
 
 log = logging.getLogger(__name__)
 
@@ -146,9 +147,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
-
-        # Network Manager (used to check for update)
-        self._network_manager = QtNetwork.QNetworkAccessManager()
 
         # restore the style
         self._setStyle(self._settings.get("style"))
@@ -858,41 +856,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param silent: do not display any message
         """
 
-        request = QtNetwork.QNetworkRequest(QtCore.QUrl("http://update.gns3.net/"))
-        request.setRawHeader("User-Agent", "GNS3 Check For Update")
-        request.setAttribute(QtNetwork.QNetworkRequest.User, silent)
-        reply = self._network_manager.get(request)
-        reply.finished.connect(self._checkForUpdateReplySlot)
-
-    def _checkForUpdateReplySlot(self):
-        """
-        Process reply for check for update.
-        """
-
-        network_reply = self.sender()
-        is_silent = network_reply.request().attribute(QtNetwork.QNetworkRequest.User)
-
-        if network_reply.error() != QtNetwork.QNetworkReply.NoError and not is_silent:
-            QtWidgets.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
-        else:
-            try:
-                latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
-            except UnicodeDecodeError:
-                log.warning("Invalid answer from the update server")
-                return
-            if parse_version(__version__) < parse_version(latest_release):
-                reply = QtWidgets.QMessageBox.question(self,
-                                                       "Check For Update",
-                                                       "Newer GNS3 version {} is available, do you want to visit our website to download it?".format(latest_release),
-                                                       QtWidgets.QMessageBox.Yes,
-                                                       QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.Yes:
-                    QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
-            elif not is_silent:
-                QtWidgets.QMessageBox.information(self, "Check For Update", "GNS3 is up-to-date!")
-            return
-
-        network_reply.deleteLater()
+        self._update_manager = UpdateManager()
+        self._update_manager.checkForUpdate(self, silent)
 
     def _gettingStartedActionSlot(self, auto=False):
         """

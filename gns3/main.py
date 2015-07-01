@@ -16,6 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+import os
+
+# Try to install updates & restart application if an update is installed
+try:
+    import gns3.update_manager
+    if gns3.update_manager.UpdateManager().installDownloadedUpdates():
+        print("Update installed restart the application")
+        python = sys.executable
+        os.execl(python, python, * sys.argv)
+except Exception as e:
+    print("Fail update installation: {}".format(str(e)))
+
 
 # WARNING
 # Due to buggy user machines we choose to put this as the first loading modules
@@ -27,8 +40,6 @@ from gns3.utils.get_resource import get_resource
 
 
 import datetime
-import sys
-import os
 import traceback
 import time
 import locale
