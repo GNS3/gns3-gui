@@ -54,14 +54,13 @@ from gns3.main_window import MainWindow
 
 from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
-
+from gns3.local_config import LocalConfig
 
 import logging
 log = logging.getLogger(__name__)
 
 
 from gns3.version import __version__
-
 
 
 def locale_check():
@@ -119,11 +118,10 @@ def main():
         frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
         # We add to the path where the OS search executable our binary location starting by GNS3
         # packaged binary
-        os.environ["PATH"] =  frozen_dir + os.pathsep + os.environ.get("PATH", "")
+        os.environ["PATH"] = frozen_dir + os.pathsep + os.environ.get("PATH", "")
 
         if options.project:
             os.chdir(frozen_dir)
-
 
     def exceptionHook(exception, value, tb):
 
@@ -216,7 +214,7 @@ def main():
     app.setApplicationVersion(__version__)
 
     # save client logging info to a file
-    logfile = os.path.normpath(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), "gns3_gui.log"))
+    logfile = os.path.join(LocalConfig.configDirectory(), "gns3_gui.log")
 
     # on debug enable logging to stdout
     if options.debug:

@@ -55,19 +55,11 @@ class LocalConfig(QtCore.QObject):
             # On windows, the system wide configuration file location is %COMMON_APPDATA%/GNS3/gns3_gui.conf
             common_appdata = os.path.expandvars("%COMMON_APPDATA%")
             system_wide_config_file = os.path.join(common_appdata, appname, filename)
-
-            # On windows, the user specific configuration file location is %APPDATA%/GNS3/gns3_gui.conf
-            appdata = os.path.expandvars("%APPDATA%")
-            self._config_file = os.path.join(appdata, appname, filename)
-
         else:
-
             # On UNIX-like platforms, the system wide configuration file location is /etc/xdg/GNS3/gns3_gui.conf
             system_wide_config_file = os.path.join("/etc/xdg", appname, filename)
 
-            # On UNIX-like platforms, the user specific configuration file location is /etc/xdg/GNS3/gns3_gui.conf
-            home = os.path.expanduser("~")
-            self._config_file = os.path.join(home, ".config", appname, filename)
+        self._config_file = os.path.join(LocalConfig.configDirectory(), filename)
 
         # First load system wide settings
         if os.path.exists(system_wide_config_file):
@@ -95,6 +87,19 @@ class LocalConfig(QtCore.QObject):
         timer.timeout.connect(self._checkConfigChanged)
         timer.setInterval(1000)  #  milliseconds
         timer.start()
+
+    @staticmethod
+    def configDirectory():
+        """
+        Get the configuration directory
+        """
+        if sys.platform.startswith("win"):
+            appdata = os.path.expandvars("%APPDATA%")
+            path = os.path.join(appdata, "GNS3")
+        else:
+            home = os.path.expanduser("~")
+            path = os.path.join(home, ".config", "GNS3")
+        return os.path.normpath(path)
 
     def _migrateOldConfig(self):
         """
