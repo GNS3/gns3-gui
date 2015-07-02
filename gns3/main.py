@@ -115,10 +115,23 @@ def main():
     exception_file_path = "exceptions.log"
 
     if hasattr(sys, "frozen"):
-        frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
         # We add to the path where the OS search executable our binary location starting by GNS3
         # packaged binary
-        os.environ["PATH"] = frozen_dir + os.pathsep + os.environ.get("PATH", "")
+        frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
+        if sys.platform.startswith("darwin"):
+            frozen_dirs = [
+                frozen_dir,
+                os.path.normpath(os.path.join(frozen_dir, '..', 'Resources'))
+            ]
+        elif sys.platform.startswith("windows"):
+            frozen_dirs = [
+                frozen_dir,
+                os.path.normpath(os.path.join(frozen_dir, 'dynamips')),
+                os.path.normpath(os.path.join(frozen_dir, 'vpcs'))
+            ]
+
+        os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
+
 
         if options.project:
             os.chdir(frozen_dir)
