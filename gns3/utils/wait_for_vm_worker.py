@@ -199,7 +199,9 @@ class WaitForVMWorker(QtCore.QObject):
                 # ask the server all a list of all its interfaces along with IP addresses
                 status, json_data = vm_server.getSynchronous("interfaces", timeout=120)
                 if status != 200:
-                    self.error.emit("Server has replied with status code {} when retrieving the network interfaces".format(status), True)
+                    msg = "Server has replied with status code {} when retrieving the network interfaces".format(status)
+                    log.error(msg)
+                    self.error.emit(msg, True)
                     return
 
                 # find the ip address for the first hostonly interface
@@ -207,6 +209,7 @@ class WaitForVMWorker(QtCore.QObject):
                 for interface in json_data:
                     if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
                         if "ip_address" in interface:
+                            log.debug("IP %s found for the vm server", interface["ip_address"])
                             vm_server.setHost(interface["ip_address"])
                             hostonly_ip_address_found = True
                             break
@@ -229,7 +232,9 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return
             elif status != 200:
-                self.error.emit("Server has replied with status code {} when retrieving version number".format(status), True)
+                msg = "Server has replied with status code {} when retrieving version number".format(status)
+                log.error(msg)
+                self.error.emit(msg, True)
                 return
             server_version = json_data["version"]
             if __version__ != server_version:

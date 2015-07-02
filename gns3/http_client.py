@@ -135,6 +135,7 @@ class HTTPClient(QtCore.QObject):
 
     def setHost(self, host):
         self._host = host
+        self._http_host = host
 
     def port(self):
         """
