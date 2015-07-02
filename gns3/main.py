@@ -123,7 +123,7 @@ def main():
                 frozen_dir,
                 os.path.normpath(os.path.join(frozen_dir, '..', 'Resources'))
             ]
-        elif sys.platform.startswith("windows"):
+        elif sys.platform.startswith("win"):
             frozen_dirs = [
                 frozen_dir,
                 os.path.normpath(os.path.join(frozen_dir, 'dynamips')),
