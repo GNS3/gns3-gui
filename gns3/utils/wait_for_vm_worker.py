@@ -142,7 +142,9 @@ class WaitForVMWorker(QtCore.QObject):
                     return
 
                 # get the guest IP address (first adapter only)
-                vm_server.setHost(self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"]))
+                guest_ip_address = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"])
+                vm_server.setHost(guest_ip_address)
+                log.info("GNS3 VM IP address set to {}".format(guest_ip_address))
             except (OSError, subprocess.SubprocessError) as e:
                 self.error.emit("Could not execute vmrun: {}".format(e), True)
                 return
@@ -209,8 +211,8 @@ class WaitForVMWorker(QtCore.QObject):
                 for interface in json_data:
                     if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
                         if "ip_address" in interface:
-                            log.debug("IP %s found for the vm server", interface["ip_address"])
                             vm_server.setHost(interface["ip_address"])
+                            log.info("GNS3 VM IP address set to {}".format(interface["ip_address"]))
                             hostonly_ip_address_found = True
                             break
 
