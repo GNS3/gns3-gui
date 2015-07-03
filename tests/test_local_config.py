@@ -113,6 +113,105 @@ def test_migrateOldConfigOSX(tmpdir):
         # It should migrate only one time
         open(str(tmpdir / '.config' / 'gns3.net' / 'world'), 'w+').close()
 
-        local_config._migrateOldConfig()
+        local_config._migrateOldConfigPath()
         assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'hello'))
         assert not os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'world'))
+
+
+def test_migrate13Config(tmpdir):
+    local_config = LocalConfig()
+
+    config_file = str(tmpdir / "gns3_gui.conf")
+
+    server_config = {
+        "allow_console_from_anywhere": True,
+        "auth": False,
+        "auto_start": True,
+        "console_end_port_range": 5000,
+        "console_start_port_range": 2001,
+        "host": "127.0.0.1",
+        "images_path": "/home/gns3/GNS3/images",
+        "password": "",
+        "path": "/bin/gns3server",
+        "port": 8001,
+        "projects_path": "/home/gns3/GNS3/projects",
+        "report_errors": False,
+        "udp_end_port_range": 20000,
+        "udp_start_port_range": 10000,
+        "user": ""
+    }
+
+    with open(config_file, "w+") as f:
+        f.write(json.dumps({
+            "LocalServer": server_config,
+            "RemoteServers": [
+                server_config
+            ],
+            "GUI": {
+                "hide_getting_started_dialog": True
+            },
+            "type": "settings",
+            "version": "1.3.7"}))
+
+    local_config._readConfig(config_file)
+    local_config._migrateOldConfig()
+
+    # The old config should not be erased in order to avoid losing data when rollback to 1.3
+    assert local_config._settings["LocalServer"] == server_config
+    assert local_config._settings["RemoteServers"] == [server_config]
+    assert local_config._settings["Servers"]["local_server"] == server_config
+    assert local_config._settings["Servers"]["remote_servers"] == [server_config]
+    assert local_config._settings["MainWindow"]["hide_getting_started_dialog"] == True
+
+    # When the file is migrated to 1.4 we should not try to modify it
+    with open(config_file, "w+") as f:
+        f.write(json.dumps({
+            "LocalServer": {"host": "error"},
+            "type": "settings",
+            "version": "1.4.2"}))
+
+    local_config._readConfig(config_file)
+    local_config._migrateOldConfig()
+
+    assert local_config._settings["LocalServer"]["host"] == "error"
+    assert local_config._settings["Servers"]["local_server"]["host"] == "127.0.0.1"
+
+
+def test_migrate13ConfigOldOsxServerPath(tmpdir):
+    local_config = LocalConfig()
+
+    config_file = str(tmpdir / "gns3_gui.conf")
+
+    server_config = {
+        "allow_console_from_anywhere": True,
+        "auth": False,
+        "auto_start": True,
+        "console_end_port_range": 5000,
+        "console_start_port_range": 2001,
+        "host": "127.0.0.1",
+        "images_path": "/home/gns3/GNS3/images",
+        "password": "",
+        "path": "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server",
+        "port": 8001,
+        "projects_path": "/home/gns3/GNS3/projects",
+        "report_errors": False,
+        "udp_end_port_range": 20000,
+        "udp_start_port_range": 10000,
+        "user": ""
+    }
+
+    with open(config_file, "w+") as f:
+        f.write(json.dumps({
+            "LocalServer": server_config,
+            "RemoteServers": [
+                server_config
+            ],
+            "type": "settings",
+            "version": "1.3.7"}))
+
+    local_config._readConfig(config_file)
+    local_config._migrateOldConfig()
+
+    # The old config should not be erased in order to avoid losing data when rollback to 1.3
+    assert local_config._settings["LocalServer"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server"
+    assert local_config._settings["Servers"]["local_server"]["path"] == "/Applications/GNS3.app/Contents/MacOS/gns3server"

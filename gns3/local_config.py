@@ -20,6 +20,8 @@ import os
 import json
 import shutil
 import copy
+from pkg_resources import parse_version
+
 
 from .qt import QtCore
 from .version import __version__
@@ -46,7 +48,7 @@ class LocalConfig(QtCore.QObject):
         else:
             filename = "gns3_gui.conf"
 
-        self._migrateOldConfig()
+        self._migrateOldConfigPath()
 
         appname = "GNS3"
 
@@ -84,6 +86,7 @@ class LocalConfig(QtCore.QObject):
         user_settings = self._readConfig(self._config_file)
         # overwrite system wide settings with user specific ones
         self._settings.update(user_settings)
+        self._migrateOldConfig()
         self._writeConfig()
 
         timer = QtCore.QTimer(self)
@@ -104,9 +107,9 @@ class LocalConfig(QtCore.QObject):
             path = os.path.join(home, ".config", "GNS3")
         return os.path.normpath(path)
 
-    def _migrateOldConfig(self):
+    def _migrateOldConfigPath(self):
         """
-        Migrate pre 1.4 config
+        Migrate pre 1.4 config path
         """
 
         # In < 1.4 on Mac the config was in a gns3.net directory
@@ -121,6 +124,26 @@ class LocalConfig(QtCore.QObject):
                 except OSError as e:
                     print("Can't copy the old config: %s", str(e))
 
+    def _migrateOldConfig(self):
+        """
+        Migrate pre 1.4 config
+        """
+
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0"):
+
+            servers = self._settings.get("Servers", {})
+
+            if "LocalServer" in self._settings:
+                servers["local_server"] = copy.copy(self._settings["LocalServer"])
+
+                # We migrate the server binary for OSX due to the change from py2app to CX freeze
+                if servers["local_server"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server":
+                    servers["local_server"]["path"] = "/Applications/GNS3.app/Contents/MacOS/gns3server"
+
+            if "RemoteServers" in self._settings:
+                servers["remote_servers"] = copy.copy(self._settings["RemoteServers"])
+
+            self._settings["Servers"] = servers
 
     def _readConfig(self, config_path):
         """
