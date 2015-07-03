@@ -157,7 +157,8 @@ elif sys.platform.startswith("darwin"):
         'Screen sharing': "osascript -e 'tell application \"Screen Sharing\"'"
                           " -e 'open location \"vnc://%h:%p\"'"
                           " -e 'end tell'",
-        }
+        'Chicken': "/Applications/Chicken.app/Contents/MacOS/Chicken %h:%p"
+    }
 
     # default Mac OS X VNC console command
     DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['Screen sharing']

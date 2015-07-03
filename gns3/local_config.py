@@ -36,7 +36,7 @@ class LocalConfig(QtCore.QObject):
     Handles the local GUI settings.
     """
 
-    def __init__(self):
+    def __init__(self, config_file=None):
 
         super().__init__()
         self._settings = {}
@@ -59,7 +59,10 @@ class LocalConfig(QtCore.QObject):
             # On UNIX-like platforms, the system wide configuration file location is /etc/xdg/GNS3/gns3_gui.conf
             system_wide_config_file = os.path.join("/etc/xdg", appname, filename)
 
-        self._config_file = os.path.join(LocalConfig.configDirectory(), filename)
+        if config_file:
+            self._config_file = config_file
+        else:
+            self._config_file = os.path.join(LocalConfig.configDirectory(), filename)
 
         # First load system wide settings
         if os.path.exists(system_wide_config_file):
@@ -113,15 +116,18 @@ class LocalConfig(QtCore.QObject):
             new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
+                    print("Migrate old config to the new location")
                     shutil.copytree(old_path, new_path)
-                except OSError:
-                    pass
+                except OSError as e:
+                    print("Can't copy the old config: %s", str(e))
+
 
     def _readConfig(self, config_path):
         """
         Read the configuration file.
         """
 
+        log.info("Load config from %s", config_path)
         try:
             with open(config_path, "r", encoding="utf-8") as f:
                 self._last_config_changed = os.stat(config_path).st_mtime
@@ -249,7 +255,7 @@ class LocalConfig(QtCore.QObject):
             log.debug("Section %s has not changed. Skip saving configuration", section)
 
     @staticmethod
-    def instance():
+    def instance(config_file=None):
         """
         Singleton to return only on instance of LocalConfig.
 
@@ -257,5 +263,5 @@ class LocalConfig(QtCore.QObject):
         """
 
         if not hasattr(LocalConfig, "_instance") or LocalConfig._instance is None:
-            LocalConfig._instance = LocalConfig()
+            LocalConfig._instance = LocalConfig(config_file=config_file)
         return LocalConfig._instance

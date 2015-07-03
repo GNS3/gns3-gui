@@ -202,7 +202,9 @@
                 "user": {
                     "type": ["string", "null"]
                 },
-                "accept_insecure_certificate": { "type": "boolean" }
+                "accept_insecure_certificate": {
+                    "type": ["string", "null"]
+                }
             },
             "required": [
                 "host",
@@ -217,7 +219,7 @@
             "properties": {
                 "protocol": { "enum": ["ssh"] },
                 "cloud": { "type": "boolean" },
-                "vm": { "type": "boolean" },                
+                "vm": { "type": "boolean" }, 
                 "host": { "$ref": "#/definitions/mandatory_string" },
                 "id": { "$ref": "#/definitions/numeric_id" },
                 "local": { "type": "boolean" },

@@ -29,6 +29,7 @@ import string
 import random
 import socket
 import subprocess
+import binascii
 
 from .qt import QtCore, QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
@@ -114,7 +115,8 @@ class Servers():
         """
 
         server = self.getServerFromString(reply.url().toDisplayString())
-        if server.acceptInsecureCertificate():
+        certificate = binascii.hexlify(errorList[0].certificate().digest()).decode('utf-8')
+        if server.acceptInsecureCertificate() == certificate:
             reply.ignoreSslErrors()
             return
 
@@ -129,7 +131,7 @@ class Servers():
                 QtWidgets.QMessageBox.No)
 
             if proceed == QtWidgets.QMessageBox.Yes:
-                server.setAcceptInsecureCertificate(True)
+                server.setAcceptInsecureCertificate(certificate)
                 self._saveSettings()
                 reply.ignoreSslErrors()
                 log.info("SSL error ignored for %s", reply.url().toDisplayString())
@@ -310,7 +312,7 @@ class Servers():
                     sock.bind(sa)
                     break
         except OSError as e:
-            QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host, e))
+            QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host(), e))
             return False
 
         try:
@@ -323,7 +325,7 @@ class Servers():
                     sock.bind(sa)
                     break
         except OSError as e:
-            log.warning("Could not use socket {}:{} {}".format(server.host, server.port, e))
+            log.warning("Could not use socket {}:{} {}".format(server.host(), server.port(), e))
             find_unused_port = True
 
         if find_unused_port:

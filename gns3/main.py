@@ -111,8 +111,14 @@ def main():
     parser.add_argument("project", help="load a GNS3 project (.gns3)", metavar="path", nargs="?")
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
     parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
+    parser.add_argument("--config", help="Configuration file")
     options = parser.parse_args()
     exception_file_path = "exceptions.log"
+
+    if options.config:
+        LocalConfig.instance(config_file=options.config)
+    else:
+        LocalConfig.instance()
 
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
@@ -131,7 +137,6 @@ def main():
             ]
 
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
-
 
         if options.project:
             os.chdir(frozen_dir)
@@ -236,7 +241,7 @@ def main():
         root_logger = init_logger(logging.INFO, logfile)
 
     # update the exception file path to have it in the same directory as the settings file.
-    exception_file_path = os.path.normpath(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path))
+    exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
 
     # Manage Ctrl + C or kill command
     def sigint_handler(*args):
