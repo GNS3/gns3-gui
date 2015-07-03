@@ -114,7 +114,7 @@ class Servers():
         """
 
         server = self.getServerFromString(reply.url().toDisplayString())
-        if server.acceptInsecureCertificate():
+        if server.acceptInsecureCertificate(errorList[0].certificate().digest()):
             reply.ignoreSslErrors()
             return
 
@@ -310,7 +310,7 @@ class Servers():
                     sock.bind(sa)
                     break
         except OSError as e:
-            QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host, e))
+            QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host(), e))
             return False
 
         try:
