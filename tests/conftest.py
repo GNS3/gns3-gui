@@ -84,7 +84,10 @@ def local_server():
 
     from gns3.servers import Servers
 
-    return Servers.instance().localServer()
+    server = Servers.instance().localServer()
+    server.setHost('127.0.0.1')
+    server.setPort(8000)
+    return server
 
 
 @pytest.fixture(scope="session")
@@ -164,6 +167,7 @@ def qemu_vm(local_server, project):
     vm.setInitialized(True)
     return vm
 
+
 @pytest.fixture
 def local_config():
     from gns3.local_config import LocalConfig
@@ -171,6 +175,7 @@ def local_config():
     config = LocalConfig.instance()
     config._settings = {}
     return config
+
 
 @pytest.fixture
 def main_window():
