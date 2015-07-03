@@ -111,8 +111,12 @@ def main():
     parser.add_argument("project", help="load a GNS3 project (.gns3)", metavar="path", nargs="?")
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
     parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
+    parser.add_argument("--config", help="Configuration file")
     options = parser.parse_args()
     exception_file_path = "exceptions.log"
+
+    if options.config:
+        LocalConfig.instance(config_file=options.config)
 
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
