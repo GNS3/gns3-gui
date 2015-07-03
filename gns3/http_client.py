@@ -74,7 +74,7 @@ class HTTPClient(QtCore.QObject):
         self._gns3_vm = False
         self._ram_limit = settings.get("ram_limit", 0)
         self._allocated_ram = 0
-        self._accept_insecure_certificate = settings.get("accept_insecure_certificate", False)
+        self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
 
         self._network_manager = network_manager
 
@@ -118,14 +118,21 @@ class HTTPClient(QtCore.QObject):
             settings["accept_insecure_certificate"] = self.acceptInsecureCertificate()
         return settings
 
-    def acceptInsecureCertificate(self):
+    def acceptInsecureCertificate(self, certificate=None):
         """
-        Does the server accept insecure SSL certificate
+        Does the server accept this insecure SSL certificate digest
+
+        :param: Certificate digest
         """
         return self._accept_insecure_certificate
 
-    def setAcceptInsecureCertificate(self, accept):
-        self._accept_insecure_certificate = accept
+    def setAcceptInsecureCertificate(self, certificate):
+        """
+        Does the server accept this insecure SSL certificate digest
+
+        :param: Certificate digest
+        """
+        self._accept_insecure_certificate = certificate
 
     def host(self):
         """

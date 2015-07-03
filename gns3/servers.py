@@ -29,6 +29,7 @@ import string
 import random
 import socket
 import subprocess
+import binascii
 
 from .qt import QtCore, QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
@@ -114,7 +115,8 @@ class Servers():
         """
 
         server = self.getServerFromString(reply.url().toDisplayString())
-        if server.acceptInsecureCertificate(errorList[0].certificate().digest()):
+        certificate = binascii.hexlify(errorList[0].certificate().digest()).decode('utf-8')
+        if server.acceptInsecureCertificate() == certificate:
             reply.ignoreSslErrors()
             return
 
@@ -129,7 +131,7 @@ class Servers():
                 QtWidgets.QMessageBox.No)
 
             if proceed == QtWidgets.QMessageBox.Yes:
-                server.setAcceptInsecureCertificate(True)
+                server.setAcceptInsecureCertificate(certificate)
                 self._saveSettings()
                 reply.ignoreSslErrors()
                 log.info("SSL error ignored for %s", reply.url().toDisplayString())
