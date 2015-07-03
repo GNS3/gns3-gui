@@ -284,10 +284,10 @@ class Router(VM):
         :param error: indicates an error (boolean)
         """
 
-        self._dynamips_id = result["dynamips_id"]
-
         if not super()._setupCallback(result, error=error, **kwargs):
             return
+
+        self._dynamips_id = result["dynamips_id"]
 
         # create the ports on the client side
         self._insertAdapters(self._settings)
