@@ -457,6 +457,11 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                                                                                                              new_local_server_settings["udp_end_port_range"]))
             return
 
+        if 5900 <= new_local_server_settings["console_start_port_range"] <= 6000 or 5900 <= new_local_server_settings["console_end_port_range"] <= 6000 \
+                or new_local_server_settings["console_start_port_range"] < 5900 and new_local_server_settings["console_end_port_range"] > 6000:
+            QtWidgets.QMessageBox.critical(self, "Port range", "Console port range between 5900 and 6000 is reserved for VNC")
+            return
+
         if new_local_server_settings["auto_start"]:
             if not os.path.isfile(new_local_server_settings["path"]):
                 QtWidgets.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(new_local_server_settings["path"]))
