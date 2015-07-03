@@ -132,7 +132,6 @@ def main():
 
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
 
-
         if options.project:
             os.chdir(frozen_dir)
 
@@ -236,7 +235,7 @@ def main():
         root_logger = init_logger(logging.INFO, logfile)
 
     # update the exception file path to have it in the same directory as the settings file.
-    exception_file_path = os.path.normpath(os.path.join(os.path.dirname(QtCore.QSettings().fileName()), exception_file_path))
+    exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
 
     # Manage Ctrl + C or kill command
     def sigint_handler(*args):
