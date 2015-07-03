@@ -89,7 +89,6 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
         """
 
         self.uiVboxManagePathLineEdit.setText(settings["vboxmanage_path"])
-        self.uiVboxManageUserLineEdit.setText(settings["vbox_user"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
@@ -107,6 +106,5 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
 
         new_settings = {}
         new_settings["vboxmanage_path"] = self.uiVboxManagePathLineEdit.text()
-        new_settings["vbox_user"] = self.uiVboxManageUserLineEdit.text()
         new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         VirtualBox.instance().setSettings(new_settings)

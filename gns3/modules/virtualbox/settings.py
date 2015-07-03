@@ -23,7 +23,6 @@ from gns3.node import Node
 
 VBOX_SETTINGS = {
     "vboxmanage_path": "",
-    "vbox_user": "",
     "use_local_server": True,
 }
 

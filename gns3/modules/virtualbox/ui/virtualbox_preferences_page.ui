@@ -69,23 +69,6 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="uiVboxManageUserLabel">
-         <property name="text">
-          <string>Run VirtualBox as another user (GNS3 running as root):</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="uiVboxManageUserLineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

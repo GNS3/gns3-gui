@@ -101,15 +101,11 @@ class VirtualBox(Module):
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
         # save some settings to the local server config file
-        server_settings = {
-            "vbox_user": self._settings["vbox_user"],
-        }
-
         if self._settings["vboxmanage_path"]:
-            server_settings["vboxmanage_path"] = os.path.normpath(self._settings["vboxmanage_path"])
-
-        config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, server_settings)
+            server_settings = {
+                "vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])
+            }
+            LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
 
     def _loadVirtualBoxVMs(self):
         """
