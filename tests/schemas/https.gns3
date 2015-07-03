@@ -40,7 +40,7 @@
         ],
         "servers": [
             {
-                "accept_insecure_certificate": 'f7bc0453972768435a1100249596737b',
+                "accept_insecure_certificate": "f7bc0453972768435a1100249596737b",
                 "cloud": false,
                 "host": "127.0.0.1",
                 "id": 1,
