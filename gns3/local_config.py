@@ -116,9 +116,11 @@ class LocalConfig(QtCore.QObject):
             new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
+                    print("Migrate old config to the new location")
                     shutil.copytree(old_path, new_path)
-                except OSError:
-                    pass
+                except OSError as e:
+                    print("Can't copy the old config: %s", str(e))
+
 
     def _readConfig(self, config_path):
         """

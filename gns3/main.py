@@ -117,6 +117,8 @@ def main():
 
     if options.config:
         LocalConfig.instance(config_file=options.config)
+    else:
+        LocalConfig.instance()
 
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
