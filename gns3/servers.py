@@ -323,7 +323,7 @@ class Servers():
                     sock.bind(sa)
                     break
         except OSError as e:
-            log.warning("Could not use socket {}:{} {}".format(server.host, server.port, e))
+            log.warning("Could not use socket {}:{} {}".format(server.host(), server.port(), e))
             find_unused_port = True
 
         if find_unused_port:
