@@ -119,7 +119,6 @@ class LocalConfig(QtCore.QObject):
             new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
-                    print("Migrate old config to the new location")
                     shutil.copytree(old_path, new_path)
                 except OSError as e:
                     print("Can't copy the old config: %s", str(e))
@@ -144,6 +143,11 @@ class LocalConfig(QtCore.QObject):
                 servers["remote_servers"] = copy.copy(self._settings["RemoteServers"])
 
             self._settings["Servers"] = servers
+
+            if "GUI" in self._settings:
+                main_window = self._settings.get("MainWindow", {})
+                main_window["hide_getting_started_dialog"] = self._settings["GUI"].get("hide_getting_started_dialog", False)
+                self._settings["MainWindow"] = main_window
 
     def _readConfig(self, config_path):
         """
