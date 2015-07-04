@@ -469,7 +469,7 @@ class Servers():
 
         gns3_vm_settings = self._settings["vm"]
         server_info = {
-            "host": gns3_vm_settings["server_host"],
+            "host": "unset",
             "port": gns3_vm_settings["server_port"],
             "protocol": "http",
             "user": gns3_vm_settings["user"],

@@ -1122,9 +1122,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         gns3_vm = GNS3VM.instance()
         if gns3_vm.autoStart():
-            servers.initVMServer()
-
             # automatically start the GNS3 VM
+            servers.initVMServer()
             worker = WaitForVMWorker()
             progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
             progress_dialog.show()

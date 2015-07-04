@@ -107,7 +107,7 @@ class GNS3VM:
         if Servers.instance().vmSettings()["adjust_local_server_ip"]:
             vm_server = servers.vmServer()
             vm_ip_address = vm_server.host()
-            log.info("GNS3 VM IP address is {}".format(vm_ip_address))
+            log.debug("GNS3 VM IP address is {}".format(vm_ip_address))
 
             for interface in QtNetwork.QNetworkInterface.allInterfaces():
                 for address in interface.addressEntries():

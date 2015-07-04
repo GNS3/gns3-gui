@@ -193,11 +193,10 @@ class WaitForVMWorker(QtCore.QObject):
                 log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
                 self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
 
-                self.server.setHost(ip_address)
-
                 if not self._is_running:
                     return
 
+                vm_server.setHost(ip_address)
                 # ask the server all a list of all its interfaces along with IP addresses
                 status, json_data = vm_server.getSynchronous("interfaces", timeout=120)
                 if status != 200:

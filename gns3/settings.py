@@ -262,8 +262,7 @@ SERVERS_SETTINGS = {
         "adjust_local_server_ip": True,
         "vmname": "GNS3 VM",
         "vmx_path": "",
-        "server_host": "",
-        "server_port": 8000,
+        "server_port": 8000,  # hardcoded for now
         "virtualization": "VMware",
         "user": "",
         "password": ""
