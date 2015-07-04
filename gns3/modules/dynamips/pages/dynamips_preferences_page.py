@@ -59,11 +59,26 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         if not path:
             return
 
+        if self._checkDynamipsPath(path):
+            self.uiDynamipsPathLineEdit.setText(path)
+
+    def _checkDynamipsPath(self, path):
+        """
+        Checks that the Dynamips path is valid.
+
+        :param path: Dynamips path
+        :returns: boolean
+        """
+
+        if not os.path.exists(path):
+            QtWidgets.QMessageBox.critical(self, "Dynamips", '"{}" does not exist'.format(path))
+            return False
+
         if not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.critical(self, "Dynamips", "{} is not an executable".format(os.path.basename(path)))
-            return
+            return False
 
-        self.uiDynamipsPathLineEdit.setText(path)
+        return True
 
     def _ghostIOSSupportSlot(self, state):
         """
@@ -130,11 +145,15 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         Saves the Dynamips preferences.
         """
 
-        new_settings = {}
-        new_settings["dynamips_path"] = self.uiDynamipsPathLineEdit.text()
-        new_settings["allocate_aux_console_ports"] = self.uiAllocateAuxConsolePortsCheckBox.isChecked()
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
-        new_settings["ghost_ios_support"] = self.uiGhostIOSSupportCheckBox.isChecked()
-        new_settings["mmap_support"] = self.uiMmapSupportCheckBox.isChecked()
-        new_settings["sparse_memory_support"] = self.uiSparseMemorySupportCheckBox.isChecked()
+        dynamips_path = self.uiDynamipsPathLineEdit.text().strip()
+        if self.uiUseLocalServercheckBox.isChecked() and not self._checkDynamipsPath(dynamips_path):
+            return
+
+        new_settings = {"dynamips_path": dynamips_path,
+                        "allocate_aux_console_ports": self.uiAllocateAuxConsolePortsCheckBox.isChecked(),
+                        "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
+                        "ghost_ios_support": self.uiGhostIOSSupportCheckBox.isChecked(),
+                        "mmap_support": self.uiMmapSupportCheckBox.isChecked(),
+                        "sparse_memory_support": self.uiSparseMemorySupportCheckBox.isChecked()}
+
         Dynamips.instance().setSettings(new_settings)

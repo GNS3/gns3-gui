@@ -81,11 +81,26 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         if not path:
             return
 
+        if self._checkIouyapPath(path):
+            self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
+
+    def _checkIouyapPath(self, path):
+        """
+        Checks that the iouyap path is valid.
+
+        :param path: iouyap path
+        :returns: boolean
+        """
+
+        if not os.path.exists(path):
+            QtWidgets.QMessageBox.critical(self, "iouyap", '"{}" does not exist'.format(path))
+            return False
+
         if not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
-            return
+            return False
 
-        self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
+        return True
 
     def _restoreDefaultsSlot(self):
         """
@@ -133,9 +148,17 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         Saves IOU preferences.
         """
 
-        new_settings = {}
-        new_settings["iourc_path"] = self.uiIOURCPathLineEdit.text()
-        new_settings["iouyap_path"] = self.uiIouyapPathLineEdit.text()
-        new_settings["license_check"] = self.uiLicensecheckBox.isChecked()
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
+        iouyap_path = self.uiIouyapPathLineEdit.text().strip()
+        if self.uiUseLocalServercheckBox.isChecked() and not self._checkIouyapPath(iouyap_path):
+            return
+
+        iourc_path = self.uiIOURCPathLineEdit.text().strip()
+        if self.uiUseLocalServercheckBox.isChecked() and iourc_path and not os.path.exists(iourc_path):
+            QtWidgets.QMessageBox.critical(self, "iourc", '"{}" does not exist'.format(iourc_path))
+            return
+
+        new_settings = {"iouyap_path": iouyap_path,
+                        "iourc_path": iourc_path,
+                        "license_check": self.uiLicensecheckBox.isChecked(),
+                        "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
         IOU.instance().setSettings(new_settings)

@@ -82,11 +82,26 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         if not path:
             return
 
+        if self._checkVPCSPath(path):
+            self.uiVPCSPathLineEdit.setText(os.path.normpath(path))
+
+    def _checkVPCSPath(self, path):
+        """
+        Checks that the VPCS path is valid.
+
+        :param path: VPCS path
+        :returns: boolean
+        """
+
+        if not os.path.exists(path):
+            QtWidgets.QMessageBox.critical(self, "VPCS", '"{}" does not exist'.format(path))
+            return False
+
         if not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.critical(self, "VPCS", "{} is not an executable".format(os.path.basename(path)))
-            return
+            return False
 
-        self.uiVPCSPathLineEdit.setText(os.path.normpath(path))
+        return True
 
     def _scriptFileBrowserSlot(self):
         """
@@ -153,7 +168,11 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         Saves VPCS preferences.
         """
 
-        new_settings = {"vpcs_path": self.uiVPCSPathLineEdit.text(),
+        vpcs_path = self.uiVPCSPathLineEdit.text().strip()
+        if self.uiUseLocalServercheckBox.isChecked() and not self._checkVPCSPath(vpcs_path):
+            return
+
+        new_settings = {"vpcs_path": vpcs_path,
                         "base_script_file": self.uiScriptFileEdit.text(),
                         "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
                         "category": self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())}

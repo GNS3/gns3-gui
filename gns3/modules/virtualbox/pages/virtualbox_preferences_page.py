@@ -54,11 +54,26 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
         if not path:
             return
 
+        if self._checkVBoxManagePath(path):
+            self.uiVboxManagePathLineEdit.setText(os.path.normpath(path))
+
+    def _checkVBoxManagePath(self, path):
+        """
+        Checks that the VBoxManage path is valid.
+
+        :param path: VBoxManage path
+        :returns: boolean
+        """
+
+        if not os.path.exists(path):
+            QtWidgets.QMessageBox.critical(self, "VBoxManage", '"{}" does not exist'.format(path))
+            return False
+
         if not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.critical(self, "VBoxManage", "{} is not an executable".format(os.path.basename(path)))
-            return
+            return False
 
-        self.uiVboxManagePathLineEdit.setText(os.path.normpath(path))
+        return True
 
     def _restoreDefaultsSlot(self):
         """
@@ -104,7 +119,10 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
         Saves VirtualBox preferences.
         """
 
-        new_settings = {}
-        new_settings["vboxmanage_path"] = self.uiVboxManagePathLineEdit.text()
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
+        vboxmanage_path = self.uiVboxManagePathLineEdit.text().strip()
+        if self.uiUseLocalServercheckBox.isChecked() and not self._checkVBoxManagePath(vboxmanage_path):
+            return
+
+        new_settings = {"vboxmanage_path": vboxmanage_path,
+                        "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
         VirtualBox.instance().setSettings(new_settings)
