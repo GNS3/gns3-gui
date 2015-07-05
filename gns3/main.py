@@ -19,13 +19,6 @@
 import sys
 import os
 
-# Try to debug
-if sys.platform.startswith("darwin"):
-    with open('/tmp/args', 'w+') as f:
-        f.write(str(sys.argv))
-    with open('/tmp/environ', 'w+') as f:
-        f.write(str(os.environ))
-
 # Try to install updates & restart application if an update is installed
 try:
     import gns3.update_manager
