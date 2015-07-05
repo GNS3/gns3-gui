@@ -31,7 +31,7 @@ import socket
 import subprocess
 import binascii
 
-from .qt import QtCore, QtNetwork, QtWidgets
+from .qt import QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
 from .local_config import LocalConfig
 from .settings import SERVERS_SETTINGS
@@ -372,7 +372,7 @@ class Servers():
         if logging.getLogger().isEnabledFor(logging.DEBUG):
             command += " --debug"
 
-        settings_dir = os.path.normpath(os.path.dirname(QtCore.QSettings().fileName()))
+        settings_dir = LocalConfig.configDirectory()
         if os.path.isdir(settings_dir):
             # save server logging info to a file in the settings directory
             logpath = os.path.join(settings_dir, "gns3_server.log")
