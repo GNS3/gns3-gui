@@ -75,7 +75,9 @@ class VMware(Module):
                 elif os.path.exists(vmrun_vix):
                     vmrun_path = vmrun_vix
         elif sys.platform.startswith("darwin"):
-            vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
+            vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
+            if os.path.exists(vmware_fusion_vmrun_path):
+                vmrun_path = vmware_fusion_vmrun_path
         else:
             vmrun_path = shutil.which("vmrun")
 

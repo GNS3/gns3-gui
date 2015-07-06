@@ -66,13 +66,17 @@ class VirtualBox(Module):
 
         if sys.platform.startswith("win"):
             if "VBOX_INSTALL_PATH" in os.environ:
-                vboxmanage_path = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")
+                vboxmanage_path_windows = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")
+                if os.path.exists(vboxmanage_path_windows):
+                    vboxmanage_path = vboxmanage_path_windows
             elif "VBOX_MSI_INSTALL_PATH" in os.environ:
-                vboxmanage_path = os.path.join(os.environ["VBOX_MSI_INSTALL_PATH"], "VBoxManage.exe")
-            else:
-                vboxmanage_path = "VBoxManage.exe"
+                vboxmanage_path_windows = os.path.join(os.environ["VBOX_MSI_INSTALL_PATH"], "VBoxManage.exe")
+                if os.path.exists(vboxmanage_path_windows):
+                    vboxmanage_path = vboxmanage_path_windows
         elif sys.platform.startswith("darwin"):
-            vboxmanage_path = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+            vboxmanage_path_osx = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+            if os.path.exists(vboxmanage_path_osx):
+                vboxmanage_path = vboxmanage_path_osx
         else:
             vboxmanage_path = shutil.which("vboxmanage")
 
