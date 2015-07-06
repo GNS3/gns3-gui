@@ -67,20 +67,6 @@ class VPCS(Module):
         # load the settings
         self._loadSettings()
 
-    @staticmethod
-    def _findVPCS(self):
-        """
-        Finds the VPCS path.
-
-        :return: path to VPCS
-        """
-
-        vpcs_path = shutil.which("vpcs")
-
-        if vpcs_path is None:
-            return ""
-        return vpcs_path
-
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -92,7 +78,11 @@ class VPCS(Module):
             self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
 
         if not os.path.exists(self._settings["vpcs_path"]):
-            self._settings["vpcs_path"] = self._findVPCS(self)
+            vpcs_path = shutil.which("vpcs")
+            if vpcs_path:
+                self._settings["vpcs_path"] = vpcs_path
+            else:
+                self._settings["vpcs_path"] = ""
 
     def _saveSettings(self):
         """

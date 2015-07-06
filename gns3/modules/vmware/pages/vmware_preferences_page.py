@@ -144,7 +144,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         """
 
         vmrun_path = self.uiVmrunPathLineEdit.text().strip()
-        if self.uiUseLocalServercheckBox.isChecked() and not self._checkVmrunPath(vmrun_path):
+        if vmrun_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkVmrunPath(vmrun_path):
             return
 
         new_settings = {"vmrun_path": vmrun_path,

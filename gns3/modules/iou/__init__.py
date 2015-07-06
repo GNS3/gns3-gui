@@ -68,6 +68,8 @@ class IOU(Module):
             iouyap_path = shutil.which("iouyap")
             if iouyap_path:
                 self._settings["iouyap_path"] = iouyap_path
+            else:
+                self._settings["iouyap_path"] = ""
 
         self._loadIOUDevices()
 

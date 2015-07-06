@@ -115,20 +115,6 @@ class Dynamips(Module):
                 m.update(data)
             return m.hexdigest()
 
-    @staticmethod
-    def _findDynamips():
-        """
-        Finds the Dynamips path.
-
-        :return: path to Dynamips
-        """
-
-        dynamips_path = shutil.which("dynamips")
-
-        if dynamips_path is None:
-            return ""
-        return dynamips_path
-
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -136,7 +122,11 @@ class Dynamips(Module):
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, DYNAMIPS_SETTINGS)
         if not os.path.exists(self._settings["dynamips_path"]):
-            self._settings["dynamips_path"] = self._findDynamips()
+            dynamips_path = shutil.which("dynamips")
+            if dynamips_path:
+                self._settings["dynamips_path"] = dynamips_path
+            else:
+                self._settings["dynamips_path"] = ""
 
         self._loadIOSRouters()
 

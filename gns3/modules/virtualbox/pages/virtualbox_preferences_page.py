@@ -120,7 +120,7 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
         """
 
         vboxmanage_path = self.uiVboxManagePathLineEdit.text().strip()
-        if self.uiUseLocalServercheckBox.isChecked() and not self._checkVBoxManagePath(vboxmanage_path):
+        if vboxmanage_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkVBoxManagePath(vboxmanage_path):
             return
 
         new_settings = {"vboxmanage_path": vboxmanage_path,

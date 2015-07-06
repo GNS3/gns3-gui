@@ -149,11 +149,11 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         iouyap_path = self.uiIouyapPathLineEdit.text().strip()
-        if self.uiUseLocalServercheckBox.isChecked() and not self._checkIouyapPath(iouyap_path):
+        if iouyap_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkIouyapPath(iouyap_path):
             return
 
         iourc_path = self.uiIOURCPathLineEdit.text().strip()
-        if self.uiUseLocalServercheckBox.isChecked() and iourc_path and not os.path.exists(iourc_path):
+        if iourc_path and self.uiUseLocalServercheckBox.isChecked() and iourc_path and not os.path.exists(iourc_path):
             QtWidgets.QMessageBox.critical(self, "iourc", '"{}" does not exist'.format(iourc_path))
             return
 

@@ -146,7 +146,7 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         """
 
         dynamips_path = self.uiDynamipsPathLineEdit.text().strip()
-        if self.uiUseLocalServercheckBox.isChecked() and not self._checkDynamipsPath(dynamips_path):
+        if dynamips_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkDynamipsPath(dynamips_path):
             return
 
         new_settings = {"dynamips_path": dynamips_path,
