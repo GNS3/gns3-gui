@@ -32,7 +32,8 @@ VMWARE_SETTINGS = {
     "host_type": "ws",
     "vmnet_start_range": 2,
     "vmnet_end_range": DEFAULT_VMNET_END_RANGE,
-    "use_local_server": True,
+    # VMware fusion is not supported for the moment
+    "use_local_server": not sys.platform.startswith("darwin"),
 }
 
 VMWARE_VM_SETTINGS = {

@@ -91,17 +91,15 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
         Validates the server.
         """
 
-        if self.currentPage() == self.uiServerWizardPage:
-
-            # FIXME: prevent users to use "cloud"
-            if self.uiCloudRadioButton.isChecked():
-                QtWidgets.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
+        # Fusion is not yet supported
+        if sys.platform.startswith("darwin"):
+            if VMware.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+                QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
                 return False
 
+        if self.currentPage() == self.uiServerWizardPage:
+
             if VMware.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
-                if sys.platform.startswith("darwin"):
-                    QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
-                    return False
                 server = Servers.instance().localServer()
             else:
                 if not Servers.instance().remoteServers():
