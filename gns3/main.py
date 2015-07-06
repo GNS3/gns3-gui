@@ -112,7 +112,6 @@ def main():
     if sys.platform.startswith("darwin"):
         sys.argv = [a for a in sys.argv if not a.startswith("-psn_")]
 
-
     parser = argparse.ArgumentParser()
     parser.add_argument("project", help="load a GNS3 project (.gns3)", metavar="path", nargs="?")
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
