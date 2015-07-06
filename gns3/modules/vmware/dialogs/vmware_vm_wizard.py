@@ -99,11 +99,6 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
 
         if self.currentPage() == self.uiServerWizardPage:
 
-            # FIXME: prevent users to use "cloud"
-            if self.uiCloudRadioButton.isChecked():
-                QtWidgets.QMessageBox.critical(self, "Cloud", "Sorry not implemented yet!")
-                return False
-
             if VMware.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
                 server = Servers.instance().localServer()
             else:
