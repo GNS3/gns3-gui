@@ -49,7 +49,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             # we do not support VMware Fusion for now
             self.uiUseLocalServercheckBox.setChecked(False)
             self.uiUseLocalServercheckBox.setEnabled(False)
-            #self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
+            self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
         else:
             self.uiHostTypeComboBox.addItem("VMware Player", "player")
             self.uiHostTypeComboBox.addItem("VMware Workstation", "ws")
