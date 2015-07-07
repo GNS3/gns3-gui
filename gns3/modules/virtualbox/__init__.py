@@ -64,6 +64,7 @@ class VirtualBox(Module):
         :return: path to VBoxManage
         """
 
+        vboxmanage_path = None
         if sys.platform.startswith("win"):
             if "VBOX_INSTALL_PATH" in os.environ:
                 vboxmanage_path_windows = os.path.join(os.environ["VBOX_INSTALL_PATH"], "VBoxManage.exe")

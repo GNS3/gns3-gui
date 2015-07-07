@@ -65,6 +65,7 @@ class VMware(Module):
         :return: path to vmrun
         """
 
+        vmrun_path = None
         if sys.platform.startswith("win"):
             vmrun_path = shutil.which("vmrun")
             if vmrun_path is None:
