@@ -90,11 +90,9 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
         if state:
             self.uiVboxManagePathLineEdit.setEnabled(True)
             self.uiVboxManagePathToolButton.setEnabled(True)
-            self.uiVboxManageUserLineEdit.setEnabled(True)
         else:
             self.uiVboxManagePathLineEdit.setEnabled(False)
             self.uiVboxManagePathToolButton.setEnabled(False)
-            self.uiVboxManageUserLineEdit.setEnabled(False)
 
     def _populateWidgets(self, settings):
         """
