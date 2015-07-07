@@ -58,7 +58,7 @@ class GNS3VM:
         Servers.instance().setVMsettings(settings)
 
     @staticmethod
-    def execute_vmrun(subcommand, args):
+    def execute_vmrun(subcommand, args, timeout=10):
 
         from gns3.modules.vmware import VMware
         vmware_settings = VMware.instance().settings()
@@ -70,11 +70,11 @@ class GNS3VM:
             command = [vmrun_path, "-T", host_type, subcommand]
         command.extend(args)
         log.debug("Executing vmrun with command: {}".format(command))
-        output = subprocess.check_output(command)
+        output = subprocess.check_output(command, timeout=timeout)
         return output.decode("utf-8", errors="ignore").strip()
 
     @staticmethod
-    def execute_vboxmanage(subcommand, args):
+    def execute_vboxmanage(subcommand, args, timeout=10):
 
         from gns3.modules.virtualbox import VirtualBox
         virtualbox_settings = VirtualBox.instance().settings()
@@ -82,7 +82,7 @@ class GNS3VM:
         command = [vboxmanage_path, "--nologo", subcommand]
         command.extend(args)
         log.debug("Executing VBoxManage with command: {}".format(command))
-        output = subprocess.check_output(command)
+        output = subprocess.check_output(command, timeout=timeout)
         return output.decode("utf-8", errors="ignore").strip()
 
     def autoStart(self):
@@ -152,9 +152,11 @@ class GNS3VM:
                 if vm_settings["virtualization"] == "VMware":
                     self.execute_vmrun("stop", [vm_settings["vmx_path"], "soft"])
                 elif vm_settings["virtualization"] == "VirtualBox":
-                    self.execute_vboxmanage("controlvm", [vm_settings["vmname"], "acpipowerbutton"])
+                    self.execute_vboxmanage("controlvm", [vm_settings["vmname"], "acpipowerbutton"], timeout=3)
             except (OSError, subprocess.SubprocessError):
                 pass
+            except subprocess.TimeoutExpired:
+                log.warning("Could not ACPI shutdown the VM (timeout expired)")
 
     @staticmethod
     def instance():
