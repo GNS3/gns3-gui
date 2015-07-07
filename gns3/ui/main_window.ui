@@ -101,6 +101,7 @@ background-none;
     </property>
     <addaction name="uiOnlineHelpAction"/>
     <addaction name="uiCheckForUpdateAction"/>
+    <addaction name="uiSetupWizard"/>
     <addaction name="uiGettingStartedAction"/>
     <addaction name="uiLabInstructionsAction"/>
     <addaction name="uiAboutQtAction"/>
@@ -1146,7 +1147,8 @@ background-none;
    <property name="text">
     <string>Download remote project</string>
    </property>
-  </action>  <action name="uiQemuImgWizardAction">
+  </action>
+  <action name="uiQemuImgWizardAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/qemu.svg</normaloff>:/icons/qemu.svg</iconset>
@@ -1154,7 +1156,13 @@ background-none;
    <property name="text">
     <string>Qemu image wizard</string>
    </property>
-  </action> </widget>
+  </action>
+  <action name="uiSetupWizard">
+   <property name="text">
+    <string>&amp;Setup Wizard</string>
+   </property>
+  </action>
+ </widget>
  <customwidgets>
   <customwidget>
    <class>GraphicsView</class>

@@ -220,6 +220,7 @@ GENERAL_SETTINGS = {
     "delay_console_all": 500,
     "default_local_news": False,
     "hide_getting_started_dialog": False,
+    "hide_setup_wizard": False,
     "debug_level": 0,
     "recent_files": [],
     "geometry": "",

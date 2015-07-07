@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SetupWizard</class>
+ <widget class="QWizard" name="SetupWizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>641</width>
+    <height>415</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Setup Wizard</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <property name="options">
+   <set>QWizard::NoBackButtonOnStartPage</set>
+  </property>
+  <widget class="QWizardPage" name="uiServerWizardPage">
+   <property name="title">
+    <string>Server</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QRadioButton" name="uiVMRadioButton">
+      <property name="text">
+       <string>GNS3 VM</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QRadioButton" name="uiLocalRadioButton">
+      <property name="text">
+       <string>Local</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>180</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="uiShowCheckBox">
+      <property name="text">
+       <string>Don't show this again</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiVMWizardPage">
+   <property name="title">
+    <string>GNS3 VM</string>
+   </property>
+   <property name="subTitle">
+    <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported in one of these.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
+      <property name="text">
+       <string>Virtualization software:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QRadioButton" name="uiVmwareRadioButton">
+      <property name="text">
+       <string>VMware (recommended)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
+      <property name="text">
+       <string>VirtualBox</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="uiVMNameLabel">
+      <property name="text">
+       <string>VM name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QComboBox" name="uiVMListComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="uiRefreshPushButton">
+      <property name="text">
+       <string>&amp;Refresh</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiAddVMsWizardPage">
+   <property name="title">
+    <string>Add virtual machines</string>
+   </property>
+   <property name="subTitle">
+    <string>Now that you have configured the server type you can choose to add one or more virtual machines (VMs) of different types.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QCheckBox" name="uiAddIOSRouterCheckBox">
+      <property name="text">
+       <string>&amp;Add an IOS router using a real IOS image</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="uiAddIOUDeviceCheckBox">
+      <property name="text">
+       <string>&amp;Add an IOU device (router or switch) using an IOU image</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="uiAddQemuVMcheckBox">
+      <property name="text">
+       <string>&amp;Add a Qemu virtual machine</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="uiAddVirtualBoxVMcheckBox">
+      <property name="text">
+       <string>&amp;Add a VirtualBox virtual machine</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QCheckBox" name="uiAddVMwareVMcheckBox">
+      <property name="text">
+       <string>&amp;Add a VMware virtual machine</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

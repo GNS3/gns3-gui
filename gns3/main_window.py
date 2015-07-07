@@ -28,14 +28,12 @@ import json
 import glob
 import logging
 
-from pkg_resources import parse_version
 from .local_config import LocalConfig
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .modules.vpcs import VPCS
 from .modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
-from .version import __version__
-from .qt import QtGui, QtCore, QtNetwork, QtWidgets, QtSvg
+from .qt import QtGui, QtCore, QtWidgets, QtSvg
 from .servers import Servers
 from .gns3_vm import GNS3VM
 from .node import Node
@@ -44,6 +42,7 @@ from .dialogs.about_dialog import AboutDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
+from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS, CLOUD_SETTINGS, ENABLE_CLOUD
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
@@ -276,6 +275,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
         self.uiCheckForUpdateAction.triggered.connect(self._checkForUpdateActionSlot)
+        self.uiSetupWizard.triggered.connect(self._setupWizardActionSlot)
         self.uiGettingStartedAction.triggered.connect(self._gettingStartedActionSlot)
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
@@ -859,6 +859,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._update_manager = UpdateManager()
         self._update_manager.checkForUpdate(self, silent)
 
+    def _setupWizardActionSlot(self):
+        """
+        Slot to open the setup wizard.
+        """
+        with Progress.instance().context(min_duration=0):
+            setup_wizard = SetupWizard(self)
+            setup_wizard.show()
+            setup_wizard.exec_()
+
     def _gettingStartedActionSlot(self, auto=False):
         """
         Slot to open the news dialog.
@@ -1119,23 +1128,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        servers = Servers.instance()
-        gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart():
-            # automatically start the GNS3 VM
-            servers.initVMServer()
-            worker = WaitForVMWorker()
-            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
-            progress_dialog.show()
-            if progress_dialog.exec_():
-                gns3_vm.adjustLocalServerIP()
-
+        # show the news dock widget
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
 
-        self._gettingStartedActionSlot(auto=True)
+        #FIXME: do something with getting started dialog
+        # self._gettingStartedActionSlot(auto=True)
 
-        # connect to the local server
+        # start and connect to the local server
+        servers = Servers.instance()
         server = servers.localServer()
         if servers.localServerAutoStart():
             if server.isLocalServerRunning():
@@ -1153,6 +1154,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
                     return
+
+        # show the setup wizard
+        with Progress.instance().context(min_duration=0):
+            setup_wizard = SetupWizard(self)
+            if setup_wizard.showit() is True:
+                setup_wizard.show()
+                setup_wizard.exec_()
+
+        # start the GNS3 VM
+        gns3_vm = GNS3VM.instance()
+        if gns3_vm.autoStart() and not gns3_vm.isRunning():
+            servers.initVMServer()
+            worker = WaitForVMWorker()
+            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+            progress_dialog.show()
+            if progress_dialog.exec_():
+                gns3_vm.adjustLocalServerIP()
 
         self._createTemporaryProject()
 
