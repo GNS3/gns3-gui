@@ -16,10 +16,18 @@
         ],
         "rectangles": [
             {
+                "border_style": 3,
+                "color": "#ffff00",
                 "height": 100.0,
                 "width": 200.0,
                 "x": -102.0,
                 "y": -278.0
+            },
+            {
+                "height": 100.0,
+                "width": 200.0,
+                "x": 102.0,
+                "y": 278.0
             }
         ]
     },
