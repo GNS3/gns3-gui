@@ -30,7 +30,7 @@
     <item row="0" column="0">
      <widget class="QRadioButton" name="uiVMRadioButton">
       <property name="text">
-       <string>GNS3 VM</string>
+       <string>GNS3 VM (Dynamips, IOU, VPCS and Qemu will use the VM)</string>
       </property>
       <property name="checked">
        <bool>true</bool>

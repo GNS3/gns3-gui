@@ -116,12 +116,11 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Validates the settings.
         """
 
+        gns3_vm = GNS3VM.instance()
+        servers = Servers.instance()
         if self.currentPage() == self.uiVMWizardPage:
             vmname = self.uiVMListComboBox.currentText()
             if vmname:
-                gns3_vm = GNS3VM.instance()
-                servers = Servers.instance()
-
                 # save the GNS3 VM settings
                 vm_settings = {"auto_start": True,
                                "vmname": vmname,
@@ -145,6 +144,11 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         elif self.currentPage() == self.uiAddVMsWizardPage:
 
             use_local_server = self.uiLocalRadioButton.isChecked()
+            if use_local_server:
+                # deactivate the GNS3 VM if using the local server
+                vm_settings = {"auto_start": False}
+                gns3_vm.setSettings(vm_settings)
+                servers.save()
             from gns3.modules import Dynamips
             Dynamips.instance().setSettings({"use_local_server": use_local_server})
             if sys.platform.startswith("linux"):

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup_wizard.ui'
 #
-# Created: Mon Jul  6 23:23:29 2015
+# Created: Tue Jul  7 21:47:56 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,7 +92,7 @@ class Ui_SetupWizard(object):
         SetupWizard.setWindowTitle(_translate("SetupWizard", "Setup Wizard"))
         self.uiServerWizardPage.setTitle(_translate("SetupWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X."))
-        self.uiVMRadioButton.setText(_translate("SetupWizard", "GNS3 VM"))
+        self.uiVMRadioButton.setText(_translate("SetupWizard", "GNS3 VM (Dynamips, IOU, VPCS and Qemu will use the VM)"))
         self.uiLocalRadioButton.setText(_translate("SetupWizard", "Local"))
         self.uiShowCheckBox.setText(_translate("SetupWizard", "Don\'t show this again"))
         self.uiVMWizardPage.setTitle(_translate("SetupWizard", "GNS3 VM"))
