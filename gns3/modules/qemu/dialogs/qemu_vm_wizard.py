@@ -23,6 +23,7 @@ import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.node import Node
+from gns3.gns3_vm import GNS3VM
 from gns3.modules.module_error import ModuleError
 from gns3.dialogs.vm_wizard import VMWizard
 
@@ -127,10 +128,11 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-
-        if self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
+        if self.page(page_id) == self.uiServerWizardPage and GNS3VM.instance().isRunning():
+            self.uiVMRadioButton.setChecked(True)
+        elif self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
             self.loadImagesList("/qemu/vms")
-        if self.page(page_id) == self.uiBinaryMemoryWizardPage:
+        elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
             try:
                 Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
             except ModuleError as e:

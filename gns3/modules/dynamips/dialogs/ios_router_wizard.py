@@ -19,13 +19,13 @@
 Wizard for IOS routers.
 """
 
-import sys
 import os
 import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.node import Node
+from gns3.gns3_vm import GNS3VM
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
@@ -370,7 +370,9 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
         super().initializePage(page_id)
 
-        if self.page(page_id) == self.uiIOSImageWizardPage:
+        if self.page(page_id) == self.uiServerWizardPage and GNS3VM.instance().isRunning():
+            self.uiVMRadioButton.setChecked(True)
+        elif self.page(page_id) == self.uiIOSImageWizardPage:
             self.loadImagesList("/dynamips/vms")
         elif self.page(page_id) == self.uiNamePlatformWizardPage:
             self._prefillPlatform()

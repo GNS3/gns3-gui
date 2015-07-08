@@ -24,7 +24,7 @@ import sys
 
 from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
-from gns3.servers import Servers
+from gns3.gns3_vm import GNS3VM
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_wizard import VMWizard
@@ -103,11 +103,9 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiServerWizardPage:
-            self.uiRemoteServersComboBox.clear()
-            for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem(server.url(), server)
-        if self.page(page_id) == self.uiNameImageWizardPage:
+        if self.page(page_id) == self.uiServerWizardPage and GNS3VM.instance().isRunning():
+            self.uiVMRadioButton.setChecked(True)
+        elif self.page(page_id) == self.uiNameImageWizardPage:
             if not self.uiIOUImageToolButton.isEnabled():
                 QtWidgets.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
             self.loadImagesList("/iou/vms")
