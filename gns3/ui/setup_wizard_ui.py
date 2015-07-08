@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setup_wizard.ui'
 #
-# Created: Tue Jul  7 21:47:56 2015
+# Created: Wed Jul  8 15:46:20 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -68,6 +68,7 @@ class Ui_SetupWizard(object):
         self.gridLayout_3 = QtWidgets.QGridLayout(self.uiAddVMsWizardPage)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.uiAddIOSRouterCheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddIOSRouterCheckBox.setChecked(True)
         self.uiAddIOSRouterCheckBox.setObjectName("uiAddIOSRouterCheckBox")
         self.gridLayout_3.addWidget(self.uiAddIOSRouterCheckBox, 0, 0, 1, 1)
         self.uiAddIOUDeviceCheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)

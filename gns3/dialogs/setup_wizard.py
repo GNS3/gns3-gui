@@ -50,11 +50,23 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         settings = parent.settings()
         self.uiShowCheckBox.setChecked(settings["hide_setup_wizard"])
 
+        # by default all radio buttons are unchecked
+        self.uiVmwareRadioButton.setAutoExclusive(False)
+        self.uiVirtualBoxRadioButton.setAutoExclusive(False)
+        self.uiVmwareRadioButton.setChecked(False)
+        self.uiVirtualBoxRadioButton.setChecked(False)
+
     def _listVMwareVMsSlot(self):
         """
         Slot to refresh the VMware VMs list.
         """
 
+        self.uiVirtualBoxRadioButton.setChecked(False)
+        from gns3.modules import VMware
+        settings = VMware.instance().settings()
+        if not os.path.exists(settings["vmrun_path"]):
+            QtWidgets.QMessageBox.critical(self, "VMware", "VMware vmrun tool could not be found, VMware or the VIX API is probably not installed")
+            return
         self._refreshVMListSlot()
 
     def _listVirtualBoxVMsSlot(self):
@@ -62,6 +74,12 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Slot to refresh the VirtualBox VMs list.
         """
 
+        self.uiVmwareRadioButton.setChecked(False)
+        from gns3.modules import VirtualBox
+        settings = VirtualBox.instance().settings()
+        if not os.path.exists(settings["vboxmanage_path"]):
+            QtWidgets.QMessageBox.critical(self, "VirtualBox", "VBoxManage could not be found, VirtualBox is probably not installed")
+            return
         self._refreshVMListSlot()
 
     def showit(self):
@@ -72,29 +90,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         return not self.uiShowCheckBox.isChecked()
-
-    def initializePage(self, page_id):
-        """
-        Initialize pages.
-
-        :param page_id: QWizardPage identifier
-        """
-
-        if self.page(page_id) == self.uiVMWizardPage:
-
-            if self.uiVmwareRadioButton.isChecked():
-                from gns3.modules import VMware
-                settings = VMware.instance().settings()
-                if not os.path.exists(settings["vmrun_path"]):
-                    QtWidgets.QMessageBox.critical(self, "VMware", "VMware vmrun tool could not be found, VMware or the VIX API is probably not installed")
-                    return
-            elif self.uiVirtualBoxRadioButton.isChecked():
-                from gns3.modules import VirtualBox
-                settings = VirtualBox.instance().settings()
-                if not os.path.exists(settings["vboxmanage_path"]):
-                    QtWidgets.QMessageBox.critical(self, "VirtualBox", "VBoxManage could not be found, VirtualBox is probably not installed")
-                    return
-            self._refreshVMListSlot()
 
     def _setPreferencesPane(self, dialog, name):
         """
