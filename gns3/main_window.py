@@ -1654,10 +1654,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _downloadRemoteProjectActionSlot(self):
         if self._project.temporary():
-            QtWidgets.QMessageBox.warning(self, "Download project", "You can not download a temporary project")
+            QtWidgets.QMessageBox.warning(self, "Download project", "You cannot download a temporary project")
+            return
 
         running_nodes = self._running_nodes()
-
         if running_nodes:
             nodes = "\n".join(running_nodes)
             MessageBox(self, "Download project", "Please stop the following nodes before downloading the project", nodes)
