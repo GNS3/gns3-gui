@@ -30,13 +30,32 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class LocalConfig(QtCore.QObject):
+class PeriodicCheckConfig(QtCore.QThread):
 
-    config_changed_signal = QtCore.Signal()
+    """
+    Timer for checking if the configuration file change
+    on disk.
+    """
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._parent = parent
+
+    def run(self):
+        self._timer = QtCore.QTimer()
+        self._timer.timeout.connect(self._parent._checkConfigChanged)
+        self._timer.setInterval(1000)  #  milliseconds
+        self._timer.start()
+        self.exec_()
+
+
+class LocalConfig(QtCore.QObject):
 
     """
     Handles the local GUI settings.
     """
+
+    config_changed_signal = QtCore.Signal()
 
     def __init__(self, config_file=None):
 
@@ -89,10 +108,8 @@ class LocalConfig(QtCore.QObject):
         self._migrateOldConfig()
         self._writeConfig()
 
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self._checkConfigChanged)
-        timer.setInterval(1000)  #  milliseconds
-        timer.start()
+        self._check_thread = PeriodicCheckConfig(self)
+        self._check_thread.start()
 
     @staticmethod
     def configDirectory():
