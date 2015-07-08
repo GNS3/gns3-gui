@@ -300,12 +300,10 @@ class VPCS(Module):
         in the nodes view and create a node on the scene.
         """
 
-        server = "local"
-        if not self._settings["use_local_server"]:
-            # pick up a remote server (round-robin method)
-            remote_server = next(iter(Servers.instance()))
-            if remote_server:
-                server = remote_server.url()
+        if self._settings["use_local_server"]:
+            server = "local"
+        else:
+            server = "vm"
 
         nodes = []
         for node_class in VPCS.classes():
