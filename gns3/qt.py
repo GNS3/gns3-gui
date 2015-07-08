@@ -35,6 +35,7 @@ log = logging.getLogger(__name__)
 
 if os.environ.get('GNS3_QT4', None) is not None:
     DEFAULT_BINDING = 'PyQt4'
+    print("WARNING: PyQt4 is no longer supported, please upgrade to PyQt5")
 else:
     try:
         import PyQt5
@@ -172,6 +173,16 @@ elif DEFAULT_BINDING == 'PyQt4':
             return path, _
 
     QtWidgets.QFileDialog = QFileDialog
+
+    # QStandardPaths replace QDesktopServices in QT5
+    class QStandardPaths:
+        DocumentsLocation = QtGui.QDesktopServices.DocumentsLocation
+        PicturesLocation = QtGui.QDesktopServices.PicturesLocation
+
+        def writableLocation(path_type):
+            return QtGui.QDesktopServices.storageLocation(path_type)
+
+    QtCore.QStandardPaths = QStandardPaths
 
     # Translate not working well when reading a PyQT5 ui file (unicode issues)
     # we turn off translation for PyQT4
