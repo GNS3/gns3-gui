@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon Jul  6 23:23:28 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul  8 19:15:31 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -35,8 +35,8 @@ class Ui_MainWindow(object):
         self.uiCentralWidget = QtWidgets.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName("uiCentralWidget")
         self.gridlayout = QtWidgets.QGridLayout(self.uiCentralWidget)
-        self.gridlayout.setContentsMargins(0, 0, 0, 0)
         self.gridlayout.setSpacing(0)
+        self.gridlayout.setContentsMargins(0, 0, 0, 0)
         self.gridlayout.setObjectName("gridlayout")
         self.uiGraphicsView = GraphicsView(self.uiCentralWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -48,7 +48,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -155,8 +155,8 @@ class Ui_MainWindow(object):
         self.uiTopologySummaryDockWidgetContents.setSizePolicy(sizePolicy)
         self.uiTopologySummaryDockWidgetContents.setObjectName("uiTopologySummaryDockWidgetContents")
         self.gridlayout1 = QtWidgets.QGridLayout(self.uiTopologySummaryDockWidgetContents)
-        self.gridlayout1.setContentsMargins(0, 0, 0, 0)
         self.gridlayout1.setSpacing(0)
+        self.gridlayout1.setContentsMargins(0, 0, 0, 0)
         self.gridlayout1.setObjectName("gridlayout1")
         self.uiTopologySummaryTreeWidget = TopologySummaryView(self.uiTopologySummaryDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -249,6 +249,7 @@ class Ui_MainWindow(object):
         icon11 = QtGui.QIcon()
         icon11.addPixmap(QtGui.QPixmap(":/icons/applications.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiPreferencesAction.setIcon(icon11)
+        self.uiPreferencesAction.setMenuRole(QtWidgets.QAction.PreferencesRole)
         self.uiPreferencesAction.setObjectName("uiPreferencesAction")
         self.uiSuspendAllAction = QtWidgets.QAction(MainWindow)
         icon12 = QtGui.QIcon()
@@ -366,10 +367,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -407,6 +408,7 @@ class Ui_MainWindow(object):
         self.uiQemuImgWizardAction.setIcon(icon31)
         self.uiQemuImgWizardAction.setObjectName("uiQemuImgWizardAction")
         self.uiSetupWizard = QtWidgets.QAction(MainWindow)
+        self.uiSetupWizard.setMenuRole(QtWidgets.QAction.NoRole)
         self.uiSetupWizard.setObjectName("uiSetupWizard")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
@@ -667,6 +669,6 @@ class Ui_MainWindow(object):
 
 from ..graphics_view import GraphicsView
 from ..topology_summary_view import TopologySummaryView
-from ..nodes_view import NodesView
 from ..console_view import ConsoleView
+from ..nodes_view import NodesView
 from . import resources_rc
