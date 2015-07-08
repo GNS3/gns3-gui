@@ -18,7 +18,6 @@
 import os
 from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.new_project_dialog_ui import Ui_NewProjectDialog
-from ..settings import ENABLE_CLOUD
 
 
 class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
@@ -46,8 +45,6 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
         self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
         self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
-        if not ENABLE_CLOUD:
-            self.uiCloudRadioButton.hide()
 
         if not showed_from_startup:
             self.uiOpenProjectPushButton.hide()
@@ -116,11 +113,7 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         if result:
             project_name = self.uiNameLineEdit.text()
             project_location = self.uiLocationLineEdit.text()
-            if self.uiCloudRadioButton.isChecked():
-                #FIXME: check for usefulness
-                project_type = "cloud"
-            else:
-                project_type = "local"
+            project_type = "local"
 
             if not project_name:
                 QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")

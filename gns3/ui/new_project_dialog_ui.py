@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'new_project_dialog.ui'
 #
-# Created: Wed May  6 14:31:53 2015
+# Created: Wed Jul  8 17:36:12 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,17 +10,26 @@
 import gns3.qt
 from gns3.qt import QtCore, QtGui, QtWidgets
 
-
-class Ui_NewProjectDialog:
-
+class Ui_NewProjectDialog(object):
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewProjectDialog.resize(491, 177)
+        NewProjectDialog.resize(479, 192)
         NewProjectDialog.setModal(True)
         self.gridLayout_2 = QtWidgets.QGridLayout(NewProjectDialog)
         self.gridLayout_2.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.uiButtonBox = QtWidgets.QDialogButtonBox(NewProjectDialog)
+        self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setObjectName("uiButtonBox")
+        self.gridLayout_2.addWidget(self.uiButtonBox, 2, 2, 1, 1)
+        self.uiOpenProjectPushButton = QtWidgets.QPushButton(NewProjectDialog)
+        self.uiOpenProjectPushButton.setObjectName("uiOpenProjectPushButton")
+        self.gridLayout_2.addWidget(self.uiOpenProjectPushButton, 2, 0, 1, 1)
+        self.uiRecentProjectsPushButton = QtWidgets.QPushButton(NewProjectDialog)
+        self.uiRecentProjectsPushButton.setObjectName("uiRecentProjectsPushButton")
+        self.gridLayout_2.addWidget(self.uiRecentProjectsPushButton, 2, 1, 1, 1)
         self.uiProjectGroupBox = QtWidgets.QGroupBox(NewProjectDialog)
         self.uiProjectGroupBox.setObjectName("uiProjectGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiProjectGroupBox)
@@ -35,7 +44,7 @@ class Ui_NewProjectDialog:
         self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
         self.uiNameLineEdit = QtWidgets.QLineEdit(self.uiProjectGroupBox)
         self.uiNameLineEdit.setObjectName("uiNameLineEdit")
-        self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 4)
+        self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 3)
         self.uiLocationLabel = QtWidgets.QLabel(self.uiProjectGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -46,46 +55,11 @@ class Ui_NewProjectDialog:
         self.gridLayout.addWidget(self.uiLocationLabel, 1, 0, 1, 1)
         self.uiLocationLineEdit = QtWidgets.QLineEdit(self.uiProjectGroupBox)
         self.uiLocationLineEdit.setObjectName("uiLocationLineEdit")
-        self.gridLayout.addWidget(self.uiLocationLineEdit, 1, 1, 1, 3)
+        self.gridLayout.addWidget(self.uiLocationLineEdit, 1, 1, 1, 2)
         self.uiLocationBrowserToolButton = QtWidgets.QToolButton(self.uiProjectGroupBox)
         self.uiLocationBrowserToolButton.setObjectName("uiLocationBrowserToolButton")
-        self.gridLayout.addWidget(self.uiLocationBrowserToolButton, 1, 4, 1, 1)
-        self.uiTypeLabel = QtWidgets.QLabel(self.uiProjectGroupBox)
-        self.uiTypeLabel.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiTypeLabel.sizePolicy().hasHeightForWidth())
-        self.uiTypeLabel.setSizePolicy(sizePolicy)
-        self.uiTypeLabel.setObjectName("uiTypeLabel")
-        self.gridLayout.addWidget(self.uiTypeLabel, 2, 0, 1, 1)
-        self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiProjectGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiLocalRadioButton.sizePolicy().hasHeightForWidth())
-        self.uiLocalRadioButton.setSizePolicy(sizePolicy)
-        self.uiLocalRadioButton.setChecked(True)
-        self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
-        self.gridLayout.addWidget(self.uiLocalRadioButton, 2, 1, 1, 1)
-        self.uiCloudRadioButton = QtWidgets.QRadioButton(self.uiProjectGroupBox)
-        self.uiCloudRadioButton.setEnabled(False)
-        self.uiCloudRadioButton.setObjectName("uiCloudRadioButton")
-        self.gridLayout.addWidget(self.uiCloudRadioButton, 2, 2, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(201, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 2, 3, 1, 2)
-        self.gridLayout_2.addWidget(self.uiProjectGroupBox, 0, 0, 1, 3)
-        self.uiOpenProjectPushButton = QtWidgets.QPushButton(NewProjectDialog)
-        self.uiOpenProjectPushButton.setObjectName("uiOpenProjectPushButton")
-        self.gridLayout_2.addWidget(self.uiOpenProjectPushButton, 1, 0, 1, 1)
-        self.uiRecentProjectsPushButton = QtWidgets.QPushButton(NewProjectDialog)
-        self.uiRecentProjectsPushButton.setObjectName("uiRecentProjectsPushButton")
-        self.gridLayout_2.addWidget(self.uiRecentProjectsPushButton, 1, 1, 1, 1)
-        self.uiButtonBox = QtWidgets.QDialogButtonBox(NewProjectDialog)
-        self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
-        self.uiButtonBox.setObjectName("uiButtonBox")
-        self.gridLayout_2.addWidget(self.uiButtonBox, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.uiLocationBrowserToolButton, 1, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.uiProjectGroupBox, 0, 0, 1, 4)
 
         self.retranslateUi(NewProjectDialog)
         self.uiButtonBox.accepted.connect(NewProjectDialog.accept)
@@ -95,12 +69,10 @@ class Ui_NewProjectDialog:
     def retranslateUi(self, NewProjectDialog):
         _translate = gns3.qt.translate
         NewProjectDialog.setWindowTitle(_translate("NewProjectDialog", "New project"))
+        self.uiOpenProjectPushButton.setText(_translate("NewProjectDialog", "&Open a project"))
+        self.uiRecentProjectsPushButton.setText(_translate("NewProjectDialog", "&Recent projects..."))
         self.uiProjectGroupBox.setTitle(_translate("NewProjectDialog", "Project"))
         self.uiNameLabel.setText(_translate("NewProjectDialog", "Name:"))
         self.uiLocationLabel.setText(_translate("NewProjectDialog", "Location:"))
         self.uiLocationBrowserToolButton.setText(_translate("NewProjectDialog", "Browse..."))
-        self.uiTypeLabel.setText(_translate("NewProjectDialog", "Type:"))
-        self.uiLocalRadioButton.setText(_translate("NewProjectDialog", "Local"))
-        self.uiCloudRadioButton.setText(_translate("NewProjectDialog", "Cloud"))
-        self.uiOpenProjectPushButton.setText(_translate("NewProjectDialog", "&Open a project"))
-        self.uiRecentProjectsPushButton.setText(_translate("NewProjectDialog", "&Recent projects..."))
+

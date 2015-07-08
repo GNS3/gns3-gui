@@ -25,7 +25,6 @@ import os
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
-from gns3.cloud.utils import UploadFilesThread
 from gns3.image_manager import ImageManager
 
 from .. import IOU
@@ -135,28 +134,6 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOUDevicesTreeWidget.setCurrentItem(item)
-
-            if new_device_settings["server"] == 'cloud':
-                import logging
-                log = logging.getLogger(__name__)
-
-                # Start uploading the image to cloud files
-                self._upload_image_progress_dialog = QtWidgets.QProgressDialog(
-                    "Uploading image file {}".format(new_device_settings['image']), "Cancel", 0, 0, parent=self)
-                self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-                self._upload_image_progress_dialog.setWindowTitle("IOU image upload")
-                self._upload_image_progress_dialog.show()
-                try:
-                    src = self._iou_devices[key]['path']
-                    # Eg: images/IOU/i86.bin
-                    dst = 'images/IOU/{}'.format(self._iou_devices[key]['image'])
-                    upload_thread = UploadFilesThread(self, MainWindow.instance().cloudSettings(), [(src, dst)])
-                    upload_thread.completed.connect(self._imageUploadComplete)
-                    upload_thread.start()
-                except Exception as e:
-                    self._upload_image_progress_dialog.reject()
-                    log.error(e)
-                    QtWidgets.QMessageBox.critical(self, "IOU image upload", "Error uploading IOU image: {}".format(e))
 
     def _iouDeviceEditSlot(self):
         """

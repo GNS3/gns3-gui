@@ -43,7 +43,7 @@ from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.setup_wizard import SetupWizard
-from .settings import GENERAL_SETTINGS, CLOUD_SETTINGS, ENABLE_CLOUD
+from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
@@ -57,9 +57,6 @@ from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology
 from .utils.download_project import DownloadProjectWorker
-from .cloud.utils import UploadProjectThread, ssh_client, DeleteInstanceThread
-from .cloud.rackspace_ctrl import get_provider
-from .cloud.exceptions import KeyPairExists
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
@@ -96,14 +93,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project = None
         self._createTemporaryProject()
         self._project_from_cmdline = project
-        self._cloud_settings = {}
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
         self._max_recent_files = 5
         self._recent_file_actions = []
         self._start_time = time.time()
-        self.loading_cloud_project = False
         local_config = LocalConfig.instance()
         local_config.config_changed_signal.connect(self._localConfigChangedSlot)
 
@@ -142,8 +137,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._recent_file_actions_separator.setVisible(False)
         self._updateRecentFileActions()
 
-        self._cloud_provider = None
-
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
 
@@ -153,12 +146,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
 
-    @property
-    def cloudProvider(self):
-        if self._cloud_provider is None:
-            self._cloud_provider = get_provider(self.cloudSettings())
-        return self._cloud_provider
-
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -166,7 +153,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, GENERAL_SETTINGS)
-        self._cloud_settings = local_config.loadSectionSettings("Cloud", CLOUD_SETTINGS)
 
         # restore packet capture settings
         Port.loadPacketCaptureSettings()
@@ -179,15 +165,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         return self._settings
-
-    def cloudSettings(self):
-        """
-        Returns the cloud settings.
-
-        :returns: cloud settings dictionary
-        """
-
-        return self._cloud_settings
 
     def setSettings(self, new_settings):
         """
@@ -206,18 +183,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-    def setCloudSettings(self, new_settings, persist):
-        """
-        Set new cloud settings and store them only when the user asks for it
-
-        :param new_settings: cloud settings dictionary
-        :param persist: whether to persist settings on disk or not
-        """
-
-        self._cloud_settings.update(new_settings)
-        settings_to_persist = self._cloud_settings if persist else CLOUD_SETTINGS
-        LocalConfig.instance().saveSectionSettings("Cloud", settings_to_persist)
-
     def _connections(self):
         """
         Connect widgets to slots
@@ -228,7 +193,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
-        self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiDownloadRemoteProject.triggered.connect(self._downloadRemoteProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
@@ -292,7 +256,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
 
         # project
-        self._project.project_about_to_close_signal.connect(self.shutdown_cloud_instances)
         self.project_new_signal.connect(self.project_created)
 
     def project(self):
@@ -1070,10 +1033,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         servers.stopLocalServer(wait=True)
 
-        # FIXME: shutting down cloud servers
-        # for cs in servers.cloud_servers.values():
-        #     cs.close_connection()
-
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
         self.close()
@@ -1384,14 +1343,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             topology.loadFile(path, self._project)
 
-            # if we're opening a cloud project, defer topology load operations
-            # if json_topology["resources_type"] == "cloud":
-            #     self._project.setType("cloud")
-            #     self.loading_cloud_project = True
-            # else:
-            #     self._project.setType("local")
-            #     topology.load(json_topology)
-
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             # log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1518,22 +1469,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             MainWindow._instance = MainWindow()
         return MainWindow._instance
 
-    def shutdown_cloud_instances(self):
-        """
-        This slot is invoked before a project is closed, when:
-         * a new project is created
-         * a project from the recent menu is opened
-         * a project is opened from file
-         * program exits
-
-        """
-
-        if self._project.temporary():
-            # do nothing if previous project was temporary
-            return
-
-        CloudInstances.instance().save()
-
     def project_created(self, project):
         """
         This slot is invoked when a project is created or opened
@@ -1550,68 +1485,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 json_topology = json.load(f)
                 if not isinstance(json_topology, dict):
                     raise ValueError("Not a GNS3 project")
-
-                if json_topology["resources_type"] != 'cloud':
-                    # do nothing in case of local projects
-                    return
-
-                project_instances = json_topology["topology"]["instances"]
         except (OSError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Project", "Could not read project: {}".format(e))
-
-    def add_instance_to_project(self, instance, keypair):
-        """
-        Add an instance to the current project
-
-        :param instance: libcloud Node object
-        """
-        if instance is None:
-            log.error("Failed creating a new instance for current project")
-            return
-
-        default_image_id = self.cloudSettings()['default_image']
-
-        topology = Topology.instance()
-        topology.addInstance(instance.name, instance.id, instance.extra['flavorId'],
-                             default_image_id, keypair.private_key, keypair.public_key)
-
-        # persist infos saving current project
-        if not self.loading_cloud_project:
-            self.saveProject(self._project.topologyFile())
-
-    def remove_instance_from_project(self, instance):
-        """
-        Remove an instance from the current project
-
-        :param instance: libcloud Node object
-        """
-        topology = Topology.instance()
-        topology.removeInstance(instance.id)
-        # persist infos saving current project
-        self.saveProject(self._project.topologyFile())
-
-    def _create_instance(self, name, flavor, image_id):
-        """
-        Wrapper method to handle SSH keypairs creation before actually creating
-        an instance
-        """
-        # add -gns3 suffix to image names to minimize clashes on Rackspace accounts
-        if not name.endswith("-gns3"):
-            name += "-gns3"
-
-        log.debug("Creating cloud keypair with name {}".format(name))
-        try:
-            keypair = self.cloudProvider.create_key_pair(name)
-        except KeyPairExists:
-            log.debug("Cloud keypair with name {} exists.  Recreating.".format(name))
-            # delete keypairs if they already exist
-            self.cloudProvider.delete_key_pair_by_name(name)
-            keypair = self.cloudProvider.create_key_pair(name)
-
-        log.debug("Creating cloud server with name {}".format(name))
-        instance = self.cloudProvider.create_instance(name, flavor, image_id, keypair)
-        log.debug("Cloud server {} created".format(name))
-        return instance, keypair
 
     def run_later(self, counter, callback):
         """
@@ -1622,34 +1497,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         QtCore.QTimer.singleShot(counter, callback)
-
-    def _exportProjectActionSlot(self):
-
-        if not ENABLE_CLOUD:
-            QtWidgets.QMessageBox.critical(self, "Cloud topology", "Sorry this feature is not yet available")
-            return
-
-        if self.isTemporaryProject():
-            # do nothing if project is temporary
-            QtWidgets.QMessageBox.critical(
-                self,
-                "Backup project",
-                "Cannot backup temporary projects, please save current project first."
-            )
-            return
-        if self.checkForUnsavedChanges():
-            self.saveProject(self._project.topologyFile())
-
-        upload_thread = UploadProjectThread(
-            self,
-            self._cloud_settings,
-            self._project.topologyFile(),
-            ImageManager.instance().getDirectory()
-        )
-        progress_dialog = ProgressDialog(upload_thread, "Backing Up Project", "Uploading project files...", "Cancel",
-                                         parent=self)
-        progress_dialog.show()
-        progress_dialog.exec_()
 
     def _downloadRemoteProjectActionSlot(self):
         if self._project.temporary():

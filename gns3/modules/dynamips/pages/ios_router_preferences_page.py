@@ -29,7 +29,6 @@ import logging
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
-from gns3.cloud.utils import UploadFilesThread
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.image_manager import ImageManager
 
@@ -99,34 +98,6 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
             self._ios_routers[key] = IOS_ROUTER_SETTINGS.copy()
             self._ios_routers[key].update(ios_settings)
-
-            if ios_settings["server"] == 'cloud':
-                import logging
-                log = logging.getLogger(__name__)
-
-                log.debug(ios_settings["image"])
-                # Start uploading the image to cloud files
-
-                self._upload_image_progress_dialog = QtWidgets.QProgressDialog("Uploading image file {}".format(ios_settings['image']), "Cancel", 0, 0, parent=self)
-                self._upload_image_progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-                self._upload_image_progress_dialog.setWindowTitle("IOS image upload")
-                self._upload_image_progress_dialog.show()
-                try:
-                    upload_thread = UploadFilesThread(
-                        self,
-                        cloud_settings=MainWindow.instance().cloudSettings(),
-                        files_to_upload=[(
-                            self._ios_routers[key]["image"],
-                            'images/' + os.path.relpath(self._ios_routers[key]["image"],
-                                                        self._main_window.settings().imagesDirPath())
-                        )]
-                    )
-                    upload_thread.completed.connect(self._imageUploadComplete)
-                    upload_thread.start()
-                except Exception as e:
-                    self._upload_image_progress_dialog.reject()
-                    log.error(e)
-                    QtWidgets.QMessageBox.critical(self, "IOS image upload", "Error uploading IOS image: {}".format(e))
 
             if ios_settings["platform"] == "c7200":
                 self._ios_routers[key]["midplane"] = "vxr"

@@ -23,10 +23,8 @@ from ..qt import QtCore, QtWidgets
 from ..ui.preferences_dialog_ui import Ui_PreferencesDialog
 from ..pages.server_preferences_page import ServerPreferencesPage
 from ..pages.general_preferences_page import GeneralPreferencesPage
-from ..pages.cloud_preferences_page import CloudPreferencesPage
 from ..pages.packet_capture_preferences_page import PacketCapturePreferencesPage
 from ..modules import MODULES
-from ..settings import ENABLE_CLOUD
 
 
 class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
@@ -61,8 +59,6 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             ServerPreferencesPage,
             PacketCapturePreferencesPage,
         ]
-        if ENABLE_CLOUD:
-            pages.append(CloudPreferencesPage)
 
         for page in pages:
             preferences_page = page(self)
