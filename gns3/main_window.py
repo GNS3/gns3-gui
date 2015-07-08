@@ -229,7 +229,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
-        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
         self.uiDownloadRemoteProject.triggered.connect(self._downloadRemoteProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
@@ -1667,17 +1666,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         progress_dialog = ProgressDialog(download_thread, "Download remote project", "Downloading project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
-
-    def _importProjectActionSlot(self):
-        dialog = ImportCloudProjectDialog(
-            self,
-            self.projectsDirPath(),
-            ImageManager.instance().getDirectory(),
-            self._cloud_settings
-        )
-
-        dialog.show()
-        dialog.exec_()
 
     def _setStyle(self, style):
 
