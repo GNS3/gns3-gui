@@ -56,7 +56,7 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology
-from .utils.download_project import DownloadProjectThread
+from .utils.download_project import DownloadProjectWorker
 from .cloud.utils import UploadProjectThread, ssh_client, DeleteInstanceThread
 from .cloud.rackspace_ctrl import get_provider
 from .cloud.exceptions import KeyPairExists
@@ -1131,7 +1131,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
 
-        #FIXME: do something with getting started dialog
+        # FIXME: do something with getting started dialog
         # self._gettingStartedActionSlot(auto=True)
 
         # start and connect to the local server
@@ -1662,8 +1662,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             MessageBox(self, "Download project", "Please stop the following nodes before downloading the project", nodes)
             return
 
-        download_thread = DownloadProjectThread(self, self._project, Servers.instance())
-        progress_dialog = ProgressDialog(download_thread, "Download remote project", "Downloading project files...", "Cancel", parent=self)
+        download_worker = DownloadProjectWorker(self, self._project, Servers.instance())
+        progress_dialog = ProgressDialog(download_worker, "Download remote project", "Downloading project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 

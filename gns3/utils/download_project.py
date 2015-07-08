@@ -25,7 +25,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class DownloadProjectThread(QtCore.QThread):
+class DownloadProjectWorker(QtCore.QObject):
 
     """
     Downloads project from cloud storage
@@ -39,6 +39,7 @@ class DownloadProjectThread(QtCore.QThread):
     file_list_received = QtCore.pyqtSignal()
 
     def __init__(self, parent, project, servers):
+        self._is_running = False
         self._project = project
         self._servers = servers
         self._files_to_download = []
@@ -48,14 +49,21 @@ class DownloadProjectThread(QtCore.QThread):
 
     def run(self):
         self.updated.emit(0)
+        self._is_running = True
 
         try:
-
+            if self._servers.vmServer():
+                self._project.get(self._servers.vmServer(), "/files", self._fileListReceived)
+                self._get_file_lists += 1
             for server in self._servers.remoteServers().values():
                 self._project.get(server, "/files", self._fileListReceived)
                 self._get_file_lists += 1
         except Exception as e:
             self.error.emit("Error importing project: {}".format(e), True)
+
+        if self._get_file_lists == 0:
+            self._is_running = False
+
 
     def _fileListReceived(self, result, error=False, server=None, **kwargs):
         self._get_file_lists -= 1
@@ -72,8 +80,14 @@ class DownloadProjectThread(QtCore.QThread):
 
         if self._get_file_lists <= 0:
             self._downloadNextFile()
+        else:
+            self._is_running = False
+            self.finished.emit()
 
     def _downloadNextFile(self):
+        if not self._is_running:
+            return
+
         try:
             file_to_download = self._files_to_download.pop()
         except IndexError:
@@ -115,12 +129,9 @@ class DownloadProjectThread(QtCore.QThread):
         except OSError as e:
             self.error.emit("Could not write file {}: {}".format(file_path, e), False)
 
-    def stop(self):
-        self.quit()
-
     def cancel(self):
         """
         Cancel this worker.
         """
 
-        self.stop()
+        self._is_running = False
