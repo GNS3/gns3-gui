@@ -144,16 +144,7 @@ class IOUDevice(VM):
                     params["private_config_content"] = base_config_content
             del additional_settings["private_config"]
 
-        # push the iourc file
-        module_settings = self._module.settings()
-        if module_settings["iourc_path"] and os.path.isfile(module_settings["iourc_path"]):
-            try:
-                with open(module_settings["iourc_path"], "rb") as f:
-                    params["iourc_content"] = f.read().decode("utf-8")
-            except OSError as e:
-                print("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
-            except UnicodeDecodeError as e:
-                print("Invalid IOURC file {}: {}".format(module_settings["iourc_path"], e))
+        params = self._addIourcContentToParams(params)
 
         params.update(additional_settings)
         self.httpPost("/iou/vms", self._setupCallback, body=params)
@@ -183,6 +174,37 @@ class IOUDevice(VM):
         # The image is missing on remote server
         if "md5sum" not in result or result["md5sum"] is None or len(result["md5sum"]) == 0:
             ImageManager.instance().addMissingImage(result["path"], self._server, "IOU")
+
+    def start(self):
+        """
+        Starts this VM instance.
+        """
+
+        if self.status() == Node.started:
+            log.debug("{} is already running".format(self.name()))
+            return
+
+        params = {}
+        params = self._addIourcContentToParams(params)
+
+        log.debug("{} is starting".format(self.name()))
+        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback, body=params)
+
+    def _addIourcContentToParams(self, params):
+        """
+        If an IOURC file exist push it when starting the IOU device
+        """
+        # push the iourc file
+        module_settings = self._module.settings()
+        if module_settings["iourc_path"] and os.path.isfile(module_settings["iourc_path"]):
+            try:
+                with open(module_settings["iourc_path"], "rb") as f:
+                    params["iourc_content"] = f.read().decode("utf-8")
+            except OSError as e:
+                print("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
+            except UnicodeDecodeError as e:
+                print("Invalid IOURC file {}: {}".format(module_settings["iourc_path"], e))
+        return params
 
     def update(self, new_settings):
         """
