@@ -84,7 +84,7 @@ class VMware(Module):
 
         if vmrun_path is None:
             return ""
-        return vmrun_path
+        return os.path.abspath(vmrun_path)
 
     @staticmethod
     def _determineHostType(self):

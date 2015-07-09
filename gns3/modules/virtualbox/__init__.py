@@ -83,7 +83,7 @@ class VirtualBox(Module):
 
         if vboxmanage_path is None:
             return ""
-        return vboxmanage_path
+        return os.path.abspath(vboxmanage_path)
 
     def _loadSettings(self):
         """

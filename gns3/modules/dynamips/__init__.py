@@ -124,7 +124,7 @@ class Dynamips(Module):
         if not os.path.exists(self._settings["dynamips_path"]):
             dynamips_path = shutil.which("dynamips")
             if dynamips_path:
-                self._settings["dynamips_path"] = dynamips_path
+                self._settings["dynamips_path"] = os.path.abspath(dynamips_path)
             else:
                 self._settings["dynamips_path"] = ""
 

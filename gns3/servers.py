@@ -93,7 +93,7 @@ class Servers():
 
         if local_server_path is None:
             return ""
-        return local_server_path
+        return os.path.abspath(local_server_path)
 
     @staticmethod
     def _findUbridge(self):
@@ -107,7 +107,7 @@ class Servers():
 
         if ubridge_path is None:
             return ""
-        return ubridge_path
+        return os.path.abspath(ubridge_path)
 
     def _handleSslErrors(self, reply, errorList):
         """

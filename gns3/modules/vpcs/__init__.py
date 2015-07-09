@@ -79,7 +79,7 @@ class VPCS(Module):
         if not os.path.exists(self._settings["vpcs_path"]):
             vpcs_path = shutil.which("vpcs")
             if vpcs_path:
-                self._settings["vpcs_path"] = vpcs_path
+                self._settings["vpcs_path"] = os.path.abspath(vpcs_path)
             else:
                 self._settings["vpcs_path"] = ""
 
