@@ -19,7 +19,8 @@ before_install:
   - sudo apt-get install qt5-default qttools5-dev-tools
   - sh scripts/prepare_travis.sh
 
-#notifications:
+notifications:
+  email: false
   #email:
   #  - julien@gns3.net
   #irc:
