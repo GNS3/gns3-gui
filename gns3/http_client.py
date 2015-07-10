@@ -152,6 +152,7 @@ class HTTPClient(QtCore.QObject):
 
     def setPort(self, port):
         self._port = port
+        self._http_port = port
 
     def protocol(self):
         """
@@ -320,21 +321,20 @@ class HTTPClient(QtCore.QObject):
                 opener = urllib.request.build_opener(auth_handler)
                 urllib.request.install_opener(opener)
 
-            response = urllib.request.urlopen(url, timeout=2)
+            response = urllib.request.urlopen(url, timeout=timeout)
             content_type = response.getheader("CONTENT-TYPE")
             if response.status == 200:
                 if content_type == "application/json":
                     content = response.read()
                     json_data = json.loads(content.decode("utf-8"))
-                    local_server = json_data.get("local", False)
                     return response.status, json_data
             else:
                 return response.status, None
         except urllib.error.HTTPError as e:
-            log.debug("Error during get on {}:{}: {}".format(self._host, self._port, e))
+            log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
             return e.code, None
         except (OSError, http.client.BadStatusLine, ValueError) as e:
-            log.debug("Error during get on {}:{}: {}".format(self._host, self._port, e))
+            log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
             return 0, None
 
     def get(self, path, callback, **kwargs):

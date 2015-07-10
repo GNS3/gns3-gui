@@ -199,11 +199,13 @@ class WaitForVMWorker(QtCore.QObject):
                 if not self._is_running:
                     return
 
+                original_port = vm_server.port()
+                vm_server.setPort(port)
                 vm_server.setHost(ip_address)
                 # ask the server all a list of all its interfaces along with IP addresses
                 status, json_data = vm_server.getSynchronous("interfaces", timeout=120)
                 if status != 200:
-                    msg = "Server has replied with status code {} when retrieving the network interfaces".format(status)
+                    msg = "Server {} has replied with status code {} when retrieving the network interfaces".format(vm_server.url(), status)
                     log.error(msg)
                     self.error.emit(msg, True)
                     return
@@ -214,6 +216,7 @@ class WaitForVMWorker(QtCore.QObject):
                     if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
                         if "ip_address" in interface:
                             vm_server.setHost(interface["ip_address"])
+                            vm_server.setPort(original_port)
                             log.info("GNS3 VM IP address set to {}".format(interface["ip_address"]))
                             hostonly_ip_address_found = True
                             break
