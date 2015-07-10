@@ -595,6 +595,11 @@ class HTTPClient(QtCore.QObject):
         """
 
         if response.error() == QtNetwork.QNetworkReply.NoError:
+            error_code = response.error()
+
+            if error_code >= 300:
+                return
+
             content = bytes(response.readAll())
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             if content_type == "application/json":
