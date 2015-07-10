@@ -156,11 +156,6 @@ class Servers():
         if not os.path.exists(local_server_settings["ubridge_path"]):
             local_server_settings["ubridge_path"] = self._findUbridge(self)
 
-        if "user" not in local_server_settings or len(local_server_settings["user"]) == 0:
-            local_server_settings["user"] = self._passwordGenerate()
-            local_server_settings["password"] = self._passwordGenerate()
-            self._saveSettings()
-
         for remote_server in self._settings["remote_servers"]:
             self._addRemoteServer(remote_server.get("protocol", "http"),
                                   remote_server["host"],
@@ -170,6 +165,12 @@ class Servers():
                                   ssh_key=remote_server.get("ssh_key", None),
                                   ssh_port=remote_server.get("ssh_port", None),
                                   accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
+
+        if "user" not in local_server_settings or len(local_server_settings["user"]) == 0:
+            local_server_settings["user"] = self._passwordGenerate()
+            local_server_settings["password"] = self._passwordGenerate()
+            #WARNING: This operation should be a the end of the method otherwise you save a partial config
+            self._saveSettings()
 
     def _saveSettings(self):
         """

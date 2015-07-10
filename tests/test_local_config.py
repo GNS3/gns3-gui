@@ -53,13 +53,26 @@ def test_loadSectionSettingsPartialConfig(local_config):
         "Test": {"a": "b"},
         "Test2": {"a": "c"},
         "Test3": {"a": {"b": 1}},
-        "Servers": {"local_server": {"user": "root"}}
+        "Servers": {
+            "local_server": {"user": "root"},
+            "remote_servers": [
+                {"z": "x"}
+            ]
+        }
     }
 
     assert local_config.loadSectionSettings("Test", {}) == {"a": "b"}
     assert local_config.loadSectionSettings("Test2", {"a": "b"}) == {"a": "c"}
     assert local_config.loadSectionSettings("Test3", {"a": {"b": 1}}) == {"a": {"b": 1}}
-    assert local_config.loadSectionSettings("Servers", {"local_server": {"user": "", "password": ""}}) == {"local_server": {"user": "root", "password": ""}}
+    assert local_config.loadSectionSettings("Servers", {
+        "local_server": {"user": "", "password": ""},
+        "remote_servers": []
+    }) == {
+        "local_server": {"user": "root", "password": ""},
+        "remote_servers": [
+            {"z": "x"}
+        ]
+    }
 
 
 def test_readConfig(config_file, local_config):

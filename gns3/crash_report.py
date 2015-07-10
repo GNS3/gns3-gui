@@ -29,7 +29,6 @@ except ImportError:
 
 from .utils.get_resource import get_resource
 from .version import __version__
-from .servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
@@ -75,6 +74,8 @@ class CrashReport:
         if os.path.exists(".git"):
             log.warning("A .git directory exist crash report is turn off for developers")
             return
+        from .servers import Servers
+
         local_server = Servers.instance().localServerSettings()
         if local_server["report_errors"]:
             if self._client is None:

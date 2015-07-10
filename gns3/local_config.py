@@ -275,9 +275,7 @@ class LocalConfig(QtCore.QObject):
 
         settings = _copySettings(settings, default_settings)
 
-        if section not in self._settings:
-            self._settings[section] = {}
-        self._settings[section].update(settings)
+        self._settings[section] = settings
         return copy.deepcopy(settings)
 
     def saveSectionSettings(self, section, settings):
