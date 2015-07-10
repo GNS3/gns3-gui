@@ -61,7 +61,7 @@ class LocalServerConfig:
         """
 
         try:
-            self._config.read(self._config_file)
+            self._config.read(self._config_file, encoding="utf-8")
         except (OSError, configparser.Error) as e:
             log.error("Could not read the local server configuration {}: {}".format(self._config_file, e))
 
