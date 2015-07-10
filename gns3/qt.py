@@ -174,6 +174,14 @@ elif DEFAULT_BINDING == 'PyQt4':
 
     QtWidgets.QFileDialog = QFileDialog
 
+    from PyQt4.QtGui import QComboBox as OldComboBox
+
+    class QComboBox(OldComboBox):
+        def currentData(self):
+            return self.itemData(self.currentIndex())
+
+    QtWidgets.QComboBox = QComboBox
+
     # QStandardPaths replace QDesktopServices in QT5
     class QStandardPaths:
         DocumentsLocation = QtGui.QDesktopServices.DocumentsLocation
