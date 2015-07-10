@@ -157,15 +157,15 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
             dialog = PreferencesDialog(self)
             if self.uiAddIOSRouterCheckBox.isChecked():
-                self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit()
+                self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
             if self.uiAddIOUDeviceCheckBox.isChecked():
-                self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit()
+                self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
             if self.uiAddQemuVMcheckBox.isChecked():
-                self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit()
+                self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
             if self.uiAddVirtualBoxVMcheckBox.isChecked():
-                self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit()
+                self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
             if self.uiAddVMwareVMcheckBox.isChecked():
-                self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit()
+                self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
             dialog.exec_()
         return True
 
