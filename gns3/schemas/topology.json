@@ -224,7 +224,7 @@
             "properties": {
                 "protocol": { "enum": ["ssh"] },
                 "cloud": { "type": "boolean" },
-                "vm": { "type": "boolean" }, 
+                "vm": { "type": "boolean" },
                 "host": { "$ref": "#/definitions/mandatory_string" },
                 "id": { "$ref": "#/definitions/numeric_id" },
                 "local": { "type": "boolean" },
@@ -598,7 +598,6 @@
                 "console",
                 "image",
                 "mac_addr",
-                "nvram",
                 "startup_config"
             ],
             "additionalProperties": false
