@@ -51,6 +51,7 @@
                 "y": {"type": "number" },
                 "z": { "type": "number" },
                 "color": { "$ref": "#/definitions/color" },
+                "border_width": { "type": "number" },
                 "border_color": { "$ref": "#/definitions/color" },
                 "border_style": {
                     "type": "integer",
@@ -75,6 +76,7 @@
                     "minimum": 0,
                     "maximum": 6
                 },
+                "border_width": { "type": "number" },
                 "height": { "type": "number" },
                 "width": {"type": "number" },
                 "x": { "type": "number" },
@@ -84,7 +86,6 @@
                 "border_color": { "$ref": "#/definitions/color" }
             },
             "required": [
-                "border_style",
                 "height",
                 "width",
                 "x",
@@ -158,7 +159,7 @@
                 },
                 "stub": { "type": "boolean" },
                 "type": {
-                    "enum": ["access"]
+                    "enum": ["access", "dot1q", "qinq"]
                 }
             },
             "required": [
