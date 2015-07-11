@@ -545,6 +545,7 @@ class Topology:
 
         errors = getTopologyValidationErrors(topology)
         if errors:
+            log.error(errors)
             print(errors)
             print(VALIDATION_ERROR_MESSAGE)
             if hasattr(sys, '_called_from_test'):
@@ -593,6 +594,7 @@ class Topology:
 
         errors = getTopologyValidationErrors(json_topology)
         if errors:
+            log.error(errors)
             print(errors)
             print(VALIDATION_ERROR_MESSAGE)
             if hasattr(sys, '_called_from_test'):
