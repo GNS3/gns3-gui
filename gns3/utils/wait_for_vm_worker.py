@@ -20,6 +20,7 @@ Thread to wait for the GNS3 VM.
 """
 
 import os
+import time
 import socket
 import subprocess
 
@@ -104,6 +105,19 @@ class WaitForVMWorker(QtCore.QObject):
                 if name.startswith("Forwarding") and value.strip('"').startswith("GNS3VM"):
                     return True
         return False
+
+    def _getInterfaces(self, vm_server, retry=0):
+        """
+        :param vm_server: The instance
+        :param retry: How many time we need to retry if server doesn't answer wait 1 second between test
+        """
+        while retry >= 0:
+            status, json_data = vm_server.getSynchronous("interfaces", timeout=1)
+            if status == 200:
+                break
+            time.sleep(1)
+            retry -= 1
+        return status, json_data
 
     def run(self):
         """
@@ -203,7 +217,7 @@ class WaitForVMWorker(QtCore.QObject):
                 vm_server.setPort(port)
                 vm_server.setHost(ip_address)
                 # ask the server all a list of all its interfaces along with IP addresses
-                status, json_data = vm_server.getSynchronous("interfaces", timeout=120)
+                status, json_data = self._getInterfaces(vm_server, retry=120)
                 if status != 200:
                     msg = "Server {} has replied with status code {} when retrieving the network interfaces".format(vm_server.url(), status)
                     log.error(msg)
