@@ -807,6 +807,7 @@ class Topology:
             errors = "\n".join(topology_file_errors)
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
         log.debug("Finish loading topology")
+        self._autoStart(topology)
 
     def _load_images(self, topology):
 
@@ -925,7 +926,8 @@ class Topology:
         """
         If everything is created auto start the topology
         """
-        if (len(topology["topology"].get("links", [])) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes)):
+        if "nodes" not in topology or ((len(topology["topology"].get("links", [])) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes))):
+            log.info("Topology initialized")
             # Auto start
             if self._auto_start:
                 log.info("Auto start nodes")
