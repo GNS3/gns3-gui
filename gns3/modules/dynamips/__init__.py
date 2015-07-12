@@ -19,7 +19,6 @@
 Dynamips module implementation.
 """
 
-import sys
 import os
 import shutil
 import hashlib
@@ -168,8 +167,9 @@ class Dynamips(Module):
                 router_settings = IOS_ROUTER_SETTINGS.copy()
                 router_settings.update(router)
                 # for backward compatibility before version 1.4
-                router_settings["symbol"] = router_settings.get("default_symbol", router_settings["symbol"])
-                router_settings["symbol"] = router_settings["symbol"][:-11] + ".svg" if router_settings["symbol"].endswith("normal.svg") else router_settings["symbol"]
+                if "symbol" not in router_settings:
+                    router_settings["symbol"] = router_settings["default_symbol"]
+                    router_settings["symbol"] = router_settings["symbol"][:-11] + ".svg" if router_settings["symbol"].endswith("normal.svg") else router_settings["symbol"]
                 self._ios_routers[key] = router_settings
 
     def _saveIOSRouters(self):

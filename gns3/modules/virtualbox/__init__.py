@@ -128,8 +128,9 @@ class VirtualBox(Module):
                 vm_settings = VBOX_VM_SETTINGS.copy()
                 vm_settings.update(vm)
                 # for backward compatibility before version 1.4
-                vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
-                vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
+                if "symbol" not in vm_settings:
+                    vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
+                    vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
                 self._virtualbox_vms[key] = vm_settings
 
     def _saveVirtualBoxVMs(self):

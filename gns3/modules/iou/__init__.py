@@ -106,8 +106,9 @@ class IOU(Module):
                 device_settings = IOU_DEVICE_SETTINGS.copy()
                 device_settings.update(device)
                 # for backward compatibility before version 1.4
-                device_settings["symbol"] = device_settings.get("default_symbol", device_settings["symbol"])
-                device_settings["symbol"] = device_settings["symbol"][:-11] + ".svg" if device_settings["symbol"].endswith("normal.svg") else device_settings["symbol"]
+                if "symbol" not in device_settings:
+                    device_settings["symbol"] = device_settings["default_symbol"]
+                    device_settings["symbol"] = device_settings["symbol"][:-11] + ".svg" if device_settings["symbol"].endswith("normal.svg") else device_settings["symbol"]
                 device_settings["startup_config"] = device_settings.get("initial_config", device_settings["startup_config"])
                 self._iou_devices[key] = device_settings
 
