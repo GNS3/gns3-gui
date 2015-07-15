@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'configuration_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/configuration_dialog.ui'
 #
-# Created: Wed May  6 14:31:52 2015
+# Created: Wed Jul 15 12:22:29 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_configurationDialog:
-
+class Ui_configurationDialog(object):
     def setupUi(self, configurationDialog):
         configurationDialog.setObjectName("configurationDialog")
         configurationDialog.resize(585, 454)
@@ -57,7 +54,7 @@ class Ui_configurationDialog:
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(configurationDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 
@@ -66,7 +63,7 @@ class Ui_configurationDialog:
         QtCore.QMetaObject.connectSlotsByName(configurationDialog)
 
     def retranslateUi(self, configurationDialog):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         configurationDialog.setWindowTitle(_translate("configurationDialog", "Configuration"))
         self.uiTitleLabel.setText(_translate("configurationDialog", "Configuration"))
 

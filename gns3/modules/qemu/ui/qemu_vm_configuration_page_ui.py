@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Wed Jun 24 22:00:03 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:34 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
@@ -312,7 +311,7 @@ class Ui_QemuVMConfigPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(QemuVMConfigPageWidget)
 
     def retranslateUi(self, QemuVMConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         QemuVMConfigPageWidget.setWindowTitle(_translate("QemuVMConfigPageWidget", "QEMU VM configuration"))
         self.uiSymbolLabel.setText(_translate("QemuVMConfigPageWidget", "Symbol:"))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:"))

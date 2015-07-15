@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'setup_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created: Wed Jul  8 15:46:20 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:31 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_SetupWizard(object):
     def setupUi(self, SetupWizard):
@@ -89,7 +88,7 @@ class Ui_SetupWizard(object):
         QtCore.QMetaObject.connectSlotsByName(SetupWizard)
 
     def retranslateUi(self, SetupWizard):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         SetupWizard.setWindowTitle(_translate("SetupWizard", "Setup Wizard"))
         self.uiServerWizardPage.setTitle(_translate("SetupWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X."))

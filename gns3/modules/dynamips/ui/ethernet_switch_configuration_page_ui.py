@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ethernet_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ethernet_switch_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:55 2015
+# Created: Wed Jul 15 12:22:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_ethernetSwitchConfigPageWidget:
-
+class Ui_ethernetSwitchConfigPageWidget(object):
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName("ethernetSwitchConfigPageWidget")
         ethernetSwitchConfigPageWidget.resize(397, 315)
@@ -111,7 +108,7 @@ class Ui_ethernetSwitchConfigPageWidget:
         ethernetSwitchConfigPageWidget.setTabOrder(self.uiDeletePushButton, self.uiPortsTreeWidget)
 
     def retranslateUi(self, ethernetSwitchConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         ethernetSwitchConfigPageWidget.setWindowTitle(_translate("ethernetSwitchConfigPageWidget", "Ethernet switch configuration"))
         self.uiGeneralGroupBox.setTitle(_translate("ethernetSwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Name:"))
@@ -128,3 +125,4 @@ class Ui_ethernetSwitchConfigPageWidget:
         self.uiPortTypeComboBox.setItemText(2, _translate("ethernetSwitchConfigPageWidget", "qinq"))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete"))
+

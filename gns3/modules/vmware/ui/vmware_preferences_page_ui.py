@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vmware_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created: Thu May 21 21:37:50 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:35 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_VMwarePreferencesPageWidget:
-
+class Ui_VMwarePreferencesPageWidget(object):
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
         VMwarePreferencesPageWidget.resize(454, 535)
@@ -104,7 +101,7 @@ class Ui_VMwarePreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(VMwarePreferencesPageWidget)
 
     def retranslateUi(self, VMwarePreferencesPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         VMwarePreferencesPageWidget.setWindowTitle(_translate("VMwarePreferencesPageWidget", "VMware"))
         self.uiUseLocalServercheckBox.setText(_translate("VMwarePreferencesPageWidget", "Use the local server"))
         self.uiVmrunPathLabel.setText(_translate("VMwarePreferencesPageWidget", "Path to vmrun:"))
@@ -117,3 +114,4 @@ class Ui_VMwarePreferencesPageWidget:
         self.uiVMnetEndRangeSpinBox.setPrefix(_translate("VMwarePreferencesPageWidget", "vmnet"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
+

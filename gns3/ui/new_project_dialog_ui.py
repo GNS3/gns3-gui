@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'new_project_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_project_dialog.ui'
 #
-# Created: Wed Jul  8 17:36:12 2015
+# Created: Wed Jul 15 12:22:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_NewProjectDialog(object):
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewProjectDialog.resize(479, 192)
+        NewProjectDialog.resize(577, 188)
         NewProjectDialog.setModal(True)
         self.gridLayout_2 = QtWidgets.QGridLayout(NewProjectDialog)
         self.gridLayout_2.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
@@ -67,7 +66,7 @@ class Ui_NewProjectDialog(object):
         QtCore.QMetaObject.connectSlotsByName(NewProjectDialog)
 
     def retranslateUi(self, NewProjectDialog):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         NewProjectDialog.setWindowTitle(_translate("NewProjectDialog", "New project"))
         self.uiOpenProjectPushButton.setText(_translate("NewProjectDialog", "&Open a project"))
         self.uiRecentProjectsPushButton.setText(_translate("NewProjectDialog", "&Recent projects..."))

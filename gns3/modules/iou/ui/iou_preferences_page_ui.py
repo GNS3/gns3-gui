@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'iou_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Wed May  6 14:31:57 2015
+# Created: Wed Jul 15 12:22:34 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_IOUPreferencesPageWidget:
-
+class Ui_IOUPreferencesPageWidget(object):
     def setupUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setObjectName("IOUPreferencesPageWidget")
         IOUPreferencesPageWidget.resize(400, 300)
@@ -96,7 +93,7 @@ class Ui_IOUPreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(IOUPreferencesPageWidget)
 
     def retranslateUi(self, IOUPreferencesPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         IOUPreferencesPageWidget.setWindowTitle(_translate("IOUPreferencesPageWidget", "IOS on UNIX"))
         self.uiLocalServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Local server"))
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
@@ -108,3 +105,4 @@ class Ui_IOUPreferencesPageWidget:
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults"))
+

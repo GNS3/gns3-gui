@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'preferences_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created: Wed May  6 14:31:54 2015
+# Created: Wed Jul 15 12:22:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_PreferencesDialog:
-
+class Ui_PreferencesDialog(object):
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")
         PreferencesDialog.resize(590, 534)
@@ -26,7 +23,7 @@ class Ui_PreferencesDialog:
         self.gridlayout.setObjectName("gridlayout")
         self.uiButtonBox = QtWidgets.QDialogButtonBox(PreferencesDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setCenterButtons(False)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 2, 1, 1, 2)
@@ -89,7 +86,7 @@ class Ui_PreferencesDialog:
         QtCore.QMetaObject.connectSlotsByName(PreferencesDialog)
 
     def retranslateUi(self, PreferencesDialog):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         PreferencesDialog.setWindowTitle(_translate("PreferencesDialog", "Preferences"))
 
 from . import resources_rc

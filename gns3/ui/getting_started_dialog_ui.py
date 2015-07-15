@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'getting_started_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/getting_started_dialog.ui'
 #
-# Created: Wed May  6 14:31:53 2015
+# Created: Wed Jul 15 12:22:29 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_GettingStartedDialog:
-
+class Ui_GettingStartedDialog(object):
     def setupUi(self, GettingStartedDialog):
         GettingStartedDialog.setObjectName("GettingStartedDialog")
         GettingStartedDialog.resize(778, 593)
@@ -47,9 +44,8 @@ class Ui_GettingStartedDialog:
         QtCore.QMetaObject.connectSlotsByName(GettingStartedDialog)
 
     def retranslateUi(self, GettingStartedDialog):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         GettingStartedDialog.setWindowTitle(_translate("GettingStartedDialog", "Getting started"))
         self.uiCheckBox.setText(_translate("GettingStartedDialog", "Don\'t show this again"))
 
-import gns3.qt
-from gns3.qt import QtWebKitWidgets
+from PyQt5 import QtWebKitWidgets

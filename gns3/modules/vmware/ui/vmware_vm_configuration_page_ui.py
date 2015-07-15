@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vmware_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created: Tue Jun 23 21:51:01 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:35 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_VMwareVMConfigPageWidget(object):
     def setupUi(self, VMwareVMConfigPageWidget):
@@ -128,7 +127,7 @@ class Ui_VMwareVMConfigPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(VMwareVMConfigPageWidget)
 
     def retranslateUi(self, VMwareVMConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         VMwareVMConfigPageWidget.setWindowTitle(_translate("VMwareVMConfigPageWidget", "VMware VM configuration"))
         self.uiACPIShutdownCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Enable ACPI shutdown"))
         self.uiSymbolLabel.setText(_translate("VMwareVMConfigPageWidget", "Symbol:"))

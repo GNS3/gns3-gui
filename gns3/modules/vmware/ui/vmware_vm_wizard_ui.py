@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vmware_vm_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
 #
-# Created: Sun Jun 14 14:54:00 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:36 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_VMwareVMWizard(object):
     def setupUi(self, VMwareVMWizard):
@@ -76,7 +75,7 @@ class Ui_VMwareVMWizard(object):
         QtCore.QMetaObject.connectSlotsByName(VMwareVMWizard)
 
     def retranslateUi(self, VMwareVMWizard):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         VMwareVMWizard.setWindowTitle(_translate("VMwareVMWizard", "New VMware VM template"))
         self.uiServerWizardPage.setTitle(_translate("VMwareVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM."))

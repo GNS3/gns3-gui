@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vpcs_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Mon Jun 22 17:45:21 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:36 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_VPCSPreferencesPageWidget(object):
     def setupUi(self, VPCSPreferencesPageWidget):
@@ -107,7 +106,7 @@ class Ui_VPCSPreferencesPageWidget(object):
         QtCore.QMetaObject.connectSlotsByName(VPCSPreferencesPageWidget)
 
     def retranslateUi(self, VPCSPreferencesPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         VPCSPreferencesPageWidget.setWindowTitle(_translate("VPCSPreferencesPageWidget", "VPCS"))
         self.uiUseLocalServercheckBox.setText(_translate("VPCSPreferencesPageWidget", "Use the local server"))
         self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS executable:"))

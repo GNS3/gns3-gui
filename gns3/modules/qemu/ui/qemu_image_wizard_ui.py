@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qemu_image_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_image_wizard.ui'
 #
-# Created: Tue Jun 30 17:16:24 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:34 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_QemuImageWizard(object):
     def setupUi(self, QemuImageWizard):
@@ -310,7 +309,7 @@ class Ui_QemuImageWizard(object):
         QtCore.QMetaObject.connectSlotsByName(QemuImageWizard)
 
     def retranslateUi(self, QemuImageWizard):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         QemuImageWizard.setWindowTitle(_translate("QemuImageWizard", "Qemu image creator"))
         self.uiBinaryWizardPage.setTitle(_translate("QemuImageWizard", "Binary and format"))
         self.uiBinaryWizardPage.setSubTitle(_translate("QemuImageWizard", "Please select a qemu-img binary, and the format for your new image."))

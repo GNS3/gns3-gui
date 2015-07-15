@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qemu_vm_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Tue Jun 30 17:19:55 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:34 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
@@ -274,7 +273,7 @@ class Ui_QemuVMWizard(object):
         QemuVMWizard.setTabOrder(self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton)
 
     def retranslateUi(self, QemuVMWizard):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         QemuVMWizard.setWindowTitle(_translate("QemuVMWizard", "New QEMU VM template"))
         self.uiServerWizardPage.setTitle(_translate("QemuVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM."))

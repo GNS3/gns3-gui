@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'cloud_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created: Tue May 26 09:46:14 2015
+# Created: Wed Jul 15 12:22:31 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_cloudConfigPageWidget:
-
+class Ui_cloudConfigPageWidget(object):
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
         cloudConfigPageWidget.resize(653, 478)
@@ -409,7 +406,7 @@ class Ui_cloudConfigPageWidget:
         QtCore.QMetaObject.connectSlotsByName(cloudConfigPageWidget)
 
     def retranslateUi(self, cloudConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud configuration"))
         self.uiGenericEthernetGroupBox.setTitle(_translate("cloudConfigPageWidget", "Generic Ethernet NIO (Administrator or root access required)"))
         self.uiAddGenericEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
@@ -459,3 +456,4 @@ class Ui_cloudConfigPageWidget:
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIONullTab), _translate("cloudConfigPageWidget", "NULL"))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
+

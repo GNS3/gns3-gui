@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'atm_bridge_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/atm_bridge_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:55 2015
+# Created: Wed Jul 15 12:22:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_atmBridgeConfigPageWidget:
-
+class Ui_atmBridgeConfigPageWidget(object):
     def setupUi(self, atmBridgeConfigPageWidget):
         atmBridgeConfigPageWidget.setObjectName("atmBridgeConfigPageWidget")
         atmBridgeConfigPageWidget.resize(432, 358)
@@ -139,7 +136,7 @@ class Ui_atmBridgeConfigPageWidget:
         atmBridgeConfigPageWidget.setTabOrder(self.uiAddPushButton, self.uiDeletePushButton)
 
     def retranslateUi(self, atmBridgeConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         atmBridgeConfigPageWidget.setWindowTitle(_translate("atmBridgeConfigPageWidget", "ATM Bridge"))
         self.uiMappingGroupBox.setTitle(_translate("atmBridgeConfigPageWidget", "Mapping"))
         self.uiMappingTreeWidget.headerItem().setText(0, _translate("atmBridgeConfigPageWidget", "Ethernet Port"))
@@ -154,3 +151,4 @@ class Ui_atmBridgeConfigPageWidget:
         self.uiDeletePushButton.setText(_translate("atmBridgeConfigPageWidget", "&Delete"))
         self.uiGeneralGroupBox.setTitle(_translate("atmBridgeConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("atmBridgeConfigPageWidget", "Name:"))
+

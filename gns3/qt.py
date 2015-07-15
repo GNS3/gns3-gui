@@ -78,6 +78,7 @@ QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
 from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 
+
 class QFileDialog(OldFileDialog):
 
     @staticmethod
@@ -110,8 +111,6 @@ class QFileDialog(OldFileDialog):
 
 QtWidgets.QFileDialog = QFileDialog
 
-def translate(*args):
-    return QtCore.QCoreApplication.translate(*args)
 
 
 # If we run from a test we replace the signal by a synchronous version

@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'packet_capture_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Wed May  6 14:31:54 2015
+# Created: Wed Jul 15 12:22:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_PacketCapturePreferencesPageWidget:
-
+class Ui_PacketCapturePreferencesPageWidget(object):
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName("PacketCapturePreferencesPageWidget")
         PacketCapturePreferencesPageWidget.resize(400, 250)
@@ -67,7 +64,7 @@ class Ui_PacketCapturePreferencesPageWidget:
         QtCore.QMetaObject.connectSlotsByName(PacketCapturePreferencesPageWidget)
 
     def retranslateUi(self, PacketCapturePreferencesPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         PacketCapturePreferencesPageWidget.setWindowTitle(_translate("PacketCapturePreferencesPageWidget", "Packet capture"))
         self.uiSettingsGroupBox.setTitle(_translate("PacketCapturePreferencesPageWidget", "Settings"))
         self.uiCaptureAnalyzerCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Packet capture analyzer command:"))
@@ -77,3 +74,4 @@ class Ui_PacketCapturePreferencesPageWidget:
         self.uiPreconfiguredCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Preconfigured packet capture reader commands:"))
         self.uiPreconfiguredCaptureReaderCommandPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "&Set"))
         self.uiRestoreDefaultsPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "Restore defaults"))
+

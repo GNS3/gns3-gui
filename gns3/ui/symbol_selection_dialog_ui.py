@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'symbol_selection_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/symbol_selection_dialog.ui'
 #
-# Created: Sun Jun 21 16:11:42 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Wed Jul 15 12:22:31 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_SymbolSelectionDialog(object):
     def setupUi(self, SymbolSelectionDialog):
@@ -63,7 +62,7 @@ class Ui_SymbolSelectionDialog(object):
         QtCore.QMetaObject.connectSlotsByName(SymbolSelectionDialog)
 
     def retranslateUi(self, SymbolSelectionDialog):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         SymbolSelectionDialog.setWindowTitle(_translate("SymbolSelectionDialog", "Symbol selection"))
         self.groupBox.setTitle(_translate("SymbolSelectionDialog", "Custom symbol"))
         self.uiSymbolLabel.setText(_translate("SymbolSelectionDialog", "Path:"))

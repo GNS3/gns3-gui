@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'atm_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/atm_switch_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:55 2015
+# Created: Wed Jul 15 12:22:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_atmSwitchConfigPageWidget:
-
+class Ui_atmSwitchConfigPageWidget(object):
     def setupUi(self, atmSwitchConfigPageWidget):
         atmSwitchConfigPageWidget.setObjectName("atmSwitchConfigPageWidget")
         atmSwitchConfigPageWidget.resize(459, 419)
@@ -170,7 +167,7 @@ class Ui_atmSwitchConfigPageWidget:
         atmSwitchConfigPageWidget.setTabOrder(self.uiAddPushButton, self.uiDeletePushButton)
 
     def retranslateUi(self, atmSwitchConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         atmSwitchConfigPageWidget.setWindowTitle(_translate("atmSwitchConfigPageWidget", "ATM Switch"))
         self.uiGeneralGroupBox.setTitle(_translate("atmSwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("atmSwitchConfigPageWidget", "Name:"))
@@ -188,3 +185,4 @@ class Ui_atmSwitchConfigPageWidget:
         self.uiDestinationPortLabel.setText(_translate("atmSwitchConfigPageWidget", "Port:"))
         self.uiDestinationVPILabel.setText(_translate("atmSwitchConfigPageWidget", "VPI:"))
         self.uiDestinationVCILabel.setText(_translate("atmSwitchConfigPageWidget", "VCI:"))
+

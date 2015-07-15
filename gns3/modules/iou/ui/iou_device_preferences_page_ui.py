@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'iou_device_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Wed May  6 14:31:56 2015
+# Created: Wed Jul 15 12:22:33 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_IOUDevicePreferencesPageWidget:
-
+class Ui_IOUDevicePreferencesPageWidget(object):
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName("IOUDevicePreferencesPageWidget")
         IOUDevicePreferencesPageWidget.resize(505, 350)
@@ -69,7 +66,7 @@ class Ui_IOUDevicePreferencesPageWidget:
         IOUDevicePreferencesPageWidget.setTabOrder(self.uiNewIOUDevicePushButton, self.uiDeleteIOUDevicePushButton)
 
     def retranslateUi(self, IOUDevicePreferencesPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         IOUDevicePreferencesPageWidget.setWindowTitle(_translate("IOUDevicePreferencesPageWidget", "IOU Devices"))
         IOUDevicePreferencesPageWidget.setAccessibleName(_translate("IOUDevicePreferencesPageWidget", "IOU Device templates"))
         self.uiNewIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&New"))
@@ -77,3 +74,4 @@ class Ui_IOUDevicePreferencesPageWidget:
         self.uiDeleteIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&Delete"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "1"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(1, _translate("IOUDevicePreferencesPageWidget", "2"))
+

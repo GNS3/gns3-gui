@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'frame_relay_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/frame_relay_switch_configuration_page.ui'
 #
-# Created: Wed May  6 14:31:56 2015
+# Created: Wed Jul 15 12:22:32 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-
-class Ui_frameRelaySwitchConfigPageWidget:
-
+class Ui_frameRelaySwitchConfigPageWidget(object):
     def setupUi(self, frameRelaySwitchConfigPageWidget):
         frameRelaySwitchConfigPageWidget.setObjectName("frameRelaySwitchConfigPageWidget")
         frameRelaySwitchConfigPageWidget.resize(499, 405)
@@ -136,7 +133,7 @@ class Ui_frameRelaySwitchConfigPageWidget:
         frameRelaySwitchConfigPageWidget.setTabOrder(self.uiAddPushButton, self.uiDeletePushButton)
 
     def retranslateUi(self, frameRelaySwitchConfigPageWidget):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         frameRelaySwitchConfigPageWidget.setWindowTitle(_translate("frameRelaySwitchConfigPageWidget", "Frame Relay Switch"))
         self.uiGeneralGroupBox.setTitle(_translate("frameRelaySwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("frameRelaySwitchConfigPageWidget", "Name:"))
@@ -151,3 +148,4 @@ class Ui_frameRelaySwitchConfigPageWidget:
         self.uiDestinationDLCILabel.setText(_translate("frameRelaySwitchConfigPageWidget", "DLCI:"))
         self.uiAddPushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Delete"))
+

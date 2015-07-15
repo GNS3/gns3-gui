@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main_window.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Wed Jul  8 19:15:31 2015
+# Created: Wed Jul 15 12:22:30 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
-import gns3.qt
-from gns3.qt import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -367,10 +366,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -508,7 +507,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.uiConsoleTextEdit, self.uiTopologySummaryTreeWidget)
 
     def retranslateUi(self, MainWindow):
-        _translate = gns3.qt.translate
+        _translate = QtCore.QCoreApplication.translate
         self.uiEditMenu.setTitle(_translate("MainWindow", "&Edit"))
         self.uiFileMenu.setTitle(_translate("MainWindow", "&File"))
         self.uiHelpMenu.setTitle(_translate("MainWindow", "&Help"))
@@ -667,8 +666,8 @@ class Ui_MainWindow(object):
         self.uiQemuImgWizardAction.setText(_translate("MainWindow", "Qemu image wizard"))
         self.uiSetupWizard.setText(_translate("MainWindow", "&Setup Wizard"))
 
-from ..graphics_view import GraphicsView
-from ..topology_summary_view import TopologySummaryView
 from ..console_view import ConsoleView
 from ..nodes_view import NodesView
+from ..graphics_view import GraphicsView
+from ..topology_summary_view import TopologySummaryView
 from . import resources_rc
