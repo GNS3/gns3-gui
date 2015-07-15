@@ -742,6 +742,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             change_symbol_action.triggered.connect(self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "vmDir"), items)):
             # Action: Show in file manager
             show_in_file_manager_action = QtWidgets.QAction("Show in file manager", menu)
             show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/open.svg'))
@@ -959,7 +960,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "vmDir") and item.node().initialized():
                 node = item.node()
                 vm_dir = node.vmDir()
                 if vm_dir is None:
