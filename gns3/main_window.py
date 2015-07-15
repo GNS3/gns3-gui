@@ -97,6 +97,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._connections()
         self._ignore_unsaved_state = False
         self._max_recent_files = 5
+        self._soft_exit = True
         self._recent_file_actions = []
         self._start_time = time.time()
         local_config = LocalConfig.instance()
@@ -182,6 +183,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings.update(new_settings)
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
+    def setSoftExit(self, softExit):
+        """If True warn user before exiting app if unsaved data"""
+        self._soft_exit = softExit
 
     def _connections(self):
         """
@@ -998,7 +1003,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self._project.closed() and not servers.localServerIsRunning():
             event.accept()
             self.uiConsoleTextEdit.closeIO()
-        elif self.checkForUnsavedChanges():
+        elif not self._soft_exit or self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
             if servers.localServerIsRunning():
                 self._project.close(local_server_shutdown=True)

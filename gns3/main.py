@@ -248,14 +248,16 @@ def main():
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
 
+    mainwindow = MainWindow(options.project)
+
     # Manage Ctrl + C or kill command
     def sigint_handler(*args):
         log.info("Signal received exiting the application")
+        mainwindow.setSoftExit(False)
         app.closeAllWindows()
     signal.signal(signal.SIGINT, sigint_handler)
     signal.signal(signal.SIGTERM, sigint_handler)
 
-    mainwindow = MainWindow(options.project)
     mainwindow.show()
     exit_code = app.exec_()
     delattr(MainWindow, "_instance")
