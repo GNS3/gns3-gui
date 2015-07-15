@@ -289,6 +289,7 @@ class HTTPClient(QtCore.QObject):
 
         :returns: boolean
         """
+
         status, json_data = self.getSynchronous("version", timeout=2)
         if json_data is None or status != 200:
             return False
@@ -301,6 +302,7 @@ class HTTPClient(QtCore.QObject):
             if not local_server:
                 log.debug("Running server is not a GNS3 local server (not started with --local)")
                 return False
+        return True
 
     def getSynchronous(self, endpoint, timeout=2):
         """
