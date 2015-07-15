@@ -59,7 +59,7 @@ class Servers():
         self._local_server_path = ""
         self._local_server_auto_start = True
         self._local_server_allow_console_from_anywhere = False
-        self._local_server_proccess = None
+        self._local_server_process = None
         self._network_manager = QtNetwork.QNetworkAccessManager()
         self._network_manager.sslErrors.connect(self._handleSslErrors)
         self._remote_server_iter_pos = 0
@@ -391,16 +391,16 @@ class Servers():
         try:
             if sys.platform.startswith("win"):
                 # use the string on Windows
-                self._local_server_proccess = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                self._local_server_process = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
             else:
                 # use arguments on other platforms
                 args = shlex.split(command)
-                self._local_server_proccess = subprocess.Popen(args)
+                self._local_server_process = subprocess.Popen(args)
         except (OSError, subprocess.SubprocessError) as e:
             log.warning('Could not start local server "{}": {}'.format(command, e))
             return False
 
-        log.info("Local server process has started (PID={})".format(self._local_server_proccess.pid))
+        log.info("Local server process has started (PID={})".format(self._local_server_process.pid))
         return True
 
     def localServerIsRunning(self):
@@ -410,7 +410,7 @@ class Servers():
         :returns: boolean
         """
 
-        if self._local_server_proccess and self._local_server_proccess.poll() is None:
+        if self._local_server_process and self._local_server_process.poll() is None:
             return True
         return False
 
@@ -422,26 +422,26 @@ class Servers():
         """
 
         if self.localServerIsRunning():
-            log.info("Stopping local server (PID={})".format(self._local_server_proccess.pid))
+            log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
             # local server is running, let's stop it
             if wait:
                 try:
                     # wait for the server to stop for maximum 2 seconds
-                    self._local_server_proccess.wait(timeout=2)
+                    self._local_server_process.wait(timeout=2)
                 except subprocess.TimeoutExpired:
                     # the local server couldn't be stopped with the normal procedure
                     if sys.platform.startswith("win"):
                         try:
-                            self._local_server_proccess.send_signal(signal.CTRL_BREAK_EVENT)
+                            self._local_server_process.send_signal(signal.CTRL_BREAK_EVENT)
                         # If the process is already dead we received a permission error
                         # it's a race condition between the timeout and send signal
                         except PermissionError:
                             pass
                     else:
-                        self._local_server_proccess.send_signal(signal.SIGINT)
+                        self._local_server_process.send_signal(signal.SIGINT)
                     try:
                         # wait for the server to stop for maximum 2 seconds
-                        self._local_server_proccess.wait(timeout=2)
+                        self._local_server_process.wait(timeout=2)
                     except subprocess.TimeoutExpired:
                         from .main_window import MainWindow
                         main_window = MainWindow.instance()
@@ -452,7 +452,7 @@ class Servers():
                                                                  QtWidgets.QMessageBox.No)
 
                         if proceed == QtWidgets.QMessageBox.Yes:
-                            self._local_server_proccess.kill()
+                            self._local_server_process.kill()
 
     def localServer(self):
         """
