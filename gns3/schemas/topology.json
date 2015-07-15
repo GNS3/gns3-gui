@@ -57,7 +57,9 @@
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 6
-                }
+                },
+                "border_transparency": {"type": "integer" },
+                "transparency": {"type": "integer" }
             },
             "required": [
                 "height",
@@ -83,7 +85,9 @@
                 "y": {"type": "number" },
                 "z": { "type": "number" },
                 "color": { "$ref": "#/definitions/color" },
-                "border_color": { "$ref": "#/definitions/color" }
+                "border_color": { "$ref": "#/definitions/color" },
+                "border_transparency": {"type": "integer" },
+                "transparency": {"type": "integer" }
             },
             "required": [
                 "height",
@@ -122,8 +126,6 @@
                 "rotation": {"type": "number" }
             },
             "required": [
-                "color",
-                "font",
                 "text",
                 "x",
                 "y"
@@ -598,7 +600,6 @@
                 "name",
                 "console",
                 "image",
-                "mac_addr",
                 "startup_config"
             ],
             "additionalProperties": false
