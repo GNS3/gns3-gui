@@ -1285,7 +1285,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         try:
             from gns3converter.main import do_conversion, get_snapshots, ConvertError
-        except ImportError:
+        except ImportError as e:
+            log.error("GNS3 converter is missing: {}".format(str(e)))
             QtWidgets.QMessageBox.critical(self, "GNS3 converter", "Please install gns3-converter in order to open old ini-style GNS3 projects")
             return
 
