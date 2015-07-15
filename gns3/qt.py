@@ -35,167 +35,83 @@ log = logging.getLogger(__name__)
 
 if os.environ.get('GNS3_QT4', None) is not None:
     DEFAULT_BINDING = 'PyQt4'
-    print("WARNING: PyQt4 is no longer supported, please upgrade to PyQt5")
 else:
     try:
         import PyQt5
         DEFAULT_BINDING = 'PyQt5'
     except ImportError:
         DEFAULT_BINDING = 'PyQt4'
-        print("WARNING: PyQt4 is no longer supported, please upgrade to PyQt5")
 
-if DEFAULT_BINDING == 'PyQt5':
 
-    from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
-    sys.modules[__name__ + '.QtCore'] = QtCore
-    sys.modules[__name__ + '.QtGui'] = QtGui
-    sys.modules[__name__ + '.QtNetwork'] = QtNetwork
-    sys.modules[__name__ + '.QtWidgets'] = QtWidgets
+if DEFAULT_BINDING == 'PyQt4':
+    log.critical('ERROR: PyQt4 is no longer supported, please upgrade to PyQt5 for Python 3')
+    from PyQt4 import QtGui
+    app = QtGui.QApplication(sys.argv)
+    message = QtGui.QMessageBox.critical(None, 'GNS3', 'PyQt4 is no longer supported, please upgrade to PyQt5 for Python 3')
+    sys.exit(1)
 
-    try:
-        from PyQt5 import QtSvg
-        sys.modules[__name__ + '.QtSvg'] = QtSvg
-    except ImportError:
-        raise SystemExit("Please install the PyQt5.QtSvg module")
 
-    try:
-        from PyQt5 import QtWebKit
-        from PyQt5 import QtWebKitWidgets
-        sys.modules[__name__ + '.QtWebKit'] = QtWebKit
-        sys.modules[__name__ + '.QtWebKitWidgets'] = QtWebKitWidgets
-    except ImportError:
-        pass
+from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
+sys.modules[__name__ + '.QtCore'] = QtCore
+sys.modules[__name__ + '.QtGui'] = QtGui
+sys.modules[__name__ + '.QtNetwork'] = QtNetwork
+sys.modules[__name__ + '.QtWidgets'] = QtWidgets
 
-    QtCore.Signal = QtCore.pyqtSignal
-    QtCore.Slot = QtCore.pyqtSlot
-    QtCore.Property = QtCore.pyqtProperty
-    QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
-
-    from PyQt5.QtWidgets import QFileDialog as OldFileDialog
-
-    class QFileDialog(OldFileDialog):
-
-        @staticmethod
-        def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
-            path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
-            if path:
-                path = os.path.normpath(path)
-            return path
-
-        @staticmethod
-        def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            path, _ = OldFileDialog.getOpenFileName(parent, caption, directory, filter, selectedFilter, options)
-            if path:
-                path = os.path.normpath(path)
-            return path, _
-
-        @staticmethod
-        def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            path, _ = OldFileDialog.getOpenFileNames(parent, caption, directory, filter, selectedFilter, options)
-            if path:
-                path = os.path.normpath(path)
-            return path, _
-
-        @staticmethod
-        def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            path, _ = OldFileDialog.getSaveFileName(parent, caption, directory, filter, selectedFilter, options)
-            if path:
-                path = os.path.normpath(path)
-            return path, _
-
-    QtWidgets.QFileDialog = QFileDialog
-
-    def translate(*args):
-        return QtCore.QCoreApplication.translate(*args)
-
-elif DEFAULT_BINDING == 'PyQt4':
-
-    sip.setapi('QDate', 2)
-    sip.setapi('QDateTime', 2)
-    sip.setapi('QString', 2)
-    sip.setapi('QTextStream', 2)
-    sip.setapi('QTime', 2)
-    sip.setapi('QUrl', 2)
-    sip.setapi('QVariant', 2)
-
-    from PyQt4 import QtCore, QtGui, QtNetwork, QtSvg, Qt
-    sys.modules[__name__ + '.QtCore'] = QtCore
-    sys.modules[__name__ + '.QtGui'] = QtGui
-    sys.modules[__name__ + '.QtNetwork'] = QtNetwork
+try:
+    from PyQt5 import QtSvg
     sys.modules[__name__ + '.QtSvg'] = QtSvg
+except ImportError:
+    raise SystemExit("Please install the PyQt5.QtSvg module")
 
-    try:
-        from PyQt4 import QtWebKit
-        sys.modules[__name__ + '.QtWebKit'] = QtWebKit
-        # Qt5 name compatibility
-        QtWebKitWidgets = QtWebKit
-    except ImportError:
-        pass
+try:
+    from PyQt5 import QtWebKit
+    from PyQt5 import QtWebKitWidgets
+    sys.modules[__name__ + '.QtWebKit'] = QtWebKit
+    sys.modules[__name__ + '.QtWebKitWidgets'] = QtWebKitWidgets
+except ImportError:
+    pass
 
-    QtCore.Signal = QtCore.pyqtSignal
-    QtCore.Slot = QtCore.pyqtSlot
-    QtCore.Property = QtCore.pyqtProperty
-    QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
+QtCore.Signal = QtCore.pyqtSignal
+QtCore.Slot = QtCore.pyqtSlot
+QtCore.Property = QtCore.pyqtProperty
+QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
-    # Qt5 name compatibility
-    QtWidgets = QtGui
+from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 
-    from PyQt4.QtGui import QFileDialog as OldFileDialog
+class QFileDialog(OldFileDialog):
 
-    class QFileDialog(OldFileDialog):
+    @staticmethod
+    def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
+        path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
+        if path:
+            path = os.path.normpath(path)
+        return path
 
-        @staticmethod
-        def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
-            path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
-            if path:
-                path = os.path.normpath(path)
-            return path
+    @staticmethod
+    def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+        path, _ = OldFileDialog.getOpenFileName(parent, caption, directory, filter, selectedFilter, options)
+        if path:
+            path = os.path.normpath(path)
+        return path, _
 
-        @staticmethod
-        def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            path, _ = OldFileDialog.getOpenFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
-            if path:
-                path = os.path.normpath(path)
-            return path, _
+    @staticmethod
+    def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+        path, _ = OldFileDialog.getOpenFileNames(parent, caption, directory, filter, selectedFilter, options)
+        if path:
+            path = os.path.normpath(path)
+        return path, _
 
-        @staticmethod
-        def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            path, _ = OldFileDialog.getOpenFileNamesAndFilter(parent, caption, directory, filter, selectedFilter, options)
-            if path:
-                path = os.path.normpath(path)
-            return path, _
+    @staticmethod
+    def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
+        path, _ = OldFileDialog.getSaveFileName(parent, caption, directory, filter, selectedFilter, options)
+        if path:
+            path = os.path.normpath(path)
+        return path, _
 
-        @staticmethod
-        def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-            path, _ = OldFileDialog.getSaveFileNameAndFilter(parent, caption, directory, filter, selectedFilter, options)
-            if path:
-                path = os.path.normpath(path)
-            return path, _
+QtWidgets.QFileDialog = QFileDialog
 
-    QtWidgets.QFileDialog = QFileDialog
-
-    from PyQt4.QtGui import QComboBox as OldComboBox
-
-    class QComboBox(OldComboBox):
-        def currentData(self):
-            return self.itemData(self.currentIndex())
-
-    QtWidgets.QComboBox = QComboBox
-
-    # QStandardPaths replace QDesktopServices in QT5
-    class QStandardPaths:
-        DocumentsLocation = QtGui.QDesktopServices.DocumentsLocation
-        PicturesLocation = QtGui.QDesktopServices.PicturesLocation
-
-        def writableLocation(path_type):
-            return QtGui.QDesktopServices.storageLocation(path_type)
-
-    QtCore.QStandardPaths = QStandardPaths
-
-    # Translate not working well when reading a PyQT5 ui file (unicode issues)
-    # we turn off translation for PyQT4
-    def translate(*args):
-        return ''.join(args[-1:])
+def translate(*args):
+    return QtCore.QCoreApplication.translate(*args)
 
 
 # If we run from a test we replace the signal by a synchronous version

@@ -20,7 +20,7 @@ Dependencies:
 
 - Python 3.3 or above
 - Setuptools
-- PyQt libraries
+- PyQt 5 libraries
 - Apache Libcloud library
 - Requests library
 - Paramiko library
@@ -34,7 +34,7 @@ The following commands will install some of these dependencies:
    sudo apt-get install python3-pyqt5.qtsvg
    sudo apt-get install python3-pyqt5.qtwebkit
 
-If you want to test using Qt4
+If you want to test using PyQt4
 
 .. code:: bash
    sudo apt-get install python3-pyqt4
@@ -84,7 +84,7 @@ Then install the GNS3 dependencies.
    brew install sip --without-python --with-python3
    brew install pyqt5 --without-python --with-python3
 
-If you want to test using Qt4
+If you want to test using PyQt4
 
 .. code:: bash
    brew install pyqt --without-python --with-python3
@@ -112,3 +112,16 @@ If you want to update the interface, modify the .ui files using QT tools. And:
 
     cd scripts
     python build_pyqt.py
+
+
+Test with PyQT4
+~~~~~~~~~~~~~~~~
+
+If you want to simulate a user with PyQT4:
+
+.. code:: bash
+   
+    export GNS3_QT4=1
+    python gns3/main.py
+
+
