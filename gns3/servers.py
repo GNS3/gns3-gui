@@ -666,7 +666,7 @@ class Servers():
 
         if self._local_server.connected():
             self._local_server.close()
-        for server in self._remote_servers:
+        for server in self._remote_servers.values():
             if server.connected():
                 server.close()
 
