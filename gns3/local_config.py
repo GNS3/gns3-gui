@@ -61,6 +61,7 @@ class LocalConfig(QtCore.QObject):
 
         super().__init__()
         self._settings = {}
+        self._last_config_changed = None
 
         if sys.platform.startswith("win"):
             filename = "gns3_gui.ini"
@@ -204,7 +205,7 @@ class LocalConfig(QtCore.QObject):
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
 
     def _checkConfigChanged(self):
-        if self._last_config_changed < os.stat(self._config_file).st_mtime:
+        if self._last_config_changed and self._last_config_changed < os.stat(self._config_file).st_mtime:
             log.info("Client config has changed, reloading it...")
             self._readConfig(self._config_file)
             self.config_changed_signal.emit()
