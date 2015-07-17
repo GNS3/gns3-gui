@@ -19,7 +19,7 @@
 Functions to start external console terminals.
 """
 
-from .qt import QtCore
+from .qt import QtCore, QtWidgets
 
 import sys
 import shlex
@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 class ConsoleThread(QtCore.QThread):
 
     consoleDone = QtCore.pyqtSignal(str, str, int)
+    consoleError = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, command, name, server, port):
         super().__init__(parent)
@@ -49,7 +50,11 @@ class ConsoleThread(QtCore.QThread):
             subprocess.call(command)
         else:
             # use arguments on other platforms
-            args = shlex.split(command)
+            try:
+                args = shlex.split(command)
+            except ValueError:
+                self.consoleError.emit("Syntax error in command: {}".format(command))
+                return
             subprocess.call(args)
 
     def run(self):
@@ -88,7 +93,12 @@ def nodeTelnetConsole(name, server, port):
     log.info('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, name, server, port)
     # console_thread.consoleDone.connect(callback)
+    console_thread.consoleError.connect(_consoleErrorSlot)
     console_thread.start()
+
+
+def _consoleErrorSlot(message):
+    QtWidgets.QMessageBox.critical(MainWindow.instance(), "Error", message)
 
 
 def telnetConsole(name, host, port):
