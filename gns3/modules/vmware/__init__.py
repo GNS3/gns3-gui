@@ -69,12 +69,28 @@ class VMware(Module):
         if sys.platform.startswith("win"):
             vmrun_path = shutil.which("vmrun")
             if vmrun_path is None:
-                vmrun_ws = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware Workstation\vmrun.exe")
-                vmrun_vix = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware VIX\vmrun.exe")
-                if os.path.exists(vmrun_ws):
-                    vmrun_path = vmrun_ws
-                elif os.path.exists(vmrun_vix):
-                    vmrun_path = vmrun_vix
+                import winreg
+                try:
+                    vmrun_ws = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware Workstation\vmrun.exe")
+                    if not os.path.exists(vmrun_ws):
+                        # default path not used, let's look in the registry
+                        hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
+                        ws_install_path, _ = winreg.QueryValueEx(hkey, "InstallPath")
+                        vmrun_ws = os.path.join(ws_install_path, "vmrun.exe")
+                        winreg.CloseKey(hkey)
+                        if os.path.exists(vmrun_ws):
+                            vmrun_path = vmrun_ws
+                except OSError:
+                    pass
+                else:
+                    vmrun_vix = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware VIX\vmrun.exe")
+                    if not os.path.exists(vmrun_vix):
+                        # default path not used, let's look in the registry
+                        hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
+                        ws_install_path, _ = winreg.QueryValueEx(hkey, "InstallPath")
+                        vmrun_vix = os.path.join(ws_install_path, "vmrun.exe")
+                        if os.path.exists(vmrun_vix):
+                            vmrun_path = vmrun_vix
         elif sys.platform.startswith("darwin"):
             vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
             if os.path.exists(vmware_fusion_vmrun_path):
