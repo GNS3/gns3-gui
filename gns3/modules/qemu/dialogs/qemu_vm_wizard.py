@@ -270,15 +270,13 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
             elif self.uiTypeComboBox.currentText() != "Default":
                 self.uiRamSpinBox.setValue(1024)
 
-        elif self.page(current_id) == self.uiBinaryMemoryWizardPage:
-
-            if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
-                return self.uiBinaryMemoryWizardPage.nextId() + 1
-
         elif self.page(current_id) == self.uiDiskWizardPage:
 
             if self.uiTypeComboBox.currentText() == "IDS":
                 return self.uiDiskWizardPage.nextId() + 1
+
+            if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
+                return self.uiDiskWizardPage.nextId()
             return -1
 
         elif self.page(current_id) == self.uiASAWizardPage:
