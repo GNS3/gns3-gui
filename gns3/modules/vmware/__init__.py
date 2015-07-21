@@ -78,8 +78,8 @@ class VMware(Module):
                         ws_install_path, _ = winreg.QueryValueEx(hkey, "InstallPath")
                         vmrun_ws = os.path.join(ws_install_path, "vmrun.exe")
                         winreg.CloseKey(hkey)
-                        if os.path.exists(vmrun_ws):
-                            vmrun_path = vmrun_ws
+                    if os.path.exists(vmrun_ws):
+                        vmrun_path = vmrun_ws
                 except OSError:
                     pass
                 else:
@@ -89,8 +89,8 @@ class VMware(Module):
                         hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
                         ws_install_path, _ = winreg.QueryValueEx(hkey, "InstallPath")
                         vmrun_vix = os.path.join(ws_install_path, "vmrun.exe")
-                        if os.path.exists(vmrun_vix):
-                            vmrun_path = vmrun_vix
+                    if os.path.exists(vmrun_vix):
+                        vmrun_path = vmrun_vix
         elif sys.platform.startswith("darwin"):
             vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
             if os.path.exists(vmware_fusion_vmrun_path):
