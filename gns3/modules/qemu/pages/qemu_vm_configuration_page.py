@@ -237,7 +237,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         """
 
         if error:
-            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error: ".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
             self.uiQemuListComboBox.clear()
             for qemu in result:
