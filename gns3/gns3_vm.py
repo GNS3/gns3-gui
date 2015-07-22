@@ -58,7 +58,7 @@ class GNS3VM:
         Servers.instance().setVMsettings(settings)
 
     @staticmethod
-    def execute_vmrun(subcommand, args, timeout=10):
+    def execute_vmrun(subcommand, args, timeout=60):
 
         from gns3.modules.vmware import VMware
         vmware_settings = VMware.instance().settings()
@@ -74,7 +74,7 @@ class GNS3VM:
         return output.decode("utf-8", errors="ignore").strip()
 
     @staticmethod
-    def execute_vboxmanage(subcommand, args, timeout=10):
+    def execute_vboxmanage(subcommand, args, timeout=60):
 
         from gns3.modules.virtualbox import VirtualBox
         virtualbox_settings = VirtualBox.instance().settings()
