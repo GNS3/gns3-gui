@@ -96,19 +96,21 @@ class Builtin(Module):
         servers = Servers.instance()
         local_server = servers.localServer()
         remote_servers = servers.remoteServers()
+        gns3_vm = Servers.instance().vmServer()
 
-        if not all(using_local_server) and len(remote_servers):
+        if not all(using_local_server) and (gns3_vm or len(remote_servers)):
             # a module is not using a local server
 
-            if True not in using_local_server and len(remote_servers) == 1:
-                # no module is using a local server and there is only one
-                # remote server available, so no need to ask the user.
-                return next(iter(servers))
-
-            server_list = []
-            server_list.append("Local server ({})".format(local_server.url()))
-            for remote_server in remote_servers:
-                server_list.append("{}".format(remote_server))
+            server_list = ["Local server ({})".format(local_server.url())]
+            if gns3_vm:
+                server_list.append("GNS3 VM ({})".format(gns3_vm.url()))
+            if len(remote_servers):
+                if True not in using_local_server and len(remote_servers) == 1:
+                    # no module is using a local server and there is only one
+                    # remote server available, so no need to ask the user.
+                    return next(iter(servers))
+                for remote_server in remote_servers:
+                    server_list.append("{}".format(remote_server))
 
             # TODO: move this to graphics_view
             from gns3.main_window import MainWindow
@@ -117,6 +119,8 @@ class Builtin(Module):
             if ok:
                 if selection.startswith("Local server"):
                     return local_server
+                elif selection.startswith("GNS3 VM"):
+                    return gns3_vm
                 else:
                     return remote_servers[selection]
             else:
