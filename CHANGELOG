@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.4.0alpha2 22/07/2015
+
+* Cloud support with the GNS3 VM.
+* Display an error message when Qemu binaries cannot be retrieved in the Qemu VM configuration page.
+* Remove default FLASH when no hda disk for Qemu VMs. Fixes  #535.
+* Use the registry to find vmrun if the default VMware install path doesn't exist. Fixes #546.
+* Avoid the creation of a NIO when one has been cancelled.
+* Fix Crash with chinese characters
+* Display an error if terminal command is invalid
+* Prevents "Show in File Manager" to be used with generic switches.
+* Remove unused dependencies
+* Drop PyQt4 support and show an error for users
+* Fixes symbol for VM template gone after restart. Fixes #538.
+* Fix VirtualBox GNS3 VM
+* Fix issue with remote server not saved/migrated
+* Remove ram as a mandatory dynamips settings
+* Force UTF-8 when reading server configuration file
+
 ## 1.4.0alpha1 09/07/2015
 
 * Remove unused cloud code from the 1.4
