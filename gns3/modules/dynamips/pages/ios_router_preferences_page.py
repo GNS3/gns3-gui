@@ -400,6 +400,7 @@ class IOSRouterPreferencesPage(QtGui.QWidget, Ui_IOSRouterPreferencesPageWidget)
             QtGui.QTreeWidgetItem(section_item, ["I/O memory:", "{}%".format(ios_router["iomem"])])
         QtGui.QTreeWidgetItem(section_item, ["PCMCIA disk0:", "{} MiB".format(ios_router["disk0"])])
         QtGui.QTreeWidgetItem(section_item, ["PCMCIA disk1:", "{} MiB".format(ios_router["disk1"])])
+        QtGui.QTreeWidgetItem(section_item, ["Auto delete:", "{}".format(ios_router["auto_delete_disks"])])
 
         # fill out the Adapters section
         section_item = self._createSectionItem("Adapters")

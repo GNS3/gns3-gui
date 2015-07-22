@@ -484,6 +484,8 @@ class IOSRouterWizard(QtGui.QWizard, Ui_IOSRouterWizard):
             settings["hover_symbol"] = ":/symbols/multilayer_switch.selected.svg"
             settings["disk0"] = 1  # adds 1MB disk to store vlan.dat
             settings["category"] = Node.switches
+        else:
+            settings["auto_delete_disks"] = True
 
         image_file = os.path.basename(image)
         if image_file.lower().startswith("c7200p"):

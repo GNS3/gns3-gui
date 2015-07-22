@@ -71,6 +71,7 @@ class Router(VM):
                           "exec_area": 64,
                           "disk0": 0,
                           "disk1": 0,
+                          "auto_delete_disks": False,
                           "console": None,
                           "aux": None,
                           "mac_addr": None,

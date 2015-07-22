@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>449</width>
-    <height>491</height>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -386,6 +386,13 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiAutoDeleteCheckBox">
+         <property name="text">
+          <string>Automatically delete NVRAM and disk files</string>
+         </property>
         </widget>
        </item>
        <item>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Sat Mar 14 16:29:27 2015
+# Created: Wed Jul 22 15:59:21 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_iosRouterConfigPageWidget(object):
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName(_fromUtf8("iosRouterConfigPageWidget"))
-        iosRouterConfigPageWidget.resize(449, 491)
+        iosRouterConfigPageWidget.resize(449, 510)
         self.vboxlayout = QtGui.QVBoxLayout(iosRouterConfigPageWidget)
         self.vboxlayout.setObjectName(_fromUtf8("vboxlayout"))
         self.uiTabWidget = QtGui.QTabWidget(iosRouterConfigPageWidget)
@@ -220,6 +220,9 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiDisk1SpinBox.setObjectName(_fromUtf8("uiDisk1SpinBox"))
         self.gridlayout.addWidget(self.uiDisk1SpinBox, 1, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.uiDisksGroupBox)
+        self.uiAutoDeleteCheckBox = QtGui.QCheckBox(self.uiMemoriesPageWidget)
+        self.uiAutoDeleteCheckBox.setObjectName(_fromUtf8("uiAutoDeleteCheckBox"))
+        self.verticalLayout_2.addWidget(self.uiAutoDeleteCheckBox)
         spacerItem1 = QtGui.QSpacerItem(20, 21, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem1)
         self.uiTabWidget.addTab(self.uiMemoriesPageWidget, _fromUtf8(""))
@@ -577,6 +580,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiDisk0SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " MiB", None))
         self.uiDisk1Label.setText(_translate("iosRouterConfigPageWidget", "PCMCIA disk1 size:", None))
         self.uiDisk1SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " MiB", None))
+        self.uiAutoDeleteCheckBox.setText(_translate("iosRouterConfigPageWidget", "Automatically delete NVRAM and disk files", None))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiMemoriesPageWidget), _translate("iosRouterConfigPageWidget", "Memories and disks", None))
         self.uiAdaptersGroupBox.setTitle(_translate("iosRouterConfigPageWidget", "Adapters", None))
         self.uiSlot0Label.setText(_translate("iosRouterConfigPageWidget", "slot 0:", None))
