@@ -169,7 +169,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         """
 
         vpcs_path = self.uiVPCSPathLineEdit.text().strip()
-        if self.uiUseLocalServercheckBox.isChecked() and not self._checkVPCSPath(vpcs_path):
+        if vpcs_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkVPCSPath(vpcs_path):
             return
 
         new_settings = {"vpcs_path": vpcs_path,
