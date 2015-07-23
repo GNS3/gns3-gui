@@ -168,6 +168,7 @@ background-none;
      <string>&amp;Tools</string>
     </property>
     <addaction name="uiVPCSAction"/>
+    <addaction name="uiIOUVMConverterAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
    <addaction name="uiEditMenu"/>
@@ -1201,6 +1202,11 @@ background-none;
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="uiIOUVMConverterAction">
+   <property name="text">
+    <string>IOU VM Converter</string>
    </property>
   </action>
  </widget>

@@ -66,6 +66,8 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
             return self._checkIOURC()
         elif self.currentPage() == self.uiWizardUpdateConfiguration:
             return self._updateConfig()
+        elif self.currentPage() == self.uiWizardPagePatchTopologies:
+            return self._patchTopologies()
         return True
 
     def _checkIOURC(self):
@@ -86,6 +88,9 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
         return True
 
     def _updateConfig(self):
+        """
+        Update the config file to use the GNS3 VM instead of IOU VM
+        """
         config = self._loadConfig()
         if "devices" in config["IOU"]:
             for device in config["IOU"]["devices"]:
@@ -94,6 +99,39 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
         config["Servers"]["remote_servers"] = []
         self._writeConfig(config)
         return True
+
+    def _patchTopologies(self):
+        """
+        Patch topologies to use the GNS3 VM
+        """
+
+        path = self.uiLineEditTopologiesPath.text()
+        try:
+            for (dirpath, dirnames, filenames) in os.walk(path):
+                for filename in filenames:
+                    if filename.endswith(".gns3"):
+                        self._patchTopology(os.path.join(dirpath, filename))
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self, "Error", "Can't open {}: {}".format(path, str(e)))
+            return False
+        return True
+
+    def _patchTopology(self, path):
+        """
+        Path a specific topology
+        """
+        try:
+            shutil.copy(path, "{}.{}.backup".format(path, datetime.now().isoformat()))
+            with open(path) as f:
+                topo = json.load(f)
+            if "topology" in topo and "servers" in topo["topology"]:
+                for server in topo["topology"]["servers"]:
+                    if server["local"] == False:
+                        server["vm"] = True
+                with open(path, 'w+') as f:
+                    topo = json.dump(topo, f)
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self, "Error", "Can't open {}: {}".format(path, str(e)))
 
     def _loadConfig(self):
         with open(self._configurationFile()) as f:
