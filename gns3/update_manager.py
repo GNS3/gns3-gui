@@ -41,8 +41,12 @@ class UpdateManager(QtCore.QObject):
 
         super().__init__()
 
-        self._update_directory = os.path.join(os.path.dirname(sys.executable), 'updates')
-        self._package_directory = os.path.join(os.path.dirname(sys.executable), 'site-packages')
+        if sys.platform.startswith("win"):
+            root = os.path.join(os.path.expandvars("%APPDATA%"), "GNS3")
+        else:
+            root = os.path.dirname(sys.executable)
+        self._update_directory = os.path.join(root, 'updates')
+        self._package_directory = os.path.join(root, 'site-packages')
         self._network_manager = None
 
     def isDevVersion(self):
@@ -129,7 +133,10 @@ class UpdateManager(QtCore.QObject):
                                                    QtWidgets.QMessageBox.Yes,
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
-                self.downloadUpdates(last_version)
+                try:
+                    self.downloadUpdates(last_version)
+                except OSError as e:
+                    QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Cannot download update: {}".format(e))
         else:
             self._get('http://update.gns3.net', self._gns3UpdateReplySlot)
 
