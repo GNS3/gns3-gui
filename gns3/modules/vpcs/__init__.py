@@ -26,13 +26,14 @@ import signal
 import socket
 import re
 import shutil
-import pkg_resources
+
 
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.local_server_config import LocalServerConfig
+from gns3.utils import parse_version
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -208,7 +209,7 @@ class VPCS(Module):
             match = re.search("Welcome to Virtual PC Simulator, version ([0-9a-z\.]+)", output.decode("utf-8"))
             if match:
                 version = match.group(1)
-                if pkg_resources.parse_version(version) < pkg_resources.parse_version("0.5b1"):
+                if parse_version(version) < parse_version("0.5b1"):
                     raise ModuleError("VPCS executable version must be >= 0.5b1")
             else:
                 raise ModuleError("Could not determine the VPCS version for {}".format(self._settings["vpcs_path"]))

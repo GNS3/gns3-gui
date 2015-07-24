@@ -16,4 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from gns3.utils import parse_version
+
+
+def test_parse_version():
+    assert parse_version('1') == (1, 'final')
+    assert parse_version('1.3') == (1, 3, 'final')
+    assert parse_version('1.3.dev3') == (1, 3, 'dev', 3)
+    assert parse_version('1.3a1') == (1, 3, 'a', 1)
+    assert parse_version('1.3rc1') == (1, 3, 'c', 1)
+
+    assert parse_version('1.2.3') > parse_version('1.2.2')
+    assert parse_version('1.3') > parse_version('1.2.2')
+    assert parse_version('1.3') > parse_version('1.3alpha1')
+    assert parse_version('1.3') > parse_version('1.3rc1')
+    assert parse_version('1.3rc1') > parse_version('1.3alpha3')
+    assert parse_version('1.3dev1') > parse_version('1.3rc1')
+
 

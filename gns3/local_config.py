@@ -20,11 +20,12 @@ import os
 import json
 import shutil
 import copy
-from pkg_resources import parse_version
 
 
 from .qt import QtCore
 from .version import __version__
+from .utils import parse_version
+
 
 import logging
 log = logging.getLogger(__name__)

@@ -22,7 +22,7 @@ import shutil
 import json
 
 
-from pkg_resources import parse_version
+from gns3.utils import parse_version
 
 from gns3 import version
 from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui
@@ -122,7 +122,7 @@ class UpdateManager(QtCore.QObject):
             log.warning("Invalid answer from the PyPi server")
 
         last_version = self._getLastMinorVersionFromPyPiReply(body)
-        if last_version != version.__version__:
+        if parse_version(last_version) > parse_version(version.__version__):
             reply = QtWidgets.QMessageBox.question(self._parent,
                                                    "Check For Update",
                                                    "Newer GNS3 version {} is available, do you want to to download it in background and install it at next application launch?".format(last_version),
@@ -143,7 +143,7 @@ class UpdateManager(QtCore.QObject):
         current_version = parse_version(version.__version__)
         for release in sorted(body['releases'].keys(), reverse=True):
             release_version = parse_version(release)
-            if release_version[2] == '*final' or release_version[3] == '*final':
+            if release_version[-1:][0] == "final":
                 if self.isDevVersion():
                     continue
             else:

@@ -118,3 +118,4 @@ def test_getLastVersionFromPyPiReplyNewMajor(update, stableVersion):
         }
     }
     assert update._getLastMinorVersionFromPyPiReply(body) == '1.4.1'
+

@@ -1,6 +1,6 @@
 import importlib
 import hashlib
-
+import re
 
 def import_from_string(string_val):
     """
@@ -31,3 +31,32 @@ def md5_hash_file(path):
                 break
             m.update(buf)
     return m.hexdigest()
+
+
+def parse_version(version):
+    """
+    Return a comparable tuple from a version string.
+
+    Replace pkg_resources.parse_version which now display a warning when use for comparing version with tuple
+
+    :returns: Version string as comparable tuple
+    """
+
+    release_type_found = False
+    version_infos = re.split('(\.|[a-z]+)', version)
+    version = []
+    for info in version_infos:
+        if info == '.' or len(info) == 0:
+            continue
+        try:
+            info = int(info)
+            version.append(info)
+        except ValueError:
+            # We want rc to be at lower level than dev version
+            if info == 'rc':
+                info = 'c'
+            version.append(info)
+            release_type_found = True
+    if release_type_found is False:
+        version.append("final")
+    return tuple(version)
