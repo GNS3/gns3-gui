@@ -206,10 +206,13 @@ class LocalConfig(QtCore.QObject):
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
 
     def _checkConfigChanged(self):
-        if self._last_config_changed and self._last_config_changed < os.stat(self._config_file).st_mtime:
-            log.info("Client config has changed, reloading it...")
-            self._readConfig(self._config_file)
-            self.config_changed_signal.emit()
+        try:
+            if self._last_config_changed and self._last_config_changed < os.stat(self._config_file).st_mtime:
+                log.info("Client config has changed, reloading it...")
+                self._readConfig(self._config_file)
+                self.config_changed_signal.emit()
+        except OSError as e:
+            log.error("Error when checking for changes {}: {}".format(self._config_file, str(e)))
 
     def configFilePath(self):
         """
