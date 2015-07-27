@@ -68,7 +68,7 @@ class UpdateManager(QtCore.QObject):
         if self._network_manager is None:
             self._network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-        request.setRawHeader('User-Agent', 'GNS3 Check For Update')
+        request.setRawHeader(b'User-Agent', b'GNS3 Check For Update')
         request.setAttribute(QtNetwork.QNetworkRequest.User, user_attribute)
         reply = self._network_manager.get(request)
         reply.finished.connect(finished_slot)
