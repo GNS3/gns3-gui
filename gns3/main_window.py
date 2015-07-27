@@ -113,8 +113,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 pass
 
         # restore the geometry and state of the main window.
-        self.restoreGeometry(QtCore.QByteArray().fromBase64(QtCore.QByteArray(self._settings["geometry"])))
-        self.restoreState(QtCore.QByteArray().fromBase64(QtCore.QByteArray(self._settings["state"])))
+        self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
+        self.restoreState(QtCore.QByteArray().fromBase64(self._settings["state"].encode()))
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
