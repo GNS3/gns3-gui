@@ -174,7 +174,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
             refcount_bits = self.uiRefcountEntrySizeComboBox.currentText()
             if not '<default>' == refcount_bits:
-                format_options.extend(['-o', 'refcount_bits=' + cluster_size])
+                format_options.extend(['-o', 'refcount_bits=' + refcount_bits])
 
             lazy_refcounts = 'on' if QtCore.Qt.Checked == self.uiLazyRefcountsCheckBox.checkState() else 'off'
             format_options.extend(['-o', 'lazy_refcounts=' + lazy_refcounts])
