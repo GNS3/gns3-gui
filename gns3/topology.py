@@ -666,9 +666,13 @@ class Topology:
                     host = topology_server["host"]
                     port = topology_server["port"]
                     user = topology_server.get("user", None)
-                    if "cloud" in topology_server:
-                        del topology_server["cloud"]
-                    self._servers[topology_server["id"]] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
+
+                    topology_server.pop("cloud", False)
+                    topology_server.pop("vm", False)
+                    topology_server.pop("local", False)
+
+                    server_id = topology_server.pop("id")
+                    self._servers[server_id] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
 
         # nodes
         self._load_old_topology = False

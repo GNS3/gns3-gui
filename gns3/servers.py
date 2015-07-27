@@ -157,9 +157,9 @@ class Servers():
             local_server_settings["ubridge_path"] = self._findUbridge(self)
 
         for remote_server in self._settings["remote_servers"]:
-            self._addRemoteServer(remote_server.get("protocol", "http"),
-                                  remote_server["host"],
-                                  remote_server["port"],
+            self._addRemoteServer(protocol=remote_server.get("protocol", "http"),
+                                  host=remote_server["host"],
+                                  port=remote_server["port"],
                                   ram_limit=remote_server.get("ram_limit", 0),
                                   user=remote_server.get("user", None),
                                   ssh_key=remote_server.get("ssh_key", None),
@@ -491,7 +491,7 @@ class Servers():
 
         return self._vm_server
 
-    def _addRemoteServer(self, protocol, host, port, ram_limit=0, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False):
+    def _addRemoteServer(self, protocol="http", host="localhost", port=8000, ram_limit=0, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False, id=None):
         """
         Adds a new remote server.
 
@@ -542,7 +542,10 @@ class Servers():
                 return server
 
         settings['user'] = user
-        return self._addRemoteServer(protocol, host, port, **settings)
+        settings['protocol'] = protocol
+        settings['host'] = host
+        settings['port'] = port
+        return self._addRemoteServer(**settings)
 
     def getServerFromString(self, server_name):
         """
