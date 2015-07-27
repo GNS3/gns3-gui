@@ -511,9 +511,9 @@ class HTTPClient(QtCore.QObject):
 
         if isinstance(body, dict):
             body = json.dumps(body)
-            request.setRawHeader("Content-Type", "application/json")
-            request.setRawHeader("Content-Length", str(len(body)))
-            data = QtCore.QByteArray(body)
+            request.setRawHeader(b"Content-Type", b"application/json")
+            request.setRawHeader(b"Content-Length", str(len(body)).encode())
+            data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
             body.open(QtCore.QIODevice.ReadOnly)
@@ -521,7 +521,7 @@ class HTTPClient(QtCore.QObject):
         elif isinstance(body, pathlib.Path):
             body = QtCore.QFile(str(body), self)
             body.open(QtCore.QFile.ReadOnly)
-            request.setRawHeader("Content-Type", "application/octet-stream")
+            request.setRawHeader(b"Content-Type", b"application/octet-stream")
             # QT is smart and will compute the Content-Lenght for us
             return body
         else:
@@ -535,7 +535,7 @@ class HTTPClient(QtCore.QObject):
             auth_string = "{}:{}".format(self._user, self._password)
             auth_string = base64.b64encode(auth_string.encode("utf-8"))
             auth_string = "Basic {}".format(auth_string.decode())
-            request.setRawHeader("Authorization", auth_string)
+            request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
     def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None):
@@ -568,12 +568,12 @@ class HTTPClient(QtCore.QObject):
 
         request = self.addAuth(request)
 
-        request.setRawHeader("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
+        request.setRawHeader(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
 
         # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
         body = self._addBodyToRequest(body, request)
 
-        response = self._network_manager.sendCustomRequest(request, method, body)
+        response = self._network_manager.sendCustomRequest(request, method.encode(), body)
 
         import copy
         context = copy.copy(context)
