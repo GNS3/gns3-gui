@@ -41,12 +41,18 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         self.setupUi(self)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferences)
+        self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply)
+        self._applyButton.clicked.connect(self._applyPreferences)
+        self._applyButton.setEnabled(False)
+        self._applyButton.setStyleSheet("QPushButton:disabled {color: gray}")
         self._items = []
         self._loadPreferencePages()
 
         # select the first available page
         self.uiTreeWidget.setCurrentItem(self._items[0])
+
+        # Something has change?
+        self._modified = False
 
     def _loadPreferencePages(self):
         """
@@ -69,6 +75,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             item.setData(0, QtCore.Qt.UserRole, preferences_page)
             self.uiStackedWidget.addWidget(preferences_page)
             self._items.append(item)
+            self._watchForChanges(preferences_page)
 
         # load module preference pages
         for module in MODULES:
@@ -85,9 +92,35 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
                 self._items.append(item)
                 if cls is preference_pages[0]:
                     parent = item
+                self._watchForChanges(preferences_page)
 
         # expand all items by default
         self.uiTreeWidget.expandAll()
+
+    def _watchForChanges(self, preferences_page):
+        """
+        Connect all the widget of a page to check if something has change
+        """
+
+        # Class name, changed signal
+        widget_to_watch = {
+            QtWidgets.QLineEdit: "textChanged",
+            QtWidgets.QTreeWidget: "itemChanged",
+            QtWidgets.QComboBox: "currentIndexChanged",
+            QtWidgets.QSpinBox: "valueChanged",
+            QtWidgets.QAbstractButton: "toggled"
+        }
+
+        for widget, signal in widget_to_watch.items():
+            for children in preferences_page.findChildren(widget):
+                getattr(children, signal).connect(self._preferenceChangeSlot)
+
+    def _preferenceChangeSlot(self, *args):
+        """
+        Called when somthing change in the preference dialog
+        """
+        self._applyButton.setEnabled(True)
+        self._modified = True
 
     def _showPreferencesPageSlot(self, current, previous):
         """
@@ -125,6 +158,9 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             # if page.savePreferences() returns None, assume success
             if ok is not None and not ok:
                 success = False
+        if success:
+            self._applyButton.setEnabled(False)
+            self._modified = False
         return success
 
     def reject(self):
@@ -132,7 +168,16 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         Closes this dialog.
         """
 
+        if self._modified:
+            reply = QtWidgets.QMessageBox.warning(self,
+                                              "Preferences",
+                                              "You have unsaved preferences.\n\nContinue wihout saving?",
+                                              QtWidgets.QMessageBox.Yes,
+                                              QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                return
         QtWidgets.QDialog.reject(self)
+
 
     def accept(self):
         """
