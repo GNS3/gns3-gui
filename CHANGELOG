@@ -1,5 +1,14 @@
 # Change Log
 
+## 1.3.8 27/07/2015
+
+* Fixes rare issue when adding a link. Fixes #573.
+* Backport: option to drop nvram & disk files for IOS routers in order to save disk space.
+* Avoid the creation of a NIO when one has been cancelled.
+* Fix Crash with chinese characters
+* Use the same location for the server config on GUI and server
+* Catch invalid reply from the remote server
+
 ## 1.4.0alpha2 22/07/2015
 
 * Cloud support with the GNS3 VM.
@@ -84,6 +93,7 @@
 * Listen for notifications from servers.
 * Migration to QT5
 * Wireshark remote packet capture
+
 
 ## 1.3.7 22/06/2015
 
