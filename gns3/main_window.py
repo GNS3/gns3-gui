@@ -27,6 +27,7 @@ import shutil
 import json
 import glob
 import logging
+import subprocess
 
 from .local_config import LocalConfig
 from .modules import MODULES
@@ -246,6 +247,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
+        self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -373,6 +375,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._createNewProject(new_project_settings)
             else:
                 self._createTemporaryProject()
+
+    def _IOUVMConverterActionSlot(self):
+        command = shutil.which("gns3-iouvm-converter")
+        if command is None:
+            QtWidgets.QMessageBox.critical(self, "gns3-iouvm-converter not found")
+            return
+        try:
+            subprocess.Popen([command])
+        except (OSError, subprocess.SubprocessError) as e:
+            QtWidgets.QMessageBox.critical(self, "Error when running gns3-iouvm-converter {}".format(e))
 
     def openProjectActionSlot(self):
         """
