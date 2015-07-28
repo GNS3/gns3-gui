@@ -430,9 +430,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         restart_local_server = False
         restart_gns3_vm = False
 
-
-
-
         # save the local server preferences
         new_local_server_settings = local_server_settings.copy()
         new_local_server_settings.update({"path": self.uiLocalServerPathLineEdit.text(),

@@ -25,6 +25,7 @@ from ..dialogs.preferences_dialog import PreferencesDialog
 from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_vm_worker import WaitForVMWorker
+from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 
 
 class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
@@ -133,7 +134,17 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
                 progress_dialog.show()
                 if progress_dialog.exec_():
-                    gns3_vm.adjustLocalServerIP()
+                    previous_local_server_ip = servers.localServer().host()
+                    new_local_server_ip = gns3_vm.adjustLocalServerIP()
+                    self.uiShowCheckBox.setChecked(True)
+                    # restart the local server if necessary
+                    if new_local_server_ip != previous_local_server_ip:
+                        servers.stopLocalServer(wait=True)
+                        if servers.startLocalServer():
+                            worker = WaitForConnectionWorker(new_local_server_ip, servers.localServer().port())
+                            dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                            dialog.show()
+                            dialog.exec_()
             else:
                 return False
         elif self.currentPage() == self.uiAddVMsWizardPage:
@@ -144,6 +155,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 vm_settings = {"auto_start": False}
                 gns3_vm.setSettings(vm_settings)
                 servers.save()
+                self.uiShowCheckBox.setChecked(True)
+
             from gns3.modules import Dynamips
             Dynamips.instance().setSettings({"use_local_server": use_local_server})
             if sys.platform.startswith("linux"):
