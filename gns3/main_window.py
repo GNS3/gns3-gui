@@ -377,7 +377,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._createTemporaryProject()
 
     def _IOUVMConverterActionSlot(self):
-        subprocess.Popen([shutil.which("gns3-iouvm-converter")])
+        command = shutil.which("gns3-iouvm-converter")
+        if command is None:
+            QtWidgets.QMessageBox.critical(self, "gns3-iouvm-converter not found")
+            return
+        try:
+            subprocess.Popen([command])
+        except (OSError, subprocess.SubprocessError) as e:
+            QtWidgets.QMessageBox.critical(self, "Error when running gns3-iouvm-converter {}".format(e))
 
     def openProjectActionSlot(self):
         """
