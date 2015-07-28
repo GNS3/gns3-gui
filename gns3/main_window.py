@@ -32,7 +32,6 @@ from .local_config import LocalConfig
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .modules.vpcs import VPCS
-from .modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from .qt import QtGui, QtCore, QtWidgets, QtSvg
 from .servers import Servers
 from .gns3_vm import GNS3VM
@@ -232,7 +231,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # tools menu connections
         self.uiVPCSAction.triggered.connect(self._vpcsActionSlot)
-        self.uiQemuImgWizardAction.triggered.connect(self._qemuImgWizardActionSlot)
 
         # annotate menu connections
         self.uiAddNoteAction.triggered.connect(self._addNoteActionSlot)
@@ -736,10 +734,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             telnetConsole("VPCS multi-host", "127.0.0.1", vpcs_port)
         except (OSError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
-
-    def _qemuImgWizardActionSlot(self):
-        img_wizard = QemuImageWizard(self)
-        img_wizard.exec_()
 
     def _addNoteActionSlot(self):
         """

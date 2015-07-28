@@ -168,7 +168,6 @@ background-none;
      <string>&amp;Tools</string>
     </property>
     <addaction name="uiVPCSAction"/>
-    <addaction name="uiQemuImgWizardAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
    <addaction name="uiEditMenu"/>

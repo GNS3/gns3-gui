@@ -166,7 +166,9 @@ class VMWizard(QtWidgets.QWizard):
         self._radio_existing_images_buttons.add(radio_button)
 
     def _imageCreateSlot(self, line_edit, create_image_wizard):
-        create_dialog = create_image_wizard(self, self.uiNameLineEdit.text())
+        server = Servers.instance().getServerFromString(self.getSettings()["server"])
+
+        create_dialog = create_image_wizard(self, server, self.uiNameLineEdit.text())
         if QtWidgets.QDialog.Accepted == create_dialog.exec_():
             line_edit.setText(create_dialog.uiLocationLineEdit.text())
 

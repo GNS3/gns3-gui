@@ -37,14 +37,17 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
     Wizard to create a Qemu VM.
 
     :param parent: parent widget
+    :param server: Server where the image should be created
     :param filename: Default filename of image.
     :param folder: Default folder for the image. If absent, defaults to Qemu's images folder.
     :param size: Default size (in MiB) for the image.
     """
 
-    def __init__(self, parent, filename="disk", folder=None, size=30000):
+    def __init__(self, parent, server, filename="disk", folder=None, size=30000):
 
         super().__init__(parent)
+
+        self._server = server
         self.setupUi(self)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
 
@@ -71,7 +74,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
         self.page(self.pageIds()[-1]).validatePage = self._createDisk
 
         # Default values
-        Qemu.instance().getQemuImgBinariesFromServer(Servers.instance().localServer(),
+        Qemu.instance().getQemuImgBinariesFromServer(self._server,
                                                      self._getQemuImgBinariesFromServerCallback)
         self.uiLocationLineEdit.setText(filename)
         self.uiSizeSpinBox.setValue(size)
@@ -96,6 +99,15 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                 else:
                     self.uiBinaryComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
         self.uiBinaryWizardPage.completeChanged.emit()
+
+    def _getCreateDiskServerCallback(self, result, error=False, **kwargs):
+        """
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self, "Create disk", "{}".format(result["message"]))
 
     def _uiSizeAndLocationWizardPage_isComplete(self):
         return not "" == self.uiLocationLineEdit.text()
@@ -203,7 +215,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                     }
                     options['subformat'] = two + size_mode_mappings[size_mode]
 
-        Qemu.instance().createDiskImage(Servers.instance().localServer(), None, options)
+        Qemu.instance().createDiskImage(self._server, self._getCreateDiskServerCallback, options)
         return True
 
     def nextId(self):
