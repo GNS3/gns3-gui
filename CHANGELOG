@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.4.0alpha3 28/07/201
+
+* IOUVM converter
+* Create qemu disk image on remote server
+* Fix _addRemoteServer() got an unexpected keyword argument 'local'
+* Do not crash if configuration file is removed
+* Fixes rare issue when adding a link. Fixes #573.
+* Fixes crash with  PyQt 5.5. Fixes #568.
+* Changes how to look for the vmrun.exe location.
+* Inform user before exiting preferences dialog with changes
+* Write GNS3 upgrade to appdata
+* Fix windows asking for upgrade to the wrong version
+
 ## 1.3.8 27/07/2015
 
 * Fixes rare issue when adding a link. Fixes #573.
