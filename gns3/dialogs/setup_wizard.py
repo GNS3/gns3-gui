@@ -210,10 +210,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         else:
             self.uiVMListComboBox.clear()
             for vm in result:
-                if self.uiVmwareRadioButton.isChecked():
-                    self.uiVMListComboBox.addItem(vm["vmname"], vm["vmx_path"])
-                else:
-                    self.uiVMListComboBox.addItem(vm["vmname"], "")
+                self.uiVMListComboBox.addItem(vm["vmname"], vm.get("vmx_path", ""))
             gns3_vm = Servers.instance().vmSettings()
             index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
             if index != -1:
