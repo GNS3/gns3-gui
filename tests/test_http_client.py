@@ -62,12 +62,12 @@ def test_get_connected(http_client, request, network_manager, response):
 
     http_client.get("/test", callback)
     request.assert_call_with("/test")
-    request.setRawHeader.assert_any_call("Content-Type", "application/json")
-    request.setRawHeader.assert_any_call("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
+    request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
+    request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     assert network_manager.sendCustomRequest.called
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == request
-    assert args[1] == "GET"
+    assert args[1] == b"GET"
 
     # Trigger the completion
     response.finished.emit()
@@ -84,9 +84,9 @@ def test_get_connected_auth(http_client, request, network_manager, response):
 
     http_client.get("/test", callback)
     request.assert_call_with("/test")
-    request.setRawHeader.assert_any_call("Content-Type", "application/json")
-    request.setRawHeader.assert_any_call("Authorization", "Basic Z25zMzozc25n")
-    request.setRawHeader.assert_any_call("User-Agent", "GNS3 QT Client v{version}".format(version=__version__))
+    request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
+    request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
+    request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     network_manager.get.assert_call_with(request)
 
     # Trigger the completion
@@ -104,7 +104,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == request
-    assert args[1] == "GET"
+    assert args[1] == b"GET"
 
     response.header.return_value = "application/json"
     response.readAll.return_value = ("{\"version\": \"" + __version__ + "\", \"local\": true}").encode()
@@ -117,7 +117,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == request
-    assert args[1] == "POST"
+    assert args[1] == b"POST"
 
     assert http_client._connected
     assert callback.called
@@ -137,7 +137,7 @@ def test_post_not_connected_connection_failed(http_client, request, network_mana
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == request
-    assert args[1] == "GET"
+    assert args[1] == b"GET"
 
     # Trigger the completion of /version
     response.finished.emit()
