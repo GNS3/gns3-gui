@@ -379,12 +379,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _IOUVMConverterActionSlot(self):
         command = shutil.which("gns3-iouvm-converter")
         if command is None:
-            QtWidgets.QMessageBox.critical(self, "gns3-iouvm-converter not found")
+            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "gns3-iouvm-converter not found")
             return
         try:
             subprocess.Popen([command])
         except (OSError, subprocess.SubprocessError) as e:
-            QtWidgets.QMessageBox.critical(self, "Error when running gns3-iouvm-converter {}".format(e))
+            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "Error when running gns3-iouvm-converter {}".format(e))
 
     def openProjectActionSlot(self):
         """
@@ -1103,8 +1103,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # FIXME: do something with getting started dialog
         # self._gettingStartedActionSlot(auto=True)
 
-        # start and connect to the local server
         servers = Servers.instance()
+
+        # start the GNS3 VM
+        gns3_vm = GNS3VM.instance()
+        if gns3_vm.autoStart() and not gns3_vm.isRunning():
+            servers.initVMServer()
+            worker = WaitForVMWorker()
+            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+            progress_dialog.show()
+            if progress_dialog.exec_():
+                gns3_vm.adjustLocalServerIP()
+
+        # start and connect to the local server
         server = servers.localServer()
         if servers.localServerAutoStart():
             if server.isLocalServerRunning():
@@ -1130,18 +1141,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.show()
                 setup_wizard.exec_()
 
-        # start the GNS3 VM
-        gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart() and not gns3_vm.isRunning():
-            servers.initVMServer()
-            worker = WaitForVMWorker()
-            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
-            progress_dialog.show()
-            if progress_dialog.exec_():
-                gns3_vm.adjustLocalServerIP()
-
         self._createTemporaryProject()
-
         if self._project_from_cmdline:
             time.sleep(0.5)  # give some time to the server to initialize
             self._loadPath(self._project_from_cmdline)
