@@ -261,6 +261,17 @@ class Qemu(Module):
 
         server.get(r"/qemu/img-binaries", callback)
 
+    def createDiskImage(self, server, callback, options):
+        """
+        Create a disk image on the remote server
+
+        :param server: server to send the request to
+        :param callback: callback for the reply from the server
+        :param options: Options for the image creation
+        """
+
+        server.post(r"/qemu/img", callback, body=options)
+
     @staticmethod
     def getNodeClass(name):
         """
