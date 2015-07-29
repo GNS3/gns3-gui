@@ -75,6 +75,10 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
         self.uiSizeSpinBox.setValue(size)
         self._formatChangedSlot(self.uiFormatQcow2Radio)
 
+        # Hide the file browse button for remote servers
+        if not self._server.isLocal():
+            self.uiLocationBrowseToolButton.hide()
+
     def _getQemuImgBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
         Callback for getQemuImgBinariesFromServer.
