@@ -69,15 +69,16 @@ class CrashReport:
         sentry_uncaught.disabled = True
 
     def captureException(self, exception, value, tb):
-        if not RAVEN_AVAILABLE:
-            return
-        if os.path.exists(".git"):
-            log.warning("A .git directory exist crash report is turn off for developers")
-            return
         from .servers import Servers
 
         local_server = Servers.instance().localServerSettings()
         if local_server["report_errors"]:
+            if not RAVEN_AVAILABLE:
+                return
+            if os.path.exists(".git"):
+                log.warning("A .git directory exist crash report is turn off for developers")
+                return
+
             if self._client is None:
                 self._client = raven.Client(CrashReport.DSN, release=__version__)
             context = {
