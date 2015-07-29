@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/iouvm_converter_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -56,6 +56,14 @@ class Ui_IOUVMConverterWizard(object):
         self.label_4.setObjectName("label_4")
         self.verticalLayout_5.addWidget(self.label_4)
         IOUVMConverterWizard.addPage(self.uiWizardPageVirtualBoxHostOnly)
+        self.uiWizardDownloadBackups = QtWidgets.QWizardPage()
+        self.uiWizardDownloadBackups.setObjectName("uiWizardDownloadBackups")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.uiWizardDownloadBackups)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.label_10 = QtWidgets.QLabel(self.uiWizardDownloadBackups)
+        self.label_10.setObjectName("label_10")
+        self.verticalLayout_10.addWidget(self.label_10)
+        IOUVMConverterWizard.addPage(self.uiWizardDownloadBackups)
         self.uiWizardRestoreBackups = QtWidgets.QWizardPage()
         self.uiWizardRestoreBackups.setObjectName("uiWizardRestoreBackups")
         self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.uiWizardRestoreBackups)
@@ -65,14 +73,6 @@ class Ui_IOUVMConverterWizard(object):
         self.label_11.setObjectName("label_11")
         self.verticalLayout_11.addWidget(self.label_11)
         IOUVMConverterWizard.addPage(self.uiWizardRestoreBackups)
-        self.uiWizardDownloadBackups = QtWidgets.QWizardPage()
-        self.uiWizardDownloadBackups.setObjectName("uiWizardDownloadBackups")
-        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.uiWizardDownloadBackups)
-        self.verticalLayout_10.setObjectName("verticalLayout_10")
-        self.label_10 = QtWidgets.QLabel(self.uiWizardDownloadBackups)
-        self.label_10.setObjectName("label_10")
-        self.verticalLayout_10.addWidget(self.label_10)
-        IOUVMConverterWizard.addPage(self.uiWizardDownloadBackups)
         self.uiWizardPageBackup = QtWidgets.QWizardPage()
         self.uiWizardPageBackup.setObjectName("uiWizardPageBackup")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.uiWizardPageBackup)
@@ -166,6 +166,15 @@ class Ui_IOUVMConverterWizard(object):
 "<li>Click on OK</li>\n"
 "<li>Start the VM<li>\n"
 "</ul>"))
+        self.label_10.setText(_translate("IOUVMConverterWizard", "<h1>Download backups</h1>\n"
+"<ul>\n"
+"<li>Log as root with password cisco</li>\n"
+"<li>Type ifconfig eth0</li>\n"
+"<li>Remember the addr</li>\n"
+"<li>In your browser open http://THEADDR:8000</li>\n"
+"<li>Download projects and images backups</li>\n"
+"<li>halt the vm</li>\n"
+"</ul>"))
         self.label_11.setText(_translate("IOUVMConverterWizard", "<h1>Restore backups</h1>\n"
 "<ul>\n"
 "<li>Start the GNS3 VM</li>\n"
@@ -173,14 +182,6 @@ class Ui_IOUVMConverterWizard(object):
 "<li>In a browser open http://THEIP:8000/upload</li>\n"
 "<li>Select the option for restoring projects and upload the previous backup</li>\n"
 "<li>Select the option for restoring images and upload the previous backup</li>\n"
-"</ul>"))
-        self.label_10.setText(_translate("IOUVMConverterWizard", "<h1>Download backups</h1>\n"
-"<ul>\n"
-"<li>Log as root with password CISCO</li>\n"
-"<li>Type ifconfig eth0</li>\n"
-"<li>Remember the addr</li>\n"
-"<li>In your browser open http://THEADDR:8000</li>\n"
-"<li>Download projects and images backups</li>\n"
 "</ul>"))
         self.label_5.setText(_translate("IOUVMConverterWizard", "<center>\n"
 "BACKUP<br>\n"

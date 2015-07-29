@@ -105,6 +105,25 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiWizardDownloadBackups">
+   <layout class="QVBoxLayout" name="verticalLayout_10">
+    <item>
+     <widget class="QLabel" name="label_10">
+      <property name="text">
+       <string>&lt;h1&gt;Download backups&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Log as root with password cisco&lt;/li&gt;
+&lt;li&gt;Type ifconfig eth0&lt;/li&gt;
+&lt;li&gt;Remember the addr&lt;/li&gt;
+&lt;li&gt;In your browser open http://THEADDR:8000&lt;/li&gt;
+&lt;li&gt;Download projects and images backups&lt;/li&gt;
+&lt;li&gt;halt the vm&lt;/li&gt;
+&lt;/ul&gt;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiWizardRestoreBackups">
    <layout class="QVBoxLayout" name="verticalLayout_11">
     <item>
@@ -121,24 +140,6 @@
       </property>
       <property name="wordWrap">
        <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="uiWizardDownloadBackups">
-   <layout class="QVBoxLayout" name="verticalLayout_10">
-    <item>
-     <widget class="QLabel" name="label_10">
-      <property name="text">
-       <string>&lt;h1&gt;Download backups&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;Log as root with password CISCO&lt;/li&gt;
-&lt;li&gt;Type ifconfig eth0&lt;/li&gt;
-&lt;li&gt;Remember the addr&lt;/li&gt;
-&lt;li&gt;In your browser open http://THEADDR:8000&lt;/li&gt;
-&lt;li&gt;Download projects and images backups&lt;/li&gt;
-&lt;/ul&gt;</string>
       </property>
      </widget>
     </item>

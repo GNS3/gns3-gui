@@ -140,7 +140,7 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
     def _writeConfig(self, config):
         shutil.copy(self._configurationFile(), "{}.{}.backup".format(self._configurationFile(), datetime.now().isoformat()))
         with open(self._configurationFile(), 'w+') as f:
-            json.dump(config, f)
+            json.dump(config, f, indent=4)
 
     def _configurationFile(self):
         if sys.platform.startswith("win"):
