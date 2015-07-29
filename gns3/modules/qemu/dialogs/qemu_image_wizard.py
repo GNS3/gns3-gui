@@ -20,13 +20,8 @@ Wizard for QEMU images.
 """
 
 import os
-import subprocess
-import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets, QFileDialog
-from gns3.servers import Servers
-from gns3.image_manager import ImageManager
-
 from .. import Qemu
 from ..ui.qemu_image_wizard_ui import Ui_QemuImageWizard
 
@@ -78,6 +73,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                                                      self._getQemuImgBinariesFromServerCallback)
         self.uiLocationLineEdit.setText(filename)
         self.uiSizeSpinBox.setValue(size)
+        self._formatChangedSlot(self.uiFormatQcow2Radio)
 
     def _getQemuImgBinariesFromServerCallback(self, result, error=False, **kwargs):
         """

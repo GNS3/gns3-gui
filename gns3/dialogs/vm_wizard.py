@@ -139,7 +139,7 @@ class VMWizard(QtWidgets.QWizard):
         else:
             self.uiRemoteServersComboBox.setEnabled(True)
 
-    def addImageSelector(self, radio_button, combo_box, line_edit, browser, image_selector, create_button=None, create_image_wizard=None):
+    def addImageSelector(self, radio_button, combo_box, line_edit, browser, image_selector, create_button=None, create_image_wizard=None, image_suffix=""):
         """
         Add a remote image selector
 
@@ -159,18 +159,18 @@ class VMWizard(QtWidgets.QWizard):
 
         if create_button:
             assert create_image_wizard is not None
-            create_button.clicked.connect(lambda: self._imageCreateSlot(line_edit, create_image_wizard))
+            create_button.clicked.connect(lambda: self._imageCreateSlot(line_edit, create_image_wizard, image_suffix))
 
         self._existingImageToggledSlot(True, combo_box, line_edit, browser, create_button)
         radio_button.toggled.connect(lambda checked: self._existingImageToggledSlot(checked, combo_box, line_edit, browser, create_button))
         self._radio_existing_images_buttons.add(radio_button)
 
-    def _imageCreateSlot(self, line_edit, create_image_wizard):
+    def _imageCreateSlot(self, line_edit, create_image_wizard, image_suffix):
         server = Servers.instance().getServerFromString(self.getSettings()["server"])
 
-        create_dialog = create_image_wizard(self, server, self.uiNameLineEdit.text())
+        create_dialog = create_image_wizard(self, server, self.uiNameLineEdit.text() + image_suffix)
         if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            line_edit.setText(create_dialog.uiLocationLineEdit.text())
+            line_edit.setText(create_dialog.uiLocationLineEdit.text() + image_suffix)
 
     def _imageBrowserSlot(self, line_edit, image_selector):
         """
