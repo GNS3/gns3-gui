@@ -21,8 +21,11 @@ Manages the GNS3 VM.
 
 import sys
 import subprocess
+import codecs
+import shutil
 
 from .qt import QtNetwork
+from collections import OrderedDict
 from .servers import Servers
 
 import logging
@@ -85,6 +88,73 @@ class GNS3VM:
         output = subprocess.check_output(command, timeout=timeout)
         return output.decode("utf-8", errors="ignore").strip()
 
+    @staticmethod
+    def parse_vmx_file(path):
+        """
+        Parses a VMX file.
+
+        :param path: path to the VMX file
+
+        :returns: dict
+        """
+
+        pairs = OrderedDict()
+        encoding = "utf-8"
+        # get the first line to read the .encoding value
+        with open(path, "rb") as f:
+            line = f.readline().decode(encoding, errors="ignore")
+            if line.startswith("#!"):
+                # skip the shebang
+                line = f.readline().decode(encoding, errors="ignore")
+            try:
+                key, value = line.split('=', 1)
+                if key.strip().lower() == ".encoding":
+                    file_encoding = value.strip('" ')
+                    try:
+                        codecs.lookup(file_encoding)
+                        encoding = file_encoding
+                    except LookupError:
+                        log.warning("Invalid file encoding detected in '{}': {}".format(path, file_encoding))
+            except ValueError:
+                log.warning("Couldn't find file encoding in {}, using {}...".format(path, encoding))
+
+        # read the file with the correct encoding
+        with open(path, encoding=encoding, errors="ignore") as f:
+            for line in f.read().splitlines():
+                try:
+                    key, value = line.split('=', 1)
+                    pairs[key.strip().lower()] = value.strip('" ')
+                except ValueError:
+                    continue
+        return pairs
+
+    @staticmethod
+    def write_vmx_file(path, pairs):
+        """
+        Write a VMware VMX file.
+
+        :param path: path to the VMX file
+        :param pairs: settings to write
+        """
+
+        encoding = "utf-8"
+        if ".encoding" in pairs:
+            file_encoding = pairs[".encoding"]
+            try:
+                codecs.lookup(file_encoding)
+                encoding = file_encoding
+            except LookupError:
+                log.warning("Invalid file encoding detected in '{}': {}".format(path, file_encoding))
+        with open(path, "w", encoding=encoding, errors="ignore") as f:
+            if sys.platform.startswith("linux"):
+                # write the shebang on the first line on Linux
+                vmware_path = shutil.which("vmware")
+                if vmware_path:
+                    f.write("#!{}\n".format(vmware_path))
+            for key, value in pairs.items():
+                entry = '{} = "{}"\n'.format(key, value)
+                f.write(entry)
+
     def autoStart(self):
         """
         Automatically start the GNS3 VM at startup.
@@ -140,6 +210,40 @@ class GNS3VM:
         """
 
         return self._is_running
+
+    def setvCPUandRAM(self, vcpus, ram):
+        """
+        Set the vCPU cores and RAM amount for the GNS3 VM.
+
+        :param vcpus: number of vCPU cores
+        :param ram: amount of memory
+
+        :returns: boolean
+        """
+
+        vm_settings = self.settings()
+        if vm_settings["virtualization"] == "VMware":
+            try:
+                pairs = self.parse_vmx_file(vm_settings["vmx_path"])
+                pairs["numvcpus"] = str(vcpus)
+                pairs["memsize"] = str(ram)
+                self.write_vmx_file(vm_settings["vmx_path"], pairs)
+            except OSError as e:
+                log.error('Could not read/write VMware VMX file "{}": {}'.format(vm_settings["vmx_path"], e))
+                return False
+
+        elif vm_settings["virtualization"] == "VirtualBox":
+            try:
+                self.execute_vboxmanage("modifyvm", [vm_settings["vmname"], "--cpus", str(vcpus)], timeout=3)
+                self.execute_vboxmanage("modifyvm", [vm_settings["vmname"], "--memory", str(ram)], timeout=3)
+            except (OSError, subprocess.SubprocessError) as e:
+                log.error("Could not execute VBoxManage: {}".format(e), True)
+                return False
+            except subprocess.TimeoutExpired:
+                log.error("VBoxmanage timeout expired", True)
+                return False
+        log.info("GNS3 VM vCPU count set to {} and RAM to {} MB".format(vcpus, ram))
+        return True
 
     def shutdown(self, force=False):
         """

@@ -77,13 +77,6 @@
     <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported in one of these.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
-      <property name="text">
-       <string>Virtualization software:</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QRadioButton" name="uiVmwareRadioButton">
       <property name="text">
@@ -91,6 +84,34 @@
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QSpinBox" name="uiRAMSpinBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="suffix">
+       <string> MB</string>
+      </property>
+      <property name="minimum">
+       <number>512</number>
+      </property>
+      <property name="maximum">
+       <number>1000000000</number>
+      </property>
+      <property name="singleStep">
+       <number>1024</number>
+      </property>
+      <property name="value">
+       <number>2048</number>
       </property>
      </widget>
     </item>
@@ -108,20 +129,58 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QComboBox" name="uiVMListComboBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
+      <property name="text">
+       <string>Virtualization software:</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QPushButton" name="uiRefreshPushButton">
+    <item row="4" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QComboBox" name="uiVMListComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="uiRefreshPushButton">
+        <property name="text">
+         <string>&amp;Refresh</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="7" column="0">
+     <widget class="QSpinBox" name="uiCPUSpinBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>128</number>
+      </property>
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="uiRAMLabel">
       <property name="text">
-       <string>&amp;Refresh</string>
+       <string>RAM size:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="uiCPULabel">
+      <property name="text">
+       <string>vCPU cores:</string>
       </property>
      </widget>
     </item>

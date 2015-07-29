@@ -17,6 +17,7 @@
 
 import sys
 import os
+import psutil
 
 from gns3.qt import QtCore, QtWidgets
 from gns3.servers import Servers
@@ -107,6 +108,23 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         dialog.uiTreeWidget.setCurrentItem(child_pane)
         return dialog.uiStackedWidget.currentWidget()
 
+    def initializePage(self, page_id):
+        """
+        Initialize Wizard pages.
+
+        :param page_id: page identifier
+        """
+
+        super().initializePage(page_id)
+        if self.page(page_id) == self.uiVMWizardPage:
+            cpu_count = psutil.cpu_count()
+            self.uiCPUSpinBox.setValue(cpu_count)
+            # we want to allocate a little me more than half of the physical memory
+            ram = int(psutil.virtual_memory().total / (1024 * 1024) / 1.8)
+            # value must be a multiple of 4 (VMware requirement)
+            ram -= ram % 4
+            self.uiRAMSpinBox.setValue(ram)
+
     def validateCurrentPage(self):
         """
         Validates the settings.
@@ -127,6 +145,17 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                     vm_settings["virtualization"] = "VirtualBox"
                 gns3_vm.setSettings(vm_settings)
                 servers.save()
+
+                # set the vCPU count and RAM
+                vpcus = self.uiCPUSpinBox.value()
+                ram = self.uiRAMSpinBox.value()
+                if ram < 1024:
+                    QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "It is recommended to allocate a minimum of 1024 MB of RAM to the GNS3 VM")
+                available_ram = int(psutil.virtual_memory().available / (1024 * 1024))
+                if ram > available_ram:
+                    QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "You have probably allocated too much memory for the GNS3 VM! (available memory is {} MB)".format(available_ram))
+                if gns3_vm.setvCPUandRAM(vpcus, ram) is False:
+                    QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Could not configure vCPUs and RAM amounts for the GNS3 VM")
 
                 # start the GNS3 VM
                 servers.initVMServer()
