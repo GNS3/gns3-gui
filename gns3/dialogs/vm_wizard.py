@@ -213,7 +213,7 @@ class VMWizard(QtWidgets.QWizard):
             line_edit.setText("")
             line_edit.show()
             browser.show()
-            if create_button and self.uiLocalRadioButton.isChecked():
+            if create_button:
                 create_button.show()
 
     def loadImagesList(self, endpoint):
