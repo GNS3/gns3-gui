@@ -168,6 +168,7 @@ class UpdateManager(QtCore.QObject):
         """
         log.debug('Download updates to %s', self._package_directory)
         os.makedirs(self._update_directory, exist_ok=True)
+        self._filesToDownload = 2
         url = 'https://pypi.python.org/packages/source/g/gns3-server/gns3-server-{}.tar.gz'.format(version)
         self._get(url, self._fileDownloadedSlot, user_attribute=os.path.join(self._update_directory, 'gns3-server.tar.gz'))
         url = 'https://pypi.python.org/packages/source/g/gns3-gui/gns3-gui-{}.tar.gz'.format(version)
@@ -177,14 +178,18 @@ class UpdateManager(QtCore.QObject):
         network_reply = self.sender()
         file_path = network_reply.request().attribute(QtNetwork.QNetworkRequest.User)
         if network_reply.error() == QtNetwork.QNetworkReply.NoError:
-            redirect = network_reply.attribute(QtNetwork.QNetworkRequest.RedirectionTargetAttribute)
-            if redirect:
-                log.debug('Redirect download to %s', redirect.toDisplayString())
-                self._downloadFile(redirect.toDisplayString(), file_path)
-            else:
-                log.debug('File downloaded %s', file_path)
-                with open(file_path, 'wb+') as f:
-                    f.write(network_reply.readAll())
+            log.debug('File downloaded %s', file_path)
+            with open(file_path, 'wb+') as f:
+                f.write(network_reply.readAll())
+            self._filesToDownload -= 1
+            if self._filesToDownload == 0:
+                reply = QtWidgets.QMessageBox.question(self._parent,
+                                                   "Check For Update",
+                                                   "GNS3 upgrade downloaded do you want to quit the application?",
+                                                   QtWidgets.QMessageBox.Yes,
+                                                   QtWidgets.QMessageBox.No)
+                if reply == QtWidgets.QMessageBox.Yes:
+                    app = QtWidgets.QApplication.instance().closeAllWindows()
         else:
             log.debug('Error when downloading %s', file_path)
         network_reply.deleteLater()
