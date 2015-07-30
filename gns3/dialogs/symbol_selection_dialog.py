@@ -97,6 +97,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             self.uiBuiltInGroupBox.setEnabled(False)
             self.uiBuiltInGroupBox.hide()
 
+        self.adjustSize()
+
     def _customSymbolToggledSlot(self, checked):
         """
         Slot for when the custom symbol radio button is toggled.
@@ -109,6 +111,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             self.uiCustomSymbolGroupBox.show()
             self.uiBuiltInGroupBox.setEnabled(False)
             self.uiBuiltInGroupBox.hide()
+            self.adjustSize()
 
     def _builtInSymbolToggledSlot(self, checked):
         """
@@ -122,6 +125,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             self.uiCustomSymbolGroupBox.hide()
             self.uiBuiltInGroupBox.setEnabled(True)
             self.uiBuiltInGroupBox.show()
+            self.adjustSize()
 
     def _applyPreferencesSlot(self):
         """
@@ -139,10 +143,13 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                     if isinstance(item, SvgNodeItem):
                         item.setSharedRenderer(renderer)
                     else:
-                        QtWidgets.QMessageBox.critical(self, "Built-in SVG symbol", "Built-in SVG symbol cannot be applied on Pixmap node item")
-                        return False
-
-
+                        pixmap = QtGui.QPixmap(path)
+                        if not pixmap.isNull():
+                            item.setPixmap(pixmap)
+                            item.setPixmapSymbolPath(path)
+                        else:
+                            QtWidgets.QMessageBox.critical(self, "Built-in SVG symbol", "Built-in SVG symbol cannot be applied on Pixmap node item")
+                            return False
         else:
             symbol_path = self.uiSymbolLineEdit.text()
             pixmap = QtGui.QPixmap(symbol_path)
@@ -150,9 +157,15 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 for item in self._items:
                     if isinstance(item, PixmapNodeItem):
                         item.setPixmap(pixmap)
+                        item.setPixmapSymbolPath(symbol_path)
                     else:
-                        QtWidgets.QMessageBox.critical(self, "Custom pixmap symbol", "Custom pixmap symbol cannot be applied on SVG node item")
-                        return False
+                        renderer = QtSvg.QSvgRenderer(symbol_path)
+                        renderer.setObjectName(symbol_path)
+                        if renderer.isValid():
+                            item.setSharedRenderer(renderer)
+                        else:
+                            QtWidgets.QMessageBox.critical(self, "Custom pixmap symbol", "Custom pixmap symbol which is not SVG format cannot be applied on SVG node item")
+                            return False
         return True
 
     def getSymbol(self):

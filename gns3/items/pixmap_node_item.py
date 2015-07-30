@@ -44,11 +44,20 @@ class PixmapNodeItem(NodeItem, QtWidgets.QGraphicsPixmapItem):
         pixmap = QtGui.QPixmap(pixmap_symbol_path)
         self.setPixmap(pixmap)
 
+    def setPixmapSymbolPath(self, path):
+        """
+        Sets the pixmap path
+
+        :param path: path to the Pixmap file.
+        """
+
+        self._pixmap_symbol_path = path
+
     def pixmapSymbolPath(self):
         """
         Returns the pixmap path
 
-        :return: path to the Pixmap file.
+        :returns: path to the Pixmap file.
         """
 
         return self._pixmap_symbol_path
