@@ -47,6 +47,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self._items = items
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+        self.uiCustomSymbolRadioButton.toggled.connect(self._customSymbolToggledSlot)
+        self.uiBuiltInSymbolRadioButton.toggled.connect(self._builtInSymbolToggledSlot)
         self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
 
         selected_symbol = symbol
@@ -62,8 +64,11 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                     symbol_name = custom_symbol
                 selected_symbol = symbol_name
             elif isinstance(first_item, PixmapNodeItem):
-                self.uiSymbolLineEdit.setText(first_item.pixmapSymbolPath())
+                selected_symbol = first_item.pixmapSymbolPath()
 
+        custom_symbol = True
+        self.uiBuiltInSymbolRadioButton.setChecked(True)
+        self.uiSymbolListWidget.setFocus()
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
         for symbol in symbol_resources.children():
@@ -74,6 +79,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 resource_path = ":/symbols/" + symbol
                 svg_renderer = QtSvg.QSvgRenderer(resource_path)
                 if resource_path == selected_symbol:
+                    # this is a built-in symbol
+                    custom_symbol = False
                     self.uiSymbolListWidget.setCurrentItem(item)
                 image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
                 # Set the ARGB to 0 to prevent rendering artifacts
@@ -82,31 +89,71 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(icon)
 
+        if custom_symbol:
+            # this is a custom symbol
+            self.uiCustomSymbolRadioButton.setChecked(True)
+            self.uiSymbolLineEdit.setText(selected_symbol)
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(selected_symbol))
+            self.uiBuiltInGroupBox.setEnabled(False)
+            self.uiBuiltInGroupBox.hide()
+
+    def _customSymbolToggledSlot(self, checked):
+        """
+        Slot for when the custom symbol radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+
+        if checked:
+            self.uiCustomSymbolGroupBox.setEnabled(True)
+            self.uiCustomSymbolGroupBox.show()
+            self.uiBuiltInGroupBox.setEnabled(False)
+            self.uiBuiltInGroupBox.hide()
+
+    def _builtInSymbolToggledSlot(self, checked):
+        """
+        Slot for when the built-in symbol radio button is toggled.
+
+        :param checked: either the button is checked or not
+        """
+
+        if checked:
+            self.uiCustomSymbolGroupBox.setEnabled(False)
+            self.uiCustomSymbolGroupBox.hide()
+            self.uiBuiltInGroupBox.setEnabled(True)
+            self.uiBuiltInGroupBox.show()
+
     def _applyPreferencesSlot(self):
         """
         Applies the selected symbol to the items.
         """
 
-        current = self.uiSymbolListWidget.currentItem()
-        if current:
-            name = current.text()
-            path = ":/symbols/{}.svg".format(name)
-            renderer = QtSvg.QSvgRenderer(path)
-            renderer.setObjectName(path)
-            for item in self._items:
-                if isinstance(item, SvgNodeItem):
-                    item.setSharedRenderer(renderer)
-                else:
-                    log.warning("Built-in SVG symbol cannot be applied on Pixmap node item")
+        if self.uiSymbolListWidget.isEnabled():
+            current = self.uiSymbolListWidget.currentItem()
+            if current:
+                name = current.text()
+                path = ":/symbols/{}.svg".format(name)
+                renderer = QtSvg.QSvgRenderer(path)
+                renderer.setObjectName(path)
+                for item in self._items:
+                    if isinstance(item, SvgNodeItem):
+                        item.setSharedRenderer(renderer)
+                    else:
+                        QtWidgets.QMessageBox.critical(self, "Built-in SVG symbol", "Built-in SVG symbol cannot be applied on Pixmap node item")
+                        return False
 
-        symbol_path = self.uiSymbolLineEdit.text()
-        pixmap = QtGui.QPixmap(symbol_path)
-        if not pixmap.isNull():
-            for item in self._items:
-                if isinstance(item, PixmapNodeItem):
-                    item.setPixmap(pixmap)
-                else:
-                    log.warning("Custom pixmap symbol cannot be applied on SVG node item")
+
+        else:
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if not pixmap.isNull():
+                for item in self._items:
+                    if isinstance(item, PixmapNodeItem):
+                        item.setPixmap(pixmap)
+                    else:
+                        QtWidgets.QMessageBox.critical(self, "Custom pixmap symbol", "Custom pixmap symbol cannot be applied on SVG node item")
+                        return False
+        return True
 
     def getSymbol(self):
 
@@ -127,7 +174,6 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             return
 
         self._symbols_dir = os.path.dirname(path)
-        self.uiSymbolListWidget.setEnabled(False)
         self.uiSymbolLineEdit.clear()
         self.uiSymbolLineEdit.setText(path)
         self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(path))
@@ -139,6 +185,10 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         :param result: boolean (accepted or rejected)
         """
 
-        if result and self._items:
-            self._applyPreferencesSlot()
+        if result:
+            if not self.uiSymbolListWidget.isEnabled() and not os.path.exists(self.uiSymbolLineEdit.text()):
+                QtWidgets.QMessageBox.critical(self, "Custom symbol", "Invalid path to custom symbol: {}".format(self.uiSymbolLineEdit.text()))
+                result = 0
+            elif result and self._items and not self._applyPreferencesSlot():
+                result = 0
         super().done(result)

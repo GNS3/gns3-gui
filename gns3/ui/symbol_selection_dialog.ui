@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
-    <height>466</height>
+    <width>498</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,41 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QRadioButton" name="uiCustomSymbolRadioButton">
+       <property name="text">
+        <string>Use a custom symbol</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="uiBuiltInSymbolRadioButton">
+       <property name="text">
+        <string>Use a built-in symbol</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="uiCustomSymbolGroupBox">
      <property name="title">
       <string>Custom symbol</string>
      </property>
@@ -110,10 +144,12 @@
     </spacer>
    </item>
   </layout>
-  <zorder>uiButtonBox</zorder>
   <zorder>uiBuiltInGroupBox</zorder>
   <zorder>verticalSpacer</zorder>
-  <zorder>groupBox</zorder>
+  <zorder>uiCustomSymbolGroupBox</zorder>
+  <zorder>uiCustomSymbolRadioButton</zorder>
+  <zorder>uiBuiltInSymbolRadioButton</zorder>
+  <zorder>horizontalSpacer_2</zorder>
  </widget>
  <resources>
   <include location="../../resources/resources.qrc"/>
