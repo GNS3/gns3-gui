@@ -198,14 +198,14 @@ class HTTPClient(QtCore.QObject):
         Called when a query upload progress
         """
         if HTTPClient._progress_callback:
-            HTTPClient._progress_callback.progress(query_id, sent, total)
+            HTTPClient._progress_callback.progress_signal.emit(query_id, sent, total)
 
     def notify_progress_download(self, query_id, sent, total):
         """
         Called when a query download progress
         """
         if HTTPClient._progress_callback:
-            HTTPClient._progress_callback.progress(query_id, sent, total)
+            HTTPClient._progress_callback.progress_signal.emit(query_id, sent, total)
 
     @classmethod
     def setProgressCallback(cls, progress_callback):

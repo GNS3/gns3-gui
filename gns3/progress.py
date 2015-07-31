@@ -31,6 +31,7 @@ class Progress(QtCore.QObject):
 
     add_query_signal = QtCore.Signal(str, str, QtNetwork.QNetworkReply)
     remove_query_signal = QtCore.Signal(str)
+    progress_signal = QtCore.Signal(str, int, int)
 
     def __init__(self, min_duration=1000):
 
@@ -43,19 +44,24 @@ class Progress(QtCore.QObject):
         self._stimer = QtCore.QTimer()
         self._finished_query_during_display = 0
         self._queries = {}
-        self.add_query_signal.connect(self._add_query)
-        self.remove_query_signal.connect(self._remove_query)
+        # QtCore.Qt.QueuedConnection warranty that we execute the slot
+        # in the current thread and not emitter thread.
+        # This fix an issue with Qt 5.5
+        self.add_query_signal.connect(self._addQuerySlot, QtCore.Qt.QueuedConnection)
+        self.remove_query_signal.connect(self._removeQuerySlot, QtCore.Qt.QueuedConnection)
+        self.progress_signal.connect(self._progressSlot, QtCore.Qt.QueuedConnection)
+
         self._minimum_duration = min_duration
         self._cancel_button_text = ""
         self._allow_cancel_query = False
         self._enable = True
 
-    def _add_query(self, query_id, explanation, response):
+    def _addQuerySlot(self, query_id, explanation, response):
 
         self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0, "response": response}
         self.show()
 
-    def _remove_query(self, query_id):
+    def _removeQuerySlot(self, query_id):
 
         self._finished_query_during_display += 1
         if query_id in self._queries:
@@ -70,7 +76,7 @@ class Progress(QtCore.QObject):
 
         return self._progress_dialog
 
-    def progress(self, query_id, current, maximum):
+    def _progressSlot(self, query_id, current, maximum):
         if query_id in self._queries:
             self._queries[query_id]["current"] = current
             self._queries[query_id]["maximum"] = maximum
@@ -97,6 +103,7 @@ class Progress(QtCore.QObject):
             progress_dialog.setWindowModality(Qt.Qt.ApplicationModal)
             progress_dialog.setWindowTitle("Please wait")
             progress_dialog.setMinimumDuration(self._minimum_duration)
+
             if len(self._cancel_button_text) > 0:
                 progress_dialog.setCancelButtonText(self._cancel_button_text)
             else:
@@ -120,7 +127,8 @@ class Progress(QtCore.QObject):
                 progress_dialog.setValue(query["current"])
 
         if len(self._queries) > 0:
-            progress_dialog.setLabelText(list(self._queries.values())[0]["explanation"])
+            text = list(self._queries.values())[0]["explanation"]
+            progress_dialog.setLabelText(text)
 
         if start_timer:
             self._stimer.singleShot(self._minimum_duration, self._show_dialog)
