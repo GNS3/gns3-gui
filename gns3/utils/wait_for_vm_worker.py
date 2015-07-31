@@ -106,14 +106,20 @@ class WaitForVMWorker(QtCore.QObject):
                     return True
         return False
 
-    def _getInterfaces(self, vm_server, retry=0):
+    @staticmethod
+    def _waitForServer(vm_server, endpoint, retry=0):
         """
-        :param vm_server: The instance
+        Wait for a VM server to reply to a request.
+
+        :param vm_server: The server instance
         :param retry: How many time we need to retry if server doesn't answer wait 1 second between test
         """
+
+        json_data = []
+        status = 0
         while retry >= 0:
-            status, json_data = vm_server.getSynchronous("interfaces", timeout=1)
-            if status == 200:
+            status, json_data = vm_server.getSynchronous(endpoint, timeout=1)
+            if status != 0:
                 break
             time.sleep(1)
             retry -= 1
@@ -217,7 +223,10 @@ class WaitForVMWorker(QtCore.QObject):
                 vm_server.setPort(port)
                 vm_server.setHost(ip_address)
                 # ask the server all a list of all its interfaces along with IP addresses
-                status, json_data = self._getInterfaces(vm_server, retry=120)
+                status, json_data = self._waitForServer(vm_server, "interfaces", retry=120)
+                if status == 401:
+                    self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
+                    return
                 if status != 200:
                     msg = "Server {} has replied with status code {} when retrieving the network interfaces".format(vm_server.url(), status)
                     log.error(msg)
@@ -251,7 +260,7 @@ class WaitForVMWorker(QtCore.QObject):
 
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
-            status, json_data = vm_server.getSynchronous("version", timeout=120)
+            status, json_data = self._waitForServer(vm_server, "version", retry=120)
             if status == 401:
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return

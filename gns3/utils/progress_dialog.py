@@ -56,7 +56,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._thread = QtCore.QThread(self)
         worker.moveToThread(self._thread)
 
-        # connect worker the signals
+        # connect worker signals
         worker.updated.connect(self._updateProgress)
         worker.error.connect(self._error)
         # worker.finished.connect(self._thread.quit)
