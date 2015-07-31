@@ -26,4 +26,4 @@ number has been incremented)
 """
 
 __version__ = "1.3.9dev1"
-__version_info__ = (1, 3, 8, -99)
+__version_info__ = (1, 3, 9, -99)
