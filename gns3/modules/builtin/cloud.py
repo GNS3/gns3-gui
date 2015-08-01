@@ -220,6 +220,36 @@ class Cloud(Node):
             return NIONull(identifier)
         return None
 
+    def _allocateNIO(self, nio):
+        """
+        Allocate a new NIO object.
+
+        :param nio: NIO description
+
+        :returns: NIO instance
+        """
+
+        nio_object = None
+        if nio.lower().startswith("nio_udp"):
+            nio_object = self._createNIOUDP(nio)
+        if nio.lower().startswith("nio_gen_eth"):
+            nio_object = self._createNIOGenericEthernet(nio)
+        if nio.lower().startswith("nio_gen_linux"):
+            nio_object = self._createNIOLinuxEthernet(nio)
+        if nio.lower().startswith("nio_nat"):
+            nio_object = self._createNIONAT(nio)
+        if nio.lower().startswith("nio_tap"):
+            nio_object = self._createNIOTAP(nio)
+        if nio.lower().startswith("nio_unix"):
+            nio_object = self._createNIOUNIX(nio)
+        if nio.lower().startswith("nio_vde"):
+            nio_object = self._createNIOVDE(nio)
+        if nio.lower().startswith("nio_null"):
+            nio_object = self._createNIONull(nio)
+        if nio_object is None:
+            log.error("Could not create NIO object from {}".format(nio))
+        return nio_object
+
     def update(self, new_settings):
         """
         Updates the settings for this cloud.
@@ -236,25 +266,8 @@ class Cloud(Node):
                 if nio in self._settings["nios"]:
                     # port already created for this NIO
                     continue
-                nio_object = None
-                if nio.lower().startswith("nio_udp"):
-                    nio_object = self._createNIOUDP(nio)
-                if nio.lower().startswith("nio_gen_eth"):
-                    nio_object = self._createNIOGenericEthernet(nio)
-                if nio.lower().startswith("nio_gen_linux"):
-                    nio_object = self._createNIOLinuxEthernet(nio)
-                if nio.lower().startswith("nio_nat"):
-                    nio_object = self._createNIONAT(nio)
-                if nio.lower().startswith("nio_tap"):
-                    nio_object = self._createNIOTAP(nio)
-                if nio.lower().startswith("nio_unix"):
-                    nio_object = self._createNIOUNIX(nio)
-                if nio.lower().startswith("nio_vde"):
-                    nio_object = self._createNIOVDE(nio)
-                if nio.lower().startswith("nio_null"):
-                    nio_object = self._createNIONull(nio)
+                nio_object = self._allocateNIO(nio)
                 if nio_object is None:
-                    log.error("Could not create NIO object from {}".format(nio))
                     continue
                 port = Port(nio, nio_object, stub=True)
                 port.setStatus(Port.started)
@@ -381,6 +394,8 @@ This is a pseudo-device for external connections
                                     if topology_port["name"] in self._settings["nios"]:
                                         self._settings["nios"].remove(topology_port["name"])
                                     topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
+                                    nio = self._allocateNIO(topology_port["name"])
+                                    port.setDefaultNio(nio)
                                     port.setName(topology_port["name"])
                                     self._settings["nios"].append(topology_port["name"])
 
