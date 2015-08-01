@@ -146,6 +146,7 @@ class Progress(QtCore.QObject):
             progress_dialog = self._progress_dialog
             self._progress_dialog = None
             progress_dialog.cancel()
+            progress_dialog.deleteLater()
 
     @contextmanager
     def context(self, **kwargs):
