@@ -91,6 +91,44 @@ class WaitForVMWorker(QtCore.QObject):
                         continue
         return interface
 
+    def _look_for_vboxnet(self, interface_number):
+        """
+        Look for the VirtualBox network name associated with a host only interface.
+
+        :returns: None or vboxnet name
+        """
+
+        result = self._vm.execute_vboxmanage("showvminfo", [self._vmname, "--machinereadable"])
+        for info in result.splitlines():
+            if '=' in info:
+                name, value = info.split('=', 1)
+                if name == "hostonlyadapter{}".format(interface_number):
+                    return value.strip('"')
+        return None
+
+    def _check_dhcp_server(self, vboxnet):
+        """
+        Check if the DHCP server associated with a vboxnet is enabled.
+
+        :param vboxnet: vboxnet name
+
+        :returns: boolean
+        """
+
+        properties = self._vm.execute_vboxmanage("list", ["dhcpservers"])
+        flag_dhcp_server_found = False
+        for prop in properties.splitlines():
+            try:
+                name, value = prop.split(':', 1)
+            except ValueError:
+                continue
+            if name.strip() == "NetworkName" and value.strip().endswith(vboxnet):
+                flag_dhcp_server_found = True
+            if flag_dhcp_server_found and name.strip() == "Enabled":
+                if value.strip() == "Yes":
+                    return True
+        return False
+
     def _check_vbox_port_forwarding(self):
         """
         Checks if the NAT port forwarding rule exists.
@@ -185,6 +223,15 @@ class WaitForVMWorker(QtCore.QObject):
                 hostonly_interface_number = self._look_for_interface("hostonly")
                 if hostonly_interface_number < 0:
                     self.error.emit("The GNS3 VM must have a host only interface configured in order to start", True)
+                    return
+
+                vboxnet = self._look_for_vboxnet(hostonly_interface_number)
+                if vboxnet is None:
+                    self.error.emit("VirtualBox host-only network could not be found for interface {}".format(hostonly_interface_number), True)
+                    return
+
+                if not self._check_dhcp_server(vboxnet):
+                    self.error.emit("DHCP must be enabled on VirtualBox host-only network: {}".format(vboxnet), True)
                     return
 
                 vm_state = self._get_vbox_vm_state()
