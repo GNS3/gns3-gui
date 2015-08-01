@@ -1143,7 +1143,10 @@ class GraphicsView(QtGui.QGraphicsView):
                     if ok:
                         if selection in ports:
                             port, dlt = ports[selection]
-                            node.startPacketCapture(port, port.captureFileName(node.name()), dlt)
+                            try:
+                                node.startPacketCapture(port, port.captureFileName(node.name()), dlt)
+                            except OSError as e:
+                                QtWidgets.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
                 else:
                     QtGui.QMessageBox.warning(self, "Capture", "No port available for packet capture on {}".format(node.name()))
 
