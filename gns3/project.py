@@ -16,7 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 import functools
+import traceback
 from .qt import QtCore
 
 from gns3.servers import Servers
@@ -151,8 +153,14 @@ class Project(QtCore.QObject):
         Path to the topology file
         """
 
-        assert self._files_dir is not None
-        assert self._name is not None
+        try:
+            assert self._files_dir is not None
+            assert self._name is not None
+        except AssertionError:
+            lines = traceback.format_exception(sys.exc_info())
+            tb = "".join(lines)
+            log.debug("Assertion detected: {}".format(tb))
+            raise
         return os.path.join(self._files_dir, self._name + ".gns3")
 
     def setTopologyFile(self, topology_file):
