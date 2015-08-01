@@ -249,6 +249,15 @@ class Port:
 
         self._destination_port = port
 
+    def setDefaultNio(self, default_nio):
+        """
+        Adds a default NIO to this port.
+
+        :param default_nio: NIO instance
+        """
+
+        self._default_nio = default_nio
+
     def defaultNio(self):
         """
         Returns the default NIO for this port.

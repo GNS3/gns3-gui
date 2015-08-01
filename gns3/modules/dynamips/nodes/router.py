@@ -25,7 +25,6 @@ import re
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
-from gns3.servers import Servers
 from gns3.packet_capture import PacketCapture
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.image_manager import ImageManager

@@ -17,7 +17,6 @@
 
 """
 NIO implementation on the client side (in the form of a pseudo node represented as a cloud).
-Asynchronously sends JSON messages to the GNS3 server and receives responses with callbacks.
 """
 
 import re
@@ -73,7 +72,7 @@ class Cloud(Node):
         self.delete_links_signal.emit()
         self.deleted_signal.emit()
 
-    def setup(self, name=None, initial_settings={}):
+    def setup(self, name=None, additional_settings={}):
         """
         Setups this cloud.
 
@@ -83,8 +82,8 @@ class Cloud(Node):
         if name:
             self._settings["name"] = name
 
-        if initial_settings:
-            self._initial_settings = initial_settings
+        if additional_settings and "nios" in additional_settings:
+            self._settings["nios"] = additional_settings["nios"]
 
         self._server.get("/interfaces", self._setupCallback)
 
@@ -103,13 +102,16 @@ class Cloud(Node):
         else:
             self._settings["interfaces"] = result.copy()
 
-        if self._initial_settings and "nios" in self._initial_settings and self._initial_settings["nios"]:
-            self._initial_settings["interfaces"] = {}
-            self.update(self._initial_settings)
+        if self._settings["nios"]:
+            self._addPorts(self._settings["nios"])
+
+        if self._loading:
+            self.loaded_signal.emit()
         else:
-            log.info("cloud {} has been created".format(self.name()))
             self.setInitialized(True)
+            log.info("cloud {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
+            self._module.addNode(self)
 
     def _createNIOUDP(self, nio):
         """
@@ -219,6 +221,56 @@ class Cloud(Node):
             return NIONull(identifier)
         return None
 
+    def _allocateNIO(self, nio):
+        """
+        Allocate a new NIO object.
+
+        :param nio: NIO description
+
+        :returns: NIO instance
+        """
+
+        nio_object = None
+        if nio.lower().startswith("nio_udp"):
+            nio_object = self._createNIOUDP(nio)
+        if nio.lower().startswith("nio_gen_eth"):
+            nio_object = self._createNIOGenericEthernet(nio)
+        if nio.lower().startswith("nio_gen_linux"):
+            nio_object = self._createNIOLinuxEthernet(nio)
+        if nio.lower().startswith("nio_nat"):
+            nio_object = self._createNIONAT(nio)
+        if nio.lower().startswith("nio_tap"):
+            nio_object = self._createNIOTAP(nio)
+        if nio.lower().startswith("nio_unix"):
+            nio_object = self._createNIOUNIX(nio)
+        if nio.lower().startswith("nio_vde"):
+            nio_object = self._createNIOVDE(nio)
+        if nio.lower().startswith("nio_null"):
+            nio_object = self._createNIONull(nio)
+        if nio_object is None:
+            log.error("Could not create NIO object from {}".format(nio))
+        return nio_object
+
+    def _addPorts(self, nios, ignore_existing_nio=False):
+        """
+        Adds adapters.
+
+        :param adapters: number of adapters
+        """
+
+        # add ports
+        for nio in nios:
+            if ignore_existing_nio and nio in self._settings["nios"]:
+                # port already created for this NIO
+                continue
+            nio_object = self._allocateNIO(nio)
+            if nio_object is None:
+                continue
+            port = Port(nio, nio_object, stub=True)
+            port.setStatus(Port.started)
+            self._ports.append(port)
+            log.debug("port {} has been added".format(nio))
+
     def update(self, new_settings):
         """
         Updates the settings for this cloud.
@@ -229,37 +281,8 @@ class Cloud(Node):
         updated = False
         if "nios" in new_settings:
             nios = new_settings["nios"]
-
-            # add ports
-            for nio in nios:
-                if nio in self._settings["nios"]:
-                    # port already created for this NIO
-                    continue
-                nio_object = None
-                if nio.lower().startswith("nio_udp"):
-                    nio_object = self._createNIOUDP(nio)
-                if nio.lower().startswith("nio_gen_eth"):
-                    nio_object = self._createNIOGenericEthernet(nio)
-                if nio.lower().startswith("nio_gen_linux"):
-                    nio_object = self._createNIOLinuxEthernet(nio)
-                if nio.lower().startswith("nio_nat"):
-                    nio_object = self._createNIONAT(nio)
-                if nio.lower().startswith("nio_tap"):
-                    nio_object = self._createNIOTAP(nio)
-                if nio.lower().startswith("nio_unix"):
-                    nio_object = self._createNIOUNIX(nio)
-                if nio.lower().startswith("nio_vde"):
-                    nio_object = self._createNIOVDE(nio)
-                if nio.lower().startswith("nio_null"):
-                    nio_object = self._createNIONull(nio)
-                if nio_object is None:
-                    log.error("Could not create NIO object from {}".format(nio))
-                    continue
-                port = Port(nio, nio_object, stub=True)
-                port.setStatus(Port.started)
-                self._ports.append(port)
-                updated = True
-                log.debug("port {} has been added".format(nio))
+            self._addPorts(nios, ignore_existing_nio=True)
+            updated = True
 
             # delete ports
             for nio in self._settings["nios"]:
@@ -327,8 +350,7 @@ This is a pseudo-device for external connections
                  "description": str(self),
                  "properties": {"name": self.name(),
                                 "nios": self._settings["nios"]},
-                 "server_id": self._server.id(),
-                 }
+                 "server_id": self._server.id()}
 
         # add the ports
         if self._ports:
@@ -348,17 +370,20 @@ This is a pseudo-device for external connections
 
         settings = node_info["properties"]
         name = settings.pop("name")
-        self.updated_signal.connect(self._updatePortSettings)
         log.info("cloud {} is loading".format(name))
+        self.setName(name)
+        self._loading = True
         self._node_info = node_info
-        self.setup(name, settings)
+        self.loaded_signal.connect(self._updatePortSettings)
+        self.setup(name, additional_settings=settings)
 
     def _updatePortSettings(self):
         """
         Updates port settings when loading a topology.
         """
 
-        self.updated_signal.disconnect(self._updatePortSettings)
+        self.loaded_signal.disconnect(self._updatePortSettings)
+
         # update the port with the correct IDs
         if "ports" in self._node_info:
             ports = self._node_info["ports"]
@@ -380,12 +405,18 @@ This is a pseudo-device for external connections
                                     if topology_port["name"] in self._settings["nios"]:
                                         self._settings["nios"].remove(topology_port["name"])
                                     topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
+                                    nio = self._allocateNIO(topology_port["name"])
+                                    port.setDefaultNio(nio)
                                     port.setName(topology_port["name"])
                                     self._settings["nios"].append(topology_port["name"])
 
-        log.info("cloud {} has been created".format(self.name()))
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
+        log.info("cloud {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
+        self._module.addNode(self)
+        self._loading = False
+        self._node_info = None
 
     def name(self):
         """

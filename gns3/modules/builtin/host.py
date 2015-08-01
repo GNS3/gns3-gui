@@ -46,7 +46,7 @@ class Host(Cloud):
         name = "Host{}".format(self._name_id)
         self._settings["name"] = name
 
-    def setup(self, name=None, initial_settings={}):
+    def setup(self, name=None, additional_settings={}):
         """
         Setups this host.
 
@@ -56,8 +56,8 @@ class Host(Cloud):
         if name:
             self._settings["name"] = name
 
-        if initial_settings:
-            self._initial_settings = initial_settings
+        if additional_settings and "nios" in additional_settings:
+            self._settings["nios"] = additional_settings["nios"]
         else:
             self.created_signal.connect(self._autoConfigure)
 
@@ -76,7 +76,6 @@ class Host(Cloud):
                 new_settings["nios"].append("nio_tap:{}".format(interface["name"]))
             else:
                 new_settings["nios"].append("nio_gen_eth:{}".format(interface["name"]))
-
         self.update(new_settings)
 
     @staticmethod

@@ -836,6 +836,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot to open the setup wizard.
         """
+
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
