@@ -401,10 +401,24 @@
                 "hdb_disk_image": { "type": "string" },
                 "hdc_disk_image": { "type": "string" },
                 "hdd_disk_image": { "type": "string" },
+                "hda_disk_interface": {
+                    "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"]
+                },
+                "hdb_disk_interface": {
+                    "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"]
+                },
+                "hdc_disk_interface": {
+                    "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"]
+                },
+                "hdd_disk_interface": {
+                    "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"]
+                },
+                "cdrom_image": { "type": "string" },
                 "hda_disk_image_md5sum": { "$ref": "#/definitions/md5" },
                 "hdb_disk_image_md5sum": { "$ref": "#/definitions/md5" },
                 "hdc_disk_image_md5sum": { "$ref": "#/definitions/md5" },
                 "hdd_disk_image_md5sum": { "$ref": "#/definitions/md5" },
+                "cdrom_image_md5sum": { "$ref": "#/definitions/md5" },
                 "initrd": { "type": "string" },
                 "initrd_md5sum": { "$ref": "#/definitions/md5" },
                 "kernel_image": { "type": "string"},

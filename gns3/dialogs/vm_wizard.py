@@ -170,7 +170,7 @@ class VMWizard(QtWidgets.QWizard):
 
         create_dialog = create_image_wizard(self, server, self.uiNameLineEdit.text() + image_suffix)
         if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            line_edit.setText(create_dialog.uiLocationLineEdit.text() + image_suffix)
+            line_edit.setText(create_dialog.uiLocationLineEdit.text())
 
     def _imageBrowserSlot(self, line_edit, image_selector):
         """
