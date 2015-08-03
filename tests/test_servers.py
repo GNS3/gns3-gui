@@ -20,6 +20,10 @@ import pytest
 
 from gns3.servers import Servers
 
+@pytest.fixture(autouse=True)
+def reset_server():
+    Servers._instance = None
+
 
 def test_loadSettings_EmptySettings(local_config, tmpdir):
 
@@ -111,3 +115,17 @@ def test_getServerFromString_with_ssh():
     assert server.user() == "root"
     assert server.ssh_port() == 22
     assert server.ssh_key() == "/tmp/test.ssh"
+
+
+def test_is_non_local_server_configured():
+
+    servers = Servers.instance()
+
+    assert servers.isNonLocalServerConfigured() is False
+    servers._vm_server = object()
+    assert servers.isNonLocalServerConfigured() is True
+    servers._vm_server = None
+    assert servers.isNonLocalServerConfigured() is False
+
+    servers._addRemoteServer("ssh", "127.0.0.1", "4000", user="root", ssh_port=22, ssh_key="/tmp/test.ssh")
+    assert servers.isNonLocalServerConfigured() is True

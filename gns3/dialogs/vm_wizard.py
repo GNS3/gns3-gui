@@ -47,6 +47,10 @@ class VMWizard(QtWidgets.QWizard):
         # The list of radio button for existing image or new images
         self._radio_existing_images_buttons = set()
 
+        if Servers.instance().isNonLocalServerConfigured() is False:
+            # skip the server page if we use the local server
+            self.setStartId(1)
+
     def refreshImageStepsButtons(self):
         """
         When changing the server type (remote or local)

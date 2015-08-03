@@ -66,10 +66,6 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiInitrdImageListComboBox, self.uiInitrdImageLineEdit, self.uiInitrdImageToolButton, QemuVMConfigurationPage.getDiskImage)
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiKernelImageListComboBox, self.uiKernelImageLineEdit, self.uiKernelImageToolButton, QemuVMConfigurationPage.getDiskImage)
 
-        if Qemu.instance().settings()["use_local_server"]:
-            # skip the server page if we use the local server
-            self.setStartId(1)
-
     def _typeChangedSlot(self, vm_type):
         """
         When the type of QEMU VM is changed.
@@ -158,7 +154,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2 ** 32
             if sys.platform.startswith("win"):
-                if self.uiTypeComboBox.currentText() != "Default" and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
+                if self.uiTypeComboBox.currentText() != "Default" and self.uiLocalRadioButton.isChecked():
                     search_string = r"qemu-0.13.0\qemu-system-i386w.exe"
                 elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server

@@ -47,7 +47,10 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        if VMware.instance().settings()["use_local_server"]:
+            # Fusion is not supported on OSX
+            self.uiLocalRadioButton.setEnabled(False)
+
+        if Servers.instance().isNonLocalServerConfigured() is False:
             # skip the server page if we use the local server
             self.setStartId(1)
 

@@ -61,12 +61,6 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
 
         self._iou_devices = iou_devices
 
-        if IOU.instance().settings()["use_local_server"]:
-            # skip the server page if we use the local server
-            self.uiLocalRadioButton.setEnabled(True)
-            self.uiLocalRadioButton.setChecked(True)
-            self.setStartId(1)
-
         self.uiIOUImageLineEdit.textChanged.connect(self._imageLineEditTextChangedSlot)
 
         # location of the base config templates
