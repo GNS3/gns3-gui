@@ -147,7 +147,7 @@ class LocalConfig(QtCore.QObject):
         Migrate pre 1.4 config
         """
 
-        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0"):
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
 
             servers = self._settings.get("Servers", {})
 
@@ -281,6 +281,7 @@ class LocalConfig(QtCore.QObject):
         settings = _copySettings(settings, default_settings)
 
         self._settings[section] = settings
+
         return copy.deepcopy(settings)
 
     def saveSectionSettings(self, section, settings):
