@@ -53,7 +53,7 @@ class UpdateManager(QtCore.QObject):
         """
         :returns: Boolean. True if it's a dev build. False it's a release build
         """
-        if version.__version_info__[3] < 0:
+        if version.__version_info__[3] != 0:
             return True
         return False
 
