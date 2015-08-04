@@ -55,7 +55,6 @@ class Servers():
         self._local_server = None
         self._vm_server = None
         self._remote_servers = {}
-        self._cloud_servers = {}
         self._local_server_path = ""
         self._local_server_auto_start = True
         self._local_server_allow_console_from_anywhere = False
@@ -682,6 +681,16 @@ class Servers():
         for server in self._remote_servers.values():
             if server.connected():
                 server.close()
+
+    def isNonLocalServerConfigured(self):
+        """
+        :returns: True if GNS3 VM or a remote server is configured
+        """
+        if self._vm_server is not None:
+            return True
+        if len(self._remote_servers) > 0:
+            return True
+        return False
 
     @staticmethod
     def instance():

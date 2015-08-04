@@ -111,10 +111,6 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
         self._ios_routers = ios_routers
 
-        if Dynamips.instance().settings()["use_local_server"]:
-            # skip the server page if we use the local server
-            self.setStartId(1)
-
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
         self.addImageSelector(self.uiIOSExistingImageRadioButton, self.uiIOSImageListComboBox, self.uiIOSImageLineEdit, self.uiIOSImageToolButton, IOSRouterPreferencesPage.getIOSImage)
 

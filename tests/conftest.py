@@ -207,15 +207,3 @@ def pytest_unconfigure(config):
     del sys._called_from_test
 
 
-def pytest_runtest_setup(item):
-    """
-    Skip all tests marked with @rackspace_authentication if username and apikey were neither
-    passed to command line nor set as environment vars
-    """
-    user = item.config.getoption("--username") or os.environ.get('RACKSPACE_USERNAME')
-    key = item.config.getoption("--apikey") or os.environ.get('RACKSPACE_APIKEY')
-
-    credentials_passed = user and key
-
-    if 'rackspace_authentication' in item.keywords and not credentials_passed:
-        pytest.skip("need rackspace authentication options to run")
