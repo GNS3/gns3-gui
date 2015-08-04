@@ -50,7 +50,7 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
             # Fusion is not supported on OSX
             self.uiLocalRadioButton.setEnabled(False)
 
-        if Servers.instance().isNonLocalServerConfigured() is False:
+        if not Servers.instance().remoteServers():
             # skip the server page if we use the local server
             self.setStartId(1)
 

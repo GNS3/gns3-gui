@@ -47,7 +47,7 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        if Servers.instance().isNonLocalServerConfigured() is False:
+        if not Servers.instance().remoteServers():
             # skip the server page if we use the local server
             self.setStartId(1)
 
