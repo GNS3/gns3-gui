@@ -81,7 +81,7 @@ class CrashReport:
                 client = raven.Client(CrashReport.DSN, release=__version__, fingerprint=['{{ default }}', exception.fingerprint])
             else:
                 client = raven.Client(CrashReport.DSN, release=__version__)
-            client.tags_context({
+            context = {
                 "os:name": platform.system(),
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
