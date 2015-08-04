@@ -1,11 +1,31 @@
 # Change Log
 
+## 1.4.0alpha4 04/08/2015
+
+* Use half the available physical memory for the GNS3 VM in the Setup Wizard.
+* Drop useless notion of resource_type
+* Fix When you modify config from outside router list is not refresh
+* Sync auth settings between 1.3 and 1.4
+* Group HTTP bad request by path
+* Disallow connection to a different major version in all cases
+* Show the server choice in wizard if you have a VM or a remote server
+* Fix local server settings erased at each launch
+* Support for Qemu disk interfaces, cd/dvd-rom image and boot priority.
+* Prevents progress dialog to stay displayed (fixes graphical bug).
+* Check that DHCP is enabled on the VirtualBox host-only network associated with the VirtualBox GNS3 VM. Fixes #287.
+* Fixes Qt5 incompatibility.
+* Catch exception when trying to launch Wireshark.
+* Fixes migration of cloud interfaces. Fixes #582.
+* Wait for the server to be fully started in the GNS3 VM. Fixes #581.
+* Fix issue with file upload and Qt 5.5
+* Improves the symbol dialog. Implements #514.
+
 ## 1.3.9 03/08/2015
 
 * Catch exception when trying to launch Wireshark.
 * Backport: fixes migration of cloud interfaces.
 
-## 1.4.0alpha3 28/07/201
+## 1.4.0alpha3 28/07/2015
 
 * IOUVM converter
 * Create qemu disk image on remote server
