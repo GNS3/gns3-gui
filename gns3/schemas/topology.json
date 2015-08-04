@@ -686,7 +686,6 @@
     },
     "required": [
         "name",
-        "resources_type",
         "topology",
         "type"
     ],
