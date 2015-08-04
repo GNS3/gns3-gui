@@ -697,7 +697,14 @@ class HTTPClient(QtCore.QObject):
                     callback(params, server=self, context=context)
         # response.deleteLater()
         if status == 400:
-            raise HttpBadRequest(body)
+            try:
+                params = json.loads(body)
+                e = HttpBadRequest(body)
+                e.fingerprint = params["path"]
+            # If something goes wrong for a any reason just raise the bad request
+            except Exception:
+                e = HttpBadRequest(body)
+            raise e
 
     def RAMLimit(self):
         """

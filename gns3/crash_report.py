@@ -59,8 +59,6 @@ class CrashReport:
     _instance = None
 
     def __init__(self):
-        self._client = None
-
         # We don't want sentry making noise if an error is catched when you don't have internet
         sentry_errors = logging.getLogger('sentry.errors')
         sentry_errors.disabled = True
@@ -79,9 +77,11 @@ class CrashReport:
                 log.warning("A .git directory exist crash report is turn off for developers")
                 return
 
-            if self._client is None:
-                self._client = raven.Client(CrashReport.DSN, release=__version__)
-            context = {
+            if hasattr(exception, "fingerprint"):
+                client = raven.Client(CrashReport.DSN, release=__version__, fingerprint=['{{ default }}', exception.fingerprint])
+            else:
+                client = raven.Client(CrashReport.DSN, release=__version__)
+            client.tags_context({
                 "os:name": platform.system(),
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
@@ -95,13 +95,13 @@ class CrashReport:
                 "python:frozen": "{}".format(hasattr(sys, "frozen"))
             }
             context = self._add_qt_informations(context)
-            self._client.tags_context(context)
+            client.tags_context(context)
             try:
-                report = self._client.captureException((exception, value, tb))
+                report = client.captureException((exception, value, tb))
             except Exception as e:
                 log.error("Can't send crash report to Sentry: {}".format(e))
                 return
-            log.info("Crash report sent with event ID: {}".format(self._client.get_ident(report)))
+            log.info("Crash report sent with event ID: {}".format(client.get_ident(report)))
 
     def _add_qt_informations(self, context):
         try:
