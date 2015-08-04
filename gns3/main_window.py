@@ -896,7 +896,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
-    def _showNodesDockWidget(self, title, category=None):
+    def _showNodesDockWidget(self, title, category=Node.routers):
         """
         Makes the NodesDockWidget appear with the appropriate title and the devices
         from the specified category listed.

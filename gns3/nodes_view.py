@@ -43,9 +43,8 @@ class NodesView(QtWidgets.QTreeWidget):
         self.setDragEnabled(True)
 
     def refresh(self):
-        if self._current_category:
-            self.clear()
-            self.populateNodesView(self._current_category, self._current_project_type)
+        self.clear()
+        self.populateNodesView(self._current_category, self._current_project_type)
 
     def populateNodesView(self, category, project_type):
         """
