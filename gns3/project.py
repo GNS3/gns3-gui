@@ -50,7 +50,6 @@ class Project(QtCore.QObject):
         self._closed = True
         self._files_dir = None
         self._images_dir = None
-        self._type = None
         self._name = "untitled"
         self._project_instances.add(self)
 
@@ -89,22 +88,6 @@ class Project(QtCore.QObject):
         """
 
         return self._closed
-
-    def type(self):
-        """
-        :returns: Project type (string)
-        """
-
-        return self._type
-
-    def setType(self, type):
-        """
-        Set project type
-
-        :param type: Project type (string)
-        """
-
-        self._type = type
 
     def temporary(self):
         """

@@ -352,7 +352,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._project.setName(new_project_settings["project_name"])
         self._project.setTopologyFile(new_project_settings["project_path"])
-        self._project.setType(new_project_settings["project_type"])
         self.saveProject(new_project_settings["project_path"])
         self.project_new_signal.emit(self._project.topologyFile())
 
@@ -913,7 +912,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiNodesDockWidget.setWindowTitle(title)
             self.uiNodesDockWidget.setVisible(True)
             self.uiNodesView.clear()
-            self.uiNodesView.populateNodesView(category, self._project.type())
+            self.uiNodesView.populateNodesView(category)
 
     def _localConfigChangedSlot(self):
         """
@@ -1383,7 +1382,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project = Project()
         self._project.setTemporary(True)
         self._project.setName("unsaved")
-        self._project.setType("local")
         self.uiGraphicsView.reset()
         self._setCurrentFile()
 

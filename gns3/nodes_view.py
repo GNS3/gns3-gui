@@ -37,33 +37,27 @@ class NodesView(QtWidgets.QTreeWidget):
 
         super().__init__(parent)
         self._current_category = None
-        self._current_project_type = None
 
         # enables the possibility to drag items.
         self.setDragEnabled(True)
 
     def refresh(self):
         self.clear()
-        self.populateNodesView(self._current_category, self._current_project_type)
+        self.populateNodesView(self._current_category)
 
-    def populateNodesView(self, category, project_type):
+    def populateNodesView(self, category):
         """
         Populates the nodes view with the device list of the specified
         category (None = all devices).
 
         :param category: category of device to list
-        :param project_type: Filter devices for this type of project (cloud|local)
         """
 
         self._current_category = category
-        self._current_project_type = project_type
 
         for module in MODULES:
             for node in module.instance().nodes():
                 if category is not None and category not in node["categories"]:
-                    continue
-                server_type = node.get("server", None)
-                if server_type is not None and server_type == "cloud" and server_type != project_type:
                     continue
                 item = QtWidgets.QTreeWidgetItem(self)
                 item.setText(0, node["name"])
