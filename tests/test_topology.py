@@ -48,7 +48,6 @@ def test_dump(vpcs_device, project, local_server):
         "project_id": project.id(),
         "auto_start": False,
         "name": project.name(),
-        "resources_type": "local",
         "version": __version__,
         "revision": 4,
         "topology": {
@@ -110,7 +109,6 @@ def test_dump_http_auth(vpcs_device, project, remote_server):
         "project_id": project.id(),
         "auto_start": False,
         "name": project.name(),
-        "resources_type": "local",
         "version": __version__,
         "revision": 4,
         "topology": {
@@ -170,7 +168,6 @@ def test_dump_ssh_server(project, ssh_server):
         "project_id": project.id(),
         "auto_start": False,
         "name": project.name(),
-        "resources_type": "local",
         "version": __version__,
         "revision": 4,
         "topology": {
@@ -259,7 +256,6 @@ def test_dump_random_id(vpcs_device, project, local_server):
             "project_id": fake_uuid,
             "auto_start": False,
             "name": project.name(),
-            "resources_type": "local",
             "version": __version__,
             "revision": 4,
             "topology": {
@@ -315,7 +311,6 @@ def test_loadFile(tmpdir):
         assert args[0] == {"name": "test", "resources_type": "local", "auto_start": False, "project_id": None, "topology": {}, "type": "topology"}
         assert topology._project.filesDir() == str(tmpdir / "test")
         assert topology._project.name() == "test"
-        assert topology._project.type() == "local"
 
 
 def test_load(project, monkeypatch, main_window, tmpdir):
@@ -324,7 +319,6 @@ def test_load(project, monkeypatch, main_window, tmpdir):
         "project_id": project.id(),
         "auto_start": False,
         "name": "twovpcs",
-        "resources_type": "local",
         "topology": {
             "links": [
                 {
