@@ -119,8 +119,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         if self.page(page_id) == self.uiVMWizardPage:
             cpu_count = psutil.cpu_count()
             self.uiCPUSpinBox.setValue(cpu_count)
-            # we want to allocate a little bit more than half of the physical memory
-            ram = int(psutil.virtual_memory().total / (1024 * 1024) / 1.8)
+            # we want to allocate half of the available physical memory
+            ram = int(psutil.virtual_memory().total / (1024 * 1024) / 2)
             # value must be a multiple of 4 (VMware requirement)
             ram -= ram % 4
             self.uiRAMSpinBox.setValue(ram)
