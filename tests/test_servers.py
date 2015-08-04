@@ -63,6 +63,33 @@ def test_loadSettings(tmpdir, local_config):
     assert servers.localServerSettings()["password"] == "hello"
 
 
+def test_loadSettingsWith13LocalServerSetting(tmpdir, local_config):
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        json.dump({
+            "Servers": {
+                "local_server": {
+                    "auth": True,
+                    "user": "world",
+                    "password": "hello"
+                }
+            },
+            "LocalServer": {
+                "auth": False
+            },
+            "version": "1.4"
+        }, f)
+
+    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
+    Servers._instance = None
+    servers = Servers.instance()
+
+    local_server = local_config.loadSectionSettings("LocalServer", {})
+
+    assert local_server["auth"] == True
+    assert local_server["user"] == "world"
+    assert local_server["password"] == "hello"
+
+
 def test_getRemoteServer():
     servers = Servers.instance()
     http_server = servers.getRemoteServer("http", "localhost", 8000, None)

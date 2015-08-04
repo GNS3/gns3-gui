@@ -172,6 +172,15 @@ class Servers():
             #WARNING: This operation should be a the end of the method otherwise you save a partial config
             self._saveSettings()
 
+        #For 1.3 compatibity old LocalServer section
+        local_server = LocalConfig.instance().loadSectionSettings("LocalServer", {})
+        if "auth" in local_server:
+            local_server["auth"] = local_server_settings["auth"]
+            local_server["user"] = local_server_settings["user"]
+            local_server["password"] = local_server_settings["password"]
+            LocalConfig.instance().saveSectionSettings("LocalServer", local_server)
+
+
     def _saveSettings(self):
         """
         Saves the server settings to a persistent settings file.
