@@ -154,14 +154,16 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
-        'Screen sharing': "osascript -e 'tell application \"Screen Sharing\"'"
-                          " -e 'open location \"vnc://%h:%p\"'"
+        'OSX builtin screen sharing': "osascript"
+                          " -e 'tell application \"Screen Sharing\"'"
+                          " -e '   display dialog \"WARNING OSX VNC support is limited if you have trouble connecting to a device please use an alternative client like Chicken of the VNC.\" buttons {\"OK\"} default button 1 with icon caution with title \"GNS3\"'"
+                          " -e '  open location \"vnc://%h:%p\"'"
                           " -e 'end tell'",
-        'Chicken': "/Applications/Chicken.app/Contents/MacOS/Chicken %h:%p"
+        'Chicken of the VNC': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p"
     }
 
     # default Mac OS X VNC console command
-    DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['Screen sharing']
+    DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['OSX builtin screen sharing']
 
 else:
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {'TightVNC': 'vncviewer %h:%p'}
