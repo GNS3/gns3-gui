@@ -46,6 +46,7 @@ QEMU_VM_SETTINGS = {
     "boot_priority": "c",
     "console_type": "telnet",
     "ram": 256,
+    "cpus": 1,
     "adapters": 1,
     "adapter_type": "e1000",
     "mac_address": "",

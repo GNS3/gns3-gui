@@ -397,6 +397,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         index = self.uiAdapterTypesComboBox.findData(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
+
+        self.uiCPUSpinBox.setValue(settings["cpus"])
         self.uiRamSpinBox.setValue(settings["ram"])
 
         if settings["cpu_throttling"]:
@@ -516,6 +518,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["adapters"] = adapters
         settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
+        settings["cpus"] = self.uiCPUSpinBox.value()
         settings["ram"] = self.uiRamSpinBox.value()
         if self.uiActivateCPUThrottlingCheckBox.isChecked():
             settings["cpu_throttling"] = self.uiCPUThrottlingSpinBox.value()

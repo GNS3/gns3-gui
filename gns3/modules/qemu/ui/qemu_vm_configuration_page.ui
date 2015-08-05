@@ -31,7 +31,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="2">
+       <item row="6" column="2">
         <widget class="QComboBox" name="uiQemuListComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -41,14 +41,14 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="2">
+       <item row="9" column="2">
         <widget class="QSpinBox" name="uiConsolePortSpinBox">
          <property name="maximum">
           <number>65535</number>
          </property>
         </widget>
        </item>
-       <item row="10" column="2">
+       <item row="11" column="2">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -61,14 +61,14 @@
          </property>
         </spacer>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QLabel" name="uiQemuListLabel">
          <property name="text">
           <string>Qemu binary:</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="0" colspan="2">
+       <item row="9" column="0" colspan="2">
         <widget class="QLabel" name="uiConsolePortLabel">
          <property name="text">
           <string>Console port:</string>
@@ -135,14 +135,14 @@
        <item row="3" column="2">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
-       <item row="7" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="uiConsoleTypeLabel">
          <property name="text">
           <string>Console type:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="2">
+       <item row="8" column="2">
         <widget class="QComboBox" name="uiConsoleTypeComboBox">
          <item>
           <property name="text">
@@ -156,15 +156,32 @@
          </item>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="2">
+        <widget class="QComboBox" name="uiBootPriorityComboBox"/>
+       </item>
+       <item row="7" column="0">
         <widget class="QLabel" name="uiBootPriorityLabel">
          <property name="text">
           <string>Boot priority:</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="2">
-        <widget class="QComboBox" name="uiBootPriorityComboBox"/>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiCPULabel">
+         <property name="text">
+          <string>vCPUs:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QSpinBox" name="uiCPUSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -268,14 +285,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="uiHdbDiskInterfaceComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="uiHdbDiskInterfaceComboBox"/>
           </item>
          </layout>
         </widget>
@@ -325,14 +335,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="uiHdcDiskInterfaceComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="uiHdcDiskInterfaceComboBox"/>
           </item>
          </layout>
         </widget>
@@ -382,14 +385,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="uiHddDiskInterfaceComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="uiHddDiskInterfaceComboBox"/>
           </item>
          </layout>
         </widget>

@@ -68,6 +68,7 @@ class QemuVM(VM):
                           "boot_priority": QEMU_VM_SETTINGS["boot_priority"],
                           "options": "",
                           "ram": QEMU_VM_SETTINGS["ram"],
+                          "cpus": QEMU_VM_SETTINGS["cpus"],
                           "console": None,
                           "console_type": QEMU_VM_SETTINGS["console_type"],
                           "adapters": QEMU_VM_SETTINGS["adapters"],

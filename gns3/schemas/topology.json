@@ -432,7 +432,8 @@
                 },
                 "qemu_path": { "type": "string" },
                 "platform": { "type": "string" },
-                "ram": {"type": "integer", "minimum": 1}
+                "ram": {"type": "integer", "minimum": 1},
+                "cpus": {"type": "integer", "minimum": 1,  "maximum": 255}
             },
             "required": [
                 "name",

@@ -72,6 +72,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["CPUs:", str(qemu_vm["cpus"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
 
         if qemu_vm["qemu_path"]:
