@@ -171,7 +171,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         if self._modified:
             reply = QtWidgets.QMessageBox.warning(self,
                                               "Preferences",
-                                              "You have unsaved preferences.\n\nContinue wihout saving?",
+                                              "You have unsaved preferences.\n\nContinue without saving?",
                                               QtWidgets.QMessageBox.Yes,
                                               QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
