@@ -265,6 +265,10 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 else:
                     self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
 
+        if qemu_path and "/" not in qemu_path and "\\" not in qemu_path:
+            self.uiQemuListComboBox.addItem("{path}".format(path=qemu_path), qemu_path)
+
+
         index = self.uiQemuListComboBox.findData("{path}".format(path=qemu_path))
         if index != -1:
             self.uiQemuListComboBox.setCurrentIndex(index)
