@@ -162,7 +162,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
                 else:
                     # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
                     search_string = "i386w.exe"
-            elif sys.platform.startswith("darwin") and hasattr(sys, "frozen") and (Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked()):
+            elif sys.platform.startswith("darwin") and hasattr(sys, "frozen") and self.uiLocalRadioButton.isChecked():
                 search_string = "GNS3.app/Contents/Resources/qemu/bin/qemu-system-x86_64"
             elif is_64bit:
                 # default is qemu-system-x86_64 on other 64-bit platforms
@@ -182,7 +182,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         :return: settings dict
         """
 
-        if Qemu.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+        if self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
             server = self.uiRemoteServersComboBox.currentText()
