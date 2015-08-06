@@ -55,6 +55,24 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
 
         # By default we use the local server
         self._server = Servers.instance().localServer()
+        self.uiLocalRadioButton.setChecked(True)
+
+    def validateCurrentPage(self):
+        """
+        Validates the server.
+        """
+
+        if self.currentPage() == self.uiServerWizardPage:
+            if self.uiLocalRadioButton.isChecked():
+                if not Servers.instance().remoteServers():
+                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
+                    return False
+                self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
+        if self.currentPage() == self.uiVirtualBoxWizardPage:
+            if not self.uiVMListComboBox.count():
+                QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "There is no VirtualBox VM available!")
+                return False
+        return True
 
     def initializePage(self, page_id):
 
@@ -63,7 +81,10 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}".format(server.url()), server)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
-            self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback, progressText="List VirtualBox VMs")
+            if self.uiLocalRadioButton.isChecked() and not Servers.instance().localServerIsRunning():
+                QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "Local server is not running")
+                return
+            self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback, progressText="Listing VirtualBox VMs...")
 
     def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -86,26 +107,6 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
                 if vm["vmname"] not in existing_vms:
                     self.uiVMListComboBox.addItem(vm["vmname"], vm)
 
-    def validateCurrentPage(self):
-        """
-        Validates the server.
-        """
-
-        if self.currentPage() == self.uiServerWizardPage:
-            if VirtualBox.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
-                server = Servers.instance().localServer()
-            else:
-                if not Servers.instance().remoteServers():
-                    QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
-                    return False
-                server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
-            self._server = server
-        if self.currentPage() == self.uiVirtualBoxWizardPage:
-            if not self.uiVMListComboBox.count():
-                QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "There is no VirtualBox VM available!")
-                return False
-        return True
-
     def getSettings(self):
         """
         Returns the settings set in this Wizard.
@@ -113,7 +114,7 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
         :return: settings dict
         """
 
-        if VirtualBox.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+        if self.uiLocalRadioButton.isChecked():
             server = "local"
         else:
             server = self.uiRemoteServersComboBox.currentText()
