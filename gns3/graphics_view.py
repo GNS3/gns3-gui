@@ -616,7 +616,10 @@ class GraphicsView(QtGui.QGraphicsView):
         """
 
         if not items:
-            items = self.scene().selectedItems()
+            items = []
+            for item in self.scene().selectedItems():
+                if isinstance(item, NodeItem) and item.node().initialized():
+                    items.append(item)
         node_configurator = NodeConfiguratorDialog(items, self._main_window)
         node_configurator.setModal(True)
         node_configurator.show()
