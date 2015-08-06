@@ -188,7 +188,9 @@ class Servers():
         # save the remote servers
         self._settings["remote_servers"] = []
         for server in self._remote_servers.values():
-            self._settings["remote_servers"].append(server.settings())
+            settings = server.settings()
+            settings["url"] = server.url()
+            self._settings["remote_servers"].append(settings)
 
         # save the settings
         LocalConfig.instance().saveSectionSettings("Servers", self._settings)
