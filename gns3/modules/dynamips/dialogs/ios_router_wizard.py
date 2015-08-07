@@ -25,11 +25,10 @@ import re
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.node import Node
-from gns3.gns3_vm import GNS3VM
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
-from gns3.dialogs.vm_wizard import VMWizard
+from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
 
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -56,7 +55,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
+class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
     """
     Wizard to create an IOS router.
@@ -67,7 +66,7 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
     def __init__(self, ios_routers, parent):
 
-        super().__init__(parent)
+        super().__init__(ios_routers, Dynamips.instance().settings()["use_local_server"], parent)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
 
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
@@ -108,8 +107,6 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
         self._widget_wics = {0: self.uiWic0comboBox,
                              1: self.uiWic1comboBox,
                              2: self.uiWic2comboBox}
-
-        self._ios_routers = ios_routers
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
         self.addImageSelector(self.uiIOSExistingImageRadioButton, self.uiIOSImageListComboBox, self.uiIOSImageLineEdit, self.uiIOSImageToolButton, IOSRouterPreferencesPage.getIOSImage)
@@ -366,12 +363,7 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
         super().initializePage(page_id)
 
-        if self.page(page_id) == self.uiServerWizardPage:
-            if GNS3VM.instance().isRunning():
-                self.uiVMRadioButton.setChecked(True)
-            elif not Dynamips.instance().settings()["use_local_server"]:
-                self.uiRemoteRadioButton.setChecked(True)
-        elif self.page(page_id) == self.uiIOSImageWizardPage:
+        if self.page(page_id) == self.uiIOSImageWizardPage:
             self.loadImagesList("/dynamips/vms")
         elif self.page(page_id) == self.uiNamePlatformWizardPage:
             self._prefillPlatform()
@@ -417,12 +409,6 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
         if super().validateCurrentPage() is False:
             return False
 
-        if self.currentPage() == self.uiNamePlatformWizardPage:
-            name = self.uiNameLineEdit.text()
-            for ios_router in self._ios_routers.values():
-                if ios_router["name"] == name:
-                    QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
-                    return False
         if self.currentPage() == self.uiMemoryWizardPage and self.uiPlatformComboBox.currentText() == "c7200":
             if self.uiRamSpinBox.value() > 512:
                 QtWidgets.QMessageBox.critical(self, "c7200 RAM requirement", "c7200 routers with NPE-400 are limited to 512MB of RAM")

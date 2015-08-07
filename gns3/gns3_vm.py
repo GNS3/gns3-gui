@@ -261,6 +261,7 @@ class GNS3VM:
                 pass
             except subprocess.TimeoutExpired:
                 log.warning("Could not ACPI shutdown the VM (timeout expired)")
+            self._is_running = False
 
     @staticmethod
     def instance():

@@ -23,16 +23,15 @@ import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.node import Node
-from gns3.gns3_vm import GNS3VM
 from gns3.modules.module_error import ModuleError
-from gns3.dialogs.vm_wizard import VMWizard
+from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
 
 from .. import Qemu
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from .qemu_image_wizard import QemuImageWizard
 
-class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
+class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
     """
     Wizard to create a Qemu VM.
@@ -42,7 +41,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
 
     def __init__(self, qemu_vms, parent):
 
-        super().__init__(parent)
+        super().__init__(qemu_vms, Qemu.instance().settings()["use_local_server"], parent)
 
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
 
@@ -57,8 +56,6 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         self.uiDiskImageHdbWizardPage.registerField("hdb_disk_image*", self.uiHdbDiskImageLineEdit)
         self.uiASAWizardPage.registerField("initrd*", self.uiInitrdImageLineEdit)
         self.uiASAWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
-
-        self._qemu_vms = qemu_vms
 
         # Fill image combo boxes
         self.addImageSelector(self.uiHdaDiskExistingImageRadioButton, self.uiHdaDiskImageListComboBox, self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton, QemuVMConfigurationPage.getDiskImage, create_image_wizard=QemuImageWizard, create_button=self.uiHdaDiskImageCreateToolButton, image_suffix="-hda")
@@ -107,13 +104,6 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
-        if self.currentPage() == self.uiNameWizardPage:
-            name = self.uiNameLineEdit.text()
-            for qemu_vm in self._qemu_vms.values():
-                if qemu_vm["name"] == name:
-                    QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
-                    return False
-
         if self.currentPage() == self.uiBinaryMemoryWizardPage:
             if not self.uiQemuListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
@@ -124,12 +114,7 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiServerWizardPage:
-            if GNS3VM.instance().isRunning():
-                self.uiVMRadioButton.setChecked(True)
-            elif not Qemu.instance().settings()["use_local_server"]:
-                self.uiRemoteRadioButton.setChecked(True)
-        elif self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
+        if self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
             self.loadImagesList("/qemu/vms")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
             try:

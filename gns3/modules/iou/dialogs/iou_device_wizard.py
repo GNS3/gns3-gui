@@ -27,13 +27,13 @@ from gns3.node import Node
 from gns3.gns3_vm import GNS3VM
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
-from gns3.dialogs.vm_wizard import VMWizard
+from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
 
 from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
 from .. import IOU
 
 
-class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
+class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
 
     """
     Wizard to create an IOU device.
@@ -43,7 +43,7 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
 
     def __init__(self, iou_devices, parent):
 
-        super().__init__(parent)
+        super().__init__(iou_devices, IOU.instance().settings()["use_local_server"], parent)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
 
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
@@ -58,8 +58,6 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
         # Mandatory fields
         self.uiNameImageWizardPage.registerField("name*", self.uiNameLineEdit)
         self.uiNameImageWizardPage.registerField("image*", self.uiIOUImageLineEdit)
-
-        self._iou_devices = iou_devices
 
         self.uiIOUImageLineEdit.textChanged.connect(self._imageLineEditTextChangedSlot)
 
@@ -97,31 +95,10 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiServerWizardPage:
-            if GNS3VM.instance().isRunning():
-                self.uiVMRadioButton.setChecked(True)
-            elif not IOU.instance().settings()["use_local_server"]:
-                self.uiRemoteRadioButton.setChecked(True)
-        elif self.page(page_id) == self.uiNameImageWizardPage:
+        if self.page(page_id) == self.uiNameImageWizardPage:
             if not self.uiIOUImageToolButton.isEnabled():
                 QtWidgets.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
             self.loadImagesList("/iou/vms")
-
-    def validateCurrentPage(self):
-        """
-        Validates the server.
-        """
-
-        if super().validateCurrentPage() is False:
-            return False
-
-        if self.currentPage() == self.uiNameImageWizardPage:
-            name = self.uiNameLineEdit.text()
-            for iou_device in self._iou_devices.values():
-                if iou_device["name"] == name:
-                    QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
-                    return False
-        return True
 
     def getSettings(self):
         """
