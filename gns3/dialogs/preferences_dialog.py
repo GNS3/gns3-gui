@@ -108,7 +108,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             QtWidgets.QTreeWidget: "itemChanged",
             QtWidgets.QComboBox: "currentIndexChanged",
             QtWidgets.QSpinBox: "valueChanged",
-            QtWidgets.QAbstractButton: "toggled"
+            QtWidgets.QAbstractButton: "pressed"
         }
 
         for widget, signal in widget_to_watch.items():
