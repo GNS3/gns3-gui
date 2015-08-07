@@ -114,7 +114,7 @@ class VMWizard(QtWidgets.QWizard):
             if hasattr(self, "uiVMRadioButton") and GNS3VM.instance().isRunning():
 
                 self.uiVMRadioButton.setChecked(True)
-            elif self._use_local_server and self.uiLocalRadioButton.enabled():
+            elif self._use_local_server and self.uiLocalRadioButton.isChecked():
                 self.uiLocalRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(True)

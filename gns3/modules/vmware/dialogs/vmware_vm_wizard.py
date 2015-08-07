@@ -54,6 +54,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
 
     def initializePage(self, page_id):
 
+        super().initializePage(page_id)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             if self.uiLocalRadioButton.isChecked() and not Servers.instance().localServerIsRunning():
                 QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "Local server is not running")
