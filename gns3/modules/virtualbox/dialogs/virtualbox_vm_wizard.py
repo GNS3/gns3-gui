@@ -66,9 +66,6 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
 
         super().initializePage(page_id)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
-            if self.uiLocalRadioButton.isChecked() and not Servers.instance().localServerIsRunning():
-                QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "Local server is not running")
-                return
             self.uiVMListComboBox.clear()
             self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback, progressText="Listing VirtualBox VMs...")
 

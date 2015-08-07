@@ -118,6 +118,11 @@ class VMWizard(QtWidgets.QWizard):
                 self.uiLocalRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(True)
+        else:
+            if self.uiLocalRadioButton.isChecked():
+                servers = Servers.instance()
+                if servers.localServerAutoStart() and not servers.localServerIsRunning():
+                    QtWidgets.QMessageBox.critical(self, "Wizard", "Local server is not running")
 
     def validateCurrentPage(self):
         """
