@@ -119,7 +119,7 @@
             "properties": {
                 "color": { "$ref": "#/definitions/color" },
                 "font": { "$ref": "#/definitions/mandatory_string" },
-                "text": { "$ref": "#/definitions/mandatory_string" },
+                "text": { "type": "string" },
                 "x": { "type": "number" },
                 "y": {"type": "number" },
                 "z": { "type": "number" },
@@ -470,14 +470,9 @@
                 }
             },
             "required": [
-                "adapter_type",
-                "adapters",
                 "console",
-                "enable_remote_console",
-                "headless",
                 "name",
                 "ram",
-                "use_any_adapter",
                 "vmname"
             ],
             "additionalProperties": false
