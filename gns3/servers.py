@@ -161,6 +161,7 @@ class Servers():
                                   port=remote_server["port"],
                                   ram_limit=remote_server.get("ram_limit", 0),
                                   user=remote_server.get("user", None),
+                                  password=remote_server.get("password", None),
                                   ssh_key=remote_server.get("ssh_key", None),
                                   ssh_port=remote_server.get("ssh_port", None),
                                   accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
@@ -501,7 +502,7 @@ class Servers():
 
         return self._vm_server
 
-    def _addRemoteServer(self, protocol="http", host="localhost", port=8000, ram_limit=0, user=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False, id=None):
+    def _addRemoteServer(self, protocol="http", host="localhost", port=8000, ram_limit=0, user=None, password=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False, id=None):
         """
         Adds a new remote server.
 
@@ -510,6 +511,7 @@ class Servers():
         :param port: port of the server (integer)
         :param ram_limit: maximum RAM to be used (integer)
         :param user: user login or None
+        :param password: user password or None
         :param ssh_port: ssh port or None
         :param ssh_key: ssh key
         :param accept_insecure_certificate: Accept invalid SSL certificate
@@ -522,6 +524,7 @@ class Servers():
                   "ram_limit": ram_limit,
                   "protocol": protocol,
                   "user": user,
+                  "password": password,
                   "ssh_port": ssh_port,
                   "ssh_key": ssh_key}
         if accept_insecure_certificate:
