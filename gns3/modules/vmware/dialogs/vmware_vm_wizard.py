@@ -52,10 +52,28 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
             # skip the server page if we use the local server
             self.setStartId(1)
 
+    def validateCurrentPage(self):
+        """
+        Validates the server.
+        """
+
+        if super().validateCurrentPage() is False:
+            return False
+
+        # Fusion is not yet supported
+        if sys.platform.startswith("darwin"):
+            if self.uiLocalRadioButton.isChecked():
+                QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
+                return False
+        if self.currentPage() == self.uiVirtualBoxWizardPage:
+            if not self.uiVMListComboBox.count():
+                QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
+                return False
+        return True
+
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             self.uiVMListComboBox.clear()
             self._server.get("/vmware/vms", self._getVMwareVMsFromServerCallback)
@@ -80,22 +98,6 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
             for vm in result:
                 if vm["vmname"] not in existing_vms:
                     self.uiVMListComboBox.addItem(vm["vmname"], vm)
-
-    def validateCurrentPage(self):
-        """
-        Validates the server.
-        """
-
-        # Fusion is not yet supported
-        if sys.platform.startswith("darwin"):
-            if self.uiLocalRadioButton.isChecked():
-                QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
-                return False
-        if self.currentPage() == self.uiVirtualBoxWizardPage:
-            if not self.uiVMListComboBox.count():
-                QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
-                return False
-        return True
 
     def getSettings(self):
         """
