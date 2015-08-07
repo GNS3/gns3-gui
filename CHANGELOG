@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.4.0beta1 07/08/2015
+
+* Show an error if you try to use a local server not started
+* CLear the list before asking for VM list for Vbox and Vmware
+* Fix password lost for remote servers
+* Fix schema for virtualbox 1.3.2 topologies
+* Refactor all VM wizards
+* Fix Apply not enabled when removing a remote server
+* Fix remote server list display when use_local_server for Qemu
+* Fixes #601 (spelling error).
+* Store the url of server in gns3_gui for third party apps
+* Fix error when editing a qemu device with a relative path
+* Catch exception when starting packet capture reader for a remote packet capture. Fixes #597.
+* Fixes KeyError: 'vmx_path'. Fixes #595.
+* Support for CPUs setting for Qemu VMs.
+* Fix chicken of VNC command and add a warning about bugs in OSX VNC
+* Fix issue whith auto update when we release a new build
+
 ## 1.4.0alpha4 04/08/2015
 
 * Use half the available physical memory for the GNS3 VM in the Setup Wizard.
