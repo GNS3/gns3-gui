@@ -24,7 +24,6 @@ import sys
 
 from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
-from gns3.gns3_vm import GNS3VM
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
