@@ -366,8 +366,11 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
 
         super().initializePage(page_id)
 
-        if self.page(page_id) == self.uiServerWizardPage and GNS3VM.instance().isRunning():
-            self.uiVMRadioButton.setChecked(True)
+        if self.page(page_id) == self.uiServerWizardPage:
+            if GNS3VM.instance().isRunning():
+                self.uiVMRadioButton.setChecked(True)
+            elif not Dynamips.instance().settings()["use_local_server"]:
+                self.uiRemoteRadioButton.setChecked(True)
         elif self.page(page_id) == self.uiIOSImageWizardPage:
             self.loadImagesList("/dynamips/vms")
         elif self.page(page_id) == self.uiNamePlatformWizardPage:
@@ -439,7 +442,7 @@ class IOSRouterWizard(VMWizard, Ui_IOSRouterWizard):
         """
 
         image = self.uiIOSImageLineEdit.text()
-        if Dynamips.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+        if self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
             if self.uiLoadBalanceCheckBox.isChecked():

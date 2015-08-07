@@ -35,7 +35,9 @@ class VMWizard(QtWidgets.QWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
+        # By default we use the local server
         self._server = Servers.instance().localServer()
+        self.uiLocalRadioButton.setChecked(True)
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)

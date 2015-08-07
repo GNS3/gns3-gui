@@ -63,7 +63,7 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
         """
 
         if self.currentPage() == self.uiServerWizardPage:
-            if self.uiLocalRadioButton.isChecked():
+            if self.uiRemoteRadioButton.isChecked():
                 if not Servers.instance().remoteServers():
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
@@ -80,6 +80,8 @@ class VirtualBoxVMWizard(QtWidgets.QWizard, Ui_VirtualBoxVMWizard):
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem("{}".format(server.url()), server)
+            if not VirtualBox.instance().settings()["use_local_server"]:
+                self.uiRemoteRadioButton.setChecked(True)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             if self.uiLocalRadioButton.isChecked() and not Servers.instance().localServerIsRunning():
                 QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "Local server is not running")

@@ -58,6 +58,7 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
 
         # By default we use the local server
         self._server = Servers.instance().localServer()
+        self.uiLocalRadioButton.setChecked(True)
 
     def initializePage(self, page_id):
 
@@ -65,7 +66,12 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
             self.uiRemoteServersComboBox.clear()
             for server in Servers.instance().remoteServers().values():
                 self.uiRemoteServersComboBox.addItem(server.url(), server)
+            if not VMware.instance().settings()["use_local_server"]:
+                self.uiRemoteRadioButton.setChecked(True)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
+            if self.uiLocalRadioButton.isChecked() and not Servers.instance().localServerIsRunning():
+                QtWidgets.QMessageBox.critical(self, "VirtualBox VMs", "Local server is not running")
+                return
             self._server.get("/vmware/vms", self._getVMwareVMsFromServerCallback)
 
     def _getVMwareVMsFromServerCallback(self, result, error=False, **kwargs):
@@ -96,20 +102,15 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
 
         # Fusion is not yet supported
         if sys.platform.startswith("darwin"):
-            if VMware.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+            if self.uiLocalRadioButton.isChecked():
                 QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
                 return False
-
         if self.currentPage() == self.uiServerWizardPage:
-
-            if VMware.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
-                server = Servers.instance().localServer()
-            else:
+            if self.uiRemoteRadioButton.isChecked():
                 if not Servers.instance().remoteServers():
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
-                server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
-            self._server = server
+                self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
         if self.currentPage() == self.uiVirtualBoxWizardPage:
             if not self.uiVMListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
@@ -123,7 +124,7 @@ class VMwareVMWizard(QtWidgets.QWizard, Ui_VMwareVMWizard):
         :return: settings dict
         """
 
-        if VMware.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+        if self.uiLocalRadioButton.isChecked():
             server = "local"
         else:
             server = self.uiRemoteServersComboBox.currentText()

@@ -124,8 +124,11 @@ class QemuVMWizard(VMWizard, Ui_QemuVMWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiServerWizardPage and GNS3VM.instance().isRunning():
-            self.uiVMRadioButton.setChecked(True)
+        if self.page(page_id) == self.uiServerWizardPage:
+            if GNS3VM.instance().isRunning():
+                self.uiVMRadioButton.setChecked(True)
+            elif not Qemu.instance().settings()["use_local_server"]:
+                self.uiRemoteRadioButton.setChecked(True)
         elif self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
             self.loadImagesList("/qemu/vms")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:

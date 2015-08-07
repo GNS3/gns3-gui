@@ -97,8 +97,11 @@ class IOUDeviceWizard(VMWizard, Ui_IOUDeviceWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiServerWizardPage and GNS3VM.instance().isRunning():
-            self.uiVMRadioButton.setChecked(True)
+        if self.page(page_id) == self.uiServerWizardPage:
+            if GNS3VM.instance().isRunning():
+                self.uiVMRadioButton.setChecked(True)
+            elif not IOU.instance().settings()["use_local_server"]:
+                self.uiRemoteRadioButton.setChecked(True)
         elif self.page(page_id) == self.uiNameImageWizardPage:
             if not self.uiIOUImageToolButton.isEnabled():
                 QtWidgets.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
