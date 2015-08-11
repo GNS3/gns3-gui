@@ -21,7 +21,6 @@ import json
 import shutil
 import copy
 
-
 from .qt import QtCore
 from .version import __version__
 from .utils import parse_version
@@ -29,25 +28,6 @@ from .utils import parse_version
 
 import logging
 log = logging.getLogger(__name__)
-
-
-class PeriodicCheckConfig(QtCore.QThread):
-
-    """
-    Timer for checking if the configuration file change
-    on disk.
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-        self._parent = parent
-
-    def run(self):
-        self._timer = QtCore.QTimer()
-        self._timer.timeout.connect(self._parent._checkConfigChanged)
-        self._timer.setInterval(1000)  #  milliseconds
-        self._timer.start()
-        self.exec_()
 
 
 class LocalConfig(QtCore.QObject):
@@ -109,9 +89,6 @@ class LocalConfig(QtCore.QObject):
         self._settings.update(user_settings)
         self._migrateOldConfig()
         self._writeConfig()
-
-        self._check_thread = PeriodicCheckConfig(self)
-        self._check_thread.start()
 
     @staticmethod
     def configDirectory():
@@ -205,7 +182,8 @@ class LocalConfig(QtCore.QObject):
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
 
-    def _checkConfigChanged(self):
+    def checkConfigChanged(self):
+
         try:
             if self._last_config_changed and self._last_config_changed < os.stat(self._config_file).st_mtime:
                 log.info("Client config has changed, reloading it...")

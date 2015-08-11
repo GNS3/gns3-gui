@@ -102,6 +102,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._start_time = time.time()
         local_config = LocalConfig.instance()
         local_config.config_changed_signal.connect(self._localConfigChangedSlot)
+        self._local_config_timer = QtCore.QTimer(self)
+        self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
+        self._local_config_timer.start(1000)  # milliseconds
 
         self._uiNewsDockWidget = None
         if not checkLicence():
