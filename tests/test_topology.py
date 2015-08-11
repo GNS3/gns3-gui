@@ -48,7 +48,6 @@ def test_dump(vpcs_device, project, local_server):
         "project_id": project.id(),
         "auto_start": False,
         "name": project.name(),
-        "resources_type": "local",
         "version": __version__,
         "revision": 3,
         "topology": {
@@ -132,7 +131,6 @@ def test_dump_random_id(vpcs_device, project, local_server):
             "project_id": fake_uuid,
             "auto_start": False,
             "name": project.name(),
-            "resources_type": "local",
             "version": __version__,
             "revision": 3,
             "topology": {
@@ -175,7 +173,7 @@ def test_loadFile(tmpdir):
 
     os.makedirs(str(tmpdir / "test"))
     with open(topo, 'w+') as f:
-        f.write('{"name": "test", "resources_type": "local"}')
+        f.write('{"name": "test"}')
 
     with patch("gns3.topology.Topology._load") as mock:
         project = Project()
@@ -183,7 +181,7 @@ def test_loadFile(tmpdir):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == {"name": "test", "resources_type": "local"}
+        assert args[0] == {"name": "test"}
         assert topology._project.filesDir() == str(tmpdir / "test")
         assert topology._project.name() == "test"
         assert topology._project.type() == "local"
@@ -195,7 +193,6 @@ def test_load(project, monkeypatch, main_window, tmpdir):
         "project_id": project.id(),
         "auto_start": False,
         "name": "twovpcs",
-        "resources_type": "local",
         "topology": {
             "links": [
                 {
@@ -318,7 +315,6 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
     topo = {
         "auto_start": False,
         "name": "twovpcs",
-        "resources_type": "cloud",
         "topology": {
             "links": [
                 {

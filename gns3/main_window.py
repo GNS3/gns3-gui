@@ -1365,17 +1365,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if extension == ".net":
                 self._convertOldProject(path)
                 return
-
             topology.loadFile(path, self._project)
-
-            # if we're opening a cloud project, defer topology load operations
-            # if json_topology["resources_type"] == "cloud":
-            #     self._project.setType("cloud")
-            #     self.loading_cloud_project = True
-            # else:
-            #     self._project.setType("local")
-            #     topology.load(json_topology)
-
         except OSError as e:
             QtGui.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             # log.error("exception {type}".format(type=type(e)), exc_info=1)
@@ -1550,14 +1540,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 json_topology = json.load(f)
                 if not isinstance(json_topology, dict):
                     raise ValueError("Not a GNS3 project")
-
-                self.CloudInspectorView.clear()
-                if json_topology["resources_type"] != 'cloud':
-                    # do nothing in case of local projects
-                    return
-
-                project_instances = json_topology["topology"]["instances"]
-                self.CloudInspectorView.load(self, [i["id"] for i in project_instances])
         except (OSError, ValueError) as e:
             QtGui.QMessageBox.critical(self, "Project", "Could not read project: {}".format(e))
 
