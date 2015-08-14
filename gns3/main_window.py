@@ -340,9 +340,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiGraphicsView.reset()
         # create the destination directory for project files
         try:
-            os.makedirs(new_project_settings["project_files_dir"])
-        except FileExistsError:
-            pass
+            os.makedirs(new_project_settings["project_files_dir"], exist_ok=True)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"], e))
             self._createTemporaryProject()
@@ -730,9 +728,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         try:
             working_dir = os.path.join(self._project.filesDir(), "project-files", "vpcs", "multi-host")
-            os.makedirs(working_dir)
-        except FileExistsError:
-            pass
+            os.makedirs(working_dir, exist_ok=True)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "VPCS", "Could not create the VPCS working directory: {}".format(e))
             return
@@ -1220,9 +1216,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # create the destination directory for project files
         try:
-            os.makedirs(project_dir)
-        except FileExistsError:
-            pass
+            os.makedirs(project_dir, exist_ok=True)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(project_dir, e))
             return
