@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Wed Jul 15 12:22:34 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Sat Aug 22 17:19:53 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -67,12 +67,6 @@ class Ui_QemuVMWizard(object):
         self.uiOSDeprecatedWarningLabel.setWordWrap(True)
         self.uiOSDeprecatedWarningLabel.setObjectName("uiOSDeprecatedWarningLabel")
         self.verticalLayout.addWidget(self.uiOSDeprecatedWarningLabel)
-        self.uiASADeprecatedWarningLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
-        self.uiASADeprecatedWarningLabel.setStyleSheet("color: red;\n"
-"font: 18pt;")
-        self.uiASADeprecatedWarningLabel.setWordWrap(True)
-        self.uiASADeprecatedWarningLabel.setObjectName("uiASADeprecatedWarningLabel")
-        self.verticalLayout.addWidget(self.uiASADeprecatedWarningLabel)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiTypeLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
@@ -287,7 +281,6 @@ class Ui_QemuVMWizard(object):
         self.uiTypeWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM type"))
         self.uiTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a type of QEMU VM to help with pre-configuration."))
         self.uiOSDeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<html><head/><body><p><span style=\" font-weight:600;\">WARNING</span>: The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM</p></body></html>"))
-        self.uiASADeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<html><head/><body><p><span style=\" font-weight:600;\">Note</span>: The recommended way to run ASA is to use ASAv with VMware.</p></body></html>"))
         self.uiTypeLabel.setText(_translate("QemuVMWizard", "Type:"))
         self.uiNameWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM name"))
         self.uiNameWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for your new QEMU virtual machine."))

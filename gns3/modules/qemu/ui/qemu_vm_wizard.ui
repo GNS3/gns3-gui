@@ -134,20 +134,6 @@ font: 18pt;</string>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="uiASADeprecatedWarningLabel">
-      <property name="styleSheet">
-       <string notr="true">color: red;
-font: 18pt;</string>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note&lt;/span&gt;: The recommended way to run ASA is to use ASAv with VMware.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="uiTypeLabel">
