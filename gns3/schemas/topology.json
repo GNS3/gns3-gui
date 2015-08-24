@@ -429,6 +429,7 @@
                 "legacy_networking": { "type": "boolean" },
                 "mac_address": { "$ref": "#/definitions/mandatory_string" },
                 "options": { "type": "string" },
+                "boot_priority": { "type": "string" },
                 "process_priority": {
                     "enum": ["realtime", "very high", "high", "normal", "low", "very low"]
                 },

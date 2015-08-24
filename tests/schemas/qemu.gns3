@@ -25,6 +25,7 @@
                     }
                 ],
                 "properties": {
+                    "boot_priority": "c",
                     "acpi_shutdown": false,
                     "adapter_type": "e1000",
                     "adapters": 1,
