@@ -51,7 +51,7 @@ log = logging.getLogger(__name__)
 # The topology version supported by client
 TOPOLOGY_REVISION = 4
 
-VALIDATION_ERROR_MESSAGE = "Validation error when dumping the topology.\nIt's probably a false positive but please send the .gns3 to developers@gns3.net.\nThanks !"
+VALIDATION_ERROR_MESSAGE = "Validation error when dumping the topology.\nIt's probably a false positive but please send the error and the .gns3 file to developers@gns3.net.\nThanks !"
 
 
 class TopologyInstance:
