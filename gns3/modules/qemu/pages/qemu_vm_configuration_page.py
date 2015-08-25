@@ -309,6 +309,10 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self._server = node.server()
         else:
             self._server = Servers.instance().getServerFromString(settings["server"])
+            if self._server is None:
+                QtWidgets.QMessageBox.critical(self, "Qemu", "Error the server {} doesn't exist in your configuration".format(settings["server"]))
+                return
+
 
         callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
         try:
