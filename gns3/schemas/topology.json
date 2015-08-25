@@ -429,6 +429,7 @@
                 "legacy_networking": { "type": "boolean" },
                 "mac_address": { "$ref": "#/definitions/mandatory_string" },
                 "options": { "type": "string" },
+                "boot_priority": { "type": "string" },
                 "process_priority": {
                     "enum": ["realtime", "very high", "high", "normal", "low", "very low"]
                 },
@@ -584,13 +585,13 @@
                 },
                 "power_supplies": {
                     "type": "array",
-                    "items": {"type": "integer", "minimum": 1}
+                    "items": {"type": "integer", "minimum": 0}
                 },
                 "ram": {"type": "integer", "minimum": 1},
                 "iomem": {"type": "integer", "minimum": 0},
                 "sensors": {
                     "type": "array",
-                    "items": {"type": "integer", "minimum": 1}
+                    "items": {"type": "integer", "minimum": 0}
                 },
                 "wic0": { "$ref": "#/definitions/dynamips_wic" },
                 "wic1": { "$ref": "#/definitions/dynamips_wic" },

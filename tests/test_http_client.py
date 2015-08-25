@@ -42,31 +42,31 @@ def response():
 
 
 @pytest.fixture
-def http_client(request, network_manager):
+def http_client(http_request, network_manager):
 
     return HTTPClient({"protocol": "http", "host": "127.0.0.1", "port": "8000"}, network_manager)
 
 
 @pytest.yield_fixture(autouse=True)
-def request():
+def http_request():
 
     mock = unittest.mock.Mock()
     with unittest.mock.patch("gns3.http_client.HTTPClient._request", return_value=mock):
         yield mock
 
 
-def test_get_connected(http_client, request, network_manager, response):
+def test_get_connected(http_client, http_request, network_manager, response):
 
     http_client._connected = True
     callback = unittest.mock.MagicMock()
 
     http_client.get("/test", callback)
-    request.assert_call_with("/test")
-    request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
-    request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
+    http_request.assert_call_with("/test")
+    http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
+    http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     assert network_manager.sendCustomRequest.called
     args, kwargs = network_manager.sendCustomRequest.call_args
-    assert args[0] == request
+    assert args[0] == http_request
     assert args[1] == b"GET"
 
     # Trigger the completion
@@ -75,7 +75,7 @@ def test_get_connected(http_client, request, network_manager, response):
     assert callback.called
 
 
-def test_get_connected_auth(http_client, request, network_manager, response):
+def test_get_connected_auth(http_client, http_request, network_manager, response):
 
     http_client._connected = True
     http_client._user = "gns3"
@@ -83,11 +83,11 @@ def test_get_connected_auth(http_client, request, network_manager, response):
     callback = unittest.mock.MagicMock()
 
     http_client.get("/test", callback)
-    request.assert_call_with("/test")
-    request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
-    request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
-    request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
-    network_manager.get.assert_call_with(request)
+    http_request.assert_call_with("/test")
+    http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
+    http_request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
+    http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
+    network_manager.get.assert_call_with(http_request)
 
     # Trigger the completion
     response.finished.emit()
@@ -95,7 +95,7 @@ def test_get_connected_auth(http_client, request, network_manager, response):
     assert callback.called
 
 
-def test_post_not_connected(http_client, request, network_manager, response):
+def test_post_not_connected(http_client, http_request, network_manager, response):
 
     http_client._connected = False
     callback = unittest.mock.MagicMock()
@@ -103,7 +103,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
     http_client.post("/test", callback, context={"toto": 42})
 
     args, kwargs = network_manager.sendCustomRequest.call_args
-    assert args[0] == request
+    assert args[0] == http_request
     assert args[1] == b"GET"
 
     response.header.return_value = "application/json"
@@ -116,7 +116,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
     response.finished.emit()
 
     args, kwargs = network_manager.sendCustomRequest.call_args
-    assert args[0] == request
+    assert args[0] == http_request
     assert args[1] == b"POST"
 
     assert http_client._connected
@@ -126,7 +126,7 @@ def test_post_not_connected(http_client, request, network_manager, response):
     assert kwargs["context"]["toto"] == 42
 
 
-def test_post_not_connected_connection_failed(http_client, request, network_manager, response):
+def test_post_not_connected_connection_failed(http_client, http_request, network_manager, response):
 
     http_client._connected = False
     callback = unittest.mock.MagicMock()
@@ -136,7 +136,7 @@ def test_post_not_connected_connection_failed(http_client, request, network_mana
     http_client.post("/test", callback)
 
     args, kwargs = network_manager.sendCustomRequest.call_args
-    assert args[0] == request
+    assert args[0] == http_request
     assert args[1] == b"GET"
 
     # Trigger the completion of /version
