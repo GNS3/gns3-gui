@@ -20,6 +20,7 @@ import tarfile
 import os
 import shutil
 import json
+import re
 
 
 from gns3.utils import parse_version
@@ -100,6 +101,9 @@ class UpdateManager(QtCore.QObject):
         try:
             latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
         except UnicodeDecodeError:
+            log.warning("Invalid answer from the update server")
+            return
+        if re.match(r"^[a-z0-9\.]+$", latest_release) is None:
             log.warning("Invalid answer from the update server")
             return
         if parse_version(version.__version__) < parse_version(latest_release):
