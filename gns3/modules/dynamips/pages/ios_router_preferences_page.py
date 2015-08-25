@@ -228,7 +228,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         try:
             os.makedirs(cls.getImageDirectory(), exist_ok=True)
         except OSError as e:
-            QtWidgets.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(destination_directory, e))
+            QtWidgets.QMessageBox.critical(parent, "IOS images directory", "Could not create the IOS images directory {}: {}".format(cls.getImageDirectory(), e))
             return
 
         compressed = False
