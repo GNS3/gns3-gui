@@ -534,7 +534,11 @@ class Port:
                 info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                 info.wShowWindow = subprocess.SW_HIDE
                 if hasattr(sys, "frozen"):
-                    env = {"PATH": os.path.dirname(os.path.abspath(sys.executable))}  # for Popen to find tail.exe
+                   tail_path = os.path.dirname(os.path.abspath(sys.executable))  # for Popen to find tail.exe
+                else:
+                    # We suppose a developer will have tail the standard GNS3 location
+                    tail_path = "C:\\Program Files\\GNS3"
+                command1 = command1.replace("tail.exe", os.path.join(tail_path, "tail.exe"))
                 command1 = command1.strip()
                 command2 = command2.strip()
             else:
@@ -547,7 +551,7 @@ class Port:
                     log.error(msg)
                     return
 
-            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE, env=env)
+            self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
             self._capture_reader_process = subprocess.Popen(command2, stdin=self._tail_process.stdout, stdout=subprocess.PIPE)
             self._tail_process.stdout.close()
         else:
