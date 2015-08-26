@@ -403,7 +403,11 @@ class HTTPClient(QtCore.QObject):
                     callback({"message": error_message}, error=True, server=self, context=context)
                 else:
                     log.debug(body)
-                    callback(json.loads(body), error=True, server=self, context=context)
+                    try:
+                        callback(json.loads(body), error=True, server=self, context=context)
+                    except ValueError:
+                        # It's happen when an antivirus catch the communication and send is error page without changing the Content Type
+                        callback({"message": error_message}, error=True, server=self, context=context)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
