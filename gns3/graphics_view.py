@@ -635,14 +635,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         if not items:
-            items = self.scene().selectedItems()
+            items = []
+            for item in self.scene().selectedItems():
+                if isinstance(item, NodeItem) and item.node().initialized():
+                    items.append(item)
         with Progress.instance().context(min_duration=0):
             node_properties = NodePropertiesDialog(items, self._main_window)
             node_properties.setModal(True)
             node_properties.show()
             node_properties.exec_()
-        for item in items:
-            item.setSelected(False)
 
     def dragMoveEvent(self, event):
         """

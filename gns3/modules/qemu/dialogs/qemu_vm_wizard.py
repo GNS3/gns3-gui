@@ -222,7 +222,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         if "options" not in settings:
             settings["options"] = ""
-        if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith(r"qemu-0.13.0\qemu-system-i386w.exe")) or \
+        if server == "local" and (sys.platform.startswith("win") and qemu_path.endswith(r"qemu-0.11.0\qemu.exe")) or \
                 (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
             settings["options"] += " -vga none -vnc none"
             settings["legacy_networking"] = True

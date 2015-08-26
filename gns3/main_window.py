@@ -1192,9 +1192,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             default_project_name = "untitled"
         else:
-            default_project_name = os.path.basename(self._project.topologyFile())
-            if default_project_name.endswith(".gns3"):
-                default_project_name = default_project_name[:-5]
+            default_project_name = self._project.name()
 
         projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
         file_dialog = QtWidgets.QFileDialog(self)
@@ -1348,9 +1346,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if extension == ".net":
                 self._convertOldProject(path)
                 return
-
             topology.loadFile(path, self._project)
-
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             # log.error("exception {type}".format(type=type(e)), exc_info=1)

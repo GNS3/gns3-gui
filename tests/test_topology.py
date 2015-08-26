@@ -300,7 +300,7 @@ def test_loadFile(tmpdir):
 
     os.makedirs(str(tmpdir / "test"))
     with open(topo, 'w+') as f:
-        f.write('{"name": "test", "resources_type": "local", "type": "topology", "auto_start": false, "project_id": null, "topology": {}}')
+        f.write('{"name": "test", "type": "topology", "auto_start": false, "project_id": null, "topology": {}}')
 
     with patch("gns3.topology.Topology._load") as mock:
         project = Project()
@@ -308,7 +308,7 @@ def test_loadFile(tmpdir):
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == {"name": "test", "resources_type": "local", "auto_start": False, "project_id": None, "topology": {}, "type": "topology"}
+        assert args[0] == {"name": "test", "auto_start": False, "project_id": None, "topology": {}, "type": "topology"}
         assert topology._project.filesDir() == str(tmpdir / "test")
         assert topology._project.name() == "test"
 
@@ -443,7 +443,6 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
     topo = {
         "auto_start": False,
         "name": "twovpcs",
-        "resources_type": "cloud",
         "topology": {
             "links": [
                 {

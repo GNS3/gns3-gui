@@ -37,6 +37,7 @@ DEFAULT_LOCAL_SERVER_PORT = 8000
 
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
+    userprofile = os.path.expandvars("%USERPROFILE%")
     if "PROGRAMFILES(X86)" in os.environ:
         # windows 64-bit
         program_files = os.environ["PROGRAMFILES"]
@@ -48,6 +49,7 @@ if sys.platform.startswith("win"):
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'SuperPutty (included with GNS3)': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT securecrt.vbs /ARG "%d" /T /TELNET %h %p'.format(program_files),
+                                             'SecureCRT (personal profile)': r'"{}\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
                                              'Telnet': 'telnet %h %p',
                                              'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files_x86),
