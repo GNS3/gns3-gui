@@ -184,7 +184,6 @@ def test_loadFile(tmpdir):
         assert args[0] == {"name": "test"}
         assert topology._project.filesDir() == str(tmpdir / "test")
         assert topology._project.name() == "test"
-        assert topology._project.type() == "local"
 
 
 def test_load(project, monkeypatch, main_window, tmpdir):
