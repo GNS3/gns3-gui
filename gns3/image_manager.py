@@ -59,7 +59,7 @@ class ImageManager:
                         os.makedirs(destination_directory, exist_ok=True)
                     except OSError as e:
                         QtWidgets.QMessageBox.critical(parent, 'Image', 'Could not create destination directory {}: {}'.format(destination_directory, str(e)))
-                        return None
+                        return path
                     worker = FileCopyWorker(path, destination_path)
                     progress_dialog = ProgressDialog(worker, 'Image', 'Copying {}'.format(os.path.basename(path)), 'Cancel', busy=True, parent=parent)
                     progress_dialog.show()
@@ -67,7 +67,7 @@ class ImageManager:
                     errors = progress_dialog.errors()
                     if errors:
                         QtWidgets.QMessageBox.critical(parent, 'Image', '{}'.format(''.join(errors)))
-                        return None
+                        return path
                     else:
                         path = destination_path
             return path
