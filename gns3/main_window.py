@@ -1208,9 +1208,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._project.temporary():
             default_project_name = "untitled"
         else:
-            default_project_name = os.path.basename(self._project.topologyFile())
-            if default_project_name.endswith(".gns3"):
-                default_project_name = default_project_name[:-5]
+            default_project_name = self._project.name()
 
         projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
         file_dialog = QtGui.QFileDialog(self)
