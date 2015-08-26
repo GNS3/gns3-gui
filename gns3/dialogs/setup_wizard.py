@@ -67,7 +67,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         from gns3.modules import VMware
         settings = VMware.instance().settings()
         if not os.path.exists(settings["vmrun_path"]):
-            QtWidgets.QMessageBox.critical(self, "VMware", "VMware vmrun tool could not be found, VMware or the VIX API is probably not installed")
+            QtWidgets.QMessageBox.critical(self, "VMware", "VMware vmrun tool could not be found, VMware or the VIX API (require for VMware player) is probably not installed")
             return
         self._refreshVMListSlot()
 
