@@ -113,7 +113,8 @@ class Servers():
         Called when an SSL error occur
         """
 
-        server = self.getServerFromString(reply.url().toDisplayString())
+        url = reply.url().toDisplayString()
+        server = self.getServerFromString(url)
         certificate = binascii.hexlify(errorList[0].certificate().digest()).decode('utf-8')
         if server.acceptInsecureCertificate() == certificate:
             reply.ignoreSslErrors()
@@ -133,7 +134,7 @@ class Servers():
                 server.setAcceptInsecureCertificate(certificate)
                 self._saveSettings()
                 reply.ignoreSslErrors()
-                log.info("SSL error ignored for %s", reply.url().toDisplayString())
+                log.info("SSL error ignored for %s", url)
 
     def _passwordGenerate(self):
         """
@@ -166,11 +167,11 @@ class Servers():
                                   ssh_port=remote_server.get("ssh_port", None),
                                   accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
 
+        changed = False
         if "user" not in local_server_settings or len(local_server_settings["user"]) == 0:
             local_server_settings["user"] = self._passwordGenerate()
             local_server_settings["password"] = self._passwordGenerate()
-            #WARNING: This operation should be a the end of the method otherwise you save a partial config
-            self._saveSettings()
+            changed = True
 
         #For 1.3 compatibity old LocalServer section
         local_server = LocalConfig.instance().loadSectionSettings("LocalServer", {})
@@ -179,7 +180,11 @@ class Servers():
             local_server["user"] = local_server_settings["user"]
             local_server["password"] = local_server_settings["password"]
             LocalConfig.instance().saveSectionSettings("LocalServer", local_server)
+            changed = True
 
+        #WARNING: This operation should be a the end of the method otherwise you save a partial config
+        if changed:
+            self._saveSettings()
 
     def _saveSettings(self):
         """

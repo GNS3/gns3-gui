@@ -17,8 +17,12 @@
 
 import json
 import pytest
+import binascii
 
 from gns3.servers import Servers
+from gns3.qt import QtWidgets
+from unittest.mock import MagicMock, patch
+
 
 @pytest.fixture(autouse=True)
 def reset_server():
@@ -156,3 +160,54 @@ def test_is_non_local_server_configured():
 
     servers._addRemoteServer("ssh", "127.0.0.1", "4000", user="root", ssh_port=22, ssh_key="/tmp/test.ssh")
     assert servers.isNonLocalServerConfigured() is True
+
+
+def test_handle_handleSslErrors():
+    """
+    Simulate when user accept an insecure certificate. This should be save to the configuration
+    """
+
+    servers = Servers.instance()
+
+    servers._addRemoteServer("https", "127.0.0.1", "443", user="root", password="toto")
+    servers._saveSettings()
+    assert servers._settings["remote_servers"] == [
+        {
+            'accept_insecure_certificate': None,
+            'host': '127.0.0.1',
+            'password': 'toto',
+            'port': 443,
+            'protocol': 'https',
+            'ram_limit': 0,
+            'url': 'https://root@127.0.0.1:443',
+            'user': 'root'
+        }
+    ]
+
+    reply = MagicMock()
+    reply.url.return_value.toDisplayString.return_value = "https://root@127.0.0.1:443/v1/version"
+    ssl_error = MagicMock()
+    ssl_error.certificate.return_value.digest.return_value = binascii.unhexlify("cca0a932ced2fb1b1a18c823542cb065")
+    errorList = [ ssl_error ]
+
+    with patch("gns3.qt.QtWidgets.QMessageBox.warning") as message_box_mock:
+        message_box_mock.return_value = QtWidgets.QMessageBox.Yes
+        servers._handleSslErrors(reply, errorList)
+
+
+    servers._saveSettings()
+    assert len(servers._settings["remote_servers"]) == 1
+    assert servers._settings["remote_servers"] == [
+        {
+            'accept_insecure_certificate': 'cca0a932ced2fb1b1a18c823542cb065',
+            'host': '127.0.0.1',
+            'password': 'toto',
+            'port': 443,
+            'protocol': 'https',
+            'ram_limit': 0,
+            'url': 'https://root@127.0.0.1:443',
+            'user': 'root'
+        }
+    ]
+
+

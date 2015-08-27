@@ -568,7 +568,10 @@ class HTTPClient(QtCore.QObject):
             host = self._http_host
 
         log.debug("{method} {protocol}://{host}:{port}/v1{path} {body}".format(method=method, protocol=self._scheme, host=host, port=self._http_port, path=path, body=body))
-        url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._scheme, host=host, port=self._http_port, path=path))
+        if self._user:
+            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}/v1{path}".format(protocol=self._scheme, user=self._user, host=host, port=self._http_port, path=path))
+        else:
+            url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._scheme, host=host, port=self._http_port, path=path))
         request = self._request(url)
 
         request = self.addAuth(request)

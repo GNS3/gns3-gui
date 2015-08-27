@@ -3,6 +3,7 @@ import pytest
 import os
 import uuid
 import unittest
+import tempfile
 import sys
 sys._called_from_test = True
 
@@ -145,10 +146,23 @@ def qemu_vm(local_server, project):
 @pytest.fixture
 def local_config():
     from gns3.local_config import LocalConfig
-    LocalConfig._instance = None
-    config = LocalConfig.instance()
-    config._settings = {}
-    return config
+
+    (fd, config_path) =  tempfile.mkstemp()
+    os.close(fd)
+
+    LocalConfig._instance = LocalConfig(config_file=config_path)
+    return LocalConfig.instance()
+
+
+@pytest.yield_fixture(autouse=True)
+def run_around_tests(local_config, main_window):
+    """
+    This setup a temporay environnement around tests
+    """
+
+    from gns3.main_window import MainWindow
+    MainWindow._instance = main_window
+    yield
 
 
 @pytest.fixture
