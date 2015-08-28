@@ -626,8 +626,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.parentItem().setSelected(True)
                     self.changeHostnameActionSlot()
                 return
-        else:
-            super().mouseDoubleClickEvent(event)
+        super().mouseDoubleClickEvent(event)
 
     def configureSlot(self, items=None):
         """

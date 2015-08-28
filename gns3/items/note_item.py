@@ -109,6 +109,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         Edit mode for this note.
         """
 
+        print("EDITABLE")
         self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction)
         self.setSelected(True)
         self.setFocus()
