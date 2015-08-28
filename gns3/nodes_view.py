@@ -54,7 +54,6 @@ class NodesView(QtWidgets.QTreeWidget):
         """
 
         self._current_category = category
-
         for module in MODULES:
             for node in module.instance().nodes():
                 if category is not None and category not in node["categories"]:
