@@ -395,7 +395,7 @@
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "acpi_shutdown": { "type": "boolean" },
                 "adapter_type": {
-                    "enum": ["e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio"]
+                    "enum": ["e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio", "virtio-net-pci"]
                 },
                 "adapters": {"type": "integer", "minimum": 1},
                 "cpu_throttling": {"type": "integer", "minimum": 0, "maximum": 100},
