@@ -872,20 +872,32 @@ class Topology:
                     destination_port = None
 
                     # find the source port
+                    found = False
                     for port in source_node.ports():
                         if port.id() == link["source_port_id"]:
+                            found = True
                             source_port = port
                             if "source_port_label" in link:
                                 source_port.setLabel(self._createPortLabel(source_node, link["source_port_label"]))
                             break
+                    if not found:
+                        msg = "Corrupted topology {} source port doesn't exist".format(link["description"])
+                        print(msg)
+                        log.error(msg)
 
                     # find the destination port
+                    found = False
                     for port in destination_node.ports():
                         if port.id() == link["destination_port_id"]:
+                            found = True
                             destination_port = port
                             if "destination_port_label" in link:
                                 destination_port.setLabel(self._createPortLabel(destination_node, link["destination_port_label"]))
                             break
+                    if not found:
+                        msg = "Corrupted topology {} destination port doesn't exist".format(link["description"])
+                        print(msg)
+                        log.error(msg)
 
                     if source_port and destination_port:
                         link = view.addLink(source_node, source_port, destination_node, destination_port)
