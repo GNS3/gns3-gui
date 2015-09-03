@@ -907,15 +907,14 @@ class Topology:
         """
 
         self._initialized_links.append(link_id)
-        if len(topology["topology"].get("links", [])) == len(self._initialized_links):
-            self._autoStart(topology)
+        self._autoStart(topology)
 
     def _autoStart(self, topology):
         """
         If everything is created auto start the topology
         """
 
-        if "nodes" not in topology or ((len(topology["topology"].get("links", [])) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes))):
+        if "nodes" not in topology["topology"] or ((len(topology["topology"].get("links", [])) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes))):
             log.info("Topology initialized")
             # Auto start
             if self._auto_start:
