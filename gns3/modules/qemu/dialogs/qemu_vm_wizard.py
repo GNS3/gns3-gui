@@ -289,7 +289,7 @@ class QemuVMWizard(QtGui.QWizard, Ui_QemuVMWizard):
             settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
-            settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt"
+            settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt -net nic"
             settings["options"] = "-icount auto -hdachs 980,16,32"
             if not sys.platform.startswith("darwin"):
                 settings["cpu_throttling"] = 80  # limit to 80% CPU usage
