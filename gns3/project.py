@@ -310,8 +310,6 @@ class Project(QtCore.QObject):
         if self._id:
             self.project_about_to_close_signal.emit()
 
-            for stream in self._notifications_stream:
-                stream.abort()
             for server in list(self._created_servers):
                 if server.isLocal() and server.connected() and self._servers.localServerIsRunning() and local_server_shutdown:
                     server.post("/server/shutdown", self._projectClosedCallback)
@@ -334,6 +332,8 @@ class Project(QtCore.QObject):
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
             if self._id:
+                for stream in self._notifications_stream:
+                    stream.abort()
                 log.info("Project {} closed".format(self._id))
 
         if server in self._created_servers:
