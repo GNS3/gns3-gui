@@ -374,15 +374,19 @@ class VPCSDevice(VM):
         :param directory: source directory path
         """
 
-        contents = os.listdir(directory)
+        try:
+            contents = os.listdir(directory)
+        except OSError as e:
+            self.warning_signal.emit(self.id(), "Can't list file in {}: {}".format(directory, str(e)))
+            return
         script_file = normalize_filename(self.name()) + "_startup.vpc"
         new_settings = {}
         if script_file in contents:
             new_settings["script_file"] = os.path.join(directory, script_file)
         else:
             self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(script_file))
-        if new_settings:
-            self.update(new_settings)
+            return
+        self.update(new_settings)
 
     def name(self):
         """
