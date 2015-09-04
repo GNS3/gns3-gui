@@ -9,6 +9,7 @@
     <file>symbols/router_firewall.svg</file>
     <file>symbols/router.awp.svg</file>
     <file>symbols/PIX_firewall.svg</file>
+    <file>symbols/firewall.svg</file>
     <file>symbols/computer.svg</file>
     <file>symbols/qemu_guest.svg</file>
     <file>symbols/vbox_guest.svg</file>
