@@ -396,6 +396,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             elif source_port.linkType() != destination_port.linkType():
                 QtWidgets.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
                 return
+            elif source_port.defaultNio() != destination_port.defaultNio():
+                QtWidgets.QMessageBox.critical(self, "Connection", "These nodes cannot be connected together ({} != {})".format(source_port.defaultNio().__name__,
+                                                                                                                                destination_port.defaultNio().__name__))
+                return
 
             if source_item.node().server().protocol() != destination_item.node().server().protocol():
                 QtWidgets.QMessageBox.critical(self, "Connection", "Sorry, you cannot connect a device running on an insecure server to a device running on a secure server.")
@@ -548,7 +552,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         factor = self.transform().scale(scale_factor, scale_factor).mapRect(QtCore.QRectF(0, 0, 1, 1)).width()
-        if (factor < 0.10 or factor > 10):
+        if factor < 0.10 or factor > 10:
             return
         self.scale(scale_factor, scale_factor)
 

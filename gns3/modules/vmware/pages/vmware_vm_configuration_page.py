@@ -19,6 +19,8 @@
 Configuration page for VMware VMs.
 """
 
+import sys
+
 from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -52,6 +54,10 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         # add the categories
         for name, category in Node.defaultCategories().items():
             self.uiCategoryComboBox.addItem(name, category)
+
+        if sys.platform.startswith("darwin"):
+            # uBridge cannot attach to VMnet interface on OSX
+            self.uiUseUbridgeCheckBox.setEnabled(False)
 
     def _symbolBrowserSlot(self):
         """
@@ -134,6 +140,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
+        self.uiUseUbridgeCheckBox.setChecked(settings["use_ubridge"])
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
@@ -196,17 +203,22 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
+        use_ubridge = self.uiUseUbridgeCheckBox.isChecked()
+        if node and settings["use_ubridge"] != use_ubridge:
+            for node_port in node.ports():
+                if not node_port.isFree():
+                    QtWidgets.QMessageBox.critical(self, node.name(), "Changing the use uBridge setting while links are connected isn't supported! Please delete all the links first.")
+                    raise ConfigurationError()
+        settings["use_ubridge"] = use_ubridge
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()
-        if node:
-            if settings["adapters"] != adapters:
-                # check if the adapters settings have changed
-                node_ports = node.ports()
-                for node_port in node_ports:
-                    if not node_port.isFree():
-                        QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-                        raise ConfigurationError()
+        if node and settings["adapters"] != adapters:
+            # check if the adapters settings have changed
+            for node_port in node.ports():
+                if not node_port.isFree():
+                    QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                    raise ConfigurationError()
         settings["adapters"] = adapters

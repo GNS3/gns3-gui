@@ -23,9 +23,11 @@ import os
 import sys
 import tempfile
 
+from gns3.qt import QtCore
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
+from gns3.nios.nio_vmnet import NIOVMNET
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VMWARE_VM_SETTINGS
 
@@ -44,6 +46,7 @@ class VMwareVM(VM):
     """
 
     URL_PREFIX = "vmware"
+    allocate_vmnet_nio_signal = QtCore.Signal(int, int, str)
 
     def __init__(self, module, server, project):
 
@@ -59,6 +62,7 @@ class VMwareVM(VM):
                           "console": None,
                           "adapters": VMWARE_VM_SETTINGS["adapters"],
                           "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
+                          "use_ubridge": VMWARE_VM_SETTINGS["use_ubridge"],
                           "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                           "headless": VMWARE_VM_SETTINGS["headless"],
                           "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
@@ -81,7 +85,10 @@ class VMwareVM(VM):
                 if self._port_segment_size and interface_number % self._port_segment_size == 0:
                     segment_number += 1
                     interface_number = 0
-            new_port = EthernetPort(port_name)
+            if self._settings["use_ubridge"]:
+                new_port = EthernetPort(port_name)
+            else:
+                new_port = EthernetPort(port_name, nio=NIOVMNET)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
             self._ports.append(new_port)
@@ -186,6 +193,7 @@ class VMwareVM(VM):
 
         updated = False
         nb_adapters_changed = False
+        ubridge_setting_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
@@ -195,10 +203,12 @@ class VMwareVM(VM):
                     self.updateAllocatedName(value)
                 if name == "adapters":
                     nb_adapters_changed = True
+                if name == "use_ubridge":
+                    ubridge_setting_changed = True
                 self._settings[name] = value
 
-        if nb_adapters_changed:
-            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+        if nb_adapters_changed or ubridge_setting_changed:
+            log.debug("number of adapters has changed to {} or uBridge setting changed".format(self._settings["adapters"]))
             # TODO: dynamically add/remove adapters
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
@@ -267,8 +277,13 @@ class VMwareVM(VM):
             if port.isFree():
                 port_info += "     {port_name} is empty\n".format(port_name=port.name())
             else:
-                port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
-                                                                            port_description=port.description())
+                nio = port.nio()
+                port_nio = "using UDP tunnel"
+                if isinstance(nio, NIOVMNET):
+                    port_nio = "using " + nio.vmnet()
+                port_info += "     {port_name} {port_description} {port_nio}\n".format(port_name=port.name(),
+                                                                                       port_description=port.description(),
+                                                                                       port_nio=port_nio)
 
         return info + port_info
 
@@ -358,6 +373,33 @@ class VMwareVM(VM):
         self._module.addNode(self)
         self._loading = False
         self._node_info = None
+
+    def allocateVMnetInterface(self, port_id):
+        """
+        Requests an UDP port allocation.
+
+        :param port_id: port identifier
+        """
+
+        log.debug("{} is requesting a VMnet interface allocation".format(self.name()))
+        self.httpPost("/vmware/interfaces/vmnet", self._allocateVMnetInterfaceCallback, context={"port_id": port_id})
+
+    def _allocateVMnetInterfaceCallback(self, result, error=False, context={}, **kwargs):
+        """
+        Callback for allocateVMnetInterface
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while allocating a VMnet interface for {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            port_id = context["port_id"]
+            vmnet = result["vmnet"]
+            log.debug("{} has allocated VMnet interface {}".format(self.name(), vmnet))
+            self.allocate_vmnet_nio_signal.emit(self.id(), port_id, vmnet)
 
     def name(self):
         """

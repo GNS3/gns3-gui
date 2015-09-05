@@ -22,6 +22,7 @@ Manages and stores everything needed for a connection between 2 devices.
 
 from .qt import QtCore
 from .nios.nio_udp import NIOUDP
+from .nios.nio_vmnet import NIOVMNET
 
 import logging
 log = logging.getLogger(__name__)
@@ -82,20 +83,25 @@ class Link(QtCore.QObject):
             source_node.nio_signal.connect(self.newNIOSlot)
             destination_node.nio_signal.connect(self.newNIOSlot)
 
-            # currently, we support only NIO_UDP for normal connections (non-stub).
-            if not source_port.defaultNio() == NIOUDP:
+            # currently, we support only NIO_UDP and NIO_VMNET for normal connections (non-stub).
+            if source_port.defaultNio() == NIOUDP:
+                assert destination_port.defaultNio() == NIOUDP
+                self._source_udp = None
+                self._destination_udp = None
+
+                # connect signals used to receive a UDP port and host allocated by a node
+                source_node.allocate_udp_nio_signal.connect(self.UDPPortAllocatedSlot)
+                destination_node.allocate_udp_nio_signal.connect(self.UDPPortAllocatedSlot)
+
+                # request the UDP info for each node
+                source_node.allocateUDPPort(self._source_port.id())
+                destination_node.allocateUDPPort(self._destination_port.id())
+            elif source_port.defaultNio() == NIOVMNET:
+                assert destination_port.defaultNio() == NIOVMNET
+                source_node.allocate_vmnet_nio_signal.connect(self.VMnetInterfaceAllocatedSlot)
+                source_node.allocateVMnetInterface(self._source_port.id())
+            else:
                 raise NotImplementedError()
-
-            self._source_udp = None
-            self._destination_udp = None
-
-            # connect signals used to receive a UDP port and host allocated by a node
-            source_node.allocate_udp_nio_signal.connect(self.UDPPortAllocatedSlot)
-            destination_node.allocate_udp_nio_signal.connect(self.UDPPortAllocatedSlot)
-
-            # request the UDP info for each node
-            source_node.allocateUDPPort(self._source_port.id())
-            destination_node.allocateUDPPort(self._destination_port.id())
         else:
             # handle stub connections (to a cloud for instance).
             if not source_port.isStub() and destination_port.isStub():
@@ -247,6 +253,30 @@ class Link(QtCore.QObject):
             self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
             self._destination_node.addNIO(self._destination_port, self._destination_nio)
 
+    def VMnetInterfaceAllocatedSlot(self, node_id, port_id, vmnet):
+        """
+        Slot to receive events from Node instances
+        when a VMnet interface has been allocated in order to create a NIO VMNET.
+
+        :param node_id: node identifier
+        :param port_id: port identifier
+        :param vmnet: vmnet interface name
+        """
+
+        # check that the node is connected to this link as a source
+        # only the source is used to request the server for a vmnet interface
+        # and then allocate a NIO VMNET to both the source and destination
+        if node_id == self._source_node.id() and port_id == self._source_port.id():
+            self._source_node.allocate_vmnet_nio_signal.disconnect(self.VMnetInterfaceAllocatedSlot)
+            self._source_nio = NIOVMNET(vmnet)
+            self._destination_nio = NIOVMNET(vmnet)
+
+            # add the VMnet NIOs to the nodes
+            self._source_node.nio_cancel_signal.connect(self.cancelNIOSlot)
+            self._source_node.addNIO(self._source_port, self._source_nio)
+            self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
+            self._destination_node.addNIO(self._destination_port, self._destination_nio)
+
     def newNIOSlot(self, node_id, port_id):
         """
         Slot to receive events from Node instances
@@ -382,5 +412,4 @@ class Link(QtCore.QObject):
                 "source_node_id": self._source_node.id(),
                 "source_port_id": self._source_port.id(),
                 "destination_node_id": self._destination_node.id(),
-                "destination_port_id": self._destination_port.id(),
-                }
+                "destination_port_id": self._destination_port.id()}

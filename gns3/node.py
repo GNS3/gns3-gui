@@ -384,6 +384,13 @@ class Node(QtCore.QObject):
                                                                                              nio.localFile()))
             return nio_info
 
+        elif nio_type == "nio_vmnet":
+            # return NIO VMnet info
+            nio_info["type"] = nio_type
+            nio_info["vmnet"] = nio.vmnet()
+            log.debug("creating {} for {}".format(nio, self.name()))
+            return nio_info
+
         elif nio_type == "nio_null":
             nio_info["type"] = nio_type
             log.debug("creating {} for {} with identifier '{}'".format(nio,

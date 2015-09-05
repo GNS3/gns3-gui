@@ -36,6 +36,11 @@ VMWARE_SETTINGS = {
     "use_local_server": not sys.platform.startswith("darwin"),
 }
 
+DEFAULT_USE_UBRIDGE = True
+if sys.platform.startswith("darwin"):
+    # uBridge cannot attach to VMnet interface on OSX
+    DEFAULT_USE_UBRIDGE = False
+
 VMWARE_VM_SETTINGS = {
     "vmx_path": "",
     "symbol": ":/symbols/vmware_guest.svg",
@@ -45,6 +50,7 @@ VMWARE_VM_SETTINGS = {
     "first_port_name": "",
     "adapters": 1,
     "adapter_type": "default",
+    "use_ubridge": DEFAULT_USE_UBRIDGE,
     "use_any_adapter": False,
     "headless": False,
     "acpi_shutdown": False,
