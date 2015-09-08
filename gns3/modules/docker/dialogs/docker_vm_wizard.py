@@ -48,7 +48,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         super().initializePage(page_id)
 
-        if self.page(page_id) == self.uiDockerWizardPage:
+        if self.page(page_id) == self.uiImageWizardPage:
             self._server.get(
                 "/docker/images", self._getDockerImagesFromServerCallback)
 
@@ -79,11 +79,12 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
-        if not self.uiImageListComboBox.count():
-            QtWidgets.QMessageBox.critical(
-                self, "Docker images",
-                "There are no Docker images available!")
-            return False
+        if self.currentPage() == self.uiImageWizardPage:
+            if not self.uiImageListComboBox.count():
+                QtWidgets.QMessageBox.critical(
+                    self, "Docker images",
+                    "There are no Docker images available!")
+                return False
         return True
 
     def getSettings(self):
@@ -92,10 +93,13 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         :return: settings
         :rtype: dict
         """
-        if Docker.instance().settings()["use_local_server"] or self.uiLocalRadioButton.isChecked():
+
+        if self.uiLocalRadioButton.isChecked():
             server = "local"
-        else:
+        elif self.uiRemoteRadioButton.isChecked():
             server = self.uiRemoteServersComboBox.currentText()
+        elif self.uiVMRadioButton.isChecked():
+            server = "vm"
 
         index = self.uiImageListComboBox.currentIndex()
         imagename = self.uiImageListComboBox.itemText(index)

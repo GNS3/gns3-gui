@@ -111,7 +111,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiDockerWizardPage">
+  <widget class="QWizardPage" name="uiImageWizardPage">
    <property name="title">
     <string>Docker Virtual Machine</string>
    </property>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -56,14 +56,14 @@ class Ui_DockerVMWizard(object):
         self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiRemoteServersGroupBox)
         DockerVMWizard.addPage(self.uiServerWizardPage)
-        self.uiDockerWizardPage = QtWidgets.QWizardPage()
-        self.uiDockerWizardPage.setObjectName("uiDockerWizardPage")
-        self.gridLayout = QtWidgets.QGridLayout(self.uiDockerWizardPage)
+        self.uiImageWizardPage = QtWidgets.QWizardPage()
+        self.uiImageWizardPage.setObjectName("uiImageWizardPage")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiImageWizardPage)
         self.gridLayout.setObjectName("gridLayout")
-        self.uiImageListLabel = QtWidgets.QLabel(self.uiDockerWizardPage)
+        self.uiImageListLabel = QtWidgets.QLabel(self.uiImageWizardPage)
         self.uiImageListLabel.setObjectName("uiImageListLabel")
         self.gridLayout.addWidget(self.uiImageListLabel, 0, 0, 1, 1)
-        self.uiImageListComboBox = QtWidgets.QComboBox(self.uiDockerWizardPage)
+        self.uiImageListComboBox = QtWidgets.QComboBox(self.uiImageWizardPage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -71,7 +71,7 @@ class Ui_DockerVMWizard(object):
         self.uiImageListComboBox.setSizePolicy(sizePolicy)
         self.uiImageListComboBox.setObjectName("uiImageListComboBox")
         self.gridLayout.addWidget(self.uiImageListComboBox, 0, 1, 1, 1)
-        DockerVMWizard.addPage(self.uiDockerWizardPage)
+        DockerVMWizard.addPage(self.uiImageWizardPage)
 
         self.retranslateUi(DockerVMWizard)
         QtCore.QMetaObject.connectSlotsByName(DockerVMWizard)
@@ -88,7 +88,7 @@ class Ui_DockerVMWizard(object):
         self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote servers"))
         self.uiLoadBalanceCheckBox.setText(_translate("DockerVMWizard", "Load balance across all available remote servers"))
         self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on server:"))
-        self.uiDockerWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))
-        self.uiDockerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a Docker virtual machine from the list."))
+        self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))
+        self.uiImageWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a Docker virtual machine from the list."))
         self.uiImageListLabel.setText(_translate("DockerVMWizard", "Image list:"))
 
