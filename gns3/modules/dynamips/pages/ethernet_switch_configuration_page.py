@@ -41,6 +41,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         self.uiDeletePushButton.clicked.connect(self._deletePortSlot)
         self.uiPortsTreeWidget.itemActivated.connect(self._portSelectedSlot)
         self.uiPortsTreeWidget.itemSelectionChanged.connect(self._portSelectionChangedSlot)
+        self.uiPortTypeComboBox.currentIndexChanged.connect(self._typeSelectionChangedSlot)
 
         # enable sorting
         self.uiPortsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
@@ -57,11 +58,19 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         port = int(item.text(0))
         vlan = int(item.text(1))
         port_type = item.text(2)
+        port_ethertype = item.text(3)
         self.uiPortSpinBox.setValue(port)
         self.uiVlanSpinBox.setValue(vlan)
         index = self.uiPortTypeComboBox.findText(port_type)
         if index != -1:
             self.uiPortTypeComboBox.setCurrentIndex(index)
+        index = self.uiPortEtherTypeComboBox.findText(port_ethertype)
+        if index != -1:
+            self.uiPortEtherTypeComboBox.setCurrentIndex(index)
+        if port_type == "qinq":
+            self.uiPortEtherTypeComboBox.setEnabled(True)
+        else:
+            self.uiPortEtherTypeComboBox.setEnabled(False)
 
     def _portSelectionChangedSlot(self):
         """
@@ -74,6 +83,17 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         else:
             self.uiDeletePushButton.setEnabled(False)
 
+    def _typeSelectionChangedSlot(self):
+        """
+        Disable Q-in-Q EtherType for access and dot1q ports.
+        """
+
+        port_type = self.uiPortTypeComboBox.currentText()
+        if port_type == "qinq":
+            self.uiPortEtherTypeComboBox.setEnabled(True)
+        else:
+            self.uiPortEtherTypeComboBox.setEnabled(False)
+
     def _addPortSlot(self):
         """
         Adds a new port.
@@ -82,12 +102,17 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         port = self.uiPortSpinBox.value()
         vlan = self.uiVlanSpinBox.value()
         port_type = self.uiPortTypeComboBox.currentText()
+        if port_type == "qinq":
+            port_ethertype = self.uiPortEtherTypeComboBox.currentText()
+        else:
+            port_ethertype = ""
 
         if port in self._ports:
             # update a given entry in the tree widget
             item = self.uiPortsTreeWidget.findItems(str(port), QtCore.Qt.MatchFixedString)[0]
             item.setText(1, str(vlan))
             item.setText(2, port_type)
+            item.setText(3, port_ethertype)
 
         else:
             # add a new entry in the tree widget
@@ -95,10 +120,12 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             item.setText(0, str(port))
             item.setText(1, str(vlan))
             item.setText(2, port_type)
+            item.setText(3, port_ethertype)
             self.uiPortsTreeWidget.addTopLevelItem(item)
 
         self._ports[port] = {"type": port_type,
-                             "vlan": vlan}
+                             "vlan": vlan,
+                             "ethertype": port_ethertype}
 
         self.uiPortSpinBox.setValue(max(self._ports) + 1)
         self.uiPortsTreeWidget.resizeColumnToContents(0)
@@ -147,6 +174,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             item.setText(0, str(port))
             item.setText(1, str(info["vlan"]))
             item.setText(2, info["type"])
+            item.setText(3, info["ethertype"])
             self.uiPortsTreeWidget.addTopLevelItem(item)
             self._ports[port] = info
 
