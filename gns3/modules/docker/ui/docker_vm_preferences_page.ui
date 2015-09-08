@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Docker VMs</string>
+   <string>Docker Containers</string>
   </property>
   <property name="accessibleName">
    <string>Docker VM templates</string>
