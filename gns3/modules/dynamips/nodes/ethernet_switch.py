@@ -83,7 +83,8 @@ class EthernetSwitch(Device):
             port.setPacketCaptureSupported(True)
             self._ports.append(port)
             self._settings["ports"][port.portNumber()] = {"type": initial_port["type"],
-                                                          "vlan": initial_port["vlan"]}
+                                                          "vlan": initial_port["vlan"],
+                                                          "ethertype": initial_port.get("ethertype","")}
 
         params = {"name": name,
                   "device_type": "ethernet_switch"}
@@ -182,7 +183,8 @@ class EthernetSwitch(Device):
         params["nio"] = self.getNIOInfo(nio)
         port_info = self._settings["ports"][port.portNumber()]
         port_settings = {"vlan": port_info["vlan"],
-                         "type": port_info["type"]}
+                         "type": port_info["type"],
+                         "ethertype": port_info["ethertype"]}
         params["port_settings"] = port_settings
         log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
         self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/nio".format(
@@ -217,16 +219,20 @@ class EthernetSwitch(Device):
                 port_info += "   Port {} is empty\n".format(port.name())
             else:
                 port_type = self._settings["ports"][port.portNumber()]["type"]
+                port_ethertype = self._settings["ports"][port.portNumber()]["ethertype"]
                 port_vlan = str(self._settings["ports"][port.portNumber()]["vlan"])
+                port_ethertype_info = ""
                 if port_type == "access":
                     port_vlan_info = "VLAN ID {}".format(port_vlan)
                 elif port_type == "dot1q":
                     port_vlan_info = "native VLAN {}".format(port_vlan)
                 elif port_type == "qinq":
                     port_vlan_info = "outer VLAN {}".format(port_vlan)
+                    port_ethertype_info = "({})".format(port_ethertype)
 
-                port_info += "   Port {name} is in {port_type} mode, with {port_vlan_info},\n".format(name=port.name(),
+                port_info += "   Port {name} is in {port_type} {port_ethertype_info} mode, with {port_vlan_info},\n".format(name=port.name(),
                                                                                                       port_type=port_type,
+                                                                                                      port_ethertype_info=port_ethertype_info,
                                                                                                       port_vlan_info=port_vlan_info)
                 port_info += "    {port_description}\n".format(port_description=port.description())
 
@@ -254,6 +260,7 @@ class EthernetSwitch(Device):
                 port_info = port.dump()
                 if port.portNumber() in self._settings["ports"]:
                     port_info["type"] = self._settings["ports"][port.portNumber()]["type"]
+                    port_info["ethertype"] = self._settings["ports"][port.portNumber()]["ethertype"]
                     port_info["vlan"] = self._settings["ports"][port.portNumber()]["vlan"]
                 ports.append(port_info)
 

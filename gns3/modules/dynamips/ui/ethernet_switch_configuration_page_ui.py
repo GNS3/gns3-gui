@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ethernet_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ethernet_switch_configuration_page.ui'
 #
-# Created: Wed Jul 15 12:22:32 2015
-#      by: PyQt5 UI code generator 5.4
+# Created: Tue Sep  8 02:41:51 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -80,12 +80,23 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.label_2 = QtWidgets.QLabel(self.uiEthernetSwitchSettingsGroupBox)
         self.label_2.setObjectName("label_2")
         self.gridlayout.addWidget(self.label_2, 2, 0, 1, 1)
+        self.label_4 = QtWidgets.QLabel(self.uiEthernetSwitchSettingsGroupBox)
+        self.label_4.setObjectName("label_4")
+        self.gridlayout.addWidget(self.label_4, 3, 0, 1, 1)
         self.uiPortTypeComboBox = QtWidgets.QComboBox(self.uiEthernetSwitchSettingsGroupBox)
         self.uiPortTypeComboBox.setObjectName("uiPortTypeComboBox")
         self.uiPortTypeComboBox.addItem("")
         self.uiPortTypeComboBox.addItem("")
         self.uiPortTypeComboBox.addItem("")
         self.gridlayout.addWidget(self.uiPortTypeComboBox, 2, 1, 1, 1)
+        self.uiPortEtherTypeComboBox = QtWidgets.QComboBox(self.uiEthernetSwitchSettingsGroupBox)
+        self.uiPortEtherTypeComboBox.setEnabled(False)
+        self.uiPortEtherTypeComboBox.setObjectName("uiPortEtherTypeComboBox")
+        self.uiPortEtherTypeComboBox.addItem("")
+        self.uiPortEtherTypeComboBox.addItem("")
+        self.uiPortEtherTypeComboBox.addItem("")
+        self.uiPortEtherTypeComboBox.addItem("")
+        self.gridlayout.addWidget(self.uiPortEtherTypeComboBox, 3, 1, 1, 1)
         self.gridLayout_2.addWidget(self.uiEthernetSwitchSettingsGroupBox, 1, 0, 1, 2)
         self.uiAddPushButton = QtWidgets.QPushButton(ethernetSwitchConfigPageWidget)
         self.uiAddPushButton.setObjectName("uiAddPushButton")
@@ -116,13 +127,19 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiPortsTreeWidget.headerItem().setText(0, _translate("ethernetSwitchConfigPageWidget", "Port"))
         self.uiPortsTreeWidget.headerItem().setText(1, _translate("ethernetSwitchConfigPageWidget", "VLAN"))
         self.uiPortsTreeWidget.headerItem().setText(2, _translate("ethernetSwitchConfigPageWidget", "Type"))
+        self.uiPortsTreeWidget.headerItem().setText(3, _translate("ethernetSwitchConfigPageWidget", "EtherType"))
         self.uiEthernetSwitchSettingsGroupBox.setTitle(_translate("ethernetSwitchConfigPageWidget", "Settings"))
         self.label.setText(_translate("ethernetSwitchConfigPageWidget", "Port:"))
         self.label_3.setText(_translate("ethernetSwitchConfigPageWidget", "VLAN:"))
         self.label_2.setText(_translate("ethernetSwitchConfigPageWidget", "Type:"))
+        self.label_4.setText(_translate("ethernetSwitchConfigPageWidget", "QinQ EtherType:"))
         self.uiPortTypeComboBox.setItemText(0, _translate("ethernetSwitchConfigPageWidget", "access"))
         self.uiPortTypeComboBox.setItemText(1, _translate("ethernetSwitchConfigPageWidget", "dot1q"))
         self.uiPortTypeComboBox.setItemText(2, _translate("ethernetSwitchConfigPageWidget", "qinq"))
+        self.uiPortEtherTypeComboBox.setItemText(0, _translate("ethernetSwitchConfigPageWidget", "0x8100"))
+        self.uiPortEtherTypeComboBox.setItemText(1, _translate("ethernetSwitchConfigPageWidget", "0x88A8"))
+        self.uiPortEtherTypeComboBox.setItemText(2, _translate("ethernetSwitchConfigPageWidget", "0x9100"))
+        self.uiPortEtherTypeComboBox.setItemText(3, _translate("ethernetSwitchConfigPageWidget", "0x9200"))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete"))
 

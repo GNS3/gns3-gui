@@ -65,6 +65,11 @@
           <string>Type</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>EtherType</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
@@ -141,6 +146,13 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>QinQ EtherType:</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
        <widget class="QComboBox" name="uiPortTypeComboBox">
         <item>
@@ -156,6 +168,33 @@
         <item>
          <property name="text">
           <string>qinq</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="uiPortEtherTypeComboBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string>0x8100</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x88A8</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x9100</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0x9200</string>
          </property>
         </item>
        </widget>
