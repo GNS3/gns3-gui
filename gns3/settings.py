@@ -125,6 +125,8 @@ if sys.platform.startswith("linux"):
     distro = platform.linux_distribution()[0]
     if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint" or distro == "Fedora":
         DEFAULT_SHELL_CONSOLE_COMMAND = PRECONFIGURED_SHELL_CONSOLE_COMMANDS["Gnome Terminal"]
+    else:
+        DEFAULT_SHELL_CONSOLE_COMMAND = ''
 else:
     DEFAULT_SHELL_CONSOLE_COMMAND = ''
 
