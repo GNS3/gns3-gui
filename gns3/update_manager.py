@@ -27,6 +27,8 @@ from gns3.utils import parse_version
 
 from gns3 import version
 from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui
+from gns3.local_config import LocalConfig
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -86,7 +88,8 @@ class UpdateManager(QtCore.QObject):
         """
         self._silent = silent
         self._parent = parent
-        if hasattr(sys, "frozen"):
+
+        if hasattr(sys, "frozen") and LocalConfig.instance().experimental():
             url = 'https://pypi.python.org/pypi/gns3-gui/json'
             self._get(url, self._pypiReplySlot)
         else:

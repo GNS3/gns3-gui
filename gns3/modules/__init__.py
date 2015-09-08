@@ -23,16 +23,10 @@ from gns3.modules.virtualbox import VirtualBox
 from gns3.modules.qemu import Qemu
 from gns3.modules.vmware import VMware
 
-
 from gns3.local_config import LocalConfig
-from gns3.settings import GENERAL_SETTINGS
-
-local_config = LocalConfig.instance()
-experimental = local_config.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
-
 
 MODULES = [VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Builtin]
 
-if experimental:
+if LocalConfig.instance().experimental():
     from gns3.modules.docker import Docker
     MODULES.append(Docker)

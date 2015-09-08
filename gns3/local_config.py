@@ -280,6 +280,14 @@ class LocalConfig(QtCore.QObject):
         else:
             log.debug("Section %s has not changed. Skip saving configuration", section)
 
+    def experimental(self):
+        """
+        :returns: Boolean. True if experimental features allowed
+        """
+
+        from gns3.settings import GENERAL_SETTINGS
+        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
+
     @staticmethod
     def instance(config_file=None):
         """
