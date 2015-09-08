@@ -27,7 +27,7 @@ from .version import __version__
 from .console_cmd import ConsoleCmd
 from .pycutext import PyCutExt
 from .modules import MODULES
-
+from .local_config import LocalConfig
 
 class ConsoleView(PyCutExt, ConsoleCmd):
 
@@ -42,6 +42,9 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         current_year = datetime.date.today().year
         self.intro = "GNS3 management console. Running GNS3 version {} on {} ({}-bit) with Qt {}.\n" \
                      "Copyright (c) 2006-{} GNS3 Technologies.".format(__version__, platform.system(), bitness, QtCore.QT_VERSION_STR, current_year)
+
+        if LocalConfig.instance().experimental():
+            self.intro += "\nWARNING: Experimental features enable. You can use some unfinished features and lost data."
 
         # Parent class initialization
         try:
