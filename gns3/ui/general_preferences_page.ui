@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>517</width>
-    <height>549</height>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="uiMiscTabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="uiGeneralTab">
       <attribute name="title">
@@ -655,6 +655,13 @@
          </property>
          <property name="checked">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiExperimentalFeaturesCheckBox">
+         <property name="text">
+          <string>Enable experimental features (Dangerous, require restart)</string>
          </property>
         </widget>
        </item>

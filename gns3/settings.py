@@ -230,6 +230,7 @@ GENERAL_SETTINGS = {
     "auto_launch_project_dialog": True,
     "auto_screenshot": True,
     "check_for_update": True,
+    "experimental_features": False,
     "last_check_for_update": 0,
     "slow_device_start_all": 0,
     "link_manual_mode": True,

@@ -239,6 +239,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
+        self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
         self.uiSlowStartAllSpinBox.setValue(settings["slow_device_start_all"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
@@ -309,6 +310,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         new_general_settings = {"auto_launch_project_dialog": self.uiLaunchNewProjectDialogCheckBox.isChecked(),
                                 "auto_screenshot": self.uiAutoScreenshotCheckBox.isChecked(),
                                 "style": self.uiStyleComboBox.currentText(),
+                                "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
                                 "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
                                 "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
                                 "slow_device_start_all": self.uiSlowStartAllSpinBox.value(),
