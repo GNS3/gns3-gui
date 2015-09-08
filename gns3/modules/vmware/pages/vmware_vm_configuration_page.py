@@ -55,10 +55,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         for name, category in Node.defaultCategories().items():
             self.uiCategoryComboBox.addItem(name, category)
 
-        if sys.platform.startswith("darwin"):
-            # uBridge cannot attach to VMnet interface on OSX
-            self.uiUseUbridgeCheckBox.setEnabled(False)
-
     def _symbolBrowserSlot(self):
         """
         Slot to open the symbol browser and select a new symbol.

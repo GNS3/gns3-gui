@@ -24,6 +24,7 @@ import sys
 from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.dialogs.vm_wizard import VMWizard
+from gns3.local_config import LocalConfig
 
 from ..ui.vmware_vm_wizard_ui import Ui_VMwareVMWizard
 from .. import VMware
@@ -44,7 +45,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         self._vmware_vms = vmware_vms
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
 
-        if sys.platform.startswith("darwin"):
+        if sys.platform.startswith("darwin") and not LocalConfig.instance().experimental():
             # Fusion is not supported on OSX
             self.uiLocalRadioButton.setEnabled(False)
 
@@ -61,7 +62,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
             return False
 
         # Fusion is not yet supported
-        if sys.platform.startswith("darwin"):
+        if sys.platform.startswith("darwin") and not LocalConfig.instance().experimental():
             if self.uiLocalRadioButton.isChecked():
                 QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
                 return False
