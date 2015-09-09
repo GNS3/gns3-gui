@@ -43,6 +43,10 @@ class Docker(Module):
         self._loadSettings()
         self._loadDockerImages()
 
+    def configChangedSlot(self):
+        # load the settings
+        self._loadSettings()
+
     def _loadSettings(self):
         """Loads the settings from the persistent settings file."""
         local_config = LocalConfig.instance()
