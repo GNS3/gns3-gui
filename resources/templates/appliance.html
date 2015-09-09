@@ -1,0 +1,74 @@
+{% extends "layout/default.html" %}
+{% block body %}
+    <div class="jumbotron">
+        {% if appliance["status"] == "broken" %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                This appliance is actually not working
+            </div>
+        {% endif %}
+        {% if appliance["status"] == "experimental" %}
+            <div class="alert alert-warning" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                This appliance is actually experimental
+            </div>
+        {% endif %}
+        <h1>{{ appliance["name"] }}</h1>
+        Category {{ appliance["category"] }}<br />
+        Product: <a href="{{ appliance["product_url"] }}">{{ appliance["product_name"] }}</a><br />
+        Vendor: <a href="{{ appliance["vendor_url"] }}">{{ appliance["vendor_name"] }}</a><br />
+        Documentation: <a href="{{ appliance["documentation_url"] }}">{{ appliance["documentation_url"] }}</a><br />
+        Status: {{ appliance["status"] }}<br />
+        Maintainer: <a href="mailto:{{ appliance["maintainer_email"] }}">{{ appliance["maintainer"] }}</a>
+
+        <p>{{ appliance["description"] | nl2br }}</p>
+
+
+    </div>
+
+    {% if appliance["usage"] %}
+        <h2>Usage</h2>
+        <p>{{ appliance["usage"] | nl2br }}</p>
+    {% endif %}
+
+    {% if "qemu" in appliance %}
+        <h2>Qemu settings</h2>
+        {% for key in appliance["qemu"] %}
+            {{ key }}: {{ appliance["qemu"][key] }}<br />
+        {% endfor %}
+    {% endif %}
+
+    {% for version in appliance["versions"] | reverse %}
+        <h2>{{ appliance["name"] }} {{version["name"]}}</h2>
+        {% if appliance.is_version_installable(version["name"]) %}
+            <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.install('{{version["name"]}}')">Install</button>
+        {% else %}
+            <div class="alert alert-warning">
+                Can't install this appliance version until you import the missing images
+            </div>
+        {% endif %}
+        <h3>Require files</h3>
+
+        {% set version_id = loop.index %}
+        {% for image in version.images.values() %}
+            <h4>{{image["filename"]}}</h4>
+            File Version: {{image["version"]}}<br />
+            Size: {{ image["filesize"] | human_filesize}}<br />
+            Checksum: {{image["md5sum"]}}<br />
+            Download url: <a href="{{image["download_url"]}}">{{image["download_url"]}}</a><br />
+            {% if "direct_download_url" in image %}
+                Direct download url: <a href="{{image["direct_download_url"]}}">{{image["direct_download_url"]}}</a><br />
+            {% endif %}
+            {% set image_path = registry.search_image_file(image["md5sum"]) %}
+            {% if image_path %}
+                <p style="color: green">File available: {{image_path}}</p>
+            {% else %}
+                <p style="color: red">File not available</p>
+                <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.importAppliance('{{image["filename"]}}', '{{image["md5sum"]}}')">Import file</button>
+            {% endif %}        
+            <hr />
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

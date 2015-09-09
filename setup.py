@@ -54,7 +54,8 @@ setup(
         "gns3-converter>=1.2.3",
         "raven>=5.2.0",
         "rsa>=3.1.4",
-        "psutil>=2.2.1"
+        "psutil>=2.2.1",
+        "Jinja2>=2.7.3"
     ],
     entry_points={
         "gui_scripts": [

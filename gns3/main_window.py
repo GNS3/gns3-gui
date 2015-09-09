@@ -63,6 +63,7 @@ from .progress import Progress
 from .licence import checkLicence
 from .image_manager import ImageManager
 from .update_manager import UpdateManager
+from .appliance_window import ApplianceWindow
 
 log = logging.getLogger(__name__)
 
@@ -401,8 +402,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
-                                                        "GNS3 project files (*.gns3)")
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net);;GNS3 appliance (*.gns3a)",
+                                                        "GNS3 project files (*.gns3)",
+                                                        "GNS3 appliance (*.gns3a)")
         if path:
             self._loadPath(path)
 
@@ -429,10 +431,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _loadPath(self, path):
         """Open a file and close the previous project"""
 
-        if path and self.checkForUnsavedChanges():
-            self._open_project_path = path
-            self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
-            self._project.close()
+        if path:
+            if path.endswith(".gns3a"):
+                self._appliance_window = ApplianceWindow(path)
+            elif self.checkForUnsavedChanges():
+                self._open_project_path = path
+                self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
+                self._project.close()
 
     def _projectClosedContinueLoadPath(self):
 

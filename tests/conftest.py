@@ -2,8 +2,9 @@
 import pytest
 import os
 import uuid
-import unittest
+from unittest.mock import MagicMock
 import tempfile
+import urllib.request
 import sys
 sys._called_from_test = True
 
@@ -170,9 +171,9 @@ def main_window():
     """
     Get a mocked main window
     """
-    window = unittest.mock.MagicMock()
+    window = MagicMock()
 
-    uiGraphicsView = unittest.mock.MagicMock()
+    uiGraphicsView = MagicMock()
     uiGraphicsView.settings.return_value = {
         "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
         "default_label_color": "#000000"
@@ -180,6 +181,24 @@ def main_window():
 
     window.uiGraphicsView = uiGraphicsView
     return window
+
+
+@pytest.fixture
+def images_dir(tmpdir):
+    os.makedirs(os.path.join(str(tmpdir), "gns3_tests", "QEMU"), exist_ok=True)
+    return os.path.join(str(tmpdir), "gns3_tests")
+
+
+@pytest.fixture
+def linux_microcore_img(images_dir):
+    """
+    Create a fake image and return the path. The md5sum of the file will be 5d41402abc4b2a76b9719d911017c592
+    """
+
+    path = os.path.join(images_dir, "QEMU", "linux-microcore-3.4.1.img")
+    with open(path, 'w+') as f:
+        f.write("hello")
+    return path
 
 
 def pytest_configure(config):
