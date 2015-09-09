@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Tue Sep  8 09:02:23 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_VMwarePreferencesPageWidget(object):
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
-        VMwarePreferencesPageWidget.resize(454, 535)
+        VMwarePreferencesPageWidget.resize(462, 532)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VMwarePreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VMwarePreferencesPageWidget)
@@ -54,17 +55,19 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.uiNetworkTab = QtWidgets.QWidget()
         self.uiNetworkTab.setObjectName("uiNetworkTab")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiNetworkTab)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiNetworkTab)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiManagedVMnetRangeGroupBox = QtWidgets.QGroupBox(self.uiNetworkTab)
         self.uiManagedVMnetRangeGroupBox.setObjectName("uiManagedVMnetRangeGroupBox")
-        self.gridLayout = QtWidgets.QGridLayout(self.uiManagedVMnetRangeGroupBox)
-        self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiManagedVMnetRangeGroupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.uiVMnetStartRangeSpinBox = QtWidgets.QSpinBox(self.uiManagedVMnetRangeGroupBox)
         self.uiVMnetStartRangeSpinBox.setMinimum(2)
         self.uiVMnetStartRangeSpinBox.setMaximum(19)
         self.uiVMnetStartRangeSpinBox.setObjectName("uiVMnetStartRangeSpinBox")
-        self.gridLayout.addWidget(self.uiVMnetStartRangeSpinBox, 0, 0, 1, 1)
+        self.horizontalLayout_3.addWidget(self.uiVMnetStartRangeSpinBox)
         self.uiToLabel = QtWidgets.QLabel(self.uiManagedVMnetRangeGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -72,18 +75,25 @@ class Ui_VMwarePreferencesPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiToLabel.sizePolicy().hasHeightForWidth())
         self.uiToLabel.setSizePolicy(sizePolicy)
         self.uiToLabel.setObjectName("uiToLabel")
-        self.gridLayout.addWidget(self.uiToLabel, 0, 1, 1, 1)
+        self.horizontalLayout_3.addWidget(self.uiToLabel)
         self.uiVMnetEndRangeSpinBox = QtWidgets.QSpinBox(self.uiManagedVMnetRangeGroupBox)
         self.uiVMnetEndRangeSpinBox.setMinimum(2)
         self.uiVMnetEndRangeSpinBox.setMaximum(19)
         self.uiVMnetEndRangeSpinBox.setProperty("value", 19)
         self.uiVMnetEndRangeSpinBox.setObjectName("uiVMnetEndRangeSpinBox")
-        self.gridLayout.addWidget(self.uiVMnetEndRangeSpinBox, 0, 2, 1, 1)
+        self.horizontalLayout_3.addWidget(self.uiVMnetEndRangeSpinBox)
+        self.uiConfigureVmnetPushButton = QtWidgets.QPushButton(self.uiManagedVMnetRangeGroupBox)
+        self.uiConfigureVmnetPushButton.setObjectName("uiConfigureVmnetPushButton")
+        self.horizontalLayout_3.addWidget(self.uiConfigureVmnetPushButton)
+        self.uiResetVmnetPushButton = QtWidgets.QPushButton(self.uiManagedVMnetRangeGroupBox)
+        self.uiResetVmnetPushButton.setObjectName("uiResetVmnetPushButton")
+        self.horizontalLayout_3.addWidget(self.uiResetVmnetPushButton)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem1, 0, 3, 1, 1)
-        self.verticalLayout.addWidget(self.uiManagedVMnetRangeGroupBox)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_3.addWidget(self.uiManagedVMnetRangeGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 359, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem2)
+        self.verticalLayout_3.addItem(spacerItem2)
         self.uiTabWidget.addTab(self.uiNetworkTab, "")
         self.verticalLayout_2.addWidget(self.uiTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -111,6 +121,8 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiVMnetStartRangeSpinBox.setPrefix(_translate("VMwarePreferencesPageWidget", "vmnet"))
         self.uiToLabel.setText(_translate("VMwarePreferencesPageWidget", "to"))
         self.uiVMnetEndRangeSpinBox.setPrefix(_translate("VMwarePreferencesPageWidget", "vmnet"))
+        self.uiConfigureVmnetPushButton.setText(_translate("VMwarePreferencesPageWidget", "&Configure"))
+        self.uiResetVmnetPushButton.setText(_translate("VMwarePreferencesPageWidget", "&Reset"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
 

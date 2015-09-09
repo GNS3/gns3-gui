@@ -23,6 +23,7 @@ import os
 import sys
 import shutil
 from gns3.qt import QtWidgets
+from gns3.utils.sudo import sudo
 
 from .. import VMware
 from ..ui.vmware_preferences_page_ui import Ui_VMwarePreferencesPageWidget
@@ -44,6 +45,8 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVmrunPathToolButton.clicked.connect(self._vmrunPathBrowserSlot)
+        self.uiConfigureVmnetPushButton.clicked.connect(self._configureVmnetSlot)
+        self.uiResetVmnetPushButton.clicked.connect(self._resetVmnetSlot)
 
         if sys.platform.startswith("darwin"):
             # we do not support VMware Fusion for now
@@ -113,6 +116,41 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             self.uiVmrunPathToolButton.setEnabled(False)
             self.uiHostTypeComboBox.setEnabled(False)
             self.uiNetworkTab.setEnabled(False)
+
+    def _getGNS3Vmnet(self):
+        """
+        Get the gns3vmnet utility path.
+        """
+
+        gns3vmnet = shutil.which("gns3vmnet")
+        if gns3vmnet is None:
+            QtWidgets.QMessageBox.critical(self, "gns3vmnet", "The gns3vmnet utility is not installed")
+            return None
+        return gns3vmnet
+
+    def _configureVmnetSlot(self):
+        """
+        Configure the vmnet interfaces.
+        """
+
+        vmnet_start = str(self.uiVMnetStartRangeSpinBox.value())
+        vmnet_end = str(self.uiVMnetEndRangeSpinBox.value())
+        gns3vmnet = self._getGNS3Vmnet()
+        if gns3vmnet is None:
+            return
+        command = [gns3vmnet, "-r", vmnet_start, vmnet_end]
+        sudo(command, parent=self)
+
+    def _resetVmnetSlot(self):
+        """
+        Deletes all vmnet interface but vmnet1 and vmnet8
+        """
+
+        gns3vmnet = self._getGNS3Vmnet()
+        if gns3vmnet is None:
+            return
+        command = [gns3vmnet, "-C"]
+        sudo(command, parent=self)
 
     def _populateWidgets(self, settings):
         """

@@ -15,29 +15,56 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import sys
 import subprocess
-
 
 from ..qt import QtWidgets
 from ..main_window import MainWindow
-from .run_in_terminal import RunInTerminal
+from .progress_dialog import ProgressDialog
+from .wait_for_command_worker import WaitForCommandWorker
+from .wait_for_runas_worker import WaitForRunAsWorker
+
+import logging
+log = logging.getLogger(__name__)
 
 
-def SudoRunInTerminal(command):
+def sudo(command, parent=None):
     """
-    Run a command in the terminal as root
+    Run a command  as an administrator.
     """
+
+    if parent is None:
+        parent = MainWindow.instance()
 
     while True:
-        password, ok = QtWidgets.QInputDialog.getText(MainWindow.instance(), "Run as root", "Password for sudo:", QtWidgets.QLineEdit.Password, "")
+        password, ok = QtWidgets.QInputDialog.getText(parent,
+                                                      "Run as administrator",
+                                                      "Please enter your password to proceed.",
+                                                      QtWidgets.QLineEdit.Password, "")
         if not ok:
             return False
-        with subprocess.Popen(["sudo", "-S", "id"], stdout=subprocess.PIPE, stdin=subprocess.PIPE) as proc:
-            proc.communicate(input=(password + "\n").encode())
-        ret = proc.wait(timeout=0.5)
-        if ret == 0:
-            break
-    RunInTerminal("sudo {}".format(command))
-    return True
 
+        if not sys.platform.startswith("win32"):
+            try:
+                # check the password is valid
+                subprocess.check_output(["sudo", "-S", "id"], input=(password + "\n").encode(), timeout=30)
+            except subprocess.CalledProcessError:
+                continue
+            except (OSError, subprocess.SubprocessError) as e:
+                QtWidgets.QMessageBox.critical(parent, "Run as administrator", "Could not execute sudo: {}".format(e))
+                return False
+
+            # sudo shouldn't need the password again.
+            waited_command = ["sudo"]
+            waited_command.extend(command)
+            worker = WaitForCommandWorker(waited_command)
+        else:
+            worker = WaitForRunAsWorker(command)
+
+        progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
+        progress_dialog.show()
+        if not progress_dialog.exec_():
+            return False
+        for line in worker.output().decode("utf-8", errors="ignore").splitlines():
+            log.info(line)
+        return True

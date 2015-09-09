@@ -25,7 +25,7 @@ from gns3.node import Node
 if sys.platform.startswith("win"):
     DEFAULT_VMNET_END_RANGE = 19
 else:
-    DEFAULT_VMNET_END_RANGE = 255
+    DEFAULT_VMNET_END_RANGE = 100
 
 VMWARE_SETTINGS = {
     "vmrun_path": "",
