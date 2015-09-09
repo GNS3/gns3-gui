@@ -19,6 +19,8 @@
 Configuration page for Docker preferences.
 """
 
+import sys
+
 from gns3.qt import QtWidgets
 from .. import Docker
 from ..ui.docker_preferences_page_ui import Ui_DockerPreferencesPageWidget
@@ -32,9 +34,13 @@ class DockerPreferencesPage(QtWidgets.QWidget, Ui_DockerPreferencesPageWidget):
 
         super().__init__()
         self.setupUi(self)
+
         # connect signals
-        self.uiRestoreDefaultsPushButton.clicked.connect(
-            self._restoreDefaultsSlot)
+        self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
+
+        if not sys.platform.startswith("linux"):
+            # Docker is only supported on Linux
+            self.uiUseLocalServercheckBox.setEnabled(False)
 
     def _restoreDefaultsSlot(self):
         """Slot to populate the page widgets with the default settings."""

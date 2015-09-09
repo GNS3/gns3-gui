@@ -19,12 +19,13 @@
 Default Docker settings.
 """
 
+import sys
 from gns3.node import Node
 
 DOCKER_SETTINGS = {
     "docker_url": "",
     "docker_user": "",
-    "use_local_server": True
+    "use_local_server": sys.platform.startswith("linux")  # Docker only supported on Linux
 }
 
 DOCKER_CONTAINER_SETTINGS = {
