@@ -15,6 +15,8 @@
     <file>symbols/vbox_guest.svg</file>
     <file>symbols/vpcs_guest.svg</file>
     <file>symbols/vmware_guest.svg</file>
+    <file>symbols/docker_guest.svg</file>
+    <file>symbols/docker_container.svg</file>
     <file>symbols/server.svg</file>
     <file>symbols/router_netflow.svg</file>
     <file>symbols/access_server.svg</file>
