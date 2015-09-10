@@ -403,8 +403,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                         "Open project",
                                                         self.projectsDirPath(),
                                                         "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net);;GNS3 appliance (*.gns3a)",
-                                                        "GNS3 project files (*.gns3)",
-                                                        "GNS3 appliance (*.gns3a)")
+                                                        "GNS3 project files (*.gns3)")
         if path:
             self._loadPath(path)
 
