@@ -77,12 +77,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     """
 
     # signal to tell the view if the user is adding a link or not
-    adding_link_signal = QtCore.Signal(bool)
+    adding_link_signal = QtCore.pyqtSignal(bool)
 
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, project=None, parent=None):
+    # signal to tell the windows is ready to load his first project
+    ready_signal = QtCore.pyqtSignal()
+
+    def __init__(self, parent=None):
 
         super().__init__(parent)
         self.setupUi(self)
@@ -93,12 +96,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._project = None
         self._createTemporaryProject()
-        self._project_from_cmdline = project
+        self._first_file_load = True
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
         self._max_recent_files = 5
         self._soft_exit = True
+        self._project_dialog = None
         self._recent_file_actions = []
         self._start_time = time.time()
         local_config = LocalConfig.instance()
@@ -267,6 +271,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # project
         self.project_new_signal.connect(self.project_created)
 
+        self.ready_signal.connect(self._readySlot)
+
     def project(self):
         """
         Return current project
@@ -370,19 +376,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if self.checkForUnsavedChanges():
-            project_dialog = NewProjectDialog(self)
-            project_dialog.show()
-            create_new_project = project_dialog.exec_()
+            self._project_dialog = NewProjectDialog(self)
+            self._project_dialog.show()
+            create_new_project = self._project_dialog.exec_()
             # Close the device dock so it repopulates.  Done in case switching
             # between cloud and local.
             self.uiNodesDockWidget.setVisible(False)
             self.uiNodesDockWidget.setWindowTitle("")
 
             if create_new_project:
-                new_project_settings = project_dialog.getNewProjectSettings()
+                new_project_settings = self._project_dialog.getNewProjectSettings()
                 self._createNewProject(new_project_settings)
             else:
                 self._createTemporaryProject()
+            self._project_dialog = None
 
     def _IOUVMConverterActionSlot(self):
         command = shutil.which("gns3-iouvm-converter")
@@ -405,7 +412,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                         "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net);;GNS3 appliance (*.gns3a)",
                                                         "GNS3 project files (*.gns3)")
         if path:
-            self._loadPath(path)
+            self.loadPath(path)
 
     def openRecentFileSlot(self):
         """
@@ -418,7 +425,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not os.path.isfile(path):
                 QtWidgets.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
-            self._loadPath(path)
+            self.loadPath(path)
 
     def loadSnapshot(self, path):
         """Loads a snapshot"""
@@ -427,10 +434,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
         self._project.close()
 
-    def _loadPath(self, path):
+    def loadPath(self, path):
         """Open a file and close the previous project"""
 
         if path:
+            if self._project_dialog:
+                self._project_dialog.reject()
+                self._project_dialog = None
+
+            if self._first_file_load is True:
+                time.sleep(0.5)  # give some time to the server to initialize
+                self._first_file_load = False
+
             if path.endswith(".gns3a"):
                 self._appliance_window = ApplianceWindow(path)
             elif self.checkForUnsavedChanges():
@@ -1152,16 +1167,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._createTemporaryProject()
-        if self._project_from_cmdline:
-            time.sleep(0.5)  # give some time to the server to initialize
-            self._loadPath(self._project_from_cmdline)
-        elif self._settings["auto_launch_project_dialog"]:
-            project_dialog = NewProjectDialog(self, showed_from_startup=True)
-            project_dialog.show()
-            create_new_project = project_dialog.exec_()
-            if create_new_project:
-                new_project_settings = project_dialog.getNewProjectSettings()
-                self._createNewProject(new_project_settings)
+
+        self.ready_signal.emit()
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
@@ -1171,6 +1178,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
+
+    def _readySlot(self):
+        """
+        Called when the application is ready to load a project
+        """
+        if self._settings["auto_launch_project_dialog"] and self._first_file_load:
+            self._project_dialog = NewProjectDialog(self, showed_from_startup=True)
+            self._project_dialog.accepted.connect(self._newProjectDialodAcceptedSlot)
+            self._project_dialog.show()
+
+    def _newProjectDialodAcceptedSlot(self):
+        """
+        Called when user accept the new project dialog
+        """
+        new_project_settings = self._project_dialog.getNewProjectSettings()
+        self._createNewProject(new_project_settings)
+        self._project_dialog = None
 
     def _running_nodes(self):
         """
@@ -1262,7 +1286,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     os.remove(old_topology_file_path)
                 except OSError as e:
                     MessageBox(self, "Save project", "Errors detected while saving the project", str(e), icon=QtWidgets.QMessageBox.Warning)
-            return self._loadPath(topology_file_path)
+            return self.loadPath(topology_file_path)
 
     def saveProject(self, path, random_id=False):
         """

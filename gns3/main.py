@@ -55,10 +55,10 @@ from gns3.main_window import MainWindow
 from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
 from gns3.local_config import LocalConfig
+from gns3.application import Application
 
 import logging
 log = logging.getLogger(__name__)
-
 
 from gns3.version import __version__
 
@@ -228,13 +228,8 @@ def main():
             except win32console.error as e:
                 print("warning: could not allocate console: {}".format(e))
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = Application(sys.argv)
 
-    # this info is necessary for QSettings
-    app.setOrganizationName("GNS3")
-    app.setOrganizationDomain("gns3.net")
-    app.setApplicationName("GNS3")
-    app.setApplicationVersion(__version__)
 
     # save client logging info to a file
     logfile = os.path.join(LocalConfig.configDirectory(), "gns3_gui.log")
@@ -248,7 +243,13 @@ def main():
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
 
-    mainwindow = MainWindow(options.project)
+    mainwindow = MainWindow()
+
+    # On OSX we can receive the file to open from a system event
+    # loadPath is smart and will load only if a path is present
+    mainwindow.ready_signal.connect(lambda: mainwindow.loadPath(app.open_file_at_startup))
+    mainwindow.ready_signal.connect(lambda: mainwindow.loadPath(options.project))
+    app.file_open_signal.connect(lambda path: mainwindow.loadPath(path))
 
     # Manage Ctrl + C or kill command
     def sigint_handler(*args):
