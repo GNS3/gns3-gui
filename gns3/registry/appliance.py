@@ -34,7 +34,7 @@ class Appliance(collections.Mapping):
         self._registry = registry
 
         try:
-            with open(path) as f:
+            with open(path, encoding="utf-8") as f:
                 self._appliance = json.load(f)
         except (OSError, ValueError) as e:
             raise ApplianceError("Could not read appliance {}: {}".format(path, str(e)))

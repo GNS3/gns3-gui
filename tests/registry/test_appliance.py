@@ -40,7 +40,7 @@ def test_check_config(tmpdir, registry):
 
     test_path = str(tmpdir / "test.json")
 
-    with open(test_path, "w+") as f:
+    with open(test_path, "w+", encoding="utf-8") as f:
         f.write("")
 
     with pytest.raises(ApplianceError):
@@ -49,13 +49,13 @@ def test_check_config(tmpdir, registry):
     with pytest.raises(ApplianceError):
         Appliance(registry, test_path)
 
-    with open(test_path, "w+") as f:
+    with open(test_path, "w+", encoding="utf-8") as f:
         f.write("{}")
 
     with pytest.raises(ApplianceError):
         Appliance(registry, test_path)
 
-    with open(test_path, "w+") as f:
+    with open(test_path, "w+", encoding="utf-8") as f:
         f.write('{"registry_version": 2}')
 
     with pytest.raises(ApplianceError):
@@ -66,7 +66,7 @@ def test_check_config(tmpdir, registry):
 
 def test_resolve_version(tmpdir):
 
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
 
     new_config = Appliance(registry, "tests/registry/appliances/microcore-linux.json")

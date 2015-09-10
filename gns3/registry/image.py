@@ -66,7 +66,7 @@ class Image:
         """
 
         if os.path.exists(self.path + ".md5sum"):
-            with open(self.path + ".md5sum") as f:
+            with open(self.path + ".md5sum", encoding="utf-8") as f:
                 self._md5sum = f.read()
                 return self._md5sum
 
@@ -80,7 +80,7 @@ class Image:
                     m.update(buf)
             self._md5sum = m.hexdigest()
         if cache:
-            with open(self.path + ".md5sum", "w+") as f:
+            with open(self.path + ".md5sum", "w+", encoding="utf-8") as f:
                 f.write(self._md5sum)
         return self._md5sum
 

@@ -28,9 +28,9 @@ from gns3.registry.registry import Registry, RegistryError
 def test_search_image_file(tmpdir):
 
     os.makedirs(str(tmpdir / "QEMU"))
-    with open(str(tmpdir / "QEMU" / "a"), "w+") as f:
+    with open(str(tmpdir / "QEMU" / "a"), "w+", encoding="utf-8") as f:
         f.write("ALPHA")
-    with open(str(tmpdir / "QEMU" / "b"), "w+") as f:
+    with open(str(tmpdir / "QEMU" / "b"), "w+", encoding="utf-8") as f:
         f.write("BETA")
 
     registry = Registry(str(tmpdir))
@@ -42,13 +42,13 @@ def test_search_image_file(tmpdir):
 
 def test_list_images(tmpdir):
     os.makedirs(str(tmpdir / "QEMU"))
-    with open(str(tmpdir / "QEMU" / ".DS_Store"), "w+") as f:
+    with open(str(tmpdir / "QEMU" / ".DS_Store"), "w+", encoding="utf-8") as f:
         f.write("garbage")
-    with open(str(tmpdir / "QEMU" / "a"), "w+") as f:
+    with open(str(tmpdir / "QEMU" / "a"), "w+", encoding="utf-8") as f:
         f.write("ALPHA")
-    with open(str(tmpdir / "QEMU" / "a.md5sum"), "w+") as f:
+    with open(str(tmpdir / "QEMU" / "a.md5sum"), "w+", encoding="utf-8") as f:
         f.write("e13d0d1c0b3999ae2386bba70417930c")
-    with open(str(tmpdir / "QEMU" / "b"), "w+") as f:
+    with open(str(tmpdir / "QEMU" / "b"), "w+", encoding="utf-8") as f:
         f.write("BETA")
 
 

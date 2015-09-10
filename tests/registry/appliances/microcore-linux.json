@@ -1,7 +1,7 @@
 {
     "name": "Micro Core Linux",
     "category": "guest",
-    "description": "Micro Core Linux is a smaller variant of Tiny Core without a graphical desktop.\n\nIt's provide a complete Linux system in few MB.",
+    "description": "Micro Core Linux® i is a smaller variant of Tiny Core without a graphical desktop.\n\nIt's provide a complete Linux system in few MB.",
     "vendor_name": "Team Tiny Core", 
     "vendor_url": "http://distro.ibiblio.org/tinycorelinux", 
     "documentation_url": "http://wiki.tinycorelinux.net/", 

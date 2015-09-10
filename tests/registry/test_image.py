@@ -30,7 +30,7 @@ def test_md5sum(linux_microcore_img):
     image = Image(linux_microcore_img)
     assert image.md5sum == "5d41402abc4b2a76b9719d911017c592"
     assert os.path.exists(linux_microcore_img + ".md5sum")
-    assert open(linux_microcore_img + ".md5sum").read() == "5d41402abc4b2a76b9719d911017c592"
+    assert open(linux_microcore_img + ".md5sum", encoding="utf-8").read() == "5d41402abc4b2a76b9719d911017c592"
 
 
 def test_filesize(linux_microcore_img):
@@ -42,7 +42,7 @@ def test_md5sum_from_cache(tmpdir):
     path = str(tmpdir / "test.img")
     open(path, "w+").close()
 
-    with open(path + ".md5sum", "w+") as f:
+    with open(path + ".md5sum", "w+", encoding="utf-8") as f:
         f.write("56f46611dfa80d0eead602cbb3f6dcee")
 
     image = Image(path)

@@ -73,7 +73,7 @@ def empty_config(tmpdir):
         }
     }
     path = str(tmpdir / "config")
-    with open(path, "w+") as f:
+    with open(path, "w+", encoding="utf-8") as f:
         json.dump(config, f)
     return Config(path)
 
@@ -91,7 +91,7 @@ def test_list_servers_vm_enable(tmpdir):
         }
     }
     path = str(tmpdir / "config")
-    with open(path, "w+") as f:
+    with open(path, "w+", encoding="utf-8") as f:
         json.dump(config, f)
     config = Config(path)
     assert config.servers == ["local", "vm"]
@@ -108,14 +108,14 @@ def test_list_servers_remote_servers(tmpdir):
         }
     }
     path = str(tmpdir / "config")
-    with open(path, "w+") as f:
+    with open(path, "w+", encoding="utf-8") as f:
         json.dump(config, f)
     config = Config(path)
     assert config.servers == ["local", "http://darkside.moon:4242"]
 
 
 def test_add_appliance_guest(empty_config, linux_microcore_img):
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
     config["images"] = [
         {
@@ -150,7 +150,7 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
 
 
 def test_add_appliance_with_symbol(empty_config, linux_microcore_img):
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
     config["images"] = [
         {
@@ -164,7 +164,7 @@ def test_add_appliance_with_symbol(empty_config, linux_microcore_img):
 
 
 def test_add_appliance_with_boot_priority(empty_config, linux_microcore_img):
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
     config["images"] = [
         {
@@ -178,7 +178,7 @@ def test_add_appliance_with_boot_priority(empty_config, linux_microcore_img):
 
 
 def test_add_appliance_router_two_disk(empty_config):
-    with open("tests/registry/appliances/arista-veos.json") as f:
+    with open("tests/registry/appliances/arista-veos.json", encoding="utf-8") as f:
         config = json.load(f)
 
 
@@ -221,7 +221,7 @@ def test_add_appliance_router_two_disk(empty_config):
 
 
 def test_add_appliance_uniq(empty_config, linux_microcore_img):
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
 
     config["images"] = [
@@ -240,7 +240,7 @@ def test_add_appliance_uniq(empty_config, linux_microcore_img):
 
 
 def test_add_appliance_path_relative_to_images_dir(empty_config, tmpdir, linux_microcore_img):
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
 
     config["images"] = [
@@ -256,7 +256,7 @@ def test_add_appliance_path_relative_to_images_dir(empty_config, tmpdir, linux_m
 
 def test_save(empty_config, linux_microcore_img):
 
-    with open("tests/registry/appliances/microcore-linux.json") as f:
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
 
     config["images"] = [

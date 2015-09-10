@@ -40,7 +40,7 @@ class Config:
         if self.path is None:
             self.path = self._get_standard_config_file_path()
 
-        with open(self.path) as f:
+        with open(self.path, encoding="utf-8") as f:
             self._config = json.load(f)
 
     @property
@@ -167,5 +167,5 @@ class Config:
         Save the configuration file
         """
 
-        with open(self.path, "w+") as f:
+        with open(self.path, "w+", encoding="utf-8") as f:
             json.dump(self._config, f, indent=4)
