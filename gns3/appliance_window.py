@@ -21,6 +21,7 @@ import os
 import shutil
 
 from .utils.get_resource import get_resource
+from .utils import human_filesize
 from .qt import QtCore, QtWidgets, QtWebKit, QtWebKitWidgets, QtGui
 from .ui.appliance_window_ui import Ui_ApplianceWindow
 from .image_manager import ImageManager
@@ -33,13 +34,6 @@ from .registry.image import Image
 import logging
 log = logging.getLogger(__name__)
 
-
-def human_filesize(num):
-    for unit in ['B','KB','MB','GB']:
-        if abs(num) < 1024.0:
-            return "%3.1f%s" % (num, unit)
-        num /= 1024.0
-    return "%.1f%s" % (num, 'TB')
 
 
 class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
@@ -66,7 +60,7 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         self.show()
 
     def _refresh(self):
-        renderer = jinja2.Environment(loader=jinja2.FileSystemLoader(get_resource('templates')))
+        renderer = jinja2.Environment(loader=jinja2.FileSystemLoader(get_resource('static')))
         renderer.filters['nl2br'] = lambda s: s.replace('\n', '<br />')
         renderer.filters['human_filesize'] = human_filesize
         template = renderer.get_template("appliance.html")

@@ -237,7 +237,5 @@
         <file>charcoal_icons/preferences-hover.svg</file>
         <file>charcoal_icons/quit.svg</file>
         <file>charcoal_icons/quit-hover.svg</file>
-        <file>templates/appliance.html</file>
-        <file>templates/layout/default.html</file>
     </qresource>
 </RCC>
