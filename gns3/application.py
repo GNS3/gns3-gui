@@ -47,5 +47,5 @@ class Application(QtWidgets.QApplication):
             if isinstance(event, QtGui.QFileOpenEvent):
                 print(str(event.file()))
                 self.open_file_at_startup = str(event.file())
-                file_open.emit(str(event.file()))
+                self.file_open_signal.emit(str(event.file()))
         return super().event(event)
