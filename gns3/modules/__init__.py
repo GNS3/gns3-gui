@@ -22,11 +22,6 @@ from gns3.modules.vpcs import VPCS
 from gns3.modules.virtualbox import VirtualBox
 from gns3.modules.qemu import Qemu
 from gns3.modules.vmware import VMware
+from gns3.modules.docker import Docker
 
-from gns3.local_config import LocalConfig
-
-MODULES = [VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Builtin]
-
-if LocalConfig.instance().experimental():
-    from gns3.modules.docker import Docker
-    MODULES.append(Docker)
+MODULES = [VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker, Builtin]
