@@ -45,10 +45,6 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         self._vmware_vms = vmware_vms
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
 
-        if sys.platform.startswith("darwin") and not LocalConfig.instance().experimental():
-            # Fusion is not supported on OSX
-            self.uiLocalRadioButton.setEnabled(False)
-
         if not Servers.instance().remoteServers():
             # skip the server page if we use the local server
             self.setStartId(1)
@@ -61,11 +57,6 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
-        # Fusion is not yet supported
-        if sys.platform.startswith("darwin") and not LocalConfig.instance().experimental():
-            if self.uiLocalRadioButton.isChecked():
-                QtWidgets.QMessageBox.critical(self, "VMware VMs", "Sorry, VMware Fusion is not supported yet")
-                return False
         if self.currentPage() == self.uiVirtualBoxWizardPage:
             if not self.uiVMListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
