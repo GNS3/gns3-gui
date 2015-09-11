@@ -98,6 +98,7 @@ background-none;
     <addaction name="uiMoveCloudProjectToLocalAction"/>
     <addaction name="uiDownloadRemoteProject"/>
     <addaction name="separator"/>
+    <addaction name="uiOpenApplianceAction"/>
     <addaction name="uiImportExportConfigsAction"/>
     <addaction name="uiScreenshotAction"/>
     <addaction name="uiSnapshotAction"/>
@@ -1207,6 +1208,15 @@ background-none;
   <action name="uiIOUVMConverterAction">
    <property name="text">
     <string>IOU VM Converter</string>
+   </property>
+  </action>
+  <action name="uiOpenApplianceAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/open.svg</normaloff>:/icons/open.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Open Appliance</string>
    </property>
   </action>
  </widget>

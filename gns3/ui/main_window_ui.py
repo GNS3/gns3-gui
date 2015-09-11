@@ -366,9 +366,9 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -410,6 +410,9 @@ class Ui_MainWindow(object):
         self.uiSetupWizard.setObjectName("uiSetupWizard")
         self.uiIOUVMConverterAction = QtWidgets.QAction(MainWindow)
         self.uiIOUVMConverterAction.setObjectName("uiIOUVMConverterAction")
+        self.uiOpenApplianceAction = QtWidgets.QAction(MainWindow)
+        self.uiOpenApplianceAction.setIcon(icon1)
+        self.uiOpenApplianceAction.setObjectName("uiOpenApplianceAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -425,6 +428,7 @@ class Ui_MainWindow(object):
         self.uiFileMenu.addAction(self.uiMoveCloudProjectToLocalAction)
         self.uiFileMenu.addAction(self.uiDownloadRemoteProject)
         self.uiFileMenu.addSeparator()
+        self.uiFileMenu.addAction(self.uiOpenApplianceAction)
         self.uiFileMenu.addAction(self.uiImportExportConfigsAction)
         self.uiFileMenu.addAction(self.uiScreenshotAction)
         self.uiFileMenu.addAction(self.uiSnapshotAction)
@@ -667,6 +671,7 @@ class Ui_MainWindow(object):
         self.uiQemuImgWizardAction.setText(_translate("MainWindow", "Qemu image wizard"))
         self.uiSetupWizard.setText(_translate("MainWindow", "&Setup Wizard"))
         self.uiIOUVMConverterAction.setText(_translate("MainWindow", "IOU VM Converter"))
+        self.uiOpenApplianceAction.setText(_translate("MainWindow", "Open Appliance"))
 
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

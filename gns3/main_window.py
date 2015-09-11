@@ -204,6 +204,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # file menu connections
         self.uiNewProjectAction.triggered.connect(self._newProjectActionSlot)
         self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
+        self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiDownloadRemoteProject.triggered.connect(self._downloadRemoteProjectActionSlot)
@@ -401,6 +402,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except (OSError, subprocess.SubprocessError) as e:
             QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "Error when running gns3-iouvm-converter {}".format(e))
 
+    def openApplianceActionSlot(self):
+        """
+        Slot called to open an appliance.
+        """
+
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                        "Open appliance",
+                                                        directory,
+                                                        "All files (*.*);;GNS3 appliance (*.gns3a)",
+                                                        "GNS3 appliance (*.gns3a)")
+        if path:
+            self.loadPath(path)
+
     def openProjectActionSlot(self):
         """
         Slot called to open a project.
@@ -409,7 +426,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net);;GNS3 appliance (*.gns3a)",
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
                                                         "GNS3 project files (*.gns3)")
         if path:
             self.loadPath(path)
@@ -1578,6 +1595,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setStyleSheet("")
         self.uiNewProjectAction.setIcon(QtGui.QIcon(":/icons/new-project.svg"))
         self.uiOpenProjectAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
+        self.uiOpenApplianceAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
         self.uiSaveProjectAction.setIcon(QtGui.QIcon(":/icons/save.svg"))
         self.uiSaveProjectAsAction.setIcon(QtGui.QIcon(":/icons/save-as.svg"))
         self.uiImportExportConfigsAction.setIcon(QtGui.QIcon(":/icons/import_export_configs.svg"))
@@ -1614,6 +1632,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setStyleSheet("")
         self.uiNewProjectAction.setIcon(self._getStyleIcon(":/classic_icons/new-project.svg", ":/classic_icons/new-project-hover.svg"))
         self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
+        self.uiOpenApplianceAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
         self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/classic_icons/save-project.svg", ":/classic_icons/save-project-hover.svg"))
         self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/classic_icons/save-as-project.svg", ":/classic_icons/save-as-project-hover.svg"))
         self.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/classic_icons/import_export_configs.svg", ":/classic_icons/import_export_configs-hover.svg"))
@@ -1673,6 +1692,7 @@ QComboBox QAbstractItemView {background-color: #dedede}
         self.setStyleSheet(style)
         self.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
         self.uiOpenProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
+        self.uiOpenApplianceAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
         self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-project.svg", ":/charcoal_icons/save-project-hover.svg"))
         self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-as-project.svg", ":/charcoal_icons/save-as-project-hover.svg"))
         self.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/charcoal_icons/import_export_configs.svg", ":/charcoal_icons/import_export_configs-hover.svg"))
