@@ -25,7 +25,7 @@ from .utils import human_filesize
 from .qt import QtCore, QtWidgets, QtWebKit, QtWebKitWidgets, QtGui
 from .ui.appliance_window_ui import Ui_ApplianceWindow
 from .image_manager import ImageManager
-from .registry.appliance import Appliance
+from .registry.appliance import Appliance, ApplianceError
 from .registry.registry import Registry
 from .registry.config import Config
 from .registry.image import Image
@@ -55,9 +55,10 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         # Enable the inspector on right click
         self.uiWebView.settings().setAttribute(QtWebKit.QWebSettings.DeveloperExtrasEnabled, True)
 
+        self.show()
+
         self._refresh()
 
-        self.show()
 
     def _refresh(self):
         renderer = jinja2.Environment(loader=jinja2.FileSystemLoader(get_resource('static')))
@@ -71,6 +72,8 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
             self._appliance = Appliance(registry, self._path)
         except ApplianceError as e:
             QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
+            self.close()
+            return
 
         self.uiWebView.setHtml(template.render(appliance=self._appliance, registry=registry))
 

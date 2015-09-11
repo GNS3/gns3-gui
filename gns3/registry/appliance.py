@@ -49,7 +49,7 @@ class Appliance(collections.Mapping):
         if "registry_version" not in self._appliance:
             raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry")
         if self._appliance["registry_version"] != 1:
-            raise ApplianceError("Please update GNS3 marketplace in order to install this appliance")
+            raise ApplianceError("Please update GNS3 in order to install this appliance")
 
     def __getitem__(self, key):
         return self._appliance.__getitem__(key)
