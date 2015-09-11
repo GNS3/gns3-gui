@@ -700,7 +700,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 return
             path = event.mimeData().urls()[0].toLocalFile()
             if os.path.isfile(path) and self._main_window.checkForUnsavedChanges():
-                self._main_window.loadProject(path)
+                self._main_window.loadPath(path)
             event.acceptProposedAction()
         else:
             event.ignore()

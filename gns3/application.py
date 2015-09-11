@@ -45,7 +45,6 @@ class Application(QtWidgets.QApplication):
         # and not the file as command line parameter
         if sys.platform.startswith("darwin"):
             if isinstance(event, QtGui.QFileOpenEvent):
-                print(str(event.file()))
                 self.open_file_at_startup = str(event.file())
                 self.file_open_signal.emit(str(event.file()))
         return super().event(event)

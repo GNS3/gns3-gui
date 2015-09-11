@@ -438,13 +438,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """Open a file and close the previous project"""
 
         if path:
+            if self._first_file_load is True:
+                self._first_file_load = False
+                time.sleep(0.5)  # give some time to the server to initialize
+
             if self._project_dialog:
                 self._project_dialog.reject()
                 self._project_dialog = None
-
-            if self._first_file_load is True:
-                time.sleep(0.5)  # give some time to the server to initialize
-                self._first_file_load = False
 
             if path.endswith(".gns3a"):
                 self._appliance_window = ApplianceWindow(path)
@@ -456,7 +456,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _projectClosedContinueLoadPath(self):
 
         path = self._open_project_path
-        if self.loadProject(path):
+        if self._loadProject(path):
             self.project_new_signal.emit(path)
 
     def _saveProjectActionSlot(self):
@@ -1362,9 +1362,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         QtWidgets.QMessageBox.information(self, "GNS3 converter", "Your project has been converted to a new format and can be found in: {}".format(project_dir))
         project_path = os.path.join(project_dir, project_name + ".gns3")
-        self.loadProject(project_path)
+        self._loadProject(project_path)
 
-    def loadProject(self, path):
+    def _loadProject(self, path):
         """
         Loads a project into GNS3.
 
