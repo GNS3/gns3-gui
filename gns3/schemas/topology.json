@@ -353,6 +353,7 @@
                 "ethernet_adapters": { "type": "integer", "minimum": 0 },
                 "initial_config": { "$ref": "#/definitions/mandatory_string" },
                 "startup_config": { "$ref": "#/definitions/mandatory_string" },
+                "private_config": { "$ref": "#/definitions/mandatory_string" },
                 "l1_keepalives": { "type": "boolean" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "nvram": { "type": "integer", "minimum": 1 },
