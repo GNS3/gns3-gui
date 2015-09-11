@@ -501,7 +501,10 @@ class Port:
         self._capturing = False
         self._capture_file_path = ""
         if self._tail_process and self._tail_process.poll() is None:
-            self._tail_process.kill()
+            try:
+                self._tail_process.kill()
+            except PermissionError:
+                pass
             self._tail_process = None
         self._capture_reader_process = None
 
