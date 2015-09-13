@@ -29,6 +29,7 @@ from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.nios.nio_vmnet import NIOVMNET
 from gns3.ports.ethernet_port import EthernetPort
+from gns3.packet_capture import PacketCapture
 from .settings import VMWARE_VM_SETTINGS
 
 import logging
@@ -91,6 +92,7 @@ class VMwareVM(VM):
                 new_port = EthernetPort(port_name, nio=NIOVMNET)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
+            new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
@@ -247,6 +249,66 @@ class VMwareVM(VM):
                 # set ports as suspended
                 port.setStatus(Port.suspended)
             self.suspended_signal.emit()
+
+    def startPacketCapture(self, port, capture_file_name, data_link_type):
+        """
+        Starts a packet capture.
+
+        :param port: Port instance
+        :param capture_file_name: PCAP capture file path
+        :param data_link_type: PCAP data link type (unused)
+        """
+
+        params = {"capture_file_name": capture_file_name}
+        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
+        self.httpPost("/vmware/vms/{vm_id}/adapters/{adapter_number}/ports/0/start_capture".format(
+            vm_id=self._vm_id,
+            adapter_number=port.adapterNumber()),
+            self._startPacketCaptureCallback,
+            context={"port": port},
+            body=params)
+
+    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
+        """
+        Callback for starting a packet capture.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            PacketCapture.instance().startCapture(self, context["port"], result["pcap_file_path"])
+
+    def stopPacketCapture(self, port):
+        """
+        Stops a packet capture.
+
+        :param port: Port instance
+        """
+
+        log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
+        self.httpPost("/vmware/vms/{vm_id}/adapters/{adapter_number}/ports/0/stop_capture".format(
+            vm_id=self._vm_id,
+            adapter_number=port.adapterNumber()),
+            self._stopPacketCaptureCallback,
+            context={"port": port})
+
+    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
+        """
+        Callback for stopping a packet capture.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            PacketCapture.instance().stopCapture(self, context["port"])
 
     def info(self):
         """
