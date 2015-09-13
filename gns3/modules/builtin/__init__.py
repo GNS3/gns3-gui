@@ -20,9 +20,7 @@ Built-in module implementation.
 """
 
 from gns3.qt import QtWidgets
-from gns3.servers import Servers
 from ..module import Module
-from ..module_error import ModuleError
 from .cloud import Cloud
 from .host import Host
 
@@ -71,61 +69,6 @@ class Builtin(Module):
 
         log.info("Built-in module reset")
         self._nodes.clear()
-
-    def allocateServer(self, node_class):
-        """
-        Allocates a server.
-
-        :param node_class: Node object
-
-        :returns: allocated server (HTTPClient instance)
-        """
-
-        # check all other modules to find if they
-        # are using a local server
-        using_local_server = []
-        from gns3.modules import MODULES
-        for module in MODULES:
-            instance = module.instance()
-            if instance != self:
-                module_settings = instance.settings()
-                if "use_local_server" in module_settings:
-                    using_local_server.append(module_settings["use_local_server"])
-
-        # allocate a server for the node
-        servers = Servers.instance()
-        local_server = servers.localServer()
-        remote_servers = servers.remoteServers()
-        gns3_vm = Servers.instance().vmServer()
-
-        if not all(using_local_server) and (gns3_vm or len(remote_servers)):
-            # a module is not using a local server
-
-            server_list = ["Local server ({})".format(local_server.url())]
-            if gns3_vm:
-                server_list.append("GNS3 VM ({})".format(gns3_vm.url()))
-            if len(remote_servers):
-                if True not in using_local_server and len(remote_servers) == 1:
-                    # no module is using a local server and there is only one
-                    # remote server available, so no need to ask the user.
-                    return next(iter(servers))
-                for remote_server in remote_servers:
-                    server_list.append("{}".format(remote_server))
-
-            # TODO: move this to graphics_view
-            from gns3.main_window import MainWindow
-            mainwindow = MainWindow.instance()
-            (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "Server", "Please choose a server", server_list, 0, False)
-            if ok:
-                if selection.startswith("Local server"):
-                    return local_server
-                elif selection.startswith("GNS3 VM"):
-                    return gns3_vm
-                else:
-                    return remote_servers[selection]
-            else:
-                raise ModuleError("Please select a server")
-        return local_server
 
     def createNode(self, node_class, server, project):
         """

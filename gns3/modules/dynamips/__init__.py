@@ -24,11 +24,9 @@ import shutil
 import hashlib
 
 from gns3.qt import QtWidgets
-from gns3.servers import Servers
 from gns3.local_config import LocalConfig
 from gns3.image_manager import ImageManager
 from gns3.local_server_config import LocalServerConfig
-from gns3.gns3_vm import GNS3VM
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -422,22 +420,11 @@ class Dynamips(Module):
         in the nodes view and create a node on the scene.
         """
 
-        server = "local"
-        if not self._settings["use_local_server"]:
-            if GNS3VM.instance().isRunning():
-                server = "vm"
-            else:
-                # pick up a remote server (round-robin method) #FIXME: review this
-                remote_server = next(iter(Servers.instance()))
-                if remote_server:
-                    server = remote_server.url()
-
         nodes = []
         for node_class in [EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
-                 "server": server,
                  "categories": node_class.categories(),
                  "symbol": node_class.defaultSymbol()}
             )
