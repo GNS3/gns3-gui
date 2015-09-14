@@ -260,7 +260,8 @@ class EthernetSwitch(Device):
                 port_info = port.dump()
                 if port.portNumber() in self._settings["ports"]:
                     port_info["type"] = self._settings["ports"][port.portNumber()]["type"]
-                    port_info["ethertype"] = self._settings["ports"][port.portNumber()]["ethertype"]
+                    if port_info["type"] == "qinq" and "ethertype" != "0x8100":
+                        port_info["ethertype"] = self._settings["ports"][port.portNumber()]["ethertype"]
                     port_info["vlan"] = self._settings["ports"][port.portNumber()]["vlan"]
                 ports.append(port_info)
 

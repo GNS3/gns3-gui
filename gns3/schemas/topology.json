@@ -164,6 +164,9 @@
                 "stub": { "type": "boolean" },
                 "type": {
                     "enum": ["access", "dot1q", "qinq"]
+                },
+                "ethertype": {
+                    "enum": ["0x8100", "0x88A8", "0x9100", "0x9200"]
                 }
             },
             "required": [
