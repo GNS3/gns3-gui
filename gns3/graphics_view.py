@@ -1419,7 +1419,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.delete()
 
     @staticmethod
-    def allocateServer(self):
+    def allocateServer():
         """
         Allocates a server.
 
@@ -1494,7 +1494,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
             if "server" not in node_data:
-                server = self.allocateServer(self)
+                server = self.allocateServer()
             elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
             elif node_data["server"] == "vm":

@@ -30,6 +30,8 @@ import random
 import socket
 import subprocess
 import binascii
+import stat
+import struct
 
 from .qt import QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
@@ -111,26 +113,64 @@ class Servers():
         path = os.path.abspath(ubridge_path)
         return path
 
-    def _checkUbridgePermission(self):
+    def _checkUbridgePermissions(self):
+        """
+        Checks that uBridge can interact with network interfaces.
+        """
+
         path = self._settings["local_server"]["ubridge_path"]
 
-        if not path or len(path) == 0:
+        if not path or len(path) == 0 or not os.path.exists(path):
             return False
-        if sys.platform.startswith("darwin"):
-            from .main_window import MainWindow
-            main_window = MainWindow.instance()
+
+        if sys.platform.startswith("win"):
+            # do not check anything on Windows
+            return True
+
+        if os.geteuid() == 0:
+            # we are root, so we should have privileged access.
+            return True
+
+        from .main_window import MainWindow
+        main_window = MainWindow.instance()
+
+        request_setuid = False
+        if sys.platform.startswith("linux"):
+            # test if the executable has the CAP_NET_RAW capability (Linux only)
             try:
-                if os.stat(path).st_uid != 0:
-                    proceed = QtWidgets.QMessageBox.question(main_window,
-                        "GNS3",
-                        "GNS3's ubridge require root permissions to interact with network interfaces. Set root permissions to ubridge?",
+                if "security.capability" in os.listxattr(path):
+                    caps = os.getxattr(path, "security.capability")
+                    # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+                    if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
+                        proceed = QtWidgets.QMessageBox.question(
+                            main_window,
+                            "uBridge",
+                            "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge?",
+                            QtWidgets.QMessageBox.Yes,
+                            QtWidgets.QMessageBox.No)
+                        if proceed == QtWidgets.QMessageBox.Yes:
+                            sudo(["setcap", "cap_net_admin,cap_net_raw=ep"])
+                else:
+                    # capabilities not supported
+                    request_setuid = True
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(main_window, "uBridge", "Can't set CAP_NET_RAW capability to uBridge {}: {}".format(path, str(e)))
+                return False
+
+        if sys.platform.startswith("darwin") or request_setuid:
+            try:
+                if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
+                    proceed = QtWidgets.QMessageBox.question(
+                        main_window,
+                        "uBridge",
+                        "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge?",
                         QtWidgets.QMessageBox.Yes,
                         QtWidgets.QMessageBox.No)
                     if proceed == QtWidgets.QMessageBox.Yes:
                         sudo(["chmod", "4755", path])
                         sudo(["chown", "root", path])
             except OSError as e:
-                QtWidgets.QMessageBox.critical(main_window, "ubridge", "Can't found ubridge {}: {}".format(path, str(e)))
+                QtWidgets.QMessageBox.critical(main_window, "uBridge", "Can't set root permissions to uBridge {}: {}".format(path, str(e)))
                 return False
         return True
 
@@ -334,7 +374,7 @@ class Servers():
         from .main_window import MainWindow
         main_window = MainWindow.instance()
 
-        self._checkUbridgePermission()
+        self._checkUbridgePermissions()
 
         # check the local server path
         local_server_path = self.localServerPath()
