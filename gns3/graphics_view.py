@@ -1452,8 +1452,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     # no module is using a local server and there is only one
                     # remote server available, so no need to ask the user.
                     return next(iter(servers))
-                for remote_server in remote_servers:
-                    server_list.append("{}".format(remote_server))
+                for remote_server in remote_servers.values():
+                    server_list.append("{}".format(remote_server.url()))
 
             from gns3.main_window import MainWindow
             mainwindow = MainWindow.instance()
@@ -1464,7 +1464,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 elif selection.startswith("GNS3 VM"):
                     return gns3_vm
                 else:
-                    return remote_servers[selection]
+                    for server in remote_servers.values():
+                        if selection == server.url():
+                            return server
             else:
                 raise ModuleError("Please select a server")
         return local_server
