@@ -41,13 +41,14 @@ class WaitForCommandWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, command, timeout=120):
+    def __init__(self, command, timeout=120, shell=False):
 
         super().__init__()
         self._is_running = False
         self._command = command
         self._timeout = timeout
         self._output = ""
+        self._shell = shell
 
     def run(self):
         """
@@ -59,7 +60,8 @@ class WaitForCommandWorker(QtCore.QObject):
         try:
             self._output = subprocess.check_output(self._command,
                                                    cwd=tempfile.gettempdir(),
-                                                   timeout=self._timeout)
+                                                   timeout=self._timeout,
+                                                   shell=self._shell)
         except (OSError, subprocess.SubprocessError) as e:
             command_string = " ".join(shlex.quote(s) for s in self._command)
             self.error.emit('Could not execute command "{}": {}'.format(command_string, e), True)

@@ -37,6 +37,8 @@ from .local_config import LocalConfig
 from .settings import SERVERS_SETTINGS
 from .local_server_config import LocalServerConfig
 from .progress import Progress
+from .utils.sudo import sudo
+
 from collections import OrderedDict
 
 import logging
@@ -106,7 +108,31 @@ class Servers():
 
         if ubridge_path is None:
             return ""
-        return os.path.abspath(ubridge_path)
+        path = os.path.abspath(ubridge_path)
+        return path
+
+    def _checkUbridgePermission(self):
+        path = self._settings["local_server"]["ubridge_path"]
+
+        if not path or len(path) == 0:
+            return False
+        if sys.platform.startswith("darwin"):
+            from .main_window import MainWindow
+            main_window = MainWindow.instance()
+            try:
+                if os.stat(path).st_uid != 0:
+                    proceed = QtWidgets.QMessageBox.question(main_window,
+                        "GNS3",
+                        "GNS3's ubridge require root permissions to interact with network interfaces. Set root permissions to ubridge?",
+                        QtWidgets.QMessageBox.Yes,
+                        QtWidgets.QMessageBox.No)
+                    if proceed == QtWidgets.QMessageBox.Yes:
+                        sudo(["chmod", "4755", path])
+                        sudo(["chown", "root", path])
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(main_window, "ubridge", "Can't found ubridge {}: {}".format(path, str(e)))
+                return False
+        return True
 
     def _handleSslErrors(self, reply, errorList):
         """
@@ -307,6 +333,8 @@ class Servers():
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
+
+        self._checkUbridgePermission()
 
         # check the local server path
         local_server_path = self.localServerPath()

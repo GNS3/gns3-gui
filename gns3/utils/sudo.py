@@ -19,7 +19,6 @@ import sys
 import subprocess
 
 from ..qt import QtWidgets
-from ..main_window import MainWindow
 from .progress_dialog import ProgressDialog
 from .wait_for_command_worker import WaitForCommandWorker
 from .wait_for_runas_worker import WaitForRunAsWorker
@@ -28,18 +27,19 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def sudo(command, parent=None):
+def sudo(command, parent=None, shell=False):
     """
     Run a command  as an administrator.
     """
 
     if parent is None:
+        from ..main_window import MainWindow
         parent = MainWindow.instance()
 
     while True:
         password, ok = QtWidgets.QInputDialog.getText(parent,
                                                       "Run as administrator",
-                                                      "Please enter your password to proceed.",
+                                                      "Please enter your password to proceed. {}".format(' '.join(command)),
                                                       QtWidgets.QLineEdit.Password, "")
         if not ok:
             return False
@@ -57,7 +57,7 @@ def sudo(command, parent=None):
             # sudo shouldn't need the password again.
             waited_command = ["sudo"]
             waited_command.extend(command)
-            worker = WaitForCommandWorker(waited_command)
+            worker = WaitForCommandWorker(waited_command, shell=shell)
         else:
             worker = WaitForRunAsWorker(command)
 
