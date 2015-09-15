@@ -22,7 +22,7 @@ import json
 import os
 from unittest.mock import MagicMock, patch
 
-from gns3.registry.config import Config
+from gns3.registry.config import Config, ConfigException
 
 
 @pytest.fixture(scope="function")
@@ -233,10 +233,12 @@ def test_add_appliance_uniq(empty_config, linux_microcore_img):
     empty_config.add_appliance(config, "local")
 
     config["qemu"]["adapters"] = 2
-    empty_config.add_appliance(config, "local")
+
+    with pytest.raises(ConfigException):
+        empty_config.add_appliance(config, "local")
 
     assert len(empty_config._config["Qemu"]["vms"]) == 1
-    assert empty_config._config["Qemu"]["vms"][0]["adapters"] == 2
+    assert empty_config._config["Qemu"]["vms"][0]["adapters"] == 1
 
 
 def test_add_appliance_path_relative_to_images_dir(empty_config, tmpdir, linux_microcore_img):

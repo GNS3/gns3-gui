@@ -23,6 +23,10 @@ import os
 import shutil
 
 
+class ConfigException(Exception):
+    pass
+
+
 class Config:
     """
     GNS3 config file
@@ -95,10 +99,15 @@ class Config:
         elif appliance_config["category"] == "router":
             new_config["category"] = 0
 
+        # Raise error if VM already exists
+        for item in self._config["Qemu"]["vms"]:
+            if item["name"] == new_config["name"]:
+                raise ConfigException("{} already exist".format(item["name"]))
+
         if "qemu" in appliance_config:
             self._add_qemu_config(new_config, appliance_config)
-            return True
-        return False
+            return
+        raise ConfigException("{} not configuration found for Qemu".format(item["name"]))
 
     def _add_qemu_config(self, new_config, appliance_config):
 
@@ -144,9 +153,6 @@ class Config:
 
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]
-
-        # Remove VM with the same Name
-        self._config["Qemu"]["vms"] = [item for item in self._config["Qemu"]["vms"] if item["name"] != new_config["name"]]
 
         self._config["Qemu"]["vms"].append(new_config)
 

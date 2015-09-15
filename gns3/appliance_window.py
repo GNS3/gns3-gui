@@ -29,7 +29,7 @@ from .ui.appliance_window_ui import Ui_ApplianceWindow
 from .image_manager import ImageManager
 from .registry.appliance import Appliance, ApplianceError
 from .registry.registry import Registry
-from .registry.config import Config
+from .registry.config import Config, ConfigException
 from .registry.image import Image
 
 
@@ -129,13 +129,19 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
             else:
                 return
 
-        if config.add_appliance(appliance_configuration, server):
-            self.close()
-            worker = WaitForLambdaWorker(lambda: config.save())
-            progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
-            progress_dialog.show()
-            if progress_dialog.exec_():
-                QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(self._appliance["name"], version))
+        self.close()
+
+        try:
+            config.add_appliance(appliance_configuration, server)
+        except ConfigException as e:
+            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
+            return
+
+        worker = WaitForLambdaWorker(lambda: config.save())
+        progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
+        progress_dialog.show()
+        if progress_dialog.exec_():
+            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(self._appliance["name"], version))
 
     @QtCore.pyqtSlot(str, str)
     def importAppliance(self, filename, md5sum):
