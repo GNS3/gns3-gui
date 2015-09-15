@@ -25,7 +25,7 @@ from gns3.registry.registry import Registry
 
 @pytest.fixture
 def registry(images_dir):
-    return Registry(images_dir)
+    return Registry([os.path.join(images_dir, "QEMU")])
 
 
 @pytest.fixture

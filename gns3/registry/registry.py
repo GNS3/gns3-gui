@@ -27,8 +27,8 @@ class RegistryError(Exception):
 
 
 class Registry:
-    def __init__(self, images_dir):
-        self._images_dir = images_dir
+    def __init__(self, images_dirs):
+        self._images_dirs = images_dirs
 
     def list_images(self):
         """
@@ -36,13 +36,13 @@ class Registry:
         """
         images = []
 
-        directory = os.path.join(self._images_dir, "QEMU")
-        if os.path.exists(directory):
-            for filename in os.listdir(directory):
-                if not filename.endswith(".md5sum") and not filename.startswith("."):
-                    path = os.path.join(directory, filename)
-                    if os.path.isfile(path):
-                        images.append(Image(path))
+        for directory in self._images_dirs:
+            if os.path.exists(directory):
+                for filename in os.listdir(directory):
+                    if not filename.endswith(".md5sum") and not filename.startswith("."):
+                        path = os.path.join(directory, filename)
+                        if os.path.isfile(path):
+                            images.append(Image(path))
         return images
 
     def search_image_file(self, md5sum):
@@ -53,15 +53,13 @@ class Registry:
         :returns: Image object or None
         """
 
-        directory = os.path.join(self._images_dir, "QEMU")
-        if os.path.exists(directory):
-            for filename in os.listdir(directory):
-                if not filename.endswith(".md5sum") and not filename.startswith("."):
-                    path = os.path.join(directory, filename)
-                    if os.path.isfile(path):
-                        image = Image(path)
-                        if image.md5sum == md5sum:
-                            return image.path
+        for directory in self._images_dirs:
+            if os.path.exists(directory):
+                for filename in os.listdir(directory):
+                    if not filename.endswith(".md5sum") and not filename.startswith("."):
+                        path = os.path.join(directory, filename)
+                        if os.path.isfile(path):
+                            image = Image(path)
+                            if image.md5sum == md5sum:
+                                return image.path
         return None
-
-

@@ -66,7 +66,10 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         renderer.filters['human_filesize'] = human_filesize
         template = renderer.get_template("appliance.html")
 
-        registry = Registry(ImageManager.instance().getDirectory())
+        images_directories = []
+        images_directories.append(os.path.join(ImageManager.instance().getDirectory(), "QEMU"))
+        images_directories.append(os.path.dirname(self._path))
+        registry = Registry(images_directories)
 
         try:
             self._appliance = Appliance(registry, self._path)
@@ -139,8 +142,7 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         if len(path) == 0:
             return
 
-        #Do not create temporary file
-        md5 = Image(path, cache=False).md5sum
+        md5 = Image(path).md5sum
         if md5 != md5sum:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file.")
             return

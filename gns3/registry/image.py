@@ -57,7 +57,7 @@ class Image:
         self._version = version
 
     @property
-    def md5sum(self, cache=True):
+    def md5sum(self):
         """
         Compute a md5 hash for file
 
@@ -79,9 +79,6 @@ class Image:
                         break
                     m.update(buf)
             self._md5sum = m.hexdigest()
-        if cache:
-            with open(self.path + ".md5sum", "w+", encoding="utf-8") as f:
-                f.write(self._md5sum)
         return self._md5sum
 
     @property

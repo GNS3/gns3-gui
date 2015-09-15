@@ -33,7 +33,7 @@ def test_search_image_file(tmpdir):
     with open(str(tmpdir / "QEMU" / "b"), "w+", encoding="utf-8") as f:
         f.write("BETA")
 
-    registry = Registry(str(tmpdir))
+    registry = Registry([str(tmpdir / "QEMU")])
     image = registry.search_image_file("36b84f8e3fba5bf993e3ba352d62d146")
     assert image == str(tmpdir / "QEMU" / "b")
 
@@ -52,7 +52,7 @@ def test_list_images(tmpdir):
         f.write("BETA")
 
 
-    registry = Registry(str(tmpdir))
+    registry = Registry([str(tmpdir / "QEMU")])
     images = registry.list_images()
     assert len(images) == 2
 

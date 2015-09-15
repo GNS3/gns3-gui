@@ -29,8 +29,6 @@ def test_filename(linux_microcore_img):
 def test_md5sum(linux_microcore_img):
     image = Image(linux_microcore_img)
     assert image.md5sum == "5d41402abc4b2a76b9719d911017c592"
-    assert os.path.exists(linux_microcore_img + ".md5sum")
-    assert open(linux_microcore_img + ".md5sum", encoding="utf-8").read() == "5d41402abc4b2a76b9719d911017c592"
 
 
 def test_filesize(linux_microcore_img):

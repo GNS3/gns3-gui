@@ -20,10 +20,7 @@
 import json
 import sys
 import os
-
-
-class ConfigException(Exception):
-    pass
+import shutil
 
 
 class Config:
@@ -155,12 +152,17 @@ class Config:
 
     def _relative_image_path(self, path):
         """
-        :returns: Path relative to image directory if image is inside or full path
+        :returns: Path relative to image directory. Copy the image to the directory if not
         """
 
         if os.path.abspath(os.path.join(os.path.dirname(path), "..")) == self.images_dir:
             return os.path.basename(path)
-        return path
+
+        filename = os.path.basename(path)
+        os.makedirs(os.path.join(self.images_dir, "QEMU"), exist_ok=True)
+        dst = os.path.join(self.images_dir, "QEMU", filename)
+        shutil.copy(path, dst)
+        return filename
 
     def save(self):
         """

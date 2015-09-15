@@ -26,7 +26,7 @@ from gns3.registry.config import Config, ConfigException
 
 
 @pytest.fixture(scope="function")
-def empty_config(tmpdir):
+def empty_config(tmpdir, images_dir):
     config = {
         "Servers": {
             "local_server": {
@@ -35,7 +35,7 @@ def empty_config(tmpdir):
                 "console_end_port_range": 5000,
                 "console_start_port_range": 2001,
                 "host": "127.0.0.1",
-                "images_path": str(tmpdir),
+                "images_path": images_dir,
                 "path": "",
                 "port": 8000,
                 "projects_path": str(tmpdir),
@@ -131,7 +131,7 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
         "cpu_throttling": 0,
         "console_type": "telnet",
         "symbol": ":/symbols/qemu_guest.svg",
-        "hda_disk_image": linux_microcore_img,
+        "hda_disk_image": "linux-microcore-3.4.1.img",
         "hdb_disk_image": "",
         "hdc_disk_image": "",
         "hdd_disk_image": "",
@@ -177,7 +177,7 @@ def test_add_appliance_with_boot_priority(empty_config, linux_microcore_img):
     assert empty_config._config["Qemu"]["vms"][0]["boot_priority"] == "dc"
 
 
-def test_add_appliance_router_two_disk(empty_config):
+def test_add_appliance_router_two_disk(empty_config, images_dir):
     with open("tests/registry/appliances/arista-veos.json", encoding="utf-8") as f:
         config = json.load(f)
 
@@ -185,11 +185,11 @@ def test_add_appliance_router_two_disk(empty_config):
     config["images"] = [
         {
             "type": "hda_disk_image",
-            "path": "/a"
+            "path": os.path.join(images_dir, "QEMU", "a")
         },
         {
             "type": "hdb_disk_image",
-            "path": "/b"
+            "path": os.path.join(images_dir, "QEMU", "b")
         }
     ]
 
@@ -201,8 +201,8 @@ def test_add_appliance_router_two_disk(empty_config):
         "category": 0,
         "cpu_throttling": 0,
         "symbol": ":/symbols/router.svg",
-        "hda_disk_image": "/a",
-        "hdb_disk_image": "/b",
+        "hda_disk_image": "a",
+        "hdb_disk_image": "b",
         "hdc_disk_image": "",
         "hdd_disk_image": "",
         "cdrom_image": "",
@@ -246,12 +246,29 @@ def test_add_appliance_path_relative_to_images_dir(empty_config, tmpdir, linux_m
     config["images"] = [
         {
             "type": "hda_disk_image",
-            "path": str(tmpdir / "QEMU" / "linux-microcore-3.4.1.img")
+            "path": linux_microcore_img
         }
     ]
 
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "linux-microcore-3.4.1.img"
+
+
+def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, images_dir):
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
+        config = json.load(f)
+
+    config["images"] = [
+        {
+            "type": "hda_disk_image",
+            "path": str(tmpdir / "a.img")
+        }
+    ]
+    with open(str(tmpdir / "a.img"), "w+") as f:
+        f.write("a")
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "a.img"
+    assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
 
 
 def test_save(empty_config, linux_microcore_img):

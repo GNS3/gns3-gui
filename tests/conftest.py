@@ -185,8 +185,8 @@ def main_window():
 
 @pytest.fixture
 def images_dir(tmpdir):
-    os.makedirs(os.path.join(str(tmpdir), "gns3_tests", "QEMU"), exist_ok=True)
-    return os.path.join(str(tmpdir), "gns3_tests")
+    os.makedirs(os.path.join(str(tmpdir), "images", "QEMU"), exist_ok=True)
+    return os.path.join(str(tmpdir), "images")
 
 
 @pytest.fixture
