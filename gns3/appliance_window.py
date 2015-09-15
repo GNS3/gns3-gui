@@ -23,6 +23,7 @@ import shutil
 from .utils.get_resource import get_resource
 from .utils.wait_for_lambda_worker import WaitForLambdaWorker
 from .utils.progress_dialog import ProgressDialog
+from .utils.server_select import server_select
 from .utils import human_filesize
 from .qt import QtCore, QtWidgets, QtWebKit, QtWebKitWidgets, QtGui
 from .ui.appliance_window_ui import Ui_ApplianceWindow
@@ -112,27 +113,14 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
         appliance_configuration = self._appliance.search_images_for_version(version)
 
-        if config.servers == ["local"]:
-            server = "local"
-        else:
-            server_types = {}
-            for server in Config().servers:
-                if server == "local":
-                    server_types["Local server"] = server
-                elif server == "vm":
-                    server_types["GNS3 VM"] = server
-                else:
-                    server_types[server] = server
-            selection, ok = QtWidgets.QInputDialog.getItem(self.parent(), "GNS3 server", "Please select a GNS3 server:", list(server_types.keys()), 0, False)
-            if ok:
-                server = server_types[selection]
-            else:
-                return
+        server = server_select(self.parent())
+        if server is None:
+            return
 
         self.close()
 
         try:
-            config.add_appliance(appliance_configuration, server)
+            config.add_appliance(appliance_configuration, server.url())
         except ConfigException as e:
             QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
             return
