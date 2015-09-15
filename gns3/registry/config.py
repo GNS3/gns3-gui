@@ -159,10 +159,17 @@ class Config:
             return os.path.basename(path)
 
         filename = os.path.basename(path)
+        self.import_image(path)
+        return filename
+
+    def import_image(self, path):
+        """
+        Copy an image to the image directory.
+        """
+        filename = os.path.basename(path)
         os.makedirs(os.path.join(self.images_dir, "QEMU"), exist_ok=True)
         dst = os.path.join(self.images_dir, "QEMU", filename)
         shutil.copy(path, dst)
-        return filename
 
     def save(self):
         """

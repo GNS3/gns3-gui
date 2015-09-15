@@ -22,7 +22,7 @@ import json
 import os
 from unittest.mock import MagicMock, patch
 
-from gns3.registry.config import Config, ConfigException
+from gns3.registry.config import Config
 
 
 @pytest.fixture(scope="function")
@@ -268,6 +268,14 @@ def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, ima
         f.write("a")
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "a.img"
+    assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
+
+
+def test_config_import_image(empty_config, images_dir, tmpdir):
+    with open(str(tmpdir / "a.img"), "w+") as f:
+        f.write("a")
+    empty_config.import_image(str(tmpdir / "a.img"))
+
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
 
 

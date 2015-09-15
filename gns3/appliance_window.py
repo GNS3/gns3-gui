@@ -21,6 +21,8 @@ import os
 import shutil
 
 from .utils.get_resource import get_resource
+from .utils.wait_for_lambda_worker import WaitForLambdaWorker
+from .utils.progress_dialog import ProgressDialog
 from .utils import human_filesize
 from .qt import QtCore, QtWidgets, QtWebKit, QtWebKitWidgets, QtGui
 from .ui.appliance_window_ui import Ui_ApplianceWindow
@@ -129,12 +131,11 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
         if config.add_appliance(appliance_configuration, server):
             self.close()
-            try:
-                config.save()
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
-                return
-            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(self._appliance["name"], version))
+            worker = WaitForLambdaWorker(lambda: config.save())
+            progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
+            progress_dialog.show()
+            if progress_dialog.exec_():
+                QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(self._appliance["name"], version))
 
     @QtCore.pyqtSlot(str, str)
     def importAppliance(self, filename, md5sum):
@@ -147,15 +148,10 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file.")
             return
 
-        try:
-            config = Config()
-            #TODO: ASK for VM type
-            os.makedirs(os.path.join(config.images_dir, "QEMU"), exist_ok=True)
-            dst_path = os.path.join(config.images_dir, "QEMU", filename)
-            shutil.copy(path, dst_path)
-            md5 = Image(dst_path).md5sum
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
-            return False
-
+        config = Config()
+        #TODO: ASK for VM type
+        worker = WaitForLambdaWorker(lambda: config.import_image(path))
+        progress_dialog = ProgressDialog(worker, "Add appliance", "Import the appliance...", None, busy=True, parent=self)
+        if not progress_dialog.exec_():
+            return
         self._refresh()
