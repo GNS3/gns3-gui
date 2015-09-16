@@ -47,7 +47,7 @@ class WaitForCommandWorker(QtCore.QObject):
         self._is_running = False
         self._command = command
         self._timeout = timeout
-        self._output = ""
+        self._output = b""
         self._shell = shell
 
     def run(self):
