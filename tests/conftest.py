@@ -41,8 +41,11 @@ def reset_modules():
     HTTPClient.reset()
     IOUDevice.reset()
 
+    from gns3.servers import Servers
+    Servers._instance = None
 
-@pytest.fixture(scope="session")
+
+@pytest.fixture
 def project(local_server):
 
     from gns3.project import Project
@@ -55,7 +58,7 @@ def project(local_server):
     return project
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def local_server():
 
     from gns3.servers import Servers
@@ -66,7 +69,7 @@ def local_server():
     return server
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def remote_server():
 
     from gns3.servers import Servers
@@ -74,7 +77,17 @@ def remote_server():
     return Servers.instance().getRemoteServer("http", "127.0.0.1", 8001, None)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
+def gns3vm_server():
+
+    from gns3.servers import Servers
+
+    Servers.instance().initVMServer()
+    print(Servers.instance().vmServer())
+    return Servers.instance().vmServer()
+
+
+@pytest.fixture
 def ssh_server():
 
     from gns3.servers import Servers

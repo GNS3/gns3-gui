@@ -17,47 +17,33 @@
 
 
 from ..servers import Servers
-from ..modules import MODULES
 from ..qt import QtWidgets
 
 
-def server_select(parent):
+def server_select(parent, allow_local_server=True):
     """
     Show a popup asking user to choose a server
 
     If only local server is available return it by default
 
     :params parent: Parent window
+    :params allow_local_server: Is local server allowed
     :returns: Server or None
     """
-
-    # check all other modules to find if they
-    # are using a local server
-    using_local_server = []
-    for module in MODULES:
-        if hasattr(module, "settings"):
-            module_settings = module.instance().settings()
-            if "use_local_server" in module_settings:
-                using_local_server.append(module_settings["use_local_server"])
 
     servers = Servers.instance()
     local_server = servers.localServer()
     remote_servers = servers.remoteServers()
     gns3_vm = Servers.instance().vmServer()
 
-
     server_list = ["Local server ({})".format(local_server.url())]
 
-    if not all(using_local_server) and (gns3_vm or len(remote_servers)):
+    if (gns3_vm or len(remote_servers)):
         # a module is not using a local server
         server_list = ["Local server ({})".format(local_server.url())]
         if gns3_vm:
             server_list.append("GNS3 VM ({})".format(gns3_vm.url()))
         if len(remote_servers):
-            if True not in using_local_server and len(remote_servers) == 1:
-                # no module is using a local server and there is only one
-                # remote server available, so no need to ask the user.
-                return next(iter(servers))
             for remote_server in remote_servers.values():
                 server_list.append("{}".format(remote_server.url()))
 
