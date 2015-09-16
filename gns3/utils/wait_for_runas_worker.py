@@ -69,7 +69,7 @@ class WaitForRunAsWorker(QtCore.QObject):
                                      lpVerb="runas",
                                      lpFile=program,
                                      lpParameters=params)
-        except pywintypes.winerror as e:
+        except pywintypes.error as e:
             command_string = " ".join(shlex.quote(s) for s in self._command)
             self.error.emit('Could not execute command "{}": {}'.format(command_string, e), True)
             return
@@ -78,7 +78,7 @@ class WaitForRunAsWorker(QtCore.QObject):
         win32event.WaitForSingleObject(handle, self._timeout * 1000)
         return_code = win32process.GetExitCodeProcess(handle)
         if return_code != 0:
-            self.error.emit("Return code is {}".format(return_code))
+            self.error.emit("Return code is {}".format(return_code), True)
         else:
             self.finished.emit()
 

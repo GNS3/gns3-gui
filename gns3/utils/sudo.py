@@ -37,14 +37,14 @@ def sudo(command, parent=None, shell=False):
         parent = MainWindow.instance()
 
     while True:
-        password, ok = QtWidgets.QInputDialog.getText(parent,
-                                                      "Run as administrator",
-                                                      "Please enter your password to proceed. {}".format(' '.join(command)),
-                                                      QtWidgets.QLineEdit.Password, "")
-        if not ok:
-            return False
-
         if not sys.platform.startswith("win32"):
+            password, ok = QtWidgets.QInputDialog.getText(parent,
+                                                          "Run as administrator",
+                                                          "Please enter your password to proceed.\nCommand: {}".format(' '.join(command)),
+                                                          QtWidgets.QLineEdit.Password, "")
+            if not ok:
+                return False
+
             try:
                 # check the password is valid
                 subprocess.check_output(["sudo", "-S", "id"], input=(password + "\n").encode(), timeout=30)
