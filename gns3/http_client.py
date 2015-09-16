@@ -399,13 +399,11 @@ class HTTPClient(QtCore.QObject):
 
         return QtNetwork.QNetworkRequest(url)
 
-    # FIXME: connect is a method in parent class (QObject)
-    def connect(self, query, callback):
+    def _connect(self, query):
         """
         Initialize the connection
 
         :param query: The query to execute when all network stack is ready
-        :param callback: User callback when connection is finish
         """
         self.executeHTTPQuery("GET", "/version", query, {})
 
@@ -430,7 +428,7 @@ class HTTPClient(QtCore.QObject):
         else:
             log.info("Connection to {}".format(self.url()))
             query = partial(self._callbackConnect, method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
-            self.connect(query, callback)
+            self._connect(query)
 
     def _connectionError(self, callback, msg=""):
         """
@@ -584,17 +582,22 @@ class HTTPClient(QtCore.QObject):
         response = self._network_manager.sendCustomRequest(request, method.encode(), body)
 
         import copy
-        context = copy.copy(context)
+        context = copy.deepcopy(context)
         query_id = str(uuid.uuid4())
         context["query_id"] = query_id
-        if showProgress:
-            self.notify_progress_start_query(context["query_id"], progressText, response)
-            response.uploadProgress.connect(partial(self.notify_progress_upload, query_id))
-            response.downloadProgress.connect(partial(self.notify_progress_download, query_id))
 
         response.finished.connect(partial(self._processResponse, response, callback, context, body, ignoreErrors))
+
         if downloadProgressCallback is not None:
             response.downloadProgress.connect(partial(self._processDownloadProgress, response, downloadProgressCallback, context))
+
+        if showProgress:
+            response.uploadProgress.connect(partial(self.notify_progress_upload, query_id))
+            response.downloadProgress.connect(partial(self.notify_progress_download, query_id))
+            # Should be the last operation otherwise we have race condition in Qt
+            # where query start before finishing connect to everything
+            self.notify_progress_start_query(context["query_id"], progressText, response)
+
         return response
 
     def _processDownloadProgress(self, response, callback, context):
