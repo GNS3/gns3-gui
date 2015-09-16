@@ -18,6 +18,7 @@
 
 import pytest
 import json
+import os
 
 from gns3.registry.appliance import Appliance, ApplianceError
 from gns3.registry.registry import Registry

@@ -18,7 +18,7 @@
 import pytest
 import unittest.mock
 
-from gns3.qt import QtNetwork, FakeQtSignal
+from gns3.qt import QtCore, QtNetwork, FakeQtSignal
 from gns3.http_client import HTTPClient
 from gns3.version import __version__, __version_info__
 
@@ -51,7 +51,10 @@ def http_client(http_request, network_manager):
 def http_request():
 
     mock = unittest.mock.Mock()
-    with unittest.mock.patch("gns3.http_client.HTTPClient._request", return_value=mock):
+    def call_request(url):
+        mock(url)
+        return mock
+    with unittest.mock.patch("gns3.http_client.HTTPClient._request", side_effect=call_request):
         yield mock
 
 
@@ -61,7 +64,8 @@ def test_get_connected(http_client, http_request, network_manager, response):
     callback = unittest.mock.MagicMock()
 
     http_client.get("/test", callback)
-    http_request.assert_call_with("/test")
+    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:8000/v1/test"))
+
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     assert network_manager.sendCustomRequest.called
@@ -83,11 +87,14 @@ def test_get_connected_auth(http_client, http_request, network_manager, response
     callback = unittest.mock.MagicMock()
 
     http_client.get("/test", callback)
-    http_request.assert_call_with("/test")
+    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:8000/v1/test"))
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
-    network_manager.get.assert_call_with(http_request)
+    assert network_manager.sendCustomRequest.called
+    args, kwargs = network_manager.sendCustomRequest.call_args
+    assert args[0] == http_request
+    assert args[1] == b"GET"
 
     # Trigger the completion
     response.finished.emit()
