@@ -18,6 +18,7 @@
 
 import jinja2
 import os
+import sys
 import shutil
 
 from .utils.get_resource import get_resource
@@ -113,7 +114,13 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
         appliance_configuration = self._appliance.search_images_for_version(version)
 
-        server = server_select(self.parent())
+        try:
+            allow_local_server = not (sys.platform.startswith("darwin") or sys.platform.startswith("win"))
+            server = server_select(self.parent(), allow_local_server=allow_local_server)
+        except ValueError:
+            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "In order to use a GNS3a file you need the GNS3VM or a remote server for Mac and Windows.")
+            self.close()
+            return
         if server is None:
             return
 
