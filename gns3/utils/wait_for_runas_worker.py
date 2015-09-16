@@ -45,7 +45,6 @@ class WaitForRunAsWorker(QtCore.QObject):
         self._is_running = False
         self._command = command
         self._timeout = timeout
-        self._output = ""
 
     def run(self):
         """
@@ -81,13 +80,6 @@ class WaitForRunAsWorker(QtCore.QObject):
             self.error.emit("Return code is {}".format(return_code), True)
         else:
             self.finished.emit()
-
-    def output(self):
-        """
-        Returns the command output.
-        """
-
-        return self._output
 
     def cancel(self):
         """

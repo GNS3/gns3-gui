@@ -58,6 +58,10 @@ def sudo(command, parent=None, shell=False):
             waited_command = ["sudo"]
             waited_command.extend(command)
             worker = WaitForCommandWorker(waited_command, shell=shell)
+
+            for line in worker.output().decode("utf-8", errors="ignore").splitlines():
+                log.info(line)
+
         else:
             worker = WaitForRunAsWorker(command)
 
@@ -65,6 +69,4 @@ def sudo(command, parent=None, shell=False):
         progress_dialog.show()
         if not progress_dialog.exec_():
             return False
-        for line in worker.output().decode("utf-8", errors="ignore").splitlines():
-            log.info(line)
         return True
