@@ -106,7 +106,10 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             if not self.uiQemuListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
                 return False
+            qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
 
+            if (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
+                QtWidgets.QMessageBox.warning(self, "Qemu binaries", "This version of qemu is obsolete and provided only for compatibility with old GNS3 versions.\nPlease use Qemu in the GNS3 VM for full Qemu support.")
         return True
 
     def initializePage(self, page_id):
