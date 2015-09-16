@@ -27,7 +27,7 @@ def server_select(parent, allow_local_server=True):
     If only local server is available return it by default
 
     :params parent: Parent window
-    :params allow_local_server: Is local server allowed
+    :params allow_local_server: Boolean Is local server allowed
     :returns: Server or None
     """
 
@@ -36,28 +36,30 @@ def server_select(parent, allow_local_server=True):
     remote_servers = servers.remoteServers()
     gns3_vm = Servers.instance().vmServer()
 
-    server_list = ["Local server ({})".format(local_server.url())]
-
-    if (gns3_vm or len(remote_servers)):
-        # a module is not using a local server
+    if allow_local_server:
         server_list = ["Local server ({})".format(local_server.url())]
-        if gns3_vm:
-            server_list.append("GNS3 VM ({})".format(gns3_vm.url()))
-        if len(remote_servers):
-            for remote_server in remote_servers.values():
-                server_list.append("{}".format(remote_server.url()))
+    else:
+        server_list = []
 
+    if gns3_vm:
+        server_list.append("GNS3 VM ({})".format(gns3_vm.url()))
+    for remote_server in remote_servers.values():
+        server_list.append("{}".format(remote_server.url()))
+
+    if len(server_list) == 0:
+        raise ValueError("No server available")
+    elif len(server_list) == 1:
+        selection = server_list[0]
+    else:
         (selection, ok) = QtWidgets.QInputDialog.getItem(parent, "Server", "Please choose a server", server_list, 0, False)
-        if ok:
-            if selection.startswith("Local server"):
-                return local_server
-            elif selection.startswith("GNS3 VM"):
-                return gns3_vm
-            else:
-                for server in remote_servers.values():
-                    if selection == server.url():
-                        return server
-        else:
+        if not ok:
             return None
-    return local_server
 
+    if selection.startswith("Local server"):
+        return local_server
+    elif selection.startswith("GNS3 VM"):
+        return gns3_vm
+    else:
+        for server in remote_servers.values():
+            if selection == server.url():
+                return server
