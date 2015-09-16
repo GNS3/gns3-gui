@@ -60,7 +60,6 @@ from .utils.download_project import DownloadProjectWorker
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
-from .licence import checkLicence
 from .image_manager import ImageManager
 from .update_manager import UpdateManager
 from .appliance_window import ApplianceWindow
