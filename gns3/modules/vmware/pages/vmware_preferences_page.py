@@ -49,8 +49,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiResetVmnetPushButton.clicked.connect(self._resetVmnetSlot)
 
         if sys.platform.startswith("darwin"):
-            # we do not support VMware Fusion for now
-            self.uiUseLocalServercheckBox.setChecked(False)
             self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
         else:
             self.uiHostTypeComboBox.addItem("VMware Player", "player")
