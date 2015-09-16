@@ -60,7 +60,6 @@ from .utils.download_project import DownloadProjectWorker
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
-from .licence import checkLicence
 from .image_manager import ImageManager
 from .update_manager import UpdateManager
 from .appliance_window import ApplianceWindow
@@ -112,13 +111,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer.start(1000)  # milliseconds
 
         self._uiNewsDockWidget = None
-        if not checkLicence():
-            try:
-                from .news_dock_widget import NewsDockWidget
-                self._uiNewsDockWidget = NewsDockWidget(self)
-                self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
-            except ImportError:
-                pass
+        try:
+            from .news_dock_widget import NewsDockWidget
+            self._uiNewsDockWidget = NewsDockWidget(self)
+            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
+        except ImportError:
+            pass
 
         # restore the geometry and state of the main window.
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
