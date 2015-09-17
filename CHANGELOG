@@ -1,5 +1,63 @@
 # Change Log
 
+## 1.4.0beta2 17/09/15
+
+* Drop netcat for unix socket it's not supported by OSX
+* VMware fusion is supported
+* Fix race conditions in http_client
+* On OSX show a warning when using an old Qemu
+* Tab support for xfce4-terminal
+* Improve alignments. Fixes #215.
+* Fixes ethertype validation error.
+* Improve check for uBridge permissions.
+* Fix an uuid is display instead of the server url
+* Set root permission to ubridge on OSX
+* Show GNS3 version at startup
+* Allows to select a remote server to run a switch. Fixes #653.
+* Support for packet capture on VMware VM links.
+* Always use ubridge with VMware by default
+* Fix PermissionError: [Errno 1] Operation not permitted when kill process
+* Support drag & drop gns3a
+* Fix an error when loading IOU schema with private_config
+* Support open a file via double click on OSX
+* Initial version of an appliance file format
+* Adds docker symbols. Fixes #643.
+* Call the vmnet management script from the GUI (with admin rights). Implements #639.
+* Use self update only if experimental features are allowed
+* Add an option for enabling experimental features
+* Backport docker support from Google Summer Of Code (not enabled)
+* Merge branch 'qinq_ethertype' of https://github.com/Bevaz/gns3-gui into Bevaz-qinq_ethertype
+* Allows VMware VMs to use vmnet interfaces for connections without using uBridge.
+* Add a firewall symbol
+* Detect broken link in topologies
+* Fix project not closing
+* Fix autostart
+* Fix file not found exception in vpcs list dir
+* Add missing virtio-net-pci to the json schema
+* Fix the all devices views
+* Fix double click event on Note Item
+* Fix Accepting insecure https connections creates additional server entry
+* Allow developer to debug packet capture on Windows
+* Fix saveAs error  unsupported operand type(s) for +=: 'NoneType' and 'str'
+* Catch error when antivirus corrupt our own JSON errors
+* Add a note about VIX API require for VMware player
+* Create image directory if not exists
+* Allow GUI to be start with python -m gns3
+* Avoid errors in qemu configuration if server has been deleted
+* Fix error when the IOS image directory is not writable
+* Do not crash if something intercept the call to the update server
+* Fix super(): no arguments in SSH client
+* Catch error when configuration file contain invalid UTF-8 chars
+* Fix JSON schema for dynamips power supply and  sensors
+* Fix missing boot_priority in JSON schema
+* Complete the error message about corrupted topologies
+* Removes ASAv warning in Qemu Wizard.
+* EthernetSwitch: Allow to choose ethertype for QinQ outer tag.
+* Adds missing properties for rectangle and ellipse in schema validation.
+* Use Qemu 0.11.0 instead of version 0.13.0 on Windows.
+* Fixes bug when opening Node properties dialog via a double click.
+* SecureCRT (installed on personal profile) command line.
+
 ## 1.4.0beta1 07/08/2015
 
 * Show an error if you try to use a local server not started
