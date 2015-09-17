@@ -163,11 +163,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             self.uiHostTypeComboBox.setCurrentIndex(index)
         self.uiVMnetStartRangeSpinBox.setValue(settings["vmnet_start_range"])
         self.uiVMnetEndRangeSpinBox.setValue(settings["vmnet_end_range"])
-        # VMware fusion is not supported for the moment
-        if sys.platform.startswith("darwin"):
-            self.uiUseLocalServercheckBox.setChecked(False)
-        else:
-            self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
+        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
         """
