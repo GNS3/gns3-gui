@@ -582,9 +582,8 @@ class HTTPClient(QtCore.QObject):
         response = self._network_manager.sendCustomRequest(request, method.encode(), body)
 
         import copy
-        context = copy.deepcopy(context)
-        query_id = str(uuid.uuid4())
-        context["query_id"] = query_id
+        context = copy.copy(context)
+        context["query_id"] = str(uuid.uuid4())
 
         response.finished.connect(partial(self._processResponse, response, callback, context, body, ignoreErrors))
 
@@ -592,8 +591,8 @@ class HTTPClient(QtCore.QObject):
             response.downloadProgress.connect(partial(self._processDownloadProgress, response, downloadProgressCallback, context))
 
         if showProgress:
-            response.uploadProgress.connect(partial(self.notify_progress_upload, query_id))
-            response.downloadProgress.connect(partial(self.notify_progress_download, query_id))
+            response.uploadProgress.connect(partial(self.notify_progress_upload, context["query_id"]))
+            response.downloadProgress.connect(partial(self.notify_progress_download, context["query_id"]))
             # Should be the last operation otherwise we have race condition in Qt
             # where query start before finishing connect to everything
             self.notify_progress_start_query(context["query_id"], progressText, response)
