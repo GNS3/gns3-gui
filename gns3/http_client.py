@@ -18,6 +18,7 @@
 
 import json
 import http
+import copy
 import ipaddress
 import uuid
 import urllib.request
@@ -581,7 +582,6 @@ class HTTPClient(QtCore.QObject):
 
         response = self._network_manager.sendCustomRequest(request, method.encode(), body)
 
-        import copy
         context = copy.copy(context)
         context["query_id"] = str(uuid.uuid4())
 

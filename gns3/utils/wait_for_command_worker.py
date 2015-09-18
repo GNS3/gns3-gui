@@ -80,4 +80,6 @@ class WaitForCommandWorker(QtCore.QObject):
         Cancel this worker.
         """
 
+        if not self:
+            return
         self._is_running = False

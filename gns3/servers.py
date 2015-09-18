@@ -494,8 +494,11 @@ class Servers():
         :returns: boolean
         """
 
-        if self._local_server_process and self._local_server_process.poll() is None:
-            return True
+        try:
+            if self._local_server_process and self._local_server_process.poll() is None:
+                return True
+        except OSError:
+            pass
         return False
 
     def stopLocalServer(self, wait=False):
