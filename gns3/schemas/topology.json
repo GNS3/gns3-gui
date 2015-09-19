@@ -147,7 +147,7 @@
                 "link_id": { "$ref": "#/definitions/numeric_id" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "nio": {
-                    "enum": ["NIO_UDP", "NIO_Generic_Ethernet", "NIO_Linux_Ethernet", "NIO_NAT", "NIO_VMnet", "NIO_Null", "NIO_TAP", "NIO_VDE", "NIO_UNIX"]
+                    "enum": ["NIO_UDP", "NIO_Generic_Ethernet", "NIO_Linux_Ethernet", "NIO_NAT", "NIO_VMNET", "NIO_Null", "NIO_TAP", "NIO_VDE", "NIO_UNIX"]
                 },
                 "port_number": {
                     "type": "integer",
