@@ -310,16 +310,15 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self._server = Servers.instance().getServerFromString(settings["server"])
             if self._server is None:
-                QtWidgets.QMessageBox.critical(self, "Qemu", "Error the server {} doesn't exist in your configuration".format(settings["server"]))
+                QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["server"]))
                 return
-
-
-        callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
-        try:
-            Qemu.instance().getQemuBinariesFromServer(self._server, callback)
-        except ModuleError as e:
-            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
-            self.uiQemuListComboBox.clear()
+            else:
+                callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
+                try:
+                    Qemu.instance().getQemuBinariesFromServer(self._server, callback)
+                except ModuleError as e:
+                    QtWidgets.QMessageBox.critical(self, "Qemu", "Error while getting the QEMU binaries list: {}".format(e))
+                    self.uiQemuListComboBox.clear()
 
         if not group:
             # set the device name

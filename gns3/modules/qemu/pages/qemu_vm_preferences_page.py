@@ -19,10 +19,8 @@
 Configuration page for QEMU VM preferences.
 """
 
-import ntpath
 import os
 import copy
-import sys
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow

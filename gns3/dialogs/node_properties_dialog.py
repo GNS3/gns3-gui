@@ -19,9 +19,6 @@
 Dialog to configure and update node settings using widget pages.
 """
 
-from gns3.http_client import HTTPClient
-from gns3.progress import Progress
-
 from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.node_properties_dialog_ui import Ui_NodePropertiesDialog
 
