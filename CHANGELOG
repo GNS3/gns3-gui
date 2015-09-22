@@ -58,6 +58,17 @@
 * Fixes bug when opening Node properties dialog via a double click.
 * SecureCRT (installed on personal profile) command line.
 
+## 1.3.10 04/09/2015
+
+* Updates kernel command line of ASA.
+* Fix file not found exception in vpcs list dir
+* Fix saveAs error  unsupported operand type(s) for +=: 'NoneType' and 'str'
+* Catch error when antivirus corrupt our own JSON errors
+* Use Qemu 0.11.0 instead of version 0.13.0 on Windows.
+* Removes "resources_type" references. Fixes #493.
+* Fixes bug when opening Node properties dialog via a double click.
+* SecureCRT (installed on personal profile) command line.
+
 ## 1.4.0beta1 07/08/2015
 
 * Show an error if you try to use a local server not started
