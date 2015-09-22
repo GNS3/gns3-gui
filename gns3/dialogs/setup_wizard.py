@@ -175,6 +175,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                             dialog.show()
                             dialog.exec_()
             else:
+                if not self.uiVmwareRadioButton.isChecked() and not self.uiVirtualBoxRadioButton.isChecked():
+                    QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select VMware or VirtualBox")
+                else:
+                    QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select a VM. If no VM is listed, check if the GNS3 VM is correctly imported and press refresh.")
                 return False
         elif self.currentPage() == self.uiAddVMsWizardPage:
 
