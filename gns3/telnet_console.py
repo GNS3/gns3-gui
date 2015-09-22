@@ -19,8 +19,9 @@
 Functions to start external console terminals.
 """
 
-from .qt import QtCore, QtGui
+from .qt import QtCore
 
+import os
 import sys
 import shlex
 import subprocess
@@ -49,7 +50,7 @@ class ConsoleThread(QtCore.QThread):
         else:
             # use arguments on other platforms
             args = shlex.split(self._command)
-            subprocess.call(args)
+            subprocess.call(args, env=os.environ)
 
     def run(self):
 
@@ -94,7 +95,7 @@ def telnetConsole(name, host, port, callback=None):
             else:
                 # use arguments on other platforms
                 args = shlex.split(command)
-                subprocess.Popen(args)
+                subprocess.Popen(args, env=os.environ)
         except (OSError, ValueError, subprocess.SubprocessError) as e:
             log.warning('could not start Telnet console "{}": {}'.format(command, e))
             raise
