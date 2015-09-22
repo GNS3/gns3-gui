@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.4.0b3 22/09/15
+
+* Add a warning if you don't select VMware or VBox in Setup Wizard
+* Fix Configuration not always saved in client
+* Fixes file path reference issue.
+* Fix Appliance doesn't work on local Server #669
+* Allows Qemu VM template editing if the server is not running. Fixes #671.
+* Fixes NIO_VMNET != NIO_VMnet.
+* Automatically add the -no-kvm option if -icount is detected to help with the migration of ASA VMs created before version 1.4
+* Fix the Runtime error
+* Improve alignments. Fixes #215.
+* Updates kernel command line of ASA.
+
 ## 1.4.0beta2 17/09/15
 
 * Drop netcat for unix socket it's not supported by OSX
