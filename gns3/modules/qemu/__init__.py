@@ -120,7 +120,7 @@ class Qemu(Module):
         """
         Sets QEMU VM settings.
 
-        :param new_iou_images: IOS images settings (dictionary)
+        :param new_qemu_vms: Qemu images settings (dictionary)
         """
 
         self._qemu_vms = new_qemu_vms.copy()

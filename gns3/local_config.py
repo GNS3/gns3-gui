@@ -274,7 +274,7 @@ class LocalConfig(QtCore.QObject):
             self._settings[section] = {}
 
         if self._settings[section] != settings:
-            self._settings[section].update(settings)
+            self._settings[section].update(copy.deepcopy(settings))
             log.info("Section %s has changed. Saving configuration", section)
             self._writeConfig()
         else:
