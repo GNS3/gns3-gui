@@ -127,7 +127,13 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         self.close()
 
         try:
-            config.add_appliance(appliance_configuration, server.url())
+            if server.isLocal():
+                server_string = "local"
+            elif server.isGNS3VM():
+                server_string = "vm"
+            else:
+                server_string = server.url()
+            config.add_appliance(appliance_configuration, server_string)
         except ConfigException as e:
             QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
             return
