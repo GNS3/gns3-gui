@@ -21,6 +21,7 @@ Functions to start external console terminals.
 
 from .qt import QtCore, QtWidgets
 
+import os
 import sys
 import shlex
 import subprocess
@@ -55,7 +56,7 @@ class ConsoleThread(QtCore.QThread):
             except ValueError:
                 self.consoleError.emit("Syntax error in command: {}".format(command))
                 return
-            subprocess.call(args)
+            subprocess.call(args, env=os.environ)
 
     def run(self):
 
@@ -90,6 +91,7 @@ def nodeTelnetConsole(name, server, port):
     if not command:
         return
 
+    #FIXME: do we still need to run the console from a thread?
     log.info('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, name, server, port)
     # console_thread.consoleDone.connect(callback)
@@ -128,7 +130,7 @@ def telnetConsole(name, host, port):
         else:
             # use arguments on other platforms
             args = shlex.split(command)
-            subprocess.Popen(args)
+            subprocess.Popen(args, env=os.environ)
     except (OSError, ValueError, subprocess.SubprocessError) as e:
         log.warning('could not start Telnet console "{}": {}'.format(command, e))
         raise
