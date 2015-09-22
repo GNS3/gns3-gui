@@ -17,7 +17,6 @@
 
 import os
 
-from ..servers import Servers
 from ..qt import QtCore
 from ..utils import md5_hash_file
 
@@ -111,7 +110,7 @@ class DownloadProjectWorker(QtCore.QObject):
         except OSError as e:
             self.error.emit("Could not write file {}: {}".format(file_path, e), False)
             return
-        self._project.get(file_to_download["server"], "/files/{}".format(file_to_download["path"]), self._downloadFileReceived, context={"fd": f}, downloadProgressCallback=self._downloadFileProgress)
+        self._project.get(file_to_download["server"], "/files/{}".format(file_to_download["path"]), self._downloadFileReceived, context={"fd": f, "file_path": file_path}, downloadProgressCallback=self._downloadFileProgress)
 
     def _downloadFileReceived(self, content, error=False, server=None, context={}):
         """
@@ -127,11 +126,13 @@ class DownloadProjectWorker(QtCore.QObject):
         try:
             context["fd"].write(content)
         except OSError as e:
-            self.error.emit("Could not write file {}: {}".format(file_path, e), False)
+            self.error.emit("Could not write file {}: {}".format(context["file_path"], e), False)
 
     def cancel(self):
         """
         Cancel this worker.
         """
 
+        if not self:
+            return
         self._is_running = False

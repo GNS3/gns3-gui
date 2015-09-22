@@ -65,4 +65,6 @@ class FileCopyWorker(QtCore.QObject):
         Stops this worker.
         """
 
+        if not self:
+            return
         self._is_running = False
