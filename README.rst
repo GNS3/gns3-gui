@@ -103,7 +103,7 @@ Finally, install both the GUI & server from the source.
 
 Or follow this `HOWTO that uses MacPorts <http://binarynature.blogspot.ca/2014/05/install-gns3-early-release-on-mac-os-x.html>`_.
 
-Developement
+Development
 -------------
 
 If you want to update the interface, modify the .ui files using QT tools. And:
