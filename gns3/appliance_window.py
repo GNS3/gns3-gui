@@ -41,6 +41,7 @@ log = logging.getLogger(__name__)
 
 
 class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
+    update_html_signal = QtCore.Signal(str)
 
     def __init__(self, path, parent=None):
         super().__init__(parent)
@@ -59,12 +60,23 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         # Enable the inspector on right click
         #self.uiWebView.settings().setAttribute(QtWebKit.QWebSettings.DeveloperExtrasEnabled, True)
 
+
+        self.update_html_signal.connect(self._updateHTMLSlot)
+
         self.show()
 
         self._refresh()
 
 
     def _refresh(self):
+        worker = WaitForLambdaWorker(lambda: self._loadPage())
+        progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for images...", None, busy=True, parent=self)
+        progress_dialog.show()
+
+    def _loadPage(self):
+        """
+        Scan user directory and build the web page.
+        """
         renderer = jinja2.Environment(loader=jinja2.FileSystemLoader(get_resource('static')))
         renderer.filters['nl2br'] = lambda s: s.replace('\n', '<br />')
         renderer.filters['human_filesize'] = human_filesize
@@ -85,7 +97,13 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
             self.close()
             return
 
-        self.uiWebView.setHtml(template.render(appliance=self._appliance, registry=registry))
+        self.update_html_signal.emit(template.render(appliance=self._appliance, registry=registry))
+
+    def _updateHTMLSlot(self, html):
+        """
+        Slot allowing to update the content of the webview
+        """
+        self.uiWebView.setHtml(html)
 
     def javaScriptWindowObject(self):
         frame = self.uiWebView.page().mainFrame()
