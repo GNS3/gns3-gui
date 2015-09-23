@@ -34,25 +34,15 @@ def test_search_image_file(tmpdir):
         f.write("BETA")
 
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    image = registry.search_image_file("36b84f8e3fba5bf993e3ba352d62d146")
+    image = registry.search_image_file("36b84f8e3fba5bf993e3ba352d62d146", 5)
     assert image == str(tmpdir / "QEMU" / "b")
 
-    assert registry.search_image_file("00000000000000000000000000000000") is None
-
-
-def test_list_images(tmpdir):
-    os.makedirs(str(tmpdir / "QEMU"))
-    with open(str(tmpdir / "QEMU" / ".DS_Store"), "w+", encoding="utf-8") as f:
-        f.write("garbage")
-    with open(str(tmpdir / "QEMU" / "a"), "w+", encoding="utf-8") as f:
-        f.write("ALPHA")
-    with open(str(tmpdir / "QEMU" / "a.md5sum"), "w+", encoding="utf-8") as f:
-        f.write("e13d0d1c0b3999ae2386bba70417930c")
-    with open(str(tmpdir / "QEMU" / "b"), "w+", encoding="utf-8") as f:
-        f.write("BETA")
-
-
+    # If size doesn't match ignore the file
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    images = registry.list_images()
-    assert len(images) == 2
+    image = registry.search_image_file("36b84f8e3fba5bf993e3ba352d62d146", 1000)
+    assert image is None
+
+    # md5sum doesn't exists
+    assert registry.search_image_file("00000000000000000000000000000000", 5) is None
+
 

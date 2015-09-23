@@ -90,7 +90,7 @@ class Appliance(collections.Mapping):
                 appliance["images"] = []
                 for image_type, image in version["images"].items():
                     image["type"] = image_type
-                    image["path"] = self._registry.search_image_file(image["md5sum"])
+                    image["path"] = self._registry.search_image_file(image["md5sum"], image["filesize"])
                     if image["path"] is None:
                         raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], image["md5sum"], appliance["name"]))
 

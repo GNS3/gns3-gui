@@ -33,27 +33,12 @@ class Registry:
     def __init__(self, images_dirs):
         self._images_dirs = images_dirs
 
-    def list_images(self):
-        """
-        List image on user computer
-        """
-        images = []
-
-        for directory in self._images_dirs:
-            log.debug("List images in %s", directory)
-            if os.path.exists(directory):
-                for filename in os.listdir(directory):
-                    if not filename.endswith(".md5sum") and not filename.startswith("."):
-                        path = os.path.join(directory, filename)
-                        if os.path.isfile(path):
-                            images.append(Image(path))
-        return images
-
-    def search_image_file(self, md5sum):
+    def search_image_file(self, md5sum, size):
         """
         Search an image based on its MD5 checksum
 
         :param md5sum: Hash of the image
+        :param size: File size
         :returns: Image object or None
         """
 
@@ -64,7 +49,12 @@ class Registry:
                     if not filename.endswith(".md5sum") and not filename.startswith("."):
                         path = os.path.join(directory, filename)
                         if os.path.isfile(path):
-                            image = Image(path)
-                            if image.md5sum == md5sum:
-                                return image.path
+
+                            # We take all the file with almost the size of the image
+                            # Almost to avoid round issue with system.
+                            file_size = os.stat(path).st_size
+                            if file_size - 10 < size and file_size + 10 > size:
+                                image = Image(path)
+                                if image.md5sum == md5sum:
+                                    return image.path
         return None

@@ -61,7 +61,7 @@
             {% if "direct_download_url" in image %}
                 Direct download url: <a href="{{image["direct_download_url"]}}">{{image["direct_download_url"]}}</a><br />
             {% endif %}
-            {% set image_path = registry.search_image_file(image["md5sum"]) %}
+            {% set image_path = registry.search_image_file(image["md5sum"], image["filesize"]) %}
             {% if image_path %}
                 <p style="color: green">File available: {{image_path}}</p>
             {% else %}
