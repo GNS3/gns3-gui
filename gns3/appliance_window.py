@@ -57,7 +57,7 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         self.uiWebView.page().mainFrame().javaScriptWindowObjectCleared.connect(self.javaScriptWindowObject)
 
         # Enable the inspector on right click
-        self.uiWebView.settings().setAttribute(QtWebKit.QWebSettings.DeveloperExtrasEnabled, True)
+        #self.uiWebView.settings().setAttribute(QtWebKit.QWebSettings.DeveloperExtrasEnabled, True)
 
         self.show()
 
@@ -70,9 +70,12 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         renderer.filters['human_filesize'] = human_filesize
         template = renderer.get_template("appliance.html")
 
-        images_directories = []
-        images_directories.append(os.path.join(ImageManager.instance().getDirectory(), "QEMU"))
-        images_directories.append(os.path.dirname(self._path))
+        images_directories = set()
+        download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        if download_directory != "":
+            images_directories.add(download_directory)
+        images_directories.add(os.path.join(ImageManager.instance().getDirectory(), "QEMU"))
+        images_directories.add(os.path.dirname(self._path))
         registry = Registry(images_directories)
 
         try:
@@ -92,11 +95,19 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         """
         Open in a new browser other url
         """
+        log.debug("Open %s in a browser", url.toString())
         QtGui.QDesktopServices.openUrl(url)
 
     #
     # Public Javascript methods
     #
+    @QtCore.pyqtSlot()
+    def refresh(self):
+        """
+        Refresh page
+        """
+        self._refresh()
+
     @QtCore.pyqtSlot(str)
     def install(self, version):
         """

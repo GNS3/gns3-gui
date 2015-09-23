@@ -67,6 +67,7 @@
             {% else %}
                 <p style="color: red">File not available</p>
                 <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.importAppliance('{{image["filename"]}}', '{{image["md5sum"]}}')">Import file</button>
+                <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.refresh()">Refresh</button>
             {% endif %}        
             <hr />
         {% endfor %}

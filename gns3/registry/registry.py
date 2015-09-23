@@ -19,6 +19,9 @@
 import os
 import copy
 
+import logging
+log = logging.getLogger(__name__)
+
 from .image import Image
 
 
@@ -37,6 +40,7 @@ class Registry:
         images = []
 
         for directory in self._images_dirs:
+            log.debug("List images in %s", directory)
             if os.path.exists(directory):
                 for filename in os.listdir(directory):
                     if not filename.endswith(".md5sum") and not filename.startswith("."):
@@ -54,6 +58,7 @@ class Registry:
         """
 
         for directory in self._images_dirs:
+            log.debug("Search images %s in %s", md5sum, directory)
             if os.path.exists(directory):
                 for filename in os.listdir(directory):
                     if not filename.endswith(".md5sum") and not filename.startswith("."):
