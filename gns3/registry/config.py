@@ -154,6 +154,9 @@ class Config:
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]
 
+        if "port_name_format" in appliance_config:
+            new_config["port_name_format"] = appliance_config["port_name_format"]
+
         self._config["Qemu"]["vms"].append(new_config)
 
     def _relative_image_path(self, path):

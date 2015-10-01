@@ -163,6 +163,20 @@ def test_add_appliance_with_symbol(empty_config, linux_microcore_img):
     assert empty_config._config["Qemu"]["vms"][0]["symbol"] == ":/symbols/asa.svg"
 
 
+def test_add_appliance_with_port_name_format(empty_config, linux_microcore_img):
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
+        config = json.load(f)
+    config["images"] = [
+        {
+            "type": "hda_disk_image",
+            "path": linux_microcore_img
+        }
+    ]
+    config["port_name_format"] = "eth{0}"
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["Qemu"]["vms"][0]["port_name_format"] == "eth{0}"
+
+
 def test_add_appliance_with_boot_priority(empty_config, linux_microcore_img):
     with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
