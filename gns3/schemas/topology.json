@@ -445,7 +445,6 @@
             "required": [
                 "name",
                 "console",
-                "options",
                 "process_priority",
                 "qemu_path",
                 "ram"
