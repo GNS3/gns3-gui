@@ -174,6 +174,7 @@ def test_processDownloadProgress(http_client):
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.attribute.return_value = 200
 
     response.readAll.return_value = b'{"action": "ping"}'
 
@@ -182,6 +183,33 @@ def test_processDownloadProgress(http_client):
     assert callback.called
     args, kwargs = callback.call_args
     assert args[0] == {"action": "ping"}
+
+
+
+def test_processDownloadProgressHTTPError(http_client):
+
+    callback = unittest.mock.MagicMock()
+    response = unittest.mock.MagicMock()
+    response.header.return_value = "application/json"
+    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.attribute.return_value = 404
+
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+
+    assert not callback.called
+
+
+def test_processDownloadProgressConnectionRefusedError(http_client):
+
+    callback = unittest.mock.MagicMock()
+    response = unittest.mock.MagicMock()
+    response.header.return_value = "application/json"
+    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
+    response.attribute.return_value = 200
+
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+
+    assert not callback.called
 
 
 def test_processDownloadProgressPartialJSON(http_client):
@@ -193,6 +221,7 @@ def test_processDownloadProgressPartialJSON(http_client):
     response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"'
     response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.attribute.return_value = 200
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
 
@@ -212,6 +241,7 @@ def test_processDownloadProgressPartialBytes(http_client):
     response.header.return_value = "application/octet-stream"
     response.readAll.return_value = b'hello'
     response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.attribute.return_value = 200
 
     http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
 

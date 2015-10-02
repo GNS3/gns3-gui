@@ -608,11 +608,6 @@ class HTTPClient(QtCore.QObject):
 
         if response.error() != QtNetwork.QNetworkReply.NoError:
             return
-        error_code = response.error()
-
-        # If internal Qt error
-        if error_code < 200:
-            return
 
         # HTTP error
         status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
