@@ -29,6 +29,9 @@ DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
 # Default images directory location
 DEFAULT_IMAGES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/images"))
 
+# Default symbols directory location
+DEFAULT_SYMBOLS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/symbols"))
+
 # Default configs directory location
 DEFAULT_CONFIGS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/configs"))
 
@@ -273,6 +276,7 @@ SERVERS_SETTINGS = {
         "port": DEFAULT_LOCAL_SERVER_PORT,
         "images_path": DEFAULT_IMAGES_PATH,
         "projects_path": DEFAULT_PROJECTS_PATH,
+        "symbols_path": DEFAULT_SYMBOLS_PATH,
         "configs_path": DEFAULT_CONFIGS_PATH,
         "report_errors": True,
         "auto_start": True,

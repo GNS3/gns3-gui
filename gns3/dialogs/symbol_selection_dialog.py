@@ -25,6 +25,7 @@ from ..qt import QtSvg, QtCore, QtGui, QtWidgets
 from ..items.svg_node_item import SvgNodeItem
 from ..items.pixmap_node_item import PixmapNodeItem
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
+from ..servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
@@ -49,7 +50,10 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiCustomSymbolRadioButton.toggled.connect(self._customSymbolToggledSlot)
         self.uiBuiltInSymbolRadioButton.toggled.connect(self._builtInSymbolToggledSlot)
+        self.uiSearchLineEdit.textChanged.connect(self._searchTextChangedSlot)
+        self.uiBuiltinSymbolOnlyCheckBox.toggled.connect(self._builtinSymbolOnlyToggledSlot)
         self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
+        self._symbols_path = Servers.instance().localServerSettings()["symbols_path"]
 
         selected_symbol = symbol
         if not self._items:
@@ -71,13 +75,29 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiSymbolListWidget.setFocus()
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
         symbol_resources = QtCore.QResource(":/symbols")
-        for symbol in symbol_resources.children():
+        self._symbol_items = []
+        symbols = symbol_resources.children()
+
+        try:
+            for file in os.listdir(self._symbols_path):
+                symbols.append(file)
+        except OSError:
+            pass
+
+        symbols.sort()
+        for symbol in symbols:
             if symbol.endswith(".svg"):
                 name = os.path.splitext(symbol)[0]
                 item = QtWidgets.QListWidgetItem(self.uiSymbolListWidget)
+                self._symbol_items.append(item)
                 item.setText(name)
-                resource_path = ":/symbols/" + symbol
-                svg_renderer = QtSvg.QSvgRenderer(resource_path)
+
+                if os.path.exists(os.path.join(self._symbols_path, symbol)):
+                    svg_renderer = QtSvg.QSvgRenderer(os.path.join(self._symbols_path, symbol))
+                else:
+                    resource_path = ":/symbols/" + symbol
+                    svg_renderer = QtSvg.QSvgRenderer(resource_path)
+
                 if resource_path == selected_symbol:
                     # this is a built-in symbol
                     custom_symbol = False
@@ -98,6 +118,26 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             self.uiBuiltInGroupBox.hide()
 
         self.adjustSize()
+
+    def _builtinSymbolOnlyToggledSlot(self, checked):
+        self._filter()
+
+    def _searchTextChangedSlot(self, text):
+        self._filter()
+
+    def _filter(self):
+        """
+        Hide element not matching the search
+        """
+        text = self.uiSearchLineEdit.text()
+        for item in self._symbol_items:
+            if self.uiBuiltinSymbolOnlyCheckBox.isChecked() and not QtCore.QResource(":/symbols/{}.svg".format(item.text())).isValid():
+                item.setHidden(True)
+            else:
+                if text.strip() in item.text() or len(text.strip()) == 0:
+                    item.setHidden(False)
+                else:
+                    item.setHidden(True)
 
     def _customSymbolToggledSlot(self, checked):
         """
@@ -136,7 +176,10 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             current = self.uiSymbolListWidget.currentItem()
             if current:
                 name = current.text()
-                path = ":/symbols/{}.svg".format(name)
+                if QtCore.QResource(":/symbols/{}.svg".format(name)).isValid():
+                    path = ":/symbols/{}.svg".format(name)
+                else:
+                    path = os.path.join(self._symbols_path, "{}.svg".format(name))
                 renderer = QtSvg.QSvgRenderer(path)
                 renderer.setObjectName(path)
                 for item in self._items:

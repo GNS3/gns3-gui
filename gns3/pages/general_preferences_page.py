@@ -57,6 +57,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiConfigurationFileLabel.setText(config_file_path)
 
         self.uiProjectsPathToolButton.clicked.connect(self._projectsPathSlot)
+        self.uiSymbolsPathToolButton.clicked.connect(self._symbolsPathSlot)
         self.uiImagesPathToolButton.clicked.connect(self._imagesPathSlot)
         self.uiConfigsPathToolButton.clicked.connect(self._configsPathSlot)
         self.uiImportConfigurationFilePushButton.clicked.connect(self._importConfigurationFileSlot)
@@ -82,6 +83,19 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if path:
             self.uiProjectsPathLineEdit.setText(path)
             self.uiProjectsPathLineEdit.setCursorPosition(0)
+
+    def _symbolsPathSlot(self):
+        """
+        Slot to select the symbols directory path.
+        """
+
+        servers = Servers.instance()
+        local_server = servers.localServerSettings()
+        directory = local_server["symbols_path"]
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My symbols directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        if path:
+            self.uiSymbolsPathLineEdit.setText(path)
+            self.uiSymbolsPathLineEdit.setCursorPosition(0)
 
     def _imagesPathSlot(self):
         """
@@ -232,6 +246,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = Servers.instance().localServerSettings()
         self.uiProjectsPathLineEdit.setText(local_server["projects_path"])
+        self.uiSymbolsPathLineEdit.setText(local_server["symbols_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
@@ -303,6 +318,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_local_server_settings = {"images_path": self.uiImagesPathLineEdit.text(),
                                      "projects_path": self.uiProjectsPathLineEdit.text(),
+                                     "symbols_path": self.uiSymbolsPathLineEdit.text(),
                                      "configs_path": self.uiConfigsPathLineEdit.text(),
                                      "report_errors": self.uiCrashReportCheckBox.isChecked()}
         Servers.instance().setLocalServerSettings(new_local_server_settings)

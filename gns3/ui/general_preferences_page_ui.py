@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Tue Sep  8 09:02:23 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(517, 577)
+        GeneralPreferencesPageWidget.resize(538, 623)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -23,11 +22,11 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.uiLocalPathsGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
         self.uiLocalPathsGroupBox.setObjectName("uiLocalPathsGroupBox")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiLocalPathsGroupBox)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.uiLocalPathsGroupBox)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.uiProjectsPathLabel = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
         self.uiProjectsPathLabel.setObjectName("uiProjectsPathLabel")
-        self.gridLayout_2.addWidget(self.uiProjectsPathLabel, 0, 0, 1, 1)
+        self.verticalLayout_7.addWidget(self.uiProjectsPathLabel)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiProjectsPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
@@ -42,10 +41,10 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiProjectsPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiProjectsPathToolButton.setObjectName("uiProjectsPathToolButton")
         self.horizontalLayout_2.addWidget(self.uiProjectsPathToolButton)
-        self.gridLayout_2.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_2)
         self.uiImagesPathLabel = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
         self.uiImagesPathLabel.setObjectName("uiImagesPathLabel")
-        self.gridLayout_2.addWidget(self.uiImagesPathLabel, 2, 0, 1, 1)
+        self.verticalLayout_7.addWidget(self.uiImagesPathLabel)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.uiImagesPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
@@ -60,10 +59,22 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiImagesPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiImagesPathToolButton.setObjectName("uiImagesPathToolButton")
         self.horizontalLayout_4.addWidget(self.uiImagesPathToolButton)
-        self.gridLayout_2.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_4)
+        self.label = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
+        self.label.setObjectName("label")
+        self.verticalLayout_7.addWidget(self.label)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.uiSymbolsPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
+        self.uiSymbolsPathLineEdit.setObjectName("uiSymbolsPathLineEdit")
+        self.horizontalLayout_3.addWidget(self.uiSymbolsPathLineEdit)
+        self.uiSymbolsPathToolButton = QtWidgets.QToolButton(self.uiLocalPathsGroupBox)
+        self.uiSymbolsPathToolButton.setObjectName("uiSymbolsPathToolButton")
+        self.horizontalLayout_3.addWidget(self.uiSymbolsPathToolButton)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_3)
         self.uiConfigsPathLabel = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
         self.uiConfigsPathLabel.setObjectName("uiConfigsPathLabel")
-        self.gridLayout_2.addWidget(self.uiConfigsPathLabel, 4, 0, 1, 1)
+        self.verticalLayout_7.addWidget(self.uiConfigsPathLabel)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.uiConfigsPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
@@ -78,7 +89,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConfigsPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiConfigsPathToolButton.setObjectName("uiConfigsPathToolButton")
         self.horizontalLayout_7.addWidget(self.uiConfigsPathToolButton)
-        self.gridLayout_2.addLayout(self.horizontalLayout_7, 5, 0, 1, 1)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_7)
         self.verticalLayout_5.addWidget(self.uiLocalPathsGroupBox)
         self.uiStyleGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
         self.uiStyleGroupBox.setObjectName("uiStyleGroupBox")
@@ -355,6 +366,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiImagesPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My binary images:"))
         self.uiImagesPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored"))
         self.uiImagesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse..."))
+        self.label.setText(_translate("GeneralPreferencesPageWidget", "My symbols:"))
+        self.uiSymbolsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "Browse..."))
         self.uiConfigsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My configs:"))
         self.uiConfigsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored"))
         self.uiConfigsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse..."))

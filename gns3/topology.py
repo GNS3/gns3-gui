@@ -422,6 +422,8 @@ class Topology:
                                 symbol_path = item.renderer().objectName()
                             elif isinstance(item, PixmapNodeItem):
                                 symbol_path = item.pixmapSymbolPath()
+
+                            if os.path.exists(symbol_path):
                                 symbol_dir_path = os.path.join(self._project.filesDir(), "project-files", "symbols")
                                 os.makedirs(symbol_dir_path, exist_ok=True)
                                 new_symbol_path = os.path.join(symbol_dir_path, os.path.basename(symbol_path))
@@ -429,7 +431,7 @@ class Topology:
                                     shutil.copyfile(symbol_path, new_symbol_path)
                                 except shutil.SameFileError:
                                     pass
-                                symbol_path = os.path.join("symbols", os.path.basename(symbol_path))
+                                symbol_path = os.path.basename(symbol_path)
                             if symbol_path:
                                 node["symbol"] = symbol_path
                 if isinstance(item, LinkItem):
@@ -721,7 +723,7 @@ class Topology:
                     if renderer.isValid():
                         node_item = SvgNodeItem(node, symbol_path)
                     else:
-                        updated_symbol_path = os.path.join(self._project.filesDir(), "project-files", topology_node["symbol"])
+                        updated_symbol_path = os.path.join(self._project.filesDir(), "project-files", "symbols", topology_node["symbol"])
                         if os.path.exists(updated_symbol_path):
                             symbol_path = updated_symbol_path
                         else:

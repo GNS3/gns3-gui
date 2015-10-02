@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
-    <height>496</height>
+    <width>521</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
      <item>
       <widget class="QRadioButton" name="uiBuiltInSymbolRadioButton">
        <property name="text">
-        <string>Use a built-in symbol</string>
+        <string>Symbols library</string>
        </property>
       </widget>
      </item>
@@ -81,15 +81,49 @@
         </item>
        </layout>
       </item>
+      <item row="1" column="1">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="uiBuiltInGroupBox">
      <property name="title">
-      <string>Built-in symbols</string>
+      <string>Symbols</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QCheckBox" name="uiBuiltinSymbolOnlyCheckBox">
+        <property name="text">
+         <string>Show only built-in symbols</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="uiSearchLabel">
+          <property name="text">
+           <string>Search:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="uiSearchLineEdit"/>
+        </item>
+       </layout>
+      </item>
       <item>
        <widget class="QListWidget" name="uiSymbolListWidget">
         <property name="minimumSize">
@@ -97,6 +131,13 @@
           <width>0</width>
           <height>300</height>
          </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>You can add your own symbols in the symbols directory.</string>
         </property>
        </widget>
       </item>
@@ -130,26 +171,9 @@
      </item>
     </layout>
    </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>34</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
   <zorder>uiBuiltInGroupBox</zorder>
-  <zorder>verticalSpacer</zorder>
   <zorder>uiCustomSymbolGroupBox</zorder>
-  <zorder>uiCustomSymbolRadioButton</zorder>
-  <zorder>uiBuiltInSymbolRadioButton</zorder>
-  <zorder>horizontalSpacer_2</zorder>
  </widget>
  <resources>
   <include location="../../resources/resources.qrc"/>
