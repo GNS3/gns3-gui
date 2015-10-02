@@ -26,6 +26,9 @@ class Image:
     An appliance image file.
     """
 
+    # Cache md5sum in order to improve performances
+    _cache = {}
+
     def __init__(self, path):
         """
         :params: path of the image
@@ -65,12 +68,18 @@ class Image:
         :returns: hexadecimal md5
         """
 
-        if os.path.exists(self.path + ".md5sum"):
-            with open(self.path + ".md5sum", encoding="utf-8") as f:
-                self._md5sum = f.read()
+        if self._md5sum is None:
+            from_cache = Image._cache.get(self.path)
+            if from_cache:
+                self._md5sum = from_cache
                 return self._md5sum
 
-        if self._md5sum is None:
+            if os.path.exists(self.path + ".md5sum"):
+                with open(self.path + ".md5sum", encoding="utf-8") as f:
+                    self._md5sum = f.read()
+                    return self._md5sum
+
+
             m = hashlib.md5()
             with open(self.path, "rb") as f:
                 while True:
@@ -79,6 +88,7 @@ class Image:
                         break
                     m.update(buf)
             self._md5sum = m.hexdigest()
+        Image._cache[self.path] = self._md5sum
         return self._md5sum
 
     @property
