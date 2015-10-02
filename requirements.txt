@@ -3,3 +3,4 @@ paramiko>=1.15.1
 requests>=2.4.3
 raven>=5.2.0
 rsa>=3.1.4
+gns3-converter>=1.2.3
