@@ -19,7 +19,7 @@ import sys
 import os
 import psutil
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtCore, QtWidgets, QtGui
 from gns3.servers import Servers
 from ..gns3_vm import GNS3VM
 from ..dialogs.preferences_dialog import PreferencesDialog
@@ -49,6 +49,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
+        self.uiVMwareBannerButton.clicked.connect(self._VMwareBannerButtonClickedSlot)
         settings = parent.settings()
         self.uiShowCheckBox.setChecked(settings["hide_setup_wizard"])
 
@@ -57,6 +58,18 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         self.uiVirtualBoxRadioButton.setAutoExclusive(False)
         self.uiVmwareRadioButton.setChecked(False)
         self.uiVirtualBoxRadioButton.setChecked(False)
+
+        if sys.platform.startswith("darwin"):
+            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.jpg"))
+        else:
+            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.jpg"))
+
+    def _VMwareBannerButtonClickedSlot(self):
+        if sys.platform.startswith("darwin"):
+            url = "http://send.onenetworkdirect.net/z/616454/CD225091/"
+        else:
+            url = "http://send.onenetworkdirect.net/z/616455/CD225091/"
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
 
     def _listVMwareVMsSlot(self):
         """
