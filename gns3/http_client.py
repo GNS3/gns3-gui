@@ -606,32 +606,39 @@ class HTTPClient(QtCore.QObject):
         part of a JSON we keep it for the next packet
         """
 
-        if response.error() == QtNetwork.QNetworkReply.NoError:
-            error_code = response.error()
+        if response.error() != QtNetwork.QNetworkReply.NoError:
+            return
+        error_code = response.error()
 
-            if error_code >= 300:
-                return
+        # If internal Qt error
+        if error_code < 200:
+            return
 
-            content = bytes(response.readAll())
-            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-            if content_type == "application/json":
-                content = content.decode("utf-8")
-                if context["query_id"] in self._buffer:
-                    content = self._buffer[context["query_id"]] + content
-                try:
-                    while True:
-                        content = content.lstrip(" \r\n\t")
-                        answer, index = json.JSONDecoder().raw_decode(content)
-                        callback(answer, server=self, context=context)
-                        content = content[index:]
-                except ValueError:  # Partial JSON
-                    self._buffer[context["query_id"]] = content
-            else:
-                callback(content, server=self, context=context)
+        # HTTP error
+        status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        if status >= 300:
+            return
 
-            if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
-                request_canceled = partial(self._requestCanceled, response, context)
-                HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
+        content = bytes(response.readAll())
+        content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+        if content_type == "application/json":
+            content = content.decode("utf-8")
+            if context["query_id"] in self._buffer:
+                content = self._buffer[context["query_id"]] + content
+            try:
+                while True:
+                    content = content.lstrip(" \r\n\t")
+                    answer, index = json.JSONDecoder().raw_decode(content)
+                    callback(answer, server=self, context=context)
+                    content = content[index:]
+            except ValueError:  # Partial JSON
+                self._buffer[context["query_id"]] = content
+        else:
+            callback(content, server=self, context=context)
+
+        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
+            request_canceled = partial(self._requestCanceled, response, context)
+            HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
 
     def _requestCanceled(self, response, context):
 
