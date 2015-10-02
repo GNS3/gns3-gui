@@ -26,7 +26,7 @@ from gns3.registry.config import Config, ConfigException
 
 
 @pytest.fixture(scope="function")
-def empty_config(tmpdir, images_dir):
+def empty_config(tmpdir, images_dir, symbols_dir):
     config = {
         "Servers": {
             "local_server": {
@@ -36,6 +36,7 @@ def empty_config(tmpdir, images_dir):
                 "console_start_port_range": 2001,
                 "host": "127.0.0.1",
                 "images_path": images_dir,
+                "symbols_path": symbols_dir,
                 "path": "",
                 "port": 8000,
                 "projects_path": str(tmpdir),
@@ -161,6 +162,63 @@ def test_add_appliance_with_symbol(empty_config, linux_microcore_img):
     config["symbol"] = ":/symbols/asa.svg"
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Qemu"]["vms"][0]["symbol"] == ":/symbols/asa.svg"
+
+
+def test_add_appliance_with_symbol_from_symbols_dir(empty_config, linux_microcore_img, symbols_dir):
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
+        config = json.load(f)
+    config["images"] = [
+        {
+            "type": "hda_disk_image",
+            "path": linux_microcore_img
+        }
+    ]
+    config["symbol"] = "linux_guest.svg"
+
+    symbol_path = os.path.join(symbols_dir, "linux_guest.svg")
+    open(symbol_path, 'w+').close()
+
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == symbol_path
+
+
+def test_add_appliance_with_symbol_from_web(empty_config, linux_microcore_img, symbols_dir):
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
+        config = json.load(f)
+    config["images"] = [
+        {
+            "type": "hda_disk_image",
+            "path": linux_microcore_img
+        }
+    ]
+    config["symbol"] = "linux_guest.svg"
+    symbol_path = os.path.join(symbols_dir, "linux_guest.svg")
+
+    with patch("urllib.request.urlretrieve") as mock:
+        empty_config.add_appliance(config, "local")
+        mock.assert_called_with("https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/linux_guest.svg", symbol_path)
+    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == symbol_path
+
+
+def test_add_appliance_with_symbol_from_web_error(empty_config, linux_microcore_img, symbols_dir):
+    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
+        config = json.load(f)
+    config["images"] = [
+        {
+            "type": "hda_disk_image",
+            "path": linux_microcore_img
+        }
+    ]
+    config["symbol"] = "linux_guest.svg"
+    symbol_path = os.path.join(symbols_dir, "linux_guest.svg")
+
+    with patch("urllib.request.urlretrieve") as mock:
+        mock.side_effect = OSError
+        empty_config.add_appliance(config, "local")
+        mock.assert_called_with("https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/linux_guest.svg", symbol_path)
+
+    # In case of error we fallback on default symbol
+    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == ":/symbols/qemu_guest.svg"
 
 
 def test_add_appliance_with_port_name_format(empty_config, linux_microcore_img):

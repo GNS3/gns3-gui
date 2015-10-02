@@ -203,6 +203,12 @@ def images_dir(tmpdir):
 
 
 @pytest.fixture
+def symbols_dir(tmpdir):
+    os.makedirs(os.path.join(str(tmpdir), "symbols"), exist_ok=True)
+    return os.path.join(str(tmpdir), "symbols")
+
+
+@pytest.fixture
 def linux_microcore_img(images_dir):
     """
     Create a fake image and return the path. The md5sum of the file will be 5d41402abc4b2a76b9719d911017c592

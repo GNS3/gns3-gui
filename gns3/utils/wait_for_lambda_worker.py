@@ -28,7 +28,8 @@ log = logging.getLogger(__name__)
 class WaitForLambdaWorker(QtCore.QObject):
 
     """
-    Thread to wait for a lambda to be executed.
+    Thread to wait for a lambda to be executed. All errors
+    are display to the user.
 
     :param lambda_runner: lambda to execute in background
     """
@@ -40,6 +41,7 @@ class WaitForLambdaWorker(QtCore.QObject):
     def __init__(self, lambda_runner):
 
         super().__init__()
+        self._error = False
         self._lambda_runner = lambda_runner
 
     def run(self):

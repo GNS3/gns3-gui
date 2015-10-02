@@ -155,16 +155,17 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
         self.close()
 
-        try:
-            if server.isLocal():
-                server_string = "local"
-            elif server.isGNS3VM():
-                server_string = "vm"
-            else:
-                server_string = server.url()
-            config.add_appliance(appliance_configuration, server_string)
-        except ConfigException as e:
-            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
+        if server.isLocal():
+            server_string = "local"
+        elif server.isGNS3VM():
+            server_string = "vm"
+        else:
+            server_string = server.url()
+
+        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string))
+        progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
+        progress_dialog.show()
+        if not progress_dialog.exec_():
             return
 
         worker = WaitForLambdaWorker(lambda: config.save())

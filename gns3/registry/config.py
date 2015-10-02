@@ -21,6 +21,7 @@ import json
 import sys
 import os
 import shutil
+import urllib
 
 
 class ConfigException(Exception):
@@ -50,6 +51,13 @@ class Config:
         :returns: Location of the images directory on the server
         """
         return self._config["Servers"]["local_server"]["images_path"]
+
+    @property
+    def symbols_dir(self):
+        """
+        :returns: Location of the symbols directory
+        """
+        return self._config["Servers"]["local_server"]["symbols_path"]
 
     @property
     def servers(self):
@@ -136,17 +144,19 @@ class Config:
         new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
 
         if "symbol" in appliance_config:
-            new_config["symbol"] = appliance_config["symbol"]
-        elif appliance_config["category"] == "guest":
-            new_config["symbol"] = ":/symbols/qemu_guest.svg"
-        elif appliance_config["category"] == "router":
-            new_config["symbol"] = ":/symbols/router.svg"
-        elif appliance_config["category"] == "multilayer_switch":
-            new_config["symbol"] = ":/symbols/multilayer_switch.svg"
-        elif appliance_config["category"] == "multilayer_switch":
-            new_config["symbol"] = ":/symbols/multilayer_switch.svg"
-        elif appliance_config["category"] == "firewall":
-            new_config["symbol"] = ":/symbols/firewall.svg"
+            new_config["symbol"] = self._set_symbol(appliance_config["symbol"])
+
+        if new_config.get("symbol") is None:
+            if appliance_config["category"] == "guest":
+                new_config["symbol"] = ":/symbols/qemu_guest.svg"
+            elif appliance_config["category"] == "router":
+                new_config["symbol"] = ":/symbols/router.svg"
+            elif appliance_config["category"] == "multilayer_switch":
+                new_config["symbol"] = ":/symbols/multilayer_switch.svg"
+            elif appliance_config["category"] == "multilayer_switch":
+                new_config["symbol"] = ":/symbols/multilayer_switch.svg"
+            elif appliance_config["category"] == "firewall":
+                new_config["symbol"] = ":/symbols/firewall.svg"
 
         for image in appliance_config["images"]:
             new_config[image["type"]] = self._relative_image_path(image["path"])
@@ -158,6 +168,26 @@ class Config:
             new_config["port_name_format"] = appliance_config["port_name_format"]
 
         self._config["Qemu"]["vms"].append(new_config)
+
+    def _set_symbol(self, symbol):
+        """
+        Download symbol for the web if need
+        """
+
+        # GNS3 builtin symbol
+        if symbol.startswith(":/symbols/"):
+            return symbol
+
+        path = os.path.join(self.symbols_dir, symbol)
+        if os.path.exists(path):
+            return path
+
+        url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol)
+        try:
+            urllib.request.urlretrieve(url, path)
+            return path
+        except OSError:
+            return None
 
     def _relative_image_path(self, path):
         """
