@@ -188,7 +188,10 @@ elif sys.platform.startswith("darwin"):
     DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['OSX builtin screen sharing']
 
 else:
-    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {'TightVNC': 'vncviewer %h:%p'}
+    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
+        'TightVNC': 'vncviewer %h:%p',
+        'Vinagre': 'vinagre %h::%p'
+    }
 
     # default VNC console command on other systems
     DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['TightVNC']
