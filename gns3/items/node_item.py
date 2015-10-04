@@ -255,6 +255,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when the node has been deleted.
         """
 
+        if self is None:
+            return
         self._node.removeAllocatedName()
         if self in self.scene().items():
             self.scene().removeItem(self)

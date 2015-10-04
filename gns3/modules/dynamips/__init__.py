@@ -393,8 +393,8 @@ class Dynamips(Module):
             if os.path.basename(ios_router["image"]) == image_path:
                 if ios_router["idlepc"] != idlepc:
                     ios_router["idlepc"] = idlepc
+                    log.info("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
                     self._saveIOSRouters()
-                break
 
     def reset(self):
         """
