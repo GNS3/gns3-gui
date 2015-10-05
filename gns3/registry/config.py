@@ -153,8 +153,6 @@ class Config:
                 new_config["symbol"] = ":/symbols/router.svg"
             elif appliance_config["category"] == "multilayer_switch":
                 new_config["symbol"] = ":/symbols/multilayer_switch.svg"
-            elif appliance_config["category"] == "multilayer_switch":
-                new_config["symbol"] = ":/symbols/multilayer_switch.svg"
             elif appliance_config["category"] == "firewall":
                 new_config["symbol"] = ":/symbols/firewall.svg"
 
