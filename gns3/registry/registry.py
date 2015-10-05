@@ -33,21 +33,22 @@ class Registry:
     def __init__(self, images_dirs):
         self._images_dirs = images_dirs
 
-    def search_image_file(self, md5sum, size):
+    def search_image_file(self, filename, md5sum, size):
         """
         Search an image based on its MD5 checksum
 
+        :param filename: Image filename (used for ova in order to return the correct file in the archive)
         :param md5sum: Hash of the image
         :param size: File size
         :returns: Image object or None
         """
 
         for directory in self._images_dirs:
-            log.debug("Search images %s in %s", md5sum, directory)
+            log.debug("Search images %s (%s) in %s", filename, md5sum, directory)
             if os.path.exists(directory):
-                for filename in os.listdir(directory):
-                    if not filename.endswith(".md5sum") and not filename.startswith("."):
-                        path = os.path.join(directory, filename)
+                for file in os.listdir(directory):
+                    if not file.endswith(".md5sum") and not file.startswith("."):
+                        path = os.path.join(directory, file)
                         if os.path.isfile(path):
 
                             # We take all the file with almost the size of the image
@@ -56,5 +57,14 @@ class Registry:
                             if file_size - 10 < size and file_size + 10 > size:
                                 image = Image(path)
                                 if image.md5sum == md5sum:
+                                    log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
                                     return image.path
+                        elif path.endswith(".ova"):
+                            image = Image(path)
+                            if image.md5sum == md5sum:
+                                # File searched in OVA use the notation x.ova/a.vmdk
+                                path = os.path.join(image.path, os.path.basename(filename))
+                                log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
+                                return path
+
         return None

@@ -18,6 +18,7 @@
 
 import json
 import copy
+import os
 import collections
 
 
@@ -68,9 +69,17 @@ class Appliance(collections.Mapping):
         for version in self._appliance["versions"]:
             for image_type, filename in version["images"].items():
                 for file in self._appliance["images"]:
-                    if file["filename"] == filename:
-                        version["images"][image_type] = copy.copy(file)
+                    file = copy.copy(file)
 
+                    if "/" in filename:
+                        parent, name = filename.split("/")
+                        filename = os.path.join(parent, name)
+                    else:
+                        parent = filename
+
+                    if file["filename"] == parent:
+                        file["filename"] = filename
+                        version["images"][image_type] = file
 
     def search_images_for_version(self, version_name):
         """
@@ -90,7 +99,7 @@ class Appliance(collections.Mapping):
                 appliance["images"] = []
                 for image_type, image in version["images"].items():
                     image["type"] = image_type
-                    image["path"] = self._registry.search_image_file(image["md5sum"], image["filesize"])
+                    image["path"] = self._registry.search_image_file(image["filename"], image["md5sum"], image["filesize"])
                     if image["path"] is None:
                         raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], image["md5sum"], appliance["name"]))
 

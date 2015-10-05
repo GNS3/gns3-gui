@@ -20,9 +20,12 @@
 import json
 import sys
 import os
-import shutil
 import urllib
 
+from .image import Image
+
+import logging
+log = logging.getLogger(__name__)
 
 class ConfigException(Exception):
     pass
@@ -106,6 +109,10 @@ class Config:
             new_config["category"] = 2
         elif appliance_config["category"] == "router":
             new_config["category"] = 0
+        elif appliance_config["category"] == "firewall":
+            new_config["category"] = 3
+        elif appliance_config["category"] == "multilayer_switch":
+            new_config["category"] = 1
 
         # Raise error if VM already exists
         for item in self._config["Qemu"]["vms"]:
@@ -157,7 +164,7 @@ class Config:
                 new_config["symbol"] = ":/symbols/firewall.svg"
 
         for image in appliance_config["images"]:
-            new_config[image["type"]] = self._relative_image_path(image["path"])
+            new_config[image["type"]] = self._relative_image_path(image["filename"], image["path"])
 
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]
@@ -165,6 +172,7 @@ class Config:
         if "port_name_format" in appliance_config:
             new_config["port_name_format"] = appliance_config["port_name_format"]
 
+        log.debug("Add appliance QEMU: %s", str(new_config))
         self._config["Qemu"]["vms"].append(new_config)
 
     def _set_symbol(self, symbol):
@@ -187,26 +195,19 @@ class Config:
         except OSError:
             return None
 
-    def _relative_image_path(self, path):
+    def _relative_image_path(self, filename, path):
         """
-        :returns: Path relative to image directory. Copy the image to the directory if not
+        :returns: Path relative to image directory.
+        Copy the image to the directory if not already in the directory
         """
 
-        if os.path.abspath(os.path.join(os.path.dirname(path), "..")) == self.images_dir:
-            return os.path.basename(path)
+        images_dir = os.path.join(self.images_dir, "QEMU")
+        path = os.path.abspath(path)
+        if os.path.commonprefix([images_dir, path]) == images_dir:
+            return filename
 
-        filename = os.path.basename(path)
-        self.import_image(path)
+        Image(path).copy(os.path.join(self.images_dir, "QEMU"))
         return filename
-
-    def import_image(self, path):
-        """
-        Copy an image to the image directory.
-        """
-        filename = os.path.basename(path)
-        os.makedirs(os.path.join(self.images_dir, "QEMU"), exist_ok=True)
-        dst = os.path.join(self.images_dir, "QEMU", filename)
-        shutil.copy(path, dst)
 
     def save(self):
         """

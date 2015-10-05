@@ -46,13 +46,13 @@ def test_askCopyUploadImage_remote(image_manager, remote_server):
         assert mock.called
 
 
-def test_uploadImageToRemoteServer(image_manager, remote_server):
+def test_uploadImageToRemoteServer(image_manager, remote_server, tmpdir):
     with patch('gns3.http_client.HTTPClient.post') as mock:
-        filename = image_manager._uploadImageToRemoteServer('/tmp/test', remote_server, 'QEMU')
+        filename = image_manager._uploadImageToRemoteServer(str(tmpdir / "QEMU" / "test"), remote_server, 'QEMU')
         assert filename == 'test'
         args, kwargs = mock.call_args
         assert args[0] == '/qemu/vms/test'
-        assert kwargs['body'] == pathlib.Path('/tmp/test')
+        assert kwargs['body'] == pathlib.Path(str(tmpdir / "QEMU" / "test"))
 
 
 def test_getDirectory(image_manager, tmpdir):

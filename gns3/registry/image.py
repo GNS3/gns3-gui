@@ -18,7 +18,8 @@
 
 import os
 import hashlib
-
+import shutil
+import tarfile
 
 
 class Image:
@@ -79,7 +80,8 @@ class Image:
                     self._md5sum = f.read()
                     return self._md5sum
 
-
+            if not os.path.isfile(self.path):
+                return None
             m = hashlib.md5()
             with open(self.path, "rb") as f:
                 while True:
@@ -97,3 +99,25 @@ class Image:
         Return image file size
         """
         return os.path.getsize(self.path)
+
+    def copy(self, directory):
+        """
+        Copy the image to a directory. Extract the image if it's an OVA.
+
+        The destination directory is created if not exists
+
+        :param directory: Destination directory
+        """
+        filename = os.path.basename(self.path)
+        dst = os.path.join(directory, filename)
+
+        if tarfile.is_tarfile(self.path):
+            os.makedirs(dst, exist_ok=True)
+            tar = tarfile.open(self.path)
+            tar.extractall(path=dst)
+            tar.close()
+        else:
+            os.makedirs(directory, exist_ok=True)
+            shutil.copy(self.path, dst)
+        with open(dst + ".md5sum", "w+", encoding="utf-8") as f:
+            f.write(self.md5sum)

@@ -91,7 +91,7 @@ class ImageManager:
         else:
             raise Exception('Invalid image vm_type')
 
-        filename = os.path.basename(path)
+        filename = self._getRelativeImagePath(path, vm_type).replace("\\", "/")
         server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path))
         return filename
 
@@ -127,6 +127,25 @@ class ImageManager:
             return True
         return False
 
+    def _getRelativeImagePath(self, path, vm_type):
+        """
+        Get a path relative to images directory path
+        or an abspath if the path is not located inside
+        image directory
+
+        :param path: file path
+        :param vm_type: Type of vm
+        :return: file path
+        """
+
+        if not path:
+            return ""
+        img_directory = self.getDirectoryForType(vm_type)
+        path = os.path.abspath(path)
+        if os.path.commonprefix([img_directory, path]) == img_directory:
+           return os.path.relpath(path, img_directory)
+        return path
+
     def getDirectory(self):
         """
         Returns the images directory path.
@@ -140,6 +159,8 @@ class ImageManager:
         """
         Return the path of local directory of the images
         of a specific vm_type
+
+        :param vm_type: Type of vm
         """
         if vm_type == 'DYNAMIPS':
             return os.path.join(self.getDirectory(), 'IOS')

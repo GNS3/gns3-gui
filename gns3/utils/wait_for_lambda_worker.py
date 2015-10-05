@@ -19,6 +19,8 @@
 Thread showing a progress dialog and running the code from a lambda
 """
 
+import traceback
+
 from ..qt import QtCore
 
 import logging
@@ -52,6 +54,7 @@ class WaitForLambdaWorker(QtCore.QObject):
         try:
             self._lambda_runner()
         except Exception as e:
+            log.critical(traceback.format_exc())
             self.error.emit(str(e), True)
             return
         self.finished.emit()

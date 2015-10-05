@@ -121,6 +121,7 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -156,6 +157,7 @@ def test_add_appliance_with_symbol(empty_config, linux_microcore_img):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -170,6 +172,7 @@ def test_add_appliance_with_symbol_from_symbols_dir(empty_config, linux_microcor
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -188,6 +191,7 @@ def test_add_appliance_with_symbol_from_web(empty_config, linux_microcore_img, s
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -206,6 +210,7 @@ def test_add_appliance_with_symbol_from_web_error(empty_config, linux_microcore_
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -227,6 +232,7 @@ def test_add_appliance_with_port_name_format(empty_config, linux_microcore_img):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -241,6 +247,7 @@ def test_add_appliance_with_boot_priority(empty_config, linux_microcore_img):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -257,10 +264,12 @@ def test_add_appliance_router_two_disk(empty_config, images_dir):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "a",
             "path": os.path.join(images_dir, "QEMU", "a")
         },
         {
             "type": "hdb_disk_image",
+            "filename": "b",
             "path": os.path.join(images_dir, "QEMU", "b")
         }
     ]
@@ -299,6 +308,7 @@ def test_add_appliance_uniq(empty_config, linux_microcore_img):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -320,12 +330,32 @@ def test_add_appliance_path_relative_to_images_dir(empty_config, tmpdir, linux_m
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
 
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "linux-microcore-3.4.1.img"
+
+
+def test_add_appliance_ova(empty_config, tmpdir, images_dir):
+    with open("tests/registry/appliances/juniper-vsrx.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+
+    os.makedirs(os.path.join(images_dir, "QEMU", "junos-vsrx-12.1X47-D10.4-domestic.ova"))
+    open(os.path.join(images_dir, "QEMU", "junos-vsrx-12.1X47-D10.4-domestic.ova", "junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk"), "w+").close()
+
+    config["images"] = [
+        {
+            "type": "hda_disk_image",
+            "filename": "junos-vsrx-12.1X47-D10.4-domestic.ova/junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk",
+            "path": os.path.join(images_dir, "QEMU", "junos-vsrx-12.1X47-D10.4-domestic.ova", "junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk")
+        }
+    ]
+
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "junos-vsrx-12.1X47-D10.4-domestic.ova/junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk"
 
 
 def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, images_dir):
@@ -335,6 +365,7 @@ def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, ima
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "a.img",
             "path": str(tmpdir / "a.img")
         }
     ]
@@ -342,14 +373,6 @@ def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, ima
         f.write("a")
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "a.img"
-    assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
-
-
-def test_config_import_image(empty_config, images_dir, tmpdir):
-    with open(str(tmpdir / "a.img"), "w+") as f:
-        f.write("a")
-    empty_config.import_image(str(tmpdir / "a.img"))
-
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
 
 
@@ -361,6 +384,7 @@ def test_save(empty_config, linux_microcore_img):
     config["images"] = [
         {
             "type": "hda_disk_image",
+            "filename": "linux-microcore-3.4.1.img",
             "path": linux_microcore_img
         }
     ]
@@ -369,3 +393,32 @@ def test_save(empty_config, linux_microcore_img):
     empty_config.save()
     with open(empty_config.path) as f:
         assert "Micro Core" in f.read()
+
+
+def test_relative_image_path(empty_config, images_dir, tmpdir):
+
+    # Image in image directory no need to copy it
+    open(os.path.join(images_dir, "QEMU", "a"), "w+").close()
+    with patch("gns3.registry.image.Image.copy") as mock:
+        assert empty_config._relative_image_path("a", os.path.join(images_dir, "QEMU", "a")) == "a"
+        assert not mock.called
+
+    # Image outside image directory we need to copy it
+    open(str(tmpdir / "b"), "w+").close()
+    with patch("gns3.registry.image.Image.copy") as mock:
+        assert empty_config._relative_image_path("b", str(tmpdir / "b")) == "b"
+        assert mock.called
+
+    # OVA in images directory no need to copy
+    os.makedirs(os.path.join(images_dir, "QEMU", "c.ova"))
+    open(os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk"), "w+").close()
+    with patch("gns3.registry.image.Image.copy") as mock:
+        assert empty_config._relative_image_path("c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova")) == "c.ova/c.vmdk"
+        assert not mock.called
+
+    # OVA outside images directory need to copy
+    os.makedirs(os.path.join(str(tmpdir), "QEMU", "d.ova"))
+    open(os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk"), "w+").close()
+    with patch("gns3.registry.image.Image.copy") as mock:
+        assert empty_config._relative_image_path("d.ova/d.vmdk", os.path.join(str(tmpdir), "QEMU", "d.ova")) == "d.ova/d.vmdk"
+        assert mock.called

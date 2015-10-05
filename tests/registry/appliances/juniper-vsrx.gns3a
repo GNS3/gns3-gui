@@ -1,0 +1,45 @@
+{
+    "maintainer": "GNS3 Team",
+    "vendor_name": "Juniper",
+    "product_name": "vSRX",
+    "name": "vSRX",
+
+
+    "description": "The vSRX delivers core firewall, networking, advanced security, and automated lifecycle management capabilities for enterprises and service providers. The industry\u2019s fastest virtual security platform, the vSRX offers firewall speeds up to 17 Gbps using only two virtual CPUs, providing scalable, secure protection across private, public, and hybrid clouds.",
+    "maintainer_email": "developers@gns3.net",
+    "documentation_url": "http://www.juniper.net/techpubs/",
+    "product_url": "https://www.juniper.net/us/en/products-services/security/srx-series/vsrx/",
+    "category": "firewall",
+    "status": "experimental",
+    "vendor_url": "https://www.juniper.net",
+    "registry_version": 1,
+    
+    "qemu": {
+        "console_type": "telnet",
+        "ram": 2000,
+        "adapter_type": "e1000",
+        "adapters": 6,
+        "arch": "x86_64",
+        "options": "-smp 2"
+    },
+
+
+    "images": [
+        {
+            "version": "12.1X47.4-domestic",
+            "filename": "junos-vsrx-12.1X47-D10.4-domestic.ova",
+            "md5sum": "008b50d56c3a56445fd5d89616881de5",
+            "filesize": 238397440,
+            "download_url": "https://www.juniper.net/us/en/dm/free-vsrx-trial/"
+        }
+    ],
+
+    "versions": [
+        {
+            "name": "12.1X47.4-domestic",
+            "images": {
+                "hda_disk_image": "junos-vsrx-12.1X47-D10.4-domestic.ova/junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk"
+            }
+        }
+    ]
+  }

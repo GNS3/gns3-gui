@@ -70,8 +70,25 @@ def test_resolve_version(tmpdir):
     with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
         config = json.load(f)
 
+    hda = config["images"][0]
+
     new_config = Appliance(registry, "tests/registry/appliances/microcore-linux.json")
-    assert new_config["versions"][0]["images"] == {"hda_disk_image": config["images"][0]}
+    assert new_config["versions"][0]["images"] == {"hda_disk_image": hda}
+
+
+def test_resolve_version_ova(tmpdir):
+
+    with open("tests/registry/appliances/juniper-vsrx.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+
+    hda = config["images"][0]
+    hda["filename"] = os.path.join("junos-vsrx-12.1X47-D10.4-domestic.ova", "junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk")
+
+    new_config = Appliance(registry, "tests/registry/appliances/juniper-vsrx.gns3a")
+
+    assert new_config["versions"][0]["images"] == {
+        "hda_disk_image": hda
+    }
 
 
 def test_search_images_for_version(linux_microcore_img, microcore_appliance):

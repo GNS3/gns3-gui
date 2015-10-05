@@ -82,12 +82,12 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         renderer.filters['human_filesize'] = human_filesize
         template = renderer.get_template("appliance.html")
 
-        images_directories = set()
+        images_directories = list()
+        images_directories.append(os.path.join(ImageManager.instance().getDirectory(), "QEMU"))
+        images_directories.append(os.path.dirname(self._path))
         download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if download_directory != "":
-            images_directories.add(download_directory)
-        images_directories.add(os.path.join(ImageManager.instance().getDirectory(), "QEMU"))
-        images_directories.add(os.path.dirname(self._path))
+        if download_directory != "" and download_directory != os.path.dirname(self._path):
+            images_directories.append(download_directory)
         registry = Registry(images_directories)
 
         try:

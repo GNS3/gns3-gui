@@ -32,17 +32,36 @@ def test_search_image_file(tmpdir):
         f.write("ALPHA")
     with open(str(tmpdir / "QEMU" / "b"), "w+", encoding="utf-8") as f:
         f.write("BETA")
+    with open(str(tmpdir / "QEMU" / "c"), "w+", encoding="utf-8") as f:
+        f.write("CHARLIE")
+    with open(str(tmpdir / "QEMU" / "c.md5sum"), "w+", encoding="utf-8") as f:
+        f.write("42b84f8e3fba5bf993e3ba352d62d146")
 
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    image = registry.search_image_file("36b84f8e3fba5bf993e3ba352d62d146", 5)
+    image = registry.search_image_file("b", "36b84f8e3fba5bf993e3ba352d62d146", 5)
     assert image == str(tmpdir / "QEMU" / "b")
+
+    # Test using md5sum cache file
+    image = registry.search_image_file("c", "42b84f8e3fba5bf993e3ba352d62d146", 5)
+    assert image == str(tmpdir / "QEMU" / "c")
 
     # If size doesn't match ignore the file
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    image = registry.search_image_file("36b84f8e3fba5bf993e3ba352d62d146", 1000)
+    image = registry.search_image_file("b", "36b84f8e3fba5bf993e3ba352d62d146", 1000)
     assert image is None
 
     # md5sum doesn't exists
-    assert registry.search_image_file("00000000000000000000000000000000", 5) is None
+    assert registry.search_image_file("x", "00000000000000000000000000000000", 5) is None
 
 
+def test_search_image_file_ova(tmpdir):
+
+    os.makedirs(str(tmpdir / "QEMU" / "a.ova"))
+    with open(str(tmpdir / "QEMU" / "a.ova" / "a.vmdk"), "w+", encoding="utf-8") as f:
+        f.write("ALPHA")
+    with open(str(tmpdir / "QEMU" / "a.ova.md5sum"), "w+") as f:
+        f.write("36b84f8e3fba5bf993e3ba352d62d146")
+
+    registry = Registry(set([str(tmpdir / "QEMU")]))
+    image = registry.search_image_file("a.ova/a.vmdk", "36b84f8e3fba5bf993e3ba352d62d146", 5)
+    assert image == str(tmpdir / "QEMU" / "a.ova" / "a.vmdk")
