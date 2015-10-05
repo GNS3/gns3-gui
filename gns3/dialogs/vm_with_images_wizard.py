@@ -112,8 +112,8 @@ class VMWithImagesWizard(VMWizard):
         User select a different image in the combo box
         """
         item = combo_box.itemData(index)
-        if item and item["filename"]:
-            line_edit.setText(item["filename"])
+        if item and item["path"]:
+            line_edit.setText(item["path"])
         else:
             line_edit.setText("")
 
@@ -130,7 +130,7 @@ class VMWithImagesWizard(VMWizard):
             browser.hide()
             line_edit.hide()
             if combo_box.count() > 0:
-                line_edit.setText(combo_box.itemData(combo_box.currentIndex())["filename"])
+                line_edit.setText(combo_box.itemData(combo_box.currentIndex())["path"])
         else:
             combo_box.hide()
             line_edit.setText("")
@@ -163,5 +163,5 @@ class VMWithImagesWizard(VMWizard):
         for combo_box in self._images_combo_boxes:
             combo_box.clear()
             for vm in result:
-                combo_box.addItem(vm["filename"], vm)
+                combo_box.addItem(vm["path"], vm)
 
