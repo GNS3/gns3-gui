@@ -228,5 +228,6 @@ class UpdateManager(QtCore.QObject):
                 # we need to drop it
                 members = tar.getmembers()[1:]
                 for member in members:
-                    member.name = member.name.split(os.sep, 1)[1]
+                    # Path separator is always / even on windows
+                    member.name = member.name.split("/", 1)[1]
                 tar.extractall(path=self._package_directory, members=members)
