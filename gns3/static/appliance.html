@@ -53,7 +53,13 @@
 
         {% set version_id = loop.index %}
         {% for image in version.images.values() %}
-            <h4>{{image["filename"]}}</h4>
+            {% if "/" in image["filename"] %}
+                {% set ova, file = image["filename"].split("/") %}
+                <h4>{{ova}}</h4>
+                Location in OVA: {{file}}<br />
+            {% else %}
+                <h4>{{image["filename"].split("")}}</h4>
+            {% endif %}
             File Version: {{image["version"]}}<br />
             Size: {{ image["filesize"] | human_filesize}}<br />
             Checksum: {{image["md5sum"]}}<br />
@@ -68,7 +74,7 @@
                 <p style="color: red">File not available</p>
                 <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.importAppliance('{{image["filename"]}}', '{{image["md5sum"]}}')">Import file</button>
                 <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.refresh()">Refresh</button>
-            {% endif %}        
+            {% endif %}
             <hr />
         {% endfor %}
     {% endfor %}
