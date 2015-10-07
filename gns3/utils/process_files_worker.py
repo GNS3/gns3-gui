@@ -80,46 +80,50 @@ class ProcessFilesWorker(QtCore.QObject):
 
         copied = 0
         # start copying/moving from the source directory
-        for path, dirs, filenames in os.walk(self._source):
-            dirs[:] = [d for d in dirs if d not in self._skip_dirs]
-            filenames[:] = [f for f in filenames if f not in self._skip_files]
-            base_dir = path.replace(self._source, self._destination)
+        try:
+            for path, dirs, filenames in os.walk(self._source):
+                dirs[:] = [d for d in dirs if d not in self._skip_dirs]
+                filenames[:] = [f for f in filenames if f not in self._skip_files]
+                base_dir = path.replace(self._source, self._destination)
 
-            # start create the destination sub-directories
-            for directory in dirs:
-                try:
-                    destination_dir = os.path.join(base_dir, directory)
-                    os.makedirs(destination_dir)
-                except FileExistsError:
-                    pass
-                except OSError as e:
-                    self.error.emit("Could not create directory {}: {}".format(destination_dir, e), True)
-                    return
-                if not self._is_running:
-                    return
+                # start create the destination sub-directories
+                for directory in dirs:
+                    try:
+                        destination_dir = os.path.join(base_dir, directory)
+                        os.makedirs(destination_dir)
+                    except FileExistsError:
+                        pass
+                    except OSError as e:
+                        self.error.emit("Could not create directory {}: {}".format(destination_dir, e), True)
+                        return
+                    if not self._is_running:
+                        return
 
-            # finally the files themselves
-            for sfile in filenames:
-                source_file = os.path.join(path, sfile)
-                destination_file = os.path.join(base_dir, sfile)
-                try:
-                    if self._move:
-                        shutil.move(source_file, destination_file)
-                    else:
-                        shutil.copy2(source_file, destination_file)
-                except OSError as e:
-                    if self._move:
-                        log.warning("Cannot move: {}".format(e))
-                        self.error.emit("Could not move file to {}: {}".format(destination_file, e), False)
-                    else:
-                        log.warning("Cannot copy: {}".format(e))
-                        self.error.emit("Could not copy file to {}: {}".format(destination_file, e), False)
-                if not self._is_running:
-                    return
-                copied += 1
-                # update the progress made
-                progress = float(copied) / file_count * 100
-                self.updated.emit(progress)
+                # finally the files themselves
+                for sfile in filenames:
+                    source_file = os.path.join(path, sfile)
+                    destination_file = os.path.join(base_dir, sfile)
+                    try:
+                        if self._move:
+                            shutil.move(source_file, destination_file)
+                        else:
+                            shutil.copy2(source_file, destination_file)
+                    except OSError as e:
+                        if self._move:
+                            log.warning("Cannot move: {}".format(e))
+                            self.error.emit("Could not move file to {}: {}".format(destination_file, e), False)
+                        else:
+                            log.warning("Cannot copy: {}".format(e))
+                            self.error.emit("Could not copy file to {}: {}".format(destination_file, e), False)
+                    if not self._is_running:
+                        return
+                    copied += 1
+                    # update the progress made
+                    progress = float(copied) / file_count * 100
+                    self.updated.emit(progress)
+        except RuntimeError:
+            self.error.emit("Maximum path depth exceedeed when copying {}".format(self._source), True)
+
 
         # everything has been copied or moved, let's inform the GUI
         self.finished.emit()
