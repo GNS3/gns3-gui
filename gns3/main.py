@@ -189,9 +189,6 @@ def main():
     def version(version_string):
         return [int(i) for i in re.split(r'[^0-9]', version_string)]
 
-    if version(QtCore.QT_VERSION_STR) < version("4.6"):
-        raise SystemExit("Requirement is Qt version 4.6 or higher, got version {}".format(QtCore.QT_VERSION_STR))
-
     # 4.8.3 because of QSettings (http://pyqt.sourceforge.net/Docs/PyQt4/pyqt_qsettings.html)
     if DEFAULT_BINDING == "PyQt4" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
         raise SystemExit("Requirement is PyQt version 4.8.3 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
