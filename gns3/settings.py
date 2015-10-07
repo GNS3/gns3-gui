@@ -149,7 +149,7 @@ if sys.platform.startswith("win"):
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Terminal + nc': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"stty raw; nc -U \\\"%s\\\"; exit\"'",
+    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Terminal + nc': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"stty raw; /usr/bin/nc -U \\\"%s\\\"; exit\"'",
                                              'Terminal + socat': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"socat UNIX-CONNECT:\\\"%s\\\" stdio,raw,echo=0 ; exit\"'"}
 
     # default Mac OS X serial console command
