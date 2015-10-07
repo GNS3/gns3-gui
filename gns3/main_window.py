@@ -1463,12 +1463,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             index = 0
             size = len(settings["RecentFiles"])
             for file_path in settings["RecentFiles"]:
-                if file_path and os.path.exists(file_path):
-                    action = self._recent_file_actions[index]
-                    action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
-                    action.setData(file_path)
-                    action.setVisible(True)
-                    index += 1
+                try:
+                    if file_path and os.path.exists(file_path):
+                        action = self._recent_file_actions[index]
+                        action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                        action.setData(file_path)
+                        action.setVisible(True)
+                        index += 1
+                # We can have this error if user save a file with unicode char
+                # and change his system locale.
+                except UnicodeEncodeError:
+                    pass
 
         for index in range(size + 1, self._max_recent_files):
             self._recent_file_actions[index].setVisible(False)
