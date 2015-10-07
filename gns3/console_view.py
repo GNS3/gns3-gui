@@ -25,6 +25,7 @@ from .version import __version__
 from .console_cmd import ConsoleCmd
 from .pycutext import PyCutExt
 from .modules import MODULES
+from .qt import QtCore
 
 
 class ConsoleView(PyCutExt, ConsoleCmd):
@@ -38,8 +39,8 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # Set introduction message
         bitness = struct.calcsize("P") * 8
         current_year = datetime.date.today().year
-        self.intro = "GNS3 management console. Running GNS3 version {} on {} ({}-bit).\n" \
-                     "Copyright (c) 2006-{} GNS3 Technologies.".format(__version__, platform.system(), bitness, current_year)
+        self.intro = "GNS3 management console.\nRunning GNS3 version {} on {} ({}-bit) with Python {} Qt {}.\n" \
+                     "Copyright (c) 2006-{} GNS3 Technologies.".format(__version__, platform.system(), bitness, platform.python_version(), QtCore.QT_VERSION_STR, current_year)
 
         # Parent class initialization
         try:
