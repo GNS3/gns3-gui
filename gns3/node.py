@@ -473,7 +473,7 @@ class Node(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def httpPost(self, path, callback, body={}, context={}):
+    def httpPost(self, path, callback, body={}, context={}, **kwargs):
         """
         POST on current server / project
 
@@ -483,9 +483,9 @@ class Node(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        self._project.post(self._server, path, callback, body=body, context=context)
+        self._project.post(self._server, path, callback, body=body, context=context, **kwargs)
 
-    def httpPut(self, path, callback, body={}, context={}):
+    def httpPut(self, path, callback, body={}, context={}, **kwargs):
         """
         PUT on current server / project
 
@@ -495,9 +495,9 @@ class Node(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        self._project.put(self._server, path, callback, body=body, context=context)
+        self._project.put(self._server, path, callback, body=body, context=context, **kwargs)
 
-    def httpGet(self, path, callback, context={}):
+    def httpGet(self, path, callback, context={}, **kwargs):
         """
         GET on current server / project
 
@@ -506,9 +506,9 @@ class Node(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        self._project.get(self._server, path, callback, context=context)
+        self._project.get(self._server, path, callback, context=context, **kwargs)
 
-    def httpDelete(self, path, callback, context={}):
+    def httpDelete(self, path, callback, context={}, **kwargs):
         """
         DELETE on current server / project
 
@@ -517,7 +517,7 @@ class Node(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        self._project.delete(self._server, path, callback, context=context)
+        self._project.delete(self._server, path, callback, context=context, **kwargs)
 
     def allocateUDPPort(self, port_id):
         """

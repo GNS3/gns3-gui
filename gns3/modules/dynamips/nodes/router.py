@@ -487,7 +487,8 @@ class Router(VM):
         self.httpGet("/dynamips/vms/{vm_id}/idlepc_proposals".format(
             vm_id=self._vm_id),
             callback,
-            context={"router": self})
+            context={"router": self},
+            progressText="Computing Idle-PC values, please wait...")
 
     def computeAutoIdlepc(self, callback):
         """
@@ -498,7 +499,8 @@ class Router(VM):
         self.httpGet("/dynamips/vms/{vm_id}/auto_idlepc".format(
             vm_id=self._vm_id),
             callback,
-            context={"router": self})
+            context={"router": self},
+            progressText="Computing Idle-PC values, please wait...")
 
     def idlepc(self):
         """
