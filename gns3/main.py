@@ -45,6 +45,7 @@ import time
 import locale
 import argparse
 import signal
+import re
 
 try:
     from gns3.qt import QtCore, QtGui, QtWidgets, DEFAULT_BINDING
@@ -186,7 +187,7 @@ def main():
         raise SystemExit("Python 3.4 or higher is required")
 
     def version(version_string):
-        return [int(i) for i in version_string.split('.')]
+        return [int(i) for i in re.split(r'[^0-9]', version_string)]
 
     if version(QtCore.QT_VERSION_STR) < version("4.6"):
         raise SystemExit("Requirement is Qt version 4.6 or higher, got version {}".format(QtCore.QT_VERSION_STR))
