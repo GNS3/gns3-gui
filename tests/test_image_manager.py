@@ -76,6 +76,28 @@ def test_addMissingImage(image_manager, remote_server, qemu_img):
             assert args[2] == 'QEMU'
 
 
+def test_addMissingImageOVAWithMultipleVMDK(image_manager, remote_server, tmpdir):
+    os.makedirs(str(tmpdir / 'QEMU' / 'test.ova'))
+    open(str(tmpdir / 'QEMU' / 'test.ova' / 'test.vmdk'), 'w+').close()
+    open(str(tmpdir / 'QEMU' / 'test.ova' / 'test-s001.vmdk'), 'w+').close()
+    open(str(tmpdir / 'QEMU' / 'test.ova' / 'test.nvram'), 'w+').close()
+
+    with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
+        with patch('gns3.image_manager.ImageManager._askForUploadMissingImage', return_value=True):
+            image_manager.addMissingImage('test.ova/test.vmdk', remote_server, 'QEMU')
+            assert mock.call_count == 2
+
+            args, kwargs = mock.call_args_list[0]
+            assert args[0] == str(tmpdir / 'QEMU' / 'test.ova' / 'test-s001.vmdk')
+            assert args[1] == remote_server
+            assert args[2] == 'QEMU'
+
+            args, kwargs = mock.call_args_list[1]
+            assert args[0] == str(tmpdir / 'QEMU' / 'test.ova' / 'test.vmdk')
+            assert args[1] == remote_server
+            assert args[2] == 'QEMU'
+
+
 def test_addMissingImage_ask_once(image_manager, remote_server, qemu_img):
     with patch('gns3.image_manager.ImageManager._askForUploadMissingImage', return_value=False) as mock:
         image_manager.addMissingImage('test.img', remote_server, 'QEMU')

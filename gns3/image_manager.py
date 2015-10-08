@@ -17,6 +17,7 @@
 
 import os
 import pathlib
+import glob
 
 from gns3.servers import Servers
 from gns3.qt import QtWidgets
@@ -112,6 +113,13 @@ class ImageManager:
         path = os.path.join(self.getDirectoryForType(vm_type), filename)
         if os.path.exists(path):
             if self._askForUploadMissingImage(filename, server):
+
+                if filename.endswith(".vmdk"):
+                    # A vmdk file could be split in multiple vmdk file
+                    search = glob.escape(path).replace(".vmdk", "-*.vmdk")
+                    for file in glob.glob(search):
+                        self._uploadImageToRemoteServer(file, server, vm_type)
+
                 self._uploadImageToRemoteServer(path, server, vm_type)
                 del self._asked_for_this_image[server.id()][filename]
 
