@@ -58,7 +58,7 @@
                 <h4>{{ova}}</h4>
                 Location in OVA: {{file}}<br />
             {% else %}
-                <h4>{{image["filename"].split("")}}</h4>
+                <h4>{{image["filename"]}}</h4>
             {% endif %}
             File Version: {{image["version"]}}<br />
             Size: {{ image["filesize"] | human_filesize}}<br />
