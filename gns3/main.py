@@ -37,6 +37,7 @@ import argparse
 
 from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
+from gns3.utils.analytics import AnalyticsClient
 
 
 import logging
@@ -226,6 +227,7 @@ def main():
 
     mainwindow = MainWindow(options.project)
     mainwindow.show()
+
     exit_code = app.exec_()
     delattr(MainWindow, "_instance")
     app.deleteLater()

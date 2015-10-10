@@ -51,7 +51,6 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.message_box import MessageBox
-from .utils.analytics import AnalyticsClient
 from .utils.glob import glob_escape
 from .ports.port import Port
 from .items.node_item import NodeItem
@@ -67,6 +66,7 @@ from .cloud_instances import CloudInstances
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
+from .utils.analytics import AnalyticsClient
 
 log = logging.getLogger(__name__)
 
@@ -105,6 +105,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._max_recent_files = 5
         self._recent_file_actions = []
         self._start_time = time.time()
+        self._analytics_client = AnalyticsClient()
         self.loading_cloud_project = False
 
         self._uiNewsDockWidget = None
@@ -1090,6 +1091,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
+        self._analytics_client.sendScreenView("Topology", session_start=False)
         self.close()
 
     def checkForUnsavedChanges(self):
@@ -1140,7 +1142,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
 
-        self._gettingStartedActionSlot(auto=True)
+        local_config = LocalConfig.instance()
+        gui_settings = local_config.loadSectionSettings("GUI", {"hide_getting_started_dialog": False})
+        if gui_settings["hide_getting_started_dialog"] is not True:
+            self._gettingStartedActionSlot(auto=True)
 
         # connect to the local server
         servers = Servers.instance()
@@ -1184,6 +1189,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
+
+        self._analytics_client.sendScreenView("Topology")
 
     def saveProjectAs(self):
         """
@@ -1297,6 +1304,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
         self._project.setTopologyFile(path)
         self._setCurrentFile(path)
+
+        self._analytics_client.sendScreenView("Topology")
+
         return True
 
     def _convertOldProject(self, path):
