@@ -161,14 +161,22 @@ class LocalConfig:
 
         settings = self.settings().get(section, dict())
 
+        missing = False
         # use default values for missing settings
         for name, value in default_settings.items():
             if name not in settings:
                 settings[name] = value
+                missing = True
 
         if section not in self._settings:
             self._settings[section] = {}
         self._settings[section].update(settings)
+
+        # If a value was not in setting file we store it
+        # on disk
+        if missing:
+            self.saveSectionSettings(section, settings)
+
         return settings
 
     def saveSectionSettings(self, section, settings):

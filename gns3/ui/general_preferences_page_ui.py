@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Fri Mar 13 15:27:54 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Sat Oct 10 22:06:44 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName(_fromUtf8("GeneralPreferencesPageWidget"))
-        GeneralPreferencesPageWidget.resize(467, 536)
+        GeneralPreferencesPageWidget.resize(510, 577)
         self.verticalLayout = QtGui.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.uiMiscTabWidget = QtGui.QTabWidget(GeneralPreferencesPageWidget)
@@ -275,6 +275,10 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiCrashReportCheckBox.setChecked(True)
         self.uiCrashReportCheckBox.setObjectName(_fromUtf8("uiCrashReportCheckBox"))
         self.verticalLayout_2.addWidget(self.uiCrashReportCheckBox)
+        self.uiStatsCheckBox = QtGui.QCheckBox(self.tab)
+        self.uiStatsCheckBox.setChecked(True)
+        self.uiStatsCheckBox.setObjectName(_fromUtf8("uiStatsCheckBox"))
+        self.verticalLayout_2.addWidget(self.uiStatsCheckBox)
         self.uiSlowStartAllLabel = QtGui.QLabel(self.tab)
         self.uiSlowStartAllLabel.setObjectName(_fromUtf8("uiSlowStartAllLabel"))
         self.verticalLayout_2.addWidget(self.uiSlowStartAllLabel)
@@ -349,6 +353,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiAutoScreenshotCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically take a screenshot when saving a project", None))
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update", None))
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically send crash reports", None))
+        self.uiStatsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send stats to GNS3 team", None))
         self.uiSlowStartAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each device start when starting all devices:", None))
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds", None))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.tab), _translate("GeneralPreferencesPageWidget", "Miscellaneous", None))

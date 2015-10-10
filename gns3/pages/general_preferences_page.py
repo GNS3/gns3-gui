@@ -205,6 +205,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         local_server = Servers.instance().localServerSettings()
         self.uiProjectsPathLineEdit.setText(local_server["projects_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
+        self.uiStatsCheckBox.setChecked(settings["send_stats"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
@@ -284,6 +285,7 @@ class GeneralPreferencesPage(QtGui.QWidget, Ui_GeneralPreferencesPageWidget):
         new_settings["auto_close_console"] = self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked()
         new_settings["bring_console_to_front"] = self.uiBringConsoleWindowToFrontCheckBox.isChecked()
         new_settings["delay_console_all"] = self.uiDelayConsoleAllSpinBox.value()
+        new_settings["send_stats"] = self.uiStatsCheckBox.isChecked()
 
         from ..main_window import MainWindow
         MainWindow.instance().setSettings(new_settings)
