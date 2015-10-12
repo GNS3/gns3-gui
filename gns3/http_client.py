@@ -180,8 +180,13 @@ class HTTPClient(QtCore.QObject):
                     log.debug("Running server is not a GNS3 local server (not started with --local)")
                     return False
                 return True
+        except (http.client.InvalidURL) as e:
+            log.warn("Invalid local server url: {}".format(e))
+        except (urllib.error.URLError):
+            # Connection refused. It's a normal behavior if server is not started
+            pass
         except (OSError, urllib.error.HTTPError, http.client.BadStatusLine, ValueError) as e:
-            log.debug("A non GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
+            log.warn("A non GNS3 server is already running on {}:{}: {}".format(self.host, self.port, e))
         return False
 
     def get(self, path, callback, context={}):
