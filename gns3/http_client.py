@@ -345,7 +345,7 @@ class HTTPClient(QtCore.QObject):
             return e.code, None
         except (OSError, http.client.BadStatusLine, ValueError) as e:
             log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
-            return 0, None
+        return 0, None
 
     def get(self, path, callback, **kwargs):
         """
