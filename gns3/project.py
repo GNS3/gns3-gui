@@ -383,5 +383,7 @@ class Project(QtCore.QObject):
                     vm.stopped_signal.emit()
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
-            print(result["event"]["message"])
-
+            print("Error: " + result["event"]["message"])
+        elif result["action"] == "log.warning":
+            log.warning(result["event"]["message"])
+            print("Warning: " + result["event"]["message"])
