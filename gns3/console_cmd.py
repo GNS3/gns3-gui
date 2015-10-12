@@ -204,7 +204,7 @@ class ConsoleCmd(cmd.Cmd):
     def do_debug(self, args):
         """
         Activate or deactivate debugging messages
-        debug [level] (0 or 1).
+        debug [level] (0, 1 or 2).
         """
 
         if '?' in args or args.strip() == "":
@@ -219,9 +219,14 @@ class ConsoleCmd(cmd.Cmd):
             if level == 0:
                 print("Deactivating debugging")
                 root.removeHandler(ch)
+                root.setLevel(logging.INFO)
             else:
-                print("Activating debugging")
                 root.addHandler(ch)
+                if level == 1:
+                    print("Activating debugging")
+                else:
+                    print("Activating full debugging")
+                    root.setLevel(logging.DEBUG)
             from .main_window import MainWindow
             MainWindow.instance().setSettings({"debug_level": level})
         else:
