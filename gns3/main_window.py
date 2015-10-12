@@ -1207,9 +1207,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when user accept the new project dialog
         """
-        new_project_settings = self._project_dialog.getNewProjectSettings()
-        self._createNewProject(new_project_settings)
-        self._project_dialog = None
+        if self._project_dialog:
+            new_project_settings = self._project_dialog.getNewProjectSettings()
+            self._createNewProject(new_project_settings)
+            self._project_dialog = None
 
     def _running_nodes(self):
         """
