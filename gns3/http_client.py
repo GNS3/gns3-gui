@@ -334,6 +334,12 @@ class HTTPClient(QtCore.QObject):
                     return response.status, json_data
             else:
                 return response.status, None
+        except (http.client.InvalidURL) as e:
+            log.warn("Invalid local server url: {}".format(e))
+            return 0, None
+        except (urllib.error.URLError):
+            # Connection refused. It's a normal behavior if server is not started
+            return 0, None
         except urllib.error.HTTPError as e:
             log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
             return e.code, None
