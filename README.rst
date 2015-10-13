@@ -113,6 +113,21 @@ If you want to update the interface, modify the .ui files using QT tools. And:
     cd scripts
     python build_pyqt.py
 
+Debug
+"""""
+
+If you want to see the full logs in the internal shell you can type:
+
+.. code:: bash
+    
+    debug 2
+
+
+Or start the app with --debug flag.
+
+Due to the fact PyQT intercept you can use a web debugger for inspecting stuff:
+https://github.com/Kozea/wdb
+
 
 Test with PyQT4
 ~~~~~~~~~~~~~~~~
