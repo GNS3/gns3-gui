@@ -680,9 +680,19 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="uiStatsCheckBox">
+         <property name="text">
+          <string>Send stats to GNS3 team</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+     </widget>
+     </item>
+     <item>
         <widget class="QCheckBox" name="uiExperimentalFeaturesCheckBox">
          <property name="text">
-          <string>Enable experimental features (Dangerous, require restart)</string>
+             <string>Enable experimental features (Dangerous, require restart)</string>
          </property>
         </widget>
        </item>

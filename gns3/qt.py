@@ -113,6 +113,37 @@ QtWidgets.QFileDialog = QFileDialog
 
 
 
+class StatsQtWidgetsQDialog(QtWidgets.QDialog):
+    """
+    Send stats from all the QWizard
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        import re
+        from .utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtWidgets.QDialog = StatsQtWidgetsQDialog
+
+
+class StatsQtWidgetsQWizard(QtWidgets.QWizard):
+    """
+    Send stats from all the QWizard
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        import re
+        from .utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtWidgets.QWizard = StatsQtWidgetsQWizard
+
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):
     class FakeQtSignal:

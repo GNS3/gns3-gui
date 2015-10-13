@@ -262,6 +262,7 @@ class LocalConfig(QtCore.QObject):
 
         return copy.deepcopy(settings)
 
+
     def saveSectionSettings(self, section, settings):
         """
         Save all the settings in a given section.

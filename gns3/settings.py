@@ -21,6 +21,7 @@ Default general settings.
 
 import os
 import sys
+import uuid
 import platform
 
 # Default projects directory location
@@ -240,6 +241,8 @@ GENERAL_SETTINGS = {
     "auto_screenshot": True,
     "check_for_update": True,
     "experimental_features": False,
+    "send_stats": True,
+    "stats_visitor_id": str(uuid.uuid4()), # An anonymous id for stats
     "last_check_for_update": 0,
     "slow_device_start_all": 0,
     "link_manual_mode": True,

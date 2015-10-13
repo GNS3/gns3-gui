@@ -63,6 +63,7 @@ from .progress import Progress
 from .image_manager import ImageManager
 from .update_manager import UpdateManager
 from .appliance_window import ApplianceWindow
+from .utils.analytics import AnalyticsClient
 
 log = logging.getLogger(__name__)
 
@@ -109,6 +110,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer = QtCore.QTimer(self)
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
+        self._analytics_client = AnalyticsClient()
 
         self._uiNewsDockWidget = None
         try:
@@ -1085,6 +1087,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
+        self._analytics_client.sendScreenView("Topology", session_start=False)
         self.close()
 
     def checkForUnsavedChanges(self):
@@ -1141,6 +1144,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
 
         # FIXME: do something with getting started dialog
+        # if gui_settings["hide_getting_started_dialog"] is not True:
         # self._gettingStartedActionSlot(auto=True)
 
         servers = Servers.instance()
@@ -1180,6 +1184,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if setup_wizard.showit() is True:
                 setup_wizard.show()
                 setup_wizard.exec_()
+
+        self._analytics_client.sendScreenView("Topology")
 
         self._createTemporaryProject()
 
@@ -1330,6 +1336,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
         self._project.setTopologyFile(path)
         self._setCurrentFile(path)
+
+        self._analytics_client.sendScreenView("Topology")
+
         return True
 
     def _convertOldProject(self, path):

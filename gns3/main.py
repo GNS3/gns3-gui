@@ -58,6 +58,7 @@ from gns3.crash_report import CrashReport
 from gns3.local_config import LocalConfig
 from gns3.application import Application
 
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -258,6 +259,7 @@ def main():
     signal.signal(signal.SIGTERM, sigint_handler)
 
     mainwindow.show()
+
     exit_code = app.exec_()
     delattr(MainWindow, "_instance")
     app.deleteLater()

@@ -249,6 +249,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiSymbolsPathLineEdit.setText(local_server["symbols_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
+        self.uiStatsCheckBox.setChecked(settings["send_stats"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
@@ -335,7 +336,8 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                 "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
                                 "auto_close_console": self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked(),
                                 "bring_console_to_front": self.uiBringConsoleWindowToFrontCheckBox.isChecked(),
-                                "delay_console_all": self.uiDelayConsoleAllSpinBox.value()}
+                                "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
+                                "send_stats": self.uiStatsCheckBox.isChecked()}
 
         from ..main_window import MainWindow
         MainWindow.instance().setSettings(new_general_settings)
