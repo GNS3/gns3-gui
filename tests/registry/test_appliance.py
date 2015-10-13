@@ -76,6 +76,12 @@ def test_resolve_version(tmpdir):
     assert new_config["versions"][0]["images"] == {"hda_disk_image": hda}
 
 
+def test_resolve_version_invalid_file(tmpdir):
+
+    with pytest.raises(ApplianceError):
+        Appliance(registry, "tests/registry/appliances/broken-microcore-linux.json")
+
+
 def test_resolve_version_ova(tmpdir):
 
     with open("tests/registry/appliances/juniper-vsrx.gns3a", encoding="utf-8") as f:

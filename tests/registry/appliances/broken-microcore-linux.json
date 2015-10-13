@@ -1,0 +1,42 @@
+{
+    "name": "Micro Core Linux",
+    "category": "guest",
+    "description": "Micro Core Linux® i is a smaller variant of Tiny Core without a graphical desktop.\n\nIt's provide a complete Linux system in few MB.",
+    "vendor_name": "Team Tiny Core",
+    "vendor_url": "http://distro.ibiblio.org/tinycorelinux",
+    "documentation_url": "http://wiki.tinycorelinux.net/",
+    "product_name": "Micro Core Linux",
+    "product_url": "http://distro.ibiblio.org/tinycorelinux",
+    "registry_version": 1,
+    "status": "stable",
+    "maintainer": "GNS3 Team",
+    "maintainer_email": "developers@gns3.net",
+
+    "qemu": {
+        "adapter_type": "e1000",
+        "adapters": 1,
+        "ram": 32,
+        "arch": "i386",
+        "console_type": "telnet"
+    },
+
+    "images": [
+        {
+            "filename": "linux-microcore-3.4.1.img",
+            "version": "3.4.1",
+            "md5sum": "5d41402abc4b2a76b9719d911017c592",
+            "filesize": 5,
+            "download_url": "https://sourceforge.net/projects/gns-3/files/Qemu%20Appliances/",
+            "direct_download_url": "http://downloads.sourceforge.net/project/gns-3/Qemu%20Appliances/linux-microcore-3.4.1.img"
+        }
+    ],
+
+    "versions": [
+        {
+            "name": "3.4.1",
+            "images": {
+                "hda_disk_image": "broken.img"
+            }
+        }
+    ]
+}

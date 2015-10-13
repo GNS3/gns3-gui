@@ -68,6 +68,9 @@ class Appliance(collections.Mapping):
 
         for version in self._appliance["versions"]:
             for image_type, filename in version["images"].items():
+
+                found = False
+
                 for file in self._appliance["images"]:
                     file = copy.copy(file)
 
@@ -80,6 +83,12 @@ class Appliance(collections.Mapping):
                     if file["filename"] == parent:
                         file["filename"] = filename
                         version["images"][image_type] = file
+                        found = True
+                        break
+
+                if not found:
+                    raise ApplianceError("Broken appliance missing file {} for version {}".format(filename, version["name"]))
+
 
     def search_images_for_version(self, version_name):
         """
