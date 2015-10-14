@@ -21,6 +21,7 @@ import json
 import sys
 import os
 import urllib
+import re
 
 from .image import Image
 
@@ -204,9 +205,14 @@ class Config:
         images_dir = os.path.join(self.images_dir, "QEMU")
         path = os.path.abspath(path)
         if os.path.commonprefix([images_dir, path]) == images_dir:
-            return filename
+            return path.replace(images_dir, '').strip('/\\')
 
-        Image(path).copy(os.path.join(self.images_dir, "QEMU"))
+        if '/' in filename or '\\' in filename:
+            # In case of OVA we want to update the OVA name
+            base_file = re.split(r'[/\\]', filename)[0]
+        else:
+            base_file = filename
+        Image(path).copy(os.path.join(self.images_dir, "QEMU"), base_file)
         return filename
 
     def save(self):

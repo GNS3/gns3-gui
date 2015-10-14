@@ -100,7 +100,7 @@ class Image:
         """
         return os.path.getsize(self.path)
 
-    def copy(self, directory):
+    def copy(self, directory, filename):
         """
         Copy the image to a directory. Extract the image if it's an OVA.
 
@@ -108,7 +108,6 @@ class Image:
 
         :param directory: Destination directory
         """
-        filename = os.path.basename(self.path)
         dst = os.path.join(directory, filename)
 
         if tarfile.is_tarfile(self.path):
