@@ -20,7 +20,6 @@ import jinja2
 import os
 import sys
 import shutil
-import functools
 
 from .utils.get_resource import get_resource
 from .utils.wait_for_lambda_worker import WaitForLambdaWorker
@@ -61,14 +60,16 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         # Enable the inspector on right click
         #self.uiWebView.settings().setAttribute(QtWebKit.QWebSettings.DeveloperExtrasEnabled, True)
 
+
         self.update_html_signal.connect(self._updateHTMLSlot)
 
         self.show()
 
         self._refresh()
 
+
     def _refresh(self):
-        worker = WaitForLambdaWorker(functools.partial(self._loadPage))
+        worker = WaitForLambdaWorker(lambda: self._loadPage())
         progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for images...", None, busy=True, parent=self)
         progress_dialog.show()
 
