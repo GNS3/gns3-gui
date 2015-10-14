@@ -112,7 +112,6 @@ background-none;
     <addaction name="uiOnlineHelpAction"/>
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
-    <addaction name="uiGettingStartedAction"/>
     <addaction name="uiLabInstructionsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>

@@ -252,7 +252,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
         self.uiCheckForUpdateAction.triggered.connect(self._checkForUpdateActionSlot)
         self.uiSetupWizard.triggered.connect(self._setupWizardActionSlot)
-        self.uiGettingStartedAction.triggered.connect(self._gettingStartedActionSlot)
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
@@ -883,25 +882,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             setup_wizard.show()
             setup_wizard.exec_()
 
-    def _gettingStartedActionSlot(self, auto=False):
-        """
-        Slot to open the news dialog.
-        """
-
-        try:
-            # QtWebKit which is used by GettingStartedDialog is not installed
-            # by default on FreeBSD, Solaris and possibly other systems.
-            from .dialogs.getting_started_dialog import GettingStartedDialog
-        except ImportError as e:
-            print(e)
-            return
-
-        dialog = GettingStartedDialog(self)
-        if auto is True and dialog.showit() is False:
-            return
-        dialog.show()
-        dialog.exec_()
-
     def _labInstructionsActionSlot(self, silent=False):
         """
         Slot to open lab instructions.
@@ -1142,10 +1122,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # show the news dock widget
         if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
             self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
-
-        # FIXME: do something with getting started dialog
-        # if gui_settings["hide_getting_started_dialog"] is not True:
-        # self._gettingStartedActionSlot(auto=True)
 
         servers = Servers.instance()
 

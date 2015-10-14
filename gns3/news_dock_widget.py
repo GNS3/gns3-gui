@@ -92,7 +92,7 @@ class NewsDockWidget(QtWidgets.QDockWidget, Ui_NewsDockWidget):
         """
 
         if QtGui.QDesktopServices.openUrl(url) is False:
-            QtWidgets.QMessageBox.critical(self, "Getting started", "Failed to open the URL: {}".format(url))
+            QtWidgets.QMessageBox.critical(self, "News", "Failed to open the URL: {}".format(url))
 
     def _loadFinishedSlot(self, result=False):
         """
