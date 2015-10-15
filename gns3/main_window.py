@@ -1067,7 +1067,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
-        self._analytics_client.sendScreenView("Topology", session_start=False)
+        self._analytics_client.sendScreenView("Main Window", session_start=False)
         self.close()
 
     def checkForUnsavedChanges(self):
@@ -1161,7 +1161,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.show()
                 setup_wizard.exec_()
 
-        self._analytics_client.sendScreenView("Topology")
+        self._analytics_client.sendScreenView("Main Window")
 
         self._createTemporaryProject()
 
@@ -1204,6 +1204,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if hasattr(node, "start") and node.status() == Node.started:
                 running_nodes.append(node.name())
         return running_nodes
+
 
     def saveProjectAs(self):
         """
@@ -1313,7 +1314,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project.setTopologyFile(path)
         self._setCurrentFile(path)
 
-        self._analytics_client.sendScreenView("Topology")
+        self._analytics_client.sendScreenView("Main Window")
 
         return True
 
