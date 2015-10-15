@@ -1091,7 +1091,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
-        self._analytics_client.sendScreenView("Topology", session_start=False)
+        self._analytics_client.sendScreenView("Main Window", session_start=False)
         self.close()
 
     def checkForUnsavedChanges(self):
@@ -1189,8 +1189,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
-
-        self._analytics_client.sendScreenView("Topology")
 
     def saveProjectAs(self):
         """
@@ -1305,7 +1303,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._project.setTopologyFile(path)
         self._setCurrentFile(path)
 
-        self._analytics_client.sendScreenView("Topology")
+        self._analytics_client.sendScreenView("Main Window")
 
         return True
 
