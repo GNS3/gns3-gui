@@ -444,7 +444,7 @@ class VMwareVM(VM):
         """
 
         log.debug("{} is requesting a VMnet interface allocation".format(self.name()))
-        self.httpPost("/vmware/interfaces/vmnet", self._allocateVMnetInterfaceCallback, context={"port_id": port_id})
+        self.httpPost("/vmware/vms/{vm_id}/interfaces/vmnet".format(vm_id=self._vm_id), self._allocateVMnetInterfaceCallback, context={"port_id": port_id})
 
     def _allocateVMnetInterfaceCallback(self, result, error=False, context={}, **kwargs):
         """
