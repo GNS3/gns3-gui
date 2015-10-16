@@ -213,9 +213,6 @@ class QemuVM(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        if "cloud_path" in new_settings:
-            params["cloud_path"] = self._settings["cloud_path"] = new_settings.pop("cloud_path")
-
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/qemu/vms/{vm_id}".format(vm_id=self._vm_id), self._updateCallback, body=params)
 
