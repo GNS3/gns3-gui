@@ -45,7 +45,7 @@ if sys.platform.startswith("win"):
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'SuperPutty (included with GNS3)': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
-                                             'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT securecrt.vbs /N "%d" /T /TELNET %h %p'.format(program_files),
+                                             'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /N "%d" /T /TELNET %h %p'.format(program_files),
                                              'SecureCRT (personal profile)': r'"{}\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
                                              'Telnet': 'telnet %h %p',
