@@ -112,17 +112,11 @@ class VMWizard(QtWidgets.QWizard):
             if hasattr(self, "uiVMRadioButton") and not GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setEnabled(False)
             if hasattr(self, "uiVMRadioButton") and GNS3VM.instance().isRunning():
-
                 self.uiVMRadioButton.setChecked(True)
             elif self._use_local_server and self.uiLocalRadioButton.isChecked():
                 self.uiLocalRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(True)
-        else:
-            if self.uiLocalRadioButton.isChecked():
-                servers = Servers.instance()
-                if servers.localServerAutoStart() and not servers.localServerIsRunning():
-                    QtWidgets.QMessageBox.critical(self, "Wizard", "Local server is not running")
 
     def validateCurrentPage(self):
         """

@@ -445,10 +445,14 @@ class HTTPClient(QtCore.QObject):
         :param msg: An optional additional message for the callback
         """
 
-        if len(msg) > 0:
-            msg = "Can't connect to server {}: {}".format(self.url(), msg)
+        if self.isLocal():
+            server = "local server {}".format(self.url())
         else:
-            msg = "Can't connect to server {}".format(self.url())
+            server = "remote server {}".format(self.url())
+        if len(msg) > 0:
+            msg = "Cannot connect to {}: {}".format(server, msg)
+        else:
+            msg = "Cannot connect to {}".format(server)
         log.error(msg)
         if callback is not None:
             callback({"message": msg}, error=True, server=self)

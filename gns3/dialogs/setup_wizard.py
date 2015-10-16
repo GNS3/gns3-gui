@@ -233,9 +233,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Refresh the list of VM available in VMware or VirtualBox.
         """
 
-        if not Servers.instance().localServerIsRunning():
-            QtWidgets.QMessageBox.critical(self, "Local server", "{}".format("Local server is not running"))
-            return
         server = Servers.instance().localServer()
         if self.uiVmwareRadioButton.isChecked():
             server.get("/vmware/vms", self._getVMsFromServerCallback)

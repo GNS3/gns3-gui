@@ -1139,7 +1139,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         server = servers.localServer()
         if servers.localServerAutoStart():
             if server.isLocalServerRunning():
-                log.info("Connecting to a server already running on this host")
+                log.info("A local server already running on this host")
             else:
                 if servers.initLocalServer() and servers.startLocalServer():
                     worker = WaitForConnectionWorker(server.host(), server.port())
