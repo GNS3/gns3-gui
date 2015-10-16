@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created: Thu Oct 15 21:17:06 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -419,8 +420,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLaunchNewProjectDialogCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Launch the new project dialog on startup"))
         self.uiAutoScreenshotCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically take a screenshot when saving a project"))
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update"))
-        self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically send crash reports"))
-        self.uiStatsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send stats to GNS3 team"))
+        self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous crash reports"))
+        self.uiStatsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous usage statistics"))
         self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features (Dangerous, require restart)"))
         self.uiSlowStartAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each device start when starting all devices:"))
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds"))

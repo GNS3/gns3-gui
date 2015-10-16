@@ -19,14 +19,13 @@
 import jinja2
 import os
 import sys
-import shutil
 
+from .qt import QtCore, QtWidgets, QtWebKit, QtWebKitWidgets, QtGui
 from .utils.get_resource import get_resource
 from .utils.wait_for_lambda_worker import WaitForLambdaWorker
 from .utils.progress_dialog import ProgressDialog
 from .utils.server_select import server_select
 from .utils import human_filesize
-from .qt import QtCore, QtWidgets, QtWebKit, QtWebKitWidgets, QtGui
 from .ui.appliance_window_ui import Ui_ApplianceWindow
 from .image_manager import ImageManager
 from .registry.appliance import Appliance, ApplianceError
@@ -37,7 +36,6 @@ from .registry.image import Image
 
 import logging
 log = logging.getLogger(__name__)
-
 
 
 class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
@@ -59,7 +57,6 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
         # Enable the inspector on right click
         #self.uiWebView.settings().setAttribute(QtWebKit.QWebSettings.DeveloperExtrasEnabled, True)
-
 
         self.update_html_signal.connect(self._updateHTMLSlot)
 
