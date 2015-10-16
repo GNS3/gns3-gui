@@ -17,56 +17,108 @@
 
 
 import platform
-import uuid
+import sys
+from datetime import datetime
 
-from hashlib import md5
-from urllib.request import urlopen
 from urllib.parse import quote
-from ..qt import QtCore
 from ..version import __version__
+from ..qt import QtCore, QtNetwork, QtGui
+from ..local_config import LocalConfig
+from ..settings import GENERAL_SETTINGS
 
+import logging
+log = logging.getLogger(__name__)
 
-class AnalyticsClient(object):
+class AnalyticsClient(QtCore.QObject):
 
     """
     Google analytics client to send events.
     """
 
-    _property_id = "UA-55817127-1"
-    _visitor_id = None
-    _user_agent = "GNS3 {} on {}".format(__version__, platform.system())
+    _property_id = "UA-55817127-3"
 
-    def _generate_visitor_id(self):
+    def __init__(self):
+        super().__init__()
+        self._visitor_id = None
+        self._manager = QtNetwork.QNetworkAccessManager(self)
 
-        rstring = self._user_agent + str(uuid.uuid4())
-        md5_string = md5(rstring.encode()).hexdigest()
-        return "0x{}".format(md5_string[:16])
+        def finished(network_reply):
+            if network_reply.error() != QtNetwork.QNetworkReply.NoError:
+                log.critical("Error when pushing to Google Analytics %s", network_reply.errorString())
 
-    def send_event(self, category, action, label, value=None):
+        self._manager.finished.connect(finished)
 
-        if not self._visitor_id:
-            self._visitor_id = self._generate_visitor_id()
+        #
+        # We need to build a user agent for Universal Analytics in order to
+        # let analytics guess the OS
+        # this could break by analytics at anytime :(
+        if sys.platform.startswith("darwin"):
+            self._user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X {release}) AppleWebKit/537.36 (KHTML, like Gecko) GNS3/{version}".format(release=platform.mac_ver()[0].replace(".", "_"), version=__version__)
+        elif sys.platform.startswith("win"):
+            self._user_agent = "Mozilla/5.0 (Windows NT {release}) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 GNS3/{version}".format(release=platform.release(), version=__version__)
+        else:
+            self._user_agent = "Mozilla/5.0 (X11; Linux {arch}) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36  GNS3/{version}".format(arch=platform.machine(), version=__version__)
+        self._rate_limit = {}
 
-        url = "http://www.google-analytics.com/__utm.gif?utmwv=5.3.6&utmac={property}" \
-            "&utmcc=__utma%3D999.999.999.999.999.1%3B&utmvid={visitor}&utmt=event&" \
-            "utme=5%28{category}*{action}*{label}%29".format(property=self._property_id,
-                                                             visitor=self._visitor_id,
-                                                             category=quote(category),
-                                                             action=quote(action),
-                                                             label=quote(label))
+    def sendScreenView(self, screen, session_start=None):
+        """
+        :params session_start: True session start, None during session, False session stop
+        """
 
-        if value is not None:
-            url += "%28{value}%29".format(value=value)
+        if session_start is not False and screen in self._rate_limit:
+            if self._rate_limit[screen] + 60 * 1 > datetime.utcnow().timestamp():
+                log.debug("Ignore call %s to Google Analytics because of rate limiting", screen)
+                return
+
+        self._rate_limit[screen] = datetime.utcnow().timestamp()
+
+        settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
+        if settings["send_stats"] is False:
+            log.debug("Stats is turn off ignore call %s", screen)
+            return
+
+        body =  "v=1" #Version
+        body += "&tid={}".format(self._property_id) # Tracking ID / Property ID
+        body += "&cid={}".format(settings["stats_visitor_id"]) # Anonymous Client ID
+        body += "&aip=1" # Anonymize IP
+        body += "&t=screenview" # Screenview hit type
+        body += "&an=GNS3" # App name
+        body += "&av={}".format(quote(__version__)) # App version.
+        body += "&ua={}".format(quote(self._user_agent)) # User agent
+        body += "&cd={}".format(quote(screen)) # Category
+        body += "&ds=gns3-gui" # Data source
+        if session_start is True:
+            body += "&sc=start" # Session start
+        elif session_start is False:
+            body += "&sc=end" # Session end
+
+        screen = QtGui.QApplication.desktop().screenGeometry()
+        body += "&sr={}x{}".format(screen.width(), screen.height()) # Screen resolution
 
         locale = QtCore.QLocale.system().name().lower()
         if locale:
-            url += "&utmul={}".format(locale)
+            body += "&ul={}".format(locale) # User language
 
-        try:
-            urlopen(url, timeout=3)
-        except Exception:
-            pass
+        # TODO: HTTPS when possible because it's broken for the moment with Qt on OSX:
+        # https://bugreports.qt.io/browse/QTBUG-45487
+        if sys.platform.startswith("darwin"):
+            url = QtCore.QUrl('http://www.google-analytics.com/collect');
+        else:
+            url = QtCore.QUrl('https://www.google-analytics.com/collect');
+        request_qt = QtNetwork.QNetworkRequest(url)
+        request_qt.setRawHeader("Content-Type", "application/x-www-form-urlencoded")
+        request_qt.setRawHeader("User-Agent", self._user_agent)
+        self._manager.post(request_qt, body)
 
-if __name__ == '__main__':
-    client = AnalyticsClient()
-    client.send_event("Windows installer", "Install", __version__)
+        log.debug("Send stats to Google Analytics: %s", body)
+
+    @staticmethod
+    def instance():
+        """
+        Singleton to return only on instance of AnalyticsClient.
+        :returns: instance of AnalyticsClient
+        """
+
+        if not hasattr(AnalyticsClient, '_instance') or AnalyticsClient._instance is None:
+            AnalyticsClient._instance = AnalyticsClient()
+        return AnalyticsClient._instance

@@ -78,6 +78,54 @@ else:
     raise ImportError("Python binding not specified.")
 
 
+class StatsQtGuiQDialog(QtGui.QDialog):
+    """
+    Send stats from all the QWizard
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        import re
+        from .utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtGui.QDialog = StatsQtGuiQDialog
+
+
+class StatsQtGuiQWizard(QtGui.QWizard):
+    """
+    Send stats from all the QWizard
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        import re
+        from .utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtGui.QWizard = StatsQtGuiQWizard
+
+
+
+class StatsQtGuiQMainWindow(QtGui.QMainWindow):
+    """
+    Send stats from all the QMainWindow
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        import re
+        from .utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtGui.QMainWindow = StatsQtGuiQMainWindow
+
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):
     class FakeQtSignal:
