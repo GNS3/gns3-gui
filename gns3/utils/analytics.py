@@ -55,7 +55,7 @@ class AnalyticsClient(QtCore.QObject):
         if sys.platform.startswith("darwin"):
             self._user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X {release}) AppleWebKit/537.36 (KHTML, like Gecko) GNS3/{version}".format(release=platform.mac_ver()[0].replace(".", "_"), version=__version__)
         elif sys.platform.startswith("win"):
-            self._user_agent = "Mozilla/5.0 (Windows NT {}) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 GNS3/{version}".format(release=platform.release(), version=__version__)
+            self._user_agent = "Mozilla/5.0 (Windows NT {release}) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 GNS3/{version}".format(release=platform.release(), version=__version__)
         else:
             self._user_agent = "Mozilla/5.0 (X11; Linux {arch}) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36  GNS3/{version}".format(arch=platform.machine(), version=__version__)
         self._rate_limit = {}
