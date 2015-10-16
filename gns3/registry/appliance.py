@@ -38,7 +38,7 @@ class Appliance(collections.Mapping):
             with open(path, encoding="utf-8") as f:
                 self._appliance = json.load(f)
         except (OSError, ValueError) as e:
-            raise ApplianceError("Could not read appliance {}: {}".format(path, str(e)))
+            raise ApplianceError("Could not read appliance {}: {}".format(os.path.abspath(path), str(e)))
         self._check_config()
         self._resolve_version()
 
