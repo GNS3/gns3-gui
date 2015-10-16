@@ -64,6 +64,11 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         for node_item in self._node_items:
             if not node_item.node().initialized():
                 continue
+
+
+            # If something of one of the displayed nodes we reload everything
+            node_item.node().updated_signal.connect(self.resetSettings)
+
             group_name = " {} group".format(str(node_item.node()))
             parent = group_name
             if parent not in self._parent_items:
