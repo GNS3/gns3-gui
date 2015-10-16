@@ -146,6 +146,7 @@ def main():
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
 
         if options.project:
+            options.project = os.path.abspath(options.project)
             os.chdir(frozen_dir)
 
     def exceptionHook(exception, value, tb):
