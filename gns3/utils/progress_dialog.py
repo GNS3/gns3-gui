@@ -75,12 +75,13 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         """
         Delete the thread.
         """
-        if self._thread.isRunning():
+        if self._thread and self._thread.isRunning():
             self._thread.quit()
             if not self._thread.wait(3000):
                 self._thread.terminate()
                 self._thread.wait()
-        self._thread.deleteLater()
+            self._thread.deleteLater()
+            self._thread = None
 
     def _updateProgress(self, value):
         """
