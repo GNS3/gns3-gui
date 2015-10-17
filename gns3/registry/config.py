@@ -118,7 +118,7 @@ class Config:
         # Raise error if VM already exists
         for item in self._config["Qemu"]["vms"]:
             if item["name"] == new_config["name"]:
-                raise ConfigException("{} already exist".format(item["name"]))
+                raise ConfigException("{} already exists".format(item["name"]))
 
         if "qemu" in appliance_config:
             self._add_qemu_config(new_config, appliance_config)

@@ -21,8 +21,8 @@
         Vendor: <a href="{{ appliance["vendor_url"] }}">{{ appliance["vendor_name"] }}</a><br />
         Documentation: <a href="{{ appliance["documentation_url"] }}">{{ appliance["documentation_url"] }}</a><br />
         Status: {{ appliance["status"] }}<br />
-        Maintainer: <a href="mailto:{{ appliance["maintainer_email"] }}">{{ appliance["maintainer"] }}</a>
-
+        Maintainer: <a href="mailto:{{ appliance["maintainer_email"] }}">{{ appliance["maintainer"] }}</a><br />
+        <br />
         <p>{{ appliance["description"] | nl2br }}</p>
 
 
@@ -46,10 +46,10 @@
             <button type="button" class="btn btn-primary navbar-btn" onclick="return gns3.install('{{version["name"]}}')">Install</button>
         {% else %}
             <div class="alert alert-warning">
-                Can't install this appliance version until you import the missing images
+                Can't install this appliance version until you import or download the missing file(s).
             </div>
         {% endif %}
-        <h3>Require files</h3>
+        <h3>Required files</h3>
 
         {% set version_id = loop.index %}
         {% for image in version.images.values() %}

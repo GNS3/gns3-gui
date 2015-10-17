@@ -695,7 +695,7 @@ class HTTPClient(QtCore.QObject):
                     try:
                         callback(json.loads(body), error=True, server=self, context=context)
                     except ValueError:
-                        # It's happen when an antivirus catch the communication and send is error page without changing the Content Type
+                        # It happens when an antivirus catch the communication and send is error page without changing the Content Type
                         callback({"message": error_message}, error=True, server=self, context=context)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
