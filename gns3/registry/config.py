@@ -112,6 +112,8 @@ class Config:
             new_config["category"] = 0
         elif appliance_config["category"] == "firewall":
             new_config["category"] = 3
+        elif appliance_config["category"] == "switch":
+            new_config["category"] = 1
         elif appliance_config["category"] == "multilayer_switch":
             new_config["category"] = 1
 
@@ -136,7 +138,6 @@ class Config:
         new_config["process_priority"] = "normal"
 
         options = appliance_config["qemu"].get("options", "")
-
         new_config["options"] = options.strip()
 
         new_config["hda_disk_image"] = appliance_config["qemu"].get("hda_disk_image", "")
@@ -159,6 +160,8 @@ class Config:
                 new_config["symbol"] = ":/symbols/qemu_guest.svg"
             elif appliance_config["category"] == "router":
                 new_config["symbol"] = ":/symbols/router.svg"
+            elif appliance_config["category"] == "switch":
+                new_config["symbol"] = ":/symbols/ethernet_switch.svg"
             elif appliance_config["category"] == "multilayer_switch":
                 new_config["symbol"] = ":/symbols/multilayer_switch.svg"
             elif appliance_config["category"] == "firewall":
@@ -170,8 +173,14 @@ class Config:
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]
 
+        if "first_port_name" in appliance_config:
+            new_config["first_port_name"] = appliance_config["first_port_name"]
+
         if "port_name_format" in appliance_config:
             new_config["port_name_format"] = appliance_config["port_name_format"]
+
+        if "port_segment_size" in appliance_config:
+            new_config["port_segment_size"] = appliance_config["port_segment_size"]
 
         log.debug("Add appliance QEMU: %s", str(new_config))
         self._config["Qemu"]["vms"].append(new_config)
