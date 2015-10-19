@@ -131,11 +131,11 @@ class Config:
 
         new_config["adapter_type"] = appliance_config["qemu"]["adapter_type"]
         new_config["adapters"] = appliance_config["qemu"]["adapters"]
-        new_config["cpu_throttling"] = 0
+        new_config["cpu_throttling"] = appliance_config["qemu"].get("cpu_throttling", 0)
         new_config["ram"] = appliance_config["qemu"]["ram"]
         new_config["console_type"] = appliance_config["qemu"]["console_type"]
         new_config["legacy_networking"] = False
-        new_config["process_priority"] = "normal"
+        new_config["process_priority"] = appliance_config["qemu"].get("process_priority", "normal")
 
         options = appliance_config["qemu"].get("options", "")
         new_config["options"] = options.strip()
@@ -145,7 +145,7 @@ class Config:
         new_config["hdc_disk_image"] = appliance_config["qemu"].get("hdc_disk_image", "")
         new_config["hdd_disk_image"] = appliance_config["qemu"].get("hdd_disk_image", "")
         new_config["cdrom_image"] = appliance_config["qemu"].get("cdrom_image", "")
-        new_config["initrd_image"] = appliance_config["qemu"].get("initrd_image", "")
+        new_config["initrd"] = appliance_config["qemu"].get("initrd", "")
         new_config["kernel_command_line"] = appliance_config["qemu"].get("kernel_command_line", "")
         new_config["kernel_image"] = appliance_config["qemu"].get("kernel_image", "")
 
