@@ -328,6 +328,12 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             else:
                 self.uiConsolePortLabel.hide()
                 self.uiConsolePortSpinBox.hide()
+
+            if "linked_base" in settings:
+                self.uiBaseVMCheckBox.setChecked(settings["linked_base"])
+            else:
+                self.uiBaseVMCheckBox.hide()
+
             self.uiHdaDiskImageLineEdit.setText(settings["hda_disk_image"])
             self.uiHdbDiskImageLineEdit.setText(settings["hdb_disk_image"])
             self.uiHdcDiskImageLineEdit.setText(settings["hdc_disk_image"])
@@ -440,6 +446,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
             if "console" in settings:
                 settings["console"] = self.uiConsolePortSpinBox.value()
+            if "linked_base" in settings:
+                settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()
+
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
             settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text().strip()
             settings["hdc_disk_image"] = self.uiHdcDiskImageLineEdit.text().strip()

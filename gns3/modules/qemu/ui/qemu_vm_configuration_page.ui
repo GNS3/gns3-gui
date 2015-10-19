@@ -24,81 +24,24 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="2" column="0">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>VM name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="1" column="0">
         <widget class="QLabel" name="uiSymbolLabel">
          <property name="text">
           <string>Symbol:</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="2">
-        <widget class="QComboBox" name="uiQemuListComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="2">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="2">
-        <spacer name="spacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>263</width>
-           <height>94</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QLabel" name="uiQemuListLabel">
-         <property name="text">
-          <string>Qemu binary:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="QLabel" name="uiConsolePortLabel">
-         <property name="text">
-          <string>Console port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiRamLabel">
-         <property name="text">
-          <string>RAM:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="QSpinBox" name="uiRamSpinBox">
-         <property name="suffix">
-          <string> MB</string>
-         </property>
-         <property name="minimum">
-          <number>32</number>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>256</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
+       <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QLineEdit" name="uiSymbolLineEdit"/>
@@ -115,34 +58,91 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>VM name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
           <string>Category:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
+       <item row="2" column="1">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
-       <item row="8" column="0">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiRamLabel">
+         <property name="text">
+          <string>RAM:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="uiRamSpinBox">
+         <property name="suffix">
+          <string> MB</string>
+         </property>
+         <property name="minimum">
+          <number>32</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>256</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiCPULabel">
+         <property name="text">
+          <string>vCPUs:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="uiCPUSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiQemuListLabel">
+         <property name="text">
+          <string>Qemu binary:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="uiQemuListComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiBootPriorityLabel">
+         <property name="text">
+          <string>Boot priority:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="uiBootPriorityComboBox"/>
+       </item>
+       <item row="7" column="0">
         <widget class="QLabel" name="uiConsoleTypeLabel">
          <property name="text">
           <string>Console type:</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="2">
+       <item row="7" column="1">
         <widget class="QComboBox" name="uiConsoleTypeComboBox">
          <item>
           <property name="text">
@@ -156,30 +156,30 @@
          </item>
         </widget>
        </item>
-       <item row="7" column="2">
-        <widget class="QComboBox" name="uiBootPriorityComboBox"/>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiBootPriorityLabel">
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiConsolePortLabel">
          <property name="text">
-          <string>Boot priority:</string>
+          <string>Console port:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiCPULabel">
-         <property name="text">
-          <string>vCPUs:</string>
+       <item row="9" column="1">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>263</width>
+           <height>94</height>
+          </size>
+         </property>
+        </spacer>
        </item>
-       <item row="5" column="2">
-        <widget class="QSpinBox" name="uiCPUSpinBox">
-         <property name="minimum">
-          <number>1</number>
-         </property>
+       <item row="8" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
          <property name="maximum">
-          <number>255</number>
+          <number>65535</number>
          </property>
         </widget>
        </item>
@@ -745,10 +745,20 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="0" column="1">
            <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
           </item>
-          <item row="1" column="0" colspan="3">
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiBaseVMCheckBox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Use as a linked base VM</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
             <property name="text">
              <string>Enable ACPI shutdown (experimental)</string>
@@ -759,6 +769,7 @@
          <zorder>uiQemuOptionsLineEdit</zorder>
          <zorder>uiQemuOptionsLabel</zorder>
          <zorder>uiACPIShutdownCheckBox</zorder>
+         <zorder>uiBaseVMCheckBox</zorder>
         </widget>
        </item>
        <item>

@@ -59,5 +59,6 @@ QEMU_VM_SETTINGS = {
     "kernel_image": "",
     "initrd": "",
     "kernel_command_line": "",
+    "linked_base": True,
     "server": "local"
 }

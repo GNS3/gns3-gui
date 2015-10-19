@@ -216,6 +216,13 @@ class Qemu(Module):
             else:
                 vm = selected_vms[0]
 
+        linked_base = self._qemu_vms[vm]["linked_base"]
+        if not linked_base:
+            for other_node in self._nodes:
+                if other_node.settings()["name"] == self._qemu_vms[vm]["name"] and \
+                        (self._qemu_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._qemu_vms[vm]["server"] == other_node.server().host):
+                    raise ModuleError("Sorry a Qemu VM without the linked base setting enabled can only be used once in your topology")
+
         vm_settings = {}
         for setting_name, value in self._qemu_vms[vm].items():
             if setting_name in node.settings() and value != "" and value is not None:
@@ -230,6 +237,7 @@ class Qemu(Module):
                    port_name_format=port_name_format,
                    port_segment_size=port_segment_size,
                    first_port_name=first_port_name,
+                   linked_clone=linked_base,
                    additional_settings=vm_settings,
                    base_name=name)
 

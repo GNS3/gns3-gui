@@ -48,6 +48,7 @@ class QemuVM(VM):
         self._port_name_format = None
         self._port_segment_size = 0
         self._first_port_name = None
+        self._linked_clone = True
 
         self._settings = {"name": "",
                           "qemu_path": "",
@@ -110,7 +111,7 @@ class QemuVM(VM):
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
     def setup(self, qemu_path, name=None, vm_id=None, port_name_format="Ethernet{0}",
-              port_segment_size=0, first_port_name="", additional_settings={}, base_name=None):
+              port_segment_size=0, first_port_name="", linked_clone=True, additional_settings={}, base_name=None):
         """
         Setups this QEMU VM.
 
@@ -120,15 +121,21 @@ class QemuVM(VM):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(base_name + "-")
+            if linked_clone:
+                name = self.allocateName(base_name + "-")
+            else:
+                name = base_name
+                self.setName(name)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this QEMU VM")
             return
 
         self._settings["name"] = name
+        self._linked_clone = linked_clone
         params = {"name": name,
-                  "qemu_path": qemu_path}
+                  "qemu_path": qemu_path,
+                  "linked_clone": linked_clone}
 
         if vm_id:
             params["vm_id"] = vm_id
@@ -315,6 +322,7 @@ class QemuVM(VM):
 
         qemu_vm = {"id": self.id(),
                    "vm_id": self._vm_id,
+                   "linked_clone": self._linked_clone,
                    "type": self.__class__.__name__,
                    "description": str(self),
                    "properties": {},
@@ -386,6 +394,7 @@ class QemuVM(VM):
         vm_id = node_info.get("qemu_id")
         if not vm_id:
             vm_id = node_info.get("vm_id")
+        linked_clone = node_info.get("linked_clone", False)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")
         port_segment_size = node_info.get("port_segment_size", 0)
         first_port_name = node_info.get("first_port_name", "")
@@ -402,7 +411,7 @@ class QemuVM(VM):
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
-        self.setup(qemu_path, name, vm_id, port_name_format, port_segment_size, first_port_name, vm_settings)
+        self.setup(qemu_path, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def _updatePortSettings(self):
         """

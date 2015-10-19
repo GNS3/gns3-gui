@@ -182,6 +182,9 @@ class Config:
         if "port_segment_size" in appliance_config:
             new_config["port_segment_size"] = appliance_config["port_segment_size"]
 
+        if "linked_base" in appliance_config:
+            new_config["linked_base"] = appliance_config["linked_base"]
+
         log.debug("Add appliance QEMU: %s", str(new_config))
         self._config["Qemu"]["vms"].append(new_config)
 
