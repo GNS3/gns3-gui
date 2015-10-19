@@ -120,14 +120,28 @@
     <string>Required files</string>
    </property>
    <property name="subTitle">
-    <string>The following files are required to install NX-OS version 7.2.0.121</string>
+    <string>The following files are required to install NX-OS</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QTreeWidget" name="treeWidget">
-      <property name="rootIsDecorated">
-       <bool>false</bool>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTreeWidget" name="treeWidget_2">
+      <property name="indentation">
+       <number>20</number>
       </property>
+      <attribute name="headerDefaultSectionSize">
+       <number>133</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Appliance version</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
       <column>
        <property name="text">
         <string>Filename</string>
@@ -148,31 +162,146 @@
         <string>Version</string>
        </property>
       </column>
-      <column>
-       <property name="text">
-        <string>Checksum</string>
-       </property>
-      </column>
       <item>
        <property name="text">
-        <string>NXOSv-7.2.0.121.qcow2</string>
+        <string>7.2.0.121</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
-        <string>345MB</string>
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
        </property>
        <property name="text">
         <string>Missing</string>
        </property>
        <property name="text">
-        <string>7.2.0.121</string>
+        <string/>
+       </property>
+       <item>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string>NXOS-V7.2.0.121.bin</string>
+        </property>
+        <property name="text">
+         <string>345MB</string>
+        </property>
+        <property name="text">
+         <string>Missing</string>
+        </property>
+        <property name="text">
+         <string>7.2.0.121</string>
+        </property>
+       </item>
+      </item>
+      <item>
+       <property name="text">
+        <string>7.3.0.42</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
-        <string>0ee38c7d717840cb4ca822f4870671d0</string>
+        <string/>
        </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Missing</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <item>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string>NXOS-V7.3.0.121.bin</string>
+        </property>
+        <property name="text">
+         <string>356MB</string>
+        </property>
+        <property name="text">
+         <string>Missing</string>
+        </property>
+        <property name="text">
+         <string>7.3.0.42</string>
+        </property>
+       </item>
+      </item>
+      <item>
+       <property name="text">
+        <string>8.0</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Available</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <item>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string>NX-diskA</string>
+        </property>
+        <property name="text">
+         <string>12MB</string>
+        </property>
+        <property name="text">
+         <string>Available</string>
+        </property>
+        <property name="text">
+         <string>8.0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string>NX-diskB</string>
+        </property>
+        <property name="text">
+         <string>400MB</string>
+        </property>
+        <property name="text">
+         <string>Available</string>
+        </property>
+        <property name="text">
+         <string>8.0</string>
+        </property>
+       </item>
       </item>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="uiImportPushButton">
@@ -243,8 +372,8 @@
        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The default username/password is admin/admin. A default configuration is present.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;The default username/password is admin/admin. A default configuration is present.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
