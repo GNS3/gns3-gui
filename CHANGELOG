@@ -1,5 +1,85 @@
 # Change Log
 
+## 1.4.0b4 19/10/2015
+
+* Mockup of appliances wizard
+* Fix tests
+* Fix Crash when opening an appliance #728
+* Mock up for appliance wizard.
+* Registry: add -nographic to Qemu options by default. Fixes #730.
+* Registry: support for initrd, cpu throttling and process priority.
+* Support for modifications to a base Qemu VM (not a linked clone).
+* Registry: adds support for switch category, first_port_name and port_segment_size.
+* Fix traceback when exiting the GUI
+* Show a download button
+* Corrects some typos.
+* Drops securecrt.vbs
+* Display an error message if QtWebkit is not installed.
+* Fix console port lost when applying settings
+* Remove unused code
+* Fix analytics report on OSX
+* Fix invalid path with frozen application
+* When raising an appliance not found error show full path
+* Remove unnecessary checks to know if the local server is running.
+* Analytics send windows
+* Fixes issue when loading a project using VMware vmnet interfaces. Fixes #319.
+* Fix the progress dialog freeze bug
+* Revert "Try to solve Scanning for Appliance images doesn't end"
+* Try to fix the progress dialog freeze bug
+* Drop dead code from getting started dialog
+* Fix Appliance installs image without adapting the filename
+* Raise error if reference in GNS3a is invalid
+* Fix typo in analytics
+* Add information on how to debug
+* Send stats to GNS3 team
+* Licenses compliance.
+* Handles warning notifications.
+* Try to solve Scanning for Appliance images doesn't end
+* Fix TypeError: 'NoneType' object is not iterable  in isLocalServerRunning
+* Fix crash AttributeError: 'NoneType' object has no attribute getNewProjectSettings
+* Fix error when importing dynamips config from non existent directory
+* Fix crash when url is invalid
+* Add a debug level 2 in the console
+* Fix a crash when loading appliance
+* Merge branch 'master' into unstable
+* Support upload of multiple vmdk file
+* Support PNG in the custom symbol selection dialog
+* Add custom messages when computing Idle-PC values. Fixes #704.
+* Display the version of Qt in the console
+* Do not crash when parsing a Qt version with a snapshot notation
+* Force nc path to /usr/bin/nc on Apple
+* Revert "Drop netcat for unix socket it's not supported by OSX"
+* Catch errors when we have an infinite recursion when copying a folder
+* Fix crash in recent files when changing locale
+* Catch error when we can't extract egg
+* Fix securecrt command line (backported from master)
+* Updates SecureCRT command line.
+* When it's an ova explain to user he need to download the ova
+* OVA file support
+* Ignore .cache directory
+* Fix update manager crash on Windows
+* Support for image in local subdirectory
+* Fix duplicate code
+* Fixes issue when saving Idle-PC into template. Fixes #674.
+* Add link for downloading VMware
+* Cache md5sum in memory when loading a gns3a
+* Support symbol import from GNS3A
+* Allow user to select symbol from his library
+* Improve HTTP progress reliability
+* Support ubuntu default VNC client (Vinagre)
+* Adds the COPYING file.
+* Fix  error when receiving an HTTP error during HTTP progress
+* Support port_name_format in GNS3 a files
+* options is not mandatory in a .gns3 file
+* Xshell 5 support
+* Add missing gns3-converter to requirements.txt
+* Fixes Qemu binaries not listed in the node configuration dialog. Fixes #683.
+* Fixes SecureCRT command line.
+* Speedup directory scan for images when loading a gns3a file
+* Show a progress bar during directory scan when searching for appliances
+* Search image by default also in the download directory
+* Fixes issue when Telnet doesn't let you to login to an appliance on Linux.
+
 ## 1.3.11 07/10/2015
 
 * Display the version of Qt in the console
