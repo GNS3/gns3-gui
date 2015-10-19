@@ -66,7 +66,7 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
 
     def _refresh(self):
-        worker = WaitForLambdaWorker(lambda: self._loadPage())
+        worker = WaitForLambdaWorker(lambda: self._loadPage(), allowed_exceptions=[ApplianceError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for images...", None, busy=True, parent=self)
         progress_dialog.show()
 
@@ -90,9 +90,8 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         try:
             self._appliance = Appliance(registry, self._path)
         except ApplianceError as e:
-            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
             self.close()
-            return
+            raise e
 
         self.update_html_signal.emit(template.render(appliance=self._appliance, registry=registry))
 
@@ -159,13 +158,13 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         else:
             server_string = server.url()
 
-        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string))
+        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if not progress_dialog.exec_():
             return
 
-        worker = WaitForLambdaWorker(lambda: config.save())
+        worker = WaitForLambdaWorker(lambda: config.save(), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if progress_dialog.exec_():
@@ -184,7 +183,7 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
 
         config = Config()
         #TODO: ASK for VM type
-        worker = WaitForLambdaWorker(lambda: config.import_image(path))
+        worker = WaitForLambdaWorker(lambda: config.import_image(path), allowed_exceptions=[ApplianceError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Import the appliance...", None, busy=True, parent=self)
         if not progress_dialog.exec_():
             return

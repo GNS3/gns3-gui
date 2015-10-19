@@ -40,11 +40,16 @@ class WaitForLambdaWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, lambda_runner):
+    def __init__(self, lambda_runner, allowed_exceptions = []):
+        """
+        :param lambda_runner: Code to execute in the worker
+        :param allowed_exceptions: Array of exception that should only display an alert box, and not raises
+        """
 
         super().__init__()
         self._error = False
         self._lambda_runner = lambda_runner
+        self._allowed_exceptions = allowed_exceptions
 
     def run(self):
         """
@@ -54,9 +59,13 @@ class WaitForLambdaWorker(QtCore.QObject):
         try:
             self._lambda_runner()
         except Exception as e:
-            log.critical(traceback.format_exc())
-            self.error.emit(str(e), True)
-            return
+            # This exceptions will only show an error dialog
+            # it's a normal application behavior like a file permission denied
+            for ex in self._allowed_exceptions:
+                if isinstance(e, ex):
+                    self.error.emit(str(e), True)
+                    return
+            raise e
         self.finished.emit()
 
     def cancel(self):

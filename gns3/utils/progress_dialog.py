@@ -21,6 +21,8 @@ Progress dialog that blocking tasks (file operations, network connections etc.)
 
 from ..qt import QtGui, QtWidgets, QtCore
 
+import logging
+log = logging.getLogger(__name__)
 
 class ProgressDialog(QtWidgets.QProgressDialog):
 
@@ -76,12 +78,13 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         Delete the thread.
         """
         if self._thread and self._thread.isRunning():
-            self._thread.quit()
-            if not self._thread.wait(3000):
-                self._thread.terminate()
-                self._thread.wait()
-            self._thread.deleteLater()
+            thread = self._thread
             self._thread = None
+            thread.quit()
+            if not thread.wait(3000):
+                thread.terminate()
+                thread.wait()
+            thread.deleteLater()
 
     def _updateProgress(self, value):
         """
@@ -96,14 +99,16 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         """
         Slot to show an error message sent by the thread.
 
-        :param message: error message
+        :param message: message
         """
 
         if stop:
+            log.critical(message)
             QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
             self.cancel()
         else:
             self._errors.append(message)
+
         self._cleanup()
 
     def errors(self):
