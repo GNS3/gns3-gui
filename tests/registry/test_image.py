@@ -77,7 +77,7 @@ def test_md5sum_from_file_cache(tmpdir):
 def test_copy(images_dir, tmpdir):
     with open(str(tmpdir / "a.img"), "w+") as f:
         f.write("a")
-    Image(str(tmpdir / "a.img")).copy(os.path.join(images_dir, "QEMU"))
+    Image(str(tmpdir / "a.img")).copy(os.path.join(images_dir, "QEMU"), "a.img")
 
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img.md5sum"))
