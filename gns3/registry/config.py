@@ -138,6 +138,8 @@ class Config:
         new_config["process_priority"] = appliance_config["qemu"].get("process_priority", "normal")
 
         options = appliance_config["qemu"].get("options", "")
+        if "-nographic" not in options:
+            options += " -nographic"
         new_config["options"] = options.strip()
 
         new_config["hda_disk_image"] = appliance_config["qemu"].get("hda_disk_image", "")
