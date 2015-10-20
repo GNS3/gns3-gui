@@ -176,14 +176,14 @@ class ApplianceWindow(QtWidgets.QWidget, Ui_ApplianceWindow):
         if len(path) == 0:
             return
 
-        md5 = Image(path).md5sum
-        if md5 != md5sum:
+        image = Image(path)
+        if image.md5sum != md5sum:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file.")
             return
 
         config = Config()
         #TODO: ASK for VM type
-        worker = WaitForLambdaWorker(lambda: config.import_image(path), allowed_exceptions=[ApplianceError])
+        worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, "QEMU"), filename), allowed_exceptions=[OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Import the appliance...", None, busy=True, parent=self)
         if not progress_dialog.exec_():
             return
