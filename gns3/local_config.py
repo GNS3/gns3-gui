@@ -241,24 +241,30 @@ class LocalConfig(QtCore.QObject):
         """
 
         settings = self.settings().get(section, dict())
+        changed = False
 
         def _copySettings(local, default):
             """
             Copy only existing settings, ignore the other.
             Add default values if require.
             """
+            nonlocal changed
 
             # use default values for missing settings
             for name, value in default.items():
                 if name not in local:
                     local[name] = value
+                    changed = True
                 elif isinstance(value, dict):
                     local[name] = _copySettings(local[name], default[name])
             return local
 
         settings = _copySettings(settings, default_settings)
-
         self._settings[section] = settings
+
+        if changed:
+            log.info("Section %s has missing default values. Adding keys %s Saving configuration", section, ','.join(set(default_settings.keys()) - set(settings.keys())))
+            self._writeConfig()
 
         return copy.deepcopy(settings)
 
