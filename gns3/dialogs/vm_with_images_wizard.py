@@ -163,5 +163,9 @@ class VMWithImagesWizard(VMWizard):
         for combo_box in self._images_combo_boxes:
             combo_box.clear()
             for vm in result:
+                # Could be drop when 1.4 is out and user have upgraded
+                if "path" not in vm:
+                    QtWidgets.QMessageBox.critical(self, "Images", "Please upgrade the gns3 server to a version >= 1.4.0b4")
+                    return
                 combo_box.addItem(vm["path"], vm)
 
