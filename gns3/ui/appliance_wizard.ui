@@ -23,18 +23,18 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Appliance Wizard</string>
+   <string>Add appliance</string>
   </property>
   <property name="modal">
    <bool>true</bool>
   </property>
   <property name="wizardStyle">
-   <enum>QWizard::ModernStyle</enum>
+   <enum>QWizard::ClassicStyle</enum>
   </property>
   <property name="options">
    <set>QWizard::NoBackButtonOnStartPage</set>
   </property>
-  <widget class="QWizardPage" name="uiVersionsWizardPage">
+  <widget class="QWizardPage" name="uiInfoWizardPage">
    <property name="title">
     <string>Cisco NX-OSv</string>
    </property>
@@ -44,6 +44,9 @@
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
      <widget class="QTreeWidget" name="uiInfoTreeWidget">
+      <property name="alternatingRowColors">
+       <bool>false</bool>
+      </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::NoSelection</enum>
       </property>
@@ -115,6 +118,108 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiServerWizardPage">
+   <property name="title">
+    <string>Server</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a server type to run your new Appliance.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>On Windows and OSX the local server is not supported. Please use the GNS3 VM.</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="uiServerTypeGroupBox">
+      <property name="title">
+       <string>Server type</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QRadioButton" name="uiRemoteRadioButton">
+         <property name="text">
+          <string>Remote</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="uiVMRadioButton">
+         <property name="text">
+          <string>GNS3 VM</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="uiLocalRadioButton">
+         <property name="text">
+          <string>Local</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="uiRemoteServersGroupBox">
+      <property name="title">
+       <string>Remote servers</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiLoadBalanceCheckBox">
+         <property name="text">
+          <string>Load balance across all available remote servers</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiRemoteServersLabel">
+         <property name="text">
+          <string>Run on server:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="uiRemoteServersComboBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiFilesWizardPage">
    <property name="title">
     <string>Required files</string>
@@ -124,12 +229,15 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTreeWidget" name="treeWidget_2">
+     <widget class="QTreeWidget" name="uiApplianceVersionTreeWidget">
       <property name="indentation">
        <number>20</number>
       </property>
       <attribute name="headerDefaultSectionSize">
-       <number>133</number>
+       <number>120</number>
+      </attribute>
+      <attribute name="headerMinimumSectionSize">
+       <number>20</number>
       </attribute>
       <column>
        <property name="text">
@@ -311,7 +419,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="uiDownloadPushButton">
         <property name="text">
          <string>&amp;Download</string>
         </property>
@@ -330,6 +438,13 @@
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QPushButton" name="uiRefreshPushButton">
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -343,17 +458,110 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QPlainTextEdit" name="uiSummaryPlainTextEdit">
-      <property name="readOnly">
+     <widget class="QTreeWidget" name="uiSummaryTreeWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustIgnored</enum>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>false</bool>
+      </property>
+      <property name="rootIsDecorated">
+       <bool>false</bool>
+      </property>
+      <property name="uniformRowHeights">
+       <bool>false</bool>
+      </property>
+      <property name="itemsExpandable">
+       <bool>false</bool>
+      </property>
+      <property name="animated">
+       <bool>false</bool>
+      </property>
+      <property name="allColumnsShowFocus">
+       <bool>false</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+      <property name="headerHidden">
        <bool>true</bool>
       </property>
-      <property name="plainText">
-       <string>&quot;adapter_type&quot;: &quot;e1000&quot;
-&quot;console_type&quot;: &quot;telnet&quot;
-&quot;ram&quot;: 3072
-&quot;arch&quot;: &quot;x86_64&quot;
-&quot;adapters&quot;: 16</string>
+      <property name="columnCount">
+       <number>2</number>
       </property>
+      <attribute name="headerDefaultSectionSize">
+       <number>150</number>
+      </attribute>
+      <attribute name="headerMinimumSectionSize">
+       <number>20</number>
+      </attribute>
+      <attribute name="headerStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <item>
+       <property name="text">
+        <string>adapter_type</string>
+       </property>
+       <property name="text">
+        <string>e1000</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>console_type</string>
+       </property>
+       <property name="text">
+        <string>telnet</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ram</string>
+       </property>
+       <property name="text">
+        <string>3072</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>arch</string>
+       </property>
+       <property name="text">
+        <string>x68_64</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>adapters</string>
+       </property>
+       <property name="text">
+        <string>16</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>kernel command line</string>
+       </property>
+       <property name="text">
+        <string>user=gns3</string>
+       </property>
+      </item>
      </widget>
     </item>
    </layout>

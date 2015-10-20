@@ -62,6 +62,7 @@ from .http_client import HTTPClient
 from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
+from .dialogs.appliance_wizard import ApplianceWizard
 
 log = logging.getLogger(__name__)
 
@@ -461,12 +462,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog = None
 
             if path.endswith(".gns3a"):
-                try:
-                    from .appliance_window import ApplianceWindow
-                except ImportError:
-                    QtWidgets.QMessageBox.critical(self, "QtWebKit", "Please install QtWebKit")
-                    return
-                self._appliance_window = ApplianceWindow(path)
+                self._appliance_wizard = ApplianceWizard(self, path)
+                self._appliance_wizard.show()
+                self._appliance_wizard.exec_()
             elif self.checkForUnsavedChanges():
                 self._open_project_path = path
                 self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
