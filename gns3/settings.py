@@ -68,7 +68,7 @@ elif sys.platform.startswith("darwin"):
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
         'Terminal': "osascript -e 'tell application \"Terminal\"'"
                     " -e 'activate'"
-                    " -e 'set _tab to do script \"telnet %h %p ; exit\"'"
+                    " -e 'set _tab to do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\"; clear; telnet %h %p ; exit\"'"
                     " -e 'delay 1'"
                     " -e 'repeat while _tab exists'"
                     " -e 'delay 1'"
