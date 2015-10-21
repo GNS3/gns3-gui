@@ -107,21 +107,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                     svg_renderer = QtSvg.QSvgRenderer(resource_path)
                     svg_renderer.render(QtGui.QPainter(image))
 
-                if resource_path == selected_symbol:
-                    # this is a built-in symbol
-                    custom_symbol = False
-                    self.uiSymbolListWidget.setCurrentItem(item)
-
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(icon)
-
-        if custom_symbol:
-            # this is a custom symbol
-            self.uiCustomSymbolRadioButton.setChecked(True)
-            self.uiSymbolLineEdit.setText(selected_symbol)
-            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(selected_symbol))
-            self.uiBuiltInGroupBox.setEnabled(False)
-            self.uiBuiltInGroupBox.hide()
 
         self.adjustSize()
 
