@@ -166,6 +166,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     # Associated data stored are col 0: version, col 1: image
                     image_widget.setData(0, QtCore.Qt.UserRole, version)
                     image_widget.setData(1, QtCore.Qt.UserRole, image)
+                    image_widget.setData(2, QtCore.Qt.UserRole, self._appliance)
                     top.addChild(image_widget)
 
                 font = top.font(0)
@@ -174,6 +175,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
                 top.setData(2, QtCore.Qt.DisplayRole, human_filesize(size))
                 top.setData(3, QtCore.Qt.DisplayRole, status)
+                top.setData(2, QtCore.Qt.UserRole, self._appliance)
                 top.setData(0, QtCore.Qt.UserRole, version)
                 self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
                 top.setExpanded(True)
@@ -288,8 +290,14 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if self.currentPage() == self.uiFilesWizardPage:
             current = self.uiApplianceVersionTreeWidget.currentItem()
             version = current.data(0, QtCore.Qt.UserRole)
+            appliance = current.data(2, QtCore.Qt.UserRole)
             if not self._appliance.is_version_installable(version["name"]):
                 QtWidgets.QMessageBox.warning(self, "Appliance", "You can't install the appliance version {} you have missing images.".format(version["name"]))
+                return False
+            print(appliance)
+            name = "{} {}".format(appliance["name"], version["name"])
+            reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {}?".format(name), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
                 return False
 
         elif self.currentPage() == self.uiUsageWizardPage:
