@@ -113,7 +113,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
             if GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setChecked(True)
-            elif self._use_local_server and self.uiLocalRadioButton.isChecked() and not (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+            elif Servers.instance().localServerIsRunning() and (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
                 self.uiLocalRadioButton.setChecked(True)
             elif len(Servers.instance().remoteServers().values()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
