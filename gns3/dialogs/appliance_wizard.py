@@ -294,7 +294,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if not self._appliance.is_version_installable(version["name"]):
                 QtWidgets.QMessageBox.warning(self, "Appliance", "You can't install the appliance version {} you have missing images.".format(version["name"]))
                 return False
-            print(appliance)
             name = "{} {}".format(appliance["name"], version["name"])
             reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {}?".format(name), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
