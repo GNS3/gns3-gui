@@ -85,7 +85,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         if self.page(page_id) == self.uiInfoWizardPage:
             self.uiInfoWizardPage.setTitle(self._appliance["product_name"])
-            self.uiInfoWizardPage.setSubTitle(self._appliance["description"])
+            self.uiDescriptionLabel.setText(self._appliance["description"])
 
             infos = (
                 ("Category", "category"),

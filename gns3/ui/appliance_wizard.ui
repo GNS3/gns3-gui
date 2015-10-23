@@ -39,10 +39,10 @@
     <string>Cisco NX-OSv</string>
    </property>
    <property name="subTitle">
-    <string>NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a hypervisor.</string>
+    <string/>
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QTreeWidget" name="uiInfoTreeWidget">
       <property name="alternatingRowColors">
        <bool>false</bool>
@@ -50,8 +50,17 @@
       <property name="selectionMode">
        <enum>QAbstractItemView::NoSelection</enum>
       </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideRight</enum>
+      </property>
       <property name="rootIsDecorated">
        <bool>false</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+      <property name="headerHidden">
+       <bool>true</bool>
       </property>
       <attribute name="headerVisible">
        <bool>false</bool>
@@ -114,6 +123,16 @@
         <string/>
        </property>
       </item>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiDescriptionLabel">
+      <property name="text">
+       <string>NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a hypervisor.</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>
