@@ -206,20 +206,20 @@ WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(os.environ["PROGRAMFILES"]),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -k -i -'.format(os.environ["PROGRAMFILES"])}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(os.environ["PROGRAMFILES"])}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "/usr/bin/open -a /Applications/Wireshark.app %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -k -i -"}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -o "gui.window_title:%d" -k -i -'}
 
 elif sys.platform.startswith("freebsd"):
     # FreeBSD
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "wireshark %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "gtail -f -c +0b %c | wireshark -k -i -"}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'gtail -f -c +0b %c | wireshark -o "gui.window_title:%d" -k -i -'}
 else:
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "wireshark %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "tail -f -c +0b %c | wireshark -k -i -"}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b %c | wireshark -o "gui.window_title:%d" -k -i -'}
 
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 

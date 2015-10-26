@@ -40,14 +40,14 @@ class PacketCapture:
 
         if vm.server().isLocal():
             try:
-                port.startPacketCapture(file_path)
+                port.startPacketCapture(vm.name(), file_path)
             except OSError as e:
                 vm.error_signal.emit(vm.id(), "Could not start the packet capture reader: {}: {}".format(e, e.filename))
         else:
             (fd, temp_capture_file_path) = tempfile.mkstemp()
             os.close(fd)
             try:
-                port.startPacketCapture(temp_capture_file_path)
+                port.startPacketCapture(vm.name(), temp_capture_file_path)
             except OSError as e:
                 vm.error_signal.emit(vm.id(), "Could not start the packet capture reader: {}: {}".format(e, e.filename))
             self._capture_files[port] = temp_capture_file_path

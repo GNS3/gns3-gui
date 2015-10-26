@@ -480,7 +480,7 @@ class Port:
 
         return self._capturing
 
-    def startPacketCapture(self, capture_file_path):
+    def startPacketCapture(self, source_node_name, capture_file_path):
         """
         Starts a packet capture.
 
@@ -491,7 +491,7 @@ class Port:
         self._capture_file_path = capture_file_path
         log.info("Saving packet capture to {}".format(capture_file_path))
         if os.path.isfile(capture_file_path) and self._settings["command_auto_start"]:
-            self.startPacketCaptureReader()
+            self.startPacketCaptureReader(source_node_name)
 
     def stopPacketCapture(self):
         """
@@ -508,7 +508,7 @@ class Port:
             self._tail_process = None
         self._capture_reader_process = None
 
-    def startPacketCaptureReader(self):
+    def startPacketCaptureReader(self, source_node_name):
         """
         Starts the packet capture reader.
         """
@@ -524,11 +524,17 @@ class Port:
             self._capture_reader_process = None
 
         command = self._settings["packet_capture_reader_command"]
+
+        # PCAP capture file path
         command = command.replace("%c", '"' + self._capture_file_path + '"')
+
+        # Add description
+        description = "{} {} to {} {}".format(source_node_name, self.name(),
+                                              self.destinationNode().name(), self.destinationPort().name())
+        command = command.replace("%d", description)
 
         if "|" in command:
             # live traffic capture (using tail)
-            env = None
             command1, command2 = command.split("|", 1)
             info = None
             if sys.platform.startswith("win"):

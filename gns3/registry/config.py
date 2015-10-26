@@ -125,7 +125,7 @@ class Config:
         if "qemu" in appliance_config:
             self._add_qemu_config(new_config, appliance_config)
             return
-        raise ConfigException("{} not configuration found for Qemu".format(item["name"]))
+        raise ConfigException("{} no configuration found for Qemu".format(item["name"]))
 
     def _add_qemu_config(self, new_config, appliance_config):
 

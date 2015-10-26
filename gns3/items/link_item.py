@@ -318,13 +318,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                 selection, ok = QtWidgets.QInputDialog.getItem(self._main_window, "Packet capture", "Please select a port:", ports, 0, False)
                 if ok:
                     if selection.endswith(self._source_port.name()):
-                        self._source_port.startPacketCaptureReader()
+                        self._source_port.startPacketCaptureReader(self._source_item.node().name())
                     else:
-                        self._destination_port.startPacketCaptureReader()
+                        self._destination_port.startPacketCaptureReader(self._destination_item.node().name())
             elif self._source_port.capturing():
-                self._source_port.startPacketCaptureReader()
+                self._source_port.startPacketCaptureReader(self._source_item.node().name())
             elif self._destination_port.capturing():
-                self._destination_port.startPacketCaptureReader()
+                self._destination_port.startPacketCaptureReader(self._destination_item.node().name())
         except OSError as e:
             QtWidgets.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
 
