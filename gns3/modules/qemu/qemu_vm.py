@@ -168,7 +168,7 @@ class QemuVM(VM):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-        for image_field in ["hda_disk_image", "hdb_disk_image", "hdc_disk_image", "hdd_disk_image", "initrd", "kernel_image"]:
+        for image_field in ["hda_disk_image", "hdb_disk_image", "hdc_disk_image", "hdd_disk_image", "initrd", "kernel_image", "cdrom_image"]:
             if image_field in result and result[image_field] is not None and result[image_field] != "":
                 # The image is missing on remote server
                 field = "{}_md5sum".format(image_field)
