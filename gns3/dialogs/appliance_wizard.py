@@ -32,7 +32,6 @@ from ..servers import Servers
 from ..gns3_vm import GNS3VM
 
 
-
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
     def __init__(self, parent, path):
         super().__init__(parent)
@@ -53,13 +52,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.close()
             raise e
 
-        self._refreshVersions()
-
         self.uiApplianceVersionTreeWidget.currentItemChanged.connect(self._applianceVersionCurrentItemChangedSlot)
         self.uiRefreshPushButton.clicked.connect(self._refreshVersions)
         self.uiDownloadPushButton.clicked.connect(self._downloadPushButtonClickedSlot)
         self.uiImportPushButton.clicked.connect(self._importPushButtonClickedSlot)
-
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         if hasattr(self, "uiVMRadioButton"):
@@ -87,7 +83,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiInfoWizardPage.setTitle(self._appliance["product_name"])
             self.uiDescriptionLabel.setText(self._appliance["description"])
 
-            infos = (
+            info = (
                 ("Category", "category"),
                 ("Product", "product_name"),
                 ("Vendor", "vendor_name"),
@@ -96,8 +92,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             )
 
             self.uiInfoTreeWidget.clear()
-            for (name, key) in infos:
-                self.uiInfoTreeWidget.addTopLevelItem(QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]]))
+            for (name, key) in info:
+                item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
+                font = item.font(0)
+                font.setBold(True)
+                item.setFont(0, font)
+                self.uiInfoTreeWidget.addTopLevelItem(item)
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
@@ -108,12 +108,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self.uiVMRadioButton.setEnabled(False)
 
             # Qemu has issues on OSX and Windows we disallow usage of the local server
-            if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+            if sys.platform.startswith("darwin") or sys.platform.startswith("win"):
                 self.uiLocalRadioButton.setEnabled(False)
 
             if GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setChecked(True)
-            elif Servers.instance().localServerIsRunning() and (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+            elif Servers.instance().localServerIsRunning():
                 self.uiLocalRadioButton.setChecked(True)
             elif len(Servers.instance().remoteServers().values()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
@@ -126,10 +126,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.page(page_id) == self.uiSummaryWizardPage:
             self.uiSummaryTreeWidget.clear()
             for key in self._appliance["qemu"]:
-                self.uiSummaryTreeWidget.addTopLevelItem(QtWidgets.QTreeWidgetItem([key.replace('_', ' ') + ":", str(self._appliance["qemu"][key])]))
+                item = QtWidgets.QTreeWidgetItem([key.replace('_', ' ').capitalize() + ":", str(self._appliance["qemu"][key])])
+                font = item.font(0)
+                font.setBold(True)
+                item.setFont(0, font)
+                self.uiSummaryTreeWidget.addTopLevelItem(item)
+            self.uiSummaryTreeWidget.resizeColumnToContents(0)
 
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("You can found the appliance in the category {}. \n\n{}".format(
+            self.uiUsageTextEdit.setText("The appliance is available in the {} category. \n\n{}".format(
                 self._appliance["category"].replace("_", " "),
                 self._appliance.get("usage", ""))
             )
@@ -146,12 +151,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         progress_dialog.show()
         if progress_dialog.exec_():
             for version in self._appliance["versions"]:
-                top = QtWidgets.QTreeWidgetItem([version["name"]])
+                top = QtWidgets.QTreeWidgetItem(["{} {}".format(self._appliance["product_name"], version["name"])])
 
                 size = 0
-                status = "Available"
+                status = "Ready to install"
                 for image in version["images"].values():
-                    if image["status"] == "Missing file":
+                    if image["status"] == "Missing":
                         status = "Missing files"
 
                     size += image["filesize"]
@@ -163,6 +168,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                             image["status"],
                             image["version"]
                         ])
+
+                    if image["status"] == "Missing":
+                        image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
+                    else:
+                        image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+
                     # Associated data stored are col 0: version, col 1: image
                     image_widget.setData(0, QtCore.Qt.UserRole, version)
                     image_widget.setData(1, QtCore.Qt.UserRole, image)
@@ -173,13 +184,23 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 font.setBold(True)
                 top.setFont(0, font)
 
+                expand = True
+                if status == "Missing files":
+                    top.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
+                else:
+                    expand = False
+                    top.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+
                 top.setData(2, QtCore.Qt.DisplayRole, human_filesize(size))
                 top.setData(3, QtCore.Qt.DisplayRole, status)
                 top.setData(2, QtCore.Qt.UserRole, self._appliance)
                 top.setData(0, QtCore.Qt.UserRole, version)
                 self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
-                top.setExpanded(True)
+                if expand:
+                    top.setExpanded(True)
 
+            self.uiApplianceVersionTreeWidget.resizeColumnToContents(0)
+            self.uiApplianceVersionTreeWidget.resizeColumnToContents(1)
             self.uiApplianceVersionTreeWidget.setCurrentItem(self.uiApplianceVersionTreeWidget.topLevelItem(0))
 
     def _resfreshDialogWorker(self):
@@ -189,9 +210,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         for version in self._appliance["versions"]:
             for image in version["images"].values():
                 if self._registry.search_image_file(image["filename"], image["md5sum"], image["filesize"]):
-                    image["status"] = "Available"
+                    image["status"] = "Found"
                 else:
-                    image["status"] = "Missing file"
+                    image["status"] = "Missing"
 
     def _applianceVersionCurrentItemChangedSlot(self, current, previous):
         """
@@ -291,10 +312,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             current = self.uiApplianceVersionTreeWidget.currentItem()
             version = current.data(0, QtCore.Qt.UserRole)
             appliance = current.data(2, QtCore.Qt.UserRole)
-            if not self._appliance.is_version_installable(version["name"]):
-                QtWidgets.QMessageBox.warning(self, "Appliance", "You can't install the appliance version {} you have missing images.".format(version["name"]))
-                return False
             name = "{} {}".format(appliance["name"], version["name"])
+            if not self._appliance.is_version_installable(version["name"]):
+                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install {} with missing files".format(name))
+                return False
             reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {}?".format(name), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 return False

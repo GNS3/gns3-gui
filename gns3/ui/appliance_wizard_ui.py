@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/appliance_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/appliance_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created: Wed Oct 28 16:44:06 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -151,7 +152,6 @@ class Ui_ApplianceWizard(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiSummaryTreeWidget.sizePolicy().hasHeightForWidth())
         self.uiSummaryTreeWidget.setSizePolicy(sizePolicy)
-        self.uiSummaryTreeWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
         self.uiSummaryTreeWidget.setAlternatingRowColors(False)
         self.uiSummaryTreeWidget.setRootIsDecorated(False)
         self.uiSummaryTreeWidget.setUniformRowHeights(False)
@@ -217,11 +217,11 @@ class Ui_ApplianceWizard(object):
         self.uiRemoteServersLabel.setText(_translate("ApplianceWizard", "Run on server:"))
         self.uiFilesWizardPage.setTitle(_translate("ApplianceWizard", "Required files"))
         self.uiFilesWizardPage.setSubTitle(_translate("ApplianceWizard", "The following files are required to install NX-OS"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(0, _translate("ApplianceWizard", "Appliance version"))
+        self.uiApplianceVersionTreeWidget.headerItem().setText(0, _translate("ApplianceWizard", "Version"))
         self.uiApplianceVersionTreeWidget.headerItem().setText(1, _translate("ApplianceWizard", "Filename"))
         self.uiApplianceVersionTreeWidget.headerItem().setText(2, _translate("ApplianceWizard", "Size"))
         self.uiApplianceVersionTreeWidget.headerItem().setText(3, _translate("ApplianceWizard", "Status"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(4, _translate("ApplianceWizard", "Version"))
+        self.uiApplianceVersionTreeWidget.headerItem().setText(4, _translate("ApplianceWizard", "File version"))
         __sortingEnabled = self.uiApplianceVersionTreeWidget.isSortingEnabled()
         self.uiApplianceVersionTreeWidget.setSortingEnabled(False)
         self.uiApplianceVersionTreeWidget.topLevelItem(0).setText(0, _translate("ApplianceWizard", "7.2.0.121"))
@@ -274,7 +274,7 @@ class Ui_ApplianceWizard(object):
         self.uiUsageTextEdit.setHtml(_translate("ApplianceWizard", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'.Helvetica Neue DeskInterface\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The default username/password is admin/admin. A default configuration is present.</p></body></html>"))
 
 from . import resources_rc
