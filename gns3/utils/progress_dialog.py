@@ -93,7 +93,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         :param value: value for the progress bar (integer)
         """
 
-        self.setValue(value)
+        if self._thread is not None:
+            self.setValue(value)
 
     def _error(self, message, stop=False):
         """
