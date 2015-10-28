@@ -131,7 +131,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.page(page_id) == self.uiUsageWizardPage:
             self.uiUsageTextEdit.setText("You can found the appliance in the category {}. \n\n{}".format(
                 self._appliance["category"].replace("_", " "),
-                self._appliance["usage"])
+                self._appliance.get("usage", ""))
             )
 
     def _refreshVersions(self):
