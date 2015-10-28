@@ -111,14 +111,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer.start(1000)  # milliseconds
         self._analytics_client = AnalyticsClient()
 
-        self._uiNewsDockWidget = None
-        try:
-            from .news_dock_widget import NewsDockWidget
-            self._uiNewsDockWidget = NewsDockWidget(self)
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
-        except ImportError:
-            pass
-
         # restore the geometry and state of the main window.
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
         self.restoreState(QtCore.QByteArray().fromBase64(self._settings["state"].encode()))
@@ -1120,12 +1112,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        # show the news dock widget
-        if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
-
         servers = Servers.instance()
-
         # start the GNS3 VM
         gns3_vm = GNS3VM.instance()
         if gns3_vm.autoStart() and not gns3_vm.isRunning():
