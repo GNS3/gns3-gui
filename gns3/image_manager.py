@@ -93,7 +93,7 @@ class ImageManager:
             raise Exception('Invalid image vm_type')
 
         filename = self._getRelativeImagePath(path, vm_type).replace("\\", "/")
-        server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Upload {}".format(filename))
+        server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename))
         return filename
 
     def addMissingImage(self, filename, server, vm_type):
