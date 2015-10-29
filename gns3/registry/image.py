@@ -110,12 +110,18 @@ class Image:
         """
         dst = os.path.join(directory, filename)
 
+        is_tar = False
         if tarfile.is_tarfile(self.path):
-            os.makedirs(dst, exist_ok=True)
+            # is_tarfile can have false positive if file start with 00000 like ISO
+            # we check if we have file in the tar
             tar = tarfile.open(self.path)
-            tar.extractall(path=dst)
+            if len(tar.getnames()) > 0:
+                is_tar = True
+                os.makedirs(dst, exist_ok=True)
+                tar.extractall(path=dst)
             tar.close()
-        else:
+
+        if not is_tar:
             os.makedirs(directory, exist_ok=True)
             shutil.copy(self.path, dst)
         with open(dst + ".md5sum", "w+", encoding="utf-8") as f:
