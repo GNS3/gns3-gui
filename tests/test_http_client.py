@@ -178,7 +178,7 @@ def test_processDownloadProgress(http_client):
 
     response.readAll.return_value = b'{"action": "ping"}'
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
 
     assert callback.called
     args, kwargs = callback.call_args
@@ -194,7 +194,7 @@ def test_processDownloadProgressHTTPError(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 404
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
 
     assert not callback.called
 
@@ -207,7 +207,7 @@ def test_processDownloadProgressConnectionRefusedError(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
 
     assert not callback.called
 
@@ -223,12 +223,12 @@ def test_processDownloadProgressPartialJSON(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
 
     assert not callback.called
 
     response.readAll.return_value = b'}\n{"a": "b"'
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
 
     assert callback.call_count == 1
     args, kwargs = callback.call_args
@@ -243,7 +243,7 @@ def test_processDownloadProgressPartialBytes(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"})
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
 
     assert callback.call_count == 1
     args, kwargs = callback.call_args
