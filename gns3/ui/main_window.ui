@@ -1215,7 +1215,7 @@ background-none;
      <normaloff>:/icons/open.svg</normaloff>:/icons/open.svg</iconset>
    </property>
    <property name="text">
-    <string>Open Appliance</string>
+    <string>Import appliance</string>
    </property>
   </action>
  </widget>
