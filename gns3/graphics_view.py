@@ -22,9 +22,8 @@ Graphical view on the scene where items are drawn.
 import logging
 import os
 import pickle
-import functools
 
-from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets
+from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
 from .servers import Servers
 from .items.node_item import NodeItem
 from .items.svg_node_item import SvgNodeItem
@@ -1059,7 +1058,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         counter = 0
         for name in sorted(nodes.keys()):
             node = nodes[name]
-            callback = functools.partial(self.consoleToNode, node)
+            callback = qpartial(self.consoleToNode, node)
             self._main_window.run_later(counter, callback)
             counter += delay
 
@@ -1088,7 +1087,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         counter = 0
         for name in sorted(nodes.keys()):
             node = nodes[name]
-            callback = functools.partial(self.consoleToNode, node, aux=True)
+            callback = qpartial(self.consoleToNode, node, aux=True)
             self._main_window.run_later(counter, callback)
             counter += delay
 

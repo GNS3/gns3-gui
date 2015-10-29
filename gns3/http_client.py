@@ -24,10 +24,9 @@ import uuid
 import urllib.request
 import pathlib
 import base64
-from functools import partial
 
 from .version import __version__, __version_info__
-from .qt import QtCore, QtNetwork
+from .qt import QtCore, QtNetwork, qpartial
 from .network_client import getNetworkUrl
 from .utils import parse_version
 
@@ -434,7 +433,7 @@ class HTTPClient(QtCore.QObject):
             return self.executeHTTPQuery(method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
         else:
             log.info("Connection to {}".format(self.url()))
-            query = partial(self._callbackConnect, method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
+            query = qpartial(self._callbackConnect, method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
             self._connect(query)
 
     def _connectionError(self, callback, msg=""):
@@ -595,24 +594,24 @@ class HTTPClient(QtCore.QObject):
         context = copy.copy(context)
         context["query_id"] = str(uuid.uuid4())
 
-        response.finished.connect(partial(self._processResponse, response, callback, context, body, ignoreErrors))
+        response.finished.connect(qpartial(self._processResponse, response, callback, context, body, ignoreErrors))
 
         if downloadProgressCallback is not None:
-            response.downloadProgress.connect(partial(self._processDownloadProgress, response, downloadProgressCallback, context))
+            response.downloadProgress.connect(qpartial(self._processDownloadProgress, response, downloadProgressCallback, context))
 
         if showProgress:
-            response.uploadProgress.connect(partial(self.notify_progress_upload, context["query_id"]))
-            response.downloadProgress.connect(partial(self.notify_progress_download, context["query_id"]))
+            response.uploadProgress.connect(qpartial(self.notify_progress_upload, context["query_id"]))
+            response.downloadProgress.connect(qpartial(self.notify_progress_download, context["query_id"]))
             # Should be the last operation otherwise we have race condition in Qt
             # where query start before finishing connect to everything
             self.notify_progress_start_query(context["query_id"], progressText, response)
 
         return response
 
-    def _processDownloadProgress(self, response, callback, context):
+    def _processDownloadProgress(self, response, callback, context, bytesReceived, bytesTotal):
         """
         Process a packet receive on the notification feed.
-        The feed can contains partial JSON. If we found a
+        The feed can contains qpartial JSON. If we found a
         part of a JSON we keep it for the next packet
         """
 
@@ -642,7 +641,7 @@ class HTTPClient(QtCore.QObject):
             callback(content, server=self, context=context)
 
         if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
-            request_canceled = partial(self._requestCanceled, response, context)
+            request_canceled = qpartial(self._requestCanceled, response, context)
             HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
 
     def _requestCanceled(self, response, context):

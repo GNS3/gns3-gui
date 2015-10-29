@@ -21,13 +21,13 @@ Configuration page for QEMU VMs.
 
 import os
 import re
+import sip
 
-from functools import partial
 from collections import OrderedDict
 from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
-from gns3.qt import QtGui, QtCore, QtWidgets
+from gns3.qt import QtGui, QtCore, QtWidgets, qpartial
 from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.dialogs.node_properties_dialog import ConfigurationError
@@ -313,7 +313,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if self._server is None:
             QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["server"]))
         else:
-            callback = partial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
+            callback = qpartial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
             try:
                 Qemu.instance().getQemuBinariesFromServer(self._server, callback)
             except ModuleError as e:

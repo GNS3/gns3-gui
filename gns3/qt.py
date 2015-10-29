@@ -28,6 +28,8 @@ For PyQt4 and PyQt5 differences please see http://pyqt.sourceforge.net/Docs/PyQt
 import sys
 import sip
 import os
+import functools
+import inspect
 
 import logging
 log = logging.getLogger(__name__)
@@ -190,3 +192,21 @@ if hasattr(sys, '_called_from_test'):
 
     QtCore.Signal = FakeQtSignal
     QtCore.pyqtSignal = FakeQtSignal
+
+
+def qpartial(func, *args, **kwargs):
+    """
+    A functools partial that you can use on qobject. If the targeted qobject is
+    destroyed the partial is not called.
+    """
+    if inspect.ismethod(func):
+        if isinstance(func.__self__, QtCore.QObject):
+
+            def partial(*args, **kwargs):
+                if sip.isdeleted(func.__self__):
+                    return
+                return func(*args, **kwargs)
+            return functools.partial(partial, *args, **kwargs)
+
+    return functools.partial(func, *args, **kwargs)
+
