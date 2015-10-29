@@ -17,9 +17,8 @@
 
 import os
 import sys
-import functools
 import traceback
-from .qt import QtCore
+from .qt import QtCore, qpartial
 
 from gns3.servers import Servers
 from gns3.topology import Topology
@@ -232,12 +231,12 @@ class Project(QtCore.QObject):
         """
 
         if server not in self._created_servers:
-            func = functools.partial(self._projectOnServerCreated, method, path, callback, body, server=server, **kwargs)
+            func = qpartial(self._projectOnServerCreated, method, path, callback, body, server=server, **kwargs)
 
             if server not in self._callback_finish_creating_on_server:
                 # The project is currently in creation on first server we wait for project id
                 if self._creating_first_server is not None:
-                    func = functools.partial(self._projectHTTPQuery, server, method, path, callback, body=body, **kwargs)
+                    func = qpartial(self._projectHTTPQuery, server, method, path, callback, body=body, **kwargs)
                     self._callback_finish_creating_on_server[self._creating_first_server].append(func)
                 else:
                     if len(self._created_servers) == 0:

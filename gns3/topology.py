@@ -27,8 +27,7 @@ import glob
 import shutil
 import sys
 
-from .qt import QtGui, QtSvg, QtWidgets
-from functools import partial
+from .qt import QtGui, QtSvg, QtWidgets, qpartial
 from .items.node_item import NodeItem
 from .items.pixmap_node_item import PixmapNodeItem
 from .items.svg_node_item import SvgNodeItem
@@ -704,7 +703,7 @@ class Topology:
                 node.setId(topology_node["id"])
 
                 # we want to know when the node has been created
-                callback = partial(self._nodeCreatedSlot, topology)
+                callback = qpartial(self._nodeCreatedSlot, topology)
                 node.created_signal.connect(callback)
 
                 self.addNode(node)
@@ -903,7 +902,7 @@ class Topology:
 
                     if source_port and destination_port:
                         link = view.addLink(source_node, source_port, destination_node, destination_port)
-                        callback = partial(self._linkCreatedSlot, topology)
+                        callback = qpartial(self._linkCreatedSlot, topology)
                         link.add_link_signal.connect(callback)
 
         # We save at the end of initialization process in order to upgrade old topologies
