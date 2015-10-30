@@ -53,6 +53,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         self.uiBootPriorityComboBox.addItem("HDD", "c")
         self.uiBootPriorityComboBox.addItem("CD/DVD-ROM", "d")
+        self.uiBootPriorityComboBox.addItem("Network", "n")
+        self.uiBootPriorityComboBox.addItem("HDD or Network", "cn")
+        self.uiBootPriorityComboBox.addItem("HDD or CD/DVD-ROM", "cd")
 
         self.uiHdaDiskImageToolButton.clicked.connect(self._hdaDiskImageBrowserSlot)
         self.uiHdbDiskImageToolButton.clicked.connect(self._hdbDiskImageBrowserSlot)
