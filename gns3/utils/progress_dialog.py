@@ -19,6 +19,8 @@
 Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
+import sip
+
 from ..qt import QtGui, QtWidgets, QtCore
 
 import logging
@@ -53,6 +55,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.setWindowTitle(title)
         self._worker = worker
         self.canceled.connect(self._worker.cancel)
+        self.destroyed.connect(self._cleanup)
         # self.canceled.connect(self._cancel)
 
         # create the thread and set the self._worker
@@ -94,7 +97,9 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         """
 
         if self._thread is not None:
-            self.setValue(value)
+            # It seem in some cases this is called on a deleted object and crash
+            if not sip.isdeleted(self):
+                self.setValue(value)
 
     def _error(self, message, stop=False):
         """
