@@ -20,11 +20,11 @@ Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
 import sip
-
-from ..qt import QtGui, QtWidgets, QtCore
+from ..qt import QtWidgets, QtCore
 
 import logging
 log = logging.getLogger(__name__)
+
 
 class ProgressDialog(QtWidgets.QProgressDialog):
 
@@ -51,10 +51,12 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         super().__init__(label_text, cancel_button_text, minimum, maximum, parent)
 
         self.setModal(True)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self._errors = []
         self.setWindowTitle(title)
         self._worker = worker
         self.canceled.connect(self._worker.cancel)
+        self.finished.connect(self.close)
         self.destroyed.connect(self._cleanup)
         # self.canceled.connect(self._cancel)
 
@@ -74,12 +76,14 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._thread.start()
 
     def __del__(self):
+
         self._cleanup()
 
     def _cleanup(self):
         """
         Delete the thread.
         """
+
         if self._thread and self._thread.isRunning():
             thread = self._thread
             self._thread = None

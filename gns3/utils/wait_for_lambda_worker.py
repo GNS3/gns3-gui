@@ -19,8 +19,6 @@
 Thread showing a progress dialog and running the code from a lambda
 """
 
-import traceback
-
 from ..qt import QtCore
 
 import logging
@@ -40,7 +38,7 @@ class WaitForLambdaWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, lambda_runner, allowed_exceptions = []):
+    def __init__(self, lambda_runner, allowed_exceptions=[]):
         """
         :param lambda_runner: Code to execute in the worker
         :param allowed_exceptions: Array of exception that should only display an alert box, and not raises
