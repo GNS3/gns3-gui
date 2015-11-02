@@ -63,6 +63,7 @@ from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
+from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
 
@@ -454,7 +455,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog = None
 
             if path.endswith(".gns3a"):
-                self._appliance_wizard = ApplianceWizard(self, path)
+                try:
+                    self._appliance_wizard = ApplianceWizard(self, path)
+                except ApplianceError as e:
+                    QtWidgets.QMessageBox.critical(self, "Appliance", "Error when importing appliance {}: {}".format(path, str(e)))
+                    return
                 self._appliance_wizard.show()
                 self._appliance_wizard.exec_()
             elif self.checkForUnsavedChanges():

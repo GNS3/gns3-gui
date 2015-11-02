@@ -45,12 +45,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if download_directory != "" and download_directory != os.path.dirname(self._path):
             images_directories.append(download_directory)
         self._registry = Registry(images_directories)
-
-        try:
-            self._appliance = Appliance(self._registry, self._path)
-        except ApplianceError as e:
-            self.close()
-            raise e
+        self._appliance = Appliance(self._registry, self._path)
 
         self.uiApplianceVersionTreeWidget.currentItemChanged.connect(self._applianceVersionCurrentItemChangedSlot)
         self.uiRefreshPushButton.clicked.connect(self._refreshVersions)
