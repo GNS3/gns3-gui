@@ -144,7 +144,7 @@ class QemuVM(VM):
         self._port_segment_size = port_segment_size
         self._first_port_name = first_port_name
         params.update(additional_settings)
-        self.httpPost("/qemu/vms", self._setupCallback, body=params)
+        self.httpPost("/qemu/vms", self._setupCallback, body=params, progressText="Creating {}".format(name))
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -174,35 +174,6 @@ class QemuVM(VM):
                 field = "{}_md5sum".format(image_field)
                 if field not in result or result[field] is None or len(result[field]) == 0:
                     ImageManager.instance().addMissingImage(result[image_field], self._server, "QEMU")
-
-    def delete(self):
-        """
-        Deletes this QEMU VM instance.
-        """
-
-        log.debug("QEMU VM instance {} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        if self._vm_id:
-            self.httpDelete("/qemu/vms/{vm_id}".format(vm_id=self._vm_id), self._deleteCallback)
-        else:
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-
-    def _deleteCallback(self, result, error=False, **kwargs):
-        """
-        Callback for delete.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        log.info("{} has been deleted".format(self.name()))
-        self.deleted_signal.emit()
-        self._module.removeNode(self)
 
     def update(self, new_settings):
         """

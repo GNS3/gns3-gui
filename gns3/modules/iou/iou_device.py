@@ -147,7 +147,7 @@ class IOUDevice(VM):
         params = self._addIourcContentToParams(params)
 
         params.update(additional_settings)
-        self.httpPost("/iou/vms", self._setupCallback, body=params)
+        self.httpPost("/iou/vms", self._setupCallback, body=params, progressText="Creating {}".format(name))
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -188,7 +188,7 @@ class IOUDevice(VM):
         params = self._addIourcContentToParams(params)
 
         log.debug("{} is starting".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback, body=params)
+        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback, body=params, progressText="{} is starting".format(self.name()))
 
     def _addIourcContentToParams(self, params):
         """

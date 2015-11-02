@@ -118,27 +118,6 @@ class DockerVM(VM):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-    def start(self):
-        """Starts this Docker container."""
-        log.debug("{} is starting".format(self.name()))
-        self.httpPost("/docker/images/{id}/start".format(
-            id=self._vm_id), self._startCallback)
-
-    def _startCallback(self, result, error=False, **kwargs):
-        """Callback for Docker container start.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-        if error:
-            log.error(
-                "error while starting {}: {}".format(
-                    self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has started".format(self.name()))
-            self.setStatus(Node.started)
-
     def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.

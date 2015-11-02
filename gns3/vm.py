@@ -91,7 +91,7 @@ class VM(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback)
+        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback, progressText="{} is starting".format(self.name()))
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -150,7 +150,7 @@ class VM(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/stop".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._stopCallback)
+        self.httpPost("/{prefix}/vms/{vm_id}/stop".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._stopCallback, progressText="{} is stopping".format(self.name()))
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
