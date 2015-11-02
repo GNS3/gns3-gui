@@ -1,5 +1,27 @@
 # Change Log
 
+## 1.4.0b5 02/11/2015
+
+* Fix crash when loading invalid appliance file
+* Show a message is starting or is stopping in progress dialog
+* Drop duplicate code
+* Changes some references for "GNS3 VM" to "Local GNS3 VM". Ref #506.
+* Fixes progress dialog remains #741.
+* Support more boot order for Qemu
+* Add Royal TS terminal
+* Add a Qt compatible version of partial
+* Show Upload filename instead of waiting for
+* Fix error where ISO is detected as an OVA during gns3a import
+* Removes News Dock Widget.
+* Support cdrom image in missing images detections
+* Fix crash when appliance is missing
+* Support for capture description in Wireshark window title.
+* Set the name of the VM in OSX Terminal application
+* Fix crash of symbol selector if the first file is a non builtin symbol
+* Install appliance from wizard instead of web app
+* Fix crash when using an old version of 1.4 server
+* Ensure default settings are saved when starting the app
+
 ## 1.4.0b4 19/10/2015
 
 * Mockup of appliances wizard
