@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/setup_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created: Sun Nov  1 18:17:05 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SetupWizard(object):
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
-        SetupWizard.resize(740, 485)
+        SetupWizard.resize(688, 469)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -143,8 +144,8 @@ class Ui_SetupWizard(object):
         SetupWizard.setWindowTitle(_translate("SetupWizard", "Setup Wizard"))
         self.uiServerWizardPage.setTitle(_translate("SetupWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X."))
-        self.uiVMRadioButton.setText(_translate("SetupWizard", "GNS3 VM (Dynamips, IOU, VPCS and Qemu will use the VM)"))
-        self.uiLocalRadioButton.setText(_translate("SetupWizard", "Local"))
+        self.uiVMRadioButton.setText(_translate("SetupWizard", "Local GNS3 VM (Dynamips, IOU, VPCS and Qemu will use this virtual machine)"))
+        self.uiLocalRadioButton.setText(_translate("SetupWizard", "Local server"))
         self.uiShowCheckBox.setText(_translate("SetupWizard", "Don\'t show this again"))
         self.uiVMWizardPage.setTitle(_translate("SetupWizard", "GNS3 VM"))
         self.uiVMWizardPage.setSubTitle(_translate("SetupWizard", "In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported in one of these."))

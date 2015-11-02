@@ -291,7 +291,7 @@
      </widget>
      <widget class="QWidget" name="uiGNS3VMTabWidget">
       <attribute name="title">
-       <string>GNS3 VM</string>
+       <string>Local GNS3 VM</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -309,7 +309,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Enable the GNS3 VM</string>
+          <string>Enable the local GNS3 VM</string>
          </property>
          <property name="checked">
           <bool>true</bool>

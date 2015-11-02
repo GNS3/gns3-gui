@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Sun Nov  1 18:17:05 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -134,10 +135,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout.addWidget(self.uiUDPPortRangeGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem2)
-        self.uiGeneralSettingsGroupBox.raise_()
-        self.uiConsolePortRangeGroupBox.raise_()
-        self.uiUDPPortRangeGroupBox.raise_()
-        self.uiLocalServerAutoStartCheckBox.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiGNS3VMTabWidget = QtWidgets.QWidget()
         self.uiGNS3VMTabWidget.setObjectName("uiGNS3VMTabWidget")
@@ -330,22 +327,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteServerPasswordLabel = QtWidgets.QLabel(self.uiRemoteTabWidget)
         self.uiRemoteServerPasswordLabel.setObjectName("uiRemoteServerPasswordLabel")
         self.gridLayout_5.addWidget(self.uiRemoteServerPasswordLabel, 6, 0, 1, 1)
-        self.uiRemoteServerProtocolComboBox.raise_()
-        self.uiRemoteServerHostLabel.raise_()
-        self.uiRemoteServerPortLineEdit.raise_()
-        self.uiRemoteServerPortLabel.raise_()
-        self.uiRemoteServerPortSpinBox.raise_()
-        self.uiRAMLimitLabel.raise_()
-        self.uiRAMLimitSpinBox.raise_()
-        self.uiRemoteServerUserLabel.raise_()
-        self.uiRemoteServerUserLineEdit.raise_()
-        self.uiRemoteServerSSHPortLabel.raise_()
-        self.uiRemoteServerSSHPortSpinBox.raise_()
-        self.uiRemoteServerSSHKeyLabel.raise_()
-        self.uiRemoteServersTreeWidget.raise_()
-        self.uiRemoteServerProtocolLabel.raise_()
-        self.uiRemoteServerPasswordLineEdit.raise_()
-        self.uiRemoteServerPasswordLabel.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.uiLoadBalancingTabWidget = QtWidgets.QWidget()
         self.uiLoadBalancingTabWidget.setObjectName("uiLoadBalancingTabWidget")
@@ -440,7 +421,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiUDPPortRangeGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "UDP tunneling port range"))
         self.uiUDPPortRangeLabel.setText(_translate("ServerPreferencesPageWidget", "to"))
         self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Local server"))
-        self.uiEnableVMCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable the GNS3 VM"))
+        self.uiEnableVMCheckBox.setText(_translate("ServerPreferencesPageWidget", "Enable the local GNS3 VM"))
         self.uiGNS3VMSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Settings"))
         self.uiVirtualizationSoftwarLabel.setText(_translate("ServerPreferencesPageWidget", "Virtualization software:"))
         self.uiVmwareRadioButton.setText(_translate("ServerPreferencesPageWidget", "VMware (recommended)"))
@@ -453,7 +434,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.groupBox.setTitle(_translate("ServerPreferencesPageWidget", "Authentication (optional)"))
         self.uiVMUserLabel.setText(_translate("ServerPreferencesPageWidget", "User:"))
         self.uiVMPasswordLabel.setText(_translate("ServerPreferencesPageWidget", "Password:"))
-        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiGNS3VMTabWidget), _translate("ServerPreferencesPageWidget", "GNS3 VM"))
+        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiGNS3VMTabWidget), _translate("ServerPreferencesPageWidget", "Local GNS3 VM"))
         self.uiRemoteServerUserLabel.setText(_translate("ServerPreferencesPageWidget", "User:"))
         self.uiRemoteServerSSHPortLabel.setText(_translate("ServerPreferencesPageWidget", "SSH port:"))
         self.uiRemoteServerSSHKeyLabel.setText(_translate("ServerPreferencesPageWidget", "SSH key:"))

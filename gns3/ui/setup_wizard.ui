@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>740</width>
-    <height>485</height>
+    <width>688</width>
+    <height>469</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,7 +45,7 @@
     <item row="0" column="0">
      <widget class="QRadioButton" name="uiVMRadioButton">
       <property name="text">
-       <string>GNS3 VM (Dynamips, IOU, VPCS and Qemu will use the VM)</string>
+       <string>Local GNS3 VM (Dynamips, IOU, VPCS and Qemu will use this virtual machine)</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -55,7 +55,7 @@
     <item row="1" column="0">
      <widget class="QRadioButton" name="uiLocalRadioButton">
       <property name="text">
-       <string>Local</string>
+       <string>Local server</string>
       </property>
      </widget>
     </item>
