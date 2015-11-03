@@ -433,7 +433,7 @@ class HTTPClient(QtCore.QObject):
             return self.executeHTTPQuery(method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
         else:
             log.info("Connection to {}".format(self.url()))
-            query = qpartial(self._callbackConnect, method, path, callback, body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
+            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
             self._connect(query)
 
     def _connectionError(self, callback, msg=""):
