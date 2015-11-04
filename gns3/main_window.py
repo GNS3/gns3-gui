@@ -309,13 +309,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return self._settings["vnc_console_command"]
 
-    def shellConsoleCommand(self):
-        """Returns the shell console command line.
-
-        :returns: command (string)
-        """
-        return self._settings["shell_console_command"]
-
     def setUnsavedState(self):
         """
         Sets the project in a unsaved state.
