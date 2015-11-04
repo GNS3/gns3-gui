@@ -34,6 +34,7 @@ from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.local_server_config import LocalServerConfig
 from gns3.utils import parse_version
+from gns3.gns3_vm import GNS3VM
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -302,8 +303,17 @@ class VPCS(Module):
 
         if self._settings["use_local_server"]:
             server = "local"
-        else:
+        elif GNS3VM.instance().isRunning():
             server = "vm"
+        else:
+            remote_server = next(iter(Servers.instance()))
+            if remote_server:
+                server = remote_server.url()
+            else:
+                # If user has no server configured and has uncheck the checkbox
+                # it's a mistake. We use the GNS3VM in order to show a correct
+                # error message
+                server = "vm"
 
         nodes = []
         for node_class in VPCS.classes():
