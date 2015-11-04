@@ -48,11 +48,11 @@ class DockerVM(VM):
         log.info("Docker image instance is being created")
         self._settings = {
             "name": "",
-            "imagename": "",
-            "console": DOCKER_CONTAINER_SETTINGS["console"],
+            "image": "",
             "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
-            "adapter_type": DOCKER_CONTAINER_SETTINGS["adapter_type"],
-            "startcmd": DOCKER_CONTAINER_SETTINGS["startcmd"]
+            "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
+            "environment": DOCKER_CONTAINER_SETTINGS["environment"],
+            "console": None
         }
 
     def _addAdapters(self, adapters):
@@ -70,18 +70,16 @@ class DockerVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
-    def setup(self, imagename, name=None, vm_id=None, additional_settings={}):
+    def setup(self, image, name=None, base_name=None, vm_id=None, additional_settings={}):
         """Sets up this Docker container.
 
-        :param imagename: image name
+        :param image: image name
         :param name: optional name
         :param additional_settings: additional settings for this VM
         """
         # let's create a unique name if none has been chosen
         if not name:
-            name = imagename.replace(":", "-").replace("/", "-")
-            name = self.allocateName(name + "-")
-            self.setName(name)
+            name = self.allocateName(base_name + "-")
 
         if not name:
             self.error_signal.emit(
@@ -89,14 +87,17 @@ class DockerVM(VM):
             return
 
         self._settings["name"] = name
+        self._settings["image"] = image
         params = {
             "name": name,
-            "imagename": imagename
+            "image": image,
+            "adapters": self._settings["adapters"]
         }
         if vm_id:
             params["id"] = vm_id
         params.update(additional_settings)
-        self.httpPost("/docker/images", self._setupCallback, body=params)
+
+        self.httpPost("/docker/vms", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """Callback for Docker container setup.
@@ -140,15 +141,7 @@ class DockerVM(VM):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
-                if name == "adapters":
-                    nb_adapters_changed = True
                 self._settings[name] = value
-
-        if nb_adapters_changed:
-            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
-            # TODO: dynamically add/remove adapters
-            self._ports.clear()
-            self._addAdapters(self._settings["adapters"])
 
         if updated:
             log.info("Docker VM {} has been updated".format(self.name()))
@@ -156,51 +149,22 @@ class DockerVM(VM):
 
     def update(self, new_settings):
         """
-        Updates the settings for this container.
+        Updates the settings for this VPCS device.
 
         :param new_settings: settings dictionary
         """
 
-        updated = False
-        if "nios" in new_settings:
-            nios = new_settings["nios"]
-            # add ports
-            for nio in nios:
-                if nio in self._settings["nios"]:
-                    # port already created for this NIO
-                    continue
-                nio_object = None
-                if nio.lower().startswith("nio_udp"):
-                    nio_object = self._createNIOUDP(nio)
-                    print("nio_object")
-                if nio_object is None:
-                    log.error("Could not create NIO object from {}".format(nio))
-                    continue
-                port = Port(nio, nio_object, stub=True)
-                port.setStatus(Port.started)
-                self._ports.append(port)
-                updated = True
-                log.debug("port {} has been added".format(nio))
+        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
+            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
+            return
 
-            # delete ports
-            for nio in self._settings["nios"]:
-                if nio not in nios:
-                    for port in self._ports.copy():
-                        if port.name() == nio:
-                            self._ports.remove(port)
-                            updated = True
-                            log.debug("port {} has been deleted".format(nio))
-                            break
+        params = {}
+        for name, value in new_settings.items():
+            if name in self._settings and self._settings[name] != value:
+                params[name] = value
 
-            self._settings["nios"] = new_settings["nios"].copy()
-
-        if "name" in new_settings and new_settings["name"] != self.name():
-            self._settings["name"] = new_settings["name"]
-            updated = True
-
-        if updated:
-            log.info("cloud {} has been updated".format(self.name()))
-            self.updated_signal.emit()
+        log.debug("{} is updating settings: {}".format(self.name(), params))
+        self.httpPut("/docker/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
 
     def suspend(self):
         """Suspends this Docker container."""
@@ -208,7 +172,7 @@ class DockerVM(VM):
             log.debug("{} is already suspended".format(self.name()))
             return
         log.debug("{} is being suspended".format(self.name()))
-        self.httpPost("/docker/images/{id}/suspend".format(
+        self.httpPost("/docker/vms/{id}/suspend".format(
             id=self._vm_id), self._suspendCallback)
 
     def _suspendCallback(self, result, error=False, **kwargs):
@@ -228,25 +192,6 @@ class DockerVM(VM):
                 # set ports as suspended
                 port.setStatus(Port.suspended)
             self.suspended_signal.emit()
-
-    def reload(self):
-        """Reloads this Docker container."""
-        log.debug("{} is being reloaded".format(self.name()))
-        self.httpPost("/docker/images/{id}/reload".format(
-            id=self._vm_id), self._reloadCallback)
-
-    def _reloadCallback(self, result, error=False, **kwargs):
-        """Callback for Docker container reload.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-        if error:
-            log.error("error while reloading {}: {}".format(
-                self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))
 
     def dump(self):
         """
@@ -309,51 +254,43 @@ class DockerVM(VM):
 
     def load(self, node_info):
         """
-        Loads a cloud representation
+        Loads a Docker representation
         (from a topology file).
 
         :param node_info: representation of the node (dictionary)
         """
         settings = node_info["properties"]
         name = settings.pop("name")
-        self.updated_signal.connect(self._updatePortSettings)
+        image = settings.pop("image")
         log.info("Docker container {} is loading".format(name))
+        self._loading = True
         self._node_info = node_info
-        self.setup(name, settings)
+        self.loaded_signal.connect(self._updatePortSettings)
+        self.setup(image, name=name, additional_settings=settings)
 
     def _updatePortSettings(self):
         """
         Updates port settings when loading a topology.
         """
 
-        self.updated_signal.disconnect(self._updatePortSettings)
-        # update the port with the correct IDs
+        self.loaded_signal.disconnect(self._updatePortSettings)
+
+        # assign the correct names and IDs to the ports
         if "ports" in self._node_info:
             ports = self._node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["name"] == port.name():
+                    if topology_port["port_number"] == port.portNumber():
+                        port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
-                        if topology_port["name"].startswith("nio_gen_eth") or topology_port["name"].startswith("nio_linux_eth"):
-                            # lookup if the interface exists
-                            available_interface = False
-                            topology_port_name = topology_port["name"].split(':', 1)[1]
-                            for interface in self._settings["interfaces"]:
-                                if interface["name"] == topology_port_name:
-                                    available_interface = True
-                                    break
-                            if not available_interface:
-                                alternative_interface = self._module.findAlternativeInterface(self, topology_port_name)
-                                if alternative_interface:
-                                    if topology_port["name"] in self._settings["nios"]:
-                                        self._settings["nios"].remove(topology_port["name"])
-                                    topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
-                                    port.setName(topology_port["name"])
-                                    self._settings["nios"].append(topology_port["name"])
 
-        log.info("cloud {} has been created".format(self.name()))
+        # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
+        log.info("Docker container {} has been loaded".format(self.name()))
         self.created_signal.emit(self.id())
+        self._module.addNode(self)
+        self._loading = False
+        self._node_info = None
 
     def name(self):
         """
@@ -380,14 +317,6 @@ class DockerVM(VM):
         """
         return self._ports
 
-    def shellExecCmd(self):
-        """Returns the execution command.
-
-        :returns: execution cmd for shell console
-        :rtype: string
-        """
-        return "docker exec -it {} bash".format(self._settings['name'])
-
     def console(self):
         """
         Returns the console port for this Docker VM instance.
@@ -410,19 +339,11 @@ class DockerVM(VM):
 
         :returns: symbol path (or resource).
         """
-        return ":/symbols/docker_guest.normal.svg"
-
-    @staticmethod
-    def hoverSymbol():
-        """Returns the symbol to use when this node is hovered.
-
-        :returns: symbol path (or resource).
-        """
-        return ":/symbols/docker_guest.selected.svg"
+        return ":/symbols/docker_guest.svg"
 
     @staticmethod
     def symbolName():
-        return "Docker image"
+        return "Docker container"
 
     @staticmethod
     def categories():
@@ -434,4 +355,4 @@ class DockerVM(VM):
         return [Node.end_devices]
 
     def __str__(self):
-        return "Docker image"
+        return "Docker container"

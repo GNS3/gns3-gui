@@ -896,7 +896,7 @@ class Topology:
                                 destination_port.setLabel(self._createPortLabel(destination_node, link["destination_port_label"]))
                             break
                     if not found:
-                        msg = "Corrupted topology {} destination port doesn't exist".format(link["description"])
+                        msg = "Corrupted topology {} destination port {} doesn't exist".format(link["description"], link["destination_port_id"])
                         print(msg)
                         log.error(msg)
 

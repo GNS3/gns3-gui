@@ -16,7 +16,6 @@
         <file>symbols/vpcs_guest.svg</file>
         <file>symbols/vmware_guest.svg</file>
         <file>symbols/docker_guest.svg</file>
-        <file>symbols/docker_container.svg</file>
         <file>symbols/server.svg</file>
         <file>symbols/router_netflow.svg</file>
         <file>symbols/access_server.svg</file>
@@ -110,6 +109,7 @@
         <file>icons/PC.png</file>
         <file>icons/PC-hover.png</file>
         <file>icons/firewall.png</file>
+        <file>icons/docker.png</file>
         <file>icons/firewall-hover.png</file>
         <file>icons/browse-all-icons.png</file>
         <file>icons/browse-all-icons-hover.png</file>
