@@ -65,14 +65,6 @@ try:
 except ImportError:
     raise SystemExit("Please install the PyQt5.QtSvg module")
 
-try:
-    from PyQt5 import QtWebKit
-    from PyQt5 import QtWebKitWidgets
-    sys.modules[__name__ + '.QtWebKit'] = QtWebKit
-    sys.modules[__name__ + '.QtWebKitWidgets'] = QtWebKitWidgets
-except ImportError:
-    pass
-
 QtCore.Signal = QtCore.pyqtSignal
 QtCore.Slot = QtCore.pyqtSlot
 QtCore.Property = QtCore.pyqtProperty
