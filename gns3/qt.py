@@ -191,6 +191,9 @@ def qpartial(func, *args, **kwargs):
     A functools partial that you can use on qobject. If the targeted qobject is
     destroyed the partial is not called.
     """
+    if func is None:
+        return None
+
     if inspect.ismethod(func):
         if isinstance(func.__self__, QtCore.QObject):
 
