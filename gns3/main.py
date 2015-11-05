@@ -228,6 +228,7 @@ def main():
             except win32console.error as e:
                 print("warning: could not allocate console: {}".format(e))
 
+    global app
     app = Application(sys.argv)
 
 
@@ -243,6 +244,7 @@ def main():
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
 
+    global mainwindow
     mainwindow = MainWindow()
 
     # On OSX we can receive the file to open from a system event
@@ -263,7 +265,6 @@ def main():
 
     exit_code = app.exec_()
     delattr(MainWindow, "_instance")
-    app.deleteLater()
 
     # We force a full garbage collect before exit
     # for unknow reason otherwise Qt Segfault on OSX in some
