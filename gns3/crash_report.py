@@ -28,14 +28,14 @@ except ImportError:
     RAVEN_AVAILABLE = False
 
 from .utils.get_resource import get_resource
-from .version import __version__
+from .version import __version__, __version_info__
 
 import logging
 log = logging.getLogger(__name__)
 
 
 # Dev build
-if __version__[4] != 0:
+if __version_info__[3] != 0:
     import faulthandler
     # Display a traceback in case of segfault crash. Usefull when frozen
     # Not enabled by default for security reason
