@@ -503,21 +503,21 @@ class Topology:
                     continue
                 if node.server().id() not in servers:
                     servers[node.server().id()] = node.server()
-                log.info("saving node: {}".format(node.name()))
+                log.info("Saving node: {}".format(node.name()))
                 topology_nodes.append(node.dump())
 
         # links
         if self._links:
             topology_links = topology["topology"]["links"] = []
             for link in self._links:
-                log.info("saving {}".format(str(link)))
+                log.info("Saving link: {}".format(str(link)))
                 topology_links.append(link.dump())
 
         # servers
         if servers:
             topology_servers = topology["topology"]["servers"] = []
             for server in servers.values():
-                log.info("saving server {}".format(server.url))
+                log.info("Saving server: {}".format(server.url()))
                 topology_servers.append(server.dump())
 
         if include_gui_data:
