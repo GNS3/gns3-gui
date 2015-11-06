@@ -12,7 +12,7 @@ class Ui_ExportDebugDialog(object):
     def setupUi(self, ExportDebugDialog):
         ExportDebugDialog.setObjectName("ExportDebugDialog")
         ExportDebugDialog.setWindowModality(QtCore.Qt.WindowModal)
-        ExportDebugDialog.resize(530, 229)
+        ExportDebugDialog.resize(592, 223)
         ExportDebugDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ExportDebugDialog)
         self.verticalLayout.setContentsMargins(-1, -1, 12, -1)
@@ -49,7 +49,6 @@ class Ui_ExportDebugDialog(object):
         self.horizontalLayout.addWidget(self.uiOkButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.label.raise_()
-        self.uiCancelButton.raise_()
 
         self.retranslateUi(ExportDebugDialog)
         self.uiCancelButton.clicked.connect(ExportDebugDialog.reject)
@@ -58,7 +57,7 @@ class Ui_ExportDebugDialog(object):
     def retranslateUi(self, ExportDebugDialog):
         _translate = QtCore.QCoreApplication.translate
         ExportDebugDialog.setWindowTitle(_translate("ExportDebugDialog", "Export debug informations"))
-        self.label.setText(_translate("ExportDebugDialog", "<html><head/><body><p>We will export debug informations. <span style=\" font-weight:600;\">Be carefull</span> this file can contain <span style=\" font-weight:600;\">private informations</span> about your topologies, GNS3 settings or your computer (list of running process for example). You can unzip the file in order to control the content.</p><p>Thanks a lot to helping the GNS3 community.</p></body></html>"))
+        self.label.setText(_translate("ExportDebugDialog", "<html><head/><body><p>We will export debug informations. <span style=\" font-weight:600;\">Be carefull</span> this file can contain <span style=\" font-weight:600;\">private informations</span> about your topologies, GNS3 settings or your computer (list of running process for example). You can unzip the file in order to control the content.</p><p><br/>You need to<span style=\" font-weight:600;\"> save the project before</span> exporting the informations.</p><p><br/>Thanks a lot to helping the GNS3 community.</p></body></html>"))
         self.uiCancelButton.setText(_translate("ExportDebugDialog", "Cancel"))
 
 from . import resources_rc

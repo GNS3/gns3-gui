@@ -43,6 +43,10 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
     def _okButtonClickedSlot(self):
         path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export debug file", None, "Zip file (*.zip);")
 
+        if len(path) == 0:
+            self.reject()
+            return
+
         try:
             with ZipFile(path, 'w') as zip:
                 zip.writestr("debug.txt", self._getDebugData())
