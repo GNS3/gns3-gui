@@ -164,11 +164,11 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
             cluster_size = self.uiQcow2ClusterSizeComboBox.currentText()
             if not '<default>' == cluster_size:
-                options["cluster_size"] = cluster_size
+                options["cluster_size"] = int(cluster_size)
 
             refcount_bits = self.uiRefcountEntrySizeComboBox.currentText()
             if not '<default>' == refcount_bits:
-                options["refcount_bits"] = refcount_bits
+                options["refcount_bits"] = int(refcount_bits)
 
             options["lazy_refcounts"] = 'on' if QtCore.Qt.Checked == self.uiLazyRefcountsCheckBox.checkState() else 'off'
 
