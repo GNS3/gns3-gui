@@ -19,10 +19,7 @@
 Configuration page for VPCS devices.
 """
 
-import os
-
 from gns3.qt import QtWidgets
-from gns3.utils.get_resource import get_resource
 from ..ui.vpcs_device_configuration_page_ui import Ui_VPCSDeviceConfigPageWidget
 
 

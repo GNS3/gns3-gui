@@ -22,7 +22,6 @@ Dialog to change node symbols.
 import os
 
 from ..qt import QtSvg, QtCore, QtGui, QtWidgets
-from ..items.svg_node_item import SvgNodeItem
 from ..items.pixmap_node_item import PixmapNodeItem
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 from ..servers import Servers
@@ -55,22 +54,9 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
         self._symbols_path = Servers.instance().localServerSettings()["symbols_path"]
 
-        selected_symbol = symbol
         if not self._items:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
-        else:
-            first_item = items[0]
-            if isinstance(first_item, SvgNodeItem):
-                custom_symbol = first_item.renderer().objectName()
-                if not custom_symbol:
-                    symbol_name = first_item.node().defaultSymbol()
-                else:
-                    symbol_name = custom_symbol
-                selected_symbol = symbol_name
-            elif isinstance(first_item, PixmapNodeItem):
-                selected_symbol = first_item.pixmapSymbolPath()
 
-        custom_symbol = True
         self.uiBuiltInSymbolRadioButton.setChecked(True)
         self.uiSymbolListWidget.setFocus()
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))

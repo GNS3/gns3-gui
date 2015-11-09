@@ -19,8 +19,6 @@
 Wizard for VirtualBox VMs.
 """
 
-import sys
-
 from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.dialogs.vm_wizard import VMWizard

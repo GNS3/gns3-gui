@@ -160,7 +160,6 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         for item in self.uiIOSRoutersTreeWidget.selectedItems():
             if item:
                 key = item.data(0, QtCore.Qt.UserRole)
-                ios_router = self._ios_routers[key]
 
                 del self._ios_routers[key]
                 self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))

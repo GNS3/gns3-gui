@@ -20,7 +20,7 @@ Configuration page for Dynamips ATM bridges.
 """
 
 import re
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..ui.atm_bridge_configuration_page_ui import Ui_atmBridgeConfigPageWidget
 
 

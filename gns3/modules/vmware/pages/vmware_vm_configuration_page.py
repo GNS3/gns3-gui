@@ -19,8 +19,6 @@
 Configuration page for VMware VMs.
 """
 
-import sys
-
 from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog

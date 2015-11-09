@@ -21,7 +21,6 @@ Configuration page for QEMU VMs.
 
 import os
 import re
-import sip
 
 from collections import OrderedDict
 from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard

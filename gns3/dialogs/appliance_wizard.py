@@ -18,10 +18,10 @@
 import os
 import sys
 
-from ..qt import QtWidgets, QtCore, QtWidgets, QtGui
+from ..qt import QtWidgets, QtCore, QtGui
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
 from ..image_manager import ImageManager
-from ..registry.appliance import Appliance, ApplianceError
+from ..registry.appliance import Appliance
 from ..registry.registry import Registry
 from ..registry.config import Config, ConfigException
 from ..registry.image import Image

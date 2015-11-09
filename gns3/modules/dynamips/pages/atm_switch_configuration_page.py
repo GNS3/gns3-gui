@@ -20,7 +20,7 @@ Configuration page for Dynamips ATM switches.
 """
 
 import re
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..ui.atm_switch_configuration_page_ui import Ui_atmSwitchConfigPageWidget
 
 

@@ -19,7 +19,7 @@
 Configuration page for Dynamips Ethernet switches.
 """
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..utils.tree_widget_item import TreeWidgetItem
 from ..ui.ethernet_switch_configuration_page_ui import Ui_ethernetSwitchConfigPageWidget
 

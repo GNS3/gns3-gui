@@ -196,7 +196,7 @@ class UpdateManager(QtCore.QObject):
                                                        QtWidgets.QMessageBox.Yes,
                                                        QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
-                    app = QtWidgets.QApplication.instance().closeAllWindows()
+                    QtWidgets.QApplication.instance().closeAllWindows()
         else:
             log.debug('Error when downloading %s', file_path)
         network_reply.deleteLater()
@@ -210,7 +210,7 @@ class UpdateManager(QtCore.QObject):
         """
 
         if os.path.exists(self._update_directory):
-            package = os.makedirs(self._package_directory, exist_ok=True)
+            os.makedirs(self._package_directory, exist_ok=True)
 
             gui_tgz = os.path.join(self._update_directory, 'gns3-gui.tar.gz')
             self._extractTgz(gui_tgz)

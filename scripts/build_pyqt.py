@@ -9,7 +9,6 @@ import sys
 import stat
 import shutil
 import subprocess
-import re
 import argparse
 
 parser = argparse.ArgumentParser()

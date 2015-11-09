@@ -19,12 +19,9 @@
 Wizard for VMware VMs.
 """
 
-import sys
-
 from gns3.qt import QtGui, QtWidgets
 from gns3.servers import Servers
 from gns3.dialogs.vm_wizard import VMWizard
-from gns3.local_config import LocalConfig
 
 from ..ui.vmware_vm_wizard_ui import Ui_VMwareVMWizard
 from .. import VMware

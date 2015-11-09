@@ -19,7 +19,7 @@
 Configuration page for Dynamips Frame Relay switches.
 """
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..ui.frame_relay_switch_configuration_page_ui import Ui_frameRelaySwitchConfigPageWidget
 
 

@@ -22,7 +22,7 @@ Configuration page for packet capture preferences.
 import sys
 import struct
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..ui.packet_capture_preferences_page_ui import Ui_PacketCapturePreferencesPageWidget
 from ..settings import PACKET_CAPTURE_SETTINGS, PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
 from ..ports.port import Port

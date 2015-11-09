@@ -19,7 +19,7 @@
 To show a advanced message box.
 """
 
-from ..qt import QtGui, QtWidgets
+from ..qt import QtWidgets
 
 
 def MessageBox(parent, title, message, details="", icon=QtWidgets.QMessageBox.Critical):

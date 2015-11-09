@@ -23,7 +23,7 @@ import sys
 import os
 import shutil
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 

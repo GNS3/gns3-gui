@@ -20,7 +20,7 @@ Configuration page for clouds.
 """
 
 import re
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
 
 

@@ -18,7 +18,6 @@
 import os
 import sys
 import configparser
-from gns3.qt import QtCore
 
 
 import logging

@@ -18,14 +18,13 @@
 
 import sys
 import shutil
-import signal
 import json
 import os
 from datetime import datetime
 
 
 try:
-    from gns3.qt import QtCore, QtGui, QtWidgets, DEFAULT_BINDING
+    from gns3.qt import QtGui, QtWidgets
 except ImportError:
     raise SystemExit("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
 
@@ -128,7 +127,7 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
                 topo = json.load(f)
             if "topology" in topo and "servers" in topo["topology"]:
                 for server in topo["topology"]["servers"]:
-                    if server["local"] == False:
+                    if server["local"] is False:
                         server["vm"] = True
                 with open(path, 'w+') as f:
                     topo = json.dump(topo, f)

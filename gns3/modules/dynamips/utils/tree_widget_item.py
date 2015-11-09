@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 
 
 class TreeWidgetItem(QtWidgets.QTreeWidgetItem):

@@ -23,7 +23,6 @@ import os
 import re
 from gns3.vm import VM
 from gns3.node import Node
-from gns3.servers import Servers
 from gns3.packet_capture import PacketCapture
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
