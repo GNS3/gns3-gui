@@ -365,7 +365,7 @@ class QemuVM(VM):
         vm_id = node_info.get("qemu_id")
         if not vm_id:
             vm_id = node_info.get("vm_id")
-        linked_clone = node_info.get("linked_clone", False)
+        linked_clone = node_info.get("linked_clone", True)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")
         port_segment_size = node_info.get("port_segment_size", 0)
         first_port_name = node_info.get("first_port_name", "")
