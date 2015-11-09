@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_configurationDialog(object):
+
     def setupUi(self, configurationDialog):
         configurationDialog.setObjectName("configurationDialog")
         configurationDialog.resize(585, 454)
@@ -53,7 +55,7 @@ class Ui_configurationDialog(object):
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(configurationDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 

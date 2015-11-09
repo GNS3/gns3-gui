@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_DockerPreferencesPageWidget(object):
+
     def setupUi(self, DockerPreferencesPageWidget):
         DockerPreferencesPageWidget.setObjectName("DockerPreferencesPageWidget")
         DockerPreferencesPageWidget.resize(200, 200)
@@ -48,4 +50,3 @@ class Ui_DockerPreferencesPageWidget(object):
         self.uiUseLocalServercheckBox.setText(_translate("DockerPreferencesPageWidget", "Use the local server"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("DockerPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("DockerPreferencesPageWidget", "Restore defaults"))
-

@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_TextEditorDialog(object):
+
     def setupUi(self, TextEditorDialog):
         TextEditorDialog.setObjectName("TextEditorDialog")
         TextEditorDialog.resize(457, 333)
@@ -55,7 +57,7 @@ class Ui_TextEditorDialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(TextEditorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -74,7 +76,7 @@ class Ui_TextEditorDialog(object):
         self.uiColorLabel.setText(_translate("TextEditorDialog", "Color:"))
         self.uiRotationLabel.setText(_translate("TextEditorDialog", "Rotation:"))
         self.uiRotationSpinBox.setToolTip(_translate("TextEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
-"editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
+                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
         self.uiRotationSpinBox.setSuffix(_translate("TextEditorDialog", "°"))
         self.uiApplyTextToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the text below to all selected items"))
         self.uiFontPushButton.setText(_translate("TextEditorDialog", "&Select font"))

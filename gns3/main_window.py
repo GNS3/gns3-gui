@@ -1202,7 +1202,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 running_nodes.append(node.name())
         return running_nodes
 
-
     def saveProjectAs(self):
         """
         Saves a project to another location/name.

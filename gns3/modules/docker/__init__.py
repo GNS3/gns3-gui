@@ -238,7 +238,6 @@ class Docker(Module):
         from .pages.docker_preferences_page import DockerPreferencesPage
         from .pages.docker_vm_preferences_page import DockerVMPreferencesPage
 
-
         from gns3.local_config import LocalConfig
         if not LocalConfig.instance().experimental():
             return []

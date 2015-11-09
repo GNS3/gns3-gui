@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_cloudConfigPageWidget(object):
+
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
         cloudConfigPageWidget.resize(653, 478)
@@ -455,4 +457,3 @@ class Ui_cloudConfigPageWidget(object):
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIONullTab), _translate("cloudConfigPageWidget", "NULL"))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
-

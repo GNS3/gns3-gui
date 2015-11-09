@@ -2,6 +2,7 @@ import importlib
 import hashlib
 import re
 
+
 def import_from_string(string_val):
     """
     Attempt to import a name from its string representation.
@@ -63,7 +64,7 @@ def parse_version(version):
 
 
 def human_filesize(size):
-    for unit in ['B','KB','MB','GB']:
+    for unit in ['B', 'KB', 'MB', 'GB']:
         if abs(size) < 1024.0:
             return "%3.1f%s" % (size, unit)
         size /= 1024.0

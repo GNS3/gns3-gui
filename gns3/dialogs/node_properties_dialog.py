@@ -65,7 +65,6 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
             if not node_item.node().initialized():
                 continue
 
-
             # If something of one of the displayed nodes we reload everything
             node_item.node().updated_signal.connect(self.resetSettings)
 

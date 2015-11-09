@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ethernetSwitchConfigPageWidget(object):
+
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName("ethernetSwitchConfigPageWidget")
         ethernetSwitchConfigPageWidget.resize(397, 315)
@@ -141,4 +143,3 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiPortEtherTypeComboBox.setItemText(3, _translate("ethernetSwitchConfigPageWidget", "0x9200"))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete"))
-

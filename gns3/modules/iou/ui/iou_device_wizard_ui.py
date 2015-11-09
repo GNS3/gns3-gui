@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_IOUDeviceWizard(object):
+
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
         IOUDeviceWizard.resize(585, 423)
@@ -142,4 +144,3 @@ class Ui_IOUDeviceWizard(object):
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:"))
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:"))
         self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse..."))
-

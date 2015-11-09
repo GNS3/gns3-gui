@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VPCSPreferencesPageWidget(object):
+
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")
         VPCSPreferencesPageWidget.resize(469, 392)
@@ -118,4 +120,3 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiScriptFileLabel.setText(_translate("VPCSPreferencesPageWidget", "Base script file:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiVPCSTabWidget), _translate("VPCSPreferencesPageWidget", "VPCS VM settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults"))
-

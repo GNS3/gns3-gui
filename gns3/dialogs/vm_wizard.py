@@ -51,7 +51,6 @@ class VMWizard(QtWidgets.QWizard):
         if hasattr(self, "uiLoadBalanceCheckBox"):
             self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
 
-
         # By default we use the local server
         self._server = Servers.instance().localServer()
         self.uiLocalRadioButton.setChecked(True)
@@ -60,7 +59,6 @@ class VMWizard(QtWidgets.QWizard):
         if Servers.instance().isNonLocalServerConfigured() is False:
             # skip the server page if we use the local server
             self.setStartId(1)
-
 
     def _vmToggledSlot(self, checked):
         """

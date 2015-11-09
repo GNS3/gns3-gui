@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_DockerVMWizard(object):
+
     def setupUi(self, DockerVMWizard):
         DockerVMWizard.setObjectName("DockerVMWizard")
         DockerVMWizard.resize(585, 424)
@@ -91,4 +93,3 @@ class Ui_DockerVMWizard(object):
         self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))
         self.uiImageWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a Docker virtual machine from the list."))
         self.uiImageListLabel.setText(_translate("DockerVMWizard", "Image list:"))
-

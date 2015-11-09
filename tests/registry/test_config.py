@@ -260,7 +260,6 @@ def test_add_appliance_router_two_disk(empty_config, images_dir):
     with open("tests/registry/appliances/arista-veos.json", encoding="utf-8") as f:
         config = json.load(f)
 
-
     config["images"] = [
         {
             "type": "hda_disk_image",

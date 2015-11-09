@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_frameRelaySwitchConfigPageWidget(object):
+
     def setupUi(self, frameRelaySwitchConfigPageWidget):
         frameRelaySwitchConfigPageWidget.setObjectName("frameRelaySwitchConfigPageWidget")
         frameRelaySwitchConfigPageWidget.resize(499, 405)
@@ -147,4 +149,3 @@ class Ui_frameRelaySwitchConfigPageWidget(object):
         self.uiDestinationDLCILabel.setText(_translate("frameRelaySwitchConfigPageWidget", "DLCI:"))
         self.uiAddPushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Delete"))
-

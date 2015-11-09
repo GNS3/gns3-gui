@@ -9,7 +9,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwarePreferencesPageWidget(object):
+
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
         VMwarePreferencesPageWidget.resize(462, 532)
@@ -125,4 +127,3 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiResetVmnetPushButton.setText(_translate("VMwarePreferencesPageWidget", "&Reset"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
-

@@ -972,7 +972,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     break
 
                 if os.path.exists(vm_dir):
-                    log.debug("Open %s in file manage" )
+                    log.debug("Open %s in file manage")
                     if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(vm_dir)) is False:
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(vm_dir))
                         break

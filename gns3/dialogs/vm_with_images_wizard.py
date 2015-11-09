@@ -168,4 +168,3 @@ class VMWithImagesWizard(VMWizard):
                     QtWidgets.QMessageBox.critical(self, "Images", "Please upgrade the gns3 server to a version >= 1.4.0b4")
                     return
                 combo_box.addItem(vm["path"], vm)
-

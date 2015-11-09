@@ -38,4 +38,3 @@ def test_context():
         assert progress._allow_cancel_query is True
     assert progress._cancel_button_text == ""
     assert progress._allow_cancel_query is False
-

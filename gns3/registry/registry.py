@@ -30,6 +30,7 @@ class RegistryError(Exception):
 
 
 class Registry:
+
     def __init__(self, images_dirs):
         self._images_dirs = images_dirs
 

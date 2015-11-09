@@ -95,4 +95,4 @@ def test_server_select_local_server_and_remote_user_cancel(main_window, remote_s
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert server == None
+        assert server is None

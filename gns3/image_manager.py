@@ -151,7 +151,7 @@ class ImageManager:
         img_directory = self.getDirectoryForType(vm_type)
         path = os.path.abspath(path)
         if os.path.commonprefix([img_directory, path]) == img_directory:
-           return os.path.relpath(path, img_directory)
+            return os.path.relpath(path, img_directory)
         return path
 
     def getDirectory(self):

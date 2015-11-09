@@ -28,6 +28,7 @@ from .image import Image
 import logging
 log = logging.getLogger(__name__)
 
+
 class ConfigException(Exception):
     pass
 
@@ -150,7 +151,6 @@ class Config:
         new_config["initrd"] = appliance_config["qemu"].get("initrd", "")
         new_config["kernel_command_line"] = appliance_config["qemu"].get("kernel_command_line", "")
         new_config["kernel_image"] = appliance_config["qemu"].get("kernel_image", "")
-
 
         new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
 

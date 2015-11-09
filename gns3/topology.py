@@ -732,7 +732,7 @@ class Topology:
                             topology_file_errors.append("Path to symbol {} doesn't exist".format(symbol_path))
                         pixmap = QtGui.QPixmap(symbol_path)
                         if not pixmap.isNull():
-                            node_item = PixmapNodeItem(node,  symbol_path)
+                            node_item = PixmapNodeItem(node, symbol_path)
                         else:
                             topology_file_errors.append("Symbol {} is invalid".format(symbol_path))
                             node_item = SvgNodeItem(node)

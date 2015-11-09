@@ -12,6 +12,7 @@ sys._called_from_test = True
 from gns3.qt.QtWidgets import QApplication
 app = QApplication([])
 
+
 @pytest.fixture(autouse=True)
 def reset_qt_signal():
     """
@@ -161,7 +162,7 @@ def qemu_vm(local_server, project):
 def local_config():
     from gns3.local_config import LocalConfig
 
-    (fd, config_path) =  tempfile.mkstemp()
+    (fd, config_path) = tempfile.mkstemp()
     os.close(fd)
 
     LocalConfig._instance = LocalConfig(config_file=config_path)
@@ -232,5 +233,3 @@ def pytest_configure(config):
 
 def pytest_unconfigure(config):
     del sys._called_from_test
-
-

@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VirtualBoxVMWizard(object):
+
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName("VirtualBoxVMWizard")
         VirtualBoxVMWizard.resize(514, 367)
@@ -87,4 +89,3 @@ class Ui_VirtualBoxVMWizard(object):
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a VirtualBox virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VirtualBoxVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VirtualBoxVMWizard", "Use as a linked base VM (experimental)"))
-

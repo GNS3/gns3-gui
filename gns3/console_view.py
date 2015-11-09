@@ -29,6 +29,7 @@ from .pycutext import PyCutExt
 from .modules import MODULES
 from .local_config import LocalConfig
 
+
 class ConsoleView(PyCutExt, ConsoleCmd):
 
     def __init__(self, parent):

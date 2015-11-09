@@ -22,6 +22,7 @@ from unittest.mock import patch
 
 from gns3.image_manager import ImageManager
 
+
 @pytest.yield_fixture
 def image_manager(tmpdir):
     ImageManager._instance = None
@@ -34,7 +35,7 @@ def qemu_img(tmpdir):
     """
     Return a fake qemu IMG
     """
-    path = str(tmpdir / 'QEMU' /'test.img')
+    path = str(tmpdir / 'QEMU' / 'test.img')
     os.makedirs(str(tmpdir / 'QEMU'))
     open(path, 'w+').close()
     return path

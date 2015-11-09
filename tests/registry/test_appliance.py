@@ -121,6 +121,3 @@ def test_is_version_installable(linux_microcore_img, microcore_appliance):
 
     assert microcore_appliance.is_version_installable("3.4.1")
     assert not microcore_appliance.is_version_installable("4.0.2")
-
-
-

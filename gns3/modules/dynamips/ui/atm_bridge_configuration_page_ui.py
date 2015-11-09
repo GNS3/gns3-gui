@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_atmBridgeConfigPageWidget(object):
+
     def setupUi(self, atmBridgeConfigPageWidget):
         atmBridgeConfigPageWidget.setObjectName("atmBridgeConfigPageWidget")
         atmBridgeConfigPageWidget.resize(432, 358)
@@ -150,4 +152,3 @@ class Ui_atmBridgeConfigPageWidget(object):
         self.uiDeletePushButton.setText(_translate("atmBridgeConfigPageWidget", "&Delete"))
         self.uiGeneralGroupBox.setTitle(_translate("atmBridgeConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("atmBridgeConfigPageWidget", "Name:"))
-

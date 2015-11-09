@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ExecCommandDialog(object):
+
     def setupUi(self, ExecCommandDialog):
         ExecCommandDialog.setObjectName("ExecCommandDialog")
         ExecCommandDialog.resize(651, 343)

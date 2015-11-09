@@ -91,7 +91,7 @@ def nodeTelnetConsole(name, server, port):
     if not command:
         return
 
-    #FIXME: do we still need to run the console from a thread?
+    # FIXME: do we still need to run the console from a thread?
     log.info('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, name, server, port)
     # console_thread.consoleDone.connect(callback)

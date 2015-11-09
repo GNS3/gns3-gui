@@ -77,34 +77,34 @@ class AnalyticsClient(QtCore.QObject):
             log.debug("Stats is turn off ignore call %s", screen)
             return
 
-        body =  "v=1" #Version
-        body += "&tid={}".format(self._property_id) # Tracking ID / Property ID
-        body += "&cid={}".format(settings["stats_visitor_id"]) # Anonymous Client ID
-        body += "&aip=1" # Anonymize IP
-        body += "&t=screenview" # Screenview hit type
-        body += "&an=GNS3" # App name
-        body += "&av={}".format(quote(__version__)) # App version.
-        body += "&ua={}".format(quote(self._user_agent)) # User agent
-        body += "&cd={}".format(quote(screen)) # Category
-        body += "&ds=gns3-gui" # Data source
+        body = "v=1"  # Version
+        body += "&tid={}".format(self._property_id)  # Tracking ID / Property ID
+        body += "&cid={}".format(settings["stats_visitor_id"])  # Anonymous Client ID
+        body += "&aip=1"  # Anonymize IP
+        body += "&t=screenview"  # Screenview hit type
+        body += "&an=GNS3"  # App name
+        body += "&av={}".format(quote(__version__))  # App version.
+        body += "&ua={}".format(quote(self._user_agent))  # User agent
+        body += "&cd={}".format(quote(screen))  # Category
+        body += "&ds=gns3-gui"  # Data source
         if session_start is True:
-            body += "&sc=start" # Session start
+            body += "&sc=start"  # Session start
         elif session_start is False:
-            body += "&sc=end" # Session end
+            body += "&sc=end"  # Session end
 
         screen = QtWidgets.QApplication.desktop().screenGeometry()
-        body += "&sr={}x{}".format(screen.width(), screen.height()) # Screen resolution
+        body += "&sr={}x{}".format(screen.width(), screen.height())  # Screen resolution
 
         locale = QtCore.QLocale.system().name().lower()
         if locale:
-            body += "&ul={}".format(locale) # User language
+            body += "&ul={}".format(locale)  # User language
 
         # TODO: HTTPS when possible because it's broken for the moment with Qt on OSX:
         # https://bugreports.qt.io/browse/QTBUG-45487
         if sys.platform.startswith("darwin"):
-            url = QtCore.QUrl('http://www.google-analytics.com/collect');
+            url = QtCore.QUrl('http://www.google-analytics.com/collect')
         else:
-            url = QtCore.QUrl('https://www.google-analytics.com/collect');
+            url = QtCore.QUrl('https://www.google-analytics.com/collect')
         request_qt = QtNetwork.QNetworkRequest(url)
         request_qt.setRawHeader(b"Content-Type", b"application/x-www-form-urlencoded")
         request_qt.setRawHeader(b"User-Agent", self._user_agent.encode())

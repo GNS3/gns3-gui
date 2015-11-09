@@ -239,7 +239,7 @@ class Servers():
             local_server_settings["password"] = self._passwordGenerate()
             changed = True
 
-        #For 1.3 compatibity old LocalServer section
+        # For 1.3 compatibity old LocalServer section
         local_server = LocalConfig.instance().loadSectionSettings("LocalServer", {})
         if "auth" in local_server:
             local_server["auth"] = local_server_settings["auth"]
@@ -248,7 +248,7 @@ class Servers():
             LocalConfig.instance().saveSectionSettings("LocalServer", local_server)
             changed = True
 
-        #WARNING: This operation should be a the end of the method otherwise you save a partial config
+        # WARNING: This operation should be a the end of the method otherwise you save a partial config
         if changed:
             self._saveSettings()
 

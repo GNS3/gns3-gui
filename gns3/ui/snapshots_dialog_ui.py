@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SnapshotsDialog(object):
+
     def setupUi(self, SnapshotsDialog):
         SnapshotsDialog.setObjectName("SnapshotsDialog")
         SnapshotsDialog.setWindowModality(QtCore.Qt.WindowModal)
@@ -46,4 +48,3 @@ class Ui_SnapshotsDialog(object):
         self.uiCreatePushButton.setText(_translate("SnapshotsDialog", "&Create"))
         self.uiRestorePushButton.setText(_translate("SnapshotsDialog", "&Restore"))
         self.uiDeletePushButton.setText(_translate("SnapshotsDialog", "&Delete"))
-

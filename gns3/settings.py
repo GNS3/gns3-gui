@@ -163,10 +163,10 @@ elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'OSX builtin screen sharing': "osascript"
-                          " -e 'tell application \"Screen Sharing\"'"
-                          " -e '   display dialog \"WARNING OSX VNC support is limited if you have trouble connecting to a device please use an alternative client like Chicken of the VNC.\" buttons {\"OK\"} default button 1 with icon caution with title \"GNS3\"'"
-                          " -e '  open location \"vnc://%h:%p\"'"
-                          " -e 'end tell'",
+        " -e 'tell application \"Screen Sharing\"'"
+        " -e '   display dialog \"WARNING OSX VNC support is limited if you have trouble connecting to a device please use an alternative client like Chicken of the VNC.\" buttons {\"OK\"} default button 1 with icon caution with title \"GNS3\"'"
+        " -e '  open location \"vnc://%h:%p\"'"
+        " -e 'end tell'",
         'Chicken of the VNC': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p"
     }
 
@@ -224,7 +224,7 @@ GENERAL_SETTINGS = {
     "check_for_update": True,
     "experimental_features": False,
     "send_stats": True,
-    "stats_visitor_id": str(uuid.uuid4()), # An anonymous id for stats
+    "stats_visitor_id": str(uuid.uuid4()),  # An anonymous id for stats
     "last_check_for_update": 0,
     "slow_device_start_all": 0,
     "link_manual_mode": True,

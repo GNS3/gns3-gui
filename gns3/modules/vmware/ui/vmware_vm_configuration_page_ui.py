@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwareVMConfigPageWidget(object):
+
     def setupUi(self, VMwareVMConfigPageWidget):
         VMwareVMConfigPageWidget.setObjectName("VMwareVMConfigPageWidget")
         VMwareVMConfigPageWidget.resize(494, 381)
@@ -149,4 +151,3 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiFirstPortNameLabel.setText(_translate("VMwareVMConfigPageWidget", "First port name:"))
         self.uiUseUbridgeCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Use uBridge for network connections"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
-

@@ -16,4 +16,4 @@ echo '
 
 find . -name '*.py' -exec autopep8 --in-place -v --aggressive --aggressive \{\} \;
 
-echo "Its 'clean"
+echo "It's clean"

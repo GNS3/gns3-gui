@@ -231,7 +231,6 @@ def main():
     global app
     app = Application(sys.argv)
 
-
     # save client logging info to a file
     logfile = os.path.join(LocalConfig.configDirectory(), "gns3_gui.log")
 

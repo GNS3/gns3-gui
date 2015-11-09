@@ -102,8 +102,8 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiNameLineEdit.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
-            #self.uiVMListLabel.hide()
-            #self.uiVMListComboBox.hide()
+            # self.uiVMListLabel.hide()
+            # self.uiVMListComboBox.hide()
 
         if not node:
             # load the symbol

@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_dockerVMConfigPageWidget(object):
+
     def setupUi(self, dockerVMConfigPageWidget):
         dockerVMConfigPageWidget.setObjectName("dockerVMConfigPageWidget")
         dockerVMConfigPageWidget.resize(509, 346)
@@ -57,4 +59,3 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiCMDLabel.setText(_translate("dockerVMConfigPageWidget", "CMD:"))
         self.uiImageListLabel.setText(_translate("dockerVMConfigPageWidget", "Image name:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("dockerVMConfigPageWidget", "General settings"))
-

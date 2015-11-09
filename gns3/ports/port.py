@@ -543,7 +543,7 @@ class Port:
                 info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                 info.wShowWindow = subprocess.SW_HIDE
                 if hasattr(sys, "frozen"):
-                   tail_path = os.path.dirname(os.path.abspath(sys.executable))  # for Popen to find tail.exe
+                    tail_path = os.path.dirname(os.path.abspath(sys.executable))  # for Popen to find tail.exe
                 else:
                     # We suppose a developer will have tail the standard GNS3 location
                     tail_path = "C:\\Program Files\\GNS3"

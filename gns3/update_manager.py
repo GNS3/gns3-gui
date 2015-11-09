@@ -191,10 +191,10 @@ class UpdateManager(QtCore.QObject):
             self._filesToDownload -= 1
             if self._filesToDownload == 0:
                 reply = QtWidgets.QMessageBox.question(self._parent,
-                                                   "Check For Update",
-                                                   "GNS3 upgrade downloaded do you want to quit the application?",
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
+                                                       "Check For Update",
+                                                       "GNS3 upgrade downloaded do you want to quit the application?",
+                                                       QtWidgets.QMessageBox.Yes,
+                                                       QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
                     app = QtWidgets.QApplication.instance().closeAllWindows()
         else:

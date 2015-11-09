@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_NewProjectDialog(object):
+
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -19,7 +21,7 @@ class Ui_NewProjectDialog(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NewProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridLayout_2.addWidget(self.uiButtonBox, 2, 2, 1, 1)
         self.uiOpenProjectPushButton = QtWidgets.QPushButton(NewProjectDialog)
@@ -73,4 +75,3 @@ class Ui_NewProjectDialog(object):
         self.uiNameLabel.setText(_translate("NewProjectDialog", "Name:"))
         self.uiLocationLabel.setText(_translate("NewProjectDialog", "Location:"))
         self.uiLocationBrowserToolButton.setText(_translate("NewProjectDialog", "Browse..."))
-

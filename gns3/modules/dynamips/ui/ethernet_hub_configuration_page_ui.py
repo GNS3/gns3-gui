@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ethernetHubConfigPageWidget(object):
+
     def setupUi(self, ethernetHubConfigPageWidget):
         ethernetHubConfigPageWidget.setObjectName("ethernetHubConfigPageWidget")
         ethernetHubConfigPageWidget.resize(381, 270)
@@ -56,4 +58,3 @@ class Ui_ethernetHubConfigPageWidget(object):
         self.uiSettingsGroupBox.setTitle(_translate("ethernetHubConfigPageWidget", "Settings"))
         self.uiNameLabel.setText(_translate("ethernetHubConfigPageWidget", "Name:"))
         self.uiPortsLabel.setText(_translate("ethernetHubConfigPageWidget", "Number of ports:"))
-

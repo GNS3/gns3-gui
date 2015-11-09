@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_QemuVMWizard(object):
+
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(623, 417)
@@ -62,7 +64,7 @@ class Ui_QemuVMWizard(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiOSDeprecatedWarningLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
         self.uiOSDeprecatedWarningLabel.setStyleSheet("color: red;\n"
-"font: 18pt;")
+                                                      "font: 18pt;")
         self.uiOSDeprecatedWarningLabel.setWordWrap(True)
         self.uiOSDeprecatedWarningLabel.setObjectName("uiOSDeprecatedWarningLabel")
         self.verticalLayout.addWidget(self.uiOSDeprecatedWarningLabel)
@@ -312,4 +314,3 @@ class Ui_QemuVMWizard(object):
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
         self.uiHdbDiskImageCreateToolButton.setText(_translate("QemuVMWizard", "Create"))
-

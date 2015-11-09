@@ -44,4 +44,3 @@ def test_load_invalid(file):
 
             errors = getTopologyValidationErrors(topology)
             assert errors is not None, errors
-

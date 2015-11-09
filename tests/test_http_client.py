@@ -51,6 +51,7 @@ def http_client(http_request, network_manager):
 def http_request():
 
     mock = unittest.mock.Mock()
+
     def call_request(url):
         mock(url)
         return mock
@@ -185,7 +186,6 @@ def test_processDownloadProgress(http_client):
     assert args[0] == {"action": "ping"}
 
 
-
 def test_processDownloadProgressHTTPError(http_client):
 
     callback = unittest.mock.MagicMock()
@@ -317,7 +317,7 @@ def test_callbackConnect_minor_version_invalid(http_client):
     }
     mock = unittest.mock.MagicMock()
 
-    #Stable release
+    # Stable release
     if __version_info__[3] == 0:
         http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
         assert http_client._connected is False
@@ -325,7 +325,6 @@ def test_callbackConnect_minor_version_invalid(http_client):
     else:
         http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
         assert http_client._connected is True
-
 
 
 def test_callbackConnect_non_gns3_server(http_client):
@@ -337,4 +336,3 @@ def test_callbackConnect_non_gns3_server(http_client):
     http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
     assert http_client._connected is False
     mock.assert_called_with({"message": "The remote server http://127.0.0.1:8000 is not a GNS3 server"}, error=True, server=http_client)
-

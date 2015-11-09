@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ExportDebugDialog(object):
+
     def setupUi(self, ExportDebugDialog):
         ExportDebugDialog.setObjectName("ExportDebugDialog")
         ExportDebugDialog.setWindowModality(QtCore.Qt.WindowModal)
@@ -20,7 +22,7 @@ class Ui_ExportDebugDialog(object):
         self.label = QtWidgets.QLabel(ExportDebugDialog)
         self.label.setTextFormat(QtCore.Qt.RichText)
         self.label.setScaledContents(False)
-        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)

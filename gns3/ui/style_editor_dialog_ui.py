@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_StyleEditorDialog(object):
+
     def setupUi(self, StyleEditorDialog):
         StyleEditorDialog.setObjectName("StyleEditorDialog")
         StyleEditorDialog.resize(328, 252)
@@ -64,7 +66,7 @@ class Ui_StyleEditorDialog(object):
         self.verticalLayout.addWidget(self.uiStyleSettingsGroupBox)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(StyleEditorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.verticalLayout.addWidget(self.uiButtonBox)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
@@ -86,7 +88,7 @@ class Ui_StyleEditorDialog(object):
         self.uiBorderStyleLabel.setText(_translate("StyleEditorDialog", "Border style:"))
         self.uiRotationLabel.setText(_translate("StyleEditorDialog", "Rotation:"))
         self.uiRotationSpinBox.setToolTip(_translate("StyleEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
-"editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
+                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
         self.uiRotationSpinBox.setSuffix(_translate("StyleEditorDialog", "°"))
 
 from . import resources_rc

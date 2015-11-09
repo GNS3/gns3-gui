@@ -27,6 +27,7 @@ class ApplianceError(Exception):
 
 
 class Appliance(collections.Mapping):
+
     def __init__(self, registry, path):
         """
         :params registry: Instance of the registry where images are located
@@ -41,7 +42,6 @@ class Appliance(collections.Mapping):
             raise ApplianceError("Could not read appliance {}: {}".format(os.path.abspath(path), str(e)))
         self._check_config()
         self._resolve_version()
-
 
     def _check_config(self):
         """
@@ -89,7 +89,6 @@ class Appliance(collections.Mapping):
                 if not found:
                     raise ApplianceError("Broken appliance missing file {} for version {}".format(filename, version["name"]))
 
-
     def search_images_for_version(self, version_name):
         """
         Search on disk the images required by this version.
@@ -134,4 +133,3 @@ class Appliance(collections.Mapping):
             return True
         except ApplianceError:
             return False
-

@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VPCSDeviceConfigPageWidget(object):
+
     def setupUi(self, VPCSDeviceConfigPageWidget):
         VPCSDeviceConfigPageWidget.setObjectName("VPCSDeviceConfigPageWidget")
         VPCSDeviceConfigPageWidget.resize(391, 246)
@@ -38,4 +40,3 @@ class Ui_VPCSDeviceConfigPageWidget(object):
         VPCSDeviceConfigPageWidget.setWindowTitle(_translate("VPCSDeviceConfigPageWidget", "VPCS device configuration"))
         self.uiConsolePortLabel.setText(_translate("VPCSDeviceConfigPageWidget", "Console port:"))
         self.uiNameLabel.setText(_translate("VPCSDeviceConfigPageWidget", "Name:"))
-

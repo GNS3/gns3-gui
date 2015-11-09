@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VirtualBoxVMPreferencesPageWidget(object):
+
     def setupUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setObjectName("VirtualBoxVMPreferencesPageWidget")
         VirtualBoxVMPreferencesPageWidget.resize(505, 350)
@@ -73,4 +75,3 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
         self.uiDeleteVirtualBoxVMPushButton.setText(_translate("VirtualBoxVMPreferencesPageWidget", "&Delete"))
         self.uiVirtualBoxVMInfoTreeWidget.headerItem().setText(0, _translate("VirtualBoxVMPreferencesPageWidget", "1"))
         self.uiVirtualBoxVMInfoTreeWidget.headerItem().setText(1, _translate("VirtualBoxVMPreferencesPageWidget", "2"))
-

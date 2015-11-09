@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_iosRouterConfigPageWidget(object):
+
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName("iosRouterConfigPageWidget")
         iosRouterConfigPageWidget.resize(476, 510)
@@ -617,4 +619,3 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSensor4Label.setText(_translate("iosRouterConfigPageWidget", "NPE outlet:"))
         self.uiSensor4SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " C"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiEnvironmentPageWidget), _translate("iosRouterConfigPageWidget", "Environment"))
-

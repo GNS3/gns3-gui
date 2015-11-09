@@ -37,7 +37,9 @@ from gns3.version import __version__
 from gns3.local_config import LocalConfig
 from gns3.ui.iouvm_converter_wizard_ui import Ui_IOUVMConverterWizard
 
+
 class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -47,7 +49,7 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
         # set the window icon
-        self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))# this info is necessary for QSettings
+        self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))  # this info is necessary for QSettings
 
         config = self._loadConfig()
         self.uiPushButtonBrowse.clicked.connect(self._browseTopologiesSlot)
@@ -148,7 +150,8 @@ class IOUVMConverterWizard(QtWidgets.QWizard, Ui_IOUVMConverterWizard):
         else:
             filename = "gns3_gui.conf"
         directory = LocalConfig.configDirectory()
-        return  os.path.join(directory, filename)
+        return os.path.join(directory, filename)
+
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

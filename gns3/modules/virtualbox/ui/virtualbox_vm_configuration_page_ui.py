@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_virtualBoxVMConfigPageWidget(object):
+
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
         virtualBoxVMConfigPageWidget.resize(510, 463)
@@ -171,4 +173,3 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiPortNameFormatLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Name format:"))
         self.uiFirstPortNameLabel.setText(_translate("virtualBoxVMConfigPageWidget", "First port name:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network"))
-

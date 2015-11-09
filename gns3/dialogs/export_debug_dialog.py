@@ -94,7 +94,7 @@ Processus:
             memory=psutil.virtual_memory(),
             cpu=psutil.cpu_times(),
             connections=connections,
-            addrs="\n".join(["* {}: {}".format(key, val) for key,val in psutil.net_if_addrs().items()])
+            addrs="\n".join(["* {}: {}".format(key, val) for key, val in psutil.net_if_addrs().items()])
         )
         for proc in psutil.process_iter():
             try:

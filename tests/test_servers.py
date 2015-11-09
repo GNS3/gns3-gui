@@ -188,12 +188,11 @@ def test_handle_handleSslErrors():
     reply.url.return_value.toDisplayString.return_value = "https://root@127.0.0.1:443/v1/version"
     ssl_error = MagicMock()
     ssl_error.certificate.return_value.digest.return_value = binascii.unhexlify("cca0a932ced2fb1b1a18c823542cb065")
-    errorList = [ ssl_error ]
+    errorList = [ssl_error]
 
     with patch("gns3.qt.QtWidgets.QMessageBox.warning") as message_box_mock:
         message_box_mock.return_value = QtWidgets.QMessageBox.Yes
         servers._handleSslErrors(reply, errorList)
-
 
     servers._saveSettings()
     assert len(servers._settings["remote_servers"]) == 1
@@ -209,5 +208,3 @@ def test_handle_handleSslErrors():
             'user': 'root'
         }
     ]
-
-

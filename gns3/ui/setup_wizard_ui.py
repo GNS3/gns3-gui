@@ -9,7 +9,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SetupWizard(object):
+
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
         SetupWizard.resize(688, 469)

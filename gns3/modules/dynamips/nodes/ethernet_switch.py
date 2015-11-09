@@ -84,7 +84,7 @@ class EthernetSwitch(Device):
             self._ports.append(port)
             self._settings["ports"][port.portNumber()] = {"type": initial_port["type"],
                                                           "vlan": initial_port["vlan"],
-                                                          "ethertype": initial_port.get("ethertype","")}
+                                                          "ethertype": initial_port.get("ethertype", "")}
 
         params = {"name": name,
                   "device_type": "ethernet_switch"}
@@ -231,9 +231,9 @@ class EthernetSwitch(Device):
                     port_ethertype_info = "({})".format(port_ethertype)
 
                 port_info += "   Port {name} is in {port_type} {port_ethertype_info} mode, with {port_vlan_info},\n".format(name=port.name(),
-                                                                                                      port_type=port_type,
-                                                                                                      port_ethertype_info=port_ethertype_info,
-                                                                                                      port_vlan_info=port_vlan_info)
+                                                                                                                            port_type=port_type,
+                                                                                                                            port_ethertype_info=port_ethertype_info,
+                                                                                                                            port_vlan_info=port_vlan_info)
                 port_info += "    {port_description}\n".format(port_description=port.description())
 
         return info + port_info

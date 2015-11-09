@@ -63,7 +63,6 @@ class DownloadProjectWorker(QtCore.QObject):
         if self._get_file_lists == 0:
             self._is_running = False
 
-
     def _fileListReceived(self, result, error=False, server=None, **kwargs):
         self._get_file_lists -= 1
         if error:

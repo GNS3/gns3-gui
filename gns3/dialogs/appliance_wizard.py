@@ -33,6 +33,7 @@ from ..gns3_vm import GNS3VM
 
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
+
     def __init__(self, parent, path):
         super().__init__(parent)
 

@@ -124,7 +124,6 @@ class ProcessFilesWorker(QtCore.QObject):
         except RuntimeError:
             self.error.emit("Maximum path depth exceedeed when copying {}".format(self._source), True)
 
-
         # everything has been copied or moved, let's inform the GUI
         self.finished.emit()
 

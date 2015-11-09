@@ -51,7 +51,6 @@ def test_md5sum_ova(tmpdir):
     assert image.md5sum == "56f46611dfa80d0eead602cbb3f6dcee"
 
 
-
 def test_filesize(linux_microcore_img):
     image = Image(linux_microcore_img)
     assert image.filesize == 5

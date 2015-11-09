@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_IOSRouterPreferencesPageWidget(object):
+
     def setupUi(self, IOSRouterPreferencesPageWidget):
         IOSRouterPreferencesPageWidget.setObjectName("IOSRouterPreferencesPageWidget")
         IOSRouterPreferencesPageWidget.resize(505, 350)
@@ -76,4 +78,3 @@ class Ui_IOSRouterPreferencesPageWidget(object):
         self.uiDecompressIOSPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Decompress"))
         self.uiEditIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Edit"))
         self.uiDeleteIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&Delete"))
-

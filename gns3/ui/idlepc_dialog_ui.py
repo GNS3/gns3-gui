@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_IdlePCDialog(object):
+
     def setupUi(self, IdlePCDialog):
         IdlePCDialog.setObjectName("IdlePCDialog")
         IdlePCDialog.setModal(True)
@@ -23,7 +25,7 @@ class Ui_IdlePCDialog(object):
         self.gridLayout.addWidget(self.uiComboBox, 1, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(IdlePCDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Help | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridLayout.addWidget(self.uiButtonBox, 2, 0, 1, 1)
 
@@ -36,4 +38,3 @@ class Ui_IdlePCDialog(object):
         _translate = QtCore.QCoreApplication.translate
         IdlePCDialog.setWindowTitle(_translate("IdlePCDialog", "Idle-PC values"))
         self.uiLabel.setText(_translate("IdlePCDialog", "Potentially better Idle-PC values are marked with \'*\'"))
-

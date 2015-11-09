@@ -31,6 +31,7 @@ from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
 from .qemu_image_wizard import QemuImageWizard
 
+
 class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
     """

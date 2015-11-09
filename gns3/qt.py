@@ -106,11 +106,11 @@ class QFileDialog(OldFileDialog):
 QtWidgets.QFileDialog = QFileDialog
 
 
-
 class StatsQtWidgetsQDialog(QtWidgets.QDialog):
     """
     Send stats from all the QWizard
     """
+
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -127,6 +127,7 @@ class StatsQtWidgetsQWizard(QtWidgets.QWizard):
     """
     Send stats from all the QWizard
     """
+
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -139,11 +140,11 @@ class StatsQtWidgetsQWizard(QtWidgets.QWizard):
 QtWidgets.QWizard = StatsQtWidgetsQWizard
 
 
-
 class StatsQtWidgetsQMainWindow(QtWidgets.QMainWindow):
     """
     Send stats from all the QMainWindow
     """
+
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -204,4 +205,3 @@ def qpartial(func, *args, **kwargs):
             return functools.partial(partial, *args, **kwargs)
 
     return functools.partial(func, *args, **kwargs)
-

@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_DockerVMPreferencesPageWidget(object):
+
     def setupUi(self, DockerVMPreferencesPageWidget):
         DockerVMPreferencesPageWidget.setObjectName("DockerVMPreferencesPageWidget")
         DockerVMPreferencesPageWidget.resize(505, 350)
@@ -73,4 +75,3 @@ class Ui_DockerVMPreferencesPageWidget(object):
         self.uiDeleteDockerVMPushButton.setText(_translate("DockerVMPreferencesPageWidget", "&Delete"))
         self.uiDockerVMInfoTreeWidget.headerItem().setText(0, _translate("DockerVMPreferencesPageWidget", "1"))
         self.uiDockerVMInfoTreeWidget.headerItem().setText(1, _translate("DockerVMPreferencesPageWidget", "2"))
-

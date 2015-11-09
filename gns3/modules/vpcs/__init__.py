@@ -63,7 +63,6 @@ class VPCS(Module):
 
         self._loadSettings()
 
-
     def configChangedSlot(self):
         # load the settings
         self._loadSettings()

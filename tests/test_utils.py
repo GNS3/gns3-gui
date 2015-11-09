@@ -32,5 +32,3 @@ def test_parse_version():
     assert parse_version('1.3') > parse_version('1.3rc1')
     assert parse_version('1.3rc1') > parse_version('1.3alpha3')
     assert parse_version('1.3dev1') > parse_version('1.3rc1')
-
-

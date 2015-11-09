@@ -9,7 +9,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_GeneralPreferencesPageWidget(object):
+
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
         GeneralPreferencesPageWidget.resize(538, 623)
@@ -427,4 +429,3 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.tab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
-
