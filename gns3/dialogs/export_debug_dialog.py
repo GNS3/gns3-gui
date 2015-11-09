@@ -26,6 +26,8 @@ from gns3.qt import QtWidgets, QtCore
 from gns3.ui.export_debug_dialog_ui import Ui_ExportDebugDialog
 from gns3.local_config import LocalConfig
 
+import logging
+log = logging.getLogger(__name__)
 
 class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
     """
@@ -41,11 +43,13 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
 
     def _okButtonClickedSlot(self):
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export debug file", None, "Zip file (*.zip);")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export debug file", None, "Zip file (*.zip)", "Zip file (*.zip)")
 
         if len(path) == 0:
             self.reject()
             return
+
+        log.info("Export debug informations to %s", path)
 
         try:
             with ZipFile(path, 'w') as zip:
@@ -57,10 +61,11 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
                         zip.write(path, filename)
 
                 dir = self._project.filesDir()
-                for filename in os.listdir(dir):
-                    path = os.path.join(dir, filename)
-                    if os.path.isfile(path):
-                        zip.write(path, filename)
+                if dir:
+                    for filename in os.listdir(dir):
+                        path = os.path.join(dir, filename)
+                        if os.path.isfile(path):
+                            zip.write(path, filename)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Debug", "Can't export debug informations: {}".format(str(e)))
         self.accept()
