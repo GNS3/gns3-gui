@@ -113,6 +113,7 @@ background-none;
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
     <addaction name="uiLabInstructionsAction"/>
+    <addaction name="uiExportDebugInformationsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -1216,6 +1217,11 @@ background-none;
    </property>
    <property name="text">
     <string>Import appliance</string>
+   </property>
+  </action>
+  <action name="uiExportDebugInformationsAction">
+   <property name="text">
+    <string>Export debug informations</string>
    </property>
   </action>
  </widget>
