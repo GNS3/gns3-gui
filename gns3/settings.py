@@ -269,7 +269,7 @@ SERVERS_SETTINGS = {
         "user": "",
         "password": "",
         "console_start_port_range": 2001,
-        "console_end_port_range": 5000,
+        "console_end_port_range": 7000,
         "udp_start_port_range": 10000,
         "udp_end_port_range": 20000,
     },
