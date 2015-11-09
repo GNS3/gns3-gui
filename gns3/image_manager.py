@@ -138,7 +138,7 @@ class ImageManager:
     def _getRelativeImagePath(self, path, vm_type):
         """
         Get a path relative to images directory path
-        or an abspath if the path is not located inside
+        or just filename if the path is not located inside
         image directory
 
         :param path: file path
@@ -152,7 +152,7 @@ class ImageManager:
         path = os.path.abspath(path)
         if os.path.commonprefix([img_directory, path]) == img_directory:
             return os.path.relpath(path, img_directory)
-        return path
+        return os.path.basename(path)
 
     def getDirectory(self):
         """

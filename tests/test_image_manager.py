@@ -22,21 +22,26 @@ from unittest.mock import patch
 
 from gns3.image_manager import ImageManager
 
+@pytest.fixture
+def images_dir(tmpdir):
+    path = tmpdir / "images"
+    path.mkdir()
+    return path
 
 @pytest.yield_fixture
-def image_manager(tmpdir):
+def image_manager(tmpdir, images_dir):
     ImageManager._instance = None
-    with patch('gns3.servers.Servers.localServerSettings', return_value={'images_path': str(tmpdir)}):
+    with patch('gns3.servers.Servers.localServerSettings', return_value={'images_path': str(images_dir)}):
         yield ImageManager.instance()
 
 
 @pytest.fixture
-def qemu_img(tmpdir):
+def qemu_img(images_dir):
     """
     Return a fake qemu IMG
     """
-    path = str(tmpdir / 'QEMU' / 'test.img')
-    os.makedirs(str(tmpdir / 'QEMU'))
+    path = str(images_dir / 'QEMU' / 'test.img')
+    os.makedirs(str(images_dir / 'QEMU'))
     open(path, 'w+').close()
     return path
 
@@ -47,23 +52,23 @@ def test_askCopyUploadImage_remote(image_manager, remote_server):
         assert mock.called
 
 
-def test_uploadImageToRemoteServer(image_manager, remote_server, tmpdir):
+def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir):
     with patch('gns3.http_client.HTTPClient.post') as mock:
-        filename = image_manager._uploadImageToRemoteServer(str(tmpdir / "QEMU" / "test"), remote_server, 'QEMU')
+        filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server, 'QEMU')
         assert filename == 'test'
         args, kwargs = mock.call_args
         assert args[0] == '/qemu/vms/test'
-        assert kwargs['body'] == pathlib.Path(str(tmpdir / "QEMU" / "test"))
+        assert kwargs['body'] == pathlib.Path(str(images_dir / "QEMU" / "test"))
 
 
-def test_getDirectory(image_manager, tmpdir):
-    assert image_manager.getDirectory() == str(tmpdir)
+def test_getDirectory(image_manager, images_dir):
+    assert image_manager.getDirectory() == str(images_dir)
 
 
-def test_directoryType(image_manager, tmpdir):
-    assert image_manager.getDirectoryForType('DYNAMIPS') == str(tmpdir / 'IOS')
-    assert image_manager.getDirectoryForType('QEMU') == str(tmpdir / 'QEMU')
-    assert image_manager.getDirectoryForType('IOU') == str(tmpdir / 'IOU')
+def test_directoryType(image_manager, images_dir):
+    assert image_manager.getDirectoryForType('DYNAMIPS') == str(images_dir / 'IOS')
+    assert image_manager.getDirectoryForType('QEMU') == str(images_dir / 'QEMU')
+    assert image_manager.getDirectoryForType('IOU') == str(images_dir / 'IOU')
 
 
 def test_addMissingImage(image_manager, remote_server, qemu_img):
@@ -77,11 +82,11 @@ def test_addMissingImage(image_manager, remote_server, qemu_img):
             assert args[2] == 'QEMU'
 
 
-def test_addMissingImageOVAWithMultipleVMDK(image_manager, remote_server, tmpdir):
-    os.makedirs(str(tmpdir / 'QEMU' / 'test.ova'))
-    open(str(tmpdir / 'QEMU' / 'test.ova' / 'test.vmdk'), 'w+').close()
-    open(str(tmpdir / 'QEMU' / 'test.ova' / 'test-s001.vmdk'), 'w+').close()
-    open(str(tmpdir / 'QEMU' / 'test.ova' / 'test.nvram'), 'w+').close()
+def test_addMissingImageOVAWithMultipleVMDK(image_manager, remote_server, images_dir):
+    os.makedirs(str(images_dir / 'QEMU' / 'test.ova'))
+    open(str(images_dir / 'QEMU' / 'test.ova' / 'test.vmdk'), 'w+').close()
+    open(str(images_dir / 'QEMU' / 'test.ova' / 'test-s001.vmdk'), 'w+').close()
+    open(str(images_dir / 'QEMU' / 'test.ova' / 'test.nvram'), 'w+').close()
 
     with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
         with patch('gns3.image_manager.ImageManager._askForUploadMissingImage', return_value=True):
@@ -89,12 +94,12 @@ def test_addMissingImageOVAWithMultipleVMDK(image_manager, remote_server, tmpdir
             assert mock.call_count == 2
 
             args, kwargs = mock.call_args_list[0]
-            assert args[0] == str(tmpdir / 'QEMU' / 'test.ova' / 'test-s001.vmdk')
+            assert args[0] == str(images_dir / 'QEMU' / 'test.ova' / 'test-s001.vmdk')
             assert args[1] == remote_server
             assert args[2] == 'QEMU'
 
             args, kwargs = mock.call_args_list[1]
-            assert args[0] == str(tmpdir / 'QEMU' / 'test.ova' / 'test.vmdk')
+            assert args[0] == str(images_dir / 'QEMU' / 'test.ova' / 'test.vmdk')
             assert args[1] == remote_server
             assert args[2] == 'QEMU'
 
@@ -110,3 +115,15 @@ def test_addMissingImageLocalServer(image_manager, local_server, qemu_img):
     with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
         image_manager.addMissingImage('test.img', local_server, 'QEMU')
         assert not mock.called
+
+
+def test_getRelativeImagePath(image_manager, remote_server, qemu_img):
+    assert image_manager._getRelativeImagePath(qemu_img, "QEMU") == "test.img"
+
+
+def test_getRelativeImagePathOutsideStandardDirectory(image_manager, remote_server, images_dir):
+    qemu_img_abs = images_dir / "full_images" / "a.img"
+    qemu_img_abs.write("1", ensure=True)
+
+    assert image_manager._getRelativeImagePath(str(qemu_img_abs), "QEMU") == "a.img"
+
