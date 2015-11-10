@@ -16,6 +16,9 @@ and faster support.
 If you are not sure on which project you should report just report the
 issue on https://github.com/GNS3/gns3-gui we will make the triage.
 
+For bug specific to the GNS3 VM report them on:
+https://github.com/GNS3/gns3-vm
+
 ## Asking for new features
 
 The best is to start a discussion on the community in order to get feedback
