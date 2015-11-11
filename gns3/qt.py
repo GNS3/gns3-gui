@@ -123,6 +123,32 @@ class StatsQtWidgetsQDialog(QtWidgets.QDialog):
 QtWidgets.QDialog = StatsQtWidgetsQDialog
 
 
+class LogQMessageBox(QtWidgets.QMessageBox):
+    """
+    Replace the standard message box for logging errors to console. And
+    show a stack trace when a critical message box is shown in debug mode
+    """
+    @staticmethod
+    def critical(parent, title, message, *args):
+        log.critical(message, stack_info=LogQMessageBox.stack_info())
+        super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
+
+    @staticmethod
+    def warning(parent, title, message, *args):
+        log.warning(message)
+        super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
+
+
+    @staticmethod
+    def stack_info():
+        """
+        Show stack trace
+        """
+        return logging.getLogger().getEffectiveLevel() == logging.DEBUG
+
+QtWidgets.QMessageBox = LogQMessageBox
+
+
 class StatsQtWidgetsQWizard(QtWidgets.QWizard):
     """
     Send stats from all the QWizard
