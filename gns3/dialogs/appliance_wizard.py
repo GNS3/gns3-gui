@@ -288,6 +288,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         else:
             server_string = self._server.url()
 
+        while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
+            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
+            appliance_configuration["name"] = appliance_configuration["name"].strip()
+
         worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
@@ -298,7 +303,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if progress_dialog.exec_():
-            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(self._appliance["name"], version))
+            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(appliance_configuration["name"], version))
             return True
 
     def validateCurrentPage(self):

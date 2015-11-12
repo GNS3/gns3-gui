@@ -95,6 +95,16 @@ class Config:
             home = os.path.expanduser("~")
             return os.path.join(home, ".config", appname, filename)
 
+    def is_name_available(self, name):
+        """
+        :param name: Appliance name
+        :returns: True if name is not already used
+        """
+        for item in self._config["Qemu"].get("vms", []):
+            if item["name"] == name:
+                return False
+        return True
+
     def add_appliance(self, appliance_config, server):
         """
         Add appliance to the user configuration
@@ -119,9 +129,8 @@ class Config:
             new_config["category"] = 1
 
         # Raise error if VM already exists
-        for item in self._config["Qemu"].get("vms", []):
-            if item["name"] == new_config["name"]:
-                raise ConfigException("{} already exists".format(item["name"]))
+        if not self.is_name_available(new_config["name"]):
+            raise ConfigException("{} already exists".format(new_config["name"]))
 
         if "qemu" in appliance_config:
             self._add_qemu_config(new_config, appliance_config)
