@@ -236,6 +236,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if data is not None:
             if "direct_download_url" in data:
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["direct_download_url"]))
+                if "compression" in data:
+                    QtWidgets.QMessageBox.warning(self, "Add appliance", "The image is compressed with {} you need to uncompress it before using it.".format(data["compression"]))
             else:
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["download_url"]))
 
