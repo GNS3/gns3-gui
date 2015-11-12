@@ -119,7 +119,7 @@ class Config:
             new_config["category"] = 1
 
         # Raise error if VM already exists
-        for item in self._config["Qemu"]["vms"]:
+        for item in self._config["Qemu"].get("vms", []):
             if item["name"] == new_config["name"]:
                 raise ConfigException("{} already exists".format(item["name"]))
 
