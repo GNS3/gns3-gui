@@ -160,6 +160,14 @@ class VMWithImagesWizard(VMWizard):
             QtWidgets.QMessageBox.critical(self, "Images", "Error while getting the VMs: {}".format(result["message"]))
             return
 
+        if len(result) == 0:
+            for radio_button in self._radio_existing_images_buttons:
+                if radio_button.isChecked():
+                    for button in radio_button.parent().findChildren(QtWidgets.QRadioButton):
+                        if button != radio_button:
+                            button.setChecked(True)
+                        button.hide()
+
         for combo_box in self._images_combo_boxes:
             combo_box.clear()
             for vm in result:
