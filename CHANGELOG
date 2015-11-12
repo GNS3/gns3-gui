@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.4.0rc1 12/15/2015
+
+* Rename an appliance if the default name is already taken
+* Existing image option should be hidden when none is available
+* Warn users about the need to uncompress the image
+* Fix crash when you have no qemu vms and use gns3a
+* Change sentry key
+* Fix format_exception() missing 2 required positional arguments: 'value' and 'tb' in topologyFile
+* Fix dialog box not returning their result
+* Log to console the Qt Message Boxes
+* Drops securecrt.vbs
+
 ## 1.4.0b5 02/11/2015
 
 * Fix crash when loading invalid appliance file
