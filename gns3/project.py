@@ -139,7 +139,8 @@ class Project(QtCore.QObject):
             assert self._files_dir is not None
             assert self._name is not None
         except AssertionError:
-            lines = traceback.format_exception(sys.exc_info())
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            lines = traceback.format_exception(exc_type, exc_value, exc_tb)
             tb = "".join(lines)
             log.debug("Assertion detected: {}".format(tb))
             raise
