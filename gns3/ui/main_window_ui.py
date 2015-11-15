@@ -415,8 +415,8 @@ class Ui_MainWindow(object):
         self.uiOpenApplianceAction = QtWidgets.QAction(MainWindow)
         self.uiOpenApplianceAction.setIcon(icon1)
         self.uiOpenApplianceAction.setObjectName("uiOpenApplianceAction")
-        self.uiExportDebugInformationsAction = QtWidgets.QAction(MainWindow)
-        self.uiExportDebugInformationsAction.setObjectName("uiExportDebugInformationsAction")
+        self.uiExportDebugInformationAction = QtWidgets.QAction(MainWindow)
+        self.uiExportDebugInformationAction.setObjectName("uiExportDebugInformationAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -442,7 +442,7 @@ class Ui_MainWindow(object):
         self.uiHelpMenu.addAction(self.uiCheckForUpdateAction)
         self.uiHelpMenu.addAction(self.uiSetupWizard)
         self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
-        self.uiHelpMenu.addAction(self.uiExportDebugInformationsAction)
+        self.uiHelpMenu.addAction(self.uiExportDebugInformationAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
         self.uiHelpMenu.addAction(self.uiAboutAction)
         self.uiViewMenu.addAction(self.uiActionFullscreen)
@@ -676,7 +676,7 @@ class Ui_MainWindow(object):
         self.uiSetupWizard.setText(_translate("MainWindow", "&Setup Wizard"))
         self.uiIOUVMConverterAction.setText(_translate("MainWindow", "IOU VM Converter"))
         self.uiOpenApplianceAction.setText(_translate("MainWindow", "Import appliance"))
-        self.uiExportDebugInformationsAction.setText(_translate("MainWindow", "Export debug informations"))
+        self.uiExportDebugInformationAction.setText(_translate("MainWindow", "Export debug information"))
 
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

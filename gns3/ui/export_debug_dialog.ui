@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>223</height>
+    <width>555</width>
+    <height>215</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Export debug informations</string>
+   <string>Export debug information</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -26,7 +26,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;We will export debug informations. &lt;span style=&quot; font-weight:600;&quot;&gt;Be carefull&lt;/span&gt; this file can contain &lt;span style=&quot; font-weight:600;&quot;&gt;private informations&lt;/span&gt; about your topologies, GNS3 settings or your computer (list of running process for example). You can unzip the file in order to control the content.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;You need to&lt;span style=&quot; font-weight:600;&quot;&gt; save the project before&lt;/span&gt; exporting the informations.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Thanks a lot to helping the GNS3 community.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export a debug information file. You must first&lt;span style=&quot; font-weight:600;&quot;&gt; save a project before&lt;/span&gt; you are allowed to save it.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Be aware&lt;/span&gt; this file can contain &lt;span style=&quot; font-weight:600;&quot;&gt;private information&lt;/span&gt; about your project, your GNS3 settings or your computer (list of running processes, opened ports etc.). You can unzip the file in order to edit its content.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Thanks a lot for helping GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>

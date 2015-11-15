@@ -94,7 +94,7 @@ class CrashReport:
                 "python:encoding": sys.getdefaultencoding(),
                 "python:frozen": "{}".format(hasattr(sys, "frozen"))
             }
-            context = self._add_qt_informations(context)
+            context = self._add_qt_information(context)
             client.tags_context(context)
             try:
                 report = client.captureException((exception, value, tb))
@@ -103,7 +103,7 @@ class CrashReport:
                 return
             log.info("Crash report sent with event ID: {}".format(client.get_ident(report)))
 
-    def _add_qt_informations(self, context):
+    def _add_qt_information(self, context):
         try:
             from .qt import QtCore
             import sip

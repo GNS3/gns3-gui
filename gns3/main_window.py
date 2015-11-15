@@ -248,7 +248,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
-        self.uiExportDebugInformationsAction.triggered.connect(self._exportDebugInformationsSlot)
+        self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
 
         # browsers tool bar connections
@@ -910,9 +910,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
-    def _exportDebugInformationsSlot(self):
+    def _exportDebugInformationSlot(self):
         """
-        Slot to display a window for exporting debug informations
+        Slot to display a window for exporting debug information
         """
 
         dialog = ExportDebugDialog(self, self._project)

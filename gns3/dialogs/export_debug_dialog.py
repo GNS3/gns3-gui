@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 
 class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
     """
-    This dialog allow user to export informations usefull
+    This dialog allow user to export useful information
     for remote debugging by a GNS3 developers.
     """
 
@@ -49,7 +49,7 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
             self.reject()
             return
 
-        log.info("Export debug informations to %s", path)
+        log.info("Export debug information to %s", path)
 
         try:
             with ZipFile(path, 'w') as zip:
@@ -67,7 +67,7 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
                         if os.path.isfile(path):
                             zip.write(path, filename)
         except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Debug", "Can't export debug informations: {}".format(str(e)))
+            QtWidgets.QMessageBox.critical(self, "Debug", "Can't export debug information: {}".format(str(e)))
         self.accept()
 
     def _getDebugData(self):
