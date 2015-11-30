@@ -93,6 +93,25 @@ elif sys.platform.startswith("darwin"):
                  " -e '  end tell'"
                  " -e 'end tell'"
                  " -e 'end tell'",
+        'iTerm 2.9': "osascript -e 'tell application \"iTerm\"'"
+                    " -e 'activate'"
+                    " -e 'if (count of windows) = 0 then'"
+                    " -e '   set t to (create window with default profile)'"
+                    " -e 'else'"
+                    " -e '   set t to current window'"
+                    " -e 'end if'"
+                    " -e 'tell t'"
+                    " -e '    create tab with default profile'"
+                    " -e '    set s to current session'"
+                    " -e '    tell s'"
+                    " -e '        write text \"telnet %h %p\"'"
+                    " -e '        delay 1'"
+                    " -e '        repeat while s exists'"
+                    " -e '            delay 1'"
+                    " -e '        end repeat'"
+                    " -e '    end tell'"
+                    " -e 'end tell'"
+                    " -e 'end tell'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
     }
@@ -193,7 +212,8 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "/usr/bin/open -a /Applications/Wireshark.app %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -o "gui.window_title:%d" -k -i -'}
+                                                    "Wireshark V1.X Live Traffic Capture": 'tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -o "gui.window_title:%d" -k -i -',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 %c | /Applications/Wireshark.app/Contents/MacOS/Wireshark -o "gui.window_title:%d" -k -i -'}
 
 elif sys.platform.startswith("freebsd"):
     # FreeBSD
