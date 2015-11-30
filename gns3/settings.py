@@ -112,10 +112,7 @@ elif sys.platform.startswith("darwin"):
                     " -e '    end tell'"
                     " -e 'end tell'"
                     " -e 'end tell'",
-        'Royal TSX': "osascript -e 'tell application \"Royal TSX\"'"
-                    " -e 'activate'"
-                    " -e 'adhoc \"%h:%p\"'"
-                    " -e 'end tell'",
+        'Royal TSX': "open 'rtsx://telnet://%h:%p'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
     }
@@ -191,10 +188,7 @@ elif sys.platform.startswith("darwin"):
         " -e '  open location \"vnc://%h:%p\"'"
         " -e 'end tell'",
         'Chicken of the VNC': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
-        'Royal TSX': "osascript -e 'tell application \"Royal TSX\"'"
-            " -e 'activate'"
-            " -e 'adhoc \"vnc://%h:%p\"'"
-            " -e 'end tell'",
+        'Royal TSX': "open 'rtsx://vnc://%h:%p'",
     }
 
     # default Mac OS X VNC console command
