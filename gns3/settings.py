@@ -112,6 +112,10 @@ elif sys.platform.startswith("darwin"):
                     " -e '    end tell'"
                     " -e 'end tell'"
                     " -e 'end tell'",
+        'Royal TSX': "osascript -e 'tell application \"Royal TSX\"'"
+                    " -e 'activate'"
+                    " -e 'adhoc \"%h:%p\"'"
+                    " -e 'end tell'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
     }
@@ -186,7 +190,11 @@ elif sys.platform.startswith("darwin"):
         " -e '   display dialog \"WARNING OSX VNC support is limited if you have trouble connecting to a device please use an alternative client like Chicken of the VNC.\" buttons {\"OK\"} default button 1 with icon caution with title \"GNS3\"'"
         " -e '  open location \"vnc://%h:%p\"'"
         " -e 'end tell'",
-        'Chicken of the VNC': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p"
+        'Chicken of the VNC': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
+        'Royal TSX': "osascript -e 'tell application \"Royal TSX\"'"
+            " -e 'activate'"
+            " -e 'adhoc \"vnc://%h:%p\"'"
+            " -e 'end tell'",
     }
 
     # default Mac OS X VNC console command
