@@ -99,7 +99,7 @@ class UpdateManager(QtCore.QObject):
         network_reply = self.sender()
         if network_reply.error() != QtNetwork.QNetworkReply.NoError:
             if not self._silent:
-                QtWidgets.QMessageBox.critical(self, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
+                QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
             return
         try:
             latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
