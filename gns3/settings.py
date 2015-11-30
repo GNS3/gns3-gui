@@ -86,6 +86,25 @@ elif sys.platform.startswith("darwin"):
                  " -e '  end tell'"
                  " -e 'end tell'"
                  " -e 'end tell'",
+        'iTerm 2.9': "osascript -e 'tell application \"iTerm\"'"
+                    " -e 'activate'"
+                    " -e 'if (count of windows) = 0 then'"
+                    " -e '   set t to (create window with default profile)'"
+                    " -e 'else'"
+                    " -e '   set t to current window'"
+                    " -e 'end if'"
+                    " -e 'tell t'"
+                    " -e '    create tab with default profile'"
+                    " -e '    set s to current session'"
+                    " -e '    tell s'"
+                    " -e '        write text \"telnet %h %p\"'"
+                    " -e '        delay 1'"
+                    " -e '        repeat while s exists'"
+                    " -e '            delay 1'"
+                    " -e '        end repeat'"
+                    " -e '    end tell'"
+                    " -e 'end tell'"
+                    " -e 'end tell'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
     }
