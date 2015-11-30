@@ -174,7 +174,8 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "/usr/bin/open -a /Applications/Wireshark.app %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -k -i -"}
+                                                    "Wireshark V1.X Live Traffic Capture": "tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -k -i -",
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: "tail -f -c +0 %c | /Applications/Wireshark.app/Contents/MacOS/Wireshark -k -i -"}
 
 elif sys.platform.startswith("freebsd"):
     # FreeBSD
