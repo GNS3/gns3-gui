@@ -146,6 +146,7 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
         "options": "-nographic",
         "process_priority": "normal",
         "qemu_path": "qemu-system-i386",
+        "usage": "Just start the appliance",
         "ram": 32,
         "server": "local"
     }

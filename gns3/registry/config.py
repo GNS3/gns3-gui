@@ -117,6 +117,10 @@ class Config:
             "server": server,
             "name": appliance_config["name"]
         }
+
+        if "usage" in appliance_config:
+            new_config["usage"] = appliance_config["usage"]
+
         if appliance_config["category"] == "guest":
             new_config["category"] = 2
         elif appliance_config["category"] == "router":

@@ -28,6 +28,7 @@ QEMU_SETTINGS = {
 
 QEMU_VM_SETTINGS = {
     "name": "",
+    "usage": "",
     "symbol": ":/symbols/qemu_guest.svg",
     "category": Node.end_devices,
     "port_name_format": "Ethernet{0}",

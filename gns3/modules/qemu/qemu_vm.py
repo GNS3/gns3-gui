@@ -51,6 +51,7 @@ class QemuVM(VM):
         self._linked_clone = True
 
         self._settings = {"name": "",
+                          "usage": "",
                           "qemu_path": "",
                           "hda_disk_image": "",
                           "hdb_disk_image": "",
@@ -350,6 +351,9 @@ class QemuVM(VM):
             else:
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
+
+        if "usage" in self._settings and len(self._settings["usage"]) > 0:
+            info += "  Usage: {}\n".format(self._settings["usage"])
 
         return info + port_info
 
