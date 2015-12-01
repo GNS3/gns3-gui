@@ -50,6 +50,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
         super().__init__(label_text, cancel_button_text, minimum, maximum, parent)
 
+        self._thread = QtCore.QThread(self)
+
         self.setModal(True)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self._errors = []
@@ -58,13 +60,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.canceled.connect(self._worker.cancel)
         self.finished.connect(self.close)
         self.destroyed.connect(self._cleanup)
-        # self.canceled.connect(self._cancel)
 
-        # create the thread and set the self._worker
-        self._thread = QtCore.QThread(self)
         self._worker.moveToThread(self._thread)
-
-        # connect self._worker signals
         self._worker.updated.connect(self._updateProgress)
         self._worker.error.connect(self._error)
         self._worker.finished.connect(self._cleanup)
