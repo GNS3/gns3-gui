@@ -1031,22 +1031,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         log.debug("Close the main Windows")
         servers = Servers.instance()
         if self._project.closed() and not servers.localServerIsRunning():
+            log.debug("Project is closed and local server is not running, closing main windows")
             event.accept()
             self.uiConsoleTextEdit.closeIO()
         elif not self._soft_exit or self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
             if servers.localServerIsRunning():
+                log.debug("Project is not closed and local server is running asking for project closing")
                 self._project.close(local_server_shutdown=True)
+                event.ignore()
             else:
                 self._project.close(local_server_shutdown=False)
 
-            if self._project.closed() and not servers.localServerIsRunning():
-                log.debug("Disconnect all servers")
+                log.debug("Project is not closed and local server is running disconnect all servers and close the main windows")
                 servers.disconnectAllServers()
                 event.accept()
                 self.uiConsoleTextEdit.closeIO()
-            else:
-                event.ignore()
         else:
             event.ignore()
 
