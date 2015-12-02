@@ -38,7 +38,15 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
     def __init__(self, parent):
 
         super().__init__(parent)
+
         self.setupUi(self)
+
+        # We adapt the max size to the screen resolution
+        height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100
+        if height > 800:
+            height = 800
+        self.setMaximumSize(QtCore.QSize(900, height))
+        self.resize(900, height)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
         self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply)
@@ -53,6 +61,8 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
 
         # Something has change?
         self._modified = False
+
+
 
     def _loadPreferencePages(self):
         """
