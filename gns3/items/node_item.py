@@ -228,7 +228,8 @@ class NodeItem():
         :param message: error message
         """
 
-        self._last_error = "{message}".format(message=message)
+        if self:
+            self._last_error = "{message}".format(message=message)
 
     def errorSlot(self, node_id, message):
         """
@@ -239,7 +240,8 @@ class NodeItem():
         :param message: error message
         """
 
-        self._last_error = "{message}".format(message=message)
+        if self:
+            self._last_error = "{message}".format(message=message)
 
     def setCustomToolTip(self):
         """
