@@ -30,10 +30,10 @@ from .main_window import MainWindow
 import logging
 log = logging.getLogger(__name__)
 
+console_mutex = QtCore.QMutex()
 
 class ConsoleThread(QtCore.QThread):
 
-    consoleDone = QtCore.pyqtSignal(str, str, int)
     consoleError = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, command, name, server, port):
@@ -67,15 +67,23 @@ class ConsoleThread(QtCore.QThread):
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name)
 
+        # If the console use an apple script we lock to avoid multiple console
+        # to interact at the same time
+        if sys.platform.startswith("darwin") and "osascript" in command:
+            console_mutex.lock()
+
         try:
             self.exec_command(command)
         except (OSError, subprocess.SubprocessError) as e:
             pass
             # log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
         finally:
-            # emit signal upon completion
-            self.consoleDone.emit(self._name, host, port)
-            self._server.releaseTunnel(port)
+            log.info('Telnet console {}:{} closed'.format(host, port))
+            if sys.platform.startswith("darwin") and "osascript" in command:
+                console_mutex.unlock()
+            else:
+                #TODO: For apple script we can't detect when the console is closed. This mean we leak a port each time you close the console
+                self._server.releaseTunnel(port)
 
 
 def nodeTelnetConsole(name, server, port):
@@ -91,10 +99,8 @@ def nodeTelnetConsole(name, server, port):
     if not command:
         return
 
-    # FIXME: do we still need to run the console from a thread?
     log.info('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, name, server, port)
-    # console_thread.consoleDone.connect(callback)
     console_thread.consoleError.connect(_consoleErrorSlot)
     console_thread.start()
 
