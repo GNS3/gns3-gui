@@ -1030,14 +1030,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         log.debug("Close the main Windows")
         servers = Servers.instance()
-        if self._project.closed() and not servers.localServerIsRunning():
-            log.debug("Project is closed and local server is not running, closing main windows")
-            event.accept()
-            self.uiConsoleTextEdit.closeIO()
-        elif self._project.closed():
-            log.debug("Project is not closed, closing the main windows")
-            event.accept()
-            self.uiConsoleTextEdit.closeIO()
+        if self._project.closed():
+            if not servers.localServerIsRunning():
+                log.debug("Project is closed and local server is not running, closing main windows")
+                event.accept()
+                self.uiConsoleTextEdit.closeIO()
+            else:
+                log.debug("Project is closed killing server and closing main windows")
+                servers.stopLocalServer(wait=True)
         elif not self._soft_exit or self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
             if servers.localServerIsRunning():
@@ -1139,21 +1139,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # start and connect to the local server
         server = servers.localServer()
         if servers.localServerAutoStart():
-            if server.isLocalServerRunning():
-                log.info("A local server already running on this host")
+            if servers.initLocalServer() and servers.startLocalServer():
+                worker = WaitForConnectionWorker(server.host(), server.port())
+                progress_dialog = ProgressDialog(worker,
+                                                 "Local server",
+                                                 "Connecting to server {} on port {}...".format(server.host(), server.port()),
+                                                 "Cancel", busy=True, parent=self)
+                progress_dialog.show()
+                if not progress_dialog.exec_():
+                    return
             else:
-                if servers.initLocalServer() and servers.startLocalServer():
-                    worker = WaitForConnectionWorker(server.host(), server.port())
-                    progress_dialog = ProgressDialog(worker,
-                                                     "Local server",
-                                                     "Connecting to server {} on port {}...".format(server.host(), server.port()),
-                                                     "Cancel", busy=True, parent=self)
-                    progress_dialog.show()
-                    if not progress_dialog.exec_():
-                        return
+                if server.isLocalServerRunning():
+                    log.info("A local server already running on this host")
                 else:
                     QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
-                    return
 
         # show the setup wizard
         with Progress.instance().context(min_duration=0):
