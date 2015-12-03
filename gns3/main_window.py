@@ -459,8 +459,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._appliance_wizard.exec_()
             elif self.checkForUnsavedChanges():
                 self._open_project_path = path
-                self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
-                self._project.close()
+                if self._project.closed():
+                    self._projectClosedContinueLoadPath()
+                else:
+                    self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
+                    self._project.close()
 
     def _projectClosedContinueLoadPath(self):
 
