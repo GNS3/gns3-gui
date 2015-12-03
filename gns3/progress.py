@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import time
 from contextlib import contextmanager
 
 from .qt import QtCore, QtWidgets, Qt, QtNetwork
@@ -41,7 +42,14 @@ class Progress(QtCore.QObject):
         from .main_window import MainWindow
         self._parent = MainWindow.instance()
 
-        self._stimer = QtCore.QTimer()
+        # Timer called for refreshing the progress dialog status
+        self._rtimer = QtCore.QTimer()
+        self._rtimer.timeout.connect(self.update)
+        self._rtimer.start(500)
+
+        # When in millisecond we start to show the progress dialog
+        self._display_start_time = 0
+
         self._finished_query_during_display = 0
         self._queries = {}
         # QtCore.Qt.QueuedConnection warranty that we execute the slot
@@ -56,21 +64,17 @@ class Progress(QtCore.QObject):
         self._allow_cancel_query = False
         self._enable = True
 
+        self._mutex = QtCore.QMutex()
+
     def _addQuerySlot(self, query_id, explanation, response):
 
         self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0, "response": response}
-        self.show()
 
     def _removeQuerySlot(self, query_id):
 
         self._finished_query_during_display += 1
         if query_id in self._queries:
             del self._queries[query_id]
-
-        if len(self._queries) == 0:
-            self.hide()
-        else:
-            self.show()
 
     def progress_dialog(self):
 
@@ -80,7 +84,6 @@ class Progress(QtCore.QObject):
         if query_id in self._queries:
             self._queries[query_id]["current"] = current
             self._queries[query_id]["maximum"] = maximum
-            self.show()
 
     def setAllowCancelQuery(self, allow_cancel_query):
         self._allow_cancel_query = allow_cancel_query
@@ -95,8 +98,13 @@ class Progress(QtCore.QObject):
             for query in self._queries.copy().values():
                 query["response"].abort()
 
-    def show(self):
+    def update(self):
+        if len(self._queries) == 0 and (time.time() * 1000) >= self._display_start_time + self._minimum_duration:
+            self.hide()
+            return
+        self.show()
 
+    def show(self):
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
             progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
             progress_dialog.canceled.connect(self._cancelSlot)
@@ -111,7 +119,8 @@ class Progress(QtCore.QObject):
 
             self._progress_dialog = progress_dialog
             self._finished_query_during_display = 0
-            start_timer = True
+            self._display_start_time = time.time() * 1000
+            self._progress_dialog.show()
         else:
             start_timer = False
             progress_dialog = self._progress_dialog
@@ -129,14 +138,6 @@ class Progress(QtCore.QObject):
         if len(self._queries) > 0:
             text = list(self._queries.values())[0]["explanation"]
             progress_dialog.setLabelText(text)
-
-        if start_timer:
-            self._stimer.singleShot(self._minimum_duration, self._show_dialog)
-
-    def _show_dialog(self):
-        if self._progress_dialog is not None and self._enable:
-            self._progress_dialog.show()
-            self._progress_dialog.exec_()
 
     def hide(self):
         """
