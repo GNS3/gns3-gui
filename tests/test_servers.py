@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import json
 import pytest
 import binascii
@@ -208,3 +209,35 @@ def test_handle_handleSslErrors():
             'user': 'root'
         }
     ]
+
+
+@pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
+def test_startLocalServer(tmpdir, local_config):
+    local_server_path = str(tmpdir / "gns3server")
+    open(local_server_path, "w+").close()
+
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        json.dump({
+            "Servers": {
+                "local_server": {
+                    "path": local_server_path,
+                }
+            },
+            "version": "1.4"
+        }, f)
+
+    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
+    Servers._instance = None
+
+    with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
+        mock_local_config.return_value = str(tmpdir)
+        with patch("subprocess.Popen") as mock:
+            Servers.instance().startLocalServer()
+            mock.assert_called_with([local_server_path,
+                                     '--host=127.0.0.1',
+                                     '--port=8000',
+                                     '--local',
+                                     '--debug',
+                                     '--log='  + str(tmpdir / "gns3_server.log"),
+                                     '--pid=' + str(tmpdir / "gns3_server.pid")
+                                    ])

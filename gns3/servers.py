@@ -67,6 +67,7 @@ class Servers():
         self._network_manager.sslErrors.connect(self._handleSslErrors)
         self._remote_server_iter_pos = 0
         self._loadSettings()
+        self._pid_path = os.path.join(LocalConfig.configDirectory(), "gns3_server.pid")
         self.registerLocalServer()
 
     def registerLocalServer(self):
@@ -469,7 +470,7 @@ class Servers():
                     pass
                 except OSError as e:
                     log.warn("could not delete server log file {}: {}".format(logpath, e))
-            command += ' --log="{}"'.format(logpath)
+            command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path)
 
         log.info("Starting local server process with {}".format(command))
         try:
