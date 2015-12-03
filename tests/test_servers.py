@@ -241,3 +241,18 @@ def test_startLocalServer(tmpdir, local_config):
                                      '--log='  + str(tmpdir / "gns3_server.log"),
                                      '--pid=' + str(tmpdir / "gns3_server.pid")
                                     ])
+
+
+def test_killAlreadyRunningServer(tmpdir):
+    with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
+        mock_local_config.return_value = str(tmpdir)
+
+        with open(str(tmpdir / "gns3_server.pid"), "w+") as f:
+            f.write("42")
+
+        mock_process = MagicMock()
+        with patch("psutil.Process", return_value=mock_process) as mock:
+            Servers.instance()._killAlreadyRunningServer()
+            mock.assert_called_with(pid=42)
+            assert mock_process.kill.called
+

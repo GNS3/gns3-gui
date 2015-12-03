@@ -32,6 +32,7 @@ import subprocess
 import binascii
 import stat
 import struct
+import psutil
 
 from .qt import QtNetwork, QtWidgets
 from .network_client import getNetworkClientInstance, getNetworkUrl
@@ -367,6 +368,22 @@ class Servers():
 
         return self._settings["local_server"]["path"]
 
+    def _killAlreadyRunningServer(self):
+        """
+        Kill a running zombie server (started by a gui that no longer exists)
+        This will not kill server started by hand.
+        """
+        try:
+            if os.path.exists(self._pid_path):
+                with open(self._pid_path) as f:
+                    pid = int(f.read())
+                process = psutil.Process(pid=pid)
+                log.info("Kill already running server with PID %d", pid)
+                process.kill()
+        except (OSError, psutil.NoSuchProcess, psutil.AccessDenied):
+            # Permission issue, or process no longer exists
+            return
+
     def initLocalServer(self):
         """
         Initialize the local server.
@@ -389,6 +406,8 @@ class Servers():
         elif not os.access(local_server_path, os.X_OK):
             QtWidgets.QMessageBox.critical(main_window, "Local server", "{} is not an executable".format(local_server_path))
             return
+
+        self._killAlreadyRunningServer()
 
         try:
             # check if the local address still exists
