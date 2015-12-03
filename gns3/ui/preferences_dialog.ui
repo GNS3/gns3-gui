@@ -126,10 +126,6 @@
           </widget>
          </item>
         </layout>
-        <zorder>uiButtonBox</zorder>
-        <zorder>uiTitleLabel</zorder>
-        <zorder>uiStackedWidget</zorder>
-        <zorder>uiStackedWidget</zorder>
        </widget>
       </widget>
      </item>
@@ -153,5 +149,38 @@
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>uiButtonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PreferencesDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>540</x>
+     <y>571</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>449</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiButtonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PreferencesDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>540</x>
+     <y>571</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>449</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

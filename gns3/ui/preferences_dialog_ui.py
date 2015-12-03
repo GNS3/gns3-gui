@@ -81,9 +81,6 @@ class Ui_PreferencesDialog(object):
         self.uiPageWidget.setObjectName("uiPageWidget")
         self.uiStackedWidget.addWidget(self.uiPageWidget)
         self.verticalLayout.addWidget(self.uiStackedWidget)
-        self.uiTitleLabel.raise_()
-        self.uiStackedWidget.raise_()
-        self.uiStackedWidget.raise_()
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.vbox.addWidget(self.scrollArea)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(PreferencesDialog)
@@ -95,6 +92,8 @@ class Ui_PreferencesDialog(object):
         self.horizontalLayout.addLayout(self.vbox)
 
         self.retranslateUi(PreferencesDialog)
+        self.uiButtonBox.accepted.connect(PreferencesDialog.accept)
+        self.uiButtonBox.rejected.connect(PreferencesDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(PreferencesDialog)
 
     def retranslateUi(self, PreferencesDialog):
