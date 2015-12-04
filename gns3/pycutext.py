@@ -24,14 +24,17 @@ import sys
 from .qt import QtCore, QtGui, QtWidgets
 
 
-class MultipleRedirection:
+class MultipleRedirection(QtCore.QObject):
+    writed = QtCore.pyqtSignal(str)
 
     def __init__(self, console, stdout):
+        super().__init__()
+
         self.console = console
         self.stdout = stdout
 
     def write(self, str):
-        self.console.write(str)
+        self.writed.emit(str)
         if self.stdout.encoding is None:
             str = str.encode("ascii", "ignore").decode("ascii", "ignore")
         elif self.stdout.encoding != "UTF-8":
@@ -79,6 +82,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         # capture all interactive input/output
         self._old_stdout = sys.stdout
         sys.stdout = MultipleRedirection(self, sys.stdout)
+        sys.stdout.writed.connect(self.write)
         # sys.stderr = MultipleRedirection((sys.stderr, self))
         self._old_stdin = sys.stdin
         sys.stdin = self
