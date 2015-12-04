@@ -34,7 +34,6 @@ class SSHConnectionThread(QtCore.QThread):
         super().__init__(parent)
 
     def run(self):
-        log.info("SSH connection to %s with key %s", self._ssh_client.url(), self._ssh_client.ssh_key())
         port = Endpoint.find_unused_port(1000, 10000)
         if port is None:
             self.error_signal.emit("No port available in order to create SSH tunnel")
@@ -79,7 +78,7 @@ class SSHClient(HTTPClient):
         assert settings["ssh_key"] is not None
         super().__init__(settings, network_manager)
 
-    def connect(self, query, callback):
+    def _connect(self, query):
         """
         Initialize the connection
 
@@ -87,15 +86,16 @@ class SSHClient(HTTPClient):
         :param callback: User callback when connection is finish
         """
 
+        log.info("SSH connection to %s with key %s", self.url(), self.ssh_key())
         thread = SSHConnectionThread(self, parent=self)
-        thread.error_signal.connect(lambda msg: self._connectionError(callback, msg))
-        thread.connected_signal.connect(lambda: super(SSHClient, self).connect(query, callback))
+        thread.error_signal.connect(lambda msg: self._connectionError(None, msg))
+        thread.connected_signal.connect(lambda: super(SSHClient, self)._connect(query ))
         thread.start()
 
     def getTunnel(self, port):
         """
         Get a tunnel to the remote port.
-        For HTTP standard client it's the same port. For SSH it will be
+        For HTTP standard client it's the same port. For SSH it will be different
 
         :param port: Remote port
         :returns: Tuple host, port to connect
