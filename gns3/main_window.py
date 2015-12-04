@@ -1318,6 +1318,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             from gns3converter.main import do_conversion, get_snapshots, ConvertError
         except ImportError:
             QtGui.QMessageBox.critical(self, "GNS3 converter", "Please install gns3-converter in order to open old ini-style GNS3 projects")
+            self._createTemporaryProject()
             return
 
         try:
@@ -1333,6 +1334,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     project_name = text
                     project_dir = os.path.join(self.projectsDirPath(), project_name)
                 else:
+                    self._createTemporaryProject()
                     return
 
             for snapshot_def in get_snapshots(path):
@@ -1342,12 +1344,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             do_conversion(topology_def, project_name, project_dir, quiet=True)
         except ConvertError as e:
             QtGui.QMessageBox.critical(self, "GNS3 converter", "Could not convert {}: {}".format(path, e))
+            self._createTemporaryProject()
             return
         except Exception:
             exc_type, exc_value, exc_tb = sys.exc_info()
             lines = traceback.format_exception(exc_type, exc_value, exc_tb)
             tb = "".join(lines)
             MessageBox(self, "GNS3 converter", "Unexpected exception while converting {}".format(path), details=tb)
+            self._createTemporaryProject()
             return
 
         QtGui.QMessageBox.information(self, "GNS3 converter", "Your project has been converted to a new format and can be found in: {}".format(project_dir))
