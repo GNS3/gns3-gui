@@ -162,7 +162,7 @@
        <item>
         <widget class="QGroupBox" name="uiConsolePortRangeGroupBox">
          <property name="title">
-          <string>Console port range</string>
+          <string>Console port range (5900 =&gt; 6000 is shared with VNC)</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
@@ -437,7 +437,7 @@
           <item row="1" column="1">
            <widget class="QLineEdit" name="uiVMPasswordLineEdit">
             <property name="inputMethodHints">
-             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
+             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
             </property>
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
@@ -601,7 +601,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="currentText" stdset="0">
+         <property name="currentText">
           <string>HTTP</string>
          </property>
          <item>
@@ -703,7 +703,7 @@
        <item row="6" column="1">
         <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
          <property name="inputMethodHints">
-          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
+          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
          </property>
          <property name="text">
           <string/>
