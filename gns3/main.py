@@ -25,7 +25,7 @@ try:
     if gns3.update_manager.UpdateManager().installDownloadedUpdates():
         print("Update installed restart the application")
         python = sys.executable
-        os.execl(python, python, * sys.argv)
+        os.execl(python, *sys.argv)
 except Exception as e:
     print("Fail update installation: {}".format(str(e)))
 
