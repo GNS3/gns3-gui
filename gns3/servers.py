@@ -349,7 +349,7 @@ class Servers():
         vm_settings = self._settings["vm"]
         vm_settings.update(settings)
 
-    def localServerAutoStart(self):
+    def shouldLocalServerAutoStart(self):
         """
         Returns either the local server
         is automatically started on startup.
@@ -384,6 +384,24 @@ class Servers():
             # Permission issue, or process no longer exists
             return
 
+    def localServerAutoStart(self):
+        """
+        Try to start the embed gns3 server.
+        """
+
+        if self.localServer().isLocalServerRunning():
+            log.info("A local server already running on this host")
+            # Try to kill the server. The server can be still running after
+            # if the server was started by hand
+            self._killAlreadyRunningServer()
+
+        if not self.localServer().isLocalServerRunning():
+            if not self.initLocalServer():
+                return False
+            if not self.startLocalServer():
+                return False
+        return True
+
     def initLocalServer(self):
         """
         Initialize the local server.
@@ -406,8 +424,6 @@ class Servers():
         elif not os.access(local_server_path, os.X_OK):
             QtWidgets.QMessageBox.critical(main_window, "Local server", "{} is not an executable".format(local_server_path))
             return
-
-        self._killAlreadyRunningServer()
 
         try:
             # check if the local address still exists

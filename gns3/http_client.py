@@ -295,13 +295,9 @@ class HTTPClient(QtCore.QObject):
         if json_data is None or status != 200:
             return False
         else:
-            version = json_data.get("version")
-            local_server = json_data.get("local", False)
-            if version != __version__:
-                log.debug("Client version {} differs with server version {}".format(__version__, version))
-                return False
-            if not local_server:
-                log.debug("Running server is not a GNS3 local server (not started with --local)")
+            version = json_data.get("version", None)
+            if version is None:
+                log.debug("Server is not a GNS3 server")
                 return False
         return True
 

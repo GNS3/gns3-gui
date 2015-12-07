@@ -1141,8 +1141,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # start and connect to the local server
         server = servers.localServer()
-        if servers.localServerAutoStart():
-            if servers.initLocalServer() and servers.startLocalServer():
+        if servers.shouldLocalServerAutoStart():
+                if not servers.localServerAutoStart():
+                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
+                    return
+
                 worker = WaitForConnectionWorker(server.host(), server.port())
                 progress_dialog = ProgressDialog(worker,
                                                  "Local server",
@@ -1151,11 +1154,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 progress_dialog.show()
                 if not progress_dialog.exec_():
                     return
-            else:
-                if server.isLocalServerRunning():
-                    log.info("A local server already running on this host")
-                else:
-                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
 
         # show the setup wizard
         with Progress.instance().context(min_duration=0):
