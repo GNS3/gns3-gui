@@ -1206,6 +1206,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 running_nodes.append(node.name())
         return running_nodes
 
+    def _isTopologyOnRemoteServer(self):
+        """
+        :returns: Boolean True if topology run on a remote server
+        """
+        topology = Topology.instance()
+        running_nodes = []
+        for node in topology.nodes():
+            if not node.server().isLocal():
+                return True
+        return False
+
     def saveProjectAs(self):
         """
         Saves a project to another location/name.
@@ -1221,6 +1232,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if running_nodes:
             nodes = "\n".join(running_nodes)
             MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
+            return
+
+        if self._isTopologyOnRemoteServer():
+            MessageBox(self, "Save project", "You can not use the save as function on a remote project for the moment.")
             return
 
         if self._project.temporary():
