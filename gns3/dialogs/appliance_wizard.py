@@ -303,7 +303,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if progress_dialog.exec_():
-            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} {} installed!".format(appliance_configuration["name"], version))
+            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
             return True
 
     def validateCurrentPage(self):
