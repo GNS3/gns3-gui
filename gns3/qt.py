@@ -46,12 +46,6 @@ if DEFAULT_BINDING == 'PyQt':
     sys.modules[__name__ + '.QtNetwork'] = QtNetwork
     sys.modules[__name__ + '.QtSvg'] = QtSvg
 
-    try:
-        from PyQt4 import QtWebKit
-        sys.modules[__name__ + '.QtWebKit'] = QtWebKit
-    except ImportError:
-        pass
-
     QtCore.Signal = QtCore.pyqtSignal
     QtCore.Slot = QtCore.pyqtSlot
     QtCore.Property = QtCore.pyqtProperty
@@ -64,12 +58,6 @@ elif DEFAULT_BINDING == 'PySide':
     sys.modules[__name__ + '.QtGui'] = QtGui
     sys.modules[__name__ + '.QtNetwork'] = QtNetwork
     sys.modules[__name__ + '.QtSvg'] = QtSvg
-
-    try:
-        from PySide import QtWebKit
-        sys.modules[__name__ + '.QtWebKit'] = QtWebKit
-    except ImportError:
-        pass
 
     QtCore.QT_VERSION_STR = QtCore.__version__
     QtCore.BINDING_VERSION_STR = __version__

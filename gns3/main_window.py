@@ -108,15 +108,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self._analytics_client = AnalyticsClient()
         self.loading_cloud_project = False
 
-        self._uiNewsDockWidget = None
-        if not self._settings["hide_news_dock_widget"]:
-            try:
-                from .news_dock_widget import NewsDockWidget
-                self._uiNewsDockWidget = NewsDockWidget(self)
-                self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
-            except ImportError:
-                pass
-
         # restore the geometry and state of the main window.
         local_config = LocalConfig.instance()
         gui_settings = local_config.loadSectionSettings("GUI", {"geometry": "",
@@ -297,7 +288,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
         self.uiCheckForUpdateAction.triggered.connect(self._checkForUpdateActionSlot)
-        self.uiGettingStartedAction.triggered.connect(self._gettingStartedActionSlot)
         self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
@@ -902,24 +892,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         network_reply.deleteLater()
 
-    def _gettingStartedActionSlot(self, auto=False):
-        """
-        Slot to open the news dialog.
-        """
-
-        try:
-            # QtWebKit which is used by GettingStartedDialog is not installed
-            # by default on FreeBSD, Solaris and possibly other systems.
-            from .dialogs.getting_started_dialog import GettingStartedDialog
-        except ImportError:
-            return
-
-        dialog = GettingStartedDialog(self)
-        if auto is True and dialog.showit() is False:
-            return
-        dialog.show()
-        dialog.exec_()
-
     def _labInstructionsActionSlot(self, silent=False):
         """
         Slot to open lab instructions.
@@ -1139,13 +1111,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             root = logging.getLogger()
             root.addHandler(logging.StreamHandler(sys.stdout))
 
-        if self._uiNewsDockWidget and not self._uiNewsDockWidget.isVisible():
-            self.addDockWidget(QtCore.Qt.DockWidgetArea(QtCore.Qt.BottomDockWidgetArea), self._uiNewsDockWidget)
-
         local_config = LocalConfig.instance()
-        gui_settings = local_config.loadSectionSettings("GUI", {"hide_getting_started_dialog": False})
-        if gui_settings["hide_getting_started_dialog"] is not True:
-            self._gettingStartedActionSlot(auto=True)
+        gui_settings = local_config.loadSectionSettings("GUI", {})
 
         # connect to the local server
         servers = Servers.instance()
