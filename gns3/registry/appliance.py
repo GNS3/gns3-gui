@@ -49,7 +49,7 @@ class Appliance(collections.Mapping):
         """
         if "registry_version" not in self._appliance:
             raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry")
-        if self._appliance["registry_version"] != 1:
+        if self._appliance["registry_version"] > 2:
             raise ApplianceError("Please update GNS3 in order to install this appliance")
 
     def __getitem__(self, key):
@@ -133,3 +133,14 @@ class Appliance(collections.Mapping):
             return True
         except ApplianceError:
             return False
+
+    def image_dir_name(self):
+        """
+        :returns: The name of diretcory where image should be located
+        """
+        if "qemu" in self._appliance:
+            return "QEMU"
+        if "iou" in self._appliance:
+            return "IOU"
+        return "IOS"
+

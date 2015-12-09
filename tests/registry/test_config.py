@@ -58,9 +58,7 @@ def empty_config(tmpdir, images_dir, symbols_dir):
             "use_local_server": True
         },
         "IOU": {
-            "appliances": [
-                {
-                }
+            "devices": [
             ],
             "iourc_path": "/Users/noplay/code/gns3/gns3-vagrant/images/iou/iourc.txt",
             "iouyap_path": "",
@@ -114,6 +112,34 @@ def test_list_servers_remote_servers(tmpdir):
     config = Config(path)
     assert config.servers == ["local", "http://darkside.moon:4242"]
 
+
+def test_add_appliance_iou(empty_config, iou_l3):
+    with open("tests/registry/appliances/cisco-iou-l3.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+    config["images"] = [
+        {
+            "type": "image",
+            "filename": "i86bi-linux-l3-adventerprisek9-15.4.1T.bin",
+            "path": iou_l3
+        }
+    ]
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["IOU"]["devices"][0] == {
+        "category": 0,
+        "symbol": ":/symbols/router.svg",
+        "server": "local",
+        "name": "Cisco IOU L3",
+        "l1_keepalives": False,
+        "nvram": 128,
+        "private_config": "",
+        "ram": 256,
+        "serial_adapters": 2,
+        "ethernet_adapters": 2,
+        "use_default_iou_values": True,
+        "startup_config": "iou_l3_base_startup-config.txt",
+        "image": os.path.basename(iou_l3),
+        "path": os.path.basename(iou_l3)
+    }
 
 def test_add_appliance_guest(empty_config, linux_microcore_img):
     with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
@@ -419,38 +445,38 @@ def test_relative_image_path(empty_config, images_dir, tmpdir):
     # Image in image directory no need to copy it
     open(os.path.join(images_dir, "QEMU", "a"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("a", os.path.join(images_dir, "QEMU", "a")) == "a"
+        assert empty_config._relative_image_path("QEMU", "a", os.path.join(images_dir, "QEMU", "a")) == "a"
         assert not mock.called
 
     # Image in image directory no need to copy it but with a different file name
     open(os.path.join(images_dir, "QEMU", "a"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("h", os.path.join(images_dir, "QEMU", "a")) == "a"
+        assert empty_config._relative_image_path("QEMU", "h", os.path.join(images_dir, "QEMU", "a")) == "a"
         assert not mock.called
 
     # Image outside image directory we need to copy it
     open(str(tmpdir / "b"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("b", str(tmpdir / "b")) == "b"
+        assert empty_config._relative_image_path("QEMU", "b", str(tmpdir / "b")) == "b"
         assert mock.called
 
     # OVA in images directory no need to copy
     os.makedirs(os.path.join(images_dir, "QEMU", "c.ova"))
     open(os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk")) == "c.ova/c.vmdk"
+        assert empty_config._relative_image_path("QEMU", "c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk")) == "c.ova/c.vmdk"
         assert not mock.called
 
     # OVA outside images directory need to copy
     os.makedirs(os.path.join(str(tmpdir), "QEMU", "d.ova"))
     open(os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("d.ova/d.vmdk", os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk")) == "d.ova/d.vmdk"
+        assert empty_config._relative_image_path("QEMU", "d.ova/d.vmdk", os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk")) == "d.ova/d.vmdk"
         assert mock.called
 
     # OVA in images directory no need to copy but with a different file name
     os.makedirs(os.path.join(images_dir, "QEMU", "e.ova"))
     open(os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("x.ova/c.vmdk", os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk")) == "e.ova/c.vmdk"
+        assert empty_config._relative_image_path("QEMU", "x.ova/c.vmdk", os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk")) == "e.ova/c.vmdk"
         assert not mock.called

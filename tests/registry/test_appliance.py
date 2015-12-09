@@ -56,10 +56,9 @@ def test_check_config(tmpdir, registry):
     with pytest.raises(ApplianceError):
         Appliance(registry, test_path)
 
-    with open(test_path, "w+", encoding="utf-8") as f:
-        f.write('{"registry_version": 2}')
-
     with pytest.raises(ApplianceError):
+        with open(test_path, "w+", encoding="utf-8") as f:
+            f.write('{"registry_version": 42}')
         Appliance(registry, test_path)
 
     Appliance(registry, "tests/registry/appliances/microcore-linux.json")
@@ -121,3 +120,10 @@ def test_is_version_installable(linux_microcore_img, microcore_appliance):
 
     assert microcore_appliance.is_version_installable("3.4.1")
     assert not microcore_appliance.is_version_installable("4.0.2")
+
+
+def test_image_dir_name(microcore_appliance):
+
+    assert Appliance(registry, "tests/registry/appliances/microcore-linux.json").image_dir_name() == "QEMU"
+    assert Appliance(registry, "tests/registry/appliances/cisco-iou-l3.gns3a").image_dir_name() == "IOU"
+
