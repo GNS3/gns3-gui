@@ -19,6 +19,9 @@
 Base class for VM classes.
 """
 
+import os
+from gns3.servers import Servers
+
 from .node import Node
 
 import logging
@@ -260,6 +263,12 @@ class VM(Node):
 
         :returns: config content
         """
+
+        if config_path is None or len(config_path.strip()) == 0:
+            return None
+
+        if not os.path.isabs(config_path):
+            config_path = os.path.join(Servers.instance().localServerSettings()["configs_path"], config_path)
 
         try:
             with open(config_path, "rb") as f:

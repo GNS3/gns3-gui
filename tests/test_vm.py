@@ -92,3 +92,18 @@ def test_deleteNIO(vpcs_device):
 
             args, kwargs = mock_delete.call_args
             assert args[0] == "/vpcs/vms/{vm_id}/adapters/0/ports/0/nio".format(vm_id=vpcs_device.vm_id())
+
+
+def test_readBaseConfig(vpcs_device, tmpdir):
+    assert vpcs_device._readBaseConfig("") is None
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        f.write("42")
+    assert vpcs_device._readBaseConfig(str(tmpdir / "test.cfg")) == "42"
+
+
+def test_readBaseConfigRelative(vpcs_device, tmpdir):
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        f.write("42")
+    with patch('gns3.servers.Servers.localServerSettings', return_value={'configs_path': str(tmpdir)}):
+        assert vpcs_device._readBaseConfig(str("test.cfg")) == "42"
+

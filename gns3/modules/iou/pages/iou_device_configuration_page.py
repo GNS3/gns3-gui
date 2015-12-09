@@ -249,7 +249,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             if not startup_config:
                 settings["startup_config"] = ""
             elif startup_config != settings["startup_config"]:
-                if os.access(startup_config, os.R_OK):
+                if self._configFileValid(startup_config):
                     settings["startup_config"] = startup_config
                 else:
                     QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
@@ -259,7 +259,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             if not private_config:
                 settings["private_config"] = ""
             elif private_config != settings["private_config"]:
-                if os.access(private_config, os.R_OK):
+                if self._configFileValid(private_config):
                     settings["private_config"] = private_config
                 else:
                     QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
@@ -296,3 +296,11 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         settings["ethernet_adapters"] = ethernet_adapters
         settings["serial_adapters"] = serial_adapters
+
+    def _configFileValid(self, path):
+        """
+        Return true if it's a valid configuration file
+        """
+        if not os.path.isabs(path):
+            path = os.path.join(Servers.instance().localServerSettings()["configs_path"], path)
+        return os.access(path, os.R_OK)
