@@ -305,3 +305,37 @@ class LocalConfig(QtCore.QObject):
         if not hasattr(LocalConfig, "_instance") or LocalConfig._instance is None:
             LocalConfig._instance = LocalConfig(config_file=config_file)
         return LocalConfig._instance
+
+    @staticmethod
+    def isMainGui():
+        """
+        :returns: Return true if we are the main gui (first gui to start)
+        """
+
+        my_pid = os.getpid()
+        pid_path = os.path.join(LocalConfig.configDirectory(), "gns3_gui.pid")
+
+        if os.path.exists(pid_path):
+            try:
+                with open(pid_path) as f:
+                    pid = int(f.read())
+                    if pid != my_pid:
+                        try:
+                            os.kill(pid, 0)  # If the proces is not running kill return an error
+                        except OSError:
+                            pass
+                        else:
+                            return False
+                    else:
+                        return True
+            except (OSError, ValueError) as e:
+                log.critical("Can't read pid file %s: %s", pid_path, str(e))
+                return False
+
+        try:
+            with open(pid_path, 'w+') as f:
+                f.write(str(my_pid))
+        except OSError as e:
+            log.critical("Can't write pid file %s: %s", pid_path, str(e))
+            return False
+        return True

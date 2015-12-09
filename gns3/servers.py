@@ -389,6 +389,12 @@ class Servers():
         Try to start the embed gns3 server.
         """
 
+        # We check if two gui are not launched at the same time
+        # to avoid killing the server of the other GUI
+        if not LocalConfig.isMainGui():
+           log.info("Not the main GUI, will not autostart the server")
+           return True
+
         if self.localServer().isLocalServerRunning():
             log.info("A local server already running on this host")
             # Try to kill the server. The server can be still running after

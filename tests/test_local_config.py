@@ -228,3 +228,40 @@ def test_migrate13ConfigOldOsxServerPath(tmpdir):
     # The old config should not be erased in order to avoid losing data when rollback to 1.3
     assert local_config._settings["LocalServer"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server"
     assert local_config._settings["Servers"]["local_server"]["path"] == "/Applications/GNS3.app/Contents/MacOS/gns3server"
+
+
+def test_isMainGui_pid_file_not_exist(tmpdir):
+    with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
+        mock_config_directory.return_value = str(tmpdir)
+        assert LocalConfig().isMainGui() is True
+        assert os.path.exists(str(tmpdir / "gns3_gui.pid"))
+
+
+def test_isMainGui_pid_file_exist_but_different(tmpdir):
+    with open(str(tmpdir / "gns3_gui.pid"), "w+") as f:
+        f.write("42")
+
+    with patch("os.kill"):
+        with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
+            mock_config_directory.return_value = str(tmpdir)
+            assert LocalConfig().isMainGui() is False
+
+
+def test_isMainGui_pid_file_exist_but_different_proces_dead(tmpdir):
+    with open(str(tmpdir / "gns3_gui.pid"), "w+") as f:
+        f.write("42")
+
+    with patch("os.kill", side_effect=lambda pid, sig: exec('raise(OSError())')):
+        with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
+            mock_config_directory.return_value = str(tmpdir)
+            assert LocalConfig().isMainGui() is True
+
+
+def test_isMainGui_pid_file_exist_but_same_pid(tmpdir):
+    with open(str(tmpdir / "gns3_gui.pid"), "w+") as f:
+        f.write("42")
+
+    with patch("os.getpid", return_value=42):
+        with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
+            mock_config_directory.return_value = str(tmpdir)
+            assert LocalConfig().isMainGui() is True
