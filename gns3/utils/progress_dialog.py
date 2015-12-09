@@ -57,7 +57,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._errors = []
         self.setWindowTitle(title)
         self._worker = worker
-        self.canceled.connect(self._worker.cancel)
+        self.canceled.connect(self._canceledSlot)
         self.finished.connect(self.close)
         self.destroyed.connect(self._cleanup)
 
@@ -71,6 +71,10 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         #  connect the thread signals and start the thread
         self._thread.started.connect(self._worker.run)
         self._thread.start()
+
+    def _canceledSlot(self):
+        self._worker.cancel()
+        self._cleanup()
 
     def __del__(self):
 
