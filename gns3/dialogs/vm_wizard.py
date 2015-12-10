@@ -35,6 +35,8 @@ class VMWizard(QtWidgets.QWizard):
         super().__init__(parent)
         self.setupUi(self)
 
+        self.setModal(True)
+
         self._devices = devices
         self._use_local_server = use_local_server
 
