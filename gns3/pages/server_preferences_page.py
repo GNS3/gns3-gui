@@ -142,6 +142,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         if state:
+            if not self.uiLocalServerAutoStartCheckBox.isChecked():
+                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The local server need to be enable in order to use the GNS3 VM")
+                self.uiEnableVMCheckBox.setChecked(False)
+                return
             self.uiGNS3VMSettingsGroupBox.setEnabled(True)
             self._refreshVMListSlot()
         else:
@@ -188,6 +192,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiConsolePortRangeGroupBox.setEnabled(True)
             self.uiUDPPortRangeGroupBox.setEnabled(True)
         else:
+            if self.uiEnableVMCheckBox.isChecked():
+                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The local server need to be enable in order to use the GNS3 VM. Please turn off the GNS3 VM before turning off the local server.")
+                self.uiLocalServerAutoStartCheckBox.setChecked(True)
+                return
             self.uiGeneralSettingsGroupBox.setEnabled(False)
             self.uiConsolePortRangeGroupBox.setEnabled(False)
             self.uiUDPPortRangeGroupBox.setEnabled(False)
