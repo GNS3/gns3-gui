@@ -66,9 +66,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
     def _VMwareBannerButtonClickedSlot(self):
         if sys.platform.startswith("darwin"):
-            url = "http://send.onenetworkdirect.net/z/616454/CD225091/"
+            url = "http://send.onenetworkdirect.net/z/616461/CD225091/"
         else:
-            url = "http://send.onenetworkdirect.net/z/616455/CD225091/"
+            url = "http://send.onenetworkdirect.net/z/616460/CD225091/"
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
 
     def _listVMwareVMsSlot(self):
