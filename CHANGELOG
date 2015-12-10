@@ -1,5 +1,49 @@
 # Change Log
 
+## 1.4.0rc2 10/12/2015
+
+* Prevent user turning off the Local server when using the GNS3 VM
+* Force VM wizard to be modal
+* Fix unicode error when exporting debug informations
+* Fix Debug can't be deactivated for current session
+* Support relative path for configuration file.
+* Report bug to GNS3.com
+* Avoid crash when cancel connection to a server
+* Fix version number display twice when installing appliance
+* Show a warning when you try to save as a remote topology
+* Fix application restart after self upgrade
+* Cleanup server autostart
+* Have default console port start from 2000.
+* Fix crash when opening a new topologies after gns3 converter failure
+* Fix SSH support
+* Fix bus error when writting on console
+* Fix Ok & Cancel button in preferences are broken
+* Fix After a project load failure you can't open new project
+* More fix around closing the GUI
+* Fix crash in progress dialog on OSX
+* Kill already running zombie server
+* Store the pid of the server when started
+* Fix a crash in rare case after a PyQT garbage collect
+* Allow to use the VNC port range for console
+* Preferences dialog resize
+* Fix a race condition when opening telnet from apple script
+* Experimental support for tabbed terminal on OSX
+* Fix validation error when saving topology with an usage
+* Fix another case of not closing windows
+* Fix GUI doesn't close after connection error to remote server
+* Add usage text to device template and on hover
+* Fix a rare crash in progress dialog
+* Fix crash when displaying an error from the update
+* Url encode royal tx url
+* Use Royal TX URI scheme thanks to @lemonmojo
+* OSX support for Royal TSX
+* Merge branch 'master' into unstable
+* Set Wireshark 2.0 as default OSX version
+* iTerm 2.9 support
+* Update debug information dialog.
+* Change text for export debug information.
+* Add informations about GNS3 VM
+
 ## 1.4.0rc1 12/15/2015
 
 * Rename an appliance if the default name is already taken
