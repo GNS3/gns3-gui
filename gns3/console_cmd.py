@@ -208,16 +208,17 @@ class ConsoleCmd(cmd.Cmd):
             return
 
         root = logging.getLogger()
-        ch = logging.StreamHandler(sys.stdout)
 
         if len(args) == 1:
             level = int(args[0])
             if level == 0:
                 print("Deactivating debugging")
-                root.removeHandler(ch)
+                for handler in root.handlers:
+                    if isinstance(handler, logging.StreamHandler):
+                        root.removeHandler(handler)
                 root.setLevel(logging.INFO)
             else:
-                root.addHandler(ch)
+                root.addHandler(logging.StreamHandler(sys.stdout))
                 if level == 1:
                     print("Activating debugging")
                 else:
