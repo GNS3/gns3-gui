@@ -132,6 +132,21 @@ class Config:
         elif appliance_config["category"] == "multilayer_switch":
             new_config["category"] = 1
 
+        if "symbol" in appliance_config:
+            new_config["symbol"] = self._set_symbol(appliance_config["symbol"])
+
+        if new_config.get("symbol") is None:
+            if appliance_config["category"] == "guest":
+                new_config["symbol"] = ":/symbols/qemu_guest.svg"
+            elif appliance_config["category"] == "router":
+                new_config["symbol"] = ":/symbols/router.svg"
+            elif appliance_config["category"] == "switch":
+                new_config["symbol"] = ":/symbols/ethernet_switch.svg"
+            elif appliance_config["category"] == "multilayer_switch":
+                new_config["symbol"] = ":/symbols/multilayer_switch.svg"
+            elif appliance_config["category"] == "firewall":
+                new_config["symbol"] = ":/symbols/firewall.svg"
+
         # Raise error if VM already exists
         if not self.is_name_available(new_config["name"]):
             raise ConfigException("{} already exists".format(new_config["name"]))
@@ -139,7 +154,54 @@ class Config:
         if "qemu" in appliance_config:
             self._add_qemu_config(new_config, appliance_config)
             return
-        raise ConfigException("{} no configuration found for Qemu".format(item["name"]))
+        if "iou" in appliance_config:
+            self._add_iou_config(new_config, appliance_config)
+            return
+        if "dynamips" in appliance_config:
+            self._add_dynamips_config(new_config, appliance_config)
+            return
+        raise ConfigException("{} no configuration found for know emulators".format(new_config["name"]))
+
+    def _add_dynamips_config(self, new_config, appliance_config):
+        new_config["auto_delete_disks"] = True
+        new_config["disk0"] = 0
+        new_config["disk1"] = 0
+        new_config["exec_area"] = 64
+        new_config["idlemax"] = 500
+        new_config["idlesleep"] = 30
+        new_config["system_id"] = "FTX0945W0MY"
+        new_config["sparsemem"] = True
+        new_config["private_config"] = ""
+        new_config["mac_addr"] = ""
+        new_config["iomem"] = 5
+        new_config["mmap"] = True
+
+        for key, value in appliance_config["dynamips"].items():
+            new_config[key] = value
+
+        for image in appliance_config["images"]:
+            new_config[image["type"]] = self._relative_image_path("IOS", image["filename"], image["path"])
+            new_config["idlepc"] = image["idlepc"]
+
+        log.debug("Add appliance Dynamips: %s", str(new_config))
+        self._config["Dynamips"]["routers"].append(new_config)
+
+    def _add_iou_config(self, new_config, appliance_config):
+        new_config["ethernet_adapters"] = appliance_config["iou"]["ethernet_adapters"]
+        new_config["serial_adapters"] = appliance_config["iou"]["serial_adapters"]
+        new_config["startup_config"] = appliance_config["iou"]["startup_config"]
+        new_config["private_config"] = ""
+        new_config["l1_keepalives"] = False
+        new_config["use_default_iou_values"] = True
+        new_config["nvram"] = appliance_config["iou"]["nvram"]
+        new_config["ram"] = appliance_config["iou"]["ram"]
+
+        for image in appliance_config["images"]:
+            new_config[image["type"]] = self._relative_image_path("IOU", image["filename"], image["path"])
+        new_config["path"] = new_config["image"]
+
+        log.debug("Add appliance IOU: %s", str(new_config))
+        self._config["IOU"]["devices"].append(new_config)
 
     def _add_qemu_config(self, new_config, appliance_config):
 
@@ -156,34 +218,20 @@ class Config:
             options += " -nographic"
         new_config["options"] = options.strip()
 
-        new_config["hda_disk_image"] = appliance_config["qemu"].get("hda_disk_image", "")
-        new_config["hdb_disk_image"] = appliance_config["qemu"].get("hdb_disk_image", "")
-        new_config["hdc_disk_image"] = appliance_config["qemu"].get("hdc_disk_image", "")
-        new_config["hdd_disk_image"] = appliance_config["qemu"].get("hdd_disk_image", "")
-        new_config["cdrom_image"] = appliance_config["qemu"].get("cdrom_image", "")
-        new_config["initrd"] = appliance_config["qemu"].get("initrd", "")
+        for image in appliance_config["images"]:
+            new_config[image["type"]] = self._relative_image_path("QEMU", image["filename"], image["path"])
+
+        new_config.setdefault("hda_disk_image", "")
+        new_config.setdefault("hdb_disk_image", "")
+        new_config.setdefault("hdc_disk_image", "")
+        new_config.setdefault("hdd_disk_image", "")
+        new_config.setdefault("cdrom_image", "")
+        new_config.setdefault("initrd", "")
+        new_config.setdefault("kernel_image", "")
+
         new_config["kernel_command_line"] = appliance_config["qemu"].get("kernel_command_line", "")
-        new_config["kernel_image"] = appliance_config["qemu"].get("kernel_image", "")
 
         new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
-
-        if "symbol" in appliance_config:
-            new_config["symbol"] = self._set_symbol(appliance_config["symbol"])
-
-        if new_config.get("symbol") is None:
-            if appliance_config["category"] == "guest":
-                new_config["symbol"] = ":/symbols/qemu_guest.svg"
-            elif appliance_config["category"] == "router":
-                new_config["symbol"] = ":/symbols/router.svg"
-            elif appliance_config["category"] == "switch":
-                new_config["symbol"] = ":/symbols/ethernet_switch.svg"
-            elif appliance_config["category"] == "multilayer_switch":
-                new_config["symbol"] = ":/symbols/multilayer_switch.svg"
-            elif appliance_config["category"] == "firewall":
-                new_config["symbol"] = ":/symbols/firewall.svg"
-
-        for image in appliance_config["images"]:
-            new_config[image["type"]] = self._relative_image_path(image["filename"], image["path"])
 
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]
@@ -223,13 +271,16 @@ class Config:
         except OSError:
             return None
 
-    def _relative_image_path(self, filename, path):
+    def _relative_image_path(self, image_dir_type, filename, path):
         """
+        :param image_dir_type: Type of image directory
+        :param filename: Filename at the end of the processus
+        :param path: Full path to the file
         :returns: Path relative to image directory.
         Copy the image to the directory if not already in the directory
         """
 
-        images_dir = os.path.join(self.images_dir, "QEMU")
+        images_dir = os.path.join(self.images_dir, image_dir_type)
         path = os.path.abspath(path)
         if os.path.commonprefix([images_dir, path]) == images_dir:
             return path.replace(images_dir, '').strip('/\\')
@@ -239,7 +290,7 @@ class Config:
             base_file = re.split(r'[/\\]', filename)[0]
         else:
             base_file = filename
-        Image(path).copy(os.path.join(self.images_dir, "QEMU"), base_file)
+        Image(path).copy(images_dir, base_file)
         return filename
 
     def save(self):

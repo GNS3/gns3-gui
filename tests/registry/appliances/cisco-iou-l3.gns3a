@@ -1,0 +1,37 @@
+{
+    "category": "router",
+    "status": "experimental",
+    "maintainer": "GNS3 Team",
+    "name": "Cisco IOU L3",
+    "vendor_name": "Cisco",
+    "product_name": "Cisco IOU L3",
+    "vendor_url": "http://www.cisco.com",
+    "description": "Cisco IOS on UNIX Layer 3 image.",
+    "registry_version": 2,
+    "maintainer_email": "developers@gns3.net",
+
+    "iou": {
+        "ethernet_adapters": 2,
+        "serial_adapters": 2,
+        "nvram": 128,
+        "ram": 256,
+        "startup_config": "iou_l3_base_startup-config.txt"
+    },
+
+    "versions": [
+        {
+            "images": {
+                "image": "i86bi-linux-l3-adventerprisek9-15.4.1T.bin"
+            },
+            "name": "15.4.1T"
+        }
+    ],
+    "images": [
+        {
+            "filesize": 152677848,
+            "md5sum": "5d41402abc4b2a76b9719d911017c592",
+            "version": "15.4.1T",
+            "filename": "i86bi-linux-l3-adventerprisek9-15.4.1T.bin"
+        }
+    ]
+}
