@@ -26,7 +26,7 @@ notifications:
   #  on_failure: always
 
 install:
-  - "pip install -r dev-requirements.txt"
+  - "pip install --upgrade -r dev-requirements.txt"
 
 script:
     - "xvfb-run py.test -vv" # Run tests in a fake X server
