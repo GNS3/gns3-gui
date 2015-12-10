@@ -270,6 +270,9 @@ class VM(Node):
         if not os.path.isabs(config_path):
             config_path = os.path.join(Servers.instance().localServerSettings()["configs_path"], config_path)
 
+        if not os.path.isfile(config_path):
+            return None
+
         try:
             with open(config_path, "rb") as f:
                 log.info("Opening configuration file: {}".format(config_path))
