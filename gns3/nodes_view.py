@@ -70,7 +70,7 @@ class NodesView(QtGui.QTreeWidget):
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
         if not self.topLevelItemCount() and category == Node.routers:
             #FIXME: port to PyQt5
-            QtGui.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
+            QtGui.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://gns3.com/support/docs">Show documentation</a>')
             #TODO: would be nicer to use QErrorMessage but the link cannot be clicked by default
             #QtGui.QErrorMessage.qtHandler().showMessage('No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
 
