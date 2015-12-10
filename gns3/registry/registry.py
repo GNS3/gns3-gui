@@ -33,6 +33,14 @@ class Registry:
     def __init__(self, images_dirs):
         self._images_dirs = images_dirs
 
+    def appendImageDirectory(self, image_directory):
+        """
+        Add a folder to the list of we need to scan
+
+        :param image_directory: Folder we need to add
+        """
+        self._images_dirs.append(image_directory)
+
     def search_image_file(self, filename, md5sum, size):
         """
         Search an image based on its MD5 checksum

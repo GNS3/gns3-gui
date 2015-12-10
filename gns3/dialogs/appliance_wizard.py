@@ -40,13 +40,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self._path = path
         self.setupUi(self)
         images_directories = list()
-        images_directories.append(os.path.join(ImageManager.instance().getDirectory(), "QEMU"))
         images_directories.append(os.path.dirname(self._path))
         download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if download_directory != "" and download_directory != os.path.dirname(self._path):
             images_directories.append(download_directory)
         self._registry = Registry(images_directories)
         self._appliance = Appliance(self._registry, self._path)
+        self._registry.appendImageDirectory(os.path.join(ImageManager.instance().getDirectory(), self._appliance.image_dir_name()))
 
         self.uiApplianceVersionTreeWidget.currentItemChanged.connect(self._applianceVersionCurrentItemChangedSlot)
         self.uiRefreshPushButton.clicked.connect(self._refreshVersions)
@@ -121,8 +121,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiSummaryWizardPage:
             self.uiSummaryTreeWidget.clear()
-            for key in self._appliance["qemu"]:
-                item = QtWidgets.QTreeWidgetItem([key.replace('_', ' ').capitalize() + ":", str(self._appliance["qemu"][key])])
+            if "qemu" in self._appliance:
+                type = "qemu"
+            elif "iou" in self._appliance:
+                type = "iou"
+            elif "dynamips" in self._appliance:
+                type = "dynamips"
+
+            for key in self._appliance[type]:
+                item = QtWidgets.QTreeWidgetItem([key.replace('_', ' ').capitalize() + ":", str(self._appliance[type][key])])
                 font = item.font(0)
                 font.setBold(True)
                 item.setFont(0, font)
@@ -256,11 +263,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         image = Image(path)
         if image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file.")
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}".format(image.md5sum, disk["md5sum"]))
             return
 
         config = Config()
-        worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, "QEMU"), disk["filename"]), allowed_exceptions=[OSError])
+        worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, self._appliance.image_dir_name()), disk["filename"]), allowed_exceptions=[OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Import the appliance...", None, busy=True, parent=self)
         if not progress_dialog.exec_():
             return
