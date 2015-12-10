@@ -77,6 +77,11 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
         except psutil.AccessDenied:
             connections = None
 
+        try:
+            addrs = ["* {}: {}".format(key, val) for key, val in psutil.net_if_addrs().items()]
+        except UnicodeDecodeError:
+            addrs = ["INVALID ADDR WITH UNICODE CHARACTERS"]
+
         data = """Version: {version}
 OS: {os}
 Python: {python}
@@ -99,7 +104,7 @@ Processus:
             memory=psutil.virtual_memory(),
             cpu=psutil.cpu_times(),
             connections=connections,
-            addrs="\n".join(["* {}: {}".format(key, val) for key, val in psutil.net_if_addrs().items()])
+            addrs="\n".join(addrs)
         )
         for proc in psutil.process_iter():
             try:
