@@ -75,6 +75,18 @@ def test_resolve_version(tmpdir):
     assert new_config["versions"][0]["images"] == {"hda_disk_image": hda}
 
 
+def test_resolve_version_dynamips(tmpdir):
+
+    with open("tests/registry/appliances/cisco-3745.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+
+    hda = config["images"][0]
+    hda["idlepc"] = "0x60aa1da0"
+
+    new_config = Appliance(registry, "tests/registry/appliances/cisco-3745.gns3a")
+    assert new_config["versions"][0]["images"] == {"image": hda}
+
+
 def test_resolve_version_invalid_file(tmpdir):
 
     with pytest.raises(ApplianceError):

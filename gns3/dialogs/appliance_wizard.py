@@ -125,6 +125,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 type = "qemu"
             elif "iou" in self._appliance:
                 type = "iou"
+            elif "dynamips" in self._appliance:
+                type = "dynamips"
 
             for key in self._appliance[type]:
                 item = QtWidgets.QTreeWidgetItem([key.replace('_', ' ').capitalize() + ":", str(self._appliance[type][key])])
@@ -261,7 +263,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         image = Image(path)
         if image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file.")
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}".format(image.md5sum, disk["md5sum"]))
             return
 
         config = Config()

@@ -200,6 +200,7 @@ def main_window():
 @pytest.fixture
 def images_dir(tmpdir):
     os.makedirs(os.path.join(str(tmpdir), "images", "QEMU"), exist_ok=True)
+    os.makedirs(os.path.join(str(tmpdir), "images", "IOS"), exist_ok=True)
     os.makedirs(os.path.join(str(tmpdir), "images", "IOU"), exist_ok=True)
     return os.path.join(str(tmpdir), "images")
 
@@ -229,6 +230,18 @@ def iou_l3(images_dir):
     """
 
     path = os.path.join(images_dir, "IOU", "i86bi-linux-l3-adventerprisek9-15.4.1T.bin")
+    with open(path, 'w+') as f:
+        f.write("hello")
+    return path
+
+
+@pytest.fixture
+def cisco_3745(images_dir):
+    """
+    Create a fake image and return the path. The md5sum of the file will be 5d41402abc4b2a76b9719d911017c592
+    """
+
+    path = os.path.join(images_dir, "IOS", "c3745-adventerprisek9-mz.124-25d.image")
     with open(path, 'w+') as f:
         f.write("hello")
     return path

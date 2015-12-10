@@ -74,6 +74,9 @@ class Appliance(collections.Mapping):
                 for file in self._appliance["images"]:
                     file = copy.copy(file)
 
+                    if "idlepc" in version:
+                        file["idlepc"] = version["idlepc"]
+
                     if "/" in filename:
                         parent, name = filename.split("/")
                         filename = os.path.join(parent, name)
@@ -136,7 +139,7 @@ class Appliance(collections.Mapping):
 
     def image_dir_name(self):
         """
-        :returns: The name of diretcory where image should be located
+        :returns: The name of directory where image should be located
         """
         if "qemu" in self._appliance:
             return "QEMU"

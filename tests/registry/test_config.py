@@ -51,8 +51,6 @@ def empty_config(tmpdir, images_dir, symbols_dir):
             "ghost_ios_support": True,
             "mmap_support": True,
             "routers": [
-                {
-                }
             ],
             "sparse_memory_support": True,
             "use_local_server": True
@@ -140,6 +138,54 @@ def test_add_appliance_iou(empty_config, iou_l3):
         "image": os.path.basename(iou_l3),
         "path": os.path.basename(iou_l3)
     }
+
+
+def test_add_appliance_dynamips(empty_config, cisco_3745):
+    with open("tests/registry/appliances/cisco-3745.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+    config["images"] = [
+        {
+            "type": "image",
+            "filename": "c3745-adventerprisek9-mz.124-25d.image",
+            "path": cisco_3745,
+            "idlepc": "0x60aa1da0"
+        }
+    ]
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["Dynamips"]["routers"][0] == {
+        "auto_delete_disks": True,
+        "category": 0,
+        "chassis": "",
+        "disk0": 0,
+        "disk1": 0,
+        "exec_area": 64,
+        "idlemax": 500,
+        "idlepc": "0x60aa1da0",
+        "idlesleep": 30,
+        "image": "c3745-adventerprisek9-mz.124-25d.image",
+        "iomem": 5,
+        "mac_addr": "",
+        "mmap": True,
+        "name": "Cisco 3745",
+        "nvram": 256,
+        "platform": "c3745",
+        "private_config": "",
+        "ram": 256,
+        "server": "local",
+        "slot0": "GT96100-FE",
+        "slot1": "NM-1FE-TX",
+        "slot2": "NM-4T",
+        "slot3": "",
+        "slot4": "",
+        "sparsemem": True,
+        "startup_config": "ios_base_startup-config.txt",
+        "symbol": ":/symbols/router.svg",
+        "system_id": "FTX0945W0MY",
+        "wic0": "WIC-1T",
+        "wic1": "WIC-1T",
+        "wic2": "WIC-1T"
+    }
+
 
 def test_add_appliance_guest(empty_config, linux_microcore_img):
     with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:

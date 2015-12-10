@@ -157,7 +157,34 @@ class Config:
         if "iou" in appliance_config:
             self._add_iou_config(new_config, appliance_config)
             return
+        if "dynamips" in appliance_config:
+            self._add_dynamips_config(new_config, appliance_config)
+            return
         raise ConfigException("{} no configuration found for know emulators".format(new_config["name"]))
+
+    def _add_dynamips_config(self, new_config, appliance_config):
+        new_config["auto_delete_disks"] = True
+        new_config["disk0"] = 0
+        new_config["disk1"] = 0
+        new_config["exec_area"] = 64
+        new_config["idlemax"] = 500
+        new_config["idlesleep"] = 30
+        new_config["system_id"] = "FTX0945W0MY"
+        new_config["sparsemem"] = True
+        new_config["private_config"] = ""
+        new_config["mac_addr"] = ""
+        new_config["iomem"] = 5
+        new_config["mmap"] = True
+
+        for key, value in appliance_config["dynamips"].items():
+            new_config[key] = value
+
+        for image in appliance_config["images"]:
+            new_config[image["type"]] = self._relative_image_path("IOS", image["filename"], image["path"])
+            new_config["idlepc"] = image["idlepc"]
+
+        log.debug("Add appliance Dynamips: %s", str(new_config))
+        self._config["Dynamips"]["routers"].append(new_config)
 
     def _add_iou_config(self, new_config, appliance_config):
         new_config["ethernet_adapters"] = appliance_config["iou"]["ethernet_adapters"]
