@@ -19,6 +19,7 @@
 Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
+import sip
 from ..qt import QtGui, QtCore
 
 
@@ -77,12 +78,15 @@ class ProgressDialog(QtGui.QProgressDialog):
         """
         Delete the thread.
         """
-        if self._thread.isRunning():
-            self._thread.quit()
-            if not self._thread.wait(3000):
-                self._thread.terminate()
-                self._thread.wait()
-        self._thread.deleteLater()
+
+        if self._thread:
+            if not sip.isdeleted(self) and not sip.isdeleted(self._thread):
+                if self._thread.isRunning():
+                    self._thread.quit()
+                    if not self._thread.wait(3000):
+                        self._thread.terminate()
+                        self._thread.wait()
+                self._thread.deleteLater()
 
     def _updateProgress(self, value):
         """
