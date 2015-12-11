@@ -13,6 +13,9 @@ notifications:
   #  on_success: change
   #  on_failure: always
 
+install:
+  - "pip install --upgrade -r dev-requirements.txt"
+
 script:
 - docker build -t gns3-gui-test .
 - docker run gns3-gui-test 

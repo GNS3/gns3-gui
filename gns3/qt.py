@@ -74,7 +74,6 @@ from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 
 
 class QFileDialog(OldFileDialog):
-
     @staticmethod
     def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
         path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)

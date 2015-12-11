@@ -1,5 +1,31 @@
 # Change Log
 
+## 1.3.13 11/12/2015
+
+* Release server 1.3.13
+
+## 1.3.12 11/12/2015
+
+* Fix warning when closing GUI
+* Update links for new website.
+* Ask user to send bug reports to GNS3.com
+* Fix travis dependencies installation
+* Drop Webkit from 1.3.X
+* Fix crash when opening a new topologies after gns3 converter failure
+* Set Wireshark 2.0 as default OSX version
+* iTerm 2.9 support
+* Add informations about GNS3 VM
+* Drops securecrt.vbs
+* Fix analytics report on OSX
+* Analytics send windows
+* Fix the progress dialog freeze bug
+* Fix typo in analytics
+* Send stats to GNS3 team
+* Licenses compliance.
+* Fix error when importing dynamips config from non existent directory
+* Fix crash when url is invalid
+* Add a debug level 2 in the console
+
 ## 1.4.0rc2 10/12/2015
 
 * Prevent user turning off the Local server when using the GNS3 VM

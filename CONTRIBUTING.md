@@ -6,7 +6,7 @@ We are friendly so don't be afraid to ask questions.
 ## Bug reports
 
 Before reporting an issue:
-* check our community website over at http://community.gns3.com
+* check our website over at https://gns3.com
 * check if an issue already exists on https://github.com/GNS3/gns3-gui
 * check if an issue already exists on https://github.com/GNS3/gns3-server
 

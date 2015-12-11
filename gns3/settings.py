@@ -276,7 +276,8 @@ GENERAL_SETTINGS = {
     "debug_level": 0,
     "recent_files": [],
     "geometry": "",
-    "state": ""
+    "state": "",
+    "debug_level": 0,
 }
 
 GRAPHICS_VIEW_SETTINGS = {
