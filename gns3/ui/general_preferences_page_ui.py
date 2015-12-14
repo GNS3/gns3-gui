@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Thu Oct 15 21:17:06 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_GeneralPreferencesPageWidget(object):
-
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
         GeneralPreferencesPageWidget.resize(538, 623)
@@ -24,6 +21,11 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.uiGeneralTab)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.uiLocalPathsGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiLocalPathsGroupBox.sizePolicy().hasHeightForWidth())
+        self.uiLocalPathsGroupBox.setSizePolicy(sizePolicy)
         self.uiLocalPathsGroupBox.setObjectName("uiLocalPathsGroupBox")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.uiLocalPathsGroupBox)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
@@ -95,6 +97,11 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.verticalLayout_7.addLayout(self.horizontalLayout_7)
         self.verticalLayout_5.addWidget(self.uiLocalPathsGroupBox)
         self.uiStyleGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiStyleGroupBox.sizePolicy().hasHeightForWidth())
+        self.uiStyleGroupBox.setSizePolicy(sizePolicy)
         self.uiStyleGroupBox.setObjectName("uiStyleGroupBox")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.uiStyleGroupBox)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -103,6 +110,11 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.verticalLayout_4.addWidget(self.uiStyleComboBox)
         self.verticalLayout_5.addWidget(self.uiStyleGroupBox)
         self.uiConfigurationFileGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiConfigurationFileGroupBox.sizePolicy().hasHeightForWidth())
+        self.uiConfigurationFileGroupBox.setSizePolicy(sizePolicy)
         self.uiConfigurationFileGroupBox.setObjectName("uiConfigurationFileGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiConfigurationFileGroupBox)
         self.gridLayout.setObjectName("gridLayout")
@@ -429,3 +441,4 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " seconds"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.tab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
+

@@ -22,8 +22,14 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="uiServerPreferenceTabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="uiLocalTabWidget">
       <attribute name="title">
@@ -64,6 +70,9 @@
           <string>General settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item row="1" column="0">
            <widget class="QLabel" name="uiLocalServerPathLabel">
             <property name="text">
@@ -322,6 +331,9 @@
           <string>Settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
             <property name="text">
@@ -561,6 +573,12 @@
        </item>
        <item row="0" column="0" colspan="2">
         <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="columnCount">
           <number>4</number>
          </property>
