@@ -48,7 +48,7 @@
           <string>Enable local server</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -312,7 +312,7 @@
           <string>Enable the local GNS3 VM</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
