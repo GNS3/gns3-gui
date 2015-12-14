@@ -99,7 +99,7 @@ def test_addMissingImageOVAWithMultipleVMDK(image_manager, remote_server, images
             assert args[2] == 'QEMU'
 
             args, kwargs = mock.call_args_list[1]
-            assert args[0] == str(images_dir / 'QEMU' / 'test.ova' / 'test.vmdk')
+            assert os.path.normpath(args[0]) == str(images_dir / 'QEMU' / 'test.ova' / 'test.vmdk')
             assert args[1] == remote_server
             assert args[2] == 'QEMU'
 

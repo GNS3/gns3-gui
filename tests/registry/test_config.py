@@ -427,7 +427,7 @@ def test_add_appliance_ova(empty_config, tmpdir, images_dir):
     ]
 
     empty_config.add_appliance(config, "local")
-    assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == "junos-vsrx-12.1X47-D10.4-domestic.ova/junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk"
+    assert empty_config._config["Qemu"]["vms"][0]["hda_disk_image"] == os.path.join("junos-vsrx-12.1X47-D10.4-domestic.ova", "junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk")
 
 
 def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, images_dir):
@@ -510,7 +510,7 @@ def test_relative_image_path(empty_config, images_dir, tmpdir):
     os.makedirs(os.path.join(images_dir, "QEMU", "c.ova"))
     open(os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("QEMU", "c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk")) == "c.ova/c.vmdk"
+        assert empty_config._relative_image_path("QEMU", "c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk")) == os.path.join("c.ova", "c.vmdk")
         assert not mock.called
 
     # OVA outside images directory need to copy
@@ -524,5 +524,5 @@ def test_relative_image_path(empty_config, images_dir, tmpdir):
     os.makedirs(os.path.join(images_dir, "QEMU", "e.ova"))
     open(os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
-        assert empty_config._relative_image_path("QEMU", "x.ova/c.vmdk", os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk")) == "e.ova/c.vmdk"
+        assert empty_config._relative_image_path("QEMU", "x.ova/c.vmdk", os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk")) == os.path.join("e.ova", "c.vmdk")
         assert not mock.called
