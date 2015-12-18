@@ -1234,7 +1234,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
             return
 
-        if self._isTopologyOnRemoteServer():
+        if self._isTopologyOnRemoteServer() and not self._project.temporary():
             MessageBox(self, "Save project", "You can not use the save as function on a remote project for the moment.")
             return
 
