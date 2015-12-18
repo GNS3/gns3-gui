@@ -205,6 +205,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
             settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdImageLineEdit.text()
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt -net nic"
             settings["options"] = "-no-kvm -icount auto -hdachs 980,16,32"
