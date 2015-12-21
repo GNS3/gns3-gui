@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/cetko/projects/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
+# Form implementation generated from reading ui file 'D:\Vasko\PyCharmProjects\gns3-gui\gns3\modules\vmware\ui\vmware_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwareVMConfigPageWidget(object):
-
     def setupUi(self, VMwareVMConfigPageWidget):
         VMwareVMConfigPageWidget.setObjectName("VMwareVMConfigPageWidget")
         VMwareVMConfigPageWidget.resize(494, 381)
@@ -143,6 +141,7 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiSymbolToolButton.setText(_translate("VMwareVMConfigPageWidget", "&Browse..."))
         self.uiCategoryLabel.setText(_translate("VMwareVMConfigPageWidget", "Category:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("VMwareVMConfigPageWidget", "General settings"))
+        self.uiPortNameFormatLabel.setToolTip(_translate("VMwareVMConfigPageWidget", "<html><head/><body><p>{0} - the port number, from 0 to the number of adapters-1.</p><p>{1} - the segment number, from 0 to the number of segments-1.</p><p>{port0} - named alias for {0}.</p><p>{port1} - the port number, from 1 to the number of adapters.</p><p>{segment0} - named alias for {1}.</p><p>{segment1} - the segment number, from 1 to the number of segments.</p></body></html>"))
         self.uiPortNameFormatLabel.setText(_translate("VMwareVMConfigPageWidget", "Name format:"))
         self.uiPortSegmentSizeLabel.setText(_translate("VMwareVMConfigPageWidget", "Segment size:"))
         self.uiAdaptersLabel.setText(_translate("VMwareVMConfigPageWidget", "Adapters:"))
@@ -151,3 +150,4 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiFirstPortNameLabel.setText(_translate("VMwareVMConfigPageWidget", "First port name:"))
         self.uiUseUbridgeCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Use uBridge for network connections"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
+

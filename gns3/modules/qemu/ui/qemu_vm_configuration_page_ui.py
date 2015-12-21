@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file 'D:\Vasko\PyCharmProjects\gns3-gui\gns3\modules\qemu\ui\qemu_vm_configuration_page.ui'
 #
-# Created: Sun Oct 18 19:06:42 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuVMConfigPageWidget(object):
-
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(611, 524)
@@ -388,6 +385,10 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.groupBox)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
         self.gridLayout_3.addWidget(self.uiACPIShutdownCheckBox, 2, 0, 1, 2)
+        self.uiQemuOptionsLineEdit.raise_()
+        self.uiQemuOptionsLabel.raise_()
+        self.uiACPIShutdownCheckBox.raise_()
+        self.uiBaseVMCheckBox.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem4 = QtWidgets.QSpacerItem(20, 90, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
@@ -446,6 +447,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:"))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:"))
         self.uiMacAddrLabel.setText(_translate("QemuVMConfigPageWidget", "Base MAC:"))
+        self.uiPortNameFormatLabel.setToolTip(_translate("QemuVMConfigPageWidget", "<html><head/><body><p>{0} - the port number, from 0 to the number of adapters-1.</p><p>{1} - the segment number, from 0 to the number of segments-1.</p><p>{port0} - named alias for {0}.</p><p>{port1} - the port number, from 1 to the number of adapters.</p><p>{segment0} - named alias for {1}.</p><p>{segment1} - the segment number, from 1 to the number of segments.</p></body></html>"))
         self.uiPortNameFormatLabel.setText(_translate("QemuVMConfigPageWidget", "Name format:"))
         self.uiFirstPortNameLabel.setText(_translate("QemuVMConfigPageWidget", "First port name:"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiNetworkTab), _translate("QemuVMConfigPageWidget", "Network"))
@@ -471,3 +473,4 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+

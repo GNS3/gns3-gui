@@ -256,6 +256,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="uiPortNameFormatLabel">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;{0} - the port number, from 0 to the number of adapters-1.&lt;/p&gt;&lt;p&gt;{1} - the segment number, from 0 to the number of segments-1.&lt;/p&gt;&lt;p&gt;{port0} - named alias for {0}.&lt;/p&gt;&lt;p&gt;{port1} - the port number, from 1 to the number of adapters.&lt;/p&gt;&lt;p&gt;{segment0} - named alias for {1}.&lt;/p&gt;&lt;p&gt;{segment1} - the segment number, from 1 to the number of segments.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Name format:</string>
          </property>
