@@ -400,7 +400,28 @@
                 "usage": { "type": "string" },
                 "acpi_shutdown": { "type": "boolean" },
                 "adapter_type": {
-                    "enum": ["e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio", "virtio-net-pci"]
+                    "enum": [
+                        "e1000",
+                        "i82550",
+                        "i82551",
+                        "i82557a",
+                        "i82557b",
+                        "i82557c",
+                        "i82558a",
+                        "i82558b",
+                        "i82559a",
+                        "i82559b",
+                        "i82559c",
+                        "i82559er",
+                        "i82562",
+                        "i82801",
+                        "ne2k_pci",
+                        "pcnet",
+                        "rtl8139",
+                        "virtio",
+                        "virtio-net-pci",
+                        "vmxnet3"
+                    ]
                 },
                 "adapters": {"type": "integer", "minimum": 1},
                 "cpu_throttling": {"type": "integer", "minimum": 0, "maximum": 100},
