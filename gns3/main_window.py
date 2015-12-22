@@ -1034,13 +1034,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         log.debug("Close the main Windows")
         servers = Servers.instance()
         if self._project.closed():
-            if not servers.localServerIsRunning():
-                log.debug("Project is closed and local server is not running, closing main windows")
-                event.accept()
-                self.uiConsoleTextEdit.closeIO()
-            else:
-                log.debug("Project is closed killing server and closing main windows")
-                servers.stopLocalServer(wait=True)
+            log.debug("Project is closed killing server and closing main windows")
+            self._finish_application_closing(close_windows=False)
+            event.accept()
+            self.uiConsoleTextEdit.closeIO()
         elif not self._soft_exit or self.checkForUnsavedChanges():
             self._project.project_closed_signal.connect(self._finish_application_closing)
             if servers.localServerIsRunning():
@@ -1050,17 +1047,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self._project.close(local_server_shutdown=False)
 
-                log.debug("Project is not closed and local server is running disconnect all servers and close the main windows")
+                log.debug("Project is not closed and local server is not running disconnect all servers and close the main windows")
                 servers.disconnectAllServers()
                 event.accept()
                 self.uiConsoleTextEdit.closeIO()
         else:
             event.ignore()
 
-    def _finish_application_closing(self):
+    def _finish_application_closing(self, close_windows=True):
         """
         Handles the event when the main window is closed.
         And project closed.
+
+        :params closing: True the windows is currently closing do not try to reclose it
         """
 
         log.debug("_finish_application_closing")
@@ -1077,7 +1076,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
         self._analytics_client.sendScreenView("Main Window", session_start=False)
-        self.close()
+
+        if close_windows:
+            self.close()
 
     def checkForUnsavedChanges(self):
         """
