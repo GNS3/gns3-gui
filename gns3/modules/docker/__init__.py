@@ -150,7 +150,7 @@ class Docker(Module):
         image = None
         if node_name:
             for image_key, info in self._docker_images.items():
-                if node_name == info["imagename"]:
+                if node_name == info["name"]:
                     image = image_key
         if not image:
             selected_images = []
@@ -179,9 +179,10 @@ class Docker(Module):
         image_settings = {}
         for setting_name, value in self._docker_images[image].items():
             if setting_name in node.settings() and value != "" and value is not None:
-                image_settings[setting_name] = value
-        imagename = self._docker_images[image]["imagename"]
-        node.setup(imagename, additional_settings=image_settings)
+                if setting_name not in ['name', 'image']:
+                    image_settings[setting_name] = value
+        image = self._docker_images[image]["image"]
+        node.setup(image, base_name=node_name,additional_settings=image_settings)
 
     def reset(self):
         """Resets the servers."""
@@ -223,7 +224,7 @@ class Docker(Module):
         for docker_image in self._docker_images.values():
             nodes.append({
                 "class": DockerVM.__name__,
-                "name": docker_image["imagename"],
+                "name": docker_image["name"],
                 "server": docker_image["server"],
                 "symbol": docker_image["symbol"],
                 "categories": [docker_image["category"]]
@@ -237,10 +238,6 @@ class Docker(Module):
         """
         from .pages.docker_preferences_page import DockerPreferencesPage
         from .pages.docker_vm_preferences_page import DockerVMPreferencesPage
-
-        from gns3.local_config import LocalConfig
-        if not LocalConfig.instance().experimental():
-            return []
 
         return [DockerPreferencesPage, DockerVMPreferencesPage]
 

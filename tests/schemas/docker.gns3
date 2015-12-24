@@ -1,0 +1,54 @@
+{
+    "auto_start": false,
+    "name": "untitled",
+    "project_id": "a8dde402-fef7-46b3-8451-593f56bb42e2",
+    "revision": 4,
+    "topology": {
+        "nodes": [
+            {
+                "description": "Docker image",
+                "id": 1,
+                "label": {
+                    "color": "#ff000000",
+                    "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                    "text": "mysql-latest-1",
+                    "x": -11.046875,
+                    "y": -25.0
+                },
+                "ports": [
+                    {
+                        "adapter_number": 0,
+                        "id": 1,
+                        "name": "Ethernet0",
+                        "port_number": 0
+                    }
+                ],
+                "properties": {
+                    "adapters": 1,
+                    "console": 6000,
+                    "image": "mysql:latest",
+                    "name": "mysql-latest-1"
+                },
+                "server_id": 1,
+                "type": "DockerVM",
+                "vm_id": "2eb660f6-ca45-43eb-954d-ca9cf0ed6e14",
+                "x": 21.5,
+                "y": -224.5
+            }
+        ],
+        "servers": [
+            {
+                "host": "127.0.0.1",
+                "id": 1,
+                "local": false,
+                "port": 8001,
+                "protocol": "http",
+                "ram_limit": 0,
+                "user": "",
+                "vm": false
+            }
+        ]
+    },
+    "type": "topology",
+    "version": "1.4.0dev11"
+}

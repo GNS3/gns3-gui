@@ -387,3 +387,7 @@ class Project(QtCore.QObject):
         elif result["action"] == "log.warning":
             log.warning(result["event"]["message"])
             print("Warning: " + result["event"]["message"])
+        elif result["action"] == "log.info":
+            log.info(result["event"]["message"])
+            print("Info: " + result["event"]["message"])
+

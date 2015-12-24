@@ -17,6 +17,8 @@
 
 """Wizard for Docker images."""
 
+import sys
+
 from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.vm_wizard import VMWizard
 
@@ -27,30 +29,42 @@ from .. import Docker
 class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
     """Wizard to create a Docker image.
 
-    :param docker_images: existing Docker images
+    :param docker_containers: existing Docker images
     :param parent: parent widget
     """
 
-    def __init__(self, docker_images, parent):
+    def __init__(self, docker_containers, parent):
 
-        super().__init__(parent=parent, devices=[], use_local_server=True)
+        super().__init__(parent=parent, devices=[], use_local_server=Docker.instance().settings()["use_local_server"])
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(
             ":/icons/docker.png"))
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
 
-        self._docker_images = docker_images
+        self.uiExistingImageRadioButton.toggled.connect(self._existingImageRadioButtonToggledSlot)
 
-        if Docker.instance().settings()["use_local_server"]:
-            # skip the server page if we use the local server
-            self.setStartId(1)
+        if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
+            # Cannot use Docker locally on Windows and Mac
+            self.uiLocalRadioButton.setEnabled(False)
+
+        self._docker_containers = docker_containers
+
+    def _existingImageRadioButtonToggledSlot(self, status):
+        if self.uiExistingImageRadioButton.isChecked():
+            self.uiImageLineEdit.hide()
+            self.uiImageNameLabel.hide()
+            self.uiImageListLabel.show()
+            self.uiImageListComboBox.show()
+        else:
+            self.uiImageNameLabel.show()
+            self.uiImageLineEdit.show()
+            self.uiImageListLabel.hide()
+            self.uiImageListComboBox.hide()
 
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
 
         if self.page(page_id) == self.uiImageWizardPage:
-            self._server.get(
-                "/docker/images", self._getDockerImagesFromServerCallback)
+            Docker.instance().getDockerImagesFromServer(self._server, self._getDockerImagesFromServerCallback)
 
     def _getDockerImagesFromServerCallback(
             self, result, error=False, **kwargs):
@@ -65,13 +79,12 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
                 self, "Docker Images", "{}".format(result["message"]))
         else:
             self.uiImageListComboBox.clear()
-            existing_images = []
-            for existing_image in self._docker_images.values():
-                existing_images.append(existing_image["imagename"])
-
-            for image in result:
-                if image["imagename"] not in existing_images:
-                    self.uiImageListComboBox.addItem(image["imagename"], image)
+            if len(result) == 0:
+                self.uiNewImageRadioButton.setChecked(True)
+            else:
+                self.uiExistingImageRadioButton.setChecked(True)
+                for image in result:
+                    self.uiImageListComboBox.addItem(image["image"], image)
 
     def validateCurrentPage(self):
         """Validates the server."""
@@ -85,7 +98,22 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
                     self, "Docker images",
                     "There are no Docker images available!")
                 return False
+            self.uiNameLineEdit.setText(self._getImageName().split(":")[0])
+
+        if self.currentPage() == self.uiNameWizardPage:
+            if self.uiNameLineEdit.text() in [ d["name"] for d in self._docker_containers.values() ]:
+                QtWidgets.QMessageBox.critical(
+                    self, "Container name",
+                    "This name already exist!")
+                return False
         return True
+
+    def _getImageName(self):
+        if self.uiExistingImageRadioButton.isChecked():
+            index = self.uiImageListComboBox.currentIndex()
+            return self.uiImageListComboBox.itemText(index)
+        else:
+            return self.uiImageLineEdit.text()
 
     def getSettings(self):
         """Returns the settings set in this Wizard.
@@ -101,13 +129,16 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         elif self.uiVMRadioButton.isChecked():
             server = "vm"
 
-        index = self.uiImageListComboBox.currentIndex()
-        imagename = self.uiImageListComboBox.itemText(index)
-        # FIXME: add some more configuration options for images
-        imageinfo = self.uiImageListComboBox.itemData(index)
+        image = self._getImageName()
+        start_command = self.uiStartCommandLineEdit.text()
+        name = self.uiNameLineEdit.text()
 
         settings = {
-            "imagename": imagename,
+            "image": image,
             "server": server,
+            "adapters": self.uiAdaptersSpinBox.value(),
+            "name": name,
+            "environment": self.uiEnvironmentTextEdit.toPlainText(),
+            "start_command": start_command
         }
         return settings

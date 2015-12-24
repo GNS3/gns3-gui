@@ -23,17 +23,15 @@ import sys
 from gns3.node import Node
 
 DOCKER_SETTINGS = {
-    "docker_url": "",
-    "docker_user": "",
     "use_local_server": sys.platform.startswith("linux")  # Docker only supported on Linux
 }
 
 DOCKER_CONTAINER_SETTINGS = {
-    "symbol": ":/symbols/vbox_guest.svg",
+    "symbol": ":/symbols/docker_guest.svg",
     "category": Node.end_devices,
-    "adapters": 4,
-    "adapter_type": "veth",
-    "console": "gnome-terminal",
-    "enable_remote_console": False,
-    "startcmd": ""
+    "start_command": "",
+    "name": "",
+    "image": "",
+    "adapters": 1,
+    "environment": ""
 }

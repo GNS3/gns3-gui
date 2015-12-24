@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>424</height>
+    <width>638</width>
+    <height>437</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,18 +116,89 @@
     <string>Docker Virtual Machine</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a Docker virtual machine from the list.</string>
+    <string>Please choose a Docker virtual machine from the list. Or provide an image name on docker hub.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="uiExistingImageRadioButton">
+        <property name="text">
+         <string>Existing image</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="uiNewImageRadioButton">
+        <property name="text">
+         <string>New image</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="uiImageListLabel">
+        <property name="text">
+         <string>Image list:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="uiImageListComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="uiImageLineEdit"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="uiImageNameLabel">
+        <property name="text">
+         <string>Image name:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiNameWizardPage">
+   <property name="title">
+    <string>Container name</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a descriptive name for your new container</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetMaximumSize</enum>
+    </property>
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::ExpandingFieldsGrow</enum>
+    </property>
+    <property name="formAlignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
     <item row="0" column="0">
-     <widget class="QLabel" name="uiImageListLabel">
+     <widget class="QLabel" name="uiNameLabel">
       <property name="text">
-       <string>Image list:</string>
+       <string>Name:</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="uiImageListComboBox">
+     <widget class="QLineEdit" name="uiNameLineEdit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -135,6 +206,128 @@
        </sizepolicy>
       </property>
      </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiAdaptersWizardPage">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="title">
+    <string>Network adapters</string>
+   </property>
+   <property name="subTitle">
+    <string>Number of adapters attached to the container.</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout_2">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::ExpandingFieldsGrow</enum>
+    </property>
+    <property name="formAlignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Adapters:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSpinBox" name="uiAdaptersSpinBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiStartCommandWizardPage">
+   <property name="title">
+    <string>Start command</string>
+   </property>
+   <property name="subTitle">
+    <string>Please enter the start command. If you leave it empty the default command will be used.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Start command:</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="uiStartCommandLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiEnvironmentWizardPage">
+   <property name="title">
+    <string>Environment</string>
+   </property>
+   <property name="subTitle">
+    <string>This variables will be passed to the container. Please report to the container documentation for the available variables.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>You need to put one pair by line example: </string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>MYSQL_HOST=localhost</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>MYSQL_USER=root</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
     </item>
    </layout>
   </widget>

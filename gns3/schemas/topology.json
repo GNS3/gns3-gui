@@ -269,6 +269,7 @@
                         "VirtualBoxVM",
                         "VMwareVM",
                         "QemuVM",
+                        "DockerVM",
                         "VPCSDevice",
                         "EthernetHub",
                         "EthernetSwitch",
@@ -330,6 +331,7 @@
                         { "$ref": "#/definitions/properties_virtualbox" },
                         { "$ref": "#/definitions/properties_vmware" },
                         { "$ref": "#/definitions/properties_iou" },
+                        { "$ref": "#/definitions/properties_docker" },
                         { "$ref": "#/definitions/properties_cloud_host" }
                     ]
                 },
@@ -346,6 +348,24 @@
                     "properties"
                 ]
             },
+            "additionalProperties": false
+        },
+
+        "properties_docker": {
+            "type": "object",
+            "properties": {
+                "console": { "$ref": "#/definitions/network_port" },
+                "adapters": { "type": "integer", "minimum": 0 },
+                "name": { "$ref": "#/definitions/mandatory_string" },
+                "image": { "$ref": "#/definitions/mandatory_string" },
+                "start_command": { "type": "string" }
+            },
+            "required": [
+                "console",
+                "name",
+                "image",
+                "adapters"
+            ],
             "additionalProperties": false
         },
 

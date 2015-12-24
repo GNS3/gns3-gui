@@ -32,9 +32,6 @@ class DockerVMConfigurationPage(
 
         super().__init__()
         self.setupUi(self)
-        # TODO: finish docker name change
-        self.uiImageListLabel.hide()
-        self.uiImageListComboBox.hide()
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -46,24 +43,17 @@ class DockerVMConfigurationPage(
         """
 
         if not group:
-            # set the device name
-            if "name" in settings:
-                self.uiNameLineEdit.setText(settings["name"])
-            else:
-                self.uiNameLabel.hide()
-                self.uiNameLineEdit.hide()
-            if "startcmd" in settings:
-                self.uiCMDLineEdit.setText(settings["startcmd"])
-            else:
-                self.uiCMDLabel.hide()
-                self.uiCMDLineEdit.hide()
+            self.uiNameLineEdit.setText(settings["name"])
+            self.uiCMDLineEdit.setText(settings["start_command"])
+            self.uiAdapterSpinBox.setValue(settings["adapters"])
+            self.uiEnvironmentTextEdit.setText(settings["environment"])
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
             self.uiCMDLabel.hide()
             self.uiCMDLineEdit.hide()
-            self.uiImageListLabel.hide()
-            self.uiImageListComboBox.hide()
+            self.uiAdapterLabel.hide()
+            self.uiAdapterSpinBox.hide()
 
     def saveSettings(self, settings, node=None, group=False):
         """Saves the Docker container settings.
@@ -73,15 +63,12 @@ class DockerVMConfigurationPage(
         :param group: indicates the settings apply to a group of VMs
         """
         if not group:
-            if "startcmd" in settings:
-                startcmd = self.uiCMDLineEdit.text()
-                settings["startcmd"] = startcmd
-            if "name" in settings:
-                name = self.uiNameLineEdit.text()
-                if not name:
-                    QtWidgets.QMessageBox.critical(self, "Name", "VMware name cannot be empty!")
-                else:
-                    settings["name"] = name
-        else:
-            del settings["startcmd"]
-            del settings["name"]
+            settings["start_command"] = self.uiCMDLineEdit.text()
+            settings["adapters"] = self.uiAdapterSpinBox.value()
+            settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
+
+            name = self.uiNameLineEdit.text()
+            if not name:
+                QtWidgets.QMessageBox.critical(self, "Name", "Docker name cannot be empty!")
+            else:
+                settings["name"] = name
