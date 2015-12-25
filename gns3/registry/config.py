@@ -229,6 +229,11 @@ class Config:
         new_config.setdefault("initrd", "")
         new_config.setdefault("kernel_image", "")
 
+        new_config["hda_disk_interface"] = appliance_config["qemu"].get("hda_disk_interface", "ide")
+        new_config["hdb_disk_interface"] = appliance_config["qemu"].get("hdb_disk_interface", "ide")
+        new_config["hdc_disk_interface"] = appliance_config["qemu"].get("hdc_disk_interface", "ide")
+        new_config["hdd_disk_interface"] = appliance_config["qemu"].get("hdd_disk_interface", "ide")
+
         new_config["kernel_command_line"] = appliance_config["qemu"].get("kernel_command_line", "")
 
         new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
