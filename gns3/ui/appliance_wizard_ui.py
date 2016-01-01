@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/appliance_wizard.ui'
+# Form implementation generated from reading ui file 'D:\Vasko\PyCharmProjects\gns3-gui\gns3\ui\appliance_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_ApplianceWizard(object):
-
     def setupUi(self, ApplianceWizard):
         ApplianceWizard.setObjectName("ApplianceWizard")
         ApplianceWizard.resize(688, 469)
@@ -46,7 +44,7 @@ class Ui_ApplianceWizard(object):
         self.gridLayout_4.addWidget(self.uiInfoTreeWidget, 1, 0, 1, 1)
         self.uiDescriptionLabel = QtWidgets.QLabel(self.uiInfoWizardPage)
         self.uiDescriptionLabel.setScaledContents(False)
-        self.uiDescriptionLabel.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.uiDescriptionLabel.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.uiDescriptionLabel.setWordWrap(True)
         self.uiDescriptionLabel.setObjectName("uiDescriptionLabel")
         self.gridLayout_4.addWidget(self.uiDescriptionLabel, 0, 0, 1, 1)
@@ -56,6 +54,7 @@ class Ui_ApplianceWizard(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiServerWizardPage)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.label = QtWidgets.QLabel(self.uiServerWizardPage)
+        self.label.setText("")
         self.label.setObjectName("label")
         self.verticalLayout_2.addWidget(self.label)
         self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
@@ -176,6 +175,17 @@ class Ui_ApplianceWizard(object):
         self.uiSummaryTreeWidget.header().setStretchLastSection(True)
         self.gridLayout_2.addWidget(self.uiSummaryTreeWidget, 0, 0, 1, 1)
         ApplianceWizard.addPage(self.uiSummaryWizardPage)
+        self.uiQemuWizardPage = QtWidgets.QWizardPage()
+        self.uiQemuWizardPage.setObjectName("uiQemuWizardPage")
+        self.formLayout = QtWidgets.QFormLayout(self.uiQemuWizardPage)
+        self.formLayout.setObjectName("formLayout")
+        self.uiQemuListLabel = QtWidgets.QLabel(self.uiQemuWizardPage)
+        self.uiQemuListLabel.setObjectName("uiQemuListLabel")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.uiQemuListLabel)
+        self.uiQemuListComboBox = QtWidgets.QComboBox(self.uiQemuWizardPage)
+        self.uiQemuListComboBox.setObjectName("uiQemuListComboBox")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiQemuListComboBox)
+        ApplianceWizard.addPage(self.uiQemuWizardPage)
         self.uiUsageWizardPage = QtWidgets.QWizardPage()
         self.uiUsageWizardPage.setObjectName("uiUsageWizardPage")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.uiUsageWizardPage)
@@ -210,7 +220,6 @@ class Ui_ApplianceWizard(object):
         self.uiDescriptionLabel.setText(_translate("ApplianceWizard", "NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a hypervisor."))
         self.uiServerWizardPage.setTitle(_translate("ApplianceWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose a server type to run your new Appliance."))
-        self.label.setText(_translate("ApplianceWizard", "On Windows and OSX the local server is not supported. Please use the GNS3 VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("ApplianceWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("ApplianceWizard", "Remote"))
         self.uiVMRadioButton.setText(_translate("ApplianceWizard", "GNS3 VM"))
@@ -272,12 +281,15 @@ class Ui_ApplianceWizard(object):
         self.uiSummaryTreeWidget.topLevelItem(5).setText(0, _translate("ApplianceWizard", "kernel command line"))
         self.uiSummaryTreeWidget.topLevelItem(5).setText(1, _translate("ApplianceWizard", "user=gns3"))
         self.uiSummaryTreeWidget.setSortingEnabled(__sortingEnabled)
+        self.uiQemuWizardPage.setTitle(_translate("ApplianceWizard", "Qemu settings"))
+        self.uiQemuWizardPage.setSubTitle(_translate("ApplianceWizard", "The following settings need to be configured"))
+        self.uiQemuListLabel.setText(_translate("ApplianceWizard", "Qemu binary"))
         self.uiUsageWizardPage.setTitle(_translate("ApplianceWizard", "Usage"))
         self.uiUsageWizardPage.setSubTitle(_translate("ApplianceWizard", "Please read the following instructions in order to use your new appliance."))
         self.uiUsageTextEdit.setHtml(_translate("ApplianceWizard", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                                "p, li { white-space: pre-wrap; }\n"
-                                                "</style></head><body style=\" font-family:\'.Helvetica Neue DeskInterface\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-                                                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
 
 from . import resources_rc
