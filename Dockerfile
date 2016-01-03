@@ -1,3 +1,4 @@
+# Run tests inside a container
 FROM ubuntu:vivid
 
 MAINTAINER GNS3 Team
