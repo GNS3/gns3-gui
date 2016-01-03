@@ -19,7 +19,7 @@ import pytest
 import sys
 import os
 import json
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from gns3.local_config import LocalConfig
 
@@ -241,7 +241,10 @@ def test_isMainGui_pid_file_exist_but_different(tmpdir):
     with open(str(tmpdir / "gns3_gui.pid"), "w+") as f:
         f.write("42")
 
-    with patch("os.kill"):
+    mock_process = MagicMock()
+    mock_process.name.return_value = "gns3.exe"
+    mock_process.uids.return_value = (os.getuid(), os.getuid(), os.getuid())
+    with patch("psutil.Process", return_value=mock_process) as mock:
         with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
             mock_config_directory.return_value = str(tmpdir)
             assert LocalConfig().isMainGui() is False
@@ -251,7 +254,9 @@ def test_isMainGui_pid_file_exist_but_different_proces_dead(tmpdir):
     with open(str(tmpdir / "gns3_gui.pid"), "w+") as f:
         f.write("42")
 
-    with patch("os.kill", side_effect=lambda pid, sig: exec('raise(OSError())')):
+    mock_process = MagicMock()
+    with patch("psutil.Process", return_value=mock_process) as mock:
+        mock.name.side_effect = (lambda: exec('raise(OSError())'))
         with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
             mock_config_directory.return_value = str(tmpdir)
             assert LocalConfig().isMainGui() is True

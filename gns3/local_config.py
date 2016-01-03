@@ -21,6 +21,8 @@ import json
 import shutil
 import copy
 
+import psutil
+
 from .qt import QtCore
 from .version import __version__
 from .utils import parse_version
@@ -321,11 +323,16 @@ class LocalConfig(QtCore.QObject):
                     pid = int(f.read())
                     if pid != my_pid:
                         try:
-                            os.kill(pid, 0)  # If the proces is not running kill return an error
-                        except OSError:
+                            process = psutil.Process(pid=pid)
+                            ps_name = process.name()
+                            ps_uid = process.uids()[0]
+                        except (OSError, psutil.NoSuchProcess, psutil.AccessDenied):
                             pass
                         else:
-                            return False
+                            if "gns3" in ps_name or "python" in ps_name:
+                                # Process run under the same process id
+                                if ps_uid == os.getuid():
+                                    return False
                     else:
                         return True
             except (OSError, ValueError) as e:
