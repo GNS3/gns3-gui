@@ -48,13 +48,7 @@ setup(
     author_email="package-maintainer@gns3.net",
     description="GNS3 graphical interface for the GNS3 server.",
     long_description=open("README.rst", "r").read(),
-    install_requires=[
-        "jsonschema>=2.4.0",
-        "paramiko>=1.15.1",
-        "gns3-converter>=1.2.4",
-        "raven>=5.2.0",
-        "psutil>=2.2.1",
-    ],
+    install_requires=open("requirements.txt", "r").read().splitlines(),
     entry_points={
         "gui_scripts": [
             "gns3 = gns3.main:main",
