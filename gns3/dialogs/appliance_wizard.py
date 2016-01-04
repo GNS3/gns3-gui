@@ -109,7 +109,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
             if GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setChecked(True)
-            elif Servers.instance().localServerIsRunning():
+            elif Servers.instance().localServer().isLocalServerRunning():
                 self.uiLocalRadioButton.setChecked(True)
             elif len(Servers.instance().remoteServers().values()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
