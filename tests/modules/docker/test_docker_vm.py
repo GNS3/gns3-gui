@@ -33,13 +33,14 @@ def test_docker_vm_setup(project, local_server):
 
     docker_vm = DockerVM(Docker(), local_server, project)
     with patch('gns3.node.Node.httpPost') as mock:
-        docker_vm.setup("ubuntu")
+        docker_vm.setup("ubuntu", base_name="ubuntu")
         assert docker_vm._settings == {
             'image': 'ubuntu',
             'name': 'ubuntu-1',
             'start_command': '',
             'adapters': 1,
-            'console': None
+            'console': None,
+            'environment': ''
         }
         assert mock.called
         args, kwargs = mock.call_args
@@ -69,7 +70,7 @@ def test_dump(project, local_server):
     vm = DockerVM(Docker(), local_server, project)
     vm._settings["name"] = "ubuntu-1"
     assert vm.dump() == {
-        'description': 'Docker image',
+        'description': 'Docker container',
         'id': vm.id(),
         'properties': {
             'adapters': 1,
