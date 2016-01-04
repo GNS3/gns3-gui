@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Vasko\PyCharmProjects\gns3-gui\gns3\ui\appliance_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/appliance_wizard.ui'
 #
 # Created by: PyQt5 UI code generator 5.5.1
 #
@@ -176,15 +176,25 @@ class Ui_ApplianceWizard(object):
         self.gridLayout_2.addWidget(self.uiSummaryTreeWidget, 0, 0, 1, 1)
         ApplianceWizard.addPage(self.uiSummaryWizardPage)
         self.uiQemuWizardPage = QtWidgets.QWizardPage()
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiQemuWizardPage.sizePolicy().hasHeightForWidth())
+        self.uiQemuWizardPage.setSizePolicy(sizePolicy)
         self.uiQemuWizardPage.setObjectName("uiQemuWizardPage")
-        self.formLayout = QtWidgets.QFormLayout(self.uiQemuWizardPage)
-        self.formLayout.setObjectName("formLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.uiQemuWizardPage)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiQemuListLabel = QtWidgets.QLabel(self.uiQemuWizardPage)
         self.uiQemuListLabel.setObjectName("uiQemuListLabel")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.uiQemuListLabel)
+        self.horizontalLayout_2.addWidget(self.uiQemuListLabel)
         self.uiQemuListComboBox = QtWidgets.QComboBox(self.uiQemuWizardPage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiQemuListComboBox.sizePolicy().hasHeightForWidth())
+        self.uiQemuListComboBox.setSizePolicy(sizePolicy)
         self.uiQemuListComboBox.setObjectName("uiQemuListComboBox")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiQemuListComboBox)
+        self.horizontalLayout_2.addWidget(self.uiQemuListComboBox)
         ApplianceWizard.addPage(self.uiQemuWizardPage)
         self.uiUsageWizardPage = QtWidgets.QWizardPage()
         self.uiUsageWizardPage.setObjectName("uiUsageWizardPage")
@@ -282,14 +292,14 @@ class Ui_ApplianceWizard(object):
         self.uiSummaryTreeWidget.topLevelItem(5).setText(1, _translate("ApplianceWizard", "user=gns3"))
         self.uiSummaryTreeWidget.setSortingEnabled(__sortingEnabled)
         self.uiQemuWizardPage.setTitle(_translate("ApplianceWizard", "Qemu settings"))
-        self.uiQemuWizardPage.setSubTitle(_translate("ApplianceWizard", "The following settings need to be configured"))
-        self.uiQemuListLabel.setText(_translate("ApplianceWizard", "Qemu binary"))
+        self.uiQemuWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose the qemu binary that we will use for running this appliance."))
+        self.uiQemuListLabel.setText(_translate("ApplianceWizard", "Qemu binary:"))
         self.uiUsageWizardPage.setTitle(_translate("ApplianceWizard", "Usage"))
         self.uiUsageWizardPage.setSubTitle(_translate("ApplianceWizard", "Please read the following instructions in order to use your new appliance."))
         self.uiUsageTextEdit.setHtml(_translate("ApplianceWizard", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
 
 from . import resources_rc

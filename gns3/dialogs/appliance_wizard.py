@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
@@ -30,7 +31,7 @@ from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
 from ..utils.progress_dialog import ProgressDialog
 from ..servers import Servers
 from ..gns3_vm import GNS3VM
-
+from ..local_config import LocalConfig
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
@@ -84,8 +85,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif "dynamips" in self._appliance:
             type = "dynamips"
 
-        kvm_requirement = self._appliance["qemu"].get("kvm", "allow") if type is "qemu" else None
-
         if self.page(page_id) == self.uiInfoWizardPage:
             self.uiInfoWizardPage.setTitle(self._appliance["product_name"])
             self.uiDescriptionLabel.setText(self._appliance["description"])
@@ -95,55 +94,36 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 ("Product", "product_name"),
                 ("Vendor", "vendor_name"),
                 ("Status", "status"),
-                ("Maintainer", "maintainer")
+                ("Maintainer", "maintainer"),
+                ("KVM", "kvm")
             )
 
             self.uiInfoTreeWidget.clear()
             for (name, key) in info:
-                item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
-                font = item.font(0)
-                font.setBold(True)
-                item.setFont(0, font)
-                self.uiInfoTreeWidget.addTopLevelItem(item)
+                if key in self._appliance:
+                    item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
+                    font = item.font(0)
+                    font.setBold(True)
+                    item.setFont(0, font)
+                    self.uiInfoTreeWidget.addTopLevelItem(item)
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
-            self.uiRemoteRadioButton.setEnabled(False)
-            self.uiVMRadioButton.setEnabled(False)
-            self.uiLocalRadioButton.setEnabled(False)
-            self.uiServerWizardPage.completeChanged.emit()
+            for server in Servers.instance().remoteServers().values():
+                self.uiRemoteServersComboBox.addItem(server.url(), server)
 
-            if kvm_requirement == "require":
-                self.label.setText("This appliance requires a server that supports KVM.")
-                for server in Servers.instance().remoteServers().values():
-                    Qemu.instance().getQemuCapabilitiesFromServer(server, qpartial(self._qemuServerCapabilitiesCallback, server=server))
-            else:
-                if kvm_requirement == "allow":
-                    self.label.setText("This appliance can use KVM if available at the selected server.")
-                else:
-                    self.label.setText("This appliance will be installed with KVM disabled.")
+            if not GNS3VM.instance().isRunning():
+                self.uiVMRadioButton.setEnabled(False)
 
-                for server in Servers.instance().remoteServers().values():
-                    self.uiRemoteServersComboBox.addItem(server.url(), server)
-                self.uiRemoteRadioButton.setEnabled(True)
-                self.uiServerWizardPage.completeChanged.emit()
+            # Qemu has issues on OSX and Windows we disallow usage of the local server
+            if (sys.platform.startswith("darwin") or sys.platform.startswith("win")) and not LocalConfig.instance().experimental():
+                self.uiLocalRadioButton.setEnabled(False)
 
             if GNS3VM.instance().isRunning():
-                self.uiVMRadioButton.setEnabled(True)
-                self.uiServerWizardPage.completeChanged.emit()
-
-            if Servers.instance().localServerIsRunning():
-                if kvm_requirement == "require":
-                    Qemu.instance().getQemuCapabilitiesFromServer(Servers.instance().localServer(), qpartial(self._qemuServerCapabilitiesCallback, server=Servers.instance().localServer()))
-                else:
-                    self.uiLocalRadioButton.setEnabled(True)
-                    self.uiServerWizardPage.completeChanged.emit()
-
-            if self.uiVMRadioButton.isEnabled():
                 self.uiVMRadioButton.setChecked(True)
-            elif self.uiLocalRadioButton.isEnabled():
+            elif Servers.instance().localServer().isLocalServerRunning():
                 self.uiLocalRadioButton.setChecked(True)
-            elif self.uiRemoteServersComboBox.count() > 0:
+            elif len(Servers.instance().remoteServers().values()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(False)
@@ -248,15 +228,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     image["status"] = "Found"
                 else:
                     image["status"] = "Missing"
-
-    def _qemuServerCapabilitiesCallback(self, result, error=None, server=None, *args, **kwargs):
-        if server is not None and error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
-            if server.isLocal():
-                self.uiLocalRadioButton.setEnabled(True)
-            else:
-                self.uiRemoteServersComboBox.addItem(server.url(), server)
-                self.uiRemoteRadioButton.setEnabled(True)
-            self.uiServerWizardPage.completeChanged.emit()
 
     def _applianceVersionCurrentItemChangedSlot(self, current, previous):
         """
@@ -411,6 +382,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     return False
                 self._server = gns3_vm_server
             else:
+                if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+                    reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                    if reply == QtWidgets.QMessageBox.No:
+                        return False
+
                 self._server = Servers.instance().localServer()
 
         elif self.currentPage() == self.uiQemuWizardPage:
