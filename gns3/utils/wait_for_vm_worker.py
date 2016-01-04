@@ -20,7 +20,6 @@ Thread to wait for the GNS3 VM.
 """
 
 import os
-import time
 import socket
 import subprocess
 
@@ -144,8 +143,7 @@ class WaitForVMWorker(QtCore.QObject):
                     return True
         return False
 
-    @staticmethod
-    def _waitForServer(vm_server, endpoint, retry=0):
+    def _waitForServer(self, vm_server, endpoint, retry=0):
         """
         Wait for a VM server to reply to a request.
 
@@ -159,7 +157,7 @@ class WaitForVMWorker(QtCore.QObject):
             status, json_data = vm_server.getSynchronous(endpoint, timeout=1)
             if status != 0:
                 break
-            time.sleep(1)
+            self.thread().sleep(1)
             retry -= 1
         return status, json_data
 
