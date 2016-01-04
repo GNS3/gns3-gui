@@ -216,6 +216,8 @@ class Config:
         options = appliance_config["qemu"].get("options", "")
         if "-nographic" not in options:
             options += " -nographic"
+        if appliance_config["qemu"].get("kvm", "allow") == "disable" and "-no-kvm" not in options:
+            options += " -no-kvm"
         new_config["options"] = options.strip()
 
         for image in appliance_config["images"]:
@@ -236,7 +238,7 @@ class Config:
 
         new_config["kernel_command_line"] = appliance_config["qemu"].get("kernel_command_line", "")
 
-        new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
+        new_config["qemu_path"] = appliance_config["qemu"]["path"]
 
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]

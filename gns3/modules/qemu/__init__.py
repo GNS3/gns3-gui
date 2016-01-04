@@ -249,15 +249,19 @@ class Qemu(Module):
         log.info("QEMU module reset")
         self._nodes.clear()
 
-    def getQemuBinariesFromServer(self, server, callback):
+    def getQemuBinariesFromServer(self, server, callback, archs=None):
         """
         Gets the QEMU binaries list from a server.
 
         :param server: server to send the request to
         :param callback: callback for the reply from the server
+        :param archs: A list of architectures. Only binaries matching the specified architectures are returned.
         """
 
-        server.get("/qemu/binaries", callback)
+        request_body = None
+        if archs is not None:
+            request_body = {"archs": archs}
+        server.get("/qemu/binaries", callback, body=request_body)
 
     def getQemuImgBinariesFromServer(self, server, callback):
         """
@@ -268,6 +272,16 @@ class Qemu(Module):
         """
 
         server.get(r"/qemu/img-binaries", callback)
+
+    def getQemuCapabilitiesFromServer(self, server, callback):
+        """
+        Gets the capabilities of Qemu at a server.
+
+        :param server: server to send the request to
+        :param callback: callback for the reply from the server
+        """
+
+        server.get(r"/qemu/capabilities", callback)
 
     def createDiskImage(self, server, callback, options):
         """
