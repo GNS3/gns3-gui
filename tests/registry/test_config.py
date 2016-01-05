@@ -220,7 +220,11 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
         "qemu_path": "qemu-system-i386",
         "usage": "Just start the appliance",
         "ram": 32,
-        "server": "local"
+        "server": "local",
+        "hda_disk_interface": "ide",
+        "hdb_disk_interface": "ide",
+        "hdc_disk_interface": "ide",
+        "hdd_disk_interface": "ide"
     }
 
 
@@ -369,7 +373,11 @@ def test_add_appliance_router_two_disk(empty_config, images_dir):
         "qemu_path": "qemu-system-x86_64",
         "ram": 2048,
         "console_type": "telnet",
-        "server": "local"
+        "server": "local",
+        "hda_disk_interface": "ide",
+        "hdb_disk_interface": "ide",
+        "hdc_disk_interface": "ide",
+        "hdd_disk_interface": "ide"
     }
 
 

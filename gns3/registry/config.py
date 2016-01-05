@@ -238,7 +238,10 @@ class Config:
 
         new_config["kernel_command_line"] = appliance_config["qemu"].get("kernel_command_line", "")
 
-        new_config["qemu_path"] = appliance_config["qemu"]["path"]
+        if "path" in appliance_config["qemu"]:
+            new_config["qemu_path"] = appliance_config["qemu"]["path"]
+        else:
+            new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
 
         if "boot_priority" in appliance_config:
             new_config["boot_priority"] = appliance_config["boot_priority"]
