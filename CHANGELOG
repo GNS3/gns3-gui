@@ -1,5 +1,27 @@
 # Change Log
 
+## 1.4.0rc3 05/01/2016
+
+* Add information about antivirus and firewall in case of connection fail
+* Change link to doc for missing router image
+* On windows and OSX experimental Qemu GNS3A support
+* Wait server in thread
+* Fix local server non avaible in appliance wizard when local server started by hand.
+* Improve pid checks
+* Allow Qemu appliances to optionally specify desired disk interfaces in their configuration (defaults to "ide").
+* Fix project non closing when you have only remote servers
+* Fix Windows layout not saved in some scenario
+* Added the ability to name Qemu/VirtualBox/VMware interfaces with numbers starting from 1, along with named aliases for numbers starting from 0, and a tooltip explaining the possible name format variables.
+* Added missing Qemu adapters to the topology schema.
+* Fix Cannot save my topology getting an error message for temporary topology
+* Fix creation of ASA devices
+* Turn off Docker until 1.5
+* Fix display of server preferences on small screen
+* Fix If you turn off the local server and close the gui and reopen preferences you have an issue
+* Zoc 7 support
+* Fix warning when closing GUI
+* Fix crash when opening a new topologies after gns3 converter failure
+
 ## 1.3.13 11/12/2015
 
 * Release server 1.3.13
