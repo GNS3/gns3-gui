@@ -447,7 +447,10 @@ class HTTPClient(QtCore.QObject):
         if len(msg) > 0:
             msg = "Cannot connect to {}: {}".format(server, msg)
         else:
-            msg = "Cannot connect to {}".format(server)
+            if self.isLocal():
+                msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall.".format(server)
+            else:
+                msg = "Cannot connect to {}".format(server)
         log.error(msg)
         if callback is not None:
             callback({"message": msg}, error=True, server=self)
