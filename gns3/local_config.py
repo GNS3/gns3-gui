@@ -325,13 +325,12 @@ class LocalConfig(QtCore.QObject):
                         try:
                             process = psutil.Process(pid=pid)
                             ps_name = process.name()
-                            ps_uid = process.uids()[0]
                         except (OSError, psutil.NoSuchProcess, psutil.AccessDenied):
                             pass
                         else:
                             if "gns3" in ps_name or "python" in ps_name:
-                                # Process run under the same process id
-                                if ps_uid == os.getuid():
+                                # Process run under the same user id
+                                if sys.platform.startswith("win") or process.uids()[0] == os.getuid():
                                     return False
                     else:
                         return True
