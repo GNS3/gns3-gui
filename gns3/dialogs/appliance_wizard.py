@@ -18,9 +18,10 @@
 import os
 import sys
 
-from ..qt import QtWidgets, QtCore, QtGui
+from ..qt import QtWidgets, QtCore, QtGui, qpartial
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
 from ..image_manager import ImageManager
+from ..modules import Qemu
 from ..registry.appliance import Appliance
 from ..registry.registry import Registry
 from ..registry.config import Config, ConfigException
@@ -30,7 +31,7 @@ from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
 from ..utils.progress_dialog import ProgressDialog
 from ..servers import Servers
 from ..gns3_vm import GNS3VM
-
+from ..local_config import LocalConfig
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
@@ -61,6 +62,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if hasattr(self, "uiLoadBalanceCheckBox"):
             self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
 
+        self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
+
     def initializePage(self, page_id):
         """
         Initialize Wizard pages.
@@ -75,6 +78,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             symbol = ":/symbols/{}.svg".format(self._appliance["category"])
         self.page(page_id).setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(symbol))
 
+        if "qemu" in self._appliance:
+            type = "qemu"
+        elif "iou" in self._appliance:
+            type = "iou"
+        elif "dynamips" in self._appliance:
+            type = "dynamips"
+
         if self.page(page_id) == self.uiInfoWizardPage:
             self.uiInfoWizardPage.setTitle(self._appliance["product_name"])
             self.uiDescriptionLabel.setText(self._appliance["description"])
@@ -84,16 +94,18 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 ("Product", "product_name"),
                 ("Vendor", "vendor_name"),
                 ("Status", "status"),
-                ("Maintainer", "maintainer")
+                ("Maintainer", "maintainer"),
+                ("KVM", "kvm")
             )
 
             self.uiInfoTreeWidget.clear()
             for (name, key) in info:
-                item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
-                font = item.font(0)
-                font.setBold(True)
-                item.setFont(0, font)
-                self.uiInfoTreeWidget.addTopLevelItem(item)
+                if key in self._appliance:
+                    item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
+                    font = item.font(0)
+                    font.setBold(True)
+                    item.setFont(0, font)
+                    self.uiInfoTreeWidget.addTopLevelItem(item)
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
@@ -104,12 +116,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self.uiVMRadioButton.setEnabled(False)
 
             # Qemu has issues on OSX and Windows we disallow usage of the local server
-            if sys.platform.startswith("darwin") or sys.platform.startswith("win"):
+            if (sys.platform.startswith("darwin") or sys.platform.startswith("win")) and not LocalConfig.instance().experimental():
                 self.uiLocalRadioButton.setEnabled(False)
 
             if GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setChecked(True)
-            elif Servers.instance().localServerIsRunning():
+            elif Servers.instance().localServer().isLocalServerRunning():
                 self.uiLocalRadioButton.setChecked(True)
             elif len(Servers.instance().remoteServers().values()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
@@ -119,14 +131,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.page(page_id) == self.uiFilesWizardPage:
             self._refreshVersions()
 
+        elif self.page(page_id) == self.uiQemuWizardPage:
+            Qemu.instance().getQemuBinariesFromServer(self._server, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
+
         elif self.page(page_id) == self.uiSummaryWizardPage:
             self.uiSummaryTreeWidget.clear()
-            if "qemu" in self._appliance:
-                type = "qemu"
-            elif "iou" in self._appliance:
-                type = "iou"
-            elif "dynamips" in self._appliance:
-                type = "dynamips"
 
             for key in self._appliance[type]:
                 item = QtWidgets.QTreeWidgetItem([key.replace('_', ' ').capitalize() + ":", str(self._appliance[type][key])])
@@ -141,6 +150,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self._appliance["category"].replace("_", " "),
                 self._appliance.get("usage", ""))
             )
+
+    def _uiServerWizardPage_isComplete(self):
+        return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
 
     def _refreshVersions(self):
         """
@@ -273,6 +285,26 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
         self._refreshVersions()
 
+    def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
+        """
+        Callback for getQemuBinariesFromServer.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
+        else:
+            self.uiQemuListComboBox.clear()
+            for qemu in result:
+                if qemu["version"]:
+                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
+                else:
+                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
+            if self.uiQemuListComboBox.count() == 1:
+                self.next()
+
     def _install(self, version):
         """
         Install the appliance to GNS3
@@ -299,6 +331,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
             appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
             appliance_configuration["name"] = appliance_configuration["name"].strip()
+
+        appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
         worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
@@ -348,7 +382,17 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     return False
                 self._server = gns3_vm_server
             else:
+                if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+                    reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                    if reply == QtWidgets.QMessageBox.No:
+                        return False
+
                 self._server = Servers.instance().localServer()
+
+        elif self.currentPage() == self.uiQemuWizardPage:
+            if self.uiQemuListComboBox.currentIndex() == -1:
+                QtWidgets.QMessageBox.critical(self, "Qemu binary", "No compatible Qemu binary selected")
+                return False
 
         return True
 

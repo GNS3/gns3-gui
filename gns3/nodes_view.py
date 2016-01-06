@@ -77,7 +77,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
         if not self.topLevelItemCount() and category == Node.routers:
-            QtWidgets.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://gns3.com/support/docs">Show documentation</a>')
+            QtWidgets.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://gns3.com/support/docs/adding-ios-or-iou-qemu-virtual-2">Show documentation</a>')
             # TODO: would be nicer to use QErrorMessage but the link cannot be clicked by default
             #QtWidgets.QErrorMessage.qtHandler().showMessage('No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
 

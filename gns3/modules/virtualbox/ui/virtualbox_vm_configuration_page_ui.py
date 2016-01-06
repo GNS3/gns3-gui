@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/cetko/projects/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
+# Form implementation generated from reading ui file 'D:\Vasko\PyCharmProjects\gns3-gui\gns3\modules\virtualbox\ui\virtualbox_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_virtualBoxVMConfigPageWidget(object):
-
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
         virtualBoxVMConfigPageWidget.resize(510, 463)
@@ -170,6 +168,8 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.label.setText(_translate("virtualBoxVMConfigPageWidget", "Type:"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Allow GNS3 to use any configured VirtualBox adapter"))
         self.uiPortSegmentSizeLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Segment size:"))
+        self.uiPortNameFormatLabel.setToolTip(_translate("virtualBoxVMConfigPageWidget", "<html><head/><body><p>{0} - the port number, from 0 to the number of adapters-1.</p><p>{1} - the segment number, from 0 to the number of segments-1.</p><p>{port0} - named alias for {0}.</p><p>{port1} - the port number, from 1 to the number of adapters.</p><p>{segment0} - named alias for {1}.</p><p>{segment1} - the segment number, from 1 to the number of segments.</p></body></html>"))
         self.uiPortNameFormatLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Name format:"))
         self.uiFirstPortNameLabel.setText(_translate("virtualBoxVMConfigPageWidget", "First port name:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("virtualBoxVMConfigPageWidget", "Network"))
+

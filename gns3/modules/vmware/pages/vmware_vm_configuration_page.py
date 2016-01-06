@@ -183,14 +183,14 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
             port_name_format = self.uiPortNameFormatLineEdit.text()
-            if '{0}' not in port_name_format:
-                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain at least {0}")
+            if '{0}' not in port_name_format and '{port0}' not in port_name_format and '{port1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain at least {0}, {port0} or {port1}")
             else:
                 settings["port_name_format"] = self.uiPortNameFormatLineEdit.text()
 
             port_segment_size = self.uiPortSegmentSizeSpinBox.value()
-            if port_segment_size and '{1}' not in port_name_format:
-                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain {1} if the segment size is not 0")
+            if port_segment_size and '{1}' not in port_name_format and '{segment0}' not in port_name_format and '{segment1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format", "If the segment size is not 0, the format must contain {1}, {segment0} or {segment1}")
             else:
                 settings["port_segment_size"] = port_segment_size
 
