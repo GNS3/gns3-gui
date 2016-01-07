@@ -73,6 +73,7 @@ PLATFORMS_DEFAULT_NVRAM = {"c1700": 128,
                            "c3745": 256,
                            "c7200": 512}
 
+# MD5 checksum done on uncompressed IOS images
 DEFAULT_IDLEPC = {"7f4ae12a098391bc0edcaf4f44caaf9d": "0x80358a60",  # c1700-adventerprisek9-mz.124-25d
                   "3aaecd2222e812c16c211bc9f7c77512": "0x824a4dc4",  # c1700-adventerprisek9-mz.124-15.T14
                   "062a32e9e3f59aeec930ea5694fda9c9": "0x80519c48",  # c2600-adventerprisek9-mz.124-25d
@@ -87,7 +88,8 @@ DEFAULT_IDLEPC = {"7f4ae12a098391bc0edcaf4f44caaf9d": "0x80358a60",  # c1700-adv
                   "64f8c427ed48fd21bd02cf1ff254c4eb": "0x60c09aa0",  # c3725-adventerprisek9-mz.124-15.T14
                   "ddbaf74274822b50fa9670e10c75b08f": "0x60aa1da0",  # c3745-adventerprisek9-mz.124-25d
                   "4af2e752220ed1397924150ff7bbe4ce": "0x602701e4",  # c3745-adventerprisek9-mz.124-15.T14
-                  "6b89d0d804e1f2bb5b8bda66b5692047": "0x606df838"}  # c7200-adventerprisek9-mz.124-24.T5
+                  "6b89d0d804e1f2bb5b8bda66b5692047": "0x606df838",  # c7200-adventerprisek9-mz.124-24.T5
+                  "dda82f22a39215bc6b27af891e12b8f6": "0x6018c294"}  # c7200-adventerprisek9-mz.155-2.XB
 
 # platforms with supported chassis
 CHASSIS = {"c1700": ("1720", "1721", "1750", "1751", "1760"),
