@@ -103,7 +103,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         :param value: value for the progress bar (integer)
         """
 
-        if self._thread is not None:
+        if self is not None and self._thread is not None:
             # It seem in some cases this is called on a deleted object and crash
             if not sip.isdeleted(self):
                 self.setValue(value)
