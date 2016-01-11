@@ -151,6 +151,30 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self._appliance.get("usage", ""))
             )
 
+        elif self.page(page_id) == self.uiCheckServerWizardPage:
+            self.uiCheckServerLabel.setText("Please wait while checking server capacities...")
+            if 'qemu' in self._appliance:
+                if self._appliance['qemu'].get('kvm', 'require') == 'require':
+                    self._server_check = False # If the server as the capacities for running the appliance
+                    Qemu.instance().getQemuCapabilitiesFromServer(self._server, qpartial(self._qemuServerCapabilitiesCallback))
+                    return
+            self._server_check = True
+            self.next()
+
+    def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
+        """
+        Check if server support KVM or not
+        """
+        if error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
+            self._server_check = True
+            self.uiCheckServerLabel.setText("Server OK you can continue the installation")
+        else:
+            msg = "The remote server doesn't support KVM. You need a Linux server or the GNS3 VM with VMware and CPU virtualization instructions."
+            self.uiCheckServerLabel.setText(msg)
+            QtWidgets.QMessageBox.critical(self, "Qemu", msg)
+            self._server_check = False
+
+
     def _uiServerWizardPage_isComplete(self):
         return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
 
@@ -393,6 +417,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if self.uiQemuListComboBox.currentIndex() == -1:
                 QtWidgets.QMessageBox.critical(self, "Qemu binary", "No compatible Qemu binary selected")
                 return False
+
+        elif self.currentPage() == self.uiCheckServerWizardPage:
+            return self._server_check
 
         return True
 
