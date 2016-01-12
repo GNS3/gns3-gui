@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.4.0 12/01/2016
+
+* Fix rare crash when showing the progress dialog
+* Fix crash on Windows when a gui is already running
+* Add default idle-pc value for c7200-adventerprisek9-mz.155-2.XB. Fixes #389.
+
 ## 1.4.0rc3 05/01/2016
 
 * Add information about antivirus and firewall in case of connection fail
