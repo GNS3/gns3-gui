@@ -332,7 +332,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
             appliance_configuration["name"] = appliance_configuration["name"].strip()
 
-        appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
+        if "qemu" in appliance_configuration:
+            appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
         worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
@@ -346,6 +347,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if progress_dialog.exec_():
             QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
             return True
+
+    def nextId(self):
+        if self.currentPage() == self.uiSummaryWizardPage:
+            if "qemu" not in self._appliance:
+                return super().nextId() + 1
+        return super().nextId()
+
 
     def validateCurrentPage(self):
         """
