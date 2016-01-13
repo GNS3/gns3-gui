@@ -143,7 +143,8 @@ else:
                                              'ROXTerm': 'roxterm -n "%d" --tab -e "telnet %h %p"',
                                              'KDE Konsole': 'konsole --new-tab -p tabtitle="%d" -e "telnet %h %p"',
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
-                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"'}
+                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"',
+                                             'urxvt': 'urxvt -title %d -e telnet %h %p'}
 
     # default Telnet console command on other systems
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
