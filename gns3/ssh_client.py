@@ -138,6 +138,6 @@ class SSHClient(HTTPClient):
         """
         Close all remote connection
         """
-        for endpoint in self._endpoints:
+        for endpoint in self._endpoints.items():
             endpoint.disable()
         super().close()
