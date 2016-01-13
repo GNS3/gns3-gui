@@ -164,7 +164,10 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
             cluster_size = self.uiQcow2ClusterSizeComboBox.currentText()
             if not '<default>' == cluster_size:
-                options["cluster_size"] = int(cluster_size)
+                if cluster_size.endswith('k'):
+                    options["cluster_size"] = int(cluster_size[:-1]) * 1024
+                else:
+                    options["cluster_size"] = int(cluster_size)
 
             refcount_bits = self.uiRefcountEntrySizeComboBox.currentText()
             if not '<default>' == refcount_bits:
