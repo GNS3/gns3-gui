@@ -71,6 +71,7 @@ class SSHClient(HTTPClient):
     def __init__(self, settings, network_manager):
 
         settings["protocol"] = "http"
+        settings["http_host"] = "127.0.0.1"
         self._ssh_port = settings["ssh_port"]
         self._ssh_key = settings["ssh_key"]
         self._endpoints = {}
@@ -138,6 +139,6 @@ class SSHClient(HTTPClient):
         """
         Close all remote connection
         """
-        for endpoint in self._endpoints.items():
+        for endpoint in self._endpoints.values():
             endpoint.disable()
         super().close()

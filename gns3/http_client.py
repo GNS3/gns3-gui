@@ -64,7 +64,10 @@ class HTTPClient(QtCore.QObject):
 
         self._scheme = settings.get("protocol", "http")
         self._host = settings["host"]
-        self._http_host = settings["host"]
+        if "http_host" in settings:
+            self._http_host = settings["http_host"]
+        else:
+            self._http_host = settings["host"]
         self._port = int(settings["port"])
         self._http_port = int(settings["port"])
         self._user = settings.get("user", None)
