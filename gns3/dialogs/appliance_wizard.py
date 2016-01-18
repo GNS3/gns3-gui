@@ -33,6 +33,7 @@ from ..servers import Servers
 from ..gns3_vm import GNS3VM
 from ..local_config import LocalConfig
 
+
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def __init__(self, parent, path):
@@ -95,17 +96,24 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 ("Vendor", "vendor_name"),
                 ("Status", "status"),
                 ("Maintainer", "maintainer"),
-                ("KVM", "kvm")
+                ("Architecture", "qemu/arch"),
+                ("KVM", "qemu/kvm")
             )
 
             self.uiInfoTreeWidget.clear()
             for (name, key) in info:
-                if key in self._appliance:
-                    item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
-                    font = item.font(0)
-                    font.setBold(True)
-                    item.setFont(0, font)
-                    self.uiInfoTreeWidget.addTopLevelItem(item)
+                if "/" in key:
+                    key, subkey = key.split("/")
+                    value = self._appliance.get(key, {}).get(subkey, None)
+                else:
+                    value = self._appliance.get(key, None)
+                if value is None:
+                    continue
+                item = QtWidgets.QTreeWidgetItem([name + ":", value])
+                font = item.font(0)
+                font.setBold(True)
+                item.setFont(0, font)
+                self.uiInfoTreeWidget.addTopLevelItem(item)
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
@@ -158,6 +166,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     self._server_check = False # If the server as the capacities for running the appliance
                     Qemu.instance().getQemuCapabilitiesFromServer(self._server, qpartial(self._qemuServerCapabilitiesCallback))
                     return
+            self.uiCheckServerLabel.setText("")
             self._server_check = True
             self.next()
 
@@ -173,7 +182,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiCheckServerLabel.setText(msg)
             QtWidgets.QMessageBox.critical(self, "Qemu", msg)
             self._server_check = False
-
 
     def _uiServerWizardPage_isComplete(self):
         return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
@@ -373,11 +381,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return True
 
     def nextId(self):
-        if self.currentPage() == self.uiSummaryWizardPage:
+        if self.currentPage() == self.uiServerWizardPage:
+            if "qemu" not in self._appliance:
+                return super().nextId() + 1
+        elif self.currentPage() == self.uiFilesWizardPage:
             if "qemu" not in self._appliance:
                 return super().nextId() + 1
         return super().nextId()
-
 
     def validateCurrentPage(self):
         """
