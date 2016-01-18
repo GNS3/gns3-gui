@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Jan 26 13:15:06 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -87,8 +86,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -121,8 +120,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -376,9 +375,9 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
@@ -426,6 +425,8 @@ class Ui_MainWindow(object):
         self.uiOpenApplianceAction.setObjectName("uiOpenApplianceAction")
         self.uiExportDebugInformationAction = QtWidgets.QAction(MainWindow)
         self.uiExportDebugInformationAction.setObjectName("uiExportDebugInformationAction")
+        self.uiDoctorAction = QtWidgets.QAction(MainWindow)
+        self.uiDoctorAction.setObjectName("uiDoctorAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -451,6 +452,7 @@ class Ui_MainWindow(object):
         self.uiHelpMenu.addAction(self.uiCheckForUpdateAction)
         self.uiHelpMenu.addAction(self.uiSetupWizard)
         self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
+        self.uiHelpMenu.addAction(self.uiDoctorAction)
         self.uiHelpMenu.addAction(self.uiExportDebugInformationAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
         self.uiHelpMenu.addAction(self.uiAboutAction)
@@ -685,10 +687,11 @@ class Ui_MainWindow(object):
         self.uiOpenApplianceAction.setText(_translate("MainWindow", "Import appliance"))
         self.uiExportDebugInformationAction.setText(_translate("MainWindow", "Export debug information"))
         self.uiExportDebugInformationAction.setToolTip(_translate("MainWindow", "Export debug information"))
+        self.uiDoctorAction.setText(_translate("MainWindow", "Doctor"))
 
 from ..console_view import ConsoleView
-from ..nodes_view import NodesView
-from ..topology_summary_view import TopologySummaryView
 from ..graphics_view import GraphicsView
+from ..nodes_view import NodesView
 from ..server_summary_view import ServerSummaryView
+from ..topology_summary_view import TopologySummaryView
 from . import resources_rc
