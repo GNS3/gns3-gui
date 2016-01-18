@@ -167,7 +167,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
         if error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
             self._server_check = True
-            self.uiCheckServerLabel.setText("Server OK you can continue the installation")
+            self.uiCheckServerLabel.setText("GNS3 server requirements is OK you can continue the installation")
         else:
             msg = "The remote server doesn't support KVM. You need a Linux server or the GNS3 VM with VMware and CPU virtualization instructions."
             self.uiCheckServerLabel.setText(msg)
