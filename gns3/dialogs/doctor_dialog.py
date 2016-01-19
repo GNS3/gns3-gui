@@ -24,7 +24,7 @@ from gns3.ui.doctor_dialog_ui import Ui_DoctorDialog
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
 from gns3 import version
-
+from gns3.modules.vmware import VMware
 
 import logging
 log = logging.getLogger(__name__)
@@ -47,10 +47,12 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             if method.startswith('check'):
                 self.write(getattr(self, method).__doc__ + ": ")
                 (res, msg) = getattr(self, method)()
-                if res:
+                if res == 0:
                     self.write('<span style="color: green"><strong>OK</strong></span>')
-                else:
-                    self.write('<span style="color: red"><strong>KO</strong> {}</span>'.format(msg))
+                elif res == 1:
+                    self.write('<span style="color: orange"><strong>WARNING</strong> {}</span>'.format(msg))
+                elif res == 2:
+                    self.write('<span style="color: red"><strong>ERROR</strong> {}</span>'.format(msg))
                 self.write("<br/>")
 
     def write(self, text):
@@ -65,20 +67,20 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
     def checkLocalServerEnabled(self):
         """Check if local server is enabled"""
         if Servers.instance().shouldLocalServerAutoStart() is False:
-            return (False, "The local server is disabled. Go to Preferences / Server / Local Server and enable the local server.")
-        return (True, None)
+            return (2, "The local server is disabled. Go to Preferences / Server / Local Server and enable the local server.")
+        return (0, None)
 
     def checkDevVersionOfGNS3(self):
         """Check if it's a stable version of GNS3"""
         if version.__version_info__[3] != 0:
-            return (False, "You are using a non stable version of GNS3.")
-        return (True, None)
+            return (2, "You are using a non stable version of GNS3.")
+        return (0, None)
 
     def checkExperimentalFeaturesEnabled(self):
         """Check if experimental features of GNS3 are not enabled"""
         if LocalConfig.instance().experimental():
-            return (False, "Experimental features are enabled. Please turn it off by going to Preferences / General / Miscellaneous.")
-        return (True, None)
+            return (2, "Experimental features are enabled. Please turn it off by going to Preferences / General / Miscellaneous.")
+        return (0, None)
 
     def checkAVGInstalled(self):
         """Check if AVG is not installed"""
@@ -87,17 +89,24 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             try:
                 psinfo = proc.as_dict(["exe"])
                 if psinfo["exe"] and "AVG\\" in psinfo["exe"]:
-                    return (False, "AVG has known troubles with GNS3 even when you disable it. You need to whitelist dynamips.exe in AVG preferences.")
+                    return (2, "AVG has known troubles with GNS3 even when you disable it. You need to whitelist dynamips.exe in AVG preferences.")
             except psutil.NoSuchProcess:
                 pass
-        return (True, None)
+        return (0, None)
 
     def checkFreeRam(self):
         """Check free RAM"""
 
         if int(psutil.virtual_memory().available / (1024 * 1024)) < 600:
-            return (False, "You have less than 600MB of RAM, this could block appliance like CISCO 7200")
-        return (True, None)
+            return (2, "You have less than 600MB of RAM, this could block appliance like CISCO 7200")
+        return (0, None)
+
+    def checkVmrun(self):
+        """Check if vmrun is installed"""
+        vmrun = VMware.instance().findVmrun()
+        if len(vmrun) == 0:
+            return (1, "vmrun not found on your system you can not use the VMware support.")
+        return (0, None)
 
 
 
