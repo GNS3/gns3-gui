@@ -795,7 +795,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
 
-        if self._project.filesDir() is None:
+        files_dir = self._project.filesDir()
+        if files_dir is None:
             QtWidgets.QMessageBox.critical(self, "Image", "Please create a node first")
             return
 
@@ -812,7 +813,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.critical(self, "Image", "Image file format not supported")
             return
 
-        destination_dir = os.path.join(self._project.filesDir(), "project-files", "images")
+        destination_dir = os.path.join(files_dir, "project-files", "images")
         try:
             os.makedirs(destination_dir, exist_ok=True)
         except OSError as e:
