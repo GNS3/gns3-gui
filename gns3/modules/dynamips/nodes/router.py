@@ -704,7 +704,7 @@ class Router(VM):
                 vm_settings[name] = value
         name = vm_settings.pop("name")
         ram = vm_settings.pop("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
-        image = vm_settings.pop("image")
+        image = vm_settings.pop("image", "")
 
         if self.server().isLocal():
             # check and update the path to use the image in the images directory
