@@ -114,6 +114,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
         :param message: message
         """
+        if self is None or sip.isdeleted(self):
+            return
 
         if stop:
             log.critical(message)
