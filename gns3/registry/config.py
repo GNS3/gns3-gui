@@ -259,6 +259,7 @@ class Config:
             new_config["linked_base"] = appliance_config["linked_base"]
 
         log.debug("Add appliance QEMU: %s", str(new_config))
+        self._config["Qemu"].setdefault("vms", [])
         self._config["Qemu"]["vms"].append(new_config)
 
     def _set_symbol(self, symbol):
