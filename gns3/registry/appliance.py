@@ -79,7 +79,7 @@ class Appliance(collections.Mapping):
 
                     if "/" in filename:
                         parent = filename.split("/")[0]
-                        name = filename.split("/")[-1:]
+                        name = filename.split("/")[-1:][0]
                         filename = os.path.join(parent, name)
                     else:
                         parent = filename

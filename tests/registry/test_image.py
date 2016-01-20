@@ -95,7 +95,7 @@ def test_copy_ova(images_dir, tmpdir):
     tar.addfile(tarinfo=info, fileobj=string)
     tar.close()
 
-    Image(str(tmpdir / "a.ova")).copy(os.path.join(images_dir, "QEMU"), "a.ova")
+    Image(str(tmpdir / "a.ova")).copy(os.path.join(images_dir, "QEMU"), "a.ova/a.vmdk")
 
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.ova", "a.vmdk"))
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.ova.md5sum"))

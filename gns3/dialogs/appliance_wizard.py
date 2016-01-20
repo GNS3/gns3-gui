@@ -310,7 +310,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         image = Image(path)
         if image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}".format(image.md5sum, disk["md5sum"]))
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}. For OVA you need to import the OVA/OVF not the file inside the archive.".format(image.md5sum, disk["md5sum"]))
             return
 
         config = Config()

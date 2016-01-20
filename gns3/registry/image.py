@@ -15,11 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import re
 import os
 import hashlib
 import shutil
 import tarfile
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class Image:
@@ -108,10 +111,17 @@ class Image:
 
         :param directory: Destination directory
         """
-        dst = os.path.join(directory, filename)
+        log.debug("Copy %s to %s", directory, filename)
 
         is_tar = False
         if tarfile.is_tarfile(self.path):
+            if '/' in filename or '\\' in filename:
+                # In case of OVA we want to update the OVA name
+                base_file = re.split(r'[/\\]', filename)[0]
+            else:
+                base_file = filename
+            dst = os.path.join(directory, base_file)
+
             # is_tarfile can have false positive if file start with 00000 like ISO
             # we check if we have file in the tar
             tar = tarfile.open(self.path)
@@ -122,6 +132,7 @@ class Image:
             tar.close()
 
         if not is_tar:
+            dst = os.path.join(directory, filename)
             os.makedirs(directory, exist_ok=True)
             shutil.copy(self.path, dst)
         with open(dst + ".md5sum", "w+", encoding="utf-8") as f:
