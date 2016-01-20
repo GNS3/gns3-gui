@@ -21,7 +21,6 @@ import json
 import sys
 import os
 import urllib
-import re
 
 from .image import Image
 
@@ -259,6 +258,7 @@ class Config:
             new_config["linked_base"] = appliance_config["linked_base"]
 
         log.debug("Add appliance QEMU: %s", str(new_config))
+        self._config["Qemu"].setdefault("vms", [])
         self._config["Qemu"]["vms"].append(new_config)
 
     def _set_symbol(self, symbol):
@@ -295,12 +295,7 @@ class Config:
         if os.path.commonprefix([images_dir, path]) == images_dir:
             return path.replace(images_dir, '').strip('/\\')
 
-        if '/' in filename or '\\' in filename:
-            # In case of OVA we want to update the OVA name
-            base_file = re.split(r'[/\\]', filename)[0]
-        else:
-            base_file = filename
-        Image(path).copy(images_dir, base_file)
+        Image(path).copy(images_dir, filename)
         return filename
 
     def save(self):

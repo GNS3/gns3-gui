@@ -162,17 +162,22 @@ class VMWithImagesWizard(VMWizard):
 
         if len(result) == 0:
             for radio_button in self._radio_existing_images_buttons:
-                if radio_button.isChecked():
+                if radio_button.isChecked() and self._widgetOnCurrentPage(radio_button):
                     for button in radio_button.parent().findChildren(QtWidgets.QRadioButton):
                         if button != radio_button:
                             button.setChecked(True)
                         button.hide()
 
         for combo_box in self._images_combo_boxes:
-            combo_box.clear()
-            for vm in result:
-                # Could be drop when 1.4 is out and user have upgraded
-                if "path" not in vm:
-                    QtWidgets.QMessageBox.critical(self, "Images", "Please upgrade the gns3 server to a version >= 1.4.0b4")
-                    return
-                combo_box.addItem(vm["path"], vm)
+            if self._widgetOnCurrentPage(combo_box):
+                combo_box.clear()
+                for vm in result:
+                    combo_box.addItem(vm["path"], vm)
+
+
+    def _widgetOnCurrentPage(self, widget):
+        """
+        :returns Boolean True if widget is current active Wizard page
+        """
+        return self.currentPage().findChild(widget.__class__, widget.objectName()) is not None
+

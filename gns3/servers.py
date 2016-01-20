@@ -380,8 +380,8 @@ class Servers():
                 process = psutil.Process(pid=pid)
                 log.info("Kill already running server with PID %d", pid)
                 process.kill()
-        except (OSError, psutil.NoSuchProcess, psutil.AccessDenied):
-            # Permission issue, or process no longer exists
+        except (OSError, ValueError, psutil.NoSuchProcess, psutil.AccessDenied):
+            # Permission issue, or process no longer exists, or file is empty
             return
 
     def localServerAutoStart(self):

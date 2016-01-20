@@ -33,6 +33,7 @@ from ..servers import Servers
 from ..gns3_vm import GNS3VM
 from ..local_config import LocalConfig
 
+
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def __init__(self, parent, path):
@@ -95,17 +96,24 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 ("Vendor", "vendor_name"),
                 ("Status", "status"),
                 ("Maintainer", "maintainer"),
-                ("KVM", "kvm")
+                ("Architecture", "qemu/arch"),
+                ("KVM", "qemu/kvm")
             )
 
             self.uiInfoTreeWidget.clear()
             for (name, key) in info:
-                if key in self._appliance:
-                    item = QtWidgets.QTreeWidgetItem([name + ":", self._appliance[key]])
-                    font = item.font(0)
-                    font.setBold(True)
-                    item.setFont(0, font)
-                    self.uiInfoTreeWidget.addTopLevelItem(item)
+                if "/" in key:
+                    key, subkey = key.split("/")
+                    value = self._appliance.get(key, {}).get(subkey, None)
+                else:
+                    value = self._appliance.get(key, None)
+                if value is None:
+                    continue
+                item = QtWidgets.QTreeWidgetItem([name + ":", value])
+                font = item.font(0)
+                font.setBold(True)
+                item.setFont(0, font)
+                self.uiInfoTreeWidget.addTopLevelItem(item)
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
@@ -150,6 +158,33 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self._appliance["category"].replace("_", " "),
                 self._appliance.get("usage", ""))
             )
+
+        elif self.page(page_id) == self.uiCheckServerWizardPage:
+            self.uiCheckServerLabel.setText("Please wait while checking server capacities...")
+            if 'qemu' in self._appliance:
+                if self._appliance['qemu'].get('kvm', 'require') == 'require':
+                    self._server_check = False # If the server as the capacities for running the appliance
+                    Qemu.instance().getQemuCapabilitiesFromServer(self._server, qpartial(self._qemuServerCapabilitiesCallback))
+                    return
+            self.uiCheckServerLabel.setText("")
+            self._server_check = True
+            self.next()
+
+    def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
+        """
+        Check if server support KVM or not
+        """
+        if error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
+            self._server_check = True
+            self.uiCheckServerLabel.setText("GNS3 server requirements is OK you can continue the installation")
+        else:
+            if error:
+                msg = error
+            else:
+                msg = "The remote server doesn't support KVM. You need a Linux server or the GNS3 VM with VMware and CPU virtualization instructions."
+            self.uiCheckServerLabel.setText(msg)
+            QtWidgets.QMessageBox.critical(self, "Qemu", msg)
+            self._server_check = False
 
     def _uiServerWizardPage_isComplete(self):
         return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
@@ -275,7 +310,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         image = Image(path)
         if image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}".format(image.md5sum, disk["md5sum"]))
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}. For OVA you need to import the OVA/OVF not the file inside the archive.".format(image.md5sum, disk["md5sum"]))
             return
 
         config = Config()
@@ -332,7 +367,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
             appliance_configuration["name"] = appliance_configuration["name"].strip()
 
-        appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
+        if "qemu" in appliance_configuration:
+            appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
         worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
@@ -346,6 +382,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if progress_dialog.exec_():
             QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
             return True
+
+    def nextId(self):
+        if self.currentPage() == self.uiServerWizardPage:
+            if "qemu" not in self._appliance:
+                return super().nextId() + 1
+        elif self.currentPage() == self.uiFilesWizardPage:
+            if "qemu" not in self._appliance:
+                return super().nextId() + 1
+        return super().nextId()
 
     def validateCurrentPage(self):
         """
@@ -393,6 +438,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if self.uiQemuListComboBox.currentIndex() == -1:
                 QtWidgets.QMessageBox.critical(self, "Qemu binary", "No compatible Qemu binary selected")
                 return False
+
+        elif self.currentPage() == self.uiCheckServerWizardPage:
+            return self._server_check
 
         return True
 

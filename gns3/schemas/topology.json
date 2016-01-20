@@ -658,8 +658,7 @@
             "required": [
                 "name",
                 "console",
-                "image",
-                "startup_config"
+                "image"
             ],
             "additionalProperties": false
         },

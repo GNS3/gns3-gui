@@ -245,6 +245,20 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiCheckServerWizardPage">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QLabel" name="uiCheckServerLabel">
+      <property name="text">
+       <string>Please wait while checking server capacities...</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiFilesWizardPage">
    <property name="title">
     <string>Required files</string>
@@ -474,6 +488,39 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiQemuWizardPage">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="title">
+    <string>Qemu settings</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose the qemu binary that we will use for running this appliance.</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLabel" name="uiQemuListLabel">
+      <property name="text">
+       <string>Qemu binary:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="uiQemuListComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiSummaryWizardPage">
    <property name="title">
     <string>Summary</string>
@@ -584,39 +631,6 @@
         <string>user=gns3</string>
        </property>
       </item>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="uiQemuWizardPage">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="title">
-    <string>Qemu settings</string>
-   </property>
-   <property name="subTitle">
-    <string>Please choose the qemu binary that we will use for running this appliance.</string>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QLabel" name="uiQemuListLabel">
-      <property name="text">
-       <string>Qemu binary:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="uiQemuListComboBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
      </widget>
     </item>
    </layout>

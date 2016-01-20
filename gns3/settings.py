@@ -69,11 +69,7 @@ elif sys.platform.startswith("darwin"):
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
         'Terminal': "osascript -e 'tell application \"Terminal\"'"
                     " -e 'activate'"
-                    " -e 'set _tab to do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\"; clear; telnet %h %p ; exit\"'"
-                    " -e 'delay 1'"
-                    " -e 'repeat while _tab exists'"
-                    " -e 'delay 1'"
-                    " -e 'end repeat'"
+                    " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\"; clear; telnet %h %p ; exit\"'"
                     " -e 'end tell'",
         'Terminal tabbed (experimental)': "osascript -e 'tell application \"Terminal\"'"
                     " -e 'activate'"
@@ -100,10 +96,6 @@ elif sys.platform.startswith("darwin"):
                  " -e '  set s to (make new session at the end of sessions)'"
                  " -e '  tell s'"
                  " -e '    exec command (\"telnet %h %p\")'"
-                 " -e '    delay 1'"
-                 " -e '    repeat while s exists'"
-                 " -e '      delay 1'"
-                 " -e '    end repeat'"
                  " -e '  end tell'"
                  " -e 'end tell'"
                  " -e 'end tell'",
@@ -119,10 +111,6 @@ elif sys.platform.startswith("darwin"):
                     " -e '    set s to current session'"
                     " -e '    tell s'"
                     " -e '        write text \"telnet %h %p\"'"
-                    " -e '        delay 1'"
-                    " -e '        repeat while s exists'"
-                    " -e '            delay 1'"
-                    " -e '        end repeat'"
                     " -e '    end tell'"
                     " -e 'end tell'"
                     " -e 'end tell'",
@@ -143,7 +131,8 @@ else:
                                              'ROXTerm': 'roxterm -n "%d" --tab -e "telnet %h %p"',
                                              'KDE Konsole': 'konsole --new-tab -p tabtitle="%d" -e "telnet %h %p"',
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
-                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"'}
+                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"',
+                                             'urxvt': 'urxvt -title %d -e telnet %h %p'}
 
     # default Telnet console command on other systems
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]

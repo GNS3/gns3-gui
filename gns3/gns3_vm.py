@@ -254,6 +254,9 @@ class GNS3VM:
         if self._is_running and (vm_settings["auto_stop"] or force):
             try:
                 if vm_settings["virtualization"] == "VMware":
+                    if vm_settings["vmx_path"] is None:
+                        log.error("No vm path configured, can't stop the VM")
+                        return
                     self.execute_vmrun("stop", [vm_settings["vmx_path"], "soft"])
                 elif vm_settings["virtualization"] == "VirtualBox":
                     self.execute_vboxmanage("controlvm", [vm_settings["vmname"], "acpipowerbutton"], timeout=3)
