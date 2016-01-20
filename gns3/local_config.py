@@ -27,7 +27,6 @@ from .qt import QtCore
 from .version import __version__
 from .utils import parse_version
 
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -146,6 +145,14 @@ class LocalConfig(QtCore.QObject):
                 main_window = self._settings.get("MainWindow", {})
                 main_window["hide_getting_started_dialog"] = self._settings["GUI"].get("hide_getting_started_dialog", False)
                 self._settings["MainWindow"] = main_window
+
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.1dev2"):
+            if sys.platform.startswith("darwin"):
+                from .settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, DEFAULT_TELNET_CONSOLE_COMMAND
+
+                if self._settings["MainWindow"]["telnet_console_command"] not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
+                    self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
+
 
     def _readConfig(self, config_path):
         """
