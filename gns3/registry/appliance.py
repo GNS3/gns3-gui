@@ -78,7 +78,8 @@ class Appliance(collections.Mapping):
                         file["idlepc"] = version["idlepc"]
 
                     if "/" in filename:
-                        parent, name = filename.split("/")
+                        parent = filename.split("/")[0]
+                        name = filename.split("/")[-1:]
                         filename = os.path.join(parent, name)
                     else:
                         parent = filename
