@@ -39,6 +39,8 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(
             ":/icons/docker.png"))
 
+        self.uiNewImageRadioButton.setChecked(True)
+        self._existingImageRadioButtonToggledSlot(False)
         self.uiExistingImageRadioButton.toggled.connect(self._existingImageRadioButtonToggledSlot)
 
         if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
@@ -93,10 +95,10 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
             return False
 
         if self.currentPage() == self.uiImageWizardPage:
-            if not self.uiImageListComboBox.count():
+            if not self.uiImageListComboBox.currentIndex() < 0:
                 QtWidgets.QMessageBox.critical(
                     self, "Docker images",
-                    "There are no Docker images available!")
+                    "There are no Docker images selected!")
                 return False
             self.uiNameLineEdit.setText(self._getImageName().split(":")[0])
 
