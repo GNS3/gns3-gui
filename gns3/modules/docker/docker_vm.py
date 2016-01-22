@@ -52,7 +52,8 @@ class DockerVM(VM):
             "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
             "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
             "environment": DOCKER_CONTAINER_SETTINGS["environment"],
-            "console": None
+            "console": None,
+            "console_type": DOCKER_CONTAINER_SETTINGS["console_type"]
         }
 
     def _addAdapters(self, adapters):

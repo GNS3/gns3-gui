@@ -42,21 +42,13 @@ class DockerVMConfigurationPage(
         :param group: indicates the settings apply to a group of images
         """
 
+        self.uiCMDLineEdit.setText(settings["start_command"])
+        self.uiEnvironmentTextEdit.setText(settings["environment"])
+        self.uiConsoleTypeComboBox.setCurrentIndex(self.uiConsoleTypeComboBox.findText(settings["console_type"]))
+
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
-            self.uiCMDLineEdit.setText(settings["start_command"])
             self.uiAdapterSpinBox.setValue(settings["adapters"])
-            self.uiEnvironmentTextEdit.setText(settings["environment"])
-
-            # If console we edit a node otherwise the template
-            if "console" in settings:
-                self.uiConsolePortSpinBox.setValue(settings["console"])
-                self.uiCategoryComboBox.hide()
-                self.uiCategoryLabel.hide()
-            else:
-                self.uiCategoryComboBox.setCurrentIndex(settings["category"])
-                self.uiConsolePortLabel.hide()
-                self.uiConsolePortSpinBox.hide()
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
@@ -76,7 +68,15 @@ class DockerVMConfigurationPage(
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
+
+            self.uiCategoryComboBox.setCurrentIndex(settings["category"])
+            self.uiConsolePortLabel.hide()
+            self.uiConsolePortSpinBox.hide()
         else:
+            self.uiConsolePortSpinBox.setValue(settings["console"])
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+
             self.uiDefaultNameFormatLabel.hide()
             self.uiDefaultNameFormatLineEdit.hide()
 
@@ -87,10 +87,13 @@ class DockerVMConfigurationPage(
         :param node: Node instance
         :param group: indicates the settings apply to a group of VMs
         """
+
+        settings["start_command"] = self.uiCMDLineEdit.text()
+        settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText()
+
         if not group:
-            settings["start_command"] = self.uiCMDLineEdit.text()
             settings["adapters"] = self.uiAdapterSpinBox.value()
-            settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
 
             name = self.uiNameLineEdit.text()
             if not name:
@@ -98,14 +101,10 @@ class DockerVMConfigurationPage(
             else:
                 settings["name"] = name
 
-            # If console we edit a node otherwise the template
-            if "console" in settings:
-                settings["console"] = self.uiConsolePortSpinBox.value()
-            else:
-                settings["category"] = self.uiCategoryComboBox.currentIndex()
 
         if not node:
             # these are template settings
+            settings["category"] = self.uiCategoryComboBox.currentIndex()
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
@@ -113,4 +112,7 @@ class DockerVMConfigurationPage(
                 QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
             else:
                 settings["default_name_format"] = default_name_format
+        else:
+            settings["console"] = self.uiConsolePortSpinBox.value()
+
 

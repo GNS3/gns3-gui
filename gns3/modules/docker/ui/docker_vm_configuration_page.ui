@@ -24,6 +24,9 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="7" column="1">
+        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
+       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="uiCMDLabel">
          <property name="text">
@@ -38,7 +41,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="uiEnvironmentLabel">
          <property name="text">
           <string>Environment (KEY=VALUE one by line):</string>
@@ -74,6 +77,13 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
         <widget class="QSpinBox" name="uiAdapterSpinBox">
          <property name="minimum">
@@ -85,13 +95,6 @@
         <widget class="QLabel" name="uiConsolePortLabel">
          <property name="text">
           <string>Console port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
          </property>
         </widget>
        </item>
@@ -127,7 +130,25 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
+        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>vnc</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

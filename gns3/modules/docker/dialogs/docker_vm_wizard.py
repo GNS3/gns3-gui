@@ -144,6 +144,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
             "adapters": self.uiAdaptersSpinBox.value(),
             "name": name,
             "environment": self.uiEnvironmentTextEdit.toPlainText(),
-            "start_command": start_command
+            "start_command": start_command,
+            "console_type": self.uiConsoleTypeComboBox.currentText()
         }
         return settings

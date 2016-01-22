@@ -281,6 +281,40 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiConsoleWizardPage">
+   <property name="title">
+    <string>Console type</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose the console type. If you choose VNC your container should have a VNC server listening on port 5900.</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Console type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="uiConsoleTypeComboBox">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>telnet</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>vnc</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiEnvironmentWizardPage">
    <property name="title">
     <string>Environment</string>
