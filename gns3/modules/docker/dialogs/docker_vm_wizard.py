@@ -95,7 +95,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
             return False
 
         if self.currentPage() == self.uiImageWizardPage:
-            if not self.uiImageListComboBox.currentIndex() < 0:
+            if self.uiImageListComboBox.currentIndex() < 0:
                 QtWidgets.QMessageBox.critical(
                     self, "Docker images",
                     "There are no Docker images selected!")
