@@ -107,14 +107,6 @@ def test_getRemoteServer():
     assert http_server.port() == 8000
     assert http_server.user() is None
 
-    ssh_server = servers.getRemoteServer("ssh", "127.0.0.1", 4000, "gns3", settings={"ssh_port": 22, "ssh_key": "/tmp/test.ssh"})
-    assert ssh_server.protocol() == "ssh"
-    assert ssh_server.host() == "127.0.0.1"
-    assert ssh_server.port() == 4000
-    assert ssh_server.user() == "gns3"
-    assert ssh_server.ssh_port() == 22
-    assert ssh_server.ssh_key() == "/tmp/test.ssh"
-
 
 def test_getServerFromString():
 
@@ -136,19 +128,6 @@ def test_getServerFromString_with_user():
     assert server.user() == "root"
 
 
-def test_getServerFromString_with_ssh():
-
-    servers = Servers.instance()
-    servers._addRemoteServer("ssh", "127.0.0.1", "4000", user="root", ssh_port=22, ssh_key="/tmp/test.ssh")
-    server = servers.getServerFromString("ssh://root@127.0.0.1:22:4000")
-    assert server.protocol() == "ssh"
-    assert server.host() == "127.0.0.1"
-    assert server.port() == 4000
-    assert server.user() == "root"
-    assert server.ssh_port() == 22
-    assert server.ssh_key() == "/tmp/test.ssh"
-
-
 def test_is_non_local_server_configured():
 
     servers = Servers.instance()
@@ -158,9 +137,6 @@ def test_is_non_local_server_configured():
     assert servers.isNonLocalServerConfigured() is True
     servers._vm_server = None
     assert servers.isNonLocalServerConfigured() is False
-
-    servers._addRemoteServer("ssh", "127.0.0.1", "4000", user="root", ssh_port=22, ssh_key="/tmp/test.ssh")
-    assert servers.isNonLocalServerConfigured() is True
 
 
 def test_handle_handleSslErrors():

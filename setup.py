@@ -50,7 +50,6 @@ setup(
     long_description=open("README.rst", "r").read(),
     install_requires=[
         "jsonschema>=2.4.0",
-        "paramiko>=1.15.1",
         "gns3-converter>=1.2.4",
         "raven>=5.2.0",
         "psutil>=2.2.1",

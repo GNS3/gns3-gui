@@ -89,14 +89,6 @@ def gns3vm_server():
 
 
 @pytest.fixture
-def ssh_server():
-
-    from gns3.servers import Servers
-
-    return Servers.instance().getRemoteServer("ssh", "127.0.0.1", 8001, "gns3", settings={"ssh_port": 22, "ssh_key": "/tmp/key.ssh"})
-
-
-@pytest.fixture
 def vpcs_device(local_server, project):
 
     from gns3.modules.vpcs.vpcs_device import VPCSDevice

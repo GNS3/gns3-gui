@@ -231,8 +231,6 @@ class Servers():
                                   ram_limit=remote_server.get("ram_limit", 0),
                                   user=remote_server.get("user", None),
                                   password=remote_server.get("password", None),
-                                  ssh_key=remote_server.get("ssh_key", None),
-                                  ssh_port=remote_server.get("ssh_port", None),
                                   accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
 
         changed = False
@@ -620,7 +618,7 @@ class Servers():
 
         return self._vm_server
 
-    def _addRemoteServer(self, protocol="http", host="localhost", port=8000, ram_limit=0, user=None, password=None, ssh_port=None, ssh_key=None, accept_insecure_certificate=False, id=None):
+    def _addRemoteServer(self, protocol="http", host="localhost", port=8000, ram_limit=0, user=None, password=None, accept_insecure_certificate=False, id=None):
         """
         Adds a new remote server.
 
@@ -630,8 +628,6 @@ class Servers():
         :param ram_limit: maximum RAM to be used (integer)
         :param user: user login or None
         :param password: user password or None
-        :param ssh_port: ssh port or None
-        :param ssh_key: ssh key
         :param accept_insecure_certificate: Accept invalid SSL certificate
 
         :returns: the new remote server
@@ -642,9 +638,7 @@ class Servers():
                   "ram_limit": ram_limit,
                   "protocol": protocol,
                   "user": user,
-                  "password": password,
-                  "ssh_port": ssh_port,
-                  "ssh_key": ssh_key}
+                  "password": password}
         if accept_insecure_certificate:
             server["accept_insecure_certificate"] = accept_insecure_certificate
         server = getNetworkClientInstance(server, self._network_manager)
@@ -658,7 +652,7 @@ class Servers():
         """
         Gets a remote server.
 
-        :param protocol: server protocol (http/ssh)
+        :param protocol: server protocol (http/https)
         :param host: host address
         :param port: port
         :param user: the username
@@ -692,12 +686,8 @@ class Servers():
 
         if "://" in server_name:
             url_settings = urllib.parse.urlparse(server_name)
-            if url_settings.scheme == "ssh":
-                _, ssh_port, port = url_settings.netloc.split(":")
-                settings = {"ssh_port": int(ssh_port)}
-            else:
-                settings = {}
-                port = url_settings.port
+            settings = {}
+            port = url_settings.port
             return self.getRemoteServer(url_settings.scheme, url_settings.hostname, port, url_settings.username, settings=settings)
         else:
             (host, port) = server_name.split(":")

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>609</height>
+    <width>692</width>
+    <height>799</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -479,6 +479,32 @@
        <string>Remote servers</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiRAMLimitLabel">
+         <property name="text">
+          <string>RAM limit:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="uiRemoteServerPortSpinBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="suffix">
+          <string notr="true"> TCP</string>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>8000</number>
+         </property>
+        </widget>
+       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="uiRemoteServerUserLabel">
          <property name="text">
@@ -496,35 +522,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiRemoteServerSSHPortLabel">
-         <property name="text">
-          <string>SSH port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="uiRemoteServerSSHKeyLabel">
-         <property name="text">
-          <string>SSH key:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <layout class="QHBoxLayout" name="uiRemoteServerSSHKeyHorizontalLayout">
-         <item>
-          <widget class="QLineEdit" name="uiRemoteServerSSHKeyLineEdit"/>
-         </item>
-         <item>
-          <widget class="QPushButton" name="uiRemoteServerSSHKeyPushButton">
-           <property name="text">
-            <string>Browse</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="9" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QPushButton" name="uiAddRemoteServerPushButton">
@@ -558,7 +556,7 @@
          </item>
         </layout>
        </item>
-       <item row="10" column="0" colspan="2">
+       <item row="8" column="0" colspan="2">
         <spacer name="spacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -570,6 +568,39 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="uiRAMLimitSpinBox">
+         <property name="suffix">
+          <string> MB</string>
+         </property>
+         <property name="maximum">
+          <number>10000000</number>
+         </property>
+         <property name="singleStep">
+          <number>512</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
+         <property name="inputMethodHints">
+          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiRemoteServerPasswordLabel">
+         <property name="text">
+          <string>Password:</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0" colspan="2">
         <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
@@ -632,11 +663,6 @@
            <string>HTTPS</string>
           </property>
          </item>
-         <item>
-          <property name="text">
-           <string>SSH</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="2" column="0">
@@ -660,84 +686,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QSpinBox" name="uiRemoteServerPortSpinBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="suffix">
-          <string notr="true"> TCP</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>8000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiRAMLimitLabel">
-         <property name="text">
-          <string>RAM limit:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QSpinBox" name="uiRAMLimitSpinBox">
-         <property name="suffix">
-          <string> MB</string>
-         </property>
-         <property name="maximum">
-          <number>10000000</number>
-         </property>
-         <property name="singleStep">
-          <number>512</number>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QSpinBox" name="uiRemoteServerSSHPortSpinBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="suffix">
-          <string> TCP</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>22</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
-         <property name="inputMethodHints">
-          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiRemoteServerPasswordLabel">
-         <property name="text">
-          <string>Password:</string>
-         </property>
-        </widget>
-       </item>
       </layout>
       <zorder>uiRemoteServerProtocolComboBox</zorder>
       <zorder>uiRemoteServerHostLabel</zorder>
@@ -748,9 +696,6 @@
       <zorder>uiRAMLimitSpinBox</zorder>
       <zorder>uiRemoteServerUserLabel</zorder>
       <zorder>uiRemoteServerUserLineEdit</zorder>
-      <zorder>uiRemoteServerSSHPortLabel</zorder>
-      <zorder>uiRemoteServerSSHPortSpinBox</zorder>
-      <zorder>uiRemoteServerSSHKeyLabel</zorder>
       <zorder>spacer_2</zorder>
       <zorder>uiRemoteServersTreeWidget</zorder>
       <zorder>uiRemoteServerProtocolLabel</zorder>
@@ -872,9 +817,6 @@
   <tabstop>uiRemoteServerPortSpinBox</tabstop>
   <tabstop>uiRemoteServerUserLineEdit</tabstop>
   <tabstop>uiRemoteServerPasswordLineEdit</tabstop>
-  <tabstop>uiRemoteServerSSHPortSpinBox</tabstop>
-  <tabstop>uiRemoteServerSSHKeyLineEdit</tabstop>
-  <tabstop>uiRemoteServerSSHKeyPushButton</tabstop>
   <tabstop>uiAddRemoteServerPushButton</tabstop>
   <tabstop>uiDeleteRemoteServerPushButton</tabstop>
   <tabstop>uiRAMLimitSpinBox</tabstop>
