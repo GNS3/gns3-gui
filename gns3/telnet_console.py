@@ -60,7 +60,8 @@ class ConsoleThread(QtCore.QThread):
 
     def run(self):
 
-        (host, port) = self._server.getTunnel(self._port)
+        host = self._server.host()
+        port = self._port
 
         # replace the place-holders by the actual values
         command = self._command.replace("%h", host)
@@ -81,9 +82,6 @@ class ConsoleThread(QtCore.QThread):
             log.info('Telnet console {}:{} closed'.format(host, port))
             if sys.platform.startswith("darwin") and "osascript" in command:
                 console_mutex.unlock()
-            else:
-                #TODO: For apple script we can't detect when the console is closed. This mean we leak a port each time you close the console
-                self._server.releaseTunnel(port)
 
 
 def nodeTelnetConsole(name, server, port):

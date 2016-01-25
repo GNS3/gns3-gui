@@ -26,6 +26,3 @@ def test_getNetworkUrl():
     assert getNetworkUrl("http", "localhost", 8000, "rsWfk49a15KipT9o8tx4vKmGRo6NtwYJ3Q2Yff6imf6PplX1hJWHJQ6ayi0XfdoF") == "http://localhost:8000"
 
 
-def test_ssh_getNetworkUrl():
-    settings = {"ssh_port": 22}
-    assert getNetworkUrl("ssh", "localhost", 8000, "root", settings=settings) == "ssh://root@localhost:22:8000"

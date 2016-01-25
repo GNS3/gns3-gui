@@ -89,25 +89,6 @@ class HTTPClient(QtCore.QObject):
         self._id = HTTPClient._instance_count
         HTTPClient._instance_count += 1
 
-    def getTunnel(self, port):
-        """
-        Get a tunnel to the remote port.
-        For HTTP standard client it's the same port. For SSH it will create a new tunnel.
-
-        :param port: Remote port
-        :returns: Tuple host, port to connect
-        """
-        return self._host, port
-
-    def releaseTunnel(self, port):
-        """
-        Release a tunnel to the remote port.
-        For HTTP standard client it's do nothing
-
-        :param port: Allocated remote port
-        """
-        pass
-
     def settings(self):
         """
         Return a dictionnary with server settings
