@@ -113,7 +113,7 @@ background-none;
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
     <addaction name="uiLabInstructionsAction"/>
-    <addaction name="uiExportDebugInformationsAction"/>
+    <addaction name="uiExportDebugInformationAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
