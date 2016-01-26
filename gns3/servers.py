@@ -557,15 +557,15 @@ class Servers():
                     self._local_server_process.wait(timeout=2)
                 except subprocess.TimeoutExpired:
                     # the local server couldn't be stopped with the normal procedure
-                    if sys.platform.startswith("win"):
-                        try:
+                    try:
+                        if sys.platform.startswith("win"):
                             self._local_server_process.send_signal(signal.CTRL_BREAK_EVENT)
-                        # If the process is already dead we received a permission error
-                        # it's a race condition between the timeout and send signal
-                        except PermissionError:
-                            pass
-                    else:
-                        self._local_server_process.send_signal(signal.SIGINT)
+                        else:
+                            self._local_server_process.send_signal(signal.SIGINT)
+                    # If the process is already dead we received a permission error
+                    # it's a race condition between the timeout and send signal
+                    except PermissionError:
+                        pass
                     try:
                         # wait for the server to stop for maximum 2 seconds
                         self._local_server_process.wait(timeout=2)
