@@ -791,6 +791,8 @@ class Servers():
 
         if self._local_server.connected():
             self._local_server.close()
+        if self._vm_server is not None and self._vm_server.connected():
+            self._vm_server.close()
         for server in self._remote_servers.values():
             if server.connected():
                 server.close()
