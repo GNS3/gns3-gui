@@ -198,6 +198,10 @@ def main():
     if DEFAULT_BINDING == "PyQt5" and version(QtCore.BINDING_VERSION_STR) < version("5.0.0"):
         raise SystemExit("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
+    import psutil
+    if version(psutil.__version__) < version("2.2.1"):
+        raise SystemExit("Requirement is psutil version 2.2.1 or higher, got version {}".format(psutil.__version__))
+
     # check for the correct locale
     # (UNIX/Linux only)
     locale_check()
