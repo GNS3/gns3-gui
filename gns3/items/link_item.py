@@ -172,6 +172,20 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         cls._draw_port_labels = state
 
+    def resetPortLabels(self):
+        """
+        Resets the port label positions.
+        """
+
+        source_port_label = self._source_port.label()
+        destination_port_label = self._destination_port.label()
+        if source_port_label is not None:
+            source_port_label.delete()
+            self._source_port.setLabel(None)
+        if destination_port_label is not None:
+            destination_port_label.delete()
+            self._destination_port.setLabel(None)
+
     def populateLinkContextualMenu(self, menu):
         """
         Adds device actions to the link contextual menu.

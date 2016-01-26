@@ -674,8 +674,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to reset the port labels on the scene.
         """
 
-        # TODO: reset port labels
-        pass
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, LinkItem):
+                item.resetPortLabels()
+                item.adjust()
 
     def _showNamesActionSlot(self):
         """
