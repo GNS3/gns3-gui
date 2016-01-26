@@ -377,8 +377,8 @@ class Ui_MainWindow(object):
         icon28 = QtGui.QIcon()
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -641,7 +641,7 @@ class Ui_MainWindow(object):
         self.uiResetPortLabelsAction.setText(_translate("MainWindow", "Reset interface labels"))
         self.uiResetPortLabelsAction.setToolTip(_translate("MainWindow", "Reset interface labels"))
         self.uiResetPortLabelsAction.setStatusTip(_translate("MainWindow", "Reset Interface Labels"))
-        self.uiCheckForUpdateAction.setText(_translate("MainWindow", "Check for Update"))
+        self.uiCheckForUpdateAction.setText(_translate("MainWindow", "Check for &Update"))
         self.uiCheckForUpdateAction.setStatusTip(_translate("MainWindow", "Check for Update"))
         self.uiEnergySavingStyleAction.setText(_translate("MainWindow", "Energy Saving"))
         self.uiEnergySavingStyleAction.setStatusTip(_translate("MainWindow", "Energy Saving Mode"))
@@ -670,7 +670,7 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setStatusTip(_translate("MainWindow", "Add a link"))
         self.uiGettingStartedAction.setText(_translate("MainWindow", "Getting started"))
         self.uiGettingStartedAction.setToolTip(_translate("MainWindow", "Show GNS3 news"))
-        self.uiLabInstructionsAction.setText(_translate("MainWindow", "Lab instructions"))
+        self.uiLabInstructionsAction.setText(_translate("MainWindow", "&Lab instructions"))
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view"))
         self.uiExportProjectAction.setText(_translate("MainWindow", "Backup project to cloud"))
         self.uiImportProjectAction.setText(_translate("MainWindow", "Restore backup from cloud"))
@@ -686,8 +686,8 @@ class Ui_MainWindow(object):
         self.uiIOUVMConverterAction.setText(_translate("MainWindow", "IOU VM Converter"))
         self.uiOpenApplianceAction.setText(_translate("MainWindow", "Import appliance"))
         self.uiExportDebugInformationAction.setText(_translate("MainWindow", "Export debug information"))
-        self.uiExportDebugInformationAction.setToolTip(_translate("MainWindow", "Export debug information"))
-        self.uiDoctorAction.setText(_translate("MainWindow", "Doctor"))
+        self.uiExportDebugInformationAction.setToolTip(_translate("MainWindow", "&Export debug information"))
+        self.uiDoctorAction.setText(_translate("MainWindow", "GNS3 &Doctor"))
 
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

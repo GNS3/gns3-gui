@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015 GNS3 Technologies Inc.
+# Copyright (C) 2016 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
 
 import psutil
 
-
-from gns3.version import __version__
-from gns3.qt import QtWidgets, QtCore
+from gns3.qt import QtWidgets
 from gns3.ui.doctor_dialog_ui import Ui_DoctorDialog
 from gns3.servers import Servers
 from gns3.local_config import LocalConfig
@@ -45,7 +43,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
         for method in sorted(dir(self)):
             if method.startswith('check'):
-                self.write(getattr(self, method).__doc__ + ": ")
+                self.write(getattr(self, method).__doc__ + "...")
                 (res, msg) = getattr(self, method)()
                 if res == 0:
                     self.write('<span style="color: green"><strong>OK</strong></span>')
@@ -65,49 +63,48 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         self.accept()
 
     def checkLocalServerEnabled(self):
-        """Check if local server is enabled"""
+        """Checking if the local server is enabled"""
         if Servers.instance().shouldLocalServerAutoStart() is False:
-            return (2, "The local server is disabled. Go to Preferences / Server / Local Server and enable the local server.")
+            return (2, "The local server is disabled. Go to Preferences -> Server -> Local Server and enable the local server.")
         return (0, None)
 
     def checkDevVersionOfGNS3(self):
-        """Check if it's a stable version of GNS3"""
+        """Checking for stable GNS3 version"""
         if version.__version_info__[3] != 0:
-            return (2, "You are using a non stable version of GNS3.")
+            return (1, "You are using a unstable version of GNS3.")
         return (0, None)
 
     def checkExperimentalFeaturesEnabled(self):
-        """Check if experimental features of GNS3 are not enabled"""
+        """Checking if experimental features are not enabled"""
         if LocalConfig.instance().experimental():
-            return (2, "Experimental features are enabled. Please turn it off by going to Preferences / General / Miscellaneous.")
+            return (1, "Experimental features are enabled. Turn them off by going to Preferences -> General -> Miscellaneous.")
         return (0, None)
 
     def checkAVGInstalled(self):
-        """Check if AVG is not installed"""
+        """Checking if AVG software is not installed"""
 
         for proc in psutil.process_iter():
             try:
                 psinfo = proc.as_dict(["exe"])
                 if psinfo["exe"] and "AVG\\" in psinfo["exe"]:
-                    return (2, "AVG has known troubles with GNS3 even when you disable it. You need to whitelist dynamips.exe in AVG preferences.")
+                    return (2, "AVG has known issues with GNS3, even after you disable it. You must whitelist dynamips.exe in the AVG preferences.")
             except psutil.NoSuchProcess:
                 pass
         return (0, None)
 
     def checkFreeRam(self):
-        """Check free RAM"""
+        """Checking for amount of free virtual memory"""
 
         if int(psutil.virtual_memory().available / (1024 * 1024)) < 600:
-            return (2, "You have less than 600MB of RAM, this could block appliance like CISCO 7200")
+            return (2, "You have less than 600MB of available virtual memory, this could prevent nodes to start")
         return (0, None)
 
     def checkVmrun(self):
-        """Check if vmrun is installed"""
+        """Checking if vmrun is installed"""
         vmrun = VMware.instance().findVmrun()
         if len(vmrun) == 0:
-            return (1, "vmrun not found on your system you can not use the VMware support.")
+            return (1, "The vmrun executable could not be found, VMware VMs cannot be used")
         return (0, None)
-
 
 
 if __name__ == '__main__':

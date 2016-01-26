@@ -950,7 +950,7 @@ background-none;
   </action>
   <action name="uiCheckForUpdateAction">
    <property name="text">
-    <string>Check for Update</string>
+    <string>Check for &amp;Update</string>
    </property>
    <property name="statusTip">
     <string>Check for Update</string>
@@ -1101,7 +1101,7 @@ background-none;
   </action>
   <action name="uiLabInstructionsAction">
    <property name="text">
-    <string>Lab instructions</string>
+    <string>&amp;Lab instructions</string>
    </property>
   </action>
   <action name="uiFitInViewAction">
@@ -1204,12 +1204,12 @@ background-none;
     <string>Export debug information</string>
    </property>
    <property name="toolTip">
-    <string>Export debug information</string>
+    <string>&amp;Export debug information</string>
    </property>
   </action>
   <action name="uiDoctorAction">
    <property name="text">
-    <string>Doctor</string>
+    <string>GNS3 &amp;Doctor</string>
    </property>
   </action>
  </widget>
