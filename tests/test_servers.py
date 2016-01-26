@@ -98,6 +98,10 @@ def test_loadSettingsWith13LocalServerSetting(tmpdir, local_config):
     assert local_server["user"] == "world"
     assert local_server["password"] == "hello"
 
+def testServers():
+    servers = Servers.instance()
+    http_server = servers.getRemoteServer("http", "localhost", 8000, None)
+    assert len(servers.servers()) == 2
 
 def test_getRemoteServer():
     servers = Servers.instance()

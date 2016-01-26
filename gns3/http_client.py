@@ -54,7 +54,9 @@ class HTTPClient(QtCore.QObject):
     # Callback class used for displaying progress
     _progress_callback = None
 
-    connected_signal = QtCore.Signal()
+    connection_connected_signal = QtCore.Signal()
+    connection_closed_signal = QtCore.Signal()
+    system_usage_updated_signal = QtCore.Signal()
     connection_error_signal = QtCore.Signal(str)
 
     def __init__(self, settings, network_manager):
@@ -79,6 +81,7 @@ class HTTPClient(QtCore.QObject):
         self._ram_limit = settings.get("ram_limit", 0)
         self._allocated_ram = 0
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
+        self._usage = None
 
         self._network_manager = network_manager
 
@@ -267,6 +270,7 @@ class HTTPClient(QtCore.QObject):
         """
         log.info("Connection to %s closed", self.url())
         self._connected = False
+        self.connection_closed_signal.emit()
 
     def isLocalServerRunning(self):
         """
@@ -488,6 +492,7 @@ class HTTPClient(QtCore.QObject):
             return
 
         self._connected = True
+        self.connection_connected_signal.emit()
         kwargs["context"] = original_context
         self.executeHTTPQuery(method, path, callback, body, **kwargs)
         self._version = params["version"]
@@ -768,5 +773,14 @@ class HTTPClient(QtCore.QObject):
             server["accept_insecure_certificate"] = self._accept_insecure_certificate
         return server
 
-    def isCloud(self):
-        return False
+    def systemUsage(self):
+        """
+        Get information about current system usage
+
+        :returns: None or dict
+        """
+        return self._usage
+
+    def setSystemUsage(self, usage):
+       self._usage = usage
+       self.system_usage_updated_signal.emit()

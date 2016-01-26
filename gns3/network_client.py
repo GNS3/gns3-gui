@@ -18,15 +18,6 @@
 import ipaddress
 
 
-def getNetworkClientInstance(settings, network_manager):
-    """
-    Based on url return a network client instance
-    """
-
-    from gns3.http_client import HTTPClient
-    return HTTPClient(settings, network_manager)
-
-
 def getNetworkUrl(protocol, host, port, user=None, settings={}):
     """
     Return a network url from settings

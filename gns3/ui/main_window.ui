@@ -472,6 +472,48 @@ background-none;
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="uiServerSummaryDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Servers Summary</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="ServerSummaryView" name="uiServerSummaryTreeWidget">
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="uiAboutAction">
    <property name="text">
     <string>&amp;About</string>
@@ -1219,7 +1261,7 @@ background-none;
     <string>Import appliance</string>
    </property>
   </action>
-  <action name="uiExportDebugInformationsAction">
+  <action name="uiExportDebugInformationAction">
    <property name="text">
     <string>Export debug informations</string>
    </property>
@@ -1245,6 +1287,11 @@ background-none;
    <class>TopologySummaryView</class>
    <extends>QTreeWidget</extends>
    <header>..topology_summary_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ServerSummaryView</class>
+   <extends>QTreeWidget</extends>
+   <header>..server_summary_view.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

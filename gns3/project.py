@@ -369,7 +369,7 @@ class Project(QtCore.QObject):
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
         self._notifications_stream.add(server.createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True))
 
-    def _event_received(self, result, **kwargs):
+    def _event_received(self, result, server=None, **kwargs):
 
         log.debug("Event received: %s", result)
         if result["action"] in ["vm.started", "vm.stopped"]:
@@ -387,3 +387,7 @@ class Project(QtCore.QObject):
         elif result["action"] == "log.warning":
             log.warning(result["event"]["message"])
             print("Warning: " + result["event"]["message"])
+        elif result["action"] == "ping":
+            # Compatible with 1.4.0 server
+            if "event" in result:
+                server.setSystemUsage(result["event"])

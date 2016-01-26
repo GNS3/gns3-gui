@@ -34,8 +34,8 @@ import stat
 import struct
 import psutil
 
-from .qt import QtNetwork, QtWidgets
-from .network_client import getNetworkClientInstance, getNetworkUrl
+from .qt import QtNetwork, QtWidgets, QtCore
+from .network_client import getNetworkUrl
 from .local_config import LocalConfig
 from .settings import SERVERS_SETTINGS
 from .local_server_config import LocalServerConfig
@@ -48,14 +48,17 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Servers():
+class Servers(QtCore.QObject):
 
     """
     Server management class.
     """
 
+    server_added_signal = QtCore.Signal(str)
+
     def __init__(self):
 
+        super().__init__()
         self._settings = {}
         self._local_server = None
         self._vm_server = None
@@ -71,6 +74,17 @@ class Servers():
         self._pid_path = os.path.join(LocalConfig.configDirectory(), "gns3_server.pid")
         self.registerLocalServer()
 
+    def servers(self):
+        """
+        Return the list of all servers, remote, vm and local
+        """
+        servers = list(self._remote_servers.values())
+        if self._local_server:
+            servers.append(self._local_server)
+        if self._vm_server:
+            servers.append(self._vm_server)
+        return servers
+
     def registerLocalServer(self):
         """
         Register a new local server.
@@ -81,10 +95,12 @@ class Servers():
         port = local_server_settings["port"]
         user = local_server_settings["user"]
         password = local_server_settings["password"]
-        self._local_server = getNetworkClientInstance({"host": host, "port": port, "user": user, "password": password},
+        self._local_server = self.getNetworkClientInstance({"host": host, "port": port, "user": user, "password": password},
                                                       self._network_manager)
         self._local_server.setLocal(True)
+        self.server_added_signal.emit("local")
         log.info("New local server connection {} registered".format(self._local_server.url()))
+
 
     @staticmethod
     def _findLocalServer(self):
@@ -603,10 +619,11 @@ class Servers():
             "user": gns3_vm_settings["user"],
             "password": gns3_vm_settings["password"]
         }
-        server = getNetworkClientInstance(server_info, self._network_manager)
+        server = self.getNetworkClientInstance(server_info, self._network_manager)
         server.setLocal(False)
         server.setGNS3VM(True)
         self._vm_server = server
+        self.server_added_signal.emit("vm")
         log.info("GNS3 VM server initialized {}".format(server.url()))
 
     def vmServer(self):
@@ -641,12 +658,22 @@ class Servers():
                   "password": password}
         if accept_insecure_certificate:
             server["accept_insecure_certificate"] = accept_insecure_certificate
-        server = getNetworkClientInstance(server, self._network_manager)
+        server = self.getNetworkClientInstance(server, self._network_manager)
         server.setLocal(False)
         self._remote_servers[server.url()] = server
+        self.server_added_signal.emit(server.url())
         log.info("New remote server connection {} registered".format(server.url()))
 
         return server
+
+    def getNetworkClientInstance(self, settings, network_manager):
+        """
+        Based on url return a network client instance
+        """
+
+        from gns3.http_client import HTTPClient
+        client = HTTPClient(settings, network_manager)
+        return client
 
     def getRemoteServer(self, protocol, host, port, user, settings={}):
         """
@@ -685,6 +712,9 @@ class Servers():
             return self.anyRemoteServer()
 
         if "://" in server_name:
+            for server in self.servers():
+                if server.url() == server_name:
+                    return server
             url_settings = urllib.parse.urlparse(server_name)
             settings = {}
             port = url_settings.port
@@ -732,9 +762,10 @@ class Servers():
             if server_id in self._remote_servers:
                 continue
 
-            new_server = getNetworkClientInstance(server, self._network_manager)
+            new_server = self.getNetworkClientInstance(server, self._network_manager)
             new_server.setLocal(False)
             self._remote_servers[server_id] = new_server
+            self.server_added_signal.emit(new_server.url())
             log.info("New remote server connection {} registered".format(new_server.url()))
 
     def remoteServers(self):
