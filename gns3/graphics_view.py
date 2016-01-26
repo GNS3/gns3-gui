@@ -22,7 +22,6 @@ Graphical view on the scene where items are drawn.
 import logging
 import os
 import pickle
-import math
 
 from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
 from .servers import Servers
@@ -321,9 +320,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
             multi = 0
         # Pair item represent the bottom links
         elif multi % 2 == 0:
-            multi = multi / 2
+            multi = multi // 2
         else:
-            multi = math.ceil(float(multi) / 2) * -1
+            multi = -multi // 2
 
         if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinationPort().linkType() == "Serial"):
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
