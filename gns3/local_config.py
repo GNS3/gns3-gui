@@ -150,8 +150,9 @@ class LocalConfig(QtCore.QObject):
             if sys.platform.startswith("darwin"):
                 from .settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, DEFAULT_TELNET_CONSOLE_COMMAND
 
-                if self._settings["MainWindow"]["telnet_console_command"] not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
-                    self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
+                if "MainWindow" in self._settings:
+                    if self._settings["MainWindow"]["telnet_console_command"] not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
+                        self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
 
 
     def _readConfig(self, config_path):
