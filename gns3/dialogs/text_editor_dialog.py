@@ -52,6 +52,10 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
             self.uiPlainTextEdit.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
 
         if len(self._items) == 1:
+            self.uiApplyColorToAllItemsCheckBox.setChecked(True)
+            self.uiApplyColorToAllItemsCheckBox.hide()
+            self.uiApplyRotationToAllItemsCheckBox.setChecked(True)
+            self.uiApplyRotationToAllItemsCheckBox.hide()
             self.uiApplyTextToAllItemsCheckBox.setChecked(True)
             self.uiApplyTextToAllItemsCheckBox.hide()
 
@@ -90,9 +94,11 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         """
 
         for item in self._items:
-            item.setDefaultTextColor(self._color)
             item.setFont(self.uiPlainTextEdit.font())
-            item.setRotation(self.uiRotationSpinBox.value())
+            if self.uiApplyColorToAllItemsCheckBox.isChecked():
+                item.setDefaultTextColor(self._color)
+            if self.uiApplyRotationToAllItemsCheckBox.isChecked():
+                item.setRotation(self.uiRotationSpinBox.value())
             if item.editable() and self.uiApplyTextToAllItemsCheckBox.isChecked():
                 item.setPlainText(self.uiPlainTextEdit.toPlainText())
 
