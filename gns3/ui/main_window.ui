@@ -38,7 +38,16 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -62,7 +71,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -104,6 +113,7 @@ background-none;
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
     <addaction name="uiLabInstructionsAction"/>
+    <addaction name="uiExportDebugInformationAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -224,7 +234,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -344,7 +363,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -408,7 +436,16 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -564,6 +601,24 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Stop all devices</string>
+   </property>
+  </action>
+  <action name="uiShowNamesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/show-hostname.svg</normaloff>:/icons/show-hostname.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show hostnames</string>
+   </property>
+   <property name="toolTip">
+    <string>Show hostnames</string>
+   </property>
+   <property name="statusTip">
+    <string>Show hostnames</string>
    </property>
   </action>
   <action name="uiConsoleAllAction">

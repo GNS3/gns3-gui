@@ -218,6 +218,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiFitInViewAction.triggered.connect(self._fitInViewActionSlot)
         self.uiShowLayersAction.triggered.connect(self._showLayersActionSlot)
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
+        self.uiShowNamesAction.triggered.connect(self._showNamesActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
 
         # control menu connections
@@ -677,6 +678,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if isinstance(item, LinkItem):
                 item.resetPortLabels()
                 item.adjust()
+
+    def _showNamesActionSlot(self):
+        """
+        Slot called to show the node names on the scene.
+        """
+
+        # TODO: show/hide node names
+        pass
 
     def _showPortNamesActionSlot(self):
         """
