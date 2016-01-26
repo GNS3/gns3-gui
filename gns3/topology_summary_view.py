@@ -62,13 +62,14 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         Changes the icon to show the node status (started, stopped etc.)
         """
         if self is None or sip.isdeleted(self):
-            self.setText(0, self._node.name())
-            if self._node.status() == Node.started:
-                self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
-            elif self._node.status() == Node.suspended:
-                self.setIcon(0, QtGui.QIcon(':/icons/led_yellow.svg'))
-            else:
-                self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
+            return
+        self.setText(0, self._node.name())
+        if self._node.status() == Node.started:
+            self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
+        elif self._node.status() == Node.suspended:
+            self.setIcon(0, QtGui.QIcon(':/icons/led_yellow.svg'))
+        else:
+            self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
 
     def _refreshNodeSlot(self):
         """
