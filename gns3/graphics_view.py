@@ -297,12 +297,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # Multi-link management
         #
         # multi is the offset of the link
-        # +------+       multi = -1    Link 3  +-------+
+        # +------+       multi = -1    Link 2  +-------+
         # |      +-----------------------------+       |
         # |  R1  |                             |   R2  |
         # |      |        multi = 0    Link 1  |       |
         # |      +-----------------------------+       |
-        # |      |        multi = 1    Link 2  |       |
+        # |      |        multi = 1    Link 3  |       |
         # +------+-----------------------------+-------+
 
         if source_item == destination_item:
@@ -324,9 +324,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             multi = multi / 2
         else:
             multi = math.ceil(float(multi) / 2) * -1
-
-        print(multi)
-
 
         if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinationPort().linkType() == "Serial"):
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
