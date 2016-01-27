@@ -74,7 +74,7 @@ class VMware(Module):
         return None
 
     @staticmethod
-    def _findVmrun(self):
+    def findVmrun():
         """
         Finds the vmrun path.
 
@@ -91,7 +91,7 @@ class VMware(Module):
                     vmrun_path = vmrun_ws
                 else:
                     # look for vmrun.exe using the directory listed in the registry
-                    vmrun_path = self._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
+                    vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
                 if vmrun_path is None:
                     # look for vmrun.exe in default VMware VIX directory
                     vmrun_vix = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware VIX\vmrun.exe")
@@ -99,7 +99,7 @@ class VMware(Module):
                         vmrun_path = vmrun_vix
                     else:
                         # look for vmrun.exe using the directory listed in the registry
-                        vmrun_path = self._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
+                        vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
         elif sys.platform.startswith("darwin"):
             vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
             if os.path.exists(vmware_fusion_vmrun_path):
@@ -144,7 +144,7 @@ class VMware(Module):
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, VMWARE_SETTINGS)
         if not os.path.exists(self._settings["vmrun_path"]):
-            self._settings["vmrun_path"] = self._findVmrun(self)
+            self._settings["vmrun_path"] = self.findVmrun()
             self._settings["host_type"] = self._determineHostType(self)
         self._loadVMwareVMs()
 

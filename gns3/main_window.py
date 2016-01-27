@@ -43,6 +43,7 @@ from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.export_debug_dialog import ExportDebugDialog
+from .dialogs.doctor_dialog import DoctorDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
@@ -249,6 +250,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
+        self.uiDoctorAction.triggered.connect(self._doctorSlot)
         self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
 
         # browsers tool bar connections
@@ -914,6 +916,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         dialog = ExportDebugDialog(self, self._project)
+        dialog.show()
+        dialog.exec_()
+
+    def _doctorSlot(self):
+        """
+        Slot to display a window for exporting debug information
+        """
+
+        dialog = DoctorDialog(self)
         dialog.show()
         dialog.exec_()
 
