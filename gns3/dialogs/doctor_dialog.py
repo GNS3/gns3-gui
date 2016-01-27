@@ -19,6 +19,7 @@ import psutil
 import platform
 import os
 import stat
+import sys
 
 from gns3.qt import QtWidgets
 from gns3.ui.doctor_dialog_ui import Ui_DoctorDialog
