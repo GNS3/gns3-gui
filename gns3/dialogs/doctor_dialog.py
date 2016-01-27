@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import psutil
+import platform
 
 from gns3.qt import QtWidgets
 from gns3.ui.doctor_dialog_ui import Ui_DoctorDialog
@@ -106,6 +107,11 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             return (1, "The vmrun executable could not be found, VMware VMs cannot be used")
         return (0, None)
 
+    def check64Bit(self):
+        """Check if processor is 64 bit"""
+        if platform.architecture()[0] != "64bit":
+            return (1, "The architecture {} is not supported.".format(platform.architecture()[0]))
+        return (0, None)
 
 if __name__ == '__main__':
     import sys
