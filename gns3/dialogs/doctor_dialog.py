@@ -121,7 +121,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         return (0, None)
 
     def checkUbridgePermission(self):
-        """Check if ubridge as the correct permission"""
+        """Check if ubridge has the correct permission"""
         if os.geteuid() == 0:
             # we are root, so we should have privileged access.
             return (0, None)
@@ -131,21 +131,23 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             return (0, None)
 
         request_setuid = False
-        if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
-            caps = os.getxattr(path, "security.capability")
-            # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
-            if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                return(2, "Ubridge require CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
+        if sys.platform.startswith("linux"):
+            if "security.capability" in os.listxattr(path):
+                caps = os.getxattr(path, "security.capability")
+                # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+                if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
+                    return(2, "Ubridge require CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
             else:
                 # capabilities not supported
                 request_setuid = True
+
         if sys.platform.startswith("darwin") or request_setuid:
              if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
                 return (2, "Ubridge should be setuid. Run sudo chown root {path} and sudo chmod 4755 {path}".format(path=path))
         return (0, None)
 
     def checkDynamipsPermission(self):
-        """Check if dynamips as the correct permission"""
+        """Check if dynamips has the correct permission"""
         if os.geteuid() == 0:
             # we are root, so we should have privileged access.
             return (0, None)
