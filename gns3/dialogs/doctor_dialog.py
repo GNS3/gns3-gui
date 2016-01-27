@@ -17,6 +17,8 @@
 
 import psutil
 import platform
+import os
+import stat
 
 from gns3.qt import QtWidgets
 from gns3.ui.doctor_dialog_ui import Ui_DoctorDialog
@@ -37,9 +39,10 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
     check return a tuple result and a message in case of failure.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, console=False):
 
         super().__init__(parent)
+        self._console = console
         self.setupUi(self)
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
         for method in sorted(dir(self)):
@@ -58,6 +61,8 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         """
         Add text to the text windows
         """
+        if self._console:
+            print(text)
         self.uiDoctorResultTextEdit.setHtml(self.uiDoctorResultTextEdit.toHtml() + text)
 
     def _okButtonClickedSlot(self):
@@ -110,12 +115,55 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
     def check64Bit(self):
         """Check if processor is 64 bit"""
         if platform.architecture()[0] != "64bit":
-            return (1, "The architecture {} is not supported.".format(platform.architecture()[0]))
+            return (2, "The architecture {} is not supported.".format(platform.architecture()[0]))
         return (0, None)
+
+    def checkUbridgePermission(self):
+        """Check if ubridge as the correct permission"""
+        if os.geteuid() == 0:
+            # we are root, so we should have privileged access.
+            return (0, None)
+
+        path = Servers.instance().localServerSettings().get("ubridge_path")
+        if path is None:
+            return (0, None)
+
+        request_setuid = False
+        if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
+            caps = os.getxattr(path, "security.capability")
+            # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+            if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
+                return(2, "Ubridge require CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
+            else:
+                # capabilities not supported
+                request_setuid = True
+        if sys.platform.startswith("darwin") or request_setuid:
+             if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
+                return (2, "Ubridge should be setuid. Run sudo chown root {path} and sudo chmod 4755 {path}".format(path=path))
+        return (0, None)
+
+    def checkDynamipsPermission(self):
+        """Check if dynamips as the correct permission"""
+        if os.geteuid() == 0:
+            # we are root, so we should have privileged access.
+            return (0, None)
+
+        path = Servers.instance().localServerSettings().get("dynamips_path")
+        if path is None:
+            return (0, None)
+
+        if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
+            caps = os.getxattr(path, "security.capability")
+            # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+            if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
+                return(2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
+        return (0, None)
+
 
 if __name__ == '__main__':
     import sys
     app = QtWidgets.QApplication(sys.argv)
     main = QtWidgets.QMainWindow()
-    DoctorDialog(main).show()
-    exit_code = app.exec_()
+    dialog = DoctorDialog(main, console=True)
+    #dialog.show()
+    #exit_code = app.exec_()
