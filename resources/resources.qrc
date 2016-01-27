@@ -53,6 +53,7 @@
         <file>icons/delete.svg</file>
         <file>icons/led_green.svg</file>
         <file>icons/led_red.svg</file>
+        <file>icons/led_gray.svg</file>
         <file>icons/led_yellow.svg</file>
         <file>icons/open.svg</file>
         <file>icons/start.svg</file>

@@ -43,6 +43,7 @@ class ServerItem(QtWidgets.QTreeWidgetItem):
         super().__init__(parent)
         self._server = server
         self._parent = parent
+        self._status = "unknown"
 
         self._server.connection_connected_signal.connect(self._refreshStatusSlot)
         self._server.connection_closed_signal.connect(self._refreshStatusSlot)
@@ -68,12 +69,17 @@ class ServerItem(QtWidgets.QTreeWidgetItem):
 
         self.setText(0, text)
         if self._server.connected():
+            self._status = "connected"
             if usage is None or (usage["cpu_usage_percent"] < 90 and usage["memory_usage_percent"] < 90):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
             else:
                 self.setIcon(0, QtGui.QIcon(':/icons/led_yellow.svg'))
         else:
-            self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
+            if self._status == "unknown":
+                self.setIcon(0, QtGui.QIcon(':/icons/led_gray.svg'))
+            else:
+                self._status = "stopped"
+                self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
 
 
 class ServerSummaryView(QtWidgets.QTreeWidget):
