@@ -119,6 +119,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiServerSummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
 
