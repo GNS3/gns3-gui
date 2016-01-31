@@ -120,6 +120,10 @@ class VMware(Module):
             return "fusion"
         else:
             vmware_path = shutil.which("vmware")
+            if vmware_path is None:
+                vmware_path = shutil.which("vmplayer")
+                if vmware_path is not None:
+                    return "player"
             if vmware_path:
                 command = [vmware_path, "-v"]
                 log.debug("Executing vmware with command: {}".format(command))
