@@ -280,7 +280,8 @@ class DockerVM(VM):
             ports = self._node_info["ports"]
             for topology_port in ports:
                 for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber():
+                    adapter_number = topology_port.get("adapter_number")
+                    if adapter_number == port.adapterNumber():
                         port.setName(topology_port["name"])
                         port.setId(topology_port["id"])
 
