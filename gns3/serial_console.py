@@ -20,6 +20,7 @@ Functions to start external serial console terminals.
 """
 
 import sys
+import os
 import shlex
 import subprocess
 from .main_window import MainWindow
@@ -54,7 +55,7 @@ def serialConsole(vmname, pipe_path):
         else:
             # use arguments on other platforms
             args = shlex.split(command)
-            subprocess.Popen(args)
+            subprocess.Popen(args, env=os.environ)
     except (OSError, subprocess.SubprocessError) as e:
         log.warning('could not start serial console "{}": {}'.format(command, e))
         raise

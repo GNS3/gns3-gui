@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import psutil
 import os
 import platform
 import struct
@@ -109,6 +110,7 @@ class CrashReport:
             import sip
         except ImportError:
             return context
+        context["psutil:version"] = psutil.__version__
         context["pyqt:version"] = QtCore.PYQT_VERSION_STR
         context["qt:version"] = QtCore.QT_VERSION_STR
         context["sip:version"] = sip.SIP_VERSION_STR

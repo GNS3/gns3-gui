@@ -59,8 +59,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiLocalServerAutoStartCheckBox.stateChanged.connect(self._useLocalServerAutoStartSlot)
-        self.uiRemoteServerProtocolComboBox.currentIndexChanged.connect(self._remoteServerProtocolCurrentIndexSlot)
-        self.uiRemoteServerSSHKeyPushButton.clicked.connect(self._remoteServerSSHKeyPushButtonSlot)
         self.uiEnableVMCheckBox.stateChanged.connect(self._enableGNS3VMSlot)
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
@@ -78,8 +76,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         index = self.uiLocalServerHostComboBox.findText("127.0.0.1")
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
-
-        self._remoteServerProtocolCurrentIndexSlot(0)
 
     def _tabChangedSlot(self, index):
         if index == 1:
@@ -151,36 +147,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         else:
             self.uiGNS3VMSettingsGroupBox.setEnabled(False)
 
-    def _remoteServerSSHKeyPushButtonSlot(self):
-        """
-        Slot to open a file browser and select an ssh key.
-        """
-
-        filter = ""
-        ssh_dir = os.path.join(os.path.expanduser("~"), ".ssh")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the SSH key", ssh_dir, filter)
-        if not path:
-            return
-
-        self.uiRemoteServerSSHKeyLineEdit.setText(path)
-
-    def _remoteServerProtocolCurrentIndexSlot(self, index):
-        if self.uiRemoteServerProtocolComboBox.currentText() == "SSH":
-            self.uiRemoteServerPasswordLabel.hide()
-            self.uiRemoteServerPasswordLineEdit.hide()
-            self.uiRemoteServerSSHPortLabel.show()
-            self.uiRemoteServerSSHPortSpinBox.show()
-            self.uiRemoteServerSSHKeyLabel.show()
-            self.uiRemoteServerSSHKeyLineEdit.show()
-            self.uiRemoteServerSSHKeyPushButton.show()
-        else:
-            self.uiRemoteServerPasswordLabel.show()
-            self.uiRemoteServerPasswordLineEdit.show()
-            self.uiRemoteServerSSHPortLabel.hide()
-            self.uiRemoteServerSSHPortSpinBox.hide()
-            self.uiRemoteServerSSHKeyLabel.hide()
-            self.uiRemoteServerSSHKeyLineEdit.hide()
-            self.uiRemoteServerSSHKeyPushButton.hide()
 
     def _useLocalServerAutoStartSlot(self, state):
         """
@@ -258,8 +224,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServerPortSpinBox.setValue(port)
         self.uiRAMLimitSpinBox.setValue(settings["ram_limit"])
         self.uiRemoteServerUserLineEdit.setText(settings["user"])
-        self.uiRemoteServerSSHKeyLineEdit.setText(settings.get("ssh_key", None))
-        self.uiRemoteServerSSHPortSpinBox.setValue(settings.get("ssh_port", 22))
 
     def _remoteServerChangedSlot(self):
         """
@@ -283,22 +247,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         ram_limit = self.uiRAMLimitSpinBox.value()
         user = self.uiRemoteServerUserLineEdit.text().strip()
         password = self.uiRemoteServerPasswordLineEdit.text().strip()
-        ssh_port = self.uiRemoteServerSSHPortSpinBox.value()
-        ssh_key = self.uiRemoteServerSSHKeyLineEdit.text().strip()
 
         if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
             return
         if port is None or port < 1:
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server port {}".format(port))
-            return
-
-        if protocol == "ssh" and len(user) == 0:
-            QtWidgets.QMessageBox.critical(self, "Remote server", "Missing user login")
-            return
-
-        if protocol == "ssh" and len(ssh_key) == 0:
-            QtWidgets.QMessageBox.critical(self, "Remote server", "Missing SSH key")
             return
 
         # check if the remote server is already defined
@@ -312,9 +266,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                     "port": port,
                     "ram_limit": ram_limit,
                     "user": user,
-                    "password": password,
-                    "ssh_port": ssh_port,
-                    "ssh_key": ssh_key}
+                    "password": password}
 
         # add a new entry in the tree widget
         item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)

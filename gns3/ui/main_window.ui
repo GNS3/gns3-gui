@@ -113,7 +113,8 @@ background-none;
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
     <addaction name="uiLabInstructionsAction"/>
-    <addaction name="uiExportDebugInformationsAction"/>
+    <addaction name="uiDoctorAction"/>
+    <addaction name="uiExportDebugInformationAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -420,7 +421,7 @@ background-none;
     </sizepolicy>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Topology Summary</string>
@@ -465,6 +466,48 @@ background-none;
        <column>
         <property name="text">
          <string>1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="uiServerSummaryDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::AllDockWidgetAreas</set>
+   </property>
+   <property name="windowTitle">
+    <string>Servers Summary</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="ServerSummaryView" name="uiServerSummaryTreeWidget">
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
         </property>
        </column>
       </widget>
@@ -601,24 +644,6 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Stop all devices</string>
-   </property>
-  </action>
-  <action name="uiShowNamesAction">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/show-hostname.svg</normaloff>:/icons/show-hostname.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show hostnames</string>
-   </property>
-   <property name="toolTip">
-    <string>Show hostnames</string>
-   </property>
-   <property name="statusTip">
-    <string>Show hostnames</string>
    </property>
   </action>
   <action name="uiConsoleAllAction">
@@ -970,7 +995,7 @@ background-none;
   </action>
   <action name="uiCheckForUpdateAction">
    <property name="text">
-    <string>Check for Update</string>
+    <string>Check for &amp;Update</string>
    </property>
    <property name="statusTip">
     <string>Check for Update</string>
@@ -1121,7 +1146,7 @@ background-none;
   </action>
   <action name="uiLabInstructionsAction">
    <property name="text">
-    <string>Lab instructions</string>
+    <string>&amp;Lab instructions</string>
    </property>
   </action>
   <action name="uiFitInViewAction">
@@ -1219,9 +1244,17 @@ background-none;
     <string>Import appliance</string>
    </property>
   </action>
-  <action name="uiExportDebugInformationsAction">
+  <action name="uiExportDebugInformationAction">
    <property name="text">
-    <string>Export debug informations</string>
+    <string>Export debug information</string>
+   </property>
+   <property name="toolTip">
+    <string>&amp;Export debug information</string>
+   </property>
+  </action>
+  <action name="uiDoctorAction">
+   <property name="text">
+    <string>GNS3 &amp;Doctor</string>
    </property>
   </action>
  </widget>
@@ -1245,6 +1278,11 @@ background-none;
    <class>TopologySummaryView</class>
    <extends>QTreeWidget</extends>
    <header>..topology_summary_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ServerSummaryView</class>
+   <extends>QTreeWidget</extends>
+   <header>..server_summary_view.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

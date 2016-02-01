@@ -20,6 +20,7 @@ Functions to start VNC console programs.
 """
 
 import sys
+import os
 import shlex
 import subprocess
 from .main_window import MainWindow
@@ -52,7 +53,7 @@ def vncConsole(host, port):
         else:
             # use arguments on other platforms
             args = shlex.split(command)
-            subprocess.Popen(args)
+            subprocess.Popen(args, env=os.environ)
     except (OSError, ValueError, subprocess.SubprocessError) as e:
         log.warning('could not start VNC program "{}": {}'.format(command, e))
         raise

@@ -19,6 +19,8 @@
 Topology summary view that list all the nodes, their status and connections.
 """
 
+import sip
+
 from .qt import QtGui, QtCore, QtWidgets
 from .node import Node
 from .topology import Topology
@@ -59,7 +61,8 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         """
         Changes the icon to show the node status (started, stopped etc.)
         """
-
+        if self is None or sip.isdeleted(self):
+            return
         self.setText(0, self._node.name())
         if self._node.status() == Node.started:
             self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))

@@ -228,36 +228,6 @@
             "additionalProperties": false
         },
 
-        "server_ssh": {
-            "properties": {
-                "protocol": { "enum": ["ssh"] },
-                "cloud": { "type": "boolean" },
-                "vm": { "type": "boolean" },
-                "host": { "$ref": "#/definitions/mandatory_string" },
-                "id": { "$ref": "#/definitions/numeric_id" },
-                "local": { "type": "boolean" },
-                "ram_limit": {
-                    "type": "integer",
-                    "minimum": 0
-                },
-                "port": { "$ref": "#/definitions/network_port" },
-                "ssh_key": { "$ref": "#/definitions/mandatory_string" },
-                "ssh_port": { "$ref": "#/definitions/network_port" },
-                "user": { "$ref": "#/definitions/mandatory_string" }
-            },
-            "required": [
-                "protocol",
-                "host",
-                "id",
-                "local",
-                "port",
-                "ssh_key",
-                "ssh_port",
-                "user"
-            ],
-            "additionalProperties": false
-        },
-
         "node": {
             "type": "object",
             "properties": {
@@ -692,13 +662,7 @@
                 },
                 "servers": {
                     "type": "array",
-                    "items": {
-                        "type": "object",
-                        "oneOf": [
-                            { "$ref": "#/definitions/server_http" },
-                            { "$ref": "#/definitions/server_ssh" }
-                        ]
-                    }
+                    "items": { "$ref": "#/definitions/server_http" }
                 }
             },
             "additionalProperties": false

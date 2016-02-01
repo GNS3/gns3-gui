@@ -43,6 +43,7 @@ from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.export_debug_dialog import ExportDebugDialog
+from .dialogs.doctor_dialog import DoctorDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
@@ -119,6 +120,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiServerSummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
 
@@ -218,7 +220,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiFitInViewAction.triggered.connect(self._fitInViewActionSlot)
         self.uiShowLayersAction.triggered.connect(self._showLayersActionSlot)
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
-        self.uiShowNamesAction.triggered.connect(self._showNamesActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
 
         # control menu connections
@@ -249,6 +250,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
+        self.uiDoctorAction.triggered.connect(self._doctorSlot)
         self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
 
         # browsers tool bar connections
@@ -674,16 +676,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to reset the port labels on the scene.
         """
 
-        # TODO: reset port labels
-        pass
-
-    def _showNamesActionSlot(self):
-        """
-        Slot called to show the node names on the scene.
-        """
-
-        # TODO: show/hide node names
-        pass
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, LinkItem):
+                item.resetPortLabels()
+                item.adjust()
 
     def _showPortNamesActionSlot(self):
         """
@@ -920,6 +916,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         dialog = ExportDebugDialog(self, self._project)
+        dialog.show()
+        dialog.exec_()
+
+    def _doctorSlot(self):
+        """
+        Slot to display a window for exporting debug information
+        """
+
+        dialog = DoctorDialog(self)
         dialog.show()
         dialog.exec_()
 

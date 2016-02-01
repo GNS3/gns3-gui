@@ -293,36 +293,36 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.deleteLinkSlot(link_id)
             return
 
-        # ugly multi-link management
-        # FIXME: taken from old GNS3 and has a bug!
-        multi = 0
-        d1 = 0
-        d2 = 1
-        link_items = source_item.links()
-        for link_item in link_items:
-            if link_item.destinationItem().node().id() == destination_item.node().id():
-                d1 += 1
-            if link_item.sourceItem().node().id() == destination_item.node().id():
-                d2 += 1
-
-        if len(link_items) > 0:
-            if d2 - d1 == 2:
-                source_port, destination_port = destination_port, source_port
-                source_item, destination_item = destination_item, source_item
-                multi = d1 + 1
-            elif d1 >= d2:
-                source_port, destination_port = destination_port, source_port
-                source_item, destination_item = destination_item, source_item
-                multi = d2
-            else:
-                multi = d1
-
-        # MAX 7 links on the scene between 2 nodes
-        if multi > 3:
-            multi = 0
+        # Multi-link management
+        #
+        # multi is the offset of the link
+        # +------+       multi = -1    Link 2  +-------+
+        # |      +-----------------------------+       |
+        # |  R1  |                             |   R2  |
+        # |      |        multi = 0    Link 1  |       |
+        # |      +-----------------------------+       |
+        # |      |        multi = 1    Link 3  |       |
+        # +------+-----------------------------+-------+
 
         if source_item == destination_item:
             multi = 0
+        else:
+            multi = 0
+            link_items = source_item.links()
+            for link_item in link_items:
+                if link_item.destinationItem().node().id() == destination_item.node().id():
+                    multi += 1
+                if link_item.sourceItem().node().id() == destination_item.node().id():
+                    multi += 1
+
+        # MAX 7 links on the scene between 2 nodes
+        if multi > 7:
+            multi = 0
+        # Pair item represent the bottom links
+        elif multi % 2 == 0:
+            multi = multi // 2
+        else:
+            multi = -multi // 2
 
         if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinationPort().linkType() == "Serial"):
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)

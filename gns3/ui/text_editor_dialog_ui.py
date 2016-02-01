@@ -2,15 +2,13 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/text_editor_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_TextEditorDialog(object):
-
     def setupUi(self, TextEditorDialog):
         TextEditorDialog.setObjectName("TextEditorDialog")
         TextEditorDialog.resize(457, 333)
@@ -30,7 +28,7 @@ class Ui_TextEditorDialog(object):
         self.gridLayout.addWidget(self.uiColorPushButton, 0, 1, 1, 1)
         self.uiRotationLabel = QtWidgets.QLabel(self.uiTextSettingsGroupBox)
         self.uiRotationLabel.setObjectName("uiRotationLabel")
-        self.gridLayout.addWidget(self.uiRotationLabel, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiRotationLabel, 2, 0, 1, 1)
         self.uiRotationSpinBox = QtWidgets.QSpinBox(self.uiTextSettingsGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -40,8 +38,14 @@ class Ui_TextEditorDialog(object):
         self.uiRotationSpinBox.setMinimum(-360)
         self.uiRotationSpinBox.setMaximum(360)
         self.uiRotationSpinBox.setObjectName("uiRotationSpinBox")
-        self.gridLayout.addWidget(self.uiRotationSpinBox, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiRotationSpinBox, 2, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiTextSettingsGroupBox)
+        self.uiApplyColorToAllItemsCheckBox = QtWidgets.QCheckBox(TextEditorDialog)
+        self.uiApplyColorToAllItemsCheckBox.setObjectName("uiApplyColorToAllItemsCheckBox")
+        self.verticalLayout.addWidget(self.uiApplyColorToAllItemsCheckBox)
+        self.uiApplyRotationToAllItemsCheckBox = QtWidgets.QCheckBox(TextEditorDialog)
+        self.uiApplyRotationToAllItemsCheckBox.setObjectName("uiApplyRotationToAllItemsCheckBox")
+        self.verticalLayout.addWidget(self.uiApplyRotationToAllItemsCheckBox)
         self.uiApplyTextToAllItemsCheckBox = QtWidgets.QCheckBox(TextEditorDialog)
         self.uiApplyTextToAllItemsCheckBox.setObjectName("uiApplyTextToAllItemsCheckBox")
         self.verticalLayout.addWidget(self.uiApplyTextToAllItemsCheckBox)
@@ -57,7 +61,7 @@ class Ui_TextEditorDialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(TextEditorDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -76,8 +80,10 @@ class Ui_TextEditorDialog(object):
         self.uiColorLabel.setText(_translate("TextEditorDialog", "Color:"))
         self.uiRotationLabel.setText(_translate("TextEditorDialog", "Rotation:"))
         self.uiRotationSpinBox.setToolTip(_translate("TextEditorDialog", "Rotation can be ajusted on the scene for a selected item while\n"
-                                                     "editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
+"editing (notes only) with ALT and \'+\' (or P) / ALT and \'-\' (or M)"))
         self.uiRotationSpinBox.setSuffix(_translate("TextEditorDialog", "°"))
+        self.uiApplyColorToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the color to all selected items"))
+        self.uiApplyRotationToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the rotation to all selected items"))
         self.uiApplyTextToAllItemsCheckBox.setText(_translate("TextEditorDialog", "Apply the text below to all selected items"))
         self.uiFontPushButton.setText(_translate("TextEditorDialog", "&Select font"))
 
