@@ -95,7 +95,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
             return False
 
         if self.currentPage() == self.uiImageWizardPage:
-            if self.uiImageListComboBox.currentIndex() < 0:
+            if self.uiImageListComboBox.currentIndex() < 0 and self.uiExistingImageRadioButton.isChecked():
                 QtWidgets.QMessageBox.critical(
                     self, "Docker images",
                     "There are no Docker images selected!")
@@ -115,7 +115,10 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
             index = self.uiImageListComboBox.currentIndex()
             return self.uiImageListComboBox.itemText(index)
         else:
-            return self.uiImageLineEdit.text()
+            name = self.uiImageLineEdit.text()
+            if not ":" in name:
+                name = "{}:latest".format(name)
+            return name
 
     def getSettings(self):
         """Returns the settings set in this Wizard.
