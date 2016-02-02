@@ -129,6 +129,8 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         path = Servers.instance().localServerSettings().get("ubridge_path")
         if path is None:
             return (0, None)
+        if not os.path.exists(path):
+            return (2, "Ubridge path {path} doesn't exists".format(path=path))
 
         request_setuid = False
         if sys.platform.startswith("linux"):
@@ -155,6 +157,8 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         path = Servers.instance().localServerSettings().get("dynamips_path")
         if path is None:
             return (0, None)
+        if not os.path.exists(path):
+            return (2, "Dynamips path {path} doesn't exists".format(path=path))
 
         if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
             caps = os.getxattr(path, "security.capability")
