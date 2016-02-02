@@ -122,7 +122,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
     def checkUbridgePermission(self):
         """Check if ubridge has the correct permission"""
-        if os.geteuid() == 0:
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
             # we are root, so we should have privileged access.
             return (0, None)
 
@@ -150,7 +150,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
     def checkDynamipsPermission(self):
         """Check if dynamips has the correct permission"""
-        if os.geteuid() == 0:
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
             # we are root, so we should have privileged access.
             return (0, None)
 
