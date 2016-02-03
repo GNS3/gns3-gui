@@ -221,7 +221,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         """
 
         qemu_module = Qemu.instance()
-        self._qemu_vms = copy.deepcopy(qemu_module.qemuVMs())
+        self._qemu_vms = copy.deepcopy(qemu_module.VMs())
         self._items.clear()
 
         for key, qemu_vm in self._qemu_vms.items():
@@ -240,4 +240,4 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         Saves the QEMU VM preferences.
         """
 
-        Qemu.instance().setQemuVMs(self._qemu_vms)
+        Qemu.instance().setVMs(self._qemu_vms)

@@ -20,9 +20,10 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 """
 
 import pickle
-from .qt import QtCore, QtGui, QtSvg, QtWidgets
+from .qt import QtCore, QtGui, QtSvg, QtWidgets, qpartial
 from .modules import MODULES
 from .node import Node
+from .dialogs.configuration_dialog import ConfigurationDialog
 
 
 class NodesView(QtWidgets.QTreeWidget):
@@ -81,6 +82,20 @@ class NodesView(QtWidgets.QTreeWidget):
             # TODO: would be nicer to use QErrorMessage but the link cannot be clicked by default
             #QtWidgets.QErrorMessage.qtHandler().showMessage('No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://community.gns3.com/community/software/documentation">Show documentation</a>')
 
+    def mousePressEvent(self, event):
+        """
+        Handles all mouse press events.
+
+        :param: QMouseEvent instance
+        """
+
+        # Check that an item has been selected and right click
+        if self.currentItem() is not None and event.button() == QtCore.Qt.RightButton:
+            self._showContextualMenu()
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
     def mouseMoveEvent(self, event):
         """
         Handles all mouse move events.
@@ -89,24 +104,66 @@ class NodesView(QtWidgets.QTreeWidget):
         :param: QMouseEvent instance
         """
 
-        # check the left button isn't used and that an item has been selected.
-        if event.buttons() != QtCore.Qt.LeftButton or self.currentItem() is None:
-            return
+        # Check that an item has been selected and left button clicked
+        if self.currentItem() is not None and event.buttons() == QtCore.Qt.LeftButton:
+            item = self.currentItem()
+            icon = item.icon(0)
 
+            # retrieve the node class from the item data
+            node = item.data(0, QtCore.Qt.UserRole)
+            mimedata = QtCore.QMimeData()
+
+            # pickle the node class, set the Mime type and data
+            # and start dragging the item.
+            data = pickle.dumps(node)
+            mimedata.setData("application/x-gns3-node", data)
+            drag = QtGui.QDrag(self)
+            drag.setMimeData(mimedata)
+            drag.setPixmap(icon.pixmap(self.iconSize()))
+            drag.setHotSpot(QtCore.QPoint(drag.pixmap().width(), drag.pixmap().height()))
+            drag.exec_(QtCore.Qt.CopyAction)
+            event.accept()
+
+    def _showContextualMenu(self):
         item = self.currentItem()
-        icon = item.icon(0)
-
-        # retrieve the node class from the item data
         node = item.data(0, QtCore.Qt.UserRole)
-        mimedata = QtCore.QMimeData()
+        node_module = None
+        for module in MODULES:
+            node_class = module.getNodeClass(node["class"])
+            if node_class:
+                break
 
-        # pickle the node class, set the Mime type and data
-        # and start dragging the item.
-        data = pickle.dumps(node)
-        mimedata.setData("application/x-gns3-node", data)
-        drag = QtGui.QDrag(self)
-        drag.setMimeData(mimedata)
-        drag.setPixmap(icon.pixmap(self.iconSize()))
-        drag.setHotSpot(QtCore.QPoint(drag.pixmap().width(), drag.pixmap().height()))
-        drag.exec_(QtCore.Qt.CopyAction)
-        event.accept()
+        if hasattr(module, "vmConfigurationPage"):
+            for vm_key, vm in module.instance().VMs().items():
+                if vm["name"] == node["name"]:
+                    break
+
+            menu = QtWidgets.QMenu()
+            configuration = QtWidgets.QAction("Configuration", menu)
+            configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
+            configuration.triggered.connect(qpartial(self._configurationSlot, vm, module))
+            menu.addAction(configuration)
+
+            configuration = QtWidgets.QAction("Delete", menu)
+            configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
+            configuration.triggered.connect(qpartial(self._deleteSlot, vm_key, vm, module))
+            menu.addAction(configuration)
+
+            menu.exec_(QtGui.QCursor.pos())
+
+    def _configurationSlot(self, vm, module, source):
+
+        dialog = ConfigurationDialog(vm["name"], vm, module.vmConfigurationPage()(), parent=self)
+        dialog.show()
+        if dialog.exec_():
+            module.instance().setVMs(module.instance().VMs())
+            self.refresh()
+
+    def _deleteSlot(self, vm_key, vm, module, source):
+
+        reply = QtWidgets.QMessageBox.question(self, "Appliance template", "Delete {}?".format(vm["name"]), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            vms = module.instance().VMs()
+            vms.pop(vm_key)
+            module.instance().setVMs(vms)
+            self.refresh()
