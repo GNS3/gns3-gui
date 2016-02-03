@@ -50,6 +50,29 @@ def test_qemu_vm_setup(qemu_vm, project):
         assert qemu_vm.vmDir() == "/tmp/test"
 
 
+def test_qemu_vm_setup_command_line(qemu_vm, project):
+
+    with patch('gns3.node.Node.httpPost') as mock:
+        qemu_vm.setup("VMNAME", base_name="test")
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/qemu/vms".format(project_id=project.id())
+
+        # Callback
+        params = {
+            "name": "QEMU1",
+            "vmname": "VMNAME",
+            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "vm_directory": "/tmp/test",
+            "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661",
+            "command_line": "/bin/fake"
+        }
+        args[1](params)
+        assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert qemu_vm.commandLine() == "/bin/fake"
+
+
 def test_qemu_vm_setup_md5_missing(qemu_vm, project):
 
     with patch('gns3.node.Node.httpPost') as mock:
