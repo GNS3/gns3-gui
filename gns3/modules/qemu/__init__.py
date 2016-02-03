@@ -107,7 +107,7 @@ class Qemu(Module):
         self._settings["vms"] = list(self._qemu_vms.values())
         self._saveSettings()
 
-    def qemuVMs(self):
+    def VMs(self):
         """
         Returns QEMU VMs settings.
 
@@ -116,7 +116,7 @@ class Qemu(Module):
 
         return self._qemu_vms
 
-    def setQemuVMs(self, new_qemu_vms):
+    def setVMs(self, new_qemu_vms):
         """
         Sets QEMU VM settings.
 
@@ -344,6 +344,11 @@ class Qemu(Module):
         from .pages.qemu_preferences_page import QemuPreferencesPage
         from .pages.qemu_vm_preferences_page import QemuVMPreferencesPage
         return [QemuPreferencesPage, QemuVMPreferencesPage]
+
+    @staticmethod
+    def vmConfigurationPage():
+        from .pages.qemu_vm_configuration_page import QemuVMConfigurationPage
+        return QemuVMConfigurationPage
 
     @staticmethod
     def instance():
