@@ -139,12 +139,12 @@ class NodesView(QtWidgets.QTreeWidget):
                     break
 
             menu = QtWidgets.QMenu()
-            configuration = QtWidgets.QAction("Configuration", menu)
+            configuration = QtWidgets.QAction("Configure Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
             configuration.triggered.connect(qpartial(self._configurationSlot, vm, module))
             menu.addAction(configuration)
 
-            configuration = QtWidgets.QAction("Delete", menu)
+            configuration = QtWidgets.QAction("Delete Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
             configuration.triggered.connect(qpartial(self._deleteSlot, vm_key, vm, module))
             menu.addAction(configuration)
@@ -161,7 +161,8 @@ class NodesView(QtWidgets.QTreeWidget):
 
     def _deleteSlot(self, vm_key, vm, module, source):
 
-        reply = QtWidgets.QMessageBox.question(self, "Appliance template", "Delete {}?".format(vm["name"]), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(vm["name"]),
+                                               QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             vms = module.instance().VMs()
             vms.pop(vm_key)
