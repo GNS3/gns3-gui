@@ -179,7 +179,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiCheckServerLabel.setText("GNS3 server requirements is OK you can continue the installation")
         else:
             if error:
-                msg = error
+                msg = result["message"]
             else:
                 msg = "The remote server doesn't support KVM. You need a Linux server or the GNS3 VM with VMware and CPU virtualization instructions."
             self.uiCheckServerLabel.setText(msg)
