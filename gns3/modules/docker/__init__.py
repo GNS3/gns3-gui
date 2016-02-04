@@ -80,7 +80,7 @@ class Docker(Module):
         self._settings["images"] = list(self._docker_images.values())
         self._saveSettings()
 
-    def dockerImages(self):
+    def VMs(self):
         """
         Returns Docker images settings.
 
@@ -90,13 +90,18 @@ class Docker(Module):
 
         return self._docker_images
 
-    def setDockerImages(self, new_docker_images):
+    def setVMs(self, new_docker_images):
         """Sets Docker image settings.
 
         :param new_iou_images: Docker images settings (dictionary)
         """
         self._docker_images = new_docker_images.copy()
         self._saveDockerImages()
+
+    @staticmethod
+    def vmConfigurationPage():
+        from .pages.docker_vm_configuration_page import DockerVMConfigurationPage
+        return DockerVMConfigurationPage
 
     def addNode(self, node):
         """Adds a node to this module.

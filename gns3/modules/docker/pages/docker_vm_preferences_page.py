@@ -201,7 +201,7 @@ class DockerVMPreferencesPage(
         """Loads the Docker VM preferences."""
 
         docker_module = Docker.instance()
-        self._docker_containers = copy.deepcopy(docker_module.dockerImages())
+        self._docker_containers = copy.deepcopy(docker_module.VMs())
         self._items.clear()
 
         for key, docker_image in self._docker_containers.items():
@@ -218,4 +218,4 @@ class DockerVMPreferencesPage(
 
     def savePreferences(self):
         """Saves the Docker image preferences."""
-        Docker.instance().setDockerImages(self._docker_containers)
+        Docker.instance().setVMs(self._docker_containers)
