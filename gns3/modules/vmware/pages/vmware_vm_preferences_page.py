@@ -171,7 +171,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         """
 
         vmware_module = VMware.instance()
-        self._vmware_vms = copy.deepcopy(vmware_module.vmwareVMs())
+        self._vmware_vms = copy.deepcopy(vmware_module.VMs())
         self._items.clear()
 
         for key, vmware_vm in self._vmware_vms.items():
@@ -190,4 +190,4 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Saves the VMware VM preferences.
         """
 
-        VMware.instance().setVMwareVMs(self._vmware_vms)
+        VMware.instance().setVMs(self._vmware_vms)

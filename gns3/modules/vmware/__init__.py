@@ -200,7 +200,7 @@ class VMware(Module):
         self._settings["vms"] = list(self._vmware_vms.values())
         self._saveSettings()
 
-    def vmwareVMs(self):
+    def VMs(self):
         """
         Returns VMware VMs settings.
 
@@ -209,7 +209,7 @@ class VMware(Module):
 
         return self._vmware_vms
 
-    def setVMwareVMs(self, new_vmware_vms):
+    def setVMs(self, new_vmware_vms):
         """
         Sets VMware VM settings.
 
@@ -218,6 +218,11 @@ class VMware(Module):
 
         self._vmware_vms = new_vmware_vms.copy()
         self._saveVMwareVMs()
+
+    @staticmethod
+    def vmConfigurationPage():
+        from .pages.vmware_vm_configuration_page import VMwareVMConfigurationPage
+        return VMwareVMConfigurationPage
 
     def addNode(self, node):
         """
