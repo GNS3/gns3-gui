@@ -141,7 +141,7 @@ class IOU(Module):
                 node.server().decreaseAllocatedRAM(node.settings()["ram"])
             self._nodes.remove(node)
 
-    def iouDevices(self):
+    def VMs(self):
         """
         Returns IOU devices settings.
 
@@ -150,7 +150,7 @@ class IOU(Module):
 
         return self._iou_devices
 
-    def setIOUDevices(self, new_iou_devices):
+    def setVMs(self, new_iou_devices):
         """
         Sets IOS devices settings.
 
@@ -159,6 +159,11 @@ class IOU(Module):
 
         self._iou_devices = new_iou_devices.copy()
         self._saveIOUDevices()
+
+    @staticmethod
+    def vmConfigurationPage():
+        from .pages.iou_device_configuration_page import iouDeviceConfigurationPage
+        return iouDeviceConfigurationPage
 
     def settings(self):
         """
