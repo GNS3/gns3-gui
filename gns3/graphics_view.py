@@ -1442,7 +1442,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.delete()
 
     @staticmethod
-    def allocateServer():
+    def allocateServer(node_data, module_instance):
         """
         Allocates a server.
 
@@ -1451,7 +1451,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         from .main_window import MainWindow
         mainwindow = MainWindow.instance()
-        server = server_select(mainwindow)
+
+        allow_local_server = False
+        if "builtin" in node_data:
+            allow_local_server = module_instance.settings()["use_local_server"]
+        server = server_select(mainwindow, allow_local_server=allow_local_server)
         if server is None:
             raise ModuleError("Please select a server")
         return server
@@ -1479,7 +1483,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
             if "server" not in node_data:
-                server = self.allocateServer()
+                server = self.allocateServer(node_data, instance)
             elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
             elif node_data["server"] == "vm":
