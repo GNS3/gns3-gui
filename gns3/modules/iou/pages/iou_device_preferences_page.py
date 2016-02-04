@@ -179,7 +179,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         """
 
         iou_module = IOU.instance()
-        self._iou_devices = copy.deepcopy(iou_module.iouDevices())
+        self._iou_devices = copy.deepcopy(iou_module.VMs())
         self._items.clear()
 
         for key, iou_device in self._iou_devices.items():
@@ -199,7 +199,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         """
 
         # self._iouImageSaveSlot()
-        IOU.instance().setIOUDevices(self._iou_devices)
+        IOU.instance().setVMs(self._iou_devices)
 
     def _imageUploadComplete(self):
         if self._upload_image_progress_dialog.wasCanceled():

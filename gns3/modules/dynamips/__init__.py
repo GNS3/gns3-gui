@@ -198,7 +198,7 @@ class Dynamips(Module):
                 node.server().decreaseAllocatedRAM(node.settings()["ram"])
             self._nodes.remove(node)
 
-    def iosRouters(self):
+    def VMs(self):
         """
         Returns IOS routers settings.
 
@@ -207,7 +207,7 @@ class Dynamips(Module):
 
         return self._ios_routers
 
-    def setIOSRouters(self, new_ios_routers):
+    def setVMs(self, new_ios_routers):
         """
         Sets IOS images settings.
 
@@ -216,6 +216,11 @@ class Dynamips(Module):
 
         self._ios_routers = new_ios_routers.copy()
         self._saveIOSRouters()
+
+    @staticmethod
+    def vmConfigurationPage():
+        from .pages.ios_router_configuration_page import IOSRouterConfigurationPage
+        return IOSRouterConfigurationPage
 
     def settings(self):
         """
@@ -424,7 +429,8 @@ class Dynamips(Module):
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
                  "categories": node_class.categories(),
-                 "symbol": node_class.defaultSymbol()}
+                 "symbol": node_class.defaultSymbol(),
+                 "builtin": True}
             )
 
         for ios_router in self._ios_routers.values():
