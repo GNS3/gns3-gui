@@ -2,15 +2,13 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuVMWizard(object):
-
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(623, 417)
@@ -21,20 +19,18 @@ class Ui_QemuVMWizard(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiServerTypeGroupBox.setObjectName("uiServerTypeGroupBox")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiServerTypeGroupBox)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.uiServerTypeGroupBox)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.uiRemoteRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
-        self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
+        self.verticalLayout_5.addWidget(self.uiRemoteRadioButton)
         self.uiVMRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiVMRadioButton.setObjectName("uiVMRadioButton")
-        self.horizontalLayout.addWidget(self.uiVMRadioButton)
+        self.verticalLayout_5.addWidget(self.uiVMRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
-        self.horizontalLayout.addWidget(self.uiLocalRadioButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout_5.addWidget(self.uiLocalRadioButton)
         self.verticalLayout_3.addWidget(self.uiServerTypeGroupBox)
         self.uiRemoteServersGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
@@ -64,7 +60,7 @@ class Ui_QemuVMWizard(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiOSDeprecatedWarningLabel = QtWidgets.QLabel(self.uiTypeWizardPage)
         self.uiOSDeprecatedWarningLabel.setStyleSheet("color: red;\n"
-                                                      "font: 18pt;")
+"font: 18pt;")
         self.uiOSDeprecatedWarningLabel.setWordWrap(True)
         self.uiOSDeprecatedWarningLabel.setObjectName("uiOSDeprecatedWarningLabel")
         self.verticalLayout.addWidget(self.uiOSDeprecatedWarningLabel)
@@ -133,8 +129,8 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_2.setChecked(False)
         self.uiNewImageRadioButton_2.setObjectName("uiNewImageRadioButton_2")
         self.horizontalLayout_3.addWidget(self.uiNewImageRadioButton_2)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
@@ -179,8 +175,8 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_4.setChecked(False)
         self.uiNewImageRadioButton_4.setObjectName("uiNewImageRadioButton_4")
         self.horizontalLayout_7.addWidget(self.uiNewImageRadioButton_4)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_7.addItem(spacerItem2)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_7.addItem(spacerItem1)
         self.verticalLayout_4.addLayout(self.horizontalLayout_7)
         self.formLayout_2 = QtWidgets.QFormLayout()
         self.formLayout_2.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
@@ -218,8 +214,8 @@ class Ui_QemuVMWizard(object):
         self.horizontalLayout_14.addWidget(self.uiKernelImageToolButton)
         self.formLayout_2.setLayout(1, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_14)
         self.verticalLayout_4.addLayout(self.formLayout_2)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_4.addItem(spacerItem3)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem2)
         self.horizontalLayout_10.addWidget(self.uiLinuxBootGroupBox)
         QemuVMWizard.addPage(self.uiASAWizardPage)
         self.uiDiskImageHdbWizardPage = QtWidgets.QWizardPage()
@@ -236,8 +232,8 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_5.setChecked(False)
         self.uiNewImageRadioButton_5.setObjectName("uiNewImageRadioButton_5")
         self.horizontalLayout_9.addWidget(self.uiNewImageRadioButton_5)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem4)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem3)
         self.verticalLayout_6.addLayout(self.horizontalLayout_9)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
@@ -273,9 +269,9 @@ class Ui_QemuVMWizard(object):
         self.uiServerWizardPage.setTitle(_translate("QemuVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("QemuVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Remote"))
-        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Local"))
+        self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM  on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM  on your local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote servers"))
         self.uiLoadBalanceCheckBox.setText(_translate("QemuVMWizard", "Load balance across all available remote servers"))
         self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on server:"))
@@ -314,3 +310,4 @@ class Ui_QemuVMWizard(object):
         self.uiHdbDiskImageLabel.setText(_translate("QemuVMWizard", "Disk image (hdb):"))
         self.uiHdbDiskImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
         self.uiHdbDiskImageCreateToolButton.setText(_translate("QemuVMWizard", "Create"))
+
