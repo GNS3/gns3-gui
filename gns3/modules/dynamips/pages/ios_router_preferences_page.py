@@ -390,7 +390,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         """
 
         dynamips_module = Dynamips.instance()
-        self._ios_routers = copy.deepcopy(dynamips_module.iosRouters())
+        self._ios_routers = copy.deepcopy(dynamips_module.VMs())
         self._items.clear()
 
         for key, ios_router in self._ios_routers.items():
@@ -409,4 +409,4 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         Saves the IOS router preferences.
         """
 
-        Dynamips.instance().setIOSRouters(self._ios_routers)
+        Dynamips.instance().setVMs(self._ios_routers)
