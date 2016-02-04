@@ -843,6 +843,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"), items)):
+            # Action: Get command line
+            show_in_file_manager_action = QtWidgets.QAction("Command line", menu)
+            show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
+            show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
+            menu.addAction(show_in_file_manager_action)
+
         # item must have no parent
         if True in list(map(lambda item: item.parentItem() is None, items)):
 
@@ -1204,6 +1211,31 @@ class GraphicsView(QtWidgets.QGraphicsView):
                                 QtWidgets.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
                 else:
                     QtWidgets.QMessageBox.warning(self, "Capture", "No port available for packet capture on {}".format(node.name()))
+
+    def getCommandLineSlot(self):
+        """
+        Slot to receive events from the get command line action in the
+        contextual menu.
+        """
+
+        items = self.scene().selectedItems()
+        if len(items) != 1:
+            QtWidgets.QMessageBox.critical(self, "Command line", "Please select only one router")
+            return
+        item = items[0]
+        if isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"):
+            router = item.node()
+            if router.commandLine() is None:
+                QtWidgets.QMessageBox.warning(self, "Command line", "Get command line is not supported for this type of node.")
+            elif router.commandLine() == '':
+                QtWidgets.QMessageBox.warning(self, "Command line", "Please start the node in order to get the command line.")
+            else:
+                dialog = QtWidgets.QInputDialog(self)
+                dialog.setOptions(QtWidgets.QInputDialog.NoButtons)
+                dialog.setLabelText("Command used to start the VM:")
+                dialog.setTextValue(router.commandLine())
+                dialog.show()
+                dialog.exec_()
 
     def idlepcActionSlot(self):
         """

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>367</height>
+    <width>598</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,11 +29,11 @@
       <property name="title">
        <string>Server type</string>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QRadioButton" name="uiRemoteRadioButton">
          <property name="text">
-          <string>Remote</string>
+          <string>Run the VMware VM on a remote computer</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -43,22 +43,9 @@
        <item>
         <widget class="QRadioButton" name="uiLocalRadioButton">
          <property name="text">
-          <string>Local</string>
+          <string>Run the VMware VM on your local computer</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

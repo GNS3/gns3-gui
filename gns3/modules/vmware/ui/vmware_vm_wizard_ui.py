@@ -2,18 +2,16 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwareVMWizard(object):
-
     def setupUi(self, VMwareVMWizard):
         VMwareVMWizard.setObjectName("VMwareVMWizard")
-        VMwareVMWizard.resize(514, 367)
+        VMwareVMWizard.resize(598, 453)
         VMwareVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -21,17 +19,15 @@ class Ui_VMwareVMWizard(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiServerTypeGroupBox.setObjectName("uiServerTypeGroupBox")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiServerTypeGroupBox)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiServerTypeGroupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.uiRemoteRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
-        self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
+        self.verticalLayout.addWidget(self.uiRemoteRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
-        self.horizontalLayout.addWidget(self.uiLocalRadioButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout.addWidget(self.uiLocalRadioButton)
         self.gridLayout_2.addWidget(self.uiServerTypeGroupBox, 0, 0, 1, 1)
         self.uiRemoteServersGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
@@ -81,11 +77,12 @@ class Ui_VMwareVMWizard(object):
         self.uiServerWizardPage.setTitle(_translate("VMwareVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("VMwareVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("VMwareVMWizard", "Remote"))
-        self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Local"))
+        self.uiRemoteRadioButton.setText(_translate("VMwareVMWizard", "Run the VMware VM on a remote computer"))
+        self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Run the VMware VM on your local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("VMwareVMWizard", "Remote servers"))
         self.uiRemoteServersLabel.setText(_translate("VMwareVMWizard", "Run on server:"))
         self.uiVirtualBoxWizardPage.setTitle(_translate("VMwareVMWizard", "VMware Virtual Machine"))
         self.uiVirtualBoxWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a VMware virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VMwareVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMWizard", "Use as a linked base VM (experimental)"))
+

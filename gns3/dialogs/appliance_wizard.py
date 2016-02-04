@@ -179,7 +179,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiCheckServerLabel.setText("GNS3 server requirements is OK you can continue the installation")
         else:
             if error:
-                msg = error
+                msg = result["message"]
             else:
                 msg = "The remote server doesn't support KVM. You need a Linux server or the GNS3 VM with VMware and CPU virtualization instructions."
             self.uiCheckServerLabel.setText(msg)
@@ -314,7 +314,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
 
         config = Config()
-        worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, self._appliance.image_dir_name()), disk["filename"]), allowed_exceptions=[OSError])
+        worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, self._appliance.image_dir_name()), disk["filename"]), allowed_exceptions=[OSError, ValueError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Import the appliance...", None, busy=True, parent=self)
         if not progress_dialog.exec_():
             return

@@ -122,13 +122,15 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
     def checkUbridgePermission(self):
         """Check if ubridge has the correct permission"""
-        if os.geteuid() == 0:
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
             # we are root, so we should have privileged access.
             return (0, None)
 
         path = Servers.instance().localServerSettings().get("ubridge_path")
         if path is None:
             return (0, None)
+        if not os.path.exists(path):
+            return (2, "Ubridge path {path} doesn't exists".format(path=path))
 
         request_setuid = False
         if sys.platform.startswith("linux"):
@@ -148,13 +150,15 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
     def checkDynamipsPermission(self):
         """Check if dynamips has the correct permission"""
-        if os.geteuid() == 0:
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
             # we are root, so we should have privileged access.
             return (0, None)
 
         path = Servers.instance().localServerSettings().get("dynamips_path")
         if path is None:
             return (0, None)
+        if not os.path.exists(path):
+            return (2, "Dynamips path {path} doesn't exists".format(path=path))
 
         if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
             caps = os.getxattr(path, "security.capability")

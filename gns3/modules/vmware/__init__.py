@@ -85,21 +85,11 @@ class VMware(Module):
         if sys.platform.startswith("win"):
             vmrun_path = shutil.which("vmrun")
             if vmrun_path is None:
-                # look for vmrun.exe in default VMware Workstation directory
-                vmrun_ws = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware Workstation\vmrun.exe")
-                if os.path.exists(vmrun_ws):
-                    vmrun_path = vmrun_ws
-                else:
-                    # look for vmrun.exe using the directory listed in the registry
-                    vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
+                # look for vmrun.exe using the VMware Workstation directory listed in the registry
+                vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
                 if vmrun_path is None:
-                    # look for vmrun.exe in default VMware VIX directory
-                    vmrun_vix = os.path.expandvars(r"%PROGRAMFILES(X86)%\VMware\VMware VIX\vmrun.exe")
-                    if os.path.exists(vmrun_vix):
-                        vmrun_path = vmrun_vix
-                    else:
-                        # look for vmrun.exe using the directory listed in the registry
-                        vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
+                    # look for vmrun.exe using the VIX directory listed in the registry
+                    vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
         elif sys.platform.startswith("darwin"):
             vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
             if os.path.exists(vmware_fusion_vmrun_path):
@@ -112,10 +102,17 @@ class VMware(Module):
         return os.path.abspath(vmrun_path)
 
     @staticmethod
-    def _determineHostType(self):
+    def _determineHostType():
 
         if sys.platform.startswith("win"):
-            output = self._settings["vmrun_path"]
+            import winreg
+            try:
+                # the Core key indicates which VMware core product is installed (VMware Player vs VMware Workstation)
+                hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Wow6432Node\VMware, Inc.")
+                output, _ = winreg.QueryValueEx(hkey, "Core")
+                winreg.CloseKey(hkey)
+            except OSError:
+                return "ws"
         elif sys.platform.startswith("darwin"):
             return "fusion"
         else:
@@ -135,10 +132,10 @@ class VMware(Module):
             else:
                 log.error("vmware command not found")
                 return "ws"
-        if "VMware Workstation" in output:
-            return "ws"
-        else:
+        if "VMware Player" in output:
             return "player"
+        # Workstation is the default
+        return "ws"
 
     def _loadSettings(self):
         """
@@ -149,7 +146,7 @@ class VMware(Module):
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, VMWARE_SETTINGS)
         if not os.path.exists(self._settings["vmrun_path"]):
             self._settings["vmrun_path"] = self.findVmrun()
-            self._settings["host_type"] = self._determineHostType(self)
+            self._settings["host_type"] = self._determineHostType()
         self._loadVMwareVMs()
 
     def _saveSettings(self):

@@ -36,6 +36,7 @@ class VM(Node):
 
         self._vm_id = None
         self._vm_directory = None
+        self._command_line = None
 
     def vm_id(self):
         """
@@ -54,6 +55,15 @@ class VM(Node):
         """
 
         return self._vm_directory
+
+    def commandLine(self):
+        """
+        Return the command line used to run the VM
+
+        :returns: identifier (string)
+        """
+
+        return self._command_line
 
     def delete(self):
         """
@@ -110,6 +120,8 @@ class VM(Node):
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
+            if result:
+                self._setupCallback(result)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -132,6 +144,9 @@ class VM(Node):
 
         if "vm_directory" in result:
             self._vm_directory = result["vm_directory"]
+
+        if "command_line" in result:
+            self._command_line = result["command_line"]
 
         # update the settings using the defaults sent by the server
         for name, value in result.items():

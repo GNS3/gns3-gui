@@ -1,5 +1,42 @@
 # Change Log
 
+## 1.4.1 01/02/2016
+
+* Improvement to detect VMware Player on Linux. Ref #970.
+* You can move Dock widgets everywhere
+* Link to download VIX api
+* Fix SSH present in the server preferences
+* Check dynamips and ubridge permission.
+* Show a dialog for checking some common issues
+* Show a summary with server usages
+* Close project on VM when closing the project on all servers
+* Allow to not rotate the text when changing all text colors
+* Raise an error when psutil is too old
+* Fix a race condition when closing the server
+* Fix a very very rare crash in topology summary view
+* Reset port label positions. Fixes #811.
+* Drop SSH support
+* Fix inversion of port label when loading a topology
+* Fix error when importing Windows XP OVA
+* Warn if configuration file contain invalid unicode characters
+* Fix a crash when importing some OVA
+* Reset the telnet command on Mac
+* Fix only one console work for OSX
+* Fix a rare crash when loading topology with missing image
+* Fix a rare race condition when inserting an image
+* Fix a crash when pid file is empty
+* Fix a rare crash in progress dialogs
+* Fix a crash if you don't have vms when importing a gns3a
+* Warn user during appliance install if server is not avaible
+* Fix error when you stop the GNS3 VM but break the config before
+* startup_config is not mandatory inside .gns3 file
+* Fix wrong host on SSH connection
+* Fix select of image broken if you need to select multiple images
+* Fix a crash when changing qemu cluster size to more than 512
+* Fix IOU support in gns3a
+* Add urxvt support
+* Add a step in the wizard checking KVM support
+
 ## 1.4.0 12/01/2016
 
 * Fix rare crash when showing the progress dialog

@@ -147,6 +147,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
+
+        self.setWindowTitle("GNS3")
+
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
 
@@ -1451,9 +1454,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if not path:
             self.setWindowFilePath("Unsaved project")
+            self.setWindowTitle("Unsaved project - GNS3")
         else:
             path = os.path.normpath(path)
             self.setWindowFilePath(path)
+            self.setWindowTitle("{path} - GNS3".format(path=os.path.basename(path)))
             self._updateRecentFileSettings(path)
             self._updateRecentFileActions()
 

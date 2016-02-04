@@ -107,8 +107,13 @@ class VMWizard(QtWidgets.QWizard):
 
         if self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
-            for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem(server.url(), server)
+
+            if len(Servers.instance().remoteServers().values()) == 0:
+                self.uiRemoteRadioButton.setEnabled(False)
+            else:
+                for server in Servers.instance().remoteServers().values():
+                    self.uiRemoteServersComboBox.addItem(server.url(), server)
+
             if hasattr(self, "uiVMRadioButton") and not GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setEnabled(False)
             if hasattr(self, "uiVMRadioButton") and GNS3VM.instance().isRunning():

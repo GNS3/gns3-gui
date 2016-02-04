@@ -2,15 +2,13 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOUDeviceWizard(object):
-
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
         IOUDeviceWizard.resize(585, 423)
@@ -21,20 +19,18 @@ class Ui_IOUDeviceWizard(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiServerTypeGroupBox.setObjectName("uiServerTypeGroupBox")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiServerTypeGroupBox)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiServerTypeGroupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.uiRemoteRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
-        self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
+        self.verticalLayout.addWidget(self.uiRemoteRadioButton)
         self.uiVMRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiVMRadioButton.setObjectName("uiVMRadioButton")
-        self.horizontalLayout.addWidget(self.uiVMRadioButton)
+        self.verticalLayout.addWidget(self.uiVMRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
-        self.horizontalLayout.addWidget(self.uiLocalRadioButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout.addWidget(self.uiLocalRadioButton)
         self.gridLayout_2.addWidget(self.uiServerTypeGroupBox, 0, 0, 1, 1)
         self.uiRemoteServersGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
@@ -88,8 +84,8 @@ class Ui_IOUDeviceWizard(object):
         self.uiNewImageRadioButton.setChecked(False)
         self.uiNewImageRadioButton.setObjectName("uiNewImageRadioButton")
         self.horizontalLayout_2.addWidget(self.uiNewImageRadioButton)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
         self.formLayout_8 = QtWidgets.QFormLayout()
         self.formLayout_8.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
@@ -129,9 +125,9 @@ class Ui_IOUDeviceWizard(object):
         self.uiServerWizardPage.setTitle(_translate("IOUDeviceWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a server type to run your new IOU device."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOUDeviceWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Remote"))
-        self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Local"))
+        self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on a remote computers"))
+        self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on your local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUDeviceWizard", "Remote servers"))
         self.uiLoadBalanceCheckBox.setText(_translate("IOUDeviceWizard", "Load balance across all available remote servers"))
         self.uiRemoteServersLabel.setText(_translate("IOUDeviceWizard", "Run on server:"))
@@ -144,3 +140,4 @@ class Ui_IOUDeviceWizard(object):
         self.uiTypeLabel.setText(_translate("IOUDeviceWizard", "Type:"))
         self.uiIOUImageLabel.setText(_translate("IOUDeviceWizard", "IOU image:"))
         self.uiIOUImageToolButton.setText(_translate("IOUDeviceWizard", "&Browse..."))
+
