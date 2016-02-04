@@ -349,8 +349,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         if ios_router["private_config"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Private-config:", ios_router["private_config"]])
         if ios_router["platform"] == "c7200":
-            QtWidgets.QTreeWidgetItem(section_item, ["Midplane:", ios_router["midplane"]])
-            QtWidgets.QTreeWidgetItem(section_item, ["NPE:", ios_router["npe"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Midplane:", ios_router.get("midplane", "vxr")])
+            QtWidgets.QTreeWidgetItem(section_item, ["NPE:", ios_router.get("npe", "npe-400")])
 
         # fill out the Memories and disk section
         section_item = self._createSectionItem("Memories and disks")
