@@ -27,6 +27,7 @@ from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..utils.wait_for_connection_worker import WaitForConnectionWorker
+from ..version import __version__
 
 
 class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
@@ -46,6 +47,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
         self._server = Servers.instance().localServer()
+        self.uiGNS3VMDownloadLinkUrlLabel.setText('')
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
@@ -76,6 +78,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Slot to refresh the VMware VMs list.
         """
 
+        download_url = "https://github.com/GNS3/gns3-gui/releases/download/v{version}/GNS3.VM.VMware.Workstation.{version}.zip".format(version=__version__)
+        self.uiGNS3VMDownloadLinkUrlLabel.setText('If you don\'t have the GNS3 Virtual Machine you can <a href="{download_url}">download it here</a>.<br>And import the VM in the virtualization software and hit refresh.'.format(download_url=download_url))
         self.uiVirtualBoxRadioButton.setChecked(False)
         from gns3.modules import VMware
         settings = VMware.instance().settings()
@@ -89,6 +93,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Slot to refresh the VirtualBox VMs list.
         """
 
+        download_url = "https://github.com/GNS3/gns3-gui/releases/download/v{version}/GNS3.VM.VirtualBox.{version}.zip".format(version=__version__)
+        self.uiGNS3VMDownloadLinkUrlLabel.setText('If you don\'t have the GNS3 Virtual Machine you can <a href="{download_url}">download it here</a>.<br>And import the VM in the virtualization software and hit refresh.'.format(download_url=download_url))
         self.uiVmwareRadioButton.setChecked(False)
         from gns3.modules import VirtualBox
         settings = VirtualBox.instance().settings()

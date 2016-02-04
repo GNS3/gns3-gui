@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>469</height>
+    <width>739</width>
+    <height>541</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>688</width>
-    <height>469</height>
+    <width>775</width>
+    <height>563</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -157,6 +157,16 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="uiGNS3VMDownloadLinkUrlLabel">
+      <property name="text">
+       <string>If you don't have the VM you can &lt;a href=&quot;https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip&quot;&gt;download it here&lt;/a&gt;. And import the VM in the virtualization software and hit refresh.</string>
+      </property>
+      <property name="openExternalLinks">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QLabel" name="uiVMNameLabel">
