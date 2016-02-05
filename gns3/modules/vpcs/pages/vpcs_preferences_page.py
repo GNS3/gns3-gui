@@ -147,6 +147,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
+        self.uiBaseNamePrefixLineEdit.setText(settings["base_name_prefix"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiSymbolLineEdit.setText(settings["symbol"])
         self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
@@ -177,11 +178,19 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
                         "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
                         "category": self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())}
 
+        # save the symbol path
         symbol_path = self.uiSymbolLineEdit.text()
         pixmap = QtGui.QPixmap(symbol_path)
         if pixmap.isNull():
             QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
         else:
             new_settings["symbol"] = symbol_path
+
+        # save the base name prefix
+        base_name_prefix = self.uiBaseNamePrefixLineEdit.text().strip()
+        if '{0}' not in base_name_prefix and '{id}' not in base_name_prefix:
+            QtWidgets.QMessageBox.critical(self, "Base name prefix", "The base name prefix must contain at least {0} or {id}")
+        else:
+            new_settings["base_name_prefix"] = base_name_prefix
 
         VPCS.instance().setSettings(new_settings)

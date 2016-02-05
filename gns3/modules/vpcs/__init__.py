@@ -167,7 +167,11 @@ class VPCS(Module):
         if script_file:
             vm_settings["script_file"] = script_file
 
-        node.setup(additional_settings=vm_settings)
+        base_name_prefix = VPCS_SETTINGS["base_name_prefix"]
+        if self._settings["base_name_prefix"]:
+            base_name_prefix = self._settings["base_name_prefix"]
+
+        node.setup(additional_settings=vm_settings, base_name_prefix=base_name_prefix)
 
     def reset(self):
         """

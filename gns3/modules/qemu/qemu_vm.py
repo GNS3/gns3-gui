@@ -102,10 +102,10 @@ class QemuVM(VM):
                 port_name = self._port_name_format.format(
                     interface_number,
                     segment_number,
-                    port0 = interface_number,
-                    port1 = 1 + interface_number,
-                    segment0 = segment_number,
-                    segment1 = 1 + segment_number
+                    port0=interface_number,
+                    port1=1 + interface_number,
+                    segment0=segment_number,
+                    segment1=1 + segment_number
                 )
                 interface_number += 1
                 if self._port_segment_size and interface_number % self._port_segment_size == 0:

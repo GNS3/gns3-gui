@@ -452,6 +452,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         }
 
         if self.uiEtherSwitchCheckBox.isChecked():
+            settings["base_name_prefix"] = "ESW"
             settings["startup_config"] = get_default_base_config(self._base_etherswitch_startup_config_template)
             settings["symbol"] = ":/symbols/multilayer_switch.svg"
             settings["disk0"] = 1  # adds 1MB disk to store vlan.dat

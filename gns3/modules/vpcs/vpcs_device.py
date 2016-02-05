@@ -61,7 +61,7 @@ class VPCSDevice(VM):
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
 
-    def setup(self, name=None, vm_id=None, additional_settings={}):
+    def setup(self, name=None, vm_id=None, additional_settings={}, base_name_prefix="PC"):
         """
         Setups this VPCS device.
 
@@ -72,7 +72,7 @@ class VPCSDevice(VM):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName("PC")
+            name = self.allocateName(base_name_prefix)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this VPCS device")

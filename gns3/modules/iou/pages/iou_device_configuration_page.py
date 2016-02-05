@@ -171,6 +171,14 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiGeneralgroupBox.hide()
 
         if not node:
+            # these are template settings
+
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
+
+            # load the base name prefix
+            self.uiBaseNamePrefixLineEdit.setText(settings["base_name_prefix"])
+
             # load the startup-config and private-config
             self.uiStartupConfigLineEdit.setText(settings["startup_config"])
             self.uiPrivateConfigLineEdit.setText(settings["private_config"])
@@ -184,6 +192,8 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
         else:
+            self.uiBaseNamePrefixLabel.hide()
+            self.uiBaseNamePrefixLineEdit.hide()
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
@@ -244,6 +254,15 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             del settings["console"]
 
         if not node:
+            # these are template settings
+
+            # save the base name prefix
+            base_name_prefix = self.uiBaseNamePrefixLineEdit.text().strip()
+            if '{0}' not in base_name_prefix and '{id}' not in base_name_prefix:
+                QtWidgets.QMessageBox.critical(self, "Base name prefix", "The base name prefix must contain at least {0} or {id}")
+            else:
+                settings["base_name_prefix"] = base_name_prefix
+
             # save the startup-config
             startup_config = self.uiStartupConfigLineEdit.text().strip()
             if not startup_config:
