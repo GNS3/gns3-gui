@@ -180,7 +180,8 @@ class Topology:
         """
 
         for l in self._links:
-            if (l._source_node == link._destination_node and l._source_port == link._destination_port) or (l._source_node == link._source_node and l._source_port == link._source_port):
+            if (l._source_node == link._destination_node and l._source_port == link._destination_port) or \
+                    (l._source_node == link._source_node and l._source_port == link._source_port):
                 return False
 
         self._links.append(link)
@@ -404,6 +405,8 @@ class Topology:
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
+        if main_window.uiShowPortNamesAction.isChecked():
+            topology["show_port_names"] = True
         view = main_window.uiGraphicsView
         if "nodes" in topology["topology"]:
             for item in view.scene().items():
@@ -608,6 +611,11 @@ class Topology:
 
         # auto start option
         self._auto_start = topology.get("auto_start", False)
+
+        # show port name option
+        if topology.get("show_port_names", False):
+            main_window.uiShowPortNamesAction.setChecked(True)
+            LinkItem.showPortLabels(True)
 
         # deactivate the unsaved state support
         main_window.ignoreUnsavedState(True)
@@ -916,7 +924,7 @@ class Topology:
 
     def _linkCreatedSlot(self, topology, link_id):
         """
-        Called when a link is successfuly created
+        Called when a link is successfully created
         """
 
         self._initialized_links.append(link_id)

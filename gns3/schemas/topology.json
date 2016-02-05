@@ -656,6 +656,9 @@
         },
         "name": { "$ref": "#/definitions/mandatory_string" },
         "project_id": { "$ref": "#/definitions/optional_uuid" },
+        "show_port_names": {
+            "type": "boolean"
+        },
         "resources_type": {
             "enum": ["local"]
         },
