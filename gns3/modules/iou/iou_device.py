@@ -396,12 +396,8 @@ class IOUDevice(VM):
         :returns: representation of the node (dictionary)
         """
 
-        iou = {"id": self.id(),
-               "vm_id": self._vm_id,
-               "type": self.__class__.__name__,
-               "description": str(self),
-               "properties": {},
-               "server_id": self._server.id()}
+        iou = super().dump()
+        iou["vm_id"] = self._vm_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -423,6 +419,8 @@ class IOUDevice(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
 
         # for backward compatibility
         vm_id = node_info.get("iou_id")

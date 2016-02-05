@@ -296,14 +296,10 @@ class QemuVM(VM):
         :returns: representation of the node (dictionary)
         """
 
-        qemu_vm = {"id": self.id(),
-                   "vm_id": self._vm_id,
-                   "linked_clone": self._linked_clone,
-                   "type": self.__class__.__name__,
-                   "description": str(self),
-                   "properties": {},
-                   "port_name_format": self._port_name_format,
-                   "server_id": self._server.id()}
+        qemu_vm = super().dump()
+        qemu_vm["vm_id"] = self._vm_id,
+        qemu_vm["linked_clone"] = self._linked_clone
+        qemu_vm["port_name_format"] = self._port_name_format
 
         if self._port_segment_size:
             qemu_vm["port_segment_size"] = self._port_segment_size
@@ -369,6 +365,7 @@ class QemuVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
+        super().load(node_info)
         # for backward compatibility
         vm_id = node_info.get("qemu_id")
         if not vm_id:

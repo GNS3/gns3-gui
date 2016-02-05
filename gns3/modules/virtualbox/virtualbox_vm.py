@@ -356,14 +356,10 @@ class VirtualBoxVM(VM):
         :returns: representation of the node (dictionary)
         """
 
-        vbox_vm = {"id": self.id(),
-                   "vm_id": self._vm_id,
-                   "linked_clone": self._linked_clone,
-                   "type": self.__class__.__name__,
-                   "description": str(self),
-                   "properties": {},
-                   "port_name_format": self._port_name_format,
-                   "server_id": self._server.id()}
+        vbox_vm = super().dump()
+        vbox_vm["vm_id"] = self._vm_id
+        vbox_vm["linked_clone"] = self._linked_clone
+        vbox_vm["port_name_format"] = self._port_name_format
 
         if self._port_segment_size:
             vbox_vm["port_segment_size"] = self._port_segment_size
@@ -390,6 +386,8 @@ class VirtualBoxVM(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
 
         # for backward compatibility
         vm_id = node_info.get("vbox_id")

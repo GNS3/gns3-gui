@@ -41,6 +41,7 @@ from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
+from .dialogs.console_command_dialog import ConsoleCommandDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
@@ -760,6 +761,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             console_action.triggered.connect(self.consoleActionSlot)
             menu.addAction(console_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
+            console_edit_action = QtWidgets.QAction("Edit console", menu)
+            console_edit_action.setIcon(QtGui.QIcon(':/icons/console_edit.svg'))
+            console_edit_action.triggered.connect(self.consoleEditActionSlot)
+            menu.addAction(console_edit_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
             aux_console_action = QtWidgets.QAction("Auxiliary console", menu)
             aux_console_action.setIcon(QtGui.QIcon(':/icons/aux-console.svg'))
@@ -1006,38 +1013,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
             # returns True to ignore this node.
             return True
 
-        if hasattr(node, "serialConsole") and node.serialConsole():
-            try:
-                from .serial_console import serialConsole
-                serialConsole(node.name(), node.serialPipe())
-            except (OSError, ValueError) as e:
-                QtWidgets.QMessageBox.critical(self, "Console", "Cannot start serial console application: {}".format(e))
-                return False
-        else:
-            name = node.name()
-            if aux:
-                console_port = node.auxConsole()
-                if console_port is None:
-                    QtWidgets.QMessageBox.critical(self, "Console", "AUX console port not allocated for {}".format(name))
-                    return False
-            else:
-                console_port = node.console()
-
-            console_type = "telnet"
-            if "console_type" in node.settings():
-                console_type = node.settings()["console_type"]
-
-            try:
-                from .telnet_console import nodeTelnetConsole
-                from .vnc_console import vncConsole
-
-                if console_type == "telnet":
-                    nodeTelnetConsole(name, node.server(), console_port)
-                elif console_type == "vnc":
-                    vncConsole(node.server().host(), console_port)
-            except (OSError, ValueError) as e:
-                QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
-                return False
+        try:
+            node.openConsole(aux)
+        except (OSError, ValueError) as e:
+            QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
+            return False
         return True
 
     def consoleFromItems(self, items):
@@ -1068,6 +1048,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         self.consoleFromItems(self.scene().selectedItems())
+
+    def consoleEditActionSlot(self):
+        """
+        Allow user to use a custom console for this VM
+        """
+
+        current_cmd = None
+        console_type = "telnet"
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
+                current_cmd = item.node().consoleCommand()
+                console_type = item.node().consoleType()
+
+        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type=console_type, current=current_cmd)
+        if ok:
+            for item in self.scene().selectedItems():
+                if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
+                    node = item.node()
+                    node.setCustomConsoleCommand(cmd)
 
     def auxConsoleFromItems(self, items):
         """

@@ -663,13 +663,9 @@ class Router(VM):
         :returns: representation of the node (dictionary)
         """
 
-        router = {"id": self.id(),
-                  "vm_id": self._vm_id,
-                  "dynamips_id": self._dynamips_id,
-                  "type": self.__class__.__name__,
-                  "description": str(self),
-                  "properties": {},
-                  "server_id": self._server.id()}
+        router = super().dump()
+        router["vm_id"] = self._vm_id,
+        router["dynamips_id"] = self._dynamips_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -691,6 +687,8 @@ class Router(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
 
         # for backward compatibility
         vm_id = dynamips_id = node_info.get("router_id")

@@ -218,12 +218,8 @@ class VPCSDevice(VM):
         :returns: representation of the node (dictionary)
         """
 
-        vpcs_device = {"id": self.id(),
-                       "vm_id": self._vm_id,
-                       "type": self.__class__.__name__,
-                       "description": str(self),
-                       "properties": {},
-                       "server_id": self._server.id()}
+        vpcs_device = super().dump()
+        vpcs_device["vm_id"] = self._vm_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -249,6 +245,7 @@ class VPCSDevice(VM):
         :param node_info: representation of the node (dictionary)
         """
 
+        super().load(node_info)
         # for backward compatibility
         vm_id = node_info.get("vpcs_id")
         if not vm_id:

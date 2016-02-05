@@ -290,6 +290,7 @@
                 "x": { "type": "number" },
                 "y": { "type": "number" },
                 "z": { "type": "number" },
+                "custom_console_command": { "$ref": "#/definitions/mandatory_string" },
                 "properties": {
                     "type": "object",
                     "oneOf": [

@@ -289,33 +289,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project = project
         self._setCurrentFile(project.topologyFile())
 
-    def telnetConsoleCommand(self):
-        """
-        Returns the Telnet console command line.
-
-        :returns: command (string)
-        """
-
-        return self._settings["telnet_console_command"]
-
-    def serialConsoleCommand(self):
-        """
-        Returns the Serial console command line.
-
-        :returns: command (string)
-        """
-
-        return self._settings["serial_console_command"]
-
-    def vncConsoleCommand(self):
-        """
-        Returns the VNC command line.
-
-        :returns: command (string)
-        """
-
-        return self._settings["vnc_console_command"]
-
     def setUnsavedState(self):
         """
         Sets the project in a unsaved state.

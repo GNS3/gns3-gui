@@ -361,14 +361,10 @@ class VMwareVM(VM):
         :returns: representation of the node (dictionary)
         """
 
-        vmware_vm = {"id": self.id(),
-                     "vm_id": self._vm_id,
-                     "linked_clone": self._linked_clone,
-                     "type": self.__class__.__name__,
-                     "description": str(self),
-                     "properties": {},
-                     "port_name_format": self._port_name_format,
-                     "server_id": self._server.id()}
+        vmware_vm = super().dump()
+        vmware_vm["vm_id"] = self._vm_id
+        vmware_vm["linked_clone"] = self._linked_clone
+        vmware_vm["port_name_format"] = self._port_name_format
 
         if self._port_segment_size:
             vmware_vm["port_segment_size"] = self._port_segment_size
@@ -395,6 +391,8 @@ class VMwareVM(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load()
 
         vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)

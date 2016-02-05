@@ -37,6 +37,46 @@ class VM(Node):
         self._vm_id = None
         self._vm_directory = None
         self._command_line = None
+        self._custom_console_command = None
+
+    def consoleCommand(self):
+        """
+        :returns: The console command for this host
+        """
+        if self._custom_console_command:
+            return self._custom_console_command
+        else:
+            from .main_window import MainWindow
+            general_settings = MainWindow.instance().settings()
+
+            console_type = self.consoleType()
+            if console_type == "serial":
+                return general_settings["serial_console_command"]
+            elif console_type == "vnc":
+                return general_settings["vnc_console_command"]
+            return general_settings["telnet_console_command"]
+
+    def setCustomConsoleCommand(self, console_command):
+        """
+        Set custom console command for this node
+        """
+
+        console_command = console_command.strip()
+        if console_command == '':
+            self._custom_console_command = None
+        else:
+            self._custom_console_command = console_command
+
+    def consoleType(self):
+        """
+        Get the console type (serial, telnet or VNC)
+        """
+        console_type = "telnet"
+        if hasattr(self, "serialConsole") and self.serialConsole():
+            return "serial"
+        if "console_type" in self.settings():
+            return self.settings()["console_type"]
+        return console_type
 
     def vm_id(self):
         """
@@ -301,3 +341,57 @@ class VM(Node):
             self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
             return None
         return ""
+
+    def dump(self):
+        """
+        Returns a representation of this device.
+        (to be saved in a topology file).
+
+        :returns: representation of the node (dictionary)
+        """
+
+        device = {
+            "id": self.id(),
+            "type": self.__class__.__name__,
+            "description": str(self),
+            "properties": {},
+            "server_id": self._server.id()
+        }
+        if self._custom_console_command is not None:
+            device["custom_console_command"] = self._custom_console_command
+        return device
+
+    def load(self, node_info):
+        """
+        Loads a device representation
+        (from a topology file).
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        if "custom_console_command" in node_info:
+            self._custom_console_command = node_info["custom_console_command"]
+
+
+    def openConsole(self, aux):
+        if hasattr(self, "serialConsole") and self.serialConsole():
+            from .serial_console import serialConsole
+            serialConsole(self.name(), self.serialPipe(), self.consoleCommand())
+
+        if aux:
+            console_port = self.auxConsole()
+            if console_port is None:
+                raise ValueError("AUX console port not allocated for {}".format(self.name()))
+        else:
+            console_port = self.console()
+
+        console_type = "telnet"
+        if "console_type" in self.settings():
+            console_type = self.settings()["console_type"]
+        if console_type == "telnet":
+            from .telnet_console import nodeTelnetConsole
+            nodeTelnetConsole(self.name(), self.server(), console_port, self.consoleCommand())
+        elif console_type == "vnc":
+            from .vnc_console import vncConsole
+            vncConsole(self.server().host(), console_port, self.consoleCommand())
+
