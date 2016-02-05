@@ -1545,7 +1545,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             else:
                 node_item = PixmapNodeItem(node, node_data["symbol"])
             node_module.setupNode(node, node_data["name"])
-        except ModuleError as e:
+        # If no server is available a ValueError is raised
+        except (ModuleError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
 
