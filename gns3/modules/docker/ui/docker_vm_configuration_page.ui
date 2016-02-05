@@ -24,6 +24,46 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiCMDLabel">
+         <property name="text">
+          <string>CMD:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="uiCMDLineEdit"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiImageListLabel">
+         <property name="text">
+          <string>Image name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="uiImageListComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiNameLabel">
          <property name="text">
@@ -35,31 +75,14 @@
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="uiCMDLabel">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
          <property name="text">
-          <string>CMD:</string>
+          <string>Default name format:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="uiCMDLineEdit"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiImageListLabel">
-         <property name="text">
-          <string>Image name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="uiImageListComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
        </item>
       </layout>
      </widget>

@@ -69,11 +69,10 @@ class DockerVMPreferencesPage(
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(
-            section_item, ["Image name:", docker_image["imagename"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_image["imagename"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
         # FIXME: add more configuration options
-        QtWidgets.QTreeWidgetItem(
-            section_item, ["CMD:", str(docker_image["startcmd"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["CMD:", str(docker_image["startcmd"])])
         # QtWidgets.QTreeWidgetItem(
         #     section_item, ["Server:", docker_image["server"]])
 

@@ -181,7 +181,12 @@ class Docker(Module):
             if setting_name in node.settings() and value != "" and value is not None:
                 image_settings[setting_name] = value
         imagename = self._docker_images[image]["imagename"]
-        node.setup(imagename, additional_settings=image_settings)
+
+        default_name_format = DOCKER_CONTAINER_SETTINGS["default_name_format"]
+        if self._docker_images[image]["default_name_format"]:
+            default_name_format = self._docker_images[image]["default_name_format"]
+
+        node.setup(imagename, additional_settings=image_settings, default_name_format=default_name_format)
 
     def reset(self):
         """Resets the servers."""
