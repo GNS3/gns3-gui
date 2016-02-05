@@ -336,8 +336,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Name:", ios_router["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Base name prefix:", ios_router["base_name_prefix"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ios_router["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ios_router["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
         if ios_router["chassis"]:

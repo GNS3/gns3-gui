@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Thu Feb  4 19:45:23 2016
+# Created: Thu Feb  4 21:08:13 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,12 +90,12 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiScriptFileLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
         self.uiScriptFileLabel.setObjectName("uiScriptFileLabel")
         self.gridLayout.addWidget(self.uiScriptFileLabel, 1, 0, 1, 1)
-        self.uiBaseNamePrefixLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
-        self.uiBaseNamePrefixLabel.setObjectName("uiBaseNamePrefixLabel")
-        self.gridLayout.addWidget(self.uiBaseNamePrefixLabel, 0, 0, 1, 1)
-        self.uiBaseNamePrefixLineEdit = QtWidgets.QLineEdit(self.uiVPCSTabWidget)
-        self.uiBaseNamePrefixLineEdit.setObjectName("uiBaseNamePrefixLineEdit")
-        self.gridLayout.addWidget(self.uiBaseNamePrefixLineEdit, 0, 1, 1, 1)
+        self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
+        self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 0, 0, 1, 1)
+        self.uiDefaultNameFormatLineEdit = QtWidgets.QLineEdit(self.uiVPCSTabWidget)
+        self.uiDefaultNameFormatLineEdit.setObjectName("uiDefaultNameFormatLineEdit")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLineEdit, 0, 1, 1, 1)
         self.uiTabWidget.addTab(self.uiVPCSTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -123,7 +123,7 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiSymbolToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse..."))
         self.uiCategoryLabel.setText(_translate("VPCSPreferencesPageWidget", "Category:"))
         self.uiScriptFileLabel.setText(_translate("VPCSPreferencesPageWidget", "Base script file:"))
-        self.uiBaseNamePrefixLabel.setText(_translate("VPCSPreferencesPageWidget", "Base name prefix:"))
+        self.uiDefaultNameFormatLabel.setText(_translate("VPCSPreferencesPageWidget", "Default name format:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiVPCSTabWidget), _translate("VPCSPreferencesPageWidget", "VPCS VM settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults"))
 

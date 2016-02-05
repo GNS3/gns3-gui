@@ -32,7 +32,7 @@ DYNAMIPS_SETTINGS = {
 
 IOS_ROUTER_SETTINGS = {
     "name": "",
-    "base_name_prefix": "R{0}",
+    "default_name_format": "R{0}",
     "image": "",
     "symbol": ":/symbols/router.svg",
     "category": Node.routers,

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Thu Feb  4 19:02:11 2016
+# Created: Thu Feb  4 21:08:13 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -139,12 +139,12 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiAuxPortSpinBox.setMaximum(65535)
         self.uiAuxPortSpinBox.setObjectName("uiAuxPortSpinBox")
         self.gridLayout_2.addWidget(self.uiAuxPortSpinBox, 14, 1, 1, 1)
-        self.uiBaseNamePrefixLineEdit = QtWidgets.QLineEdit(self.uiGeneralPageWidget)
-        self.uiBaseNamePrefixLineEdit.setObjectName("uiBaseNamePrefixLineEdit")
-        self.gridLayout_2.addWidget(self.uiBaseNamePrefixLineEdit, 1, 1, 1, 1)
-        self.uiBaseNamePrefixLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
-        self.uiBaseNamePrefixLabel.setObjectName("uiBaseNamePrefixLabel")
-        self.gridLayout_2.addWidget(self.uiBaseNamePrefixLabel, 1, 0, 1, 1)
+        self.uiDefaultNameFormatLineEdit = QtWidgets.QLineEdit(self.uiGeneralPageWidget)
+        self.uiDefaultNameFormatLineEdit.setObjectName("uiDefaultNameFormatLineEdit")
+        self.gridLayout_2.addWidget(self.uiDefaultNameFormatLineEdit, 1, 1, 1, 1)
+        self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
+        self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
+        self.gridLayout_2.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 1)
         self.uiTabWidget.addTab(self.uiGeneralPageWidget, "")
         self.uiMemoriesPageWidget = QtWidgets.QWidget()
         self.uiMemoriesPageWidget.setObjectName("uiMemoriesPageWidget")
@@ -568,7 +568,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiMidplaneLabel.setText(_translate("iosRouterConfigPageWidget", "Midplane:"))
         self.uiIOSImageLabel.setText(_translate("iosRouterConfigPageWidget", "IOS image path:"))
         self.uiNPELabel.setText(_translate("iosRouterConfigPageWidget", "NPE:"))
-        self.uiBaseNamePrefixLabel.setText(_translate("iosRouterConfigPageWidget", "Base name prefix:"))
+        self.uiDefaultNameFormatLabel.setText(_translate("iosRouterConfigPageWidget", "Default name format:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralPageWidget), _translate("iosRouterConfigPageWidget", "General"))
         self.uiRamLabel.setText(_translate("iosRouterConfigPageWidget", "RAM size:"))
         self.uiRamSpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " MiB"))

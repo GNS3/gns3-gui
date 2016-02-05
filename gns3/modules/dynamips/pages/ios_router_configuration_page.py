@@ -286,8 +286,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             # rename the label from "Name" to "Template name"
             self.uiNameLabel.setText("Template name:")
 
-            # load the base name prefix
-            self.uiBaseNamePrefixLineEdit.setText(settings["base_name_prefix"])
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
 
             # load the startup-config
             self.uiStartupConfigLineEdit.setText(settings["startup_config"])
@@ -304,8 +304,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
         else:
-            self.uiBaseNamePrefixLabel.hide()
-            self.uiBaseNamePrefixLineEdit.hide()
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
@@ -531,12 +531,12 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if not node:
             # these are template settings
 
-            # save the base name prefix
-            base_name_prefix = self.uiBaseNamePrefixLineEdit.text().strip()
-            if '{0}' not in base_name_prefix and '{id}' not in base_name_prefix:
-                QtWidgets.QMessageBox.critical(self, "Base name prefix", "The base name prefix must contain at least {0} or {id}")
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
             else:
-                settings["base_name_prefix"] = base_name_prefix
+                settings["default_name_format"] = default_name_format
 
             startup_config = self.uiStartupConfigLineEdit.text().strip()
             if not startup_config:

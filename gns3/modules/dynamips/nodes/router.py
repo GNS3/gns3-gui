@@ -218,7 +218,7 @@ class Router(VM):
                 self._addWICPorts(wic, wic_slot_number)
         self._updateWICNumbering()
 
-    def setup(self, image, ram, name=None, vm_id=None, dynamips_id=None, additional_settings={}, base_name_prefix="R"):
+    def setup(self, image, ram, name=None, vm_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
         """
         Setups this router.
 
@@ -232,7 +232,7 @@ class Router(VM):
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(base_name_prefix)
+            name = self.allocateName(default_name_format)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this router")

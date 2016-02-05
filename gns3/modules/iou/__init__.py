@@ -237,13 +237,13 @@ class IOU(Module):
                 iouimage = selected_images[0]
 
         vm_settings = {}
-        for setting_name, value in iouimage.items():
+        for setting_name, value in self._iou_devices[iouimage].items():
             if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
                 vm_settings[setting_name] = value
 
-        base_name_prefix = IOU_DEVICE_SETTINGS["base_name_prefix"]
-        if iouimage["base_name_prefix"]:
-            base_name_prefix = iouimage["base_name_prefix"]
+        default_name_format = IOU_DEVICE_SETTINGS["default_name_format"]
+        if self._iou_devices[iouimage]["default_name_format"]:
+            default_name_format = self._iou_devices[iouimage]["default_name_format"]
 
         if vm_settings["use_default_iou_values"]:
             del vm_settings["ram"]
@@ -254,7 +254,7 @@ class IOU(Module):
             del vm_settings["console"]
 
         iou_path = vm_settings.pop("path")
-        node.setup(iou_path, additional_settings=vm_settings, base_name_prefix=base_name_prefix)
+        node.setup(iou_path, additional_settings=vm_settings, default_name_format=default_name_format)
 
     def reset(self):
         """

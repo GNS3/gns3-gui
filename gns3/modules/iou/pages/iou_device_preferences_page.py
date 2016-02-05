@@ -70,8 +70,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Name:", iou_device["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Base name prefix:", iou_device["base_name_prefix"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", iou_device["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", iou_device["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
         if iou_device["startup_config"]:

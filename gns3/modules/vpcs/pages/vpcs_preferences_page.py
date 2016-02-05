@@ -147,7 +147,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
-        self.uiBaseNamePrefixLineEdit.setText(settings["base_name_prefix"])
+        self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiSymbolLineEdit.setText(settings["symbol"])
         self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
@@ -186,11 +186,11 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         else:
             new_settings["symbol"] = symbol_path
 
-        # save the base name prefix
-        base_name_prefix = self.uiBaseNamePrefixLineEdit.text().strip()
-        if '{0}' not in base_name_prefix and '{id}' not in base_name_prefix:
-            QtWidgets.QMessageBox.critical(self, "Base name prefix", "The base name prefix must contain at least {0} or {id}")
+        # save the default name format
+        default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+        if '{0}' not in default_name_format and '{id}' not in default_name_format:
+            QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
         else:
-            new_settings["base_name_prefix"] = base_name_prefix
+            new_settings["default_name_format"] = default_name_format
 
         VPCS.instance().setSettings(new_settings)

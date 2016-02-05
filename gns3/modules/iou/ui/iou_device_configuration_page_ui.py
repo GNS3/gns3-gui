@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Thu Feb  4 19:02:11 2016
+# Created: Thu Feb  4 21:08:13 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,13 +97,13 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiConsolePortSpinBox.setMaximum(65535)
         self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
         self.gridLayout.addWidget(self.uiConsolePortSpinBox, 8, 1, 1, 1)
-        self.uiBaseNamePrefixLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
-        self.uiBaseNamePrefixLabel.setObjectName("uiBaseNamePrefixLabel")
-        self.gridLayout.addWidget(self.uiBaseNamePrefixLabel, 1, 0, 1, 1)
-        self.uiBaseNamePrefixLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
-        self.uiBaseNamePrefixLineEdit.setText("")
-        self.uiBaseNamePrefixLineEdit.setObjectName("uiBaseNamePrefixLineEdit")
-        self.gridLayout.addWidget(self.uiBaseNamePrefixLineEdit, 1, 1, 1, 1)
+        self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
+        self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 1)
+        self.uiDefaultNameFormatLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
+        self.uiDefaultNameFormatLineEdit.setText("")
+        self.uiDefaultNameFormatLineEdit.setObjectName("uiDefaultNameFormatLineEdit")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLineEdit, 1, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.uiGeneralgroupBox)
         self.uiOtherSettingsGroupBox = QtWidgets.QGroupBox(self.tab)
         self.uiOtherSettingsGroupBox.setObjectName("uiOtherSettingsGroupBox")
@@ -213,7 +213,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiPrivateConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Private-config:"))
         self.uiPrivateConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:"))
-        self.uiBaseNamePrefixLabel.setText(_translate("iouDeviceConfigPageWidget", "Base name prefix:"))
+        self.uiDefaultNameFormatLabel.setText(_translate("iouDeviceConfigPageWidget", "Default name format:"))
         self.uiOtherSettingsGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Other settings"))
         self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages (testing only)"))
         self.uiDefaultValuesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Use default IOU values for memories"))
