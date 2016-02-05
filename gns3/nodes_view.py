@@ -133,11 +133,12 @@ class NodesView(QtWidgets.QTreeWidget):
             if node_class:
                 break
 
-        if hasattr(module, "vmConfigurationPage"):
+        # We can not edit stuff like EthernetSwitch
+        # or without config template like VPCS
+        if not "builtin" in node and hasattr(module, "vmConfigurationPage"):
             for vm_key, vm in module.instance().VMs().items():
                 if vm["name"] == node["name"]:
                     break
-
             menu = QtWidgets.QMenu()
             configuration = QtWidgets.QAction("Configure Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))

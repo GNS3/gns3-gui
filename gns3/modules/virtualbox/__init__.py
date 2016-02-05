@@ -126,6 +126,8 @@ class VirtualBox(Module):
                 if key in self._virtualbox_vms or not vmname or not server:
                     continue
                 vm_settings = VBOX_VM_SETTINGS.copy()
+                # For backward compatibility we use vmname
+                vm_settings["name"] = vmname
                 vm_settings.update(vm)
                 # for backward compatibility before version 1.4
                 if "symbol" not in vm_settings:
@@ -141,7 +143,7 @@ class VirtualBox(Module):
         self._settings["vms"] = list(self._virtualbox_vms.values())
         self._saveSettings()
 
-    def virtualBoxVMs(self):
+    def VMs(self):
         """
         Returns VirtualBox VMs settings.
 
@@ -150,7 +152,12 @@ class VirtualBox(Module):
 
         return self._virtualbox_vms
 
-    def setVirtualBoxVMs(self, new_virtualbox_vms):
+    @staticmethod
+    def vmConfigurationPage():
+        from .pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPage
+        return VirtualBoxVMConfigurationPage
+
+    def setVMs(self, new_virtualbox_vms):
         """
         Sets VirtualBox VM settings.
 

@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="uiLocalTabWidget">
       <property name="sizePolicy">
@@ -332,55 +332,42 @@
           <property name="sizeConstraint">
            <enum>QLayout::SetMinimumSize</enum>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
+          <item row="8" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiAdjustLocalServerIPCheckBox">
             <property name="text">
-             <string>Virtualization software:</string>
+             <string>Adjust the local server IP to be in the same subnet</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="uiVmwareRadioButton">
-              <property name="text">
-               <string>VMware (recommended)</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
-              <property name="text">
-               <string>VirtualBox</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="uiHeadlessCheckBox">
+            <property name="text">
+             <string>Start VM in headless mode</string>
+            </property>
+           </widget>
           </item>
-          <item row="3" column="0">
+          <item row="7" column="0">
+           <widget class="QCheckBox" name="uiShutdownCheckBox">
+            <property name="text">
+             <string>ACPI shutdown VM when closing GNS3</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
            <widget class="QLabel" name="uiVMNameLabel">
             <property name="text">
              <string>VM name:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="1">
+           <widget class="QPushButton" name="uiRefreshPushButton">
+            <property name="text">
+             <string>&amp;Refresh</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QComboBox" name="uiVMListComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -390,31 +377,27 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="uiRefreshPushButton">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
             <property name="text">
-             <string>&amp;Refresh</string>
+             <string>Virtualization software:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="uiHeadlessCheckBox">
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
             <property name="text">
-             <string>Start VM in headless mode</string>
+             <string>VirtualBox</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="uiShutdownCheckBox">
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="uiVmwareRadioButton">
             <property name="text">
-             <string>ACPI shutdown VM when closing GNS3</string>
+             <string>VMware (recommended)</string>
             </property>
-           </widget>
-          </item>
-          <item row="7" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiAdjustLocalServerIPCheckBox">
-            <property name="text">
-             <string>Adjust the local server IP to be in the same subnet</string>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -813,8 +796,6 @@
   <tabstop>uiUDPEndPortSpinBox</tabstop>
   <tabstop>uiRestoreDefaultsPushButton</tabstop>
   <tabstop>uiEnableVMCheckBox</tabstop>
-  <tabstop>uiVmwareRadioButton</tabstop>
-  <tabstop>uiVirtualBoxRadioButton</tabstop>
   <tabstop>uiVMListComboBox</tabstop>
   <tabstop>uiRefreshPushButton</tabstop>
   <tabstop>uiHeadlessCheckBox</tabstop>

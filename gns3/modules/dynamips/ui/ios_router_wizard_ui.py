@@ -2,15 +2,13 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOSRouterWizard(object):
-
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName("IOSRouterWizard")
         IOSRouterWizard.resize(585, 398)
@@ -21,20 +19,18 @@ class Ui_IOSRouterWizard(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiServerTypeGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiServerTypeGroupBox.setObjectName("uiServerTypeGroupBox")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiServerTypeGroupBox)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiServerTypeGroupBox)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiRemoteRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
-        self.horizontalLayout.addWidget(self.uiRemoteRadioButton)
+        self.verticalLayout_3.addWidget(self.uiRemoteRadioButton)
         self.uiVMRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiVMRadioButton.setObjectName("uiVMRadioButton")
-        self.horizontalLayout.addWidget(self.uiVMRadioButton)
+        self.verticalLayout_3.addWidget(self.uiVMRadioButton)
         self.uiLocalRadioButton = QtWidgets.QRadioButton(self.uiServerTypeGroupBox)
         self.uiLocalRadioButton.setObjectName("uiLocalRadioButton")
-        self.horizontalLayout.addWidget(self.uiLocalRadioButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout_3.addWidget(self.uiLocalRadioButton)
         self.verticalLayout.addWidget(self.uiServerTypeGroupBox)
         self.uiRemoteServersGroupBox = QtWidgets.QGroupBox(self.uiServerWizardPage)
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
@@ -72,8 +68,8 @@ class Ui_IOSRouterWizard(object):
         self.uiIOSNewImageRadioButton.setChecked(False)
         self.uiIOSNewImageRadioButton.setObjectName("uiIOSNewImageRadioButton")
         self.horizontalLayout_4.addWidget(self.uiIOSNewImageRadioButton)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
         self.uiIOSImageLabel = QtWidgets.QLabel(self.uiIOSImageWizardPage)
         self.uiIOSImageLabel.setObjectName("uiIOSImageLabel")
@@ -296,9 +292,9 @@ class Ui_IOSRouterWizard(object):
         self.uiServerWizardPage.setTitle(_translate("IOSRouterWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a server type to run your new IOS router."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOSRouterWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Remote"))
-        self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("IOSRouterWizard", "Local"))
+        self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on your local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOSRouterWizard", "Remote servers"))
         self.uiLoadBalanceCheckBox.setText(_translate("IOSRouterWizard", "Load balance across all available remote servers"))
         self.uiRemoteServersLabel.setText(_translate("IOSRouterWizard", "Run on server:"))
@@ -338,3 +334,4 @@ class Ui_IOSRouterWizard(object):
         self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core."))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:"))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder"))
+

@@ -171,7 +171,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         """
 
         vbox_module = VirtualBox.instance()
-        self._virtualbox_vms = copy.deepcopy(vbox_module.virtualBoxVMs())
+        self._virtualbox_vms = copy.deepcopy(vbox_module.VMs())
         self._items.clear()
 
         for key, vbox_vm in self._virtualbox_vms.items():
@@ -191,4 +191,4 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         """
 
         # self._vboxVMSaveSlot()
-        VirtualBox.instance().setVirtualBoxVMs(self._virtualbox_vms)
+        VirtualBox.instance().setVMs(self._virtualbox_vms)
