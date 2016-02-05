@@ -118,8 +118,8 @@ class QemuVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, qemu_path, name=None, vm_id=None, port_name_format="Ethernet{0}",
-              port_segment_size=0, first_port_name="", linked_clone=True, additional_settings={}, base_name=None):
+    def setup(self, qemu_path, name=None, vm_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+              first_port_name="", linked_clone=True, additional_settings={}, default_name_format=None):
         """
         Setups this QEMU VM.
 
@@ -128,17 +128,14 @@ class QemuVM(VM):
         """
 
         # let's create a unique name if none has been chosen
-        if not name:
-            if linked_clone:
-                name = self.allocateName(base_name + "-")
-            else:
-                name = base_name
-                self.setName(name)
+        if not name and linked_clone:
+            name = self.allocateName(default_name_format)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this QEMU VM")
             return
 
+        self.setName(name)
         self._settings["name"] = name
         self._linked_clone = linked_clone
         params = {"name": name,

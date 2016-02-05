@@ -106,6 +106,14 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             self.uiVMListComboBox.hide()
 
         if not node:
+            # these are template settings
+
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
+
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
+
             # load the symbol
             self.uiSymbolLineEdit.setText(settings["symbol"])
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
@@ -119,6 +127,8 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
             self.uiFirstPortNameLineEdit.setText(settings["first_port_name"])
         else:
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
             self.uiSymbolLabel.hide()
             self.uiSymbolLineEdit.hide()
             self.uiSymbolToolButton.hide()
@@ -176,6 +186,15 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             del settings["enable_remote_console"]
 
         if not node:
+            # these are template settings
+
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+            else:
+                settings["default_name_format"] = default_name_format
+
             symbol_path = self.uiSymbolLineEdit.text()
             pixmap = QtGui.QPixmap(symbol_path)
             if pixmap.isNull():

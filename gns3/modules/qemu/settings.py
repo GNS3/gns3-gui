@@ -28,6 +28,7 @@ QEMU_SETTINGS = {
 
 QEMU_VM_SETTINGS = {
     "name": "",
+    "default_name_format": "{name}-{0}",
     "usage": "",
     "symbol": ":/symbols/qemu_guest.svg",
     "category": Node.end_devices,

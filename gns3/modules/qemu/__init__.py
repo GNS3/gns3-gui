@@ -233,13 +233,22 @@ class Qemu(Module):
         port_name_format = self._qemu_vms[vm]["port_name_format"]
         port_segment_size = self._qemu_vms[vm]["port_segment_size"]
         first_port_name = self._qemu_vms[vm]["first_port_name"]
+
+        default_name_format = QEMU_VM_SETTINGS["default_name_format"]
+        if self._qemu_vms[vm]["default_name_format"]:
+            default_name_format = self._qemu_vms[vm]["default_name_format"]
+        if linked_base:
+            default_name_format = default_name_format.replace('{name}', name)
+            name = None
+
         node.setup(qemu_path,
+                   name=name,
                    port_name_format=port_name_format,
                    port_segment_size=port_segment_size,
                    first_port_name=first_port_name,
                    linked_clone=linked_base,
                    additional_settings=vm_settings,
-                   base_name=name)
+                   default_name_format=default_name_format)
 
     def reset(self):
         """

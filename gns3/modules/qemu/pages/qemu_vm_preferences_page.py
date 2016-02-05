@@ -67,7 +67,9 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["VM name:", qemu_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", qemu_vm["name"]])
+        if qemu_vm["linked_base"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", qemu_vm["server"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["CPUs:", str(qemu_vm["cpus"])])
