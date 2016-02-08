@@ -672,12 +672,6 @@ class Router(VM):
             if value is not None and value != "":
                 router["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = router["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return router
 
     def load(self, node_info):

@@ -371,12 +371,6 @@ class VirtualBoxVM(VM):
             if value is not None and value != "":
                 vbox_vm["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = vbox_vm["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return vbox_vm
 
     def load(self, node_info):

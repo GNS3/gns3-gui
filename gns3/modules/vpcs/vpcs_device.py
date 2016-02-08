@@ -229,12 +229,6 @@ class VPCSDevice(VM):
                         value = os.path.basename(value)
                     vpcs_device["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = vpcs_device["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return vpcs_device
 
     def load(self, node_info):

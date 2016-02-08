@@ -311,12 +311,6 @@ class QemuVM(VM):
             if value is not None and value != "":
                 qemu_vm["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = qemu_vm["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return qemu_vm
 
     def info(self):

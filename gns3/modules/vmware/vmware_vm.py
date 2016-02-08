@@ -376,12 +376,6 @@ class VMwareVM(VM):
             if value is not None and value != "":
                 vmware_vm["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = vmware_vm["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return vmware_vm
 
     def load(self, node_info):

@@ -404,12 +404,6 @@ class IOUDevice(VM):
             if value is not None and value != "":
                 iou["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = iou["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return iou
 
     def load(self, node_info):

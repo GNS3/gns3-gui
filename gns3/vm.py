@@ -359,6 +359,13 @@ class VM(Node):
         }
         if self._custom_console_command is not None:
             device["custom_console_command"] = self._custom_console_command
+
+        # add the ports
+        if self._ports:
+            ports = device["ports"] = []
+            for port in self._ports:
+                ports.append(port.dump())
+
         return device
 
     def load(self, node_info):
