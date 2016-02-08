@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>469</height>
+    <height>494</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>688</width>
-    <height>469</height>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -341,6 +341,22 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on a version to see the required files and import the file from your computer.&lt;br/&gt;GNS3 is looking for files in your downloads directory and in the GNS3 images directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::RichText</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QTreeWidget" name="uiApplianceVersionTreeWidget">
       <property name="indentation">
        <number>20</number>
@@ -522,6 +538,16 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="uiExplainDownloadLabel">
+      <property name="text">
+       <string>Click on a the download button to access to a location where you can download the file.</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="uiImportPushButton">
@@ -549,6 +575,13 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="uiCreateVersionPushButton">
+        <property name="text">
+         <string>Create a new version</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="uiRefreshPushButton">

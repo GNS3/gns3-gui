@@ -54,6 +54,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.uiRefreshPushButton.clicked.connect(self._refreshVersions)
         self.uiDownloadPushButton.clicked.connect(self._downloadPushButtonClickedSlot)
         self.uiImportPushButton.clicked.connect(self._importPushButtonClickedSlot)
+        self.uiCreateVersionPushButton.clicked.connect(self._createVersionPushButtonClickedSlot)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         if hasattr(self, "uiVMRadioButton"):
@@ -193,11 +194,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
         Refresh the list of files for different version of the appliance
         """
+
         self.uiFilesWizardPage.setSubTitle("The following versions are available for " + self._appliance["product_name"] + ".  Check the status of files required to install.")
         self.uiApplianceVersionTreeWidget.clear()
 
         worker = WaitForLambdaWorker(lambda: self._resfreshDialogWorker())
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for images...", None, busy=True, parent=self)
+        progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for files...", None, busy=True, parent=self)
         progress_dialog.show()
         if progress_dialog.exec_():
             for version in self._appliance["versions"]:
@@ -209,12 +211,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     if image["status"] == "Missing":
                         status = "Missing files"
 
-                    size += image["filesize"]
+                    size += image.get("filesize", 0)
                     image_widget = QtWidgets.QTreeWidgetItem(
                         [
                             "",
                             image["filename"],
-                            human_filesize(image["filesize"]),
+                            human_filesize(image.get("filesize", 0)),
                             image["status"],
                             image["version"]
                         ])
@@ -259,7 +261,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                if self._registry.search_image_file(image["filename"], image["md5sum"], image["filesize"]):
+                if self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize")):
                     image["status"] = "Found"
                 else:
                     image["status"] = "Missing"
@@ -270,6 +272,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
         self.uiDownloadPushButton.hide()
         self.uiImportPushButton.hide()
+        self.uiExplainDownloadLabel.hide()
 
         if current is None:
             return
@@ -291,9 +294,20 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if "direct_download_url" in data:
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["direct_download_url"]))
                 if "compression" in data:
-                    QtWidgets.QMessageBox.warning(self, "Add appliance", "The image is compressed with {} you need to uncompress it before using it.".format(data["compression"]))
+                    QtWidgets.QMessageBox.warning(self, "Add appliance", "The file is compressed with {} you need to uncompress it before using it.".format(data["compression"]))
             else:
+                QtWidgets.QMessageBox.warning(self, "Add appliance", "Download will redirect you where the required file can be downloaded, you may have to be registered with the vendor in order to download the file.")
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["download_url"]))
+
+    def _createVersionPushButtonClickedSlot(self):
+        """
+        Allow user to create a new version of an appliance
+        """
+
+        new_version, ok = QtWidgets.QInputDialog.getText(self, "Create a new version", "Create a version allow to use unknow files for this appliance.\nIf this file work please share your experience on the GNS3 community.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
+        if ok:
+            self._appliance.create_new_version(new_version)
+            self._refreshVersions()
 
     def _importPushButtonClickedSlot(self):
         """
@@ -309,8 +323,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
 
         image = Image(path)
-        if image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct image file. The MD5 sum is {} and should be {}. For OVA you need to import the OVA/OVF not the file inside the archive.".format(image.md5sum, disk["md5sum"]))
+        if "md5sum" in disk and image.md5sum != disk["md5sum"]:
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}. For OVA you need to import the OVA/OVF not the file inside the archive.".format(image.md5sum, disk["md5sum"]))
             return
 
         config = Config()

@@ -139,3 +139,21 @@ def test_image_dir_name(microcore_appliance):
     assert Appliance(registry, "tests/registry/appliances/microcore-linux.json").image_dir_name() == "QEMU"
     assert Appliance(registry, "tests/registry/appliances/cisco-iou-l3.gns3a").image_dir_name() == "IOU"
 
+
+def test_create_new_version(microcore_appliance):
+
+    a = Appliance(registry, "tests/registry/appliances/microcore-linux.json")
+    a.create_new_version("42.0")
+    v = a['versions'][-1:][0]
+    assert v == {
+        'images':
+        {
+            'hda_disk_image':
+                {
+                    'filename': 'linux-microcore-42.0.img',
+                    'version': '42.0'
+                }
+        },
+        'name': '42.0'
+    }
+
