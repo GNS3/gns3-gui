@@ -44,6 +44,7 @@ from .dialogs.idlepc_dialog import IdlePCDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
+from .utils.normalize_filename import normalize_filename
 
 # link items
 from .items.link_item import LinkItem
@@ -1122,23 +1123,50 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 self._import_config_dir = self._main_window.project().filesDir()
 
             item = items[0]
-            path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                            "Import config",
-                                                            self._import_config_dir,
-                                                            "All files (*.*);;Config files (*.cfg)",
-                                                            "Config files (*.cfg)")
-
-            if path:
-                self._import_config_dir = os.path.dirname(path)
-                item.node().importConfig(path)
             if hasattr(item.node(), "importPrivateConfig"):
+                # this node can have one startup-config and one private-config
+                default_startup_config_path = os.path.join(self._import_config_dir, normalize_filename(item.node().name())) + "_startup-config.cfg"
+                if os.path.exists(default_startup_config_path):
+                    default_import_path = default_startup_config_path
+                else:
+                    default_import_path = self._import_config_dir
+                path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                "Import startup-config",
+                                                                default_import_path,
+                                                                "All files (*.*);;Config files (*.cfg)",
+                                                                "Config files (*.cfg)")
+
+                if path:
+                    self._import_config_dir = os.path.dirname(path)
+                    item.node().importConfig(path)
+
+                default_private_config_path = os.path.join(self._import_config_dir, normalize_filename(item.node().name())) + "_private-config.cfg"
+                if os.path.exists(default_private_config_path):
+                    default_import_path = default_private_config_path
+                else:
+                    default_import_path = self._import_config_dir
                 path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                                 "Import private-config",
-                                                                self._import_config_dir,
+                                                                default_import_path,
                                                                 "All files (*.*);;Config files (*.cfg)",
                                                                 "Config files (*.cfg)")
                 if path:
                     item.node().importPrivateConfig(path)
+            else:
+                # this node has just one config
+                default_config_path = os.path.join(self._import_config_dir, normalize_filename(item.node().name())) + ".cfg"
+                if os.path.exists(default_config_path):
+                    default_import_path = default_config_path
+                else:
+                    default_import_path = self._import_config_dir
+                path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import config",
+                                                                default_import_path,
+                                                                "All files (*.*);;Config files (*.cfg)",
+                                                                "Config files (*.cfg)")
+
+                if path:
+                    self._import_config_dir = os.path.dirname(path)
+                    item.node().importConfig(path)
 
     def exportConfigActionSlot(self):
         """
@@ -1166,12 +1194,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
-                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export startup-config", self._export_config_dir)
+                # this node can have one startup-config and one private-config
+                default_startup_config_path = os.path.join(self._export_config_dir, normalize_filename(item.node().name())) + "_startup-config.cfg"
+                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export startup-config", default_startup_config_path)
                 self._export_config_dir = os.path.dirname(config_path)
-                private_config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config", self._export_config_dir)
+                default_private_config_path = os.path.join(self._export_config_dir, normalize_filename(item.node().name())) + "_private-config.cfg"
+                private_config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config", default_private_config_path)
                 item.node().exportConfig(config_path, private_config_path)
             else:
-                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export config", self._export_config_dir)
+                # this node has just one config
+                default_config_path = os.path.join(self._export_config_dir, normalize_filename(item.node().name())) + ".cfg"
+                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export config", default_config_path)
                 self._export_config_dir = os.path.dirname(config_path)
                 item.node().exportConfig(config_path)
 
@@ -1442,7 +1475,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.delete()
 
     @staticmethod
-    def allocateServer():
+    def allocateServer(node_data, module_instance):
         """
         Allocates a server.
 
@@ -1451,7 +1484,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         from .main_window import MainWindow
         mainwindow = MainWindow.instance()
-        server = server_select(mainwindow)
+
+        allow_local_server = False
+        if "builtin" in node_data:
+            allow_local_server = module_instance.settings()["use_local_server"]
+        server = server_select(mainwindow, allow_local_server=allow_local_server)
         if server is None:
             raise ModuleError("Please select a server")
         return server
@@ -1479,7 +1516,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
             if "server" not in node_data:
-                server = self.allocateServer()
+                server = self.allocateServer(node_data, instance)
             elif node_data["server"] == "local":
                 server = Servers.instance().localServer()
             elif node_data["server"] == "vm":
@@ -1508,7 +1545,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             else:
                 node_item = PixmapNodeItem(node, node_data["symbol"])
             node_module.setupNode(node, node_data["name"])
-        except ModuleError as e:
+        # If no server is available a ValueError is raised
+        except (ModuleError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
 

@@ -268,19 +268,27 @@ class VirtualBox(Module):
 
         vm_settings = {}
         for setting_name, value in self._virtualbox_vms[vm].items():
-            if setting_name in node.settings() and value != "" and value is not None:
+            if setting_name != "name" and setting_name in node.settings() and value != "" and value is not None:
                 vm_settings[setting_name] = value
 
         vmname = self._virtualbox_vms[vm]["vmname"]
         port_name_format = self._virtualbox_vms[vm]["port_name_format"]
         port_segment_size = self._virtualbox_vms[vm]["port_segment_size"]
         first_port_name = self._virtualbox_vms[vm]["first_port_name"]
+
+        default_name_format = VBOX_VM_SETTINGS["default_name_format"]
+        if self._virtualbox_vms[vm]["default_name_format"]:
+            default_name_format = self._virtualbox_vms[vm]["default_name_format"]
+        if linked_base:
+            default_name_format = default_name_format.replace('{name}', vmname)
+
         node.setup(vmname,
                    port_name_format=port_name_format,
                    port_segment_size=port_segment_size,
                    first_port_name=first_port_name,
                    linked_clone=linked_base,
-                   additional_settings=vm_settings)
+                   additional_settings=vm_settings,
+                   default_name_format=default_name_format)
 
     def reset(self):
         """

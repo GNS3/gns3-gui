@@ -37,6 +37,7 @@ VMWARE_SETTINGS = {
 
 VMWARE_VM_SETTINGS = {
     "vmx_path": "",
+    "default_name_format": "{name}-{0}",
     "symbol": ":/symbols/vmware_guest.svg",
     "category": Node.end_devices,
     "port_name_format": "Ethernet{0}",

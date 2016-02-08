@@ -36,6 +36,7 @@ if not sys.platform.startswith("linux"):
 
 IOU_DEVICE_SETTINGS = {
     "name": "",
+    "default_name_format": "IOU{0}",
     "path": "",
     "symbol": ":/symbols/multilayer_switch.svg",
     "category": Node.routers,

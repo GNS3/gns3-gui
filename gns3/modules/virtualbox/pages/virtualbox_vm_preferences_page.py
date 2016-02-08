@@ -66,7 +66,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["VM name:", vbox_vm["vmname"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["vmname"]])
+        if vbox_vm["linked_base"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])

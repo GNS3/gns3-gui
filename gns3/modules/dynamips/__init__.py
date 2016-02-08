@@ -281,10 +281,9 @@ class Dynamips(Module):
                 if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
                     vm_settings[setting_name] = value
 
-            base_name = "R"
-            if "slot1" in vm_settings and vm_settings["slot1"] == "NM-16ESW":
-                # must be an EtherSwitch router
-                base_name = "ESW"
+            default_name_format = IOS_ROUTER_SETTINGS["default_name_format"]
+            if ios_router["default_name_format"]:
+                default_name_format = ios_router["default_name_format"]
 
             # Older GNS3 versions may have the following invalid settings in the VM template
             if "console" in vm_settings:
@@ -298,7 +297,7 @@ class Dynamips(Module):
             image = vm_settings.pop("image", None)
             if image is None:
                 raise ModuleError("No IOS image has been associated with this IOS router")
-            node.setup(image, ram, additional_settings=vm_settings, base_name=base_name)
+            node.setup(image, ram, additional_settings=vm_settings, default_name_format=default_name_format)
         else:
             node.setup()
 

@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Thu Feb  4 21:08:13 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_iouDeviceConfigPageWidget(object):
-
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName("iouDeviceConfigPageWidget")
-        iouDeviceConfigPageWidget.resize(461, 520)
+        iouDeviceConfigPageWidget.resize(569, 564)
         self.verticalLayout = QtWidgets.QVBoxLayout(iouDeviceConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(iouDeviceConfigPageWidget)
@@ -35,7 +34,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
         self.uiSymbolLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiSymbolLabel.setObjectName("uiSymbolLabel")
-        self.gridLayout.addWidget(self.uiSymbolLabel, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiSymbolLabel, 2, 0, 1, 1)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
@@ -45,16 +44,16 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiSymbolToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiSymbolToolButton.setObjectName("uiSymbolToolButton")
         self.horizontalLayout_7.addWidget(self.uiSymbolToolButton)
-        self.gridLayout.addLayout(self.horizontalLayout_7, 1, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_7, 2, 1, 1, 1)
         self.uiCategoryLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiCategoryLabel.setObjectName("uiCategoryLabel")
-        self.gridLayout.addWidget(self.uiCategoryLabel, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiCategoryLabel, 3, 0, 1, 1)
         self.uiCategoryComboBox = QtWidgets.QComboBox(self.uiGeneralgroupBox)
         self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
-        self.gridLayout.addWidget(self.uiCategoryComboBox, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiCategoryComboBox, 3, 1, 1, 1)
         self.uiIOUImageLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiIOUImageLabel.setObjectName("uiIOUImageLabel")
-        self.gridLayout.addWidget(self.uiIOUImageLabel, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiIOUImageLabel, 5, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.uiIOUImageLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
@@ -64,10 +63,10 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiIOUImageToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiIOUImageToolButton.setObjectName("uiIOUImageToolButton")
         self.horizontalLayout_5.addWidget(self.uiIOUImageToolButton)
-        self.gridLayout.addLayout(self.horizontalLayout_5, 3, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 5, 1, 1, 1)
         self.uiStartupConfigLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiStartupConfigLabel.setObjectName("uiStartupConfigLabel")
-        self.gridLayout.addWidget(self.uiStartupConfigLabel, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiStartupConfigLabel, 6, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.uiStartupConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
@@ -77,10 +76,10 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiStartupConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiStartupConfigToolButton.setObjectName("uiStartupConfigToolButton")
         self.horizontalLayout_4.addWidget(self.uiStartupConfigToolButton)
-        self.gridLayout.addLayout(self.horizontalLayout_4, 4, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_4, 6, 1, 1, 1)
         self.uiPrivateConfigLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiPrivateConfigLabel.setObjectName("uiPrivateConfigLabel")
-        self.gridLayout.addWidget(self.uiPrivateConfigLabel, 5, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiPrivateConfigLabel, 7, 0, 1, 1)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.uiPrivateConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
@@ -90,14 +89,21 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiPrivateConfigToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiPrivateConfigToolButton.setObjectName("uiPrivateConfigToolButton")
         self.horizontalLayout_6.addWidget(self.uiPrivateConfigToolButton)
-        self.gridLayout.addLayout(self.horizontalLayout_6, 5, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_6, 7, 1, 1, 1)
         self.uiConsolePortLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout.addWidget(self.uiConsolePortLabel, 6, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiConsolePortLabel, 8, 0, 1, 1)
         self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.uiGeneralgroupBox)
         self.uiConsolePortSpinBox.setMaximum(65535)
         self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 6, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 8, 1, 1, 1)
+        self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
+        self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 1)
+        self.uiDefaultNameFormatLineEdit = QtWidgets.QLineEdit(self.uiGeneralgroupBox)
+        self.uiDefaultNameFormatLineEdit.setText("")
+        self.uiDefaultNameFormatLineEdit.setObjectName("uiDefaultNameFormatLineEdit")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLineEdit, 1, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.uiGeneralgroupBox)
         self.uiOtherSettingsGroupBox = QtWidgets.QGroupBox(self.tab)
         self.uiOtherSettingsGroupBox.setObjectName("uiOtherSettingsGroupBox")
@@ -207,6 +213,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiPrivateConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Private-config:"))
         self.uiPrivateConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
         self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:"))
+        self.uiDefaultNameFormatLabel.setText(_translate("iouDeviceConfigPageWidget", "Default name format:"))
         self.uiOtherSettingsGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Other settings"))
         self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages (testing only)"))
         self.uiDefaultValuesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Use default IOU values for memories"))
@@ -221,3 +228,4 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiSerialAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Serial adapters:"))
         self.uiSerialAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter equals 4 serial interfaces"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("iouDeviceConfigPageWidget", "Network"))
+

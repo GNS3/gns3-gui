@@ -1,26 +1,23 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created: Sun Nov  1 18:17:05 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_SetupWizard(object):
-
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
-        SetupWizard.resize(688, 469)
+        SetupWizard.resize(739, 541)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(SetupWizard.sizePolicy().hasHeightForWidth())
         SetupWizard.setSizePolicy(sizePolicy)
-        SetupWizard.setMaximumSize(QtCore.QSize(688, 469))
+        SetupWizard.setMaximumSize(QtCore.QSize(775, 563))
         SetupWizard.setModal(True)
         SetupWizard.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         SetupWizard.setOptions(QtWidgets.QWizard.NoBackButtonOnStartPage)
@@ -73,6 +70,10 @@ class Ui_SetupWizard(object):
         self.uiVMwareBannerButton.setObjectName("uiVMwareBannerButton")
         self.horizontalLayout_2.addWidget(self.uiVMwareBannerButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.uiGNS3VMDownloadLinkUrlLabel = QtWidgets.QLabel(self.uiVMWizardPage)
+        self.uiGNS3VMDownloadLinkUrlLabel.setOpenExternalLinks(True)
+        self.uiGNS3VMDownloadLinkUrlLabel.setObjectName("uiGNS3VMDownloadLinkUrlLabel")
+        self.verticalLayout_2.addWidget(self.uiGNS3VMDownloadLinkUrlLabel)
         self.uiVMNameLabel = QtWidgets.QLabel(self.uiVMWizardPage)
         self.uiVMNameLabel.setObjectName("uiVMNameLabel")
         self.verticalLayout_2.addWidget(self.uiVMNameLabel)
@@ -154,6 +155,7 @@ class Ui_SetupWizard(object):
         self.uiVirtualizationSoftwarLabel.setText(_translate("SetupWizard", "Virtualization software:"))
         self.uiVmwareRadioButton.setText(_translate("SetupWizard", "VMware (recommended)"))
         self.uiVirtualBoxRadioButton.setText(_translate("SetupWizard", "VirtualBox"))
+        self.uiGNS3VMDownloadLinkUrlLabel.setText(_translate("SetupWizard", "If you don\'t have the VM you can <a href=\"https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip\">download it here</a>. And import the VM in the virtualization software and hit refresh."))
         self.uiVMNameLabel.setText(_translate("SetupWizard", "VM name:"))
         self.uiRefreshPushButton.setText(_translate("SetupWizard", "&Refresh"))
         self.uiCPULabel.setText(_translate("SetupWizard", "vCPU cores:"))

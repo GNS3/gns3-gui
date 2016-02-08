@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>476</width>
-    <height>510</height>
+    <width>499</width>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,58 +24,13 @@
        <string>General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>Name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiPlatformLabel">
-         <property name="text">
-          <string>Platform:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="uiPlatformTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiChassisLabel">
-         <property name="text">
-          <string>Chassis:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="uiChassisTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="uiIOSImageLabel">
-         <property name="text">
-          <string>IOS image path:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item row="10" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLineEdit" name="uiIOSImageLineEdit"/>
+          <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
          </item>
          <item>
-          <widget class="QToolButton" name="uiIOSImageToolButton">
+          <widget class="QToolButton" name="uiPrivateConfigToolButton">
            <property name="text">
             <string>&amp;Browse...</string>
            </property>
@@ -86,10 +41,47 @@
          </item>
         </layout>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="uiStartupConfigLabel">
+       <item row="17" column="1">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>263</width>
+           <height>151</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="14" column="0">
+        <widget class="QLabel" name="uiAuxPortLabel">
          <property name="text">
-          <string>Initial startup-config:</string>
+          <string>Aux port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="uiChassisTextLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QLabel" name="uiConsolePortLabel">
+         <property name="text">
+          <string>Console port:</string>
          </property>
         </widget>
        </item>
@@ -110,20 +102,20 @@
          </item>
         </layout>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="uiPrivateConfigLabel">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiPlatformLabel">
          <property name="text">
-          <string>Initial private-config:</string>
+          <string>Platform:</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item row="8" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
+          <widget class="QLineEdit" name="uiIOSImageLineEdit"/>
          </item>
          <item>
-          <widget class="QToolButton" name="uiPrivateConfigToolButton">
+          <widget class="QToolButton" name="uiIOSImageToolButton">
            <property name="text">
             <string>&amp;Browse...</string>
            </property>
@@ -134,91 +126,38 @@
          </item>
         </layout>
        </item>
-       <item row="13" column="0">
-        <widget class="QLabel" name="uiConsolePortLabel">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
          <property name="text">
-          <string>Console port:</string>
+          <string>Name:</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <widget class="QLabel" name="uiAuxPortLabel">
+       <item row="10" column="0">
+        <widget class="QLabel" name="uiPrivateConfigLabel">
          <property name="text">
-          <string>Aux port:</string>
+          <string>Initial private-config:</string>
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
-        <widget class="QSpinBox" name="uiAuxPortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0">
-        <widget class="QLabel" name="uiMidplaneLabel">
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiStartupConfigLabel">
          <property name="text">
-          <string>Midplane:</string>
+          <string>Initial startup-config:</string>
          </property>
         </widget>
        </item>
-       <item row="15" column="1">
-        <widget class="QComboBox" name="uiMidplaneComboBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="0">
-        <widget class="QLabel" name="uiNPELabel">
+       <item row="3" column="1">
+        <widget class="QLabel" name="uiPlatformTextLabel">
          <property name="text">
-          <string>NPE:</string>
+          <string/>
          </property>
         </widget>
        </item>
-       <item row="17" column="1">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>263</width>
-           <height>151</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="16" column="1">
-        <widget class="QComboBox" name="uiNPEComboBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string>Symbol:</string>
+          <string>Category:</string>
          </property>
         </widget>
        </item>
@@ -239,15 +178,86 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiChassisLabel">
          <property name="text">
-          <string>Category:</string>
+          <string>Chassis:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="16" column="1">
+        <widget class="QComboBox" name="uiNPEComboBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="1">
+        <widget class="QComboBox" name="uiMidplaneComboBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="0">
+        <widget class="QLabel" name="uiMidplaneLabel">
+         <property name="text">
+          <string>Midplane:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiIOSImageLabel">
+         <property name="text">
+          <string>IOS image path:</string>
          </property>
         </widget>
        </item>
        <item row="6" column="1">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="16" column="0">
+        <widget class="QLabel" name="uiNPELabel">
+         <property name="text">
+          <string>NPE:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="1">
+        <widget class="QSpinBox" name="uiAuxPortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+         <property name="text">
+          <string>Default name format:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

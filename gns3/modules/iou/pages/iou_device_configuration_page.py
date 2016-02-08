@@ -171,6 +171,14 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiGeneralgroupBox.hide()
 
         if not node:
+            # these are template settings
+
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
+
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
+
             # load the startup-config and private-config
             self.uiStartupConfigLineEdit.setText(settings["startup_config"])
             self.uiPrivateConfigLineEdit.setText(settings["private_config"])
@@ -184,6 +192,8 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
         else:
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
             self.uiStartupConfigLabel.hide()
             self.uiStartupConfigLineEdit.hide()
             self.uiStartupConfigToolButton.hide()
@@ -244,6 +254,15 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             del settings["console"]
 
         if not node:
+            # these are template settings
+
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+            else:
+                settings["default_name_format"] = default_name_format
+
             # save the startup-config
             startup_config = self.uiStartupConfigLineEdit.text().strip()
             if not startup_config:

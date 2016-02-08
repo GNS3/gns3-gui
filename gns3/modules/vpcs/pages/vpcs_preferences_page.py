@@ -147,6 +147,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
+        self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
         self.uiScriptFileEdit.setText(settings["base_script_file"])
         self.uiSymbolLineEdit.setText(settings["symbol"])
         self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
@@ -177,11 +178,19 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
                         "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
                         "category": self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())}
 
+        # save the symbol path
         symbol_path = self.uiSymbolLineEdit.text()
         pixmap = QtGui.QPixmap(symbol_path)
         if pixmap.isNull():
             QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
         else:
             new_settings["symbol"] = symbol_path
+
+        # save the default name format
+        default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+        if '{0}' not in default_name_format and '{id}' not in default_name_format:
+            QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+        else:
+            new_settings["default_name_format"] = default_name_format
 
         VPCS.instance().setSettings(new_settings)

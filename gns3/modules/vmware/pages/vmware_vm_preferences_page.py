@@ -66,7 +66,9 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["VM name:", vmware_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
+        if vmware_vm["linked_base"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", vmware_vm["server"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vmware_vm["enable_remote_console"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])

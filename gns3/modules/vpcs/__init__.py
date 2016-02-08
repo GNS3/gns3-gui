@@ -167,7 +167,11 @@ class VPCS(Module):
         if script_file:
             vm_settings["script_file"] = script_file
 
-        node.setup(additional_settings=vm_settings)
+        default_name_format = VPCS_SETTINGS["default_name_format"]
+        if self._settings["default_name_format"]:
+            default_name_format = self._settings["default_name_format"]
+
+        node.setup(additional_settings=vm_settings, default_name_format=default_name_format)
 
     def reset(self):
         """

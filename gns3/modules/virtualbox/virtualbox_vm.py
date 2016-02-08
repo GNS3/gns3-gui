@@ -97,8 +97,8 @@ class VirtualBoxVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, vmname, name=None, vm_id=None, port_name_format="Ethernet{0}",
-              port_segment_size=0, first_port_name="", linked_clone=False, additional_settings={}):
+    def setup(self, vmname, name=None, vm_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+              first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
         """
         Setups this VirtualBox VM.
 
@@ -110,9 +110,11 @@ class VirtualBoxVM(VM):
         """
 
         # let's create a unique name if none has been chosen
+        print(default_name_format)
         if not name:
             if linked_clone:
-                name = self.allocateName(vmname + "-")
+                name = self.allocateName(default_name_format)
+                print(name)
             else:
                 name = vmname
                 self.setName(name)
