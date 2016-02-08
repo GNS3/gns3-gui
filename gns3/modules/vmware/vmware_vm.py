@@ -392,7 +392,7 @@ class VMwareVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
-        super().load()
+        super().load(node_info)
 
         vm_id = node_info["vm_id"]
         linked_clone = node_info.get("linked_clone", False)
@@ -409,34 +409,7 @@ class VMwareVM(VM):
 
         log.info("VMware VM {} is loading".format(name))
         self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(vmx_path, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-        # update the port with the correct names and IDs
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    adapter_number = topology_port.get("adapter_number")
-                    if adapter_number == port.adapterNumber():
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("VMware VM {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
 
     def allocateVMnetInterface(self, port_id):
         """
