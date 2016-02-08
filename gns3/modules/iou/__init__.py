@@ -300,7 +300,7 @@ class IOU(Module):
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
-        iou_devices = self.iouDevices()
+        iou_devices = self.VMs()
         candidate_iou_images = {}
 
         alternative_image = image
