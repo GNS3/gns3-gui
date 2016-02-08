@@ -110,11 +110,9 @@ class VirtualBoxVM(VM):
         """
 
         # let's create a unique name if none has been chosen
-        print(default_name_format)
         if not name:
             if linked_clone:
                 name = self.allocateName(default_name_format)
-                print(name)
             else:
                 name = vmname
                 self.setName(name)
