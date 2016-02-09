@@ -361,7 +361,7 @@ class Dynamips(Module):
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
-        ios_routers = self.iosRouters()
+        ios_routers = self.VMs()
         candidate_ios_images = {}
         alternative_image = {"image": image,
                              "ram": None,

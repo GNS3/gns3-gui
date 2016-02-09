@@ -627,15 +627,17 @@ class Topology:
         if "links" in topology["topology"]:
             links = topology["topology"]["links"]
             for topology_link in links:
-                log.debug("mapping node to link with ID {}".format(topology_link["id"]))
-                source_id = topology_link["source_node_id"]
-                destination_id = topology_link["destination_node_id"]
-                if source_id not in self._node_to_links_mapping:
-                    self._node_to_links_mapping[source_id] = []
-                if destination_id not in self._node_to_links_mapping:
-                    self._node_to_links_mapping[destination_id] = []
-                self._node_to_links_mapping[source_id].append(topology_link)
-                self._node_to_links_mapping[destination_id].append(topology_link)
+                # It seem an 1.0 topology could be corrupt and missed the id
+                if "id" in topology_link:
+                    log.debug("Mapping node to link with ID {}".format(topology_link["id"]))
+                    source_id = topology_link["source_node_id"]
+                    destination_id = topology_link["destination_node_id"]
+                    if source_id not in self._node_to_links_mapping:
+                        self._node_to_links_mapping[source_id] = []
+                    if destination_id not in self._node_to_links_mapping:
+                        self._node_to_links_mapping[destination_id] = []
+                    self._node_to_links_mapping[source_id].append(topology_link)
+                    self._node_to_links_mapping[destination_id].append(topology_link)
 
         # servers
         self._servers = {}

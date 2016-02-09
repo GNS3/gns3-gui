@@ -1041,6 +1041,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         progress.setCancelButtonText("Force quit")
 
         log.debug("Close the main Windows")
+
+        self._analytics_client.sendScreenView("Main Window", session_start=False)
+
         servers = Servers.instance()
         if self._project.closed():
             log.debug("Project is closed killing server and closing main windows")
@@ -1076,7 +1079,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
-        self._analytics_client.sendScreenView("Main Window", session_start=False)
 
         if close_windows:
             self.close()

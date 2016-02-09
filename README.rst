@@ -18,7 +18,7 @@ You must be connected to the Internet in order to install the dependencies.
 
 Dependencies:
 
-- Python 3.3 or above
+- Python 3.4 or above
 - Setuptools
 - PyQt 5 libraries
 - Apache Libcloud library

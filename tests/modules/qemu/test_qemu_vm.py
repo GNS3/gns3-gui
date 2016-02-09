@@ -31,7 +31,7 @@ def test_qemu_vm_init(local_server, project):
 def test_qemu_vm_setup(qemu_vm, project):
 
     with patch('gns3.node.Node.httpPost') as mock:
-        qemu_vm.setup("VMNAME", base_name="test")
+        qemu_vm.setup("/bin/fake", name="VMNAME")
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/qemu/vms".format(project_id=project.id())
@@ -53,7 +53,7 @@ def test_qemu_vm_setup(qemu_vm, project):
 def test_qemu_vm_setup_command_line(qemu_vm, project):
 
     with patch('gns3.node.Node.httpPost') as mock:
-        qemu_vm.setup("VMNAME", base_name="test")
+        qemu_vm.setup("/bin/fake", name="VMNAME")
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/qemu/vms".format(project_id=project.id())
@@ -76,7 +76,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
 def test_qemu_vm_setup_md5_missing(qemu_vm, project):
 
     with patch('gns3.node.Node.httpPost') as mock:
-        qemu_vm.setup("VMNAME", base_name="test")
+        qemu_vm.setup("/bin/fake", name="VMNAME")
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/qemu/vms".format(project_id=project.id())
