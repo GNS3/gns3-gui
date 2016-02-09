@@ -67,6 +67,7 @@ class DockerVM(VM):
             new_port.setShortName(short_name)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
+            new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
@@ -357,3 +358,5 @@ class DockerVM(VM):
 
     def __str__(self):
         return "Docker container"
+
+

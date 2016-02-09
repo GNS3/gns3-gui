@@ -25,7 +25,6 @@ import re
 from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.port import Port
-from gns3.packet_capture import PacketCapture
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.image_manager import ImageManager
 
@@ -411,69 +410,6 @@ class Router(VM):
                 # set ports as suspended
                 port.setStatus(Port.suspended)
             self.suspended_signal.emit()
-
-    def startPacketCapture(self, port, capture_file_name, data_link_type):
-        """
-        Starts a packet capture.
-
-        :param port: Port instance
-        :param capture_file_name: PCAP capture file path
-        :param data_link_type: PCAP data link type
-        """
-
-        params = {"capture_file_name": capture_file_name,
-                  "data_link_type": data_link_type}
-        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/start_capture".format(
-            vm_id=self._vm_id,
-            adapter_number=port.adapterNumber(),
-            port_number=port.portNumber()),
-            self._startPacketCaptureCallback,
-            context={"port": port},
-            body=params)
-
-    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for starting a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            PacketCapture.instance().startCapture(self, context["port"], result["pcap_file_path"])
-
-    def stopPacketCapture(self, port):
-        """
-        Stops a packet capture.
-
-        :param port: Port instance
-        """
-
-        log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self.httpPost("/dynamips/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/stop_capture".format(
-            vm_id=self._vm_id,
-            adapter_number=port.adapterNumber(),
-            port_number=port.portNumber()),
-            self._stopPacketCaptureCallback,
-            context={"port": port})
-
-    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for stopping a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            PacketCapture.instance().stopCapture(self, context["port"])
 
     def computeIdlepcs(self, callback):
         """
