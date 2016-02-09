@@ -322,3 +322,9 @@ PACKET_CAPTURE_SETTINGS = {
     "command_auto_start": True,
     "packet_capture_analyzer_command": DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND,
 }
+
+CUSTOM_CONSOLE_COMMANDS_SETTINGS = {
+    "telnet": {},
+    "vnc": {},
+    "serial": {}
+}

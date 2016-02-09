@@ -16,12 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import copy
 
 from gns3.qt import QtWidgets
+from gns3.local_config import LocalConfig
 from gns3.ui.console_command_dialog_ui import Ui_uiConsoleCommandDialog
 from gns3.settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, \
-        PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, \
-        PRECONFIGURED_VNC_CONSOLE_COMMANDS
+        PRECONFIGURED_SERIAL_CONSOLE_COMMANDS,                   \
+        PRECONFIGURED_VNC_CONSOLE_COMMANDS,                      \
+        CUSTOM_CONSOLE_COMMANDS_SETTINGS
 
 
 import logging
@@ -41,23 +44,60 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         """
         super().__init__(parent)
         self.setupUi(self)
+        self._console_type = console_type
+        self._current = current
 
-        if console_type == "telnet":
-            consoles = PRECONFIGURED_TELNET_CONSOLE_COMMANDS
-        elif console_type == "vnc":
-            consoles = PRECONFIGURED_VNC_CONSOLE_COMMANDS
-        else:
-            consoles = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS
-
-        self.uiCommandComboBox.addItem("Custom", "")
-        for name, cmd in sorted(consoles.items(), key=(lambda item: item[0].lower())):
-            self.uiCommandComboBox.addItem(name, cmd)
+        self._settings = LocalConfig.instance().loadSectionSettings("CustomConsoleCommands", CUSTOM_CONSOLE_COMMANDS_SETTINGS)
 
         self.uiCommandComboBox.currentIndexChanged.connect(self.commandComboBoxCurrentIndexChangedSlot)
         self.uiCommandPlainTextEdit.textChanged.connect(self.textChangedSlot)
+        self.uiSavePushButton.clicked.connect(self.savePushButtonClickedSlot)
+        self.uiRemovePushButton.clicked.connect(self.removePushButtonClickedSlot)
 
-        if current:
-            self.uiCommandPlainTextEdit.setPlainText(current)
+        self._refreshList()
+
+    def _refreshList(self):
+        if self._console_type == "telnet":
+            self._consoles = copy.copy(PRECONFIGURED_TELNET_CONSOLE_COMMANDS)
+            self._consoles.update(self._settings[self._console_type])
+        elif self._console_type == "vnc":
+            self._consoles = copy.copy(PRECONFIGURED_VNC_CONSOLE_COMMANDS)
+            self._consoles.update(self._settings[self._console_type])
+        else:
+            self._consoles = copy.copy(PRECONFIGURED_SERIAL_CONSOLE_COMMANDS)
+            self._consoles.update(self._settings[self._console_type])
+
+        self.uiCommandComboBox.clear()
+        self.uiCommandComboBox.addItem("Custom", "")
+        for name, cmd in sorted(self._consoles.items(), key=(lambda item: item[0].lower())):
+            self.uiCommandComboBox.addItem(name, cmd)
+
+        if self._current:
+            self.uiCommandPlainTextEdit.setPlainText(self._current)
+        else:
+            self.uiCommandComboBox.setCurrentIndex(1)
+
+    def removePushButtonClickedSlot(self):
+        """
+        Remove the custom command from the custom list
+        """
+        self._settings[self._console_type].pop(self.uiCommandComboBox.currentText())
+        LocalConfig.instance().saveSectionSettings("CustomConsoleCommands", self._settings)
+        self._current = None
+        self._refreshList()
+
+    def savePushButtonClickedSlot(self):
+        """
+        Save a custom command to the list
+        """
+        name, ok = QtWidgets.QInputDialog.getText(self, "Add a command", "Command name:", QtWidgets.QLineEdit.Normal)
+        command = self.uiCommandPlainTextEdit.toPlainText().strip()
+        if ok and len(command) > 0:
+            if command not in self._consoles.values():
+                self._settings[self._console_type][name] = command
+                self._current = command
+                LocalConfig.instance().saveSectionSettings("CustomConsoleCommands", self._settings)
+                self._refreshList()
 
     def textChangedSlot(self):
         index = self.uiCommandComboBox.findData(self.uiCommandPlainTextEdit.toPlainText())
@@ -66,9 +106,15 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         self.uiCommandComboBox.setCurrentIndex(index)
 
     def commandComboBoxCurrentIndexChangedSlot(self, index):
+        self.uiRemovePushButton.hide()
         # Ignore custom command
         if index != 0:
             self.uiCommandPlainTextEdit.setPlainText(self.uiCommandComboBox.currentData())
+            self.uiSavePushButton.hide()
+            if self.uiCommandComboBox.currentText() in self._settings[self._console_type].keys():
+                self.uiRemovePushButton.show()
+        else:
+            self.uiSavePushButton.show()
 
     @staticmethod
     def getCommand(parent, console_type="telnet", current=None):
@@ -77,6 +123,7 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         if dialog.exec_():
             return (True, dialog.uiCommandPlainTextEdit.toPlainText().replace("\n", " "))
         return (False, None)
+
 
 if __name__ == '__main__':
     import sys
