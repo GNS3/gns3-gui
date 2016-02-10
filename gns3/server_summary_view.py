@@ -93,6 +93,9 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
     def __init__(self, parent):
 
         super().__init__(parent)
+
+        self._servers = set()
+
         Servers.instance().server_added_signal.connect(self._serverAddedSlot)
         for server in Servers.instance().servers():
             self._serverAddedSlot(server.url())
@@ -103,6 +106,10 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
 
         :params url: URL of the server
         """
+
+        if url in self._servers:
+            return
+        self._servers.add(url)
         server = Servers.instance().getServerFromString(url)
         ServerItem(self, server)
 
