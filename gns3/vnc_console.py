@@ -29,17 +29,13 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def vncConsole(host, port):
+def vncConsole(host, port, command):
     """
     Start a VNC console program.
 
     :param host: host or IP address
     :param port: port number
     """
-
-    command = MainWindow.instance().vncConsoleCommand()
-    if not command:
-        return
 
     # replace the place-holders by the actual values
     command = command.replace("%h", host)

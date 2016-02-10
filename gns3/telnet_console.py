@@ -84,18 +84,15 @@ class ConsoleThread(QtCore.QThread):
                 console_mutex.unlock()
 
 
-def nodeTelnetConsole(name, server, port):
+def nodeTelnetConsole(name, server, port, command):
     """
     Start a Telnet console program for a topology node.
 
     :param name: Name of the console
     :param port: Port number of the console on remote host
     :param server: Server where the console is running
+    :param command: Console command
     """
-
-    command = MainWindow.instance().telnetConsoleCommand()
-    if not command:
-        return
 
     log.info('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, name, server, port)
@@ -117,7 +114,8 @@ def telnetConsole(name, host, port):
     :param server: Server where the console is running
     """
 
-    command = MainWindow.instance().telnetConsoleCommand()
+    general_settings = MainWindow.instance().settings()
+    command = general_settings["telnet_console_command"]
     if not command:
         return
 
