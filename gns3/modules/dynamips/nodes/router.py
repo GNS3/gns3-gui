@@ -340,10 +340,8 @@ class Router(VM):
         :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
+        if not super()._updateCallback(result, error=error, **kwargs):
+            return False
 
         updated = False
         for name, value in result.items():
@@ -599,24 +597,14 @@ class Router(VM):
         :returns: representation of the node (dictionary)
         """
 
-        router = {"id": self.id(),
-                  "vm_id": self._vm_id,
-                  "dynamips_id": self._dynamips_id,
-                  "type": self.__class__.__name__,
-                  "description": str(self),
-                  "properties": {},
-                  "server_id": self._server.id()}
+        router = super().dump()
+        router["vm_id"] = self._vm_id
+        router["dynamips_id"] = self._dynamips_id
 
         # add the properties
         for name, value in self._settings.items():
             if value is not None and value != "":
                 router["properties"][name] = value
-
-        # add the ports
-        if self._ports:
-            ports = router["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
 
         return router
 
@@ -627,6 +615,8 @@ class Router(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
 
         # for backward compatibility
         vm_id = dynamips_id = node_info.get("router_id")
@@ -657,34 +647,7 @@ class Router(VM):
 
         log.info("router {} is loading".format(name))
         self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(image, ram, name, vm_id, dynamips_id, vm_settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-
-        # update the port with the correct names and IDs
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber() and (topology_port.get("adapter_number", None) == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber()):
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("router {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
 
     def saveConfig(self):
         """

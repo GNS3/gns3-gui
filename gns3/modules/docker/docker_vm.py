@@ -200,14 +200,9 @@ class DockerVM(VM):
 
         :returns: representation of the node (dictionary)
         """
-        container = {
-            "id": self.id(),
-            "vm_id": self._vm_id,
-            "type": self.__class__.__name__,
-            "description": str(self),
-            "properties": {},
-            "server_id": self._server.id()
-        }
+        docker = super().dump()
+        docker["id"] = self.id()
+        docker["vm_id"] = self._vm_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -259,13 +254,13 @@ class DockerVM(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
+
         settings = node_info["properties"]
         name = settings.pop("name")
         image = settings.pop("image")
         log.info("Docker container {} is loading".format(name))
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(image, name=name, additional_settings=settings)
 
     def _updatePortSettings(self):

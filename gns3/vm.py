@@ -38,6 +38,46 @@ class VM(Node):
         self._vm_id = None
         self._vm_directory = None
         self._command_line = None
+        self._custom_console_command = None
+
+    def consoleCommand(self):
+        """
+        :returns: The console command for this host
+        """
+        if self._custom_console_command:
+            return self._custom_console_command
+        else:
+            from .main_window import MainWindow
+            general_settings = MainWindow.instance().settings()
+
+            console_type = self.consoleType()
+            if console_type == "serial":
+                return general_settings["serial_console_command"]
+            elif console_type == "vnc":
+                return general_settings["vnc_console_command"]
+            return general_settings["telnet_console_command"]
+
+    def setCustomConsoleCommand(self, console_command):
+        """
+        Set custom console command for this node
+        """
+
+        console_command = console_command.strip()
+        if console_command == '':
+            self._custom_console_command = None
+        else:
+            self._custom_console_command = console_command
+
+    def consoleType(self):
+        """
+        Get the console type (serial, telnet or VNC)
+        """
+        console_type = "telnet"
+        if hasattr(self, "serialConsole") and self.serialConsole():
+            return "serial"
+        if "console_type" in self.settings():
+            return self.settings()["console_type"]
+        return console_type
 
     def vm_id(self):
         """
@@ -122,7 +162,7 @@ class VM(Node):
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
             if result:
-                self._setupCallback(result)
+                self._updateCallback(result)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -157,6 +197,24 @@ class VM(Node):
                                                                                   self._settings[name],
                                                                                   value))
                 self._settings[name] = value
+        return True
+
+    def _updateCallback(self, result, error=False, **kwargs):
+        """
+        Callback for update.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
+
+        if "command_line" in result:
+            self._command_line = result["command_line"]
+
         return True
 
     def stop(self):
@@ -367,3 +425,91 @@ class VM(Node):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             PacketCapture.instance().stopCapture(self, context["port"])
+    def dump(self):
+        """
+        Returns a representation of this device.
+        (to be saved in a topology file).
+
+        :returns: representation of the node (dictionary)
+        """
+
+        device = {
+            "id": self.id(),
+            "type": self.__class__.__name__,
+            "description": str(self),
+            "properties": {},
+            "server_id": self._server.id()
+        }
+        if self._custom_console_command is not None:
+            device["custom_console_command"] = self._custom_console_command
+
+        # add the ports
+        if self._ports:
+            ports = device["ports"] = []
+            for port in self._ports:
+                ports.append(port.dump())
+
+        return device
+
+    def load(self, node_info):
+        """
+        Loads a device representation
+        (from a topology file).
+
+        :param node_info: representation of the node (dictionary)
+        """
+
+        if "custom_console_command" in node_info:
+            self._custom_console_command = node_info["custom_console_command"]
+        self._loading = True
+        self._node_info = node_info
+        self.loaded_signal.connect(self._updatePortSettings)
+
+    def openConsole(self, aux):
+        if hasattr(self, "serialConsole") and self.serialConsole():
+            from .serial_console import serialConsole
+            serialConsole(self.name(), self.serialPipe(), self.consoleCommand())
+
+        if aux:
+            console_port = self.auxConsole()
+            if console_port is None:
+                raise ValueError("AUX console port not allocated for {}".format(self.name()))
+        else:
+            console_port = self.console()
+
+        console_type = "telnet"
+        if "console_type" in self.settings():
+            console_type = self.settings()["console_type"]
+        if console_type == "telnet":
+            from .telnet_console import nodeTelnetConsole
+            nodeTelnetConsole(self.name(), self.server(), console_port, self.consoleCommand())
+        elif console_type == "vnc":
+            from .vnc_console import vncConsole
+            vncConsole(self.server().host(), console_port, self.consoleCommand())
+
+    def _updatePortSettings(self):
+        """
+        Updates port settings when loading a topology.
+        """
+
+        self.loaded_signal.disconnect(self._updatePortSettings)
+
+        # assign the correct names and IDs to the ports
+        if "ports" in self._node_info:
+            ports = self._node_info["ports"]
+            for topology_port in ports:
+                for port in self._ports:
+                    if topology_port["port_number"] == port.portNumber():
+                        # If the adapter is missing we consider that adapter_number == port_number
+                        adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
+                        if port.adapterNumber() is None or adapter_number == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber():
+                            port.setName(topology_port["name"])
+                            port.setId(topology_port["id"])
+
+        # now we can set the node as initialized and trigger the created signal
+        self.setInitialized(True)
+        log.info("{} has been loaded".format(self.name()))
+        self.created_signal.emit(self.id())
+        self._module.addNode(self)
+        self._loading = False
+        self._node_info = None

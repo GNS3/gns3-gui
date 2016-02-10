@@ -186,6 +186,8 @@ class NodeItem():
         when a the node has been updated.
         """
 
+        if self is None:
+            return
         if self._node_label:
             if self._node_label.toPlainText() != self._node.name():
                 self._node_label.setPlainText(self._node.name())

@@ -157,10 +157,8 @@ class VPCSDevice(VM):
         :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
+        if not super()._updateCallback(result, error=error, **kwargs):
+            return False
 
         updated = False
         for name, value in result.items():
@@ -218,12 +216,8 @@ class VPCSDevice(VM):
         :returns: representation of the node (dictionary)
         """
 
-        vpcs_device = {"id": self.id(),
-                       "vm_id": self._vm_id,
-                       "type": self.__class__.__name__,
-                       "description": str(self),
-                       "properties": {},
-                       "server_id": self._server.id()}
+        vpcs_device = super().dump()
+        vpcs_device["vm_id"] = self._vm_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -232,12 +226,6 @@ class VPCSDevice(VM):
                     if name == "startup_script_path":
                         value = os.path.basename(value)
                     vpcs_device["properties"][name] = value
-
-        # add the ports
-        if self._ports:
-            ports = vpcs_device["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
 
         return vpcs_device
 
@@ -248,6 +236,8 @@ class VPCSDevice(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
 
         # for backward compatibility
         vm_id = node_info.get("vpcs_id")
@@ -263,34 +253,7 @@ class VPCSDevice(VM):
 
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(name, vm_id, vm_settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-
-        # assign the correct names and IDs to the ports
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber():
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("VPCS device {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
 
     def exportConfig(self, config_export_path):
         """

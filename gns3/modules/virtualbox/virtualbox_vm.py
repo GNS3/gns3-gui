@@ -188,10 +188,8 @@ class VirtualBoxVM(VM):
         :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
+        if not super()._updateCallback(result, error=error, **kwargs):
+            return False
 
         updated = False
         nb_adapters_changed = False
@@ -293,14 +291,10 @@ class VirtualBoxVM(VM):
         :returns: representation of the node (dictionary)
         """
 
-        vbox_vm = {"id": self.id(),
-                   "vm_id": self._vm_id,
-                   "linked_clone": self._linked_clone,
-                   "type": self.__class__.__name__,
-                   "description": str(self),
-                   "properties": {},
-                   "port_name_format": self._port_name_format,
-                   "server_id": self._server.id()}
+        vbox_vm = super().dump()
+        vbox_vm["vm_id"] = self._vm_id
+        vbox_vm["linked_clone"] = self._linked_clone
+        vbox_vm["port_name_format"] = self._port_name_format
 
         if self._port_segment_size:
             vbox_vm["port_segment_size"] = self._port_segment_size
@@ -312,12 +306,6 @@ class VirtualBoxVM(VM):
             if value is not None and value != "":
                 vbox_vm["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = vbox_vm["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
         return vbox_vm
 
     def load(self, node_info):
@@ -327,6 +315,8 @@ class VirtualBoxVM(VM):
 
         :param node_info: representation of the node (dictionary)
         """
+
+        super().load(node_info)
 
         # for backward compatibility
         vm_id = node_info.get("vbox_id")
@@ -347,35 +337,7 @@ class VirtualBoxVM(VM):
 
         log.info("VirtualBox VM {} is loading".format(name))
         self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(vmname, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-
-        # assign the correct names and IDs to the ports
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
-                    if adapter_number == port.adapterNumber():
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("VirtualBox VM {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
 
     def name(self):
         """

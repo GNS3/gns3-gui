@@ -207,10 +207,8 @@ class QemuVM(VM):
         :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
+        if not super()._updateCallback(result, error=error, **kwargs):
+            return False
 
         updated = False
         nb_adapters_changed = False
@@ -296,14 +294,10 @@ class QemuVM(VM):
         :returns: representation of the node (dictionary)
         """
 
-        qemu_vm = {"id": self.id(),
-                   "vm_id": self._vm_id,
-                   "linked_clone": self._linked_clone,
-                   "type": self.__class__.__name__,
-                   "description": str(self),
-                   "properties": {},
-                   "port_name_format": self._port_name_format,
-                   "server_id": self._server.id()}
+        qemu_vm = super().dump()
+        qemu_vm["vm_id"] = self._vm_id
+        qemu_vm["linked_clone"] = self._linked_clone
+        qemu_vm["port_name_format"] = self._port_name_format
 
         if self._port_segment_size:
             qemu_vm["port_segment_size"] = self._port_segment_size
@@ -314,12 +308,6 @@ class QemuVM(VM):
         for name, value in self._settings.items():
             if value is not None and value != "":
                 qemu_vm["properties"][name] = value
-
-        # add the ports
-        if self._ports:
-            ports = qemu_vm["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
 
         return qemu_vm
 
@@ -369,6 +357,7 @@ class QemuVM(VM):
         :param node_info: representation of the node (dictionary)
         """
 
+        super().load(node_info)
         # for backward compatibility
         vm_id = node_info.get("qemu_id")
         if not vm_id:
@@ -387,35 +376,7 @@ class QemuVM(VM):
         qemu_path = vm_settings.pop("qemu_path")
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(qemu_path, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-
-        # assign the correct names and IDs to the ports
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
-                    if adapter_number == port.adapterNumber():
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("QEMU VM {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
 
     def name(self):
         """
