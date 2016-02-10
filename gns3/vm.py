@@ -380,9 +380,19 @@ class VM(Node):
 
         # add the ports
         if self._ports:
+            # In 1.4.2dev1 we track an issue about duplicate port name
+            # https://github.com/GNS3/gns3-gui/issues/992
+            initialized_port_name = set()
+
             ports = device["ports"] = []
             for port in self._ports:
-                ports.append(port.dump())
+                if port.name() in initialized_port_name:
+                    msg = "Duplicate port name {} in {}.".format(port.name(), self.name())
+                    print(msg)
+                    log.error(msg)
+                else:
+                    ports.append(port.dump())
+                    initialized_port_name.add(port.name())
 
         return device
 
@@ -432,14 +442,24 @@ class VM(Node):
         # assign the correct names and IDs to the ports
         if "ports" in self._node_info:
             ports = self._node_info["ports"]
+
+            port_initialized = set()
+
             for topology_port in ports:
                 for port in self._ports:
                     if topology_port["port_number"] == port.portNumber():
                         # If the adapter is missing we consider that adapter_number == port_number
                         adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
                         if port.adapterNumber() is None or adapter_number == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber():
-                            port.setName(topology_port["name"])
-                            port.setId(topology_port["id"])
+
+                            if port in port_initialized:
+                                msg = "Topology corrupted port {} already exists for {}".format(port, self.name())
+                                print(msg)
+                                log.error(msg)
+                            else:
+                                port.setName(topology_port["name"])
+                                port.setId(topology_port["id"])
+                                port_initialized.add(port)
 
         # now we can set the node as initialized and trigger the created signal
         self.setInitialized(True)
