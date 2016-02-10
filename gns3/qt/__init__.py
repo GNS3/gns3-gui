@@ -28,6 +28,7 @@ For PyQt4 and PyQt5 differences please see http://pyqt.sourceforge.net/Docs/PyQt
 import sys
 import sip
 import os
+import re
 import functools
 import inspect
 
@@ -105,23 +106,6 @@ class QFileDialog(OldFileDialog):
 QtWidgets.QFileDialog = QFileDialog
 
 
-class StatsQtWidgetsQDialog(QtWidgets.QDialog):
-    """
-    Send stats from all the QWizard
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        import re
-        from .utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QDialog = StatsQtWidgetsQDialog
-
-
 class LogQMessageBox(QtWidgets.QMessageBox):
     """
     Replace the standard message box for logging errors to console. And
@@ -147,39 +131,6 @@ class LogQMessageBox(QtWidgets.QMessageBox):
 
 QtWidgets.QMessageBox = LogQMessageBox
 
-
-class StatsQtWidgetsQWizard(QtWidgets.QWizard):
-    """
-    Send stats from all the QWizard
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        import re
-        from .utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QWizard = StatsQtWidgetsQWizard
-
-
-class StatsQtWidgetsQMainWindow(QtWidgets.QMainWindow):
-    """
-    Send stats from all the QMainWindow
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        import re
-        from .utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QMainWindow = StatsQtWidgetsQMainWindow
 
 # If we run from a test we replace the signal by a synchronous version
 if hasattr(sys, '_called_from_test'):
@@ -212,6 +163,54 @@ if hasattr(sys, '_called_from_test'):
     QtCore.pyqtSignal = FakeQtSignal
 
 
+class StatsQtWidgetsQWizard(QtWidgets.QWizard):
+    """
+    Send stats from all the QWizard
+    """
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        from ..utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtWidgets.QWizard = StatsQtWidgetsQWizard
+
+
+class StatsQtWidgetsQMainWindow(QtWidgets.QMainWindow):
+    """
+    Send stats from all the QMainWindow
+    """
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        from ..utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtWidgets.QMainWindow = StatsQtWidgetsQMainWindow
+
+
+class StatsQtWidgetsQDialog(QtWidgets.QDialog):
+    """
+    Send stats from all the QWizard
+    """
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        from ..utils.analytics import AnalyticsClient
+        name = self.__class__.__name__
+        name = re.sub(r"([A-Z])", r" \1", name).strip()
+        AnalyticsClient.instance().sendScreenView(name)
+
+QtWidgets.QDialog = StatsQtWidgetsQDialog
+
+
 def qpartial(func, *args, **kwargs):
     """
     A functools partial that you can use on qobject. If the targeted qobject is
@@ -230,3 +229,4 @@ def qpartial(func, *args, **kwargs):
             return functools.partial(partial, *args, **kwargs)
 
     return functools.partial(func, *args, **kwargs)
+
