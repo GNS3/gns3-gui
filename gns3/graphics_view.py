@@ -762,9 +762,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
             menu.addAction(console_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
-            console_edit_action = QtWidgets.QAction("Edit console", menu)
+            console_edit_action = QtWidgets.QAction("Custom console", menu)
             console_edit_action.setIcon(QtGui.QIcon(':/icons/console_edit.svg'))
-            console_edit_action.triggered.connect(self.consoleEditActionSlot)
+            console_edit_action.triggered.connect(self.customConsoleActionSlot)
             menu.addAction(console_edit_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
@@ -1014,7 +1014,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             return True
 
         try:
-            node.openConsole(aux)
+            node.openConsole(aux=aux)
         except (OSError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
             return False
@@ -1049,7 +1049,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         self.consoleFromItems(self.scene().selectedItems())
 
-    def consoleEditActionSlot(self):
+    def customConsoleActionSlot(self):
         """
         Allow user to use a custom console for this VM
         """
@@ -1066,7 +1066,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             for item in self.scene().selectedItems():
                 if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
                     node = item.node()
-                    node.setCustomConsoleCommand(cmd)
+                    node.openConsole(command=cmd)
 
     def auxConsoleFromItems(self, items):
         """

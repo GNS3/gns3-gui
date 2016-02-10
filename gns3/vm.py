@@ -37,35 +37,20 @@ class VM(Node):
         self._vm_id = None
         self._vm_directory = None
         self._command_line = None
-        self._custom_console_command = None
 
     def consoleCommand(self):
         """
         :returns: The console command for this host
         """
-        if self._custom_console_command:
-            return self._custom_console_command
-        else:
-            from .main_window import MainWindow
-            general_settings = MainWindow.instance().settings()
+        from .main_window import MainWindow
+        general_settings = MainWindow.instance().settings()
 
-            console_type = self.consoleType()
-            if console_type == "serial":
-                return general_settings["serial_console_command"]
-            elif console_type == "vnc":
-                return general_settings["vnc_console_command"]
-            return general_settings["telnet_console_command"]
-
-    def setCustomConsoleCommand(self, console_command):
-        """
-        Set custom console command for this node
-        """
-
-        console_command = console_command.strip()
-        if console_command == '':
-            self._custom_console_command = None
-        else:
-            self._custom_console_command = console_command
+        console_type = self.consoleType()
+        if console_type == "serial":
+            return general_settings["serial_console_command"]
+        elif console_type == "vnc":
+            return general_settings["vnc_console_command"]
+        return general_settings["telnet_console_command"]
 
     def consoleType(self):
         """
@@ -375,8 +360,6 @@ class VM(Node):
             "properties": {},
             "server_id": self._server.id()
         }
-        if self._custom_console_command is not None:
-            device["custom_console_command"] = self._custom_console_command
 
         # add the ports
         if self._ports:
@@ -394,16 +377,17 @@ class VM(Node):
         :param node_info: representation of the node (dictionary)
         """
 
-        if "custom_console_command" in node_info:
-            self._custom_console_command = node_info["custom_console_command"]
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
 
-    def openConsole(self, aux):
+    def openConsole(self, command=None, aux=False):
+        if command is None:
+            command = self.consoleCommand()
+
         if hasattr(self, "serialConsole") and self.serialConsole():
             from .serial_console import serialConsole
-            serialConsole(self.name(), self.serialPipe(), self.consoleCommand())
+            serialConsole(self.name(), self.serialPipe(), command)
 
         if aux:
             console_port = self.auxConsole()
@@ -417,10 +401,10 @@ class VM(Node):
             console_type = self.settings()["console_type"]
         if console_type == "telnet":
             from .telnet_console import nodeTelnetConsole
-            nodeTelnetConsole(self.name(), self.server(), console_port, self.consoleCommand())
+            nodeTelnetConsole(self.name(), self.server(), console_port, command)
         elif console_type == "vnc":
             from .vnc_console import vncConsole
-            vncConsole(self.server().host(), console_port, self.consoleCommand())
+            vncConsole(self.server().host(), console_port, command)
 
     def _updatePortSettings(self):
         """
