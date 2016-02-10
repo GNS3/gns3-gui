@@ -27,7 +27,6 @@ from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
 from .servers import Servers
 from .items.node_item import NodeItem
 from .items.svg_node_item import SvgNodeItem
-from .items.pixmap_node_item import PixmapNodeItem
 from .dialogs.node_properties_dialog import NodePropertiesDialog
 from .link import Link
 from .node import Node
@@ -1539,10 +1538,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
-            if QtSvg.QSvgRenderer(node_data["symbol"]).isValid():
-                node_item = SvgNodeItem(node, node_data["symbol"])
-            else:
-                node_item = PixmapNodeItem(node, node_data["symbol"])
+            node_item = SvgNodeItem(node, node_data["symbol"])
             node_module.setupNode(node, node_data["name"])
         # If no server is available a ValueError is raised
         except (ModuleError, ValueError) as e:

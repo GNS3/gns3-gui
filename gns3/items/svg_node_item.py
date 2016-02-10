@@ -20,6 +20,7 @@ Graphical representation of a SVG node on the QGraphicsScene.
 """
 
 from ..qt import QtSvg
+from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .node_item import NodeItem
 
 import logging
@@ -42,9 +43,9 @@ class SvgNodeItem(NodeItem, QtSvg.QGraphicsSvgItem):
 
         # create renderer using symbols path/resource
         if symbol:
-            renderer = QtSvg.QSvgRenderer(symbol)
+            renderer = QImageSvgRenderer(symbol)
             if symbol != node.defaultSymbol():
                 renderer.setObjectName(symbol)
         else:
-            renderer = QtSvg.QSvgRenderer(node.defaultSymbol())
+            renderer = QImageSvgRenderer(node.defaultSymbol())
         self.setSharedRenderer(renderer)
