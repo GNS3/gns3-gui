@@ -1057,14 +1057,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
         current_cmd = None
         console_type = "telnet"
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
 
         (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type=console_type, current=current_cmd)
         if ok:
             for item in self.scene().selectedItems():
-                if isinstance(item, NodeItem) and hasattr(item.node(), "console"):
+                if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
                     node.openConsole(command=cmd)
 
