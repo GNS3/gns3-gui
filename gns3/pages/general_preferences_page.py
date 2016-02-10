@@ -26,9 +26,9 @@ import json
 from gns3.qt import QtGui, QtCore, QtWidgets
 from gns3.local_config import LocalConfig
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
-from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, PRECONFIGURED_TELNET_CONSOLE_COMMANDS, \
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS, PRECONFIGURED_VNC_CONSOLE_COMMANDS, STYLES
 from gns3.servers import Servers
+from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, STYLES
+from ..dialogs.console_command_dialog import ConsoleCommandDialog
 
 
 class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget):
@@ -43,14 +43,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.setupUi(self)
         self._remote_servers = {}
         self._preferences_dialog = parent
-
-        # Load the pre-configured console & VNC commands
-        for name, cmd in sorted(PRECONFIGURED_TELNET_CONSOLE_COMMANDS.items()):
-            self.uiTelnetConsolePreconfiguredCommandComboBox.addItem(name, cmd)
-        for name, cmd in sorted(PRECONFIGURED_SERIAL_CONSOLE_COMMANDS.items()):
-            self.uiSerialConsolePreconfiguredCommandComboBox.addItem(name, cmd)
-        for name, cmd in sorted(PRECONFIGURED_VNC_CONSOLE_COMMANDS.items()):
-            self.uiVNCConsolePreconfiguredCommandComboBox.addItem(name, cmd)
 
         # Display the path of the config file
         config_file_path = LocalConfig.instance().configFilePath()
@@ -136,30 +128,30 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         Slot to set a chosen pre-configured Telnet console command.
         """
 
-        self.uiTelnetConsoleCommandLineEdit.clear()
-        command = self.uiTelnetConsolePreconfiguredCommandComboBox.itemData(self.uiTelnetConsolePreconfiguredCommandComboBox.currentIndex(), QtCore.Qt.UserRole)
-        self.uiTelnetConsoleCommandLineEdit.setText(command)
-        self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
+        cmd = self.uiTelnetConsoleCommandLineEdit.text()
+        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="telnet", current=cmd)
+        if ok:
+            self.uiTelnetConsoleCommandLineEdit.setText(cmd)
 
     def _serialConsolePreconfiguredCommandSlot(self):
         """
         Slot to set a chosen pre-configured serial console command.
         """
 
-        self.uiSerialConsoleCommandLineEdit.clear()
-        command = self.uiSerialConsolePreconfiguredCommandComboBox.itemData(self.uiSerialConsolePreconfiguredCommandComboBox.currentIndex(), QtCore.Qt.UserRole)
-        self.uiSerialConsoleCommandLineEdit.setText(command)
-        self.uiSerialConsoleCommandLineEdit.setCursorPosition(0)
+        cmd = self.uiSerialConsoleCommandLineEdit.text()
+        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="serial", current=cmd)
+        if ok:
+            self.uiSerialConsoleCommandLineEdit.setText(cmd)
 
     def _vncConsolePreconfiguredCommandSlot(self):
         """
         Slot to set a chosen pre-configured VNC console command.
         """
 
-        self.uiVNCConsoleCommandLineEdit.clear()
-        command = self.uiVNCConsolePreconfiguredCommandComboBox.itemData(self.uiVNCConsolePreconfiguredCommandComboBox.currentIndex(), QtCore.Qt.UserRole)
-        self.uiVNCConsoleCommandLineEdit.setText(command)
-        self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
+        cmd = self.uiVNCConsoleCommandLineEdit.text()
+        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="vnc", current=cmd)
+        if ok:
+            self.uiVNCConsoleCommandLineEdit.setText(cmd)
 
     def _importConfigurationFileSlot(self):
         """
@@ -262,23 +254,14 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         index = self.uiStyleComboBox.findText(settings["style"])
         if index != -1:
             self.uiStyleComboBox.setCurrentIndex(index)
-        index = self.uiTelnetConsolePreconfiguredCommandComboBox.findData(settings["telnet_console_command"])
-        if index != -1:
-            self.uiTelnetConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
         self.uiSerialConsoleCommandLineEdit.setText(settings["serial_console_command"])
         self.uiSerialConsoleCommandLineEdit.setCursorPosition(0)
-        index = self.uiSerialConsolePreconfiguredCommandComboBox.findData(settings["serial_console_command"])
-        if index != -1:
-            self.uiSerialConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
         self.uiCloseConsoleWindowsOnDeleteCheckBox.setChecked(settings["auto_close_console"])
         self.uiBringConsoleWindowToFrontCheckBox.setChecked(settings["bring_console_to_front"])
         self.uiDelayConsoleAllSpinBox.setValue(settings["delay_console_all"])
 
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
         self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
-        index = self.uiVNCConsolePreconfiguredCommandComboBox.findData(settings["vnc_console_command"])
-        if index != -1:
-            self.uiVNCConsolePreconfiguredCommandComboBox.setCurrentIndex(index)
 
     def _populateGraphicsViewSettingWidgets(self, settings):
         """
