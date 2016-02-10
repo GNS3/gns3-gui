@@ -167,6 +167,19 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
                 return(2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
         return (0, None)
 
+    def checkGNS3InstalledTwice(self):
+        """Check if gns3 is not installed twice"""
+
+        if not sys.platform.startswith("win"):
+            return (0, None)
+
+        try:
+            if os.path.exists("/usr/local/bin/gns3server") and os.path.exists("/usr/bin/gns3server"):
+                return(2, "GNS3 is installed twice please remove it from /usr/local/bin")
+        except OSError:
+            pass
+        return (0, None)
+
 
 if __name__ == '__main__':
     import sys
