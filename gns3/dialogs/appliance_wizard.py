@@ -304,7 +304,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         Allow user to create a new version of an appliance
         """
 
-        new_version, ok = QtWidgets.QInputDialog.getText(self, "Create a new version", "Create a version allow to use unknow files for this appliance.\nIf this file work please share your experience on the GNS3 community.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
+        new_version, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Creating a new version allows to import unknown files to use with this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
         if ok:
             self._appliance.create_new_version(new_version)
             self._refreshVersions()
