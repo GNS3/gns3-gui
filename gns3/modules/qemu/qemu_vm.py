@@ -207,10 +207,8 @@ class QemuVM(VM):
         :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
+        if not super()._updateCallback(result, error=error, **kwargs):
+            return False
 
         updated = False
         nb_adapters_changed = False

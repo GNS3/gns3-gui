@@ -161,7 +161,7 @@ class VM(Node):
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
             if result:
-                self._setupCallback(result)
+                self._updateCallback(result)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -196,6 +196,24 @@ class VM(Node):
                                                                                   self._settings[name],
                                                                                   value))
                 self._settings[name] = value
+        return True
+
+    def _updateCallback(self, result, error=False, **kwargs):
+        """
+        Callback for update.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
+
+        if "command_line" in result:
+            self._command_line = result["command_line"]
+
         return True
 
     def stop(self):
