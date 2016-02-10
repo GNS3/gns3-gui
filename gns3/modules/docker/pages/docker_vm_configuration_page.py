@@ -55,6 +55,18 @@ class DockerVMConfigurationPage(
             self.uiAdapterLabel.hide()
             self.uiAdapterSpinBox.hide()
 
+        if not node:
+            # these are template settings
+
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
+
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
+        else:
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
+
     def saveSettings(self, settings, node=None, group=False):
         """Saves the Docker container settings.
 
@@ -72,3 +84,13 @@ class DockerVMConfigurationPage(
                 QtWidgets.QMessageBox.critical(self, "Name", "Docker name cannot be empty!")
             else:
                 settings["name"] = name
+
+        if not node:
+            # these are template settings
+
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+            else:
+                settings["default_name_format"] = default_name_format

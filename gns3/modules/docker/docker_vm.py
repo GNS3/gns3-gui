@@ -71,7 +71,7 @@ class DockerVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
-    def setup(self, image, name=None, base_name=None, vm_id=None, additional_settings={}):
+    def setup(self, image, name=None, base_name=None, vm_id=None, additional_settings={}, default_name_format="{name}-{0}"):
         """Sets up this Docker container.
 
         :param image: image name
@@ -80,11 +80,10 @@ class DockerVM(VM):
         """
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(base_name + "-")
+            name = self.allocateName(default_name_format.replace('{name}', base_name))
 
         if not name:
-            self.error_signal.emit(
-                self.id(), "could not allocate a name for this container")
+            self.error_signal.emit(self.id(), "could not allocate a name for this container")
             return
 
         self._settings["name"] = name
