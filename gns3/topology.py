@@ -27,9 +27,10 @@ import glob
 import shutil
 import sys
 
-from .qt import QtGui, QtSvg, QtWidgets, qpartial
+from .qt import QtGui, QtWidgets, qpartial
+from .qt.qimage_svg_renderer import QImageSvgRenderer
+
 from .items.node_item import NodeItem
-from .items.pixmap_node_item import PixmapNodeItem
 from .items.svg_node_item import SvgNodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
@@ -422,8 +423,6 @@ class Topology:
                             symbol_path = None
                             if isinstance(item, SvgNodeItem):
                                 symbol_path = item.renderer().objectName()
-                            elif isinstance(item, PixmapNodeItem):
-                                symbol_path = item.pixmapSymbolPath()
 
                             if os.path.exists(symbol_path):
                                 symbol_dir_path = os.path.join(self._project.filesDir(), "project-files", "symbols")
@@ -726,27 +725,24 @@ class Topology:
                     topology_node["symbol"] = topology_node["default_symbol"]
                     topology_node["symbol"] = topology_node["symbol"][:-11] + ".svg" if topology_node["symbol"].endswith("normal.svg") else topology_node["symbol"]
 
+                renderer = None
                 if "symbol" in topology_node:
                     symbol_path = topology_node["symbol"]
-                    renderer = QtSvg.QSvgRenderer(symbol_path)
-                    if renderer.isValid():
-                        node_item = SvgNodeItem(node, symbol_path)
-                    else:
-                        updated_symbol_path = os.path.join(self._project.filesDir(), "project-files", "symbols", topology_node["symbol"])
-                        if os.path.exists(updated_symbol_path):
-                            symbol_path = updated_symbol_path
-                        else:
-                            symbol_path = topology_node["symbol"]
+                    renderer = QImageSvgRenderer(symbol_path)
+
+                    if not renderer.isValid():
+                        symbol_path = os.path.join(self._project.filesDir(), "project-files", "symbols", topology_node["symbol"])
+                        renderer = QImageSvgRenderer(symbol_path)
+
+                    if not renderer.isValid():
                         symbol_path = os.path.normpath(symbol_path)
-                        if not os.path.isfile(symbol_path):
-                            topology_file_errors.append("Path to symbol {} doesn't exist".format(symbol_path))
-                        pixmap = QtGui.QPixmap(symbol_path)
-                        if not pixmap.isNull():
-                            node_item = PixmapNodeItem(node, symbol_path)
-                        else:
-                            topology_file_errors.append("Symbol {} is invalid".format(symbol_path))
-                            node_item = SvgNodeItem(node)
+                        renderer = QImageSvgRenderer(symbol_path)
+
+                if renderer and renderer.isValid():
+                    node_item = SvgNodeItem(node, symbol_path)
                 else:
+                    if "symbol" in topology_node:
+                        topology_file_errors.append("Symbol {} is invalid or doesn't exist".format(topology_node["symbol"]))
                     node_item = SvgNodeItem(node)
 
                 # create the node item and restore GUI settings

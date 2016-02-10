@@ -21,8 +21,8 @@ Dialog to change node symbols.
 
 import os
 
-from ..qt import QtSvg, QtCore, QtGui, QtWidgets
-from ..items.pixmap_node_item import PixmapNodeItem
+from ..qt import QtCore, QtGui, QtWidgets
+from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 from ..servers import Servers
 
@@ -83,15 +83,11 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 image.fill(0x00000000)
 
                 if os.path.exists(os.path.join(self._symbols_path, symbol)):
-                    svg_renderer = QtSvg.QSvgRenderer(os.path.join(self._symbols_path, symbol))
-                    if svg_renderer.isValid():
-                        svg_renderer.render(QtGui.QPainter(image))
-                    else:
-                        image.load(os.path.join(self._symbols_path, symbol))
+                    svg_renderer = QImageSvgRenderer(os.path.join(self._symbols_path, symbol))
                 else:
                     resource_path = ":/symbols/" + symbol
-                    svg_renderer = QtSvg.QSvgRenderer(resource_path)
-                    svg_renderer.render(QtGui.QPainter(image))
+                    svg_renderer = QImageSvgRenderer(resource_path)
+                svg_renderer.render(QtGui.QPainter(image))
 
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(icon)
@@ -156,17 +152,13 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         pixmap = QtGui.QPixmap(symbol_path)
         if not pixmap.isNull():
             for item in self._items:
-                if isinstance(item, PixmapNodeItem):
-                    item.setPixmap(pixmap)
-                    item.setPixmapSymbolPath(symbol_path)
+                renderer = QImageSvgRenderer(symbol_path)
+                renderer.setObjectName(symbol_path)
+                if renderer.isValid():
+                    item.setSharedRenderer(renderer)
                 else:
-                    renderer = QtSvg.QSvgRenderer(symbol_path)
-                    renderer.setObjectName(symbol_path)
-                    if renderer.isValid():
-                        item.setSharedRenderer(renderer)
-                    else:
-                        QtWidgets.QMessageBox.critical(self, "Custom pixmap symbol", "Custom pixmap symbol which is not SVG format cannot be applied on SVG node item")
-                        return False
+                    QtWidgets.QMessageBox.critical(self, "Custom pixmap symbol", "Invalid image")
+                    return False
 
         return True
 
