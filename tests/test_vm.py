@@ -40,39 +40,11 @@ def test_vpcs_dump(vpcs_device):
     assert dump["description"] == "VPCS device"
     assert dump["properties"] == {"name": vpcs_device.name()}
     assert dump["server_id"] == vpcs_device._server.id()
-    assert "custom_console_command" not in dump
-
-
-def test_vpcs_dump_custom_console(vpcs_device):
-
-    vpcs_device.setCustomConsoleCommand("/bin/fake")
-    dump = vpcs_device.dump()
-    assert dump["id"] == vpcs_device.id()
-    assert dump["type"] == "VPCSDevice"
-    assert dump["description"] == "VPCS device"
-    assert dump["properties"] == {"name": vpcs_device.name()}
-    assert dump["server_id"] == vpcs_device._server.id()
-    assert dump["custom_console_command"] == "/bin/fake"
-
-
-def test_vpcs_dump_custom_console(vpcs_device):
-
-    vpcs_device.setCustomConsoleCommand("/bin/fake")
-    dump = vpcs_device.dump()
-    assert dump["id"] == vpcs_device.id()
-    assert dump["type"] == "VPCSDevice"
-    assert dump["description"] == "VPCS device"
-    assert dump["properties"] == {"name": vpcs_device.name()}
-    assert dump["server_id"] == vpcs_device._server.id()
-    assert dump["custom_console_command"] == "/bin/fake"
-
 
 def test_vpcs_load(vpcs_device):
 
     dump = vpcs_device.dump()
-    dump["custom_console_command"] = "/bin/test"
     vpcs_device.load(dump)
-    assert vpcs_device.consoleCommand() == "/bin/test"
 
 
 def test_vpcs_device_stop(vpcs_device):
