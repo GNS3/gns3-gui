@@ -60,7 +60,7 @@ class Registry:
                         if os.path.isfile(path):
                             if md5sum is None:
                                 if filename == os.path.basename(path):
-                                    return path
+                                    return Image(path)
                             else:
                                 # We take all the file with almost the size of the image
                                 # Almost to avoid round issue with system.
@@ -69,7 +69,7 @@ class Registry:
                                     image = Image(path)
                                     if image.md5sum == md5sum:
                                         log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
-                                        return image.path
+                                        return image
                         elif path.endswith(".ova"):
                             if md5sum is None:
                                 # File searched in OVA use the notation x.ova/a.vmdk
@@ -77,13 +77,13 @@ class Registry:
 
                                     path = os.path.join(path, os.path.basename(filename))
                                     log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
-                                    return path
+                                    return Image(path)
                             else:
                                 image = Image(path)
                                 if image.md5sum == md5sum:
                                     # File searched in OVA use the notation x.ova/a.vmdk
                                     path = os.path.join(image.path, os.path.basename(filename))
                                     log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
-                                    return path
+                                    return Image(path)
 
         return None

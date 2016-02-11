@@ -218,7 +218,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                             image["filename"],
                             human_filesize(image.get("filesize", 0)),
                             image["status"],
-                            image["version"]
+                            image["version"],
+                            image.get("md5sum", "")
                         ])
 
                     if image["status"] == "Missing":
@@ -261,8 +262,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                if self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize")):
+                img = self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize"))
+                if img:
                     image["status"] = "Found"
+                    image["md5sum"] = img.md5sum
+                    image["filesize"] = img.filesize
                 else:
                     image["status"] = "Missing"
 

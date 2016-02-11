@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>494</height>
+    <width>704</width>
+    <height>504</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>688</width>
-    <height>600</height>
+    <width>2000</width>
+    <height>2000</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -398,6 +398,11 @@
         <string>File version</string>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>MD5</string>
+       </property>
+      </column>
       <item>
        <property name="text">
         <string>7.2.0.121</string>
@@ -435,6 +440,9 @@
         </property>
         <property name="text">
          <string>7.2.0.121</string>
+        </property>
+        <property name="text">
+         <string>5d41402abc4b2a76b9719d911017c592</string>
         </property>
        </item>
       </item>
@@ -476,6 +484,9 @@
         <property name="text">
          <string>7.3.0.42</string>
         </property>
+        <property name="text">
+         <string>5d41402abc4b2a76b9719d911017c592</string>
+        </property>
        </item>
       </item>
       <item>
@@ -516,6 +527,9 @@
         <property name="text">
          <string>8.0</string>
         </property>
+        <property name="text">
+         <string>5d41402abc4b2a76b9719d911017c592</string>
+        </property>
        </item>
        <item>
         <property name="text">
@@ -532,6 +546,9 @@
         </property>
         <property name="text">
          <string>8.0</string>
+        </property>
+        <property name="text">
+         <string>5d41402abc4b2a76b9719d911017c592</string>
         </property>
        </item>
       </item>
