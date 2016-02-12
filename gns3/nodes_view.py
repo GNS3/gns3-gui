@@ -20,7 +20,8 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 """
 
 import pickle
-from .qt import QtCore, QtGui, QtSvg, QtWidgets, qpartial
+from .qt import QtCore, QtGui, QtWidgets, qpartial
+from .qt.qimage_svg_renderer import QImageSvgRenderer
 from .modules import MODULES
 from .node import Node
 from .dialogs.configuration_dialog import ConfigurationDialog
@@ -65,14 +66,8 @@ class NodesView(QtWidgets.QTreeWidget):
                 image = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
                 # Set the ARGB to 0 to prevent rendering artifacts
                 image.fill(0x00000000)
-                svg_renderer = QtSvg.QSvgRenderer(node["symbol"])
-                if svg_renderer.isValid():
-                    svg_renderer.render(QtGui.QPainter(image))
-                else:
-                    # FIXME: Cannot read file '...', because: Encountered incorrectly encoded content. (line 1)
-                    image.load(node["symbol"])
-                    if image.isNull():
-                        continue
+                svg_renderer = QImageSvgRenderer(node["symbol"])
+                svg_renderer.render(QtGui.QPainter(image))
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(0, icon)
 
