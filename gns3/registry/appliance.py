@@ -93,6 +93,20 @@ class Appliance(collections.Mapping):
                 if not found:
                     raise ApplianceError("Broken appliance missing file {} for version {}".format(filename, version["name"]))
 
+    def create_new_version(self, version_name):
+        """
+        Duplicate a version in order to create a new version
+        """
+        ref = self._appliance["versions"][0]
+        new_version= {'name': version_name}
+        new_version['images'] = {}
+
+        for disk_type in ref['images']:
+            filename = ref['images'][disk_type]['filename']
+            filename = filename.replace(ref['images'][disk_type]['version'], version_name)
+            new_version['images'][disk_type] = {'filename': filename, 'version': version_name}
+        self._appliance['versions'].append(new_version)
+
     def search_images_for_version(self, version_name):
         """
         Search on disk the images required by this version.
@@ -111,9 +125,19 @@ class Appliance(collections.Mapping):
                 appliance["images"] = []
                 for image_type, image in version["images"].items():
                     image["type"] = image_type
-                    image["path"] = self._registry.search_image_file(image["filename"], image["md5sum"], image["filesize"])
-                    if image["path"] is None:
-                        raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], image["md5sum"], appliance["name"]))
+
+                    img = self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize"))
+                    if img is None:
+                        if "md5sum" in image:
+                            raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], image["md5sum"], appliance["name"]))
+                        else:
+                            raise ApplianceError("File {} not found for {}".format(image["filename"], appliance["name"]))
+
+                    image["path"] = img.path
+
+                    if "md5sum" not in image:
+                        image["md5sum"] = img.md5sum
+                        image["filesize"] = img.filesize
 
                     appliance["images"].append(image)
                     found = True
