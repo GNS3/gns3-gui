@@ -35,7 +35,7 @@ class DockerVMConfigurationPage(
 
     def loadSettings(self, settings, node=None, group=False):
         """
-        Loads the VirtualBox VM settings.
+        Loads the Docker VM settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance
@@ -47,6 +47,12 @@ class DockerVMConfigurationPage(
             self.uiCMDLineEdit.setText(settings["start_command"])
             self.uiAdapterSpinBox.setValue(settings["adapters"])
             self.uiEnvironmentTextEdit.setText(settings["environment"])
+
+            if "console" in settings:
+                self.uiConsolePortSpinBox.setValue(settings["console"])
+            else:
+                self.uiConsolePortLabel.hide()
+                self.uiConsolePortSpinBox.hide()
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
@@ -54,6 +60,8 @@ class DockerVMConfigurationPage(
             self.uiCMDLineEdit.hide()
             self.uiAdapterLabel.hide()
             self.uiAdapterSpinBox.hide()
+            self.uiConsolePortLabel.hide()
+            self.uiConsolePortSpinBox.hide()
 
         if not node:
             # these are template settings
@@ -84,6 +92,10 @@ class DockerVMConfigurationPage(
                 QtWidgets.QMessageBox.critical(self, "Name", "Docker name cannot be empty!")
             else:
                 settings["name"] = name
+
+
+            if "console" in settings:
+                settings["console"] = self.uiConsolePortSpinBox.value()
 
         if not node:
             # these are template settings
