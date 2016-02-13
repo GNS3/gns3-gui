@@ -121,7 +121,6 @@ class Appliance(collections.Mapping):
         appliance = copy.deepcopy(self._appliance)
         for version in appliance["versions"]:
             if version["name"] == version_name:
-                appliance["name"] = "{} {}".format(appliance["name"], version["name"])
                 appliance["images"] = []
                 for image_type, image in version["images"].items():
                     image["type"] = image_type

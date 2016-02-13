@@ -419,11 +419,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             current = self.uiApplianceVersionTreeWidget.currentItem()
             version = current.data(0, QtCore.Qt.UserRole)
             appliance = current.data(2, QtCore.Qt.UserRole)
-            name = "{} {}".format(appliance["name"], version["name"])
             if not self._appliance.is_version_installable(version["name"]):
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install {} with missing files".format(name))
+                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install {} with missing files".format(appliance["name"]))
                 return False
-            reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {}?".format(name), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {} version {}?".format(appliance["name"], version["name"]),
+                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 return False
 
