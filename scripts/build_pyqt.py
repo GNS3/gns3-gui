@@ -13,6 +13,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--force", help="force rebuild all files", action="store_true")
+parser.add_argument("--ressources", help="force rebuild ressources", action="store_true")
 args = parser.parse_args()
 
 if sys.platform.startswith('win'):
@@ -51,7 +52,7 @@ def build_resources(path, target):
         source = os.path.join(path, file)
         if source.endswith(".qrc"):
             target = os.path.join(target, file.replace(".qrc", "_rc.py"))
-            if not os.access(target, os.F_OK) or (os.stat(source)[stat.ST_MTIME] > os.stat(target)[stat.ST_MTIME]) or args.force:
+            if not os.access(target, os.F_OK) or (os.stat(source)[stat.ST_MTIME] > os.stat(target)[stat.ST_MTIME]) or args.force or args.ressources:
                 command = [PYRCC, "-compress", "9", "-o", target, source]
                 print("Building resources {}".format(source))
                 if args.force and os.access(target, os.F_OK):
