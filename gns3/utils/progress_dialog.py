@@ -85,7 +85,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         Delete the thread.
         """
 
-        if self._thread:
+        if self and self._thread:
             if not sip.isdeleted(self) and not sip.isdeleted(self._thread):
                 if self._thread.isRunning():
                     thread = self._thread
