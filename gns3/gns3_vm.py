@@ -41,6 +41,8 @@ class GNS3VM:
     def __init__(self):
 
         self._is_running = False
+        # The current running vboxmanage and vmrun process
+        self._running_process = None
 
     def settings(self):
         """
@@ -60,8 +62,38 @@ class GNS3VM:
 
         Servers.instance().setVMsettings(settings)
 
-    @staticmethod
-    def execute_vmrun(subcommand, args, timeout=60):
+    def killRunningProcess(self):
+        """
+        Kill the VBoxManage and vmrun process if running
+        """
+        if self._running_process is not None:
+            self._running_process.kill()
+            self._running_process.wait()
+            self._running_process = None
+
+    def _process_check_output(self, command, timeout=None):
+        # Original code from Python's subprocess.check_output
+        # https://github.com/python/cpython/blob/3.4/Lib/subprocess.py
+        with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+            self._running_process = process
+            try:
+                output, unused_err = process.communicate(None, timeout=timeout)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                output, unused_err = process.communicate()
+                self._running_process = None
+                raise subprocess.TimeoutExpired(process.args, timeout, output=output)
+            except:
+                self.killRunningProcess()
+                raise
+            retcode = process.poll()
+            if retcode:
+                self._running_process = None
+                raise subprocess.CalledProcessError(retcode, process.args, output=output)
+        self._running_process = None
+        return output.decode("utf-8", errors="ignore").strip()
+
+    def execute_vmrun(self, subcommand, args, timeout=60):
 
         from gns3.modules.vmware import VMware
         vmware_settings = VMware.instance().settings()
@@ -73,11 +105,10 @@ class GNS3VM:
             command = [vmrun_path, "-T", host_type, subcommand]
         command.extend(args)
         log.debug("Executing vmrun with command: {}".format(command))
-        output = subprocess.check_output(command, timeout=timeout)
-        return output.decode("utf-8", errors="ignore").strip()
 
-    @staticmethod
-    def execute_vboxmanage(subcommand, args, timeout=60):
+        return self._process_check_output(command, timeout=timeout)
+
+    def execute_vboxmanage(self, subcommand, args, timeout=60):
 
         from gns3.modules.virtualbox import VirtualBox
         virtualbox_settings = VirtualBox.instance().settings()
@@ -85,8 +116,7 @@ class GNS3VM:
         command = [vboxmanage_path, "--nologo", subcommand]
         command.extend(args)
         log.debug("Executing VBoxManage with command: {}".format(command))
-        output = subprocess.check_output(command, timeout=timeout)
-        return output.decode("utf-8", errors="ignore").strip()
+        return self._process_check_output(command, timeout=timeout)
 
     @staticmethod
     def parse_vmx_file(path):
