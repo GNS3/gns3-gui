@@ -207,14 +207,14 @@ class DockerVM(VM):
         # add the properties
         for name, value in self._settings.items():
             if value is not None and value != "":
-                container["properties"][name] = value
+                docker["properties"][name] = value
 
         # add the ports
         if self._ports:
-            ports = container["ports"] = []
+            ports = docker["ports"] = []
             for port in self._ports:
                 ports.append(port.dump())
-        return container
+        return docker
 
     def info(self):
         """Returns information about this Docker container.
