@@ -126,6 +126,7 @@ def test_load(project, local_server):
             "name": "mysql:latest-1",
             "adapters": 1,
             "start_command": "/bin/ls",
-            "console": 6000
+            "console": 6000,
+            "vm_id": "ec35076f-f6e5-4c72-a594-e94a47419710",
         }
 

@@ -94,7 +94,7 @@ class DockerVM(VM):
             "adapters": self._settings["adapters"]
         }
         if vm_id:
-            params["id"] = vm_id
+            params["vm_id"] = vm_id
         params.update(additional_settings)
 
         self.httpPost("/docker/vms", self._setupCallback, body=params)
@@ -260,8 +260,9 @@ class DockerVM(VM):
         settings = node_info["properties"]
         name = settings.pop("name")
         image = settings.pop("image")
+        vm_id = node_info["vm_id"]
         log.info("Docker container {} is loading".format(name))
-        self.setup(image, name=name, additional_settings=settings)
+        self.setup(image, name=name, vm_id=vm_id, additional_settings=settings)
 
     def _updatePortSettings(self):
         """
