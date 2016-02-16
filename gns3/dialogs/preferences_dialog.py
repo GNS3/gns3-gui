@@ -42,11 +42,16 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         self.setupUi(self)
 
         # We adapt the max size to the screen resolution
+        # We need to manually do that otherwise on small screen the windows
+        # could be bigger than the screen instead of displaying scrollbars
         height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100
-        if height > 800:
-            height = 800
-        self.setMaximumSize(QtCore.QSize(900, height))
-        self.resize(900, height)
+        width = QtWidgets.QDesktopWidget().screenGeometry().width() - 100
+
+        self.setMaximumSize(QtCore.QSize(width, height))
+        if width > 900 and self.width() < 900:
+            self.resize(900, self.height())
+        if height > 768 and self.height() < 768:
+            self.resize(self.width(), 768)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
         self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply)
