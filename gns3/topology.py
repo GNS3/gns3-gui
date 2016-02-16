@@ -27,7 +27,7 @@ import glob
 import shutil
 import sys
 
-from .qt import QtGui, QtWidgets, qpartial
+from .qt import QtGui, QtWidgets, QtSvg, qpartial
 from .qt.qimage_svg_renderer import QImageSvgRenderer
 
 from .items.node_item import NodeItem
