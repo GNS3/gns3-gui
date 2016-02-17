@@ -64,7 +64,7 @@ class GNS3VM:
 
     def killRunningProcess(self):
         """
-        Kill the VBoxManage and vmrun process if running
+        Kill the VBoxManage or vmrun process if running
         """
         if self._running_process is not None:
             self._running_process.kill()
@@ -74,7 +74,7 @@ class GNS3VM:
     def _process_check_output(self, command, timeout=None):
         # Original code from Python's subprocess.check_output
         # https://github.com/python/cpython/blob/3.4/Lib/subprocess.py
-        with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as process:
             self._running_process = process
             try:
                 output, unused_err = process.communicate(None, timeout=timeout)

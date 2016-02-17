@@ -333,7 +333,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         config = Config()
         worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, self._appliance.image_dir_name()), disk["filename"]), allowed_exceptions=[OSError, ValueError])
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Import the appliance...", None, busy=True, parent=self)
+        progress_dialog = ProgressDialog(worker, "Add appliance", "Importing the appliance...", None, busy=True, parent=self)
         if not progress_dialog.exec_():
             return
         self._refreshVersions()
