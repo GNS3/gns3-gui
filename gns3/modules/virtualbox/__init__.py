@@ -126,9 +126,10 @@ class VirtualBox(Module):
                 if key in self._virtualbox_vms or not vmname or not server:
                     continue
                 vm_settings = VBOX_VM_SETTINGS.copy()
-                # For backward compatibility we use vmname
-                vm_settings["name"] = vmname
                 vm_settings.update(vm)
+                # For backward compatibility we use vmname
+                if not vm_settings["name"]:
+                    vm_settings["name"] = vmname
                 # for backward compatibility before version 1.4
                 if "symbol" not in vm_settings:
                     vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
@@ -271,6 +272,7 @@ class VirtualBox(Module):
             if setting_name != "name" and setting_name in node.settings() and value != "" and value is not None:
                 vm_settings[setting_name] = value
 
+        name = self._virtualbox_vms[vm]["name"]
         vmname = self._virtualbox_vms[vm]["vmname"]
         port_name_format = self._virtualbox_vms[vm]["port_name_format"]
         port_segment_size = self._virtualbox_vms[vm]["port_segment_size"]
@@ -280,9 +282,11 @@ class VirtualBox(Module):
         if self._virtualbox_vms[vm]["default_name_format"]:
             default_name_format = self._virtualbox_vms[vm]["default_name_format"]
         if linked_base:
-            default_name_format = default_name_format.replace('{name}', vmname)
+            default_name_format = default_name_format.replace('{name}', name)
+            name = None
 
         node.setup(vmname,
+                   name=name,
                    port_name_format=port_name_format,
                    port_segment_size=port_segment_size,
                    first_port_name=first_port_name,
@@ -330,7 +334,7 @@ class VirtualBox(Module):
         for vbox_vm in self._virtualbox_vms.values():
             nodes.append(
                 {"class": VirtualBoxVM.__name__,
-                 "name": vbox_vm["vmname"],
+                 "name": vbox_vm["name"],
                  "server": vbox_vm["server"],
                  "symbol": vbox_vm["symbol"],
                  "categories": [vbox_vm["category"]]}

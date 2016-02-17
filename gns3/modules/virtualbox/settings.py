@@ -27,6 +27,7 @@ VBOX_SETTINGS = {
 }
 
 VBOX_VM_SETTINGS = {
+    "name": "",
     "vmname": "",
     "default_name_format": "{name}-{0}",
     "symbol": ":/symbols/vbox_guest.svg",

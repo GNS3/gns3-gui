@@ -66,7 +66,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["vmname"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["VirtualBox name:", vbox_vm["vmname"]])
         if vbox_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
@@ -123,7 +124,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             self._virtualbox_vms[key].update(new_vm_settings)
 
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
-            item.setText(0, self._virtualbox_vms[key]["vmname"])
+            item.setText(0, self._virtualbox_vms[key]["name"])
             item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
@@ -143,17 +144,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             if dialog.exec_():
                 # update the icon
                 item.setIcon(0, QtGui.QIcon(vbox_vm["symbol"]))
-                if vbox_vm["vmname"] != item.text(0):
-                    new_key = "{server}:{vmname}".format(server=vbox_vm["server"], name=vbox_vm["vmname"])
-                    if new_key in self._virtualbox_vms:
-                        QtWidgets.QMessageBox.critical(self, "VirtualBox VM", "VirtualBox VM name {} already exists for server {}".format(vbox_vm["vmname"],
-                                                                                                                                          vbox_vm["server"]))
-                        vbox_vm["vmname"] = item.text(0)
-                        return
-                    self._virtualbox_vms[new_key] = self._virtualbox_vms[key]
-                    del self._virtualbox_vms[key]
-                    item.setText(0, vbox_vm["vmname"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                if vbox_vm["name"] != item.text(0):
+                    item.setText(0, vbox_vm["name"])
                 self._refreshInfo(vbox_vm)
 
     def _vboxVMDeleteSlot(self):
@@ -178,7 +170,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         for key, vbox_vm in self._virtualbox_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
-            item.setText(0, vbox_vm["vmname"])
+            item.setText(0, vbox_vm["name"])
             item.setIcon(0, QtGui.QIcon(vbox_vm["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
