@@ -124,13 +124,17 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if not GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setEnabled(False)
 
-            # Qemu has issues on OSX and Windows we disallow usage of the local server
-            if (sys.platform.startswith("darwin") or sys.platform.startswith("win")) and not LocalConfig.instance().experimental():
-                self.uiLocalRadioButton.setEnabled(False)
+            if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+                if type == "qemu":
+                    # Qemu has issues on OSX and Windows we disallow usage of the local server
+                    if not LocalConfig.instance().experimental():
+                        self.uiLocalRadioButton.setEnabled(False)
+                elif type != "dynamips":
+                    self.uiLocalRadioButton.setEnabled(False)
 
             if GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setChecked(True)
-            elif Servers.instance().localServer().isLocalServerRunning():
+            elif Servers.instance().localServer().isLocalServerRunning() and self.uiLocalRadioButton.isEnabled():
                 self.uiLocalRadioButton.setChecked(True)
             elif len(Servers.instance().remoteServers().values()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
@@ -446,9 +450,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self._server = gns3_vm_server
             else:
                 if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
-                    reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-                    if reply == QtWidgets.QMessageBox.No:
-                        return False
+                    if "qemu" in self._appliance:
+                        reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                        if reply == QtWidgets.QMessageBox.No:
+                            return False
 
                 self._server = Servers.instance().localServer()
 
