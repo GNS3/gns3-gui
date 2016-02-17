@@ -105,6 +105,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
         vminfo = self.uiVMListComboBox.itemData(index)
 
         settings = {
+            "name": vmname,
             "vmname": vmname,
             "server": server,
             "ram": vminfo["ram"],
