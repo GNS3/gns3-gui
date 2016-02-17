@@ -84,6 +84,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             type = "qemu"
         elif "iou" in self._appliance:
             type = "iou"
+        elif "docker" in self._appliance:
+            type = "docker"
         elif "dynamips" in self._appliance:
             type = "dynamips"
 
@@ -260,6 +262,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
         Scan local directory in order to found the images on disk
         """
+
+        # Docker do not have versions
+        if not "versions" in self._appliance:
+            return
+
         for version in self._appliance["versions"]:
             for image in version["images"].values():
                 img = self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize"))
@@ -371,7 +378,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
             return False
 
-        appliance_configuration = self._appliance.search_images_for_version(version)
+        if version is None:
+            appliance_configuration = self._appliance.copy()
+        else:
+            appliance_configuration = self._appliance.search_images_for_version(version)
 
         if self._server.isLocal():
             server_string = "local"
@@ -403,7 +413,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
-            if "qemu" not in self._appliance:
+            if "docker" in self._appliance:
+                return super().nextId() + 3
+            elif "qemu" not in self._appliance:
                 return super().nextId() + 1
         elif self.currentPage() == self.uiFilesWizardPage:
             if "qemu" not in self._appliance:
@@ -429,8 +441,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.currentPage() == self.uiUsageWizardPage:
             current = self.uiApplianceVersionTreeWidget.currentItem()
-            version = current.data(0, QtCore.Qt.UserRole)
-            return self._install(version["name"])
+            if current:
+                version = current.data(0, QtCore.Qt.UserRole)
+                return self._install(version["name"])
+            else:
+                return self._install(None)
 
         elif self.currentPage() == self.uiServerWizardPage:
             if self.uiRemoteRadioButton.isChecked():

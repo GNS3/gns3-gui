@@ -23,7 +23,8 @@ import sys
 from gns3.node import Node
 
 DOCKER_SETTINGS = {
-    "use_local_server": sys.platform.startswith("linux")  # Docker only supported on Linux
+    "use_local_server": sys.platform.startswith("linux"),  # Docker only supported on Linux
+    "containers": []
 }
 
 DOCKER_CONTAINER_SETTINGS = {

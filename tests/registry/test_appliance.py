@@ -75,6 +75,14 @@ def test_resolve_version(tmpdir):
     assert new_config["versions"][0]["images"] == {"hda_disk_image": hda}
 
 
+def test_resolve_docker(tmpdir):
+
+    with open("tests/registry/appliances/openvswitch.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+
+    new_config = Appliance(registry, "tests/registry/appliances/openvswitch.gns3a")
+
+
 def test_resolve_version_dynamips(tmpdir):
 
     with open("tests/registry/appliances/cisco-3745.gns3a", encoding="utf-8") as f:

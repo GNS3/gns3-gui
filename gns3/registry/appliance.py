@@ -49,7 +49,7 @@ class Appliance(collections.Mapping):
         """
         if "registry_version" not in self._appliance:
             raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry")
-        if self._appliance["registry_version"] > 2:
+        if self._appliance["registry_version"] > 3:
             raise ApplianceError("Please update GNS3 in order to install this appliance")
 
     def __getitem__(self, key):
@@ -65,6 +65,9 @@ class Appliance(collections.Mapping):
         """
         Replace image field in versions by their the complete information from images
         """
+
+        if "versions" not in self._appliance:
+            return
 
         for version in self._appliance["versions"]:
             for image_type, filename in version["images"].items():
@@ -147,6 +150,12 @@ class Appliance(collections.Mapping):
             raise ApplianceError("Version {} not found for {}".format(version_name, appliance["name"]))
 
         return appliance
+
+    def copy(self):
+        """
+        Get a copy of the appliance
+        """
+        return copy.deepcopy(self._appliance)
 
     def is_version_installable(self, version):
         """

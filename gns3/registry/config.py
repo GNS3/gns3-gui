@@ -159,7 +159,17 @@ class Config:
         if "dynamips" in appliance_config:
             self._add_dynamips_config(new_config, appliance_config)
             return
+        if "docker" in appliance_config:
+            self._add_docker_config(new_config, appliance_config)
+            return
         raise ConfigException("{} no configuration found for know emulators".format(new_config["name"]))
+
+    def _add_docker_config(self, new_config, appliance_config):
+        new_config["adapters"] = appliance_config["docker"]["adapters"]
+        new_config["image"] = appliance_config["docker"]["image"]
+        new_config["environment"] = appliance_config["docker"].get("environment", "")
+        new_config["start_command"] = appliance_config["docker"].get("start_command", "")
+        self._config["Docker"]["containers"].append(new_config)
 
     def _add_dynamips_config(self, new_config, appliance_config):
         new_config["auto_delete_disks"] = True

@@ -36,7 +36,7 @@ class Docker(Module):
         super().__init__()
 
         self._settings = {}
-        self._docker_images = {}
+        self._docker_containers = {}
         self._nodes = []
 
         # load the settings
@@ -59,25 +59,25 @@ class Docker(Module):
             self.__class__.__name__, self._settings)
 
     def _loadDockerImages(self):
-        """Load the Docker images from the persistent settings file."""
+        """Load the Docker containers from the persistent settings file."""
 
         local_config = LocalConfig.instance()
         settings = local_config.settings()
-        if "images" in settings.get(self.__class__.__name__, {}):
-            for image in settings[self.__class__.__name__]["images"]:
+        if "containers" in settings.get(self.__class__.__name__, {}):
+            for image in settings[self.__class__.__name__]["containers"]:
                 name = image.get("name")
                 server = image.get("server")
                 key = "{server}:{name}".format(server=server, name=name)
-                if key in self._docker_images or not name or not server:
+                if key in self._docker_containers or not name or not server:
                     continue
                 container_settings = DOCKER_CONTAINER_SETTINGS.copy()
                 container_settings.update(image)
-                self._docker_images[key] = container_settings
+                self._docker_containers[key] = container_settings
 
     def _saveDockerImages(self):
-        """Saves the Docker images to the persistent settings file."""
+        """Saves the Docker containers to the persistent settings file."""
 
-        self._settings["images"] = list(self._docker_images.values())
+        self._settings["containers"] = list(self._docker_containers.values())
         self._saveSettings()
 
     def VMs(self):
@@ -88,14 +88,14 @@ class Docker(Module):
         :rtype: dict
         """
 
-        return self._docker_images
+        return self._docker_containers
 
-    def setVMs(self, new_docker_images):
+    def setVMs(self, new_docker_containers):
         """Sets Docker image settings.
 
         :param new_iou_images: Docker images settings (dictionary)
         """
-        self._docker_images = new_docker_images.copy()
+        self._docker_containers = new_docker_containers.copy()
         self._saveDockerImages()
 
     @staticmethod
@@ -154,12 +154,12 @@ class Docker(Module):
 
         image = None
         if node_name:
-            for image_key, info in self._docker_images.items():
+            for image_key, info in self._docker_containers.items():
                 if node_name == info["name"]:
                     image = image_key
         if not image:
             selected_images = []
-            for image, info in self._docker_images.items():
+            for image, info in self._docker_containers.items():
                 if info["server"] == node.server().host() or (
                         node.server().isLocal() and info["server"] == "local"):
                     selected_images.append(image)
@@ -182,16 +182,16 @@ class Docker(Module):
                 image = selected_images[0]
 
         image_settings = {}
-        for setting_name, value in self._docker_images[image].items():
+        for setting_name, value in self._docker_containers[image].items():
             if setting_name in node.settings() and value != "" and value is not None:
                 if setting_name not in ['name', 'image']:
                     image_settings[setting_name] = value
 
         default_name_format = DOCKER_CONTAINER_SETTINGS["default_name_format"]
-        if self._docker_images[image]["default_name_format"]:
-            default_name_format = self._docker_images[image]["default_name_format"]
+        if self._docker_containers[image]["default_name_format"]:
+            default_name_format = self._docker_containers[image]["default_name_format"]
 
-        image = self._docker_images[image]["image"]
+        image = self._docker_containers[image]["image"]
         node.setup(image, base_name=node_name, additional_settings=image_settings, default_name_format=default_name_format)
 
     def reset(self):
@@ -231,7 +231,7 @@ class Docker(Module):
         in the nodes view and create a node on the scene.
         """
         nodes = []
-        for docker_image in self._docker_images.values():
+        for docker_image in self._docker_containers.values():
             nodes.append({
                 "class": DockerVM.__name__,
                 "name": docker_image["name"],

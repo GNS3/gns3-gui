@@ -67,6 +67,9 @@ def empty_config(tmpdir, images_dir, symbols_dir):
             "use_local_server": True,
             "vms": [
             ]
+        },
+        "Docker": {
+            "containers": []
         }
     }
     path = str(tmpdir / "config")
@@ -138,6 +141,25 @@ def test_add_appliance_iou(empty_config, iou_l3):
         "image": os.path.basename(iou_l3),
         "path": os.path.basename(iou_l3)
     }
+
+
+def test_add_appliance_docker(empty_config, iou_l3):
+    with open("tests/registry/appliances/openvswitch.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+
+    empty_config.add_appliance(config, "local")
+    assert empty_config._config["Docker"]["containers"][0] == {
+        "name": "Open vSwitch",
+        "image": "gns3/openvswitch",
+        "category": 1,
+        "symbol": ":/symbols/multilayer_switch.svg",
+        "server": "local",
+        "adapters": 16,
+        "start_command": "",
+        "environment": "",
+        "usage": "By default all interfaces are connected to the br0"
+    }
+
 
 
 def test_add_appliance_dynamips(empty_config, cisco_3745):
