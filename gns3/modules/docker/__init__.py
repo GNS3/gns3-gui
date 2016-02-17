@@ -41,11 +41,15 @@ class Docker(Module):
 
         # load the settings
         self._loadSettings()
-        self._loadDockerImages()
 
     def configChangedSlot(self):
         # load the settings
         self._loadSettings()
+
+    def _saveSettings(self):
+        """Saves the settings to the persistent settings file."""
+        LocalConfig.instance().saveSectionSettings(
+            self.__class__.__name__, self._settings)
 
     def _loadSettings(self):
         """Loads the settings from the persistent settings file."""
@@ -53,18 +57,8 @@ class Docker(Module):
         self._settings = local_config.loadSectionSettings(
             self.__class__.__name__, DOCKER_SETTINGS)
 
-    def _saveSettings(self):
-        """Saves the settings to the persistent settings file."""
-        LocalConfig.instance().saveSectionSettings(
-            self.__class__.__name__, self._settings)
-
-    def _loadDockerImages(self):
-        """Load the Docker containers from the persistent settings file."""
-
-        local_config = LocalConfig.instance()
-        settings = local_config.settings()
-        if "containers" in settings.get(self.__class__.__name__, {}):
-            for image in settings[self.__class__.__name__]["containers"]:
+        if "containers" in self._settings:
+            for image in self._settings["containers"]:
                 name = image.get("name")
                 server = image.get("server")
                 key = "{server}:{name}".format(server=server, name=name)
