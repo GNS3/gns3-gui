@@ -179,7 +179,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 # start the GNS3 VM
                 servers.initVMServer()
                 worker = WaitForVMWorker()
-                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
                 progress_dialog.show()
                 if progress_dialog.exec_():
                     previous_local_server_ip = servers.localServer().host()
