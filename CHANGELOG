@@ -1,5 +1,62 @@
 # Change Log
 
+## 1.4.2 17/02/2016
+
+* Allow gif image (not animated) since pattent expire in 2004
+* Countdown before starting the GNS3 VM
+* Prevent IOU GNS3A install on Windows
+* Set timeout from 1 to 3 seconds when waiting for GNS3 VM server. Ref #1034.
+* Redirect stderr to stdout when executing VBoxManage or vmrun. Ref #1027.
+* Update VMware banners
+* Prevent a crash in progress dialog
+* Update for 4K monitor
+* Allow to cancel the start of the GNS3 VM
+* Update the .net converter
+* Detect and fix duplicate port name in topology
+* Allow to open a custom console on any node
+* All node are now SVG items
+* Move Qt code to a module so we can add new code in differents files
+* Fix rare crash when updating node
+* Prevent duplicate server in server summary
+* Fix a regression in Host and Cloud
+* Check if GNS3 is not installed twice in doctor
+* Allow to add custom command to the list
+* Update Readme Python 3.4 is require
+* Allow to import unknow files via GNS3A
+* Fix a problem with gns3 running in background after exit
+* Move common code for ports dump to vm.py
+* Move common code _updatePortSettings to vm.py
+* Fix a crash when searching for alternative images
+* Fix a crash with corrupted topology from 1.0
+* Remove all the docker code from 1.4 gui to avoid confusion
+* Create a dialog for choosing the console command.
+* Catch error if dynamips is disabled for local and no remote available
+* Put a link for the GNS3 VM in the setup wizard
+* When importing appliance explain why options is gray
+* User configurable default name format for VMware and VirtualBox. Ref #748
+* Changes "base name prefix" to "default name format". Ref #748.
+* User configurable base name support for Dynamips, IOU and VPCS. Ref #748.
+* Refactor "Import config" router dialog. Fixes #752.
+* Fixes ValueError: cannot mmap an empty file. Fixes #723.
+* Saves the "show port names" state in topology files. Fixes #778.
+* Fix KeyError: 'midplane' when loading 7200 in some cases
+* Hide the server select box for builtin switch if dynamips local is off
+* Fix an issue where the Existing image button can disapear from wizard
+* Fix a race condition when you ask for image list but close the windows
+* Fix alignements of VMware and VirtualBox in VM choice type
+* Better explanation during server choice
+* Disabled remote button when we have no remote in server wizard
+* Improved lookup for VMware host type. Fixes #970.
+* Change some text in nodes view.
+* Allow to edit a node via a right click in the node
+* Show error if a problem occur when getting remote server KVM status
+* Display a clean error when an appliance has an invalid JSON
+* MobaXterm integration
+* Allow to show the command line used to start a VM
+* Add - GNS3 at the end of the windows name
+* Fix a crash with doctor on windows
+* Fix crash in doctor if ubridge path is empty
+
 ## 1.4.1 01/02/2016
 
 * Improvement to detect VMware Player on Linux. Ref #970.
