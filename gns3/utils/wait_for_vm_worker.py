@@ -186,7 +186,11 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return
             elif status != 200:
-                msg = "Server has replied with status code {} when retrieving version number".format(status)
+                if status == 0:
+                    msg = "Could not connect to GNS3 server {}:{} (please check your firewall settings)".format(vm_server.host(),
+                                                                                                                vm_server.port())
+                else:
+                    msg = "Server has replied with status code {} when retrieving version number".format(status)
                 log.error(msg)
                 self.error.emit(msg, True)
                 return
