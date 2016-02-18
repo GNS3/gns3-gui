@@ -233,7 +233,7 @@ class VirtualBox(Module):
         vm = None
         if node_name:
             for vm_key, info in self._virtualbox_vms.items():
-                if node_name == info["vmname"]:
+                if node_name == info["name"]:
                     vm = vm_key
 
         if not vm:
