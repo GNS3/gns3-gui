@@ -178,6 +178,7 @@ class WaitForVMWorker(QtCore.QObject):
         if not self._is_running:
             return
 
+        self._vm.setRunning(True)
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
             status, json_data = self._waitForServer(vm_server, "version", retry=120)
@@ -216,7 +217,6 @@ class WaitForVMWorker(QtCore.QObject):
             if self._headless:
                 args.extend(["nogui"])
             self._vm.execute_vmrun("start", args)
-            self._vm.setRunning(True)
 
             if not self._is_running:
                 return False
@@ -290,8 +290,6 @@ class WaitForVMWorker(QtCore.QObject):
 
             if not self._is_running:
                 return False
-
-            self._vm.setRunning(True)
 
             ip_address = "127.0.0.1"
             try:
