@@ -196,7 +196,7 @@ class WaitForVMWorker(QtCore.QObject):
                 return
             server_version = json_data["version"]
             if __version__ != server_version:
-                self.error.emit("Client version {} differs with server version {} in the GNS3 VM, please upgrade...".format(__version__, server_version), True)
+                self.error.emit("Client version {} differs with server version {} in the GNS3 VM, please upgrade the VM by selecting the Upgrade options in the VM menu.".format(__version__, server_version), True)
                 return
         except OSError as e:
             self.error.emit("Request error {}".format(e), True)
