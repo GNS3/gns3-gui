@@ -44,6 +44,7 @@ class ConfigurationDialog(QtWidgets.QDialog, Ui_configurationDialog):
         self.setWindowTitle(configuration_page.windowTitle())
         self.uiConfigStackedWidget.addWidget(configuration_page)
         self.uiConfigStackedWidget.setCurrentWidget(configuration_page)
+        self.setModal(True)
         configuration_page.loadSettings(settings)
         self._settings = settings
         self._configuration_page = configuration_page

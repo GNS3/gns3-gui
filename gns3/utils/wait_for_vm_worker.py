@@ -178,6 +178,7 @@ class WaitForVMWorker(QtCore.QObject):
         if not self._is_running:
             return
 
+        self._vm.setRunning(True)
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
             status, json_data = self._waitForServer(vm_server, "version", retry=120)
@@ -185,7 +186,11 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return
             elif status != 200:
-                msg = "Server has replied with status code {} when retrieving version number".format(status)
+                if status == 0:
+                    msg = "Could not connect to GNS3 server {}:{} (please check your firewall settings)".format(vm_server.host(),
+                                                                                                                vm_server.port())
+                else:
+                    msg = "Server has replied with status code {} when retrieving version number".format(status)
                 log.error(msg)
                 self.error.emit(msg, True)
                 return
@@ -216,7 +221,6 @@ class WaitForVMWorker(QtCore.QObject):
             if self._headless:
                 args.extend(["nogui"])
             self._vm.execute_vmrun("start", args)
-            self._vm.setRunning(True)
 
             if not self._is_running:
                 return False
@@ -290,8 +294,6 @@ class WaitForVMWorker(QtCore.QObject):
 
             if not self._is_running:
                 return False
-
-            self._vm.setRunning(True)
 
             ip_address = "127.0.0.1"
             try:

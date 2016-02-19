@@ -773,7 +773,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         # supported image file formats
-        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
+        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
@@ -1111,7 +1111,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if gns3_vm.autoStart() and not gns3_vm.isRunning():
             servers.initVMServer()
             worker = WaitForVMWorker()
-            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self)
+            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
             progress_dialog.show()
             if progress_dialog.exec_():
                 gns3_vm.adjustLocalServerIP()

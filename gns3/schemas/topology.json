@@ -584,7 +584,12 @@
                 "disk1": {"type": "integer", "minimum": 0},
                 "exec_area": {"type": "integer", "minimum": 1},
                 "idlemax": {"type": "integer", "minimum": 1},
-                "idlepc": {"type": "string", "pattern": "^0x[0-9a-f]{8}"},
+                "idlepc": {
+                    "oneOf": [
+                        {"type": "string", "pattern": "^0x[0-9a-f]{8}$"},
+                        {"type": "string", "pattern": "^0x0$"}
+                    ]
+                },
                 "idlesleep": {"type": "integer", "minimum": 1},
                 "image": { "$ref": "#/definitions/mandatory_string" },
                 "image_md5sum": { "$ref": "#/definitions/md5" },
