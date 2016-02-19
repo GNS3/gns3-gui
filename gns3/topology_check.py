@@ -21,7 +21,6 @@ import os
 
 from gns3.utils.get_resource import get_resource
 
-
 def getTopologyValidationErrors(topology):
     """
     Apply a JSON schema to a topology
@@ -44,6 +43,8 @@ def getTopologyValidationErrors(topology):
         # for suberror in sorted(error.context, key=lambda e: e.schema_path):
         #    print(list(suberror.schema_path), suberror.message, sep=", ")
         error_message += "{}\n".format(str(error))
+
+    error_message += "Best error message: {}\n".format(jsonschema.exceptions.best_match(v.iter_errors(topology)).message)
     return error_message
 
 
