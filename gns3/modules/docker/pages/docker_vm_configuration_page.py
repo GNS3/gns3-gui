@@ -47,6 +47,8 @@ class DockerVMConfigurationPage(
             self.uiCMDLineEdit.setText(settings["start_command"])
             self.uiAdapterSpinBox.setValue(settings["adapters"])
             self.uiEnvironmentTextEdit.setText(settings["environment"])
+            self.uiCategoryComboBox.setCurrentIndex(settings["category"])
+
 
             if "console" in settings:
                 self.uiConsolePortSpinBox.setValue(settings["console"])
@@ -62,6 +64,7 @@ class DockerVMConfigurationPage(
             self.uiAdapterSpinBox.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
+            self.uiCategoryComboBox.hide()
 
         if not node:
             # these are template settings
@@ -86,6 +89,7 @@ class DockerVMConfigurationPage(
             settings["start_command"] = self.uiCMDLineEdit.text()
             settings["adapters"] = self.uiAdapterSpinBox.value()
             settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
+            settings["category"] = self.uiCategoryComboBox.currentIndex()
 
             name = self.uiNameLineEdit.text()
             if not name:
@@ -106,3 +110,4 @@ class DockerVMConfigurationPage(
                 QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
             else:
                 settings["default_name_format"] = default_name_format
+
