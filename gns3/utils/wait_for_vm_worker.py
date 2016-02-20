@@ -155,7 +155,7 @@ class WaitForVMWorker(QtCore.QObject):
         status = 0
         while retry >= 0:
             status, json_data = vm_server.getSynchronous(endpoint, timeout=3)
-            if status != 0:
+            if status != 0 or not self._is_running:
                 break
             self.thread().sleep(1)
             retry -= 1
