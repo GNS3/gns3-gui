@@ -201,8 +201,11 @@ class WaitForVMWorker(QtCore.QObject):
                 guest_ip_address = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"], timeout=120)
                 vm_server.setHost(guest_ip_address)
                 log.info("GNS3 VM IP address set to {}".format(guest_ip_address))
-            except (OSError, subprocess.SubprocessError) as e:
+            except OSError as e:
                 self.error.emit("Could not execute vmrun: {}".format(e), True)
+                return
+            except subprocess.SubprocessError as e:
+                self.error.emit("Could not execute vmrun: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
                 return
             except subprocess.TimeoutExpired:
                 self.error.emit("vmrun timeout expired", True)
@@ -293,8 +296,11 @@ class WaitForVMWorker(QtCore.QObject):
                     self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
                     return
 
-            except (OSError, subprocess.SubprocessError) as e:
+            except OSError as e:
                 self.error.emit("Could not execute VBoxManage: {}".format(e), True)
+                return
+            except subprocess.SubprocessError as e:
+                self.error.emit("Could not execute VBoxManage: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
                 return
             except subprocess.TimeoutExpired:
                 self.error.emit("VBoxmanage timeout expired", True)
