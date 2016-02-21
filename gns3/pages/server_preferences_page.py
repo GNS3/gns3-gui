@@ -25,6 +25,9 @@ import re
 import uuid
 import shutil
 
+import logging
+log = logging.getLogger(__name__)
+
 from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..servers import Servers
@@ -121,8 +124,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             QtWidgets.QMessageBox.critical(self, "VM List", "{}".format(result["message"]))
         else:
             self.uiVMListComboBox.clear()
+            vm_settings = Servers.instance().settings()["vm"]
             for vm in result:
-                self.uiVMListComboBox.addItem(vm["vmname"], vm.get("vmx_path", ""))
+                vmx_path = ""
+                if vm_settings["virtualization"] == "VMware":
+                    vmx_path = vm.get("vmx_path")
+                self.uiVMListComboBox.addItem(vm["vmname"], vmx_path)
             gns3_vm = Servers.instance().vmSettings()
             index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
             if index != -1:
@@ -336,7 +343,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiVMListComboBox.setCurrentIndex(index)
         else:
             self.uiVMListComboBox.clear()
-            self.uiVMListComboBox.addItem(vm_settings["vmname"], vm_settings["vmx_path"])
+            vmx_path = ""
+            if vm_settings["virtualization"] == "VMware":
+                vmx_path = vm_settings["vmx_path"]
+            self.uiVMListComboBox.addItem(vm_settings["vmname"], vmx_path)
         if vm_settings["virtualization"] == "VMware":
             self.uiVmwareRadioButton.setChecked(True)
         elif vm_settings["virtualization"] == "VirtualBox":
@@ -448,6 +458,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         elif self.uiVirtualBoxRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VirtualBox"
         if new_gns3vm_settings != servers_settings["vm"]:
+            log.info("GNS3 VM restart required!")
             restart_gns3_vm = True
         servers_settings["vm"].update(new_gns3vm_settings)
 
