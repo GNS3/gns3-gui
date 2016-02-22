@@ -170,141 +170,9 @@ class WaitForVMWorker(QtCore.QObject):
 
         self._is_running = True
         if self._virtualization == "VMware":
-            # handle a VMware based GNS3 VM
-
-            # check we have a valid VMX file path
-            if not self._vmx_path:
-                self.error.emit("GNS3 VM is not configured", True)
-                return
-            if not os.path.exists(self._vmx_path):
-                self.error.emit("VMware VMX file {} doesn't exist".format(self._vmx_path), True)
-                return
-
-            try:
-                # start the VM
-                args = [self._vmx_path]
-                if self._headless:
-                    args.extend(["nogui"])
-                self._vm.execute_vmrun("start", args)
-                self._vm.setRunning(True)
-
-                # check if the VMware guest tools are installed
-                vmware_tools_state = self._vm.execute_vmrun("checkToolsState", [self._vmx_path])
-                if vmware_tools_state not in ("installed", "running"):
-                    self.error.emit("VMware tools are not installed in {}".format(self._vmname), True)
-                    return
-
-                if not self._is_running:
-                    return
-
-                # get the guest IP address (first adapter only)
-                guest_ip_address = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"], timeout=120)
-                vm_server.setHost(guest_ip_address)
-                log.info("GNS3 VM IP address set to {}".format(guest_ip_address))
-            except OSError as e:
-                self.error.emit("Could not execute vmrun: {}".format(e), True)
-                return
-            except subprocess.SubprocessError as e:
-                self.error.emit("Could not execute vmrun: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
-                return
-            except subprocess.TimeoutExpired:
-                self.error.emit("vmrun timeout expired", True)
-                return
-
+            self._is_running = self._start_vmware(vm_server)
         elif self._virtualization == "VirtualBox":
-            # handle a VirtualBox based GNS3 VM
-
-            try:
-                # get a NAT interface number
-                nat_interface_number = self._look_for_interface("nat")
-                if nat_interface_number < 0:
-                    self.error.emit("The GNS3 VM must have a NAT interface configured in order to start", True)
-                    return
-
-                hostonly_interface_number = self._look_for_interface("hostonly")
-                if hostonly_interface_number < 0:
-                    self.error.emit("The GNS3 VM must have a host only interface configured in order to start", True)
-                    return
-
-                vboxnet = self._look_for_vboxnet(hostonly_interface_number)
-                if vboxnet is None:
-                    self.error.emit("VirtualBox host-only network could not be found for interface {}".format(hostonly_interface_number), True)
-                    return
-
-                if not self._check_dhcp_server(vboxnet):
-                    self.error.emit("DHCP must be enabled on VirtualBox host-only network: {}".format(vboxnet), True)
-                    return
-
-                vm_state = self._get_vbox_vm_state()
-                log.info('"{}" state is {}'.format(self._vmname, vm_state))
-                if vm_state in ("poweroff", "saved"):
-                    # start the VM if it is not running
-                    args = [self._vmname]
-                    if self._headless:
-                        args.extend(["--type", "headless"])
-                    self._vm.execute_vboxmanage("startvm", args)
-                self._vm.setRunning(True)
-
-                ip_address = "127.0.0.1"
-                try:
-                    # get a random port on localhost
-                    with socket.socket() as s:
-                        s.bind((ip_address, 0))
-                        port = s.getsockname()[1]
-                except OSError as e:
-                    self.error.emit("Error while getting random port: {}".format(e), True)
-                    return
-
-                if self._check_vbox_port_forwarding():
-                    # delete the GNS3VM NAT port forwarding rule if it exists
-                    log.debug("Removing GNS3VM NAT port forwarding rule from interface {}".format(nat_interface_number))
-                    self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "delete", "GNS3VM"])
-
-                # add a GNS3VM NAT port forwarding rule to redirect 127.0.0.1 with random port to port 8000 in the VM
-                log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
-                self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
-
-                if not self._is_running:
-                    return
-
-                original_port = vm_server.port()
-                vm_server.setPort(port)
-                vm_server.setHost(ip_address)
-                # ask the server all a list of all its interfaces along with IP addresses
-                status, json_data = self._waitForServer(vm_server, "interfaces", retry=120)
-                if status == 401:
-                    self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
-                    return
-                if status != 200:
-                    msg = "Server {} has replied with status code {} when retrieving the network interfaces".format(vm_server.url(), status)
-                    log.error(msg)
-                    self.error.emit(msg, True)
-                    return
-
-                # find the ip address for the first hostonly interface
-                hostonly_ip_address_found = False
-                for interface in json_data:
-                    if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
-                        if "ip_address" in interface:
-                            vm_server.setHost(interface["ip_address"])
-                            vm_server.setPort(original_port)
-                            log.info("GNS3 VM IP address set to {}".format(interface["ip_address"]))
-                            hostonly_ip_address_found = True
-                            break
-
-                if not hostonly_ip_address_found:
-                    self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
-                    return
-
-            except OSError as e:
-                self.error.emit("Could not execute VBoxManage: {}".format(e), True)
-                return
-            except subprocess.SubprocessError as e:
-                self.error.emit("Could not execute VBoxManage: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
-                return
-            except subprocess.TimeoutExpired:
-                self.error.emit("VBoxmanage timeout expired", True)
-                return
+            self._is_running = self._start_virtualbox(vm_server)
 
         if not self._is_running:
             return
@@ -334,6 +202,147 @@ class WaitForVMWorker(QtCore.QObject):
             return
 
         self.finished.emit()
+
+    def _start_vmware(self, vm_server):
+        """
+        Handle a VMware based GNS3 VM
+        """
+
+        # check we have a valid VMX file path
+        if not self._vmx_path:
+            self.error.emit("GNS3 VM is not configured", True)
+            return False
+        if not os.path.exists(self._vmx_path):
+            self.error.emit("VMware VMX file {} doesn't exist".format(self._vmx_path), True)
+            return False
+
+        try:
+            # start the VM
+            args = [self._vmx_path]
+            if self._headless:
+                args.extend(["nogui"])
+            self._vm.execute_vmrun("start", args)
+            self._vm.setRunning(True)
+
+            # check if the VMware guest tools are installed
+            vmware_tools_state = self._vm.execute_vmrun("checkToolsState", [self._vmx_path])
+            if vmware_tools_state not in ("installed", "running"):
+                self.error.emit("VMware tools are not installed in {}".format(self._vmname), True)
+                return False
+
+            if not self._is_running:
+                return False
+
+            # get the guest IP address (first adapter only)
+            guest_ip_address = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"], timeout=120)
+            vm_server.setHost(guest_ip_address)
+            log.info("GNS3 VM IP address set to {}".format(guest_ip_address))
+        except OSError as e:
+            self.error.emit("Could not execute vmrun: {}".format(e), True)
+            return False
+        except subprocess.SubprocessError as e:
+            self.error.emit("Could not execute vmrun: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
+            return False
+        except subprocess.TimeoutExpired:
+            self.error.emit("vmrun timeout expired", True)
+            return False
+        return True
+
+    def _start_virtualbox(self, vm_server):
+        """handle a VirtualBox based GNS3 VM"""
+
+        try:
+            # get a NAT interface number
+            nat_interface_number = self._look_for_interface("nat")
+            if nat_interface_number < 0:
+                self.error.emit("The GNS3 VM must have a NAT interface configured in order to start", True)
+                return False
+
+            hostonly_interface_number = self._look_for_interface("hostonly")
+            if hostonly_interface_number < 0:
+                self.error.emit("The GNS3 VM must have a host only interface configured in order to start", True)
+                return False
+
+            vboxnet = self._look_for_vboxnet(hostonly_interface_number)
+            if vboxnet is None:
+                self.error.emit("VirtualBox host-only network could not be found for interface {}".format(hostonly_interface_number), True)
+                return False
+
+            if not self._check_dhcp_server(vboxnet):
+                self.error.emit("DHCP must be enabled on VirtualBox host-only network: {}".format(vboxnet), True)
+                return False
+
+            vm_state = self._get_vbox_vm_state()
+            log.info('"{}" state is {}'.format(self._vmname, vm_state))
+            if vm_state in ("poweroff", "saved"):
+                # start the VM if it is not running
+                args = [self._vmname]
+                if self._headless:
+                    args.extend(["--type", "headless"])
+                self._vm.execute_vboxmanage("startvm", args)
+            self._vm.setRunning(True)
+
+            ip_address = "127.0.0.1"
+            try:
+                # get a random port on localhost
+                with socket.socket() as s:
+                    s.bind((ip_address, 0))
+                    port = s.getsockname()[1]
+            except OSError as e:
+                self.error.emit("Error while getting random port: {}".format(e), True)
+                return False
+
+            if self._check_vbox_port_forwarding():
+                # delete the GNS3VM NAT port forwarding rule if it exists
+                log.debug("Removing GNS3VM NAT port forwarding rule from interface {}".format(nat_interface_number))
+                self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "delete", "GNS3VM"])
+
+            # add a GNS3VM NAT port forwarding rule to redirect 127.0.0.1 with random port to port 8000 in the VM
+            log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
+            self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
+
+            if not self._is_running:
+                return False
+
+            original_port = vm_server.port()
+            vm_server.setPort(port)
+            vm_server.setHost(ip_address)
+            # ask the server all a list of all its interfaces along with IP addresses
+            status, json_data = self._waitForServer(vm_server, "interfaces", retry=120)
+            if status == 401:
+                self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
+                return False
+            if status != 200:
+                msg = "Server {} has replied with status code {} when retrieving the network interfaces".format(vm_server.url(), status)
+                log.error(msg)
+                self.error.emit(msg, True)
+                return False
+
+            # find the ip address for the first hostonly interface
+            hostonly_ip_address_found = False
+            for interface in json_data:
+                if "name" in interface and interface["name"] == "eth{}".format(hostonly_interface_number - 1):
+                    if "ip_address" in interface:
+                        vm_server.setHost(interface["ip_address"])
+                        vm_server.setPort(original_port)
+                        log.info("GNS3 VM IP address set to {}".format(interface["ip_address"]))
+                        hostonly_ip_address_found = True
+                        break
+
+            if not hostonly_ip_address_found:
+                self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
+                return False
+
+        except OSError as e:
+            self.error.emit("Could not execute VBoxManage: {}".format(e), True)
+            return False
+        except subprocess.SubprocessError as e:
+            self.error.emit("Could not execute VBoxManage: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
+            return False
+        except subprocess.TimeoutExpired:
+            self.error.emit("VBoxmanage timeout expired", True)
+            return False
+        return True
 
     def cancel(self):
         """
