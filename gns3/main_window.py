@@ -1133,9 +1133,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     return
 
         # show the setup wizard
-        with Progress.instance().context(min_duration=0):
-            setup_wizard = SetupWizard(self)
-            if setup_wizard.showit() is True:
+        if not self._settings["hide_setup_wizard"]:
+            with Progress.instance().context(min_duration=0):
+                setup_wizard = SetupWizard(self)
                 setup_wizard.show()
                 setup_wizard.exec_()
 
