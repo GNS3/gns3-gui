@@ -65,7 +65,7 @@ class Registry:
                                 # We take all the file with almost the size of the image
                                 # Almost to avoid round issue with system.
                                 file_size = os.stat(path).st_size
-                                if file_size - 10 < size and file_size + 10 > size:
+                                if size is None or (file_size - 10 < size and file_size + 10 > size):
                                     image = Image(path)
                                     if image.md5sum == md5sum:
                                         log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
