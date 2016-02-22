@@ -296,6 +296,17 @@ class ConsoleCmd(cmd.Cmd):
                             print(json.dumps(node, sort_keys=True, indent=4))
                             break
 
+    def _show_gnsvm(self, params):
+        """
+        Handles the 'show gns3vm' command.
+
+        :param params: list of parameters
+        """
+        from gns3.gns3_vm import GNS3VM
+        vm = GNS3VM.instance()
+        print("Running: {}".format(vm.isRunning()))
+        print("Settings: {}".format(vm.settings()))
+
     def do_show(self, args):
         """
         Show detail information about every device in current lab:
@@ -309,6 +320,9 @@ class ConsoleCmd(cmd.Cmd):
 
         Show topology info of a device:
         show run <device_name>
+
+        Show the GNS3 VM status
+        show gns3vm
         """
 
         if '?' in args or args.strip() == "":
@@ -320,6 +334,8 @@ class ConsoleCmd(cmd.Cmd):
             self._show_device(params)
         elif params[0] == "run":
             self._show_run(params)
+        elif params[0] == "gns3vm":
+            self._show_gnsvm(params)
         else:
             print(self.do_show.__doc__)
 
