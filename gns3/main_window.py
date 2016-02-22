@@ -1133,7 +1133,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     return
 
         # show the setup wizard
-        if not self._settings["hide_setup_wizard"]:
+        if not self._settings["hide_setup_wizard"] and not gns3_vm.isRunning():
             with Progress.instance().context(min_duration=0):
                 setup_wizard = SetupWizard(self)
                 setup_wizard.show()
