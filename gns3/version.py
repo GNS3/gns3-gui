@@ -25,10 +25,5 @@ or negative for a release candidate or beta (after the base version
 number has been incremented)
 """
 
-<<<<<<< HEAD
 __version__ = "1.5.0dev1"
 __version_info__ = (1, 5, 0, -99)
-=======
-__version__ = "1.4.3dev1"
-__version_info__ = (1, 4, 3, -99)
->>>>>>> master
