@@ -105,7 +105,6 @@ class GNS3VM:
             command = [vmrun_path, "-T", host_type, subcommand]
         command.extend(args)
         log.debug("Executing vmrun with command: {}".format(command))
-
         return self._process_check_output(command, timeout=timeout)
 
     def execute_vboxmanage(self, subcommand, args, timeout=60):
@@ -266,8 +265,11 @@ class GNS3VM:
             try:
                 self.execute_vboxmanage("modifyvm", [vm_settings["vmname"], "--cpus", str(vcpus)], timeout=3)
                 self.execute_vboxmanage("modifyvm", [vm_settings["vmname"], "--memory", str(ram)], timeout=3)
-            except (OSError, subprocess.SubprocessError) as e:
+            except OSError as e:
                 log.error("Could not execute VBoxManage: {}".format(e), True)
+                return False
+            except subprocess.SubprocessError as e:
+                log.error("Could not execute VBoxManage: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
                 return False
             except subprocess.TimeoutExpired:
                 log.error("VBoxmanage timeout expired", True)

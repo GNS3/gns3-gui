@@ -1065,7 +1065,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             for item in self.scene().selectedItems():
                 if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
-                    node.openConsole(command=cmd)
+                    try:
+                        node.openConsole(command=cmd)
+                    except (OSError, ValueError) as e:
+                        QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
 
     def auxConsoleFromItems(self, items):
         """

@@ -57,15 +57,12 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._errors = []
         self.setWindowTitle(title)
         self.canceled.connect(self._canceledSlot)
-        self.finished.connect(self.close)
         self.destroyed.connect(self._cleanup)
 
         self._thread = QtCore.QThread(self)
 
         self._worker = worker
-        self._worker.finished.connect(self._cleanup)
         self._worker.finished.connect(self.accept)
-        self._worker.finished.connect(worker.deleteLater)
         self._worker.updated.connect(self._updateProgress)
         self._worker.error.connect(self._error)
         self._worker.moveToThread(self._thread)
@@ -154,11 +151,10 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         if stop:
             log.critical(message)
             QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
-            self.cancel()
+            self._canceledSlot()
         else:
             self._errors.append(message)
-
-        self._cleanup()
+            self._cleanup()
 
     def errors(self):
         """

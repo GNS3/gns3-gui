@@ -155,7 +155,7 @@ class WaitForVMWorker(QtCore.QObject):
         status = 0
         while retry >= 0:
             status, json_data = vm_server.getSynchronous(endpoint, timeout=3)
-            if status != 0:
+            if status != 0 or not self._is_running:
                 break
             self.thread().sleep(1)
             retry -= 1
@@ -171,14 +171,12 @@ class WaitForVMWorker(QtCore.QObject):
         self._is_running = True
         if self._virtualization == "VMware":
             self._is_running = self._start_vmware(vm_server)
-
         elif self._virtualization == "VirtualBox":
-            self._is_running = self._start_vbox(vm_server)
+            self._is_running = self._start_virtualbox(vm_server)
 
         if not self._is_running:
             return
 
-        self._vm.setRunning(True)
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
             status, json_data = self._waitForServer(vm_server, "version", retry=120)
@@ -196,8 +194,9 @@ class WaitForVMWorker(QtCore.QObject):
                 return
             server_version = json_data["version"]
             if __version__ != server_version:
-                self.error.emit("Client version {} differs with server version {} in the GNS3 VM, please upgrade...".format(__version__, server_version), True)
-                return
+                # It's just a warning. If the version has a big mistach the HTTP code for the connection to
+                # to the server will block.
+                print("Client version {} differs with server version {} in the GNS3 VM, please upgrade the VM by selecting the Upgrade options in the VM menu.".format(__version__, server_version))
         except OSError as e:
             self.error.emit("Request error {}".format(e), True)
             return
@@ -205,7 +204,9 @@ class WaitForVMWorker(QtCore.QObject):
         self.finished.emit()
 
     def _start_vmware(self, vm_server):
-        """handle a VMware based GNS3 VM"""
+        """
+        Handle a VMware based GNS3 VM
+        """
 
         # check we have a valid VMX file path
         if not self._vmx_path:
@@ -221,9 +222,7 @@ class WaitForVMWorker(QtCore.QObject):
             if self._headless:
                 args.extend(["nogui"])
             self._vm.execute_vmrun("start", args)
-
-            if not self._is_running:
-                return False
+            self._vm.setRunning(True)
 
             # check if the VMware guest tools are installed
             vmware_tools_state = self._vm.execute_vmrun("checkToolsState", [self._vmx_path])
@@ -238,18 +237,20 @@ class WaitForVMWorker(QtCore.QObject):
             guest_ip_address = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"], timeout=120)
             vm_server.setHost(guest_ip_address)
             log.info("GNS3 VM IP address set to {}".format(guest_ip_address))
-        except (OSError, subprocess.SubprocessError) as e:
+        except OSError as e:
             self.error.emit("Could not execute vmrun: {}".format(e), True)
+            return False
+        except subprocess.SubprocessError as e:
+            self.error.emit("Could not execute vmrun: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
             return False
         except subprocess.TimeoutExpired:
             self.error.emit("vmrun timeout expired", True)
             return False
         return True
 
-    def _start_vbox(self, vm_server):
-        """
-        handle a VirtualBox based GNS3 VM
-        """
+    def _start_virtualbox(self, vm_server):
+        """handle a VirtualBox based GNS3 VM"""
+
         try:
             # get a NAT interface number
             nat_interface_number = self._look_for_interface("nat")
@@ -257,15 +258,9 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("The GNS3 VM must have a NAT interface configured in order to start", True)
                 return False
 
-            if not self._is_running:
-                return False
-
             hostonly_interface_number = self._look_for_interface("hostonly")
             if hostonly_interface_number < 0:
                 self.error.emit("The GNS3 VM must have a host only interface configured in order to start", True)
-                return False
-
-            if not self._is_running:
                 return False
 
             vboxnet = self._look_for_vboxnet(hostonly_interface_number)
@@ -273,14 +268,8 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("VirtualBox host-only network could not be found for interface {}".format(hostonly_interface_number), True)
                 return False
 
-            if not self._is_running:
-                return False
-
             if not self._check_dhcp_server(vboxnet):
                 self.error.emit("DHCP must be enabled on VirtualBox host-only network: {}".format(vboxnet), True)
-                return False
-
-            if not self._is_running:
                 return False
 
             vm_state = self._get_vbox_vm_state()
@@ -291,9 +280,7 @@ class WaitForVMWorker(QtCore.QObject):
                 if self._headless:
                     args.extend(["--type", "headless"])
                 self._vm.execute_vboxmanage("startvm", args)
-
-            if not self._is_running:
-                return False
+            self._vm.setRunning(True)
 
             ip_address = "127.0.0.1"
             try:
@@ -309,9 +296,6 @@ class WaitForVMWorker(QtCore.QObject):
                 # delete the GNS3VM NAT port forwarding rule if it exists
                 log.debug("Removing GNS3VM NAT port forwarding rule from interface {}".format(nat_interface_number))
                 self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "delete", "GNS3VM"])
-
-            if not self._is_running:
-                return False
 
             # add a GNS3VM NAT port forwarding rule to redirect 127.0.0.1 with random port to port 8000 in the VM
             log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
@@ -349,8 +333,11 @@ class WaitForVMWorker(QtCore.QObject):
                 self.error.emit("Not IP address could be found in the GNS3 VM for eth{}".format(hostonly_interface_number - 1), True)
                 return False
 
-        except (OSError, subprocess.SubprocessError) as e:
+        except OSError as e:
             self.error.emit("Could not execute VBoxManage: {}".format(e), True)
+            return False
+        except subprocess.SubprocessError as e:
+            self.error.emit("Could not execute VBoxManage: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
             return False
         except subprocess.TimeoutExpired:
             self.error.emit("VBoxmanage timeout expired", True)
@@ -367,4 +354,3 @@ class WaitForVMWorker(QtCore.QObject):
         self._is_running = False
         self._vm.killRunningProcess()
         self._vm.setRunning(False)
-

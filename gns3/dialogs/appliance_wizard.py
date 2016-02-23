@@ -304,6 +304,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         He should have selected the file before.
         """
         current = self.uiApplianceVersionTreeWidget.currentItem()
+
+        if current is None:
+            return
+
         data = current.data(1, QtCore.Qt.UserRole)
         if data is not None:
             if "direct_download_url" in data:

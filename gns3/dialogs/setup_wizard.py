@@ -103,15 +103,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             return
         self._refreshVMListSlot()
 
-    def showit(self):
-        """
-        Either this dialog should be automatically showed at startup.
-
-        :returns: boolean
-        """
-
-        return not self.uiShowCheckBox.isChecked()
-
     def _setPreferencesPane(self, dialog, name):
         """
         Finds the first child of the QTreeWidgetItem name.

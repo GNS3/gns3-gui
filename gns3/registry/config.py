@@ -193,6 +193,7 @@ class Config:
             new_config["idlepc"] = image["idlepc"]
 
         log.debug("Add appliance Dynamips: %s", str(new_config))
+        self._config["Dynamips"].setdefault("routers", [])
         self._config["Dynamips"]["routers"].append(new_config)
 
     def _add_iou_config(self, new_config, appliance_config):
@@ -210,6 +211,7 @@ class Config:
         new_config["path"] = new_config["image"]
 
         log.debug("Add appliance IOU: %s", str(new_config))
+        self._config["IOU"].setdefault("devices", [])
         self._config["IOU"]["devices"].append(new_config)
 
     def _add_qemu_config(self, new_config, appliance_config):
