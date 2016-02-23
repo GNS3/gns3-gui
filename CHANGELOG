@@ -1,5 +1,21 @@
 # Change Log
 
+## 1.4.4 23/02/2016
+
+* Fix crash when selecting no image in GNS3A but clicking on Download
+* Fix crash when you have a file size None (testing a new gns3a)
+* Prevent the progress dialog to cancel the GNS3VM when it's finish
+* Add a command show gns3vm to get the GNS3 VM statusM
+* Prevent setup wizard to appear if VM is running
+* Display error dialog if a custom console is invalid
+* Crash when you import GNS3A just after installing gns3 Fix #1063
+* Change the way we check is setup wizard has been turned off Fix #1071
+* Do not failed if GNS3 VM server has an incorrect version
+* Include the output from vmrun or  VBoxManage when they return an error code.
+* Fixes bug that forced the GNS3 VM running in VirtualBox to restart even if no preferences had been changed.
+* Allows to cancel the progress dialog when GNS3 tries to contact the server running in the GNS3 VM.
+* Ask user to upgrade via the VM menu
+
 ## 1.4.3 19/02/2016
 
 * Allow idlepc 0x0 in topology
