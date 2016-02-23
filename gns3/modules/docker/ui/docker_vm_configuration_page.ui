@@ -120,7 +120,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
           <string>Category</string>
          </property>

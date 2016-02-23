@@ -47,12 +47,14 @@ class DockerVMConfigurationPage(
             self.uiCMDLineEdit.setText(settings["start_command"])
             self.uiAdapterSpinBox.setValue(settings["adapters"])
             self.uiEnvironmentTextEdit.setText(settings["environment"])
-            self.uiCategoryComboBox.setCurrentIndex(settings["category"])
 
-
+            # If console we edit a node otherwise the template
             if "console" in settings:
                 self.uiConsolePortSpinBox.setValue(settings["console"])
+                self.uiCategoryComboBox.hide()
+                self.uiCategoryLabel.hide()
             else:
+                self.uiCategoryComboBox.setCurrentIndex(settings["category"])
                 self.uiConsolePortLabel.hide()
                 self.uiConsolePortSpinBox.hide()
         else:
@@ -89,7 +91,6 @@ class DockerVMConfigurationPage(
             settings["start_command"] = self.uiCMDLineEdit.text()
             settings["adapters"] = self.uiAdapterSpinBox.value()
             settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
-            settings["category"] = self.uiCategoryComboBox.currentIndex()
 
             name = self.uiNameLineEdit.text()
             if not name:
@@ -97,9 +98,11 @@ class DockerVMConfigurationPage(
             else:
                 settings["name"] = name
 
-
+            # If console we edit a node otherwise the template
             if "console" in settings:
                 settings["console"] = self.uiConsolePortSpinBox.value()
+            else:
+                settings["category"] = self.uiCategoryComboBox.currentIndex()
 
         if not node:
             # these are template settings
