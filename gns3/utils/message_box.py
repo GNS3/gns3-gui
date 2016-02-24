@@ -19,7 +19,7 @@
 To show a advanced message box.
 """
 
-from ..qt import QtWidgets
+from gns3.qt import QtWidgets
 
 
 def MessageBox(parent, title, message, details="", icon=QtWidgets.QMessageBox.Critical):
@@ -31,3 +31,12 @@ def MessageBox(parent, title, message, details="", icon=QtWidgets.QMessageBox.Cr
     if details:
         msgbox.setDetailedText(details)
     msgbox.exec_()
+
+
+if __name__ == '__main__':
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    main = QtWidgets.QMainWindow()
+    dialog = MessageBox(main, "Test", "Hello world", details="A lot of details")
+    dialog.show()
+    exit_code = app.exec_()
