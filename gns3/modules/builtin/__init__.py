@@ -151,7 +151,8 @@ class Builtin(Module):
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
                  "categories": node_class.categories(),
-                 "symbol": node_class.defaultSymbol()}
+                 "symbol": node_class.defaultSymbol(),
+                 "builtin": True}
             )
         return nodes
 

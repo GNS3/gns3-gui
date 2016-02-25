@@ -1486,8 +1486,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         from .main_window import MainWindow
         mainwindow = MainWindow.instance()
 
-        allow_local_server = True
         if "builtin" in node_data:
+            allow_local_server = True
+        else:
             allow_local_server = module_instance.settings()["use_local_server"]
         server = server_select(mainwindow, allow_local_server=allow_local_server)
         if server is None:
