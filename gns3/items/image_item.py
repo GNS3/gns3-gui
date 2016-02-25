@@ -19,7 +19,7 @@
 Graphical representation of an image on the QGraphicsScene.
 """
 
-from ..qt import QtCore
+from ..qt import QtWidgets
 
 
 class ImageItem():
@@ -37,6 +37,12 @@ class ImageItem():
         if pos:
             self.setPos(pos)
 
+    def filePath(self):
+        """
+        Return image file
+        """
+        return self._image_path
+
     def delete(self):
         """
         Deletes this image item.
@@ -44,7 +50,10 @@ class ImageItem():
 
         self.scene().removeItem(self)
         from ..topology import Topology
-        Topology.instance().removeImage(self)
+        try:
+            Topology.instance().removeImage(self)
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self.parent(), "Image", "Cannot delete the image: {}".format(str(e)))
 
     def paint(self, painter, option, widget=None):
         """
