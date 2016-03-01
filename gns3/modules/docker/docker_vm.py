@@ -53,6 +53,7 @@ class DockerVM(VM):
             "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
             "environment": DOCKER_CONTAINER_SETTINGS["environment"],
             "console": None,
+            "aux": None,
             "console_type": DOCKER_CONTAINER_SETTINGS["console_type"]
         }
 
@@ -322,6 +323,14 @@ class DockerVM(VM):
         :returns: port (integer)
         """
         return self._settings["console"]
+
+    def auxConsole(self):
+        """
+        Returns the console port for this Docker VM instance.
+
+        :returns: port (integer)
+        """
+        return self._settings["aux"]
 
     def configPage(self):
         """Returns the configuration page widget to be used by the node configurator.

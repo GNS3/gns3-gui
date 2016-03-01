@@ -39,18 +39,19 @@ class VM(Node):
         self._vm_directory = None
         self._command_line = None
 
-    def consoleCommand(self):
+    def consoleCommand(self, console_type=None):
         """
         :returns: The console command for this host
         """
         from .main_window import MainWindow
         general_settings = MainWindow.instance().settings()
 
-        console_type = self.consoleType()
-        if console_type == "serial":
-            return general_settings["serial_console_command"]
-        elif console_type == "vnc":
-            return general_settings["vnc_console_command"]
+        if console_type != "telnet":
+            console_type = self.consoleType()
+            if console_type == "serial":
+                return general_settings["serial_console_command"]
+            elif console_type == "vnc":
+                return general_settings["vnc_console_command"]
         return general_settings["telnet_console_command"]
 
     def consoleType(self):
@@ -457,29 +458,35 @@ class VM(Node):
         self.loaded_signal.connect(self._updatePortSettings)
 
     def openConsole(self, command=None, aux=False):
-        if command is None:
-            command = self.consoleCommand()
 
         if hasattr(self, "serialConsole") and self.serialConsole():
-            from .serial_console import serialConsole
-            serialConsole(self.name(), self.serialPipe(), command)
-
-        if aux:
+            console_type = "serial"
+            if command is None:
+                command = self.consoleCommand()
+        elif aux:
+            command = self.consoleCommand("telnet")
             console_port = self.auxConsole()
             if console_port is None:
                 raise ValueError("AUX console port not allocated for {}".format(self.name()))
+            # Aux console is always telnet
+            console_type = "telnet"
         else:
-            console_port = self.console()
+            if command is None:
+                command = self.consoleCommand()
 
-        console_type = "telnet"
-        if "console_type" in self.settings():
-            console_type = self.settings()["console_type"]
+            console_port = self.console()
+            if "console_type" in self.settings():
+                console_type = self.settings()["console_type"]
+
         if console_type == "telnet":
             from .telnet_console import nodeTelnetConsole
             nodeTelnetConsole(self.name(), self.server(), console_port, command)
         elif console_type == "vnc":
             from .vnc_console import vncConsole
             vncConsole(self.server().host(), console_port, command)
+        elif console_type == "serial":
+            from .serial_console import serialConsole
+            serialConsole(self.name(), self.serialPipe(), command)
 
     def _updatePortSettings(self):
         """
