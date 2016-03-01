@@ -326,6 +326,7 @@
             "type": "object",
             "properties": {
                 "console": { "$ref": "#/definitions/network_port" },
+                "aux": { "$ref": "#/definitions/network_port" },
                 "adapters": { "type": "integer", "minimum": 0 },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "image": { "$ref": "#/definitions/mandatory_string" },
