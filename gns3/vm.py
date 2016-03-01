@@ -459,6 +459,7 @@ class VM(Node):
 
     def openConsole(self, command=None, aux=False):
 
+        console_type == "telnet"
         if hasattr(self, "serialConsole") and self.serialConsole():
             console_type = "serial"
             if command is None:
