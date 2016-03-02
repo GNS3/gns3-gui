@@ -502,7 +502,7 @@ class Servers(QtCore.QObject):
         path = self.localServerPath()
         host = self._local_server.host()
         port = self._local_server.port()
-        command = '"{executable}" --host={host} --port={port} --local'.format(executable=path,
+        command = '"{executable}" --host={host} --port={port} --local --controller'.format(executable=path,
                                                                               host=host,
                                                                               port=port)
 

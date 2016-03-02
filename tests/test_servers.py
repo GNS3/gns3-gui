@@ -217,6 +217,7 @@ def test_startLocalServer(tmpdir, local_config):
                                      '--host=127.0.0.1',
                                      '--port=8000',
                                      '--local',
+                                     '--controller',
                                      '--debug',
                                      '--log='  + str(tmpdir / "gns3_server.log"),
                                      '--pid=' + str(tmpdir / "gns3_server.pid")
