@@ -1,18 +1,18 @@
 {
     "auto_start": false,
     "name": "untitled",
-    "project_id": "a8dde402-fef7-46b3-8451-593f56bb42e2",
+    "project_id": "5db49364-3811-4257-9347-066688161c37",
     "revision": 4,
     "topology": {
         "nodes": [
             {
-                "description": "Docker image",
+                "description": "Docker container",
                 "id": 1,
                 "label": {
                     "color": "#ff000000",
                     "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
-                    "text": "mysql-latest-1",
-                    "x": -11.046875,
+                    "text": "alpine-1",
+                    "x": 6.3046875,
                     "y": -25.0
                 },
                 "ports": [
@@ -25,15 +25,18 @@
                 ],
                 "properties": {
                     "adapters": 1,
+                    "aux": 6001,
                     "console": 6000,
-                    "image": "mysql:latest",
-                    "name": "mysql-latest-1"
+                    "console_type": "telnet",
+                    "image": "alpine:3.3",
+                    "name": "alpine-1",
+                    "start_command": "/bin/sh"
                 },
                 "server_id": 1,
                 "type": "DockerVM",
-                "vm_id": "2eb660f6-ca45-43eb-954d-ca9cf0ed6e14",
-                "x": 21.5,
-                "y": -224.5
+                "vm_id": "b0de95a2-e03a-494a-83d2-a1620f8d9db6",
+                "x": -260.5,
+                "y": -96.5
             }
         ],
         "servers": [
@@ -50,5 +53,5 @@
         ]
     },
     "type": "topology",
-    "version": "1.4.0dev11"
+    "version": "1.5.0dev1"
 }

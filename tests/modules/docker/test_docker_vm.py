@@ -40,7 +40,9 @@ def test_docker_vm_setup(project, local_server):
             'start_command': '',
             'adapters': 1,
             'console': None,
-            'environment': ''
+            'environment': '',
+            'console_type': 'telnet',
+            'aux': None
         }
         assert mock.called
         args, kwargs = mock.call_args
@@ -74,7 +76,8 @@ def test_dump(project, local_server):
         'id': vm.id(),
         'properties': {
             'adapters': 1,
-            'name': 'ubuntu-1'
+            'name': 'ubuntu-1',
+            'console_type': 'telnet'
         },
         'server_id': 0,
         'type': 'DockerVM',
