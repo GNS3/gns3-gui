@@ -173,13 +173,14 @@ def test_processDownloadProgress(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
     response.readAll.return_value = b'{"action": "ping"}'
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
 
     assert callback.called
     args, kwargs = callback.call_args
@@ -190,11 +191,12 @@ def test_processDownloadProgressHTTPError(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 404
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
 
     assert not callback.called
 
@@ -203,11 +205,12 @@ def test_processDownloadProgressConnectionRefusedError(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
 
     assert not callback.called
 
@@ -218,17 +221,18 @@ def test_processDownloadProgressPartialJSON(http_client):
     to wait for the next part"""
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"'
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
 
     assert not callback.called
 
     response.readAll.return_value = b'}\n{"a": "b"'
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
 
     assert callback.call_count == 1
     args, kwargs = callback.call_args
@@ -238,28 +242,17 @@ def test_processDownloadProgressPartialJSON(http_client):
 def test_processDownloadProgressPartialBytes(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
+    server = unittest.mock.MagicMock()
     response.header.return_value = "application/octet-stream"
     response.readAll.return_value = b'hello'
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, 10, 100)
+    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
 
     assert callback.call_count == 1
     args, kwargs = callback.call_args
     assert args[0] == b'hello'
-
-
-def test_dump(http_client):
-
-    assert http_client.dump() == {
-        'host': '127.0.0.1',
-        'id': 0,
-        'local': True,
-        'port': 8000,
-        'protocol': 'http',
-        'ram_limit': 0,
-        'vm': False}
 
 
 def test_callbackConnect_version_ok(http_client):
@@ -270,18 +263,6 @@ def test_callbackConnect_version_ok(http_client):
     }
     http_client._callbackConnect("GET", "/version", None, {}, {}, params)
     assert http_client._connected
-
-
-def test_callbackConnect_version_non_local(http_client):
-
-    params = {
-        "local": False,
-        "version": __version__
-    }
-    mock = unittest.mock.MagicMock()
-    http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
-    assert http_client._connected is False
-    mock.assert_called_with({"message": "Running server is not a GNS3 local server (not started with --local)"}, error=True, server=http_client)
 
 
 def test_callbackConnect_version_non_local_remote_server(http_client):
@@ -305,7 +286,7 @@ def test_callbackConnect_major_version_invalid(http_client):
     mock = unittest.mock.MagicMock()
     http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
     assert http_client._connected is False
-    mock.assert_called_with({"message": "Client version {} differs with server version 1.2.3".format(__version__)}, error=True, server=http_client)
+    mock.assert_called_with({"message": "Client version {} differs with server version 1.2.3".format(__version__)}, error=True, server=None)
 
 
 def test_callbackConnect_minor_version_invalid(http_client):
@@ -321,7 +302,7 @@ def test_callbackConnect_minor_version_invalid(http_client):
     if __version_info__[3] == 0:
         http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
         assert http_client._connected is False
-        mock.assert_called_with({"message": "Client version {} differs with server version {}".format(__version__, new_version)}, error=True, server=http_client)
+        mock.assert_called_with({"message": "Client version {} differs with server version {}".format(__version__, new_version)}, error=True, server=None)
     else:
         http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
         assert http_client._connected is True
@@ -335,4 +316,4 @@ def test_callbackConnect_non_gns3_server(http_client):
     mock = unittest.mock.MagicMock()
     http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
     assert http_client._connected is False
-    mock.assert_called_with({"message": "The remote server http://127.0.0.1:8000 is not a GNS3 server"}, error=True, server=http_client)
+    mock.assert_called_with({"message": "The remote server http://127.0.0.1:8000 is not a GNS3 server"}, error=True, server=None)

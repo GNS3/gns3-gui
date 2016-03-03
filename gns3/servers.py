@@ -409,13 +409,13 @@ class Servers(QtCore.QObject):
            log.info("Not the main GUI, will not autostart the server")
            return True
 
-        if self.localServer().isLocalServerRunning():
+        if self.isLocalServerRunning():
             log.info("A local server already running on this host")
             # Try to kill the server. The server can be still running after
             # if the server was started by hand
             self._killAlreadyRunningServer()
 
-        if not self.localServer().isLocalServerRunning():
+        if not self.isLocalServerRunning():
             if not self.initLocalServer():
                 return False
             if not self.startLocalServer():
@@ -543,7 +543,7 @@ class Servers(QtCore.QObject):
         log.info("Local server process has started (PID={})".format(self._local_server_process.pid))
         return True
 
-    def localServerIsRunning(self):
+    def localServerProcessIsRunning(self):
         """
         Returns either the local server is running.
 
@@ -557,6 +557,23 @@ class Servers(QtCore.QObject):
             pass
         return False
 
+    def isLocalServerRunning(self):
+        """
+        Synchronous check if a server is already running on this host.
+
+        :returns: boolean
+        """
+
+        status, json_data = self.localServer().getSynchronous("version", timeout=2)
+        if json_data is None or status != 200:
+            return False
+        else:
+            version = json_data.get("version", None)
+            if version is None:
+                log.debug("Server is not a GNS3 server")
+                return False
+        return True
+
     def stopLocalServer(self, wait=False):
         """
         Stops the local server.
@@ -564,7 +581,7 @@ class Servers(QtCore.QObject):
         :param wait: wait for the server to stop
         """
 
-        if self.localServerIsRunning():
+        if self.localServerProcessIsRunning():
             log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
             # local server is running, let's stop it
             if wait:
@@ -671,8 +688,8 @@ class Servers(QtCore.QObject):
         Based on url return a network client instance
         """
 
-        from gns3.http_client import HTTPClient
-        client = HTTPClient(settings, network_manager)
+        from gns3.server import Server
+        client = Server(settings, network_manager)
         return client
 
     def getRemoteServer(self, protocol, host, port, user, settings={}):

@@ -89,8 +89,8 @@ def test_dump(vpcs_device, project, local_server):
 
 def test_dump_http_auth(vpcs_device, project, remote_server):
 
-    remote_server.setUser("hello")
-    remote_server.setPassword("world")
+    remote_server._user = "hello"
+    remote_server._password = "world"
 
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.vpcs import VPCS

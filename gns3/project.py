@@ -231,6 +231,11 @@ class Project(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
 
+        #TODO: REMOVE THIS
+        from gns3.http_client import HTTPClient
+        assert not isinstance(server, HTTPClient)
+        #TODO: END REMOVE this
+
         if server not in self._created_servers:
             func = qpartial(self._projectOnServerCreated, method, path, callback, body, server=server, **kwargs)
 
@@ -311,12 +316,12 @@ class Project(QtCore.QObject):
             self.project_about_to_close_signal.emit()
 
             for server in list(self._created_servers):
-                if server.isLocal() and server.connected() and self._servers.localServerIsRunning() and local_server_shutdown:
+                if server.isLocal() and server.connected() and self._servers.localServerProcessIsRunning() and local_server_shutdown:
                     server.post("/server/shutdown", self._projectClosedCallback)
                 else:
                     server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
-            if self._servers.localServerIsRunning() and local_server_shutdown:
+            if self._servers.localServerProcessIsRunning() and local_server_shutdown:
                 log.info("Local server running shutdown the server")
                 local_server = self._servers.localServer()
                 local_server.post("/server/shutdown", self._projectClosedCallback, progressText="Shutdown the server")

@@ -79,7 +79,7 @@ def test_dump(project, local_server):
             'name': 'ubuntu-1',
             'console_type': 'telnet'
         },
-        'server_id': 0,
+        'server_id': local_server.id(),
         'type': 'DockerVM',
         'vm_id': None
     }

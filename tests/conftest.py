@@ -30,7 +30,6 @@ def reset_modules():
     Reset modules (VPCS, VirtualBox...) internal variables.
     """
 
-    from gns3.http_client import HTTPClient
     from gns3.ports.port import Port
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
@@ -39,7 +38,6 @@ def reset_modules():
     Port.reset()
     VPCSDevice.reset()
     VirtualBoxVM.reset()
-    HTTPClient.reset()
     IOUDevice.reset()
 
     from gns3.servers import Servers
