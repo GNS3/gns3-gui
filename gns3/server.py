@@ -17,7 +17,6 @@
 
 
 from .qt import QtCore
-from .http_client import HTTPClient
 from .network_client import getNetworkUrl
 
 import logging
@@ -29,13 +28,13 @@ class Server(QtCore.QObject):
     An instance of Server
     """
 
-    _instance_count = 1
+    _instance_count = 0
 
     connection_connected_signal = QtCore.Signal()
     connection_closed_signal = QtCore.Signal()
     system_usage_updated_signal = QtCore.Signal()
 
-    def __init__(self, settings, network_manager):
+    def __init__(self, settings, http_client):
 
         super().__init__()
         self._protocol = settings.get("protocol", "http")
@@ -49,16 +48,19 @@ class Server(QtCore.QObject):
         self._allocated_ram = 0
         self._local = True
         self._gns3_vm = False
+        self._server_id = settings.get("server_id", self.url())
 
-        self._http_client = HTTPClient(settings, network_manager)
+        self._http_client = http_client
         self._http_client.connection_connected_signal.connect(lambda: self.connection_connected_signal.emit())
 
-        # create an unique ID
+        # Unique ID for dump in topology
         self._id = Server._instance_count
         Server._instance_count += 1
 
     def _updateServer(self):
         # TODO update server settings on the controller
+        # emit a signal for that
+        # or manage everything in servers?
         pass
 
     def host(self):
@@ -67,9 +69,15 @@ class Server(QtCore.QObject):
         """
         return self._host
 
-    def setHost(self, host):
+    def setHostPort(self, host, port):
+        """
+        Change the host and the port with only
+        one operation
+        """
         self._host = host
         self._http_client.setHost(host)
+        self._port = port
+        self._http_client.setPort(port)
         self._updateServer()
 
     def port(self):
@@ -77,11 +85,6 @@ class Server(QtCore.QObject):
         Port display to user
         """
         return self._port
-
-    def setPort(self, port):
-        self._port = port
-        self._http_client.setPort(port)
-        self._updateServer()
 
     def protocol(self):
         """
@@ -95,10 +98,21 @@ class Server(QtCore.QObject):
         """
         return self._user
 
+    def password(self):
+        """
+        User login display to GNS3 user
+        """
+        return self._password
+
+    def server_id(self):
+        """
+        Return the remote server identifier
+        """
+        return self._server_id
+
     def id(self):
         """
-        Returns this HTTP Client identifier.
-        :returns: HTTP client identifier (string)
+        Returns this Server identifier.
         """
 
         return self._id

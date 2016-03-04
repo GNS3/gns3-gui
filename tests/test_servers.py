@@ -237,3 +237,16 @@ def test_killAlreadyRunningServer(tmpdir):
             mock.assert_called_with(pid=42)
             assert mock_process.kill.called
 
+
+def test_getServerInstance():
+    servers = Servers.instance()
+    # By default the controller is init for the test we erase it
+    servers._controller_server = None
+
+    server = servers._getServerInstance({"host": "example.com", "port": 42}, MagicMock(), controller=False)
+    assert server.host() == "example.com"
+    assert servers.controllerServer() is None
+
+    server = servers._getServerInstance({"host": "example2.com", "port": 42}, MagicMock(), controller=True)
+    assert server.host() == "example2.com"
+    assert servers.controllerServer() is not None

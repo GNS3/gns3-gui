@@ -41,6 +41,9 @@ from .settings import SERVERS_SETTINGS
 from .local_server_config import LocalServerConfig
 from .progress import Progress
 from .utils.sudo import sudo
+from .server import Server
+from .controller import Controller
+from .http_client import HTTPClient
 
 from collections import OrderedDict
 
@@ -62,6 +65,7 @@ class Servers(QtCore.QObject):
         self._settings = {}
         self._local_server = None
         self._vm_server = None
+        self._controller_server = None
         self._remote_servers = {}
         self._local_server_path = ""
         self._local_server_auto_start = True
@@ -95,12 +99,10 @@ class Servers(QtCore.QObject):
         port = local_server_settings["port"]
         user = local_server_settings["user"]
         password = local_server_settings["password"]
-        self._local_server = self.getNetworkClientInstance({"host": host, "port": port, "user": user, "password": password},
-                                                      self._network_manager)
+        self._local_server = self._getServerInstance({"server_id": "local", "host": host, "port": port, "user": user, "password": password}, self._network_manager, controller=True)
         self._local_server.setLocal(True)
         self.server_added_signal.emit("local")
         log.info("New local server connection {} registered".format(self._local_server.url()))
-
 
     @staticmethod
     def _findLocalServer(self):
@@ -473,7 +475,7 @@ class Servers(QtCore.QObject):
             # find an alternate port for the local server
             old_port = server.port()
             try:
-                server.setPort(self._findUnusedLocalPort(server.host()))
+                server.setHostPort(server.host(), self._findUnusedLocalPort(server.host()))
             except OSError as e:
                 QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not find an unused port for the local server: {}".format(e))
                 return False
@@ -614,6 +616,12 @@ class Servers(QtCore.QObject):
                         if proceed == QtWidgets.QMessageBox.Yes:
                             self._local_server_process.kill()
 
+    def controllerServer(self):
+        """
+        Return the controller server
+        """
+        return self._controller_server
+
     def localServer(self):
         """
         Returns the local server.
@@ -630,13 +638,14 @@ class Servers(QtCore.QObject):
 
         gns3_vm_settings = self._settings["vm"]
         server_info = {
+            "server_id": "vm",
             "host": "unset",
             "port": gns3_vm_settings["server_port"],
             "protocol": "http",
             "user": gns3_vm_settings["user"],
             "password": gns3_vm_settings["password"]
         }
-        server = self.getNetworkClientInstance(server_info, self._network_manager)
+        server = self._getServerInstance(server_info, self._network_manager)
         server.setLocal(False)
         server.setGNS3VM(True)
         self._vm_server = server
@@ -675,7 +684,7 @@ class Servers(QtCore.QObject):
                   "password": password}
         if accept_insecure_certificate:
             server["accept_insecure_certificate"] = accept_insecure_certificate
-        server = self.getNetworkClientInstance(server, self._network_manager)
+        server = self._getServerInstance(server, self._network_manager)
         server.setLocal(False)
         self._remote_servers[server.url()] = server
         self.server_added_signal.emit(server.url())
@@ -683,14 +692,21 @@ class Servers(QtCore.QObject):
 
         return server
 
-    def getNetworkClientInstance(self, settings, network_manager):
+    def _getServerInstance(self, settings, network_manager, controller=False):
         """
         Based on url return a network client instance
+
+        :param controller: True if the server is the GNS3 controller
         """
 
-        from gns3.server import Server
-        client = Server(settings, network_manager)
-        return client
+        client = HTTPClient(settings, network_manager)
+        server = Server(settings, client)
+        if controller:
+            self._controller_server = Controller(client)
+            #TODO: How to manage server created before?
+        if self._controller_server:
+            self._controller_server.addServer(server)
+        return server
 
     def getRemoteServer(self, protocol, host, port, user, settings={}):
         """
@@ -779,7 +795,7 @@ class Servers(QtCore.QObject):
             if server_id in self._remote_servers:
                 continue
 
-            new_server = self.getNetworkClientInstance(server, self._network_manager)
+            new_server = self._getServerInstance(server, self._network_manager)
             new_server.setLocal(False)
             self._remote_servers[server_id] = new_server
             self.server_added_signal.emit(new_server.url())

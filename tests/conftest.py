@@ -63,8 +63,7 @@ def local_server():
     from gns3.servers import Servers
 
     server = Servers.instance().localServer()
-    server.setHost('127.0.0.1')
-    server.setPort(8000)
+    server.setHostPort('127.0.0.1', 8000)
     return server
 
 

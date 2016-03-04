@@ -24,8 +24,18 @@ from gns3.server import Server
 @pytest.fixture
 def server():
     Server.reset()
-    server =  Server({"protocol": "http", "host": "127.0.0.1", "port": "8000"}, MagicMock())
+    server = Server({"protocol": "http", "host": "127.0.0.1", "port": "8000"}, MagicMock())
     return server
+
+
+def test_server_id():
+    Server.reset()
+    server = Server({"server_id": "local", "protocol": "http", "host": "127.0.0.1", "port": "8000"}, MagicMock())
+    assert server.id() == 0
+    assert server.server_id() == "local"
+    server = Server({"protocol": "http", "host": "127.0.0.1", "port": "8000"}, MagicMock())
+    assert server.id() == 1
+    assert server.server_id() == "http://127.0.0.1:8000"
 
 
 def test_http_query_forwarded_to_http_client(server):
