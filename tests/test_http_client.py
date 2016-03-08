@@ -64,8 +64,8 @@ def test_get_connected(http_client, http_request, network_manager, response):
     http_client._connected = True
     callback = unittest.mock.MagicMock()
 
-    http_client.get("/test", callback)
-    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:8000/v1/test"))
+    http_client.createHTTPQuery("GET", "/test", callback)
+    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:8000/v2/test"))
 
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
@@ -87,8 +87,8 @@ def test_get_connected_auth(http_client, http_request, network_manager, response
     http_client._password = "3sng"
     callback = unittest.mock.MagicMock()
 
-    http_client.get("/test", callback)
-    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:8000/v1/test"))
+    http_client.createHTTPQuery("GET", "/test", callback)
+    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:8000/v2/test"))
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
@@ -108,7 +108,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
-    http_client.post("/test", callback, context={"toto": 42})
+    http_client.createHTTPQuery("POST", "/test", callback, context={"toto": 42})
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == http_request
@@ -141,7 +141,7 @@ def test_post_not_connected_connection_failed(http_client, http_request, network
 
     response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
 
-    http_client.post("/test", callback)
+    http_client.createHTTPQuery("POST", "/test", callback)
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == http_request
@@ -160,7 +160,7 @@ def test_progress_callback(http_client, response):
     progress = unittest.mock.MagicMock()
 
     http_client.setProgressCallback(progress)
-    http_client.post("/test", callback)
+    http_client.createHTTPQuery("POST", "/test", callback)
 
     # Trigger the completion
     response.finished.emit()

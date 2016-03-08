@@ -53,7 +53,7 @@ def test_askCopyUploadImage_remote(image_manager, remote_server):
 
 
 def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir):
-    with patch('gns3.http_client.HTTPClient.post') as mock:
+    with patch('gns3.server.Server.post') as mock:
         filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server, 'QEMU')
         assert filename == 'test'
         args, kwargs = mock.call_args

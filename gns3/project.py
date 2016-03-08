@@ -317,14 +317,14 @@ class Project(QtCore.QObject):
 
             for server in list(self._created_servers):
                 if server.isLocal() and server.connected() and self._servers.localServerProcessIsRunning() and local_server_shutdown:
-                    server.post("/server/shutdown", self._projectClosedCallback)
+                    server.post("/servers/shutdown", self._projectClosedCallback)
                 else:
                     server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
             if self._servers.localServerProcessIsRunning() and local_server_shutdown:
                 log.info("Local server running shutdown the server")
                 local_server = self._servers.localServer()
-                local_server.post("/server/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
+                local_server.post("/servers/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
             else:
                 # The project is not initialized when we close it
                 self._closed = True

@@ -268,37 +268,39 @@ class Server(QtCore.QObject):
         """
         Forward the query to the HTTP client
         """
-        return self._http_client.get(*args, server=self, **kwargs)
+        return self.createHTTPQuery("GET", *args, **kwargs)
 
     def post(self, *args, **kwargs):
         """
         Forward the query to the HTTP client
         """
-        return self._http_client.post(*args, server=self, **kwargs)
+        return self.createHTTPQuery("POST", *args, **kwargs)
 
     def put(self, *args, **kwargs):
         """
         Forward the query to the HTTP client
         """
-        return self._http_client.put(*args, server=self, **kwargs)
+        return self.createHTTPQuery("PUT", *args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """
         Forward the query to the HTTP client
         """
-        return self._http_client.delete(*args, server=self, **kwargs)
+        return self.createHTTPQuery("DELETE", *args, **kwargs)
 
-    def createHTTPQuery(self, *args, **kwargs):
+    def createHTTPQuery(self, method, path, *args, **kwargs):
         """
         Forward the query to the HTTP client
         """
-        return self._http_client.createHTTPQuery(*args, server=self, **kwargs)
+        path = "/hypervisor" + path
+        return self._http_client.createHTTPQuery(method, path, *args, server=self, **kwargs)
 
-    def getSynchronous(self, *args, **kwargs):
+    def getSynchronous(self, path, *args, **kwargs):
         """
         Forward the query to the HTTP client
         """
-        return self._http_client.getSynchronous(*args, **kwargs)
+        path = "hypervisor/" + path
+        return self._http_client.getSynchronous(path, *args, **kwargs)
 
     def connected(self):
         return self._http_client.connected()

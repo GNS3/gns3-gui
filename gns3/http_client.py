@@ -174,7 +174,7 @@ class HTTPClient(QtCore.QObject):
         :returns: Tuple (Status code, json of anwser). Status 0 is a non HTTP error
         """
         try:
-            url = "{protocol}://{host}:{port}/v1/{endpoint}".format(protocol=self._protocol, host=self._host, port=self._port, endpoint=endpoint)
+            url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=self._protocol, host=self._host, port=self._port, endpoint=endpoint)
 
             log.debug("Synchronous get %s with user %s", url, self._user)
             if self._user is not None and len(self._user) > 0:
@@ -208,54 +208,6 @@ class HTTPClient(QtCore.QObject):
             log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
         return 0, None
 
-    def get(self, path, callback, **kwargs):
-        """
-        HTTP GET on the remote server
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-
-        Full arg list in createHTTPQuery
-        """
-
-        self.createHTTPQuery("GET", path, callback, **kwargs)
-
-    def put(self, path, callback, **kwargs):
-        """
-        HTTP PUT on the remote server
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-
-        Full arg list in createHTTPQuery
-        """
-
-        self.createHTTPQuery("PUT", path, callback, **kwargs)
-
-    def post(self, path, callback, **kwargs):
-        """
-        HTTP POST on the remote server
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-
-        Full arg list in createHTTPQuery
-        """
-
-        self.createHTTPQuery("POST", path, callback, **kwargs)
-
-    def delete(self, path, callback, **kwargs):
-        """
-        HTTP DELETE on the remote server
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-
-        Full arg list in createHTTPQuery
-        """
-
-        self.createHTTPQuery("DELETE", path, callback, **kwargs)
-
     def _request(self, url):
         """
         Get a QNetworkRequest object. You can mock this
@@ -274,7 +226,7 @@ class HTTPClient(QtCore.QObject):
         :param query: The query to execute when all network stack is ready
         :param query: The Server to connect
         """
-        self._executeHTTPQuery("GET", "/version", query, {}, server=server)
+        self._executeHTTPQuery("GET", "/hypervisor/version", query, {}, server=server)
 
     def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None):
         """
@@ -427,11 +379,11 @@ class HTTPClient(QtCore.QObject):
         except ipaddress.AddressValueError:
             host = self._host
 
-        log.debug("{method} {protocol}://{host}:{port}/v1{path} {body}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body))
+        log.debug("{method} {protocol}://{host}:{port}/v2{path} {body}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body))
         if self._user:
-            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}/v1{path}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path))
+            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}/v2{path}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path))
         else:
-            url = QtCore.QUrl("{protocol}://{host}:{port}/v1{path}".format(protocol=self._protocol, host=host, port=self._port, path=path))
+            url = QtCore.QUrl("{protocol}://{host}:{port}/v2{path}".format(protocol=self._protocol, host=host, port=self._port, path=path))
         request = self._request(url)
 
         request = self._addAuth(request)
