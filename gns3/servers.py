@@ -540,6 +540,17 @@ class Servers(QtCore.QObject):
             log.warning('Could not start local server "{}": {}'.format(command, e))
             return False
 
+        # We check during one second that the process is still running and not crashing immediately
+        try:
+            outs, errs = self._local_server_process.communicate(timeout=1)
+        except subprocess.TimeoutExpired:
+            # Process is still running
+            pass
+        else:
+            outs, errs = self._local_server_process.communicate(timeout=1)
+            log.warning('Could not start local server "{}"'.format(command))
+            return False
+
         log.info("Local server process has started (PID={})".format(self._local_server_process.pid))
         return True
 
