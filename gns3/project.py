@@ -47,17 +47,14 @@ class Project(QtCore.QObject):
         self._id = None
         self._temporary = False
         self._closed = True
+        self._created = False
         self._files_dir = None
         self._images_dir = None
         self._name = "untitled"
         self._project_instances.add(self)
 
-        # Manage project creations on multiple servers
-        self._created_servers = set()
-        # We need to wait the first server
-        self._creating_first_server = None
         # We queue query in order to ensure the project is only created once on remote server
-        self._callback_finish_creating_on_server = {}
+        self._callback_finish_creating_on_server = None
 
         self._listen_notification = False
         self._notifications_stream = set()
@@ -231,40 +228,24 @@ class Project(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
 
-        #TODO: REMOVE THIS
-        from gns3.http_client import HTTPClient
-        assert not isinstance(server, HTTPClient)
-        #TODO: END REMOVE this
+        if not self._created:
+            func = qpartial(self._projectOnServerCreated, method, path, callback, body, hypervisor_server=server, **kwargs)
 
-        if server not in self._created_servers:
-            func = qpartial(self._projectOnServerCreated, method, path, callback, body, server=server, **kwargs)
-
-            if server not in self._callback_finish_creating_on_server:
-                # The project is currently in creation on first server we wait for project id
-                if self._creating_first_server is not None:
-                    func = qpartial(self._projectHTTPQuery, server, method, path, callback, body=body, **kwargs)
-                    self._callback_finish_creating_on_server[self._creating_first_server].append(func)
-                else:
-                    if len(self._created_servers) == 0:
-                        self._creating_first_server = server
-
-                    self._callback_finish_creating_on_server[server] = []
-                    body = {
-                        "name": self._name,
-                        "temporary": self._temporary,
-                        "project_id": self._id
-                    }
-                    if server == self._servers.localServer():
-                        body["path"] = self.filesDir()
-
-                    server.post("/projects", func, body=body)
-            else:
-                # If the project creation is already in progress we bufferize the query
-                self._callback_finish_creating_on_server[server].append(func)
+            if self._callback_finish_creating_on_server is None:
+                self._callback_finish_creating_on_server = []
+                body = {
+                    "name": self._name,
+                    "temporary": self._temporary,
+                    "project_id": self._id,
+                    "path": self.filesDir()
+                }
+                Servers.instance().controllerServer().post("/projects", func, body=body)
+            # We bufferize the query for when the project is created on the remote server
+            self._callback_finish_creating_on_server.append(func)
         else:
-            self._projectOnServerCreated(method, path, callback, body, params={}, server=server, **kwargs)
+            self._projectOnServerCreated(method, path, callback, body, params={}, hypervisor_server=server, **kwargs)
 
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, server=None, **kwargs):
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, hypervisor_server=None, server=None, **kwargs):
         """
         The project is created on the server continue
         the query
@@ -280,33 +261,28 @@ class Project(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
 
-        self._creating_first_server = None
         if error:
             print("Error while creating project: {}".format(params["message"]))
             return
 
-        if self._id is None:
-            # Try to track the issue: https://github.com/GNS3/gns3-gui/issues/232
-            assert "project_id" in params, "project_id not in {}".format(params)
+        if not self._created:
+            self._closed = False
+            self._created = True
+
+        if not self._id:
             self._id = params["project_id"]
 
-        if server == self._servers.localServer() and "path" in params:
-            self._files_dir = params["path"]
-            log.info("Server project path is {}".format(self._files_dir))
-
-        self._closed = False
-        if server not in self._created_servers:
-            self._created_servers.add(server)
-            self._startListenNotifications(server)
+            #TODO: Listen notif from server
+            #self._startListenNotifications(hypervisor_server)
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        server.createHTTPQuery(method, path, callback, body=body, **kwargs)
+        hypervisor_server.createHTTPQuery(method, path, callback, body=body, **kwargs)
 
         # Call all operations waiting for project creation:
-        if server in self._callback_finish_creating_on_server:
-            callbacks = self._callback_finish_creating_on_server[server]
-            del self._callback_finish_creating_on_server[server]
-            for call in callbacks:
+        if self._callback_finish_creating_on_server:
+            calls = self._callback_finish_creating_on_server
+            self._callback_finish_creating_on_server = []
+            for call in calls:
                 call()
 
     def close(self, local_server_shutdown=False):
@@ -317,14 +293,14 @@ class Project(QtCore.QObject):
 
             for server in list(self._created_servers):
                 if server.isLocal() and server.connected() and self._servers.localServerProcessIsRunning() and local_server_shutdown:
-                    server.post("/servers/shutdown", self._projectClosedCallback)
+                    server.post("/hypervisors/shutdown", self._projectClosedCallback)
                 else:
                     server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
             if self._servers.localServerProcessIsRunning() and local_server_shutdown:
                 log.info("Local server running shutdown the server")
                 local_server = self._servers.localServer()
-                local_server.post("/servers/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
+                local_server.post("/hypervisors/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
             else:
                 # The project is not initialized when we close it
                 self._closed = True

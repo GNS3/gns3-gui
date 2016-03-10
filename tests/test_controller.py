@@ -41,8 +41,8 @@ def test_http_query_forwarded_to_http_client(controller):
     controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/controller/delete")
 
 
-def test_add_server(controller):
+def test_add_hypervisor(controller):
 
-    server = Server({"server_id": "local", "host": "example.com", "port": 42}, MagicMock())
-    controller.addServer(server)
-    controller._http_client.createHTTPQuery.assert_called_with("POST", "/controller/servers", None, body={'host': 'example.com', 'port': 42, 'password': None, 'server_id': 'local', 'protocol': 'http', 'user': None})
+    hypervisor = Server({"server_id": "local", "host": "example.com", "port": 42}, MagicMock())
+    controller.addServer(hypervisor)
+    controller._http_client.createHTTPQuery.assert_called_with("POST", "/controller/hypervisors", None, body={'host': 'example.com', 'port': 42, 'password': None, 'hypervisor_id': 'local', 'protocol': 'http', 'user': None})
