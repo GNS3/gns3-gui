@@ -398,6 +398,7 @@ class VM(Node):
         if hasattr(self, "serialConsole") and self.serialConsole():
             from .serial_console import serialConsole
             serialConsole(self.name(), self.serialPipe(), command)
+            return
 
         if aux:
             console_port = self.auxConsole()
