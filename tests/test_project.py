@@ -317,7 +317,7 @@ def test_project_close(local_server):
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{project_id}/close".format(project_id=uuid)
+        assert args[1] == "/controller/projects/{project_id}/close".format(project_id=uuid)
         assert kwargs["body"] == {}
 
         # Call the project close callback
@@ -325,45 +325,6 @@ def test_project_close(local_server):
 
         assert mock_signal_closed.called
 
-        assert project.closed()
-
-
-def test_project_close_multiple_servers(local_server, remote_server):
-
-    uuid = uuid4()
-    mock = MagicMock
-    with patch("gns3.http_client.HTTPClient.createHTTPQuery") as mock:
-
-        signal = MagicMock()
-
-        project = Project()
-        project._created_servers = set((local_server, ))
-        project._created_servers.add(remote_server)
-        project.setId(uuid)
-
-        mock_signal = MagicMock()
-        mock_signal_closed = MagicMock()
-        project.project_about_to_close_signal.connect(mock_signal)
-        project.project_closed_signal.connect(mock_signal_closed)
-
-        project.close()
-
-        assert mock_signal.call_count == 1
-        assert not mock_signal_closed.called
-
-        assert mock.call_count == 2
-
-        args, kwargs = mock.call_args
-
-        assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{project_id}/close".format(project_id=uuid)
-        assert kwargs["body"] == {}
-
-        # Call the project close callback
-        args[2]({"project_id": uuid}, server=local_server)
-        args[2]({"project_id": uuid}, server=remote_server)
-
-        assert mock_signal_closed.call_count == 1
         assert project.closed()
 
 
@@ -392,7 +353,7 @@ def test_project_close_error(local_server):
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{project_id}/close".format(project_id=uuid)
+        assert args[1] == "/controller/projects/{project_id}/close".format(project_id=uuid)
         assert kwargs["body"] == {}
 
         # Call the project close callback
@@ -415,7 +376,7 @@ def test_project_commit(local_server):
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{project_id}/commit".format(project_id=project.id())
+        assert args[1] == "/controller/projects/{project_id}/commit".format(project_id=project.id())
 
 
 def test_project_moveFromTemporaryToPath(tmpdir, local_server):

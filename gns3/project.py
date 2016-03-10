@@ -160,8 +160,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        for server in list(self._created_servers):
-            server.post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
+        Servers.instance().controllerServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
     def get(self, server, path, callback, **kwargs):
         """
@@ -291,11 +290,10 @@ class Project(QtCore.QObject):
         if self._id:
             self.project_about_to_close_signal.emit()
 
-            for server in list(self._created_servers):
-                if server.isLocal() and server.connected() and self._servers.localServerProcessIsRunning() and local_server_shutdown:
-                    server.post("/hypervisors/shutdown", self._projectClosedCallback)
-                else:
-                    server.post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
+            if self._servers.localServerProcessIsRunning() and local_server_shutdown:
+                Servers.instance().controllerServer().post("/hypervisors/shutdown", self._projectClosedCallback)
+            else:
+                Servers.instance().controllerServer().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
             if self._servers.localServerProcessIsRunning() and local_server_shutdown:
                 log.info("Local server running shutdown the server")
@@ -317,15 +315,12 @@ class Project(QtCore.QObject):
                     stream.abort()
                 log.info("Project {} closed".format(self._id))
 
-        if server in self._created_servers:
-            self._created_servers.remove(server)
-        if len(self._created_servers) == 0:
-            self._closed = True
-            self.project_closed_signal.emit()
-            try:
-                self._project_instances.remove(self)
-            except KeyError:
-                return
+        self._closed = True
+        self.project_closed_signal.emit()
+        try:
+            self._project_instances.remove(self)
+        except KeyError:
+            return
 
     def moveFromTemporaryToPath(self, new_path):
         """
