@@ -461,11 +461,11 @@ class VM(Node):
 
         console_type = "telnet"
         if hasattr(self, "serialConsole") and self.serialConsole():
-            console_type = "serial"
-            if command is None:
-                command = self.consoleCommand()
-        elif aux:
-            command = self.consoleCommand("telnet")
+            from .serial_console import serialConsole
+            serialConsole(self.name(), self.serialPipe(), command)
+            return
+
+        if aux:
             console_port = self.auxConsole()
             if console_port is None:
                 raise ValueError("AUX console port not allocated for {}".format(self.name()))
@@ -485,9 +485,6 @@ class VM(Node):
         elif console_type == "vnc":
             from .vnc_console import vncConsole
             vncConsole(self.server().host(), console_port, command)
-        elif console_type == "serial":
-            from .serial_console import serialConsole
-            serialConsole(self.name(), self.serialPipe(), command)
 
     def _updatePortSettings(self):
         """

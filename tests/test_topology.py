@@ -22,6 +22,7 @@ from unittest.mock import patch, MagicMock
 from gns3.topology import Topology
 from gns3.project import Project
 from gns3.version import __version__
+from gns3.items.pixmap_image_item import PixmapImageItem
 import gns3.main_window
 
 
@@ -504,3 +505,59 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
     assert topology.getNode(2).initialized()
     assert main_window.uiGraphicsView.addLink.called
     assert main_window.saveProject.called
+
+
+def test_image_in_project(tmpdir):
+    project_dir = tmpdir / "project" / "project-files"
+    os.makedirs(str(project_dir / "images"))
+
+    project = Project()
+    project.setFilesDir(str(tmpdir / "project"))
+
+    topology = Topology()
+    topology.project = project
+
+    with open(str(project_dir / "images" / "1.jpg"), "w+") as f:
+        f.write("AA")
+
+    image1 = PixmapImageItem(None, "images/1.jpg")
+    topology.addImage(image1)
+    assert image1 in topology._images
+
+    image2 = PixmapImageItem(None, "images/1.jpg")
+    topology.addImage(image2)
+    assert image1 in topology._images
+    assert image2 in topology._images
+
+    topology.removeImage(image2)
+    assert os.path.exists(str(project_dir / "images" / "1.jpg"))
+
+    # If not image use this file delete it
+    topology.removeImage(image1)
+    assert not os.path.exists(str(project_dir / "images" / "1.jpg"))
+
+
+def test_image_outside_project(tmpdir):
+    """
+    By security we do not delete image outside project.
+    This should not append but if someone reuse the image items for
+    something else.
+    """
+
+    project_img_dir = tmpdir / "project" / "project-files" / "images"
+    os.makedirs(str(project_img_dir))
+
+    project = Project()
+    project.setFilesDir(str(tmpdir / "project"))
+
+    topology = Topology()
+    topology.project = project
+
+    with open(str(tmpdir / "1.jpg"), "w+") as f:
+        f.write("AA")
+
+    image1 = PixmapImageItem(None, str(tmpdir / "1.jpg"))
+    topology.addImage(image1)
+    assert image1 in topology._images
+    topology.removeImage(image1)
+    assert os.path.exists(str(tmpdir / "1.jpg"))

@@ -97,6 +97,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             self._parent.refreshAllLinks(source_child=self)
         self.setText(0, self._node.name())
         self.refreshLinks()
+        self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.AscendingOrder)
 
     def refreshLinks(self):
         """

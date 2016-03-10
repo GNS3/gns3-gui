@@ -28,11 +28,11 @@ from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
-from ..module import Module
-from ..module_error import ModuleError
-from .vmware_vm import VMwareVM
-from .settings import VMWARE_SETTINGS
-from .settings import VMWARE_VM_SETTINGS
+from gns3.modules.module import Module
+from gns3.modules.module_error import ModuleError
+from gns3.modules.vmware.vmware_vm import VMwareVM
+from gns3.modules.vmware.settings import VMWARE_SETTINGS
+from gns3.modules.vmware.settings import VMWARE_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -91,7 +91,15 @@ class VMware(Module):
                     # look for vmrun.exe using the VIX directory listed in the registry
                     vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
         elif sys.platform.startswith("darwin"):
-            vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
+            vmware_fusion_vmrun_path = None
+            try:
+                output = subprocess.check_output(["mdfind", "kMDItemCFBundleIdentifier == 'com.vmware.fusion'"]).decode("utf-8", errors="ignore").strip()
+                if len(output):
+                    vmware_fusion_vmrun_path = os.path.join(output, "Contents/Library/vmrun")
+            except (OSError, subprocess.SubprocessError) as e:
+                pass
+            if vmware_fusion_vmrun_path is None:
+                vmware_fusion_vmrun_path = "/Applications/VMware Fusion.app/Contents/Library/vmrun"
             if os.path.exists(vmware_fusion_vmrun_path):
                 vmrun_path = vmware_fusion_vmrun_path
         else:
@@ -415,3 +423,7 @@ class VMware(Module):
         if not hasattr(VMware, "_instance"):
             VMware._instance = VMware()
         return VMware._instance
+
+
+if __name__ == '__main__':
+    print("vmrun", VMware.findVmrun())
