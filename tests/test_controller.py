@@ -32,17 +32,17 @@ def test_http_query_forwarded_to_http_client(controller):
     The HTTP query should be forwarded to the HTTP client
     """
     controller.get("/get")
-    controller._http_client.createHTTPQuery.assert_called_with("GET", "/controller/get")
+    controller._http_client.createHTTPQuery.assert_called_with("GET", "/get")
     controller.post("/post")
-    controller._http_client.createHTTPQuery.assert_called_with("POST", "/controller/post")
+    controller._http_client.createHTTPQuery.assert_called_with("POST", "/post")
     controller.put("/put")
-    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/controller/put")
+    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/put")
     controller.delete("/delete")
-    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/controller/delete")
+    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/delete")
 
 
 def test_add_hypervisor(controller):
 
     hypervisor = Server({"server_id": "local", "host": "example.com", "port": 42}, MagicMock())
     controller.addServer(hypervisor)
-    controller._http_client.createHTTPQuery.assert_called_with("POST", "/controller/hypervisors", None, body={'host': 'example.com', 'port': 42, 'password': None, 'hypervisor_id': 'local', 'protocol': 'http', 'user': None})
+    controller._http_client.createHTTPQuery.assert_called_with("POST", "/hypervisors", None, body={'host': 'example.com', 'port': 42, 'password': None, 'hypervisor_id': 'local', 'protocol': 'http', 'user': None})

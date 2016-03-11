@@ -49,8 +49,6 @@ class Controller(QtCore.QObject):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
-
-        path = "/controller" + path
         return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 
     def addServer(self, server):

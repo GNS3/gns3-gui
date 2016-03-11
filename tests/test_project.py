@@ -40,7 +40,7 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects"
+        assert args[1] == "/projects"
         assert kwargs["body"] == {"name": "untitled",
                                   "temporary": False,
                                   "path": str(tmpdir),
@@ -74,7 +74,7 @@ def test_project_post_non_created_project_local_server(tmpdir, local_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects"
+        assert args[1] == "/projects"
         assert kwargs["body"] == {"name": "untitled",
                                   "temporary": False,
                                   "project_id": uuid,
@@ -107,7 +107,7 @@ def test_project_post_non_created_project_remote_server(remote_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects"
+        assert args[1] == "/projects"
         assert kwargs["body"] == {"name": "untitled", "temporary": False, "project_id": uuid, "path": None}
 
         args[2]({}, server=remote_server)
@@ -137,7 +137,7 @@ def test_project_post_non_created_project_remote_server_two_query(remote_server)
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects"
+        assert args[1] == "/projects"
         assert kwargs["body"] == {"name": "untitled", "temporary": False, "project_id": uuid, "path": None}
         project.post(remote_server, "/test2", lambda: 0, body={"test": "test"})
 
@@ -183,7 +183,7 @@ def test_project_post_non_created_project_remote_server_two_query_two_server(rem
         project.post(local_server, "/test3", lambda: 0, body={"test": "test"})
 
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects"
+        assert args[1] == "/projects"
         assert kwargs["body"] == {"name": "untitled", "temporary": False, "project_id": uuid, "path": None}
         project.post(remote_server, "/test2", lambda: 0, body={"test": "test"})
 
@@ -317,7 +317,7 @@ def test_project_close(local_server):
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects/{project_id}/close".format(project_id=uuid)
+        assert args[1] == "/projects/{project_id}/close".format(project_id=uuid)
         assert kwargs["body"] == {}
 
         # Call the project close callback
@@ -353,7 +353,7 @@ def test_project_close_error(local_server):
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects/{project_id}/close".format(project_id=uuid)
+        assert args[1] == "/projects/{project_id}/close".format(project_id=uuid)
         assert kwargs["body"] == {}
 
         # Call the project close callback
@@ -376,7 +376,7 @@ def test_project_commit(local_server):
         args, kwargs = mock.call_args
 
         assert args[0] == "POST"
-        assert args[1] == "/controller/projects/{project_id}/commit".format(project_id=project.id())
+        assert args[1] == "/projects/{project_id}/commit".format(project_id=project.id())
 
 
 def test_project_moveFromTemporaryToPath(tmpdir, local_server):
