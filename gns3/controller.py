@@ -34,18 +34,18 @@ class Controller(QtCore.QObject):
         self._http_client = http_client
 
     def get(self, *args, **kwargs):
-        return self._createHTTPQuery("GET", *args, **kwargs)
+        return self.createHTTPQuery("GET", *args, **kwargs)
 
     def post(self, *args, **kwargs):
-        return self._createHTTPQuery("POST", *args, **kwargs)
+        return self.createHTTPQuery("POST", *args, **kwargs)
 
     def put(self, *args, **kwargs):
-        return self._createHTTPQuery("PUT", *args, **kwargs)
+        return self.createHTTPQuery("PUT", *args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        return self._createHTTPQuery("DELETE", *args, **kwargs)
+        return self.createHTTPQuery("DELETE", *args, **kwargs)
 
-    def _createHTTPQuery(self, method, path, *args, **kwargs):
+    def createHTTPQuery(self, method, path, *args, **kwargs):
         """
         Forward the query to the HTTP client or controller depending of the path
         """

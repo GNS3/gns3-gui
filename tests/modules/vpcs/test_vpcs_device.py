@@ -29,45 +29,54 @@ def test_vpcs_device_init(local_server, project):
     vpcs_device = VPCSDevice(None, local_server, project)
 
 
-def test_vpcs_device_setup(vpcs_device, project):
+def test_vpcs_device_setup(vpcs_device, project, local_server):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
         vpcs_device.setup(name="PC 1", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms"
+        assert args[0] == "/vms"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "startup_script": "echo TEST"
+            "hypervisor_id": local_server.id(),
+            "vm_type": "vpcs",
+            "properties": {
+                "startup_script": "echo TEST"
+            }
         }
 
         # Callback
         params = {
             "console": 2000,
             "name": "PC1",
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "script_file": None,
-            "startup_script": None,
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "properties": {
+                "script_file": None,
+                "startup_script": None,
+            }
         }
         args[1](params)
 
         assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_vpcs_device_setup_with_uuid(vpcs_device, project):
+def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
         vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms"
+        assert args[0] == "/vms"
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
+            "hypervisor_id": local_server.id(),
+            "vm_type": "vpcs",
+            "properties": {}
         }
 
         # Callback
@@ -75,16 +84,18 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "script_file": None,
-            "startup_script": None,
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "properties": {
+                "script_file": None,
+                "startup_script": None,
+            }
         }
         args[1](params)
 
         assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
+def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_server):
     """
     Script file is converted to a text version in order to work
     on remote servers.
@@ -94,14 +105,17 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
     with open(path, 'w+') as f:
         f.write("echo TEST")
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
         vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms"
+        assert args[0] == "/vms"
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
+            "hypervisor_id": local_server.id(),
+            "vm_type": "vpcs",
+            "properties": {}
         }
 
         # Callback
@@ -109,9 +123,11 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "script_file": None,
-            "startup_script": "echo TEST",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "properties": {
+                "script_file": None,
+                "startup_script": "echo TEST",
+            }
         }
         args[1](params)
 

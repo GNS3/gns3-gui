@@ -21,6 +21,8 @@ Base class for node classes.
 
 from .qt import QtCore
 from .ports.port import Port
+from .servers import Servers
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -487,6 +489,19 @@ class Node(QtCore.QObject):
         """
 
         self._project.post(self._server, path, callback, body=body, context=context, **kwargs)
+
+    def controllerHttpPost(self, path, callback, body={}, context={}, **kwargs):
+        """
+        POST on current server / project
+
+        :param path: Remote path
+        :param callback: callback method to call when the server replies
+        :param body: params to send (dictionary)
+        :param context: Pass a context to the response callback
+        """
+
+        server = Servers.instance().controllerServer()
+        self._project.post(server, path, callback, body=body, context=context, **kwargs)
 
     def httpPut(self, path, callback, body={}, context={}, **kwargs):
         """

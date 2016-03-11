@@ -15,12 +15,43 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
+
 
 from unittest.mock import patch, Mock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
+
+
+def test_create(vpcs_device, local_server):
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
+        vpcs_device._create({"name": "PC 1", "startup_script": "echo TEST"})
+        assert mock.called
+        args, kwargs = mock.call_args
+        assert args[0] == "/vms"
+        assert kwargs["body"] == {
+            "name": "PC 1",
+            "hypervisor_id": local_server.id(),
+            "vm_type": "vpcs",
+            "properties": {
+                "startup_script": "echo TEST"
+            }
+        }
+
+
+def test_setupCallback(vpcs_device):
+    vm_id = str(uuid.uuid4())
+    vpcs_device._setupCallback({
+        "name": "PC 1",
+        "vm_id": vm_id,
+        "properties": {
+            "startup_script": "echo TEST"
+        }
+    })
+    assert vpcs_device._vm_id == vm_id
+    assert vpcs_device._settings["startup_script"] == "echo TEST"
 
 
 def test_vpcs_device_start(vpcs_device):
@@ -40,6 +71,7 @@ def test_vpcs_dump(vpcs_device):
     assert dump["description"] == "VPCS device"
     assert dump["properties"] == {"name": vpcs_device.name()}
     assert dump["server_id"] == vpcs_device._server.id()
+
 
 def test_vpcs_load(vpcs_device):
 

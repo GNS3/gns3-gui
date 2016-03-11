@@ -150,6 +150,25 @@ class VM(Node):
             if result:
                 self._updateCallback(result)
 
+    def _create(self, params):
+        """
+        Create the VM on the controller
+        """
+        body = {"properties": {}}
+        body["vm_type"] = self.URL_PREFIX
+        body["hypervisor_id"] = self._server.server_id()
+
+        # We have two kind of properties. The general properties common to all
+        # VM and the specific that we need to put in the properties field
+        vm_general_properties = ("name", "vm_id", "console", "console_type")
+        for key, value in params.items():
+            if key in vm_general_properties:
+                body[key] = value
+            else:
+                body["properties"][key] = value
+
+        self.controllerHttpPost("/vms", self._setupCallback, body=body)
+
     def _setupCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
@@ -183,6 +202,15 @@ class VM(Node):
                                                                                   self._settings[name],
                                                                                   value))
                 self._settings[name] = value
+
+        if "properties" in result:
+            for name, value in result["properties"].items():
+                if name in self._settings and self._settings[name] != value:
+                    log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(),
+                                                                                      name,
+                                                                                      self._settings[name],
+                                                                                      value))
+                    self._settings[name] = value
         return True
 
     def _updateCallback(self, result, error=False, **kwargs):

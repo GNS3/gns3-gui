@@ -99,7 +99,7 @@ class VPCSDevice(VM):
             del additional_settings["startup_script"]
 
         params.update(additional_settings)
-        self.httpPost("/vpcs/vms", self._setupCallback, body=params)
+        self._create(params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
