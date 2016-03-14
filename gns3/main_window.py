@@ -1096,6 +1096,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+        if not LocalConfig.instance().isMainGui():
+            reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                self.close()
+                return
+
 
         # restore debug level
         if self._settings["debug_level"]:
