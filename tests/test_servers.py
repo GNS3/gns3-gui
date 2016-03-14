@@ -19,6 +19,7 @@ import sys
 import json
 import pytest
 import binascii
+import subprocess
 
 from gns3.servers import Servers
 from gns3.qt import QtWidgets
@@ -98,10 +99,12 @@ def test_loadSettingsWith13LocalServerSetting(tmpdir, local_config):
     assert local_server["user"] == "world"
     assert local_server["password"] == "hello"
 
+
 def testServers():
     servers = Servers.instance()
     http_server = servers.getRemoteServer("http", "localhost", 8000, None)
     assert len(servers.servers()) == 2
+
 
 def test_getRemoteServer():
     servers = Servers.instance()
@@ -211,7 +214,12 @@ def test_startLocalServer(tmpdir, local_config):
 
     with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
         mock_local_config.return_value = str(tmpdir)
-        with patch("subprocess.Popen") as mock:
+        process_mock = MagicMock()
+        with patch("subprocess.Popen", return_value=process_mock) as mock:
+
+            # If everything work fine the command is still running and a timeout is raised
+            process_mock.communicate.side_effect = subprocess.TimeoutExpired("test", 1)
+
             Servers.instance().startLocalServer()
             mock.assert_called_with([local_server_path,
                                      '--host=127.0.0.1',
