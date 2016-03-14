@@ -67,4 +67,20 @@ def test_create_link(devices, project, controller):
     link._linkCreatedCallback({"link_id": str(uuid.uuid4())})
     mock_signal.assert_called_with(link._id)
 
+    assert link._link_id is not None
     assert not devices[0].ports()[0].isFree()
+
+
+def test_delete_link(devices, project, controller):
+    link = Link(devices[0], devices[0].ports()[0], devices[1], devices[1].ports()[0])
+    link._link_id = str(uuid.uuid4())
+    link.deleteLink()
+
+    controller.delete.assert_called_with("/projects/{}/links/{}".format(project.id(), link._link_id), link._linkDeletedCallback)
+
+    mock_signal = MagicMock()
+    link.delete_link_signal.connect(mock_signal)
+    link._linkDeletedCallback({})
+    mock_signal.assert_called_with(link._id)
+
+    assert devices[0].ports()[0].isFree()

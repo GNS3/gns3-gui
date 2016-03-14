@@ -64,6 +64,7 @@ class Link(QtCore.QObject):
         self._source_port = source_port
         self._destination_node = destination_node
         self._destination_port = destination_port
+        self._link_id = None
 
         body = {
             "vms": [
@@ -76,6 +77,7 @@ class Link(QtCore.QObject):
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
+            log.error("error while creating link: {}".format(result["message"]))
             return
 
         # let the GUI know about this link has been deleted
@@ -86,6 +88,8 @@ class Link(QtCore.QObject):
         self._destination_port.setLinkId(self._id)
         self._destination_port.setDestinationNode(self._source_node)
         self._destination_port.setDestinationPort(self._source_port)
+
+        self._link_id = result["link_id"]
 
     @classmethod
     def reset(cls):
@@ -112,6 +116,17 @@ class Link(QtCore.QObject):
                                                             self._destination_node.name(),
                                                             self._destination_port.name()))
 
+        Servers.instance().controllerServer().delete("/projects/{project_id}/links/{link_id}".format(project_id=self._source_node.project().id(),
+                                                                                                     link_id=self._link_id), self._linkDeletedCallback)
+
+    def _linkDeletedCallback(self, result, error=False, **kwargs):
+        """
+        Called after the link is remove from the topology
+        """
+        if error:
+            log.error("error while deleting link: {}".format(result["message"]))
+            return
+
         self._source_port.setFree()
         self._source_node.updated_signal.emit()
         self._destination_port.setFree()
@@ -119,6 +134,7 @@ class Link(QtCore.QObject):
 
         # let the GUI know about this link has been deleted
         self.delete_link_signal.emit(self._id)
+
 
     def id(self):
         """
