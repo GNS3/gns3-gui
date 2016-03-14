@@ -68,7 +68,7 @@ def test_dump(vpcs_device, project, local_server):
                     },
                     "server_id": local_server.id(),
                     "type": "VPCSDevice",
-                    "vm_id": None
+                    "vm_id": vpcs_device.vm_id()
                 }
             ],
             "servers": [

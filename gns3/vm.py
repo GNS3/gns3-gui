@@ -280,69 +280,6 @@ class VM(Node):
         else:
             log.info("{} has reloaded".format(self.name()))
 
-    def addNIO(self, port, nio):
-        """
-        Adds a new NIO on the specified port for this VM instance.
-
-        :param port: Port instance
-        :param nio: NIO instance
-        """
-        params = self.getNIOInfo(nio)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self.httpPost("/{prefix}/vms/{vm_id}/adapters/{adapter}/ports/{port}/nio".format(
-            adapter=port.adapterNumber(),
-            port=port.portNumber(),
-            prefix=self.URL_PREFIX,
-            vm_id=self._vm_id),
-            self._addNIOCallback,
-            context={"port_id": port.id()},
-            body=params)
-
-    def _addNIOCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for addNIO.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while adding a NIO for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            self.nio_cancel_signal.emit(self.id())
-        else:
-            self.nio_signal.emit(self.id(), context["port_id"])
-
-    def deleteNIO(self, port):
-        """
-        Deletes an NIO from the specified port on this instance
-
-        :param port: Port instance
-        """
-
-        log.debug("{} is deleting an NIO".format(self.name()))
-        self.httpDelete("/{prefix}/vms/{vm_id}/adapters/{adapter}/ports/{port}/nio".format(
-            adapter=port.adapterNumber(),
-            prefix=self.URL_PREFIX,
-            port=port.portNumber(),
-            vm_id=self._vm_id),
-            self._deleteNIOCallback)
-
-    def _deleteNIOCallback(self, result, error=False, **kwargs):
-        """
-        Callback for deleteNIO.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("Error while deleting NIO {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
-
-        log.debug("{} has deleted a NIO: {}".format(self.name(), result))
-
     def _readBaseConfig(self, config_path):
         """
         Returns a base config content.

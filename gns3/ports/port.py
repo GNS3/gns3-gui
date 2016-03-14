@@ -31,7 +31,6 @@ log = logging.getLogger(__name__)
 
 from gns3.utils.normalize_filename import normalize_filename
 from ..local_config import LocalConfig
-from ..nios.nio_udp import NIOUDP
 from ..settings import PACKET_CAPTURE_SETTINGS
 
 
@@ -41,8 +40,6 @@ class Port:
     Base port.
 
     :param name: port name (string)
-    :param default_nio: NIO object to use by default
-    :param stub: indicates a stub port
     """
 
     _instance_count = 1
@@ -53,7 +50,7 @@ class Port:
     started = 1
     suspended = 2
 
-    def __init__(self, name, default_nio=None, stub=False):
+    def __init__(self, name):
 
         # create an unique ID
         self._id = Port._instance_count
@@ -67,7 +64,6 @@ class Port:
         self._short_name = None
         self._port_number = None
         self._adapter_number = None
-        self._stub = stub
         self._link_id = None
         self._port_label = None
         self._status = Port.stopped
@@ -82,12 +78,6 @@ class Port:
         self._tail_process = None
         self._capture_reader_process = None
         self._capture_analyzer_process = None
-
-        if default_nio is None:
-            self._default_nio = NIOUDP
-        else:
-            self._default_nio = default_nio
-        self._nio = None
 
     def id(self):
         """
@@ -249,42 +239,6 @@ class Port:
 
         self._destination_port = port
 
-    def setDefaultNio(self, default_nio):
-        """
-        Adds a default NIO to this port.
-
-        :param default_nio: NIO instance
-        """
-
-        self._default_nio = default_nio
-
-    def defaultNio(self):
-        """
-        Returns the default NIO for this port.
-
-        :returns: NIO object
-        """
-
-        return self._default_nio
-
-    def nio(self):
-        """
-        Returns the NIO attached to this port.
-
-        :returns: NIO instance
-        """
-
-        return self._nio
-
-    def setNio(self, nio):
-        """
-        Attach a NIO to this port.
-
-        :param nio: NIO instance
-        """
-
-        self._nio = nio
-
     def linkId(self):
         """
         Returns the link id connected to this port.
@@ -325,7 +279,6 @@ class Port:
         Frees this port.
         """
 
-        self._nio = None
         self._link_id = None
         self._destination_node = None
         self._destination_port = None
@@ -339,18 +292,9 @@ class Port:
         :returns: boolean
         """
 
-        if self._nio:
+        if self._link_id:
             return False
         return True
-
-    def isStub(self):
-        """
-        Checks if this is a stub port.
-
-        :returns: boolean
-        """
-
-        return self._stub
 
     def setHotPluggable(self, hot_pluggable):
         """
@@ -618,14 +562,10 @@ class Port:
         port = {"name": self._name,
                 "id": self._id}
 
-        if self._nio:
-            port["nio"] = str(self._nio)
         if self._port_number is not None:
             port["port_number"] = self._port_number
         if self._adapter_number is not None:
             port["adapter_number"] = self._adapter_number
-        if self._stub:
-            port["stub"] = self._stub
         if self.description():
             port["description"] = self.description()
         if self._link_id is not None:

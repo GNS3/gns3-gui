@@ -21,8 +21,8 @@ Manages and stores everything needed for a connection between 2 devices.
 
 
 from .qt import QtCore
-from .nios.nio_udp import NIOUDP
-from .nios.nio_vmnet import NIOVMNET
+from .servers import Servers
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -64,56 +64,28 @@ class Link(QtCore.QObject):
         self._source_port = source_port
         self._destination_node = destination_node
         self._destination_port = destination_port
-        self._source_nio = None
-        self._destination_nio = None
-        self._source_nio_active = False
-        self._destination_nio_active = False
 
-        if source_port.isStub() or destination_port.isStub():
-            self._stub = True
-        else:
-            self._stub = False
-        # we must request UDP information if the NIO is a NIO UDP and before
-        # it can be created.
-        if not self._stub:
-            # connect signals used when a NIO has been created by a node
-            # and this NIO need to be attached to a port connected to this link
-            source_node.nio_signal.connect(self.newNIOSlot)
-            destination_node.nio_signal.connect(self.newNIOSlot)
+        body = {
+            "vms": [
+                {"vm_id": source_node.vm_id(), "adapter_number": source_port.adapterNumber(), "port_number": source_port.portNumber()},
+                {"vm_id": destination_node.vm_id(), "adapter_number": destination_port.adapterNumber(), "port_number": destination_port.portNumber()}
+            ]
+        }
 
-            # currently, we support only NIO_UDP and NIO_VMNET for normal connections (non-stub).
-            if source_port.defaultNio() == NIOUDP:
-                assert destination_port.defaultNio() == NIOUDP
-                self._source_udp = None
-                self._destination_udp = None
+        Servers.instance().controllerServer().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
-                # connect signals used to receive a UDP port and host allocated by a node
-                source_node.allocate_udp_nio_signal.connect(self.UDPPortAllocatedSlot)
-                destination_node.allocate_udp_nio_signal.connect(self.UDPPortAllocatedSlot)
+    def _linkCreatedCallback(self, result, error=False, **kwargs):
+        if error:
+            return
 
-                # request the UDP info for each node
-                source_node.allocateUDPPort(self._source_port.id())
-                destination_node.allocateUDPPort(self._destination_port.id())
-            elif source_port.defaultNio() == NIOVMNET:
-                assert destination_port.defaultNio() == NIOVMNET
-                source_node.allocate_vmnet_nio_signal.connect(self.VMnetInterfaceAllocatedSlot)
-                source_node.allocateVMnetInterface(self._source_port.id())
-            else:
-                raise NotImplementedError()
-        else:
-            # handle stub connections (to a cloud for instance).
-            if not source_port.isStub() and destination_port.isStub():
-                source_node.nio_signal.connect(self.newNIOSlot)
-                self._source_nio = self._destination_port.defaultNio()
-                self._source_node.nio_cancel_signal.connect(self.cancelNIOSlot)
-                self._source_node.addNIO(self._source_port, self._source_nio)
-            elif not destination_port.isStub() and source_port.isStub():
-                destination_node.nio_signal.connect(self.newNIOSlot)
-                self._destination_nio = self._source_port.defaultNio()
-                self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
-                self._destination_node.addNIO(self._destination_port, self._destination_nio)
-            else:
-                log.error("both ports are stub!")
+        # let the GUI know about this link has been deleted
+        self.add_link_signal.emit(self._id)
+        self._source_port.setLinkId(self._id)
+        self._source_port.setDestinationNode(self._destination_node)
+        self._source_port.setDestinationPort(self._destination_port)
+        self._destination_port.setLinkId(self._id)
+        self._destination_port.setDestinationNode(self._source_node)
+        self._destination_port.setDestinationPort(self._source_port)
 
     @classmethod
     def reset(cls):
@@ -140,13 +112,8 @@ class Link(QtCore.QObject):
                                                             self._destination_node.name(),
                                                             self._destination_port.name()))
 
-        # delete the NIOs on both source and destination nodes
-        if self._source_port.nio():
-            self._source_node.deleteNIO(self._source_port)
         self._source_port.setFree()
         self._source_node.updated_signal.emit()
-        if self._destination_port.nio():
-            self._destination_node.deleteNIO(self._destination_port)
         self._destination_port.setFree()
         self._destination_node.updated_signal.emit()
 
@@ -197,204 +164,6 @@ class Link(QtCore.QObject):
         """
 
         return self._destination_port
-
-    def UDPPortAllocatedSlot(self, node_id, port_id, lport):
-        """
-        Slot to receive events from Node instances
-        when a UDP port has been allocated in order to create a NIO UDP.
-
-        :param node_id: node identifier
-        :param port_id: port identifier
-        :param lport: local UDP port
-        """
-        # check that the node is connected to this link as a source
-        if node_id == self._source_node.id() and port_id == self._source_port.id():
-            laddr = self._source_node.server().host()
-            self._source_udp = (lport, laddr)
-            # disconnect the signal has we don't expect new source UDP info for this link.
-            self._source_node.allocate_udp_nio_signal.disconnect(self.UDPPortAllocatedSlot)
-
-            log.debug("{} has allocated UDP port {} for host {}".format(self._source_node.name(),
-                                                                        lport,
-                                                                        laddr))
-
-        # check that the node is connected to this link as a destination
-        elif node_id == self._destination_node.id() and port_id == self._destination_port.id():
-            laddr = self._destination_node.server().host()
-            self._destination_udp = (lport, laddr)
-            # disconnect the signal has we don't expect new source UDP info for this link.
-            self._destination_node.allocate_udp_nio_signal.disconnect(self.UDPPortAllocatedSlot)
-
-            log.debug("{} has allocated UDP port {} for host {}".format(self._destination_node.name(),
-                                                                        lport,
-                                                                        laddr))
-
-        if self._source_udp and self._destination_udp:
-            # we got UDP info from both source and destination nodes
-            # meaning we can proceed with the creation of UDP NIOs
-            lport, laddr = self._source_udp
-            rport, raddr = self._destination_udp
-
-            self._source_nio = NIOUDP(lport, raddr, rport)
-            self._destination_nio = NIOUDP(rport, laddr, lport)
-
-            self._source_udp = None
-            self._destination_udp = None
-
-            log.debug("creating UDP tunnel from {}:{} to {}:{} ".format(laddr, lport, raddr, rport))
-
-            # add the UDP NIOs to the nodes
-            self._source_node.nio_cancel_signal.connect(self.cancelNIOSlot)
-            self._source_node.addNIO(self._source_port, self._source_nio)
-            self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
-            self._destination_node.addNIO(self._destination_port, self._destination_nio)
-
-    def VMnetInterfaceAllocatedSlot(self, node_id, port_id, vmnet):
-        """
-        Slot to receive events from Node instances
-        when a VMnet interface has been allocated in order to create a NIO VMNET.
-
-        :param node_id: node identifier
-        :param port_id: port identifier
-        :param vmnet: vmnet interface name
-        """
-
-        # check that the node is connected to this link as a source
-        # only the source is used to request the server for a vmnet interface
-        # and then allocate a NIO VMNET to both the source and destination
-        if node_id == self._source_node.id() and port_id == self._source_port.id():
-            self._source_node.allocate_vmnet_nio_signal.disconnect(self.VMnetInterfaceAllocatedSlot)
-            self._source_nio = NIOVMNET(vmnet)
-            self._destination_nio = NIOVMNET(vmnet)
-
-            # add the VMnet NIOs to the nodes
-            self._source_node.nio_cancel_signal.connect(self.cancelNIOSlot)
-            self._source_node.addNIO(self._source_port, self._source_nio)
-            self._destination_node.nio_cancel_signal.connect(self.cancelNIOSlot)
-            self._destination_node.addNIO(self._destination_port, self._destination_nio)
-
-    def newNIOSlot(self, node_id, port_id):
-        """
-        Slot to receive events from Node instances
-        when a NIO has been created on the server
-        and are active.
-
-        :param node_id: node identifier
-        :param port_id: port identifier
-        """
-
-        # in very rare cases link is already deleted
-        if self is None:
-            return
-
-        # check that the node is connected to this link as a source
-        if node_id == self._source_node.id() and port_id == self._source_port.id():
-            self._source_nio_active = True
-            # disconnect the signal has we don't expect new source NIO for this link.
-            self._source_node.nio_signal.disconnect(self.newNIOSlot)
-
-        # check that the node is connected to this link as a destination
-        elif node_id == self._destination_node.id() and port_id == self._destination_port.id():
-            self._destination_nio_active = True
-            # disconnect the signal has we don't expect new destination NIO for this link.
-            self._destination_node.nio_signal.disconnect(self.newNIOSlot)
-
-        if not self._stub and self._source_nio_active and self._destination_nio_active:
-            # both NIOs are active now.
-            self._addToSourcePort(self._source_nio)
-            self._addToDestinationPort(self._destination_nio)
-
-            self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-            self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-            self._source_nio_active = False
-            self._destination_nio_active = False
-
-            # let the GUI know about this link has been created
-            self.add_link_signal.emit(self._id)
-        elif self._stub and self._source_nio_active:
-            self._addToSourcePort(self._source_nio)
-            # add the NIO to destination to show the port is not free.
-            self._addToDestinationPort(self._source_nio)
-            self._source_nio_active = False
-            self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-            self.add_link_signal.emit(self._id)
-        elif self._stub and self._destination_nio_active:
-            # add the NIO to source to show the port is not free.
-            self._addToSourcePort(self._destination_nio)
-            self._addToDestinationPort(self._destination_nio)
-            self._destination_nio_active = False
-            self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-            self.add_link_signal.emit(self._id)
-
-    def _addToSourcePort(self, nio):
-        """
-        Adds a NIO, a link id and a description to the source port.
-
-        :param nio: NIO instance
-        """
-
-        self._source_port.setNio(nio)
-        self._source_port.setLinkId(self._id)
-        self._source_port.setDestinationNode(self._destination_node)
-        self._source_port.setDestinationPort(self._destination_port)
-
-        log.debug("{} attached to {} on port {}".format(nio,
-                                                        self._source_node.name(),
-                                                        self._source_port.name()))
-
-    def _addToDestinationPort(self, nio):
-        """
-        Adds a NIO, a link id and a description to the destination port.
-
-        :param nio: NIO instance
-        """
-
-        self._destination_port.setNio(nio)
-        self._destination_port.setLinkId(self._id)
-        self._destination_port.setDestinationNode(self._source_node)
-        self._destination_port.setDestinationPort(self._source_port)
-
-        log.debug("{} attached to {} on port {}".format(nio,
-                                                        self._destination_node.name(),
-                                                        self._destination_port.name()))
-
-    def cancelNIOSlot(self, node_id):
-        """
-        Slot to receive events from Node instances
-        when a NIO has been canceled because of an
-        error returned by the server.
-
-        :param node_id: node identifier
-        """
-
-        if not self._stub:
-            try:
-                # the destination node has canceled its NIO allocation
-                self._destination_node.nio_signal.disconnect(self.newNIOSlot)
-            except TypeError:
-                # ignore TypeError: 'method' object is not connected
-                pass
-
-            try:
-                # the source node has canceled its NIO allocation
-                self._source_node.nio_signal.disconnect(self.newNIOSlot)
-            except TypeError:
-                # ignore TypeError: 'method' object is not connected
-                pass
-
-            self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-            self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-        else:
-            if self._source_node.id() == node_id:
-                self._source_node.nio_signal.disconnect(self.newNIOSlot)
-                self._source_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-            else:
-                self._destination_node.nio_signal.disconnect(self.newNIOSlot)
-                self._destination_node.nio_cancel_signal.disconnect(self.cancelNIOSlot)
-
-        self._source_nio_active = False
-        self._destination_nio_active = False
-        self.deleteLink()
 
     def dump(self):
         """

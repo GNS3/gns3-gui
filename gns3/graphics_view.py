@@ -325,7 +325,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             multi = -multi // 2
 
-        if link.sourcePort().linkType() == "Serial" or (source_port.isStub() and link.destinationPort().linkType() == "Serial"):
+        if link.sourcePort().linkType() == "Serial":
             link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
         else:
             link_item = EthernetLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
@@ -392,14 +392,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if not destination_port.isHotPluggable() and destination_item.node().status() == Node.started:
                 QtWidgets.QMessageBox.critical(self, "Connection", "A new link cannot be added because {} is running".format(destination_item.node().name()))
                 return
-            if source_port.isStub() or destination_port.isStub():
-                pass
             elif source_port.linkType() != destination_port.linkType():
                 QtWidgets.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
-                return
-            elif source_port.defaultNio() != destination_port.defaultNio():
-                QtWidgets.QMessageBox.critical(self, "Connection", "These nodes cannot be connected together ({} != {})".format(source_port.defaultNio().__name__,
-                                                                                                                                destination_port.defaultNio().__name__))
                 return
 
             if source_item.node().server().protocol() != destination_item.node().server().protocol():

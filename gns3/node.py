@@ -50,9 +50,6 @@ class Node(QtCore.QObject):
     error_signal = QtCore.Signal(int, str)
     warning_signal = QtCore.Signal(int, str)
     server_error_signal = QtCore.Signal(int, str)
-    nio_signal = QtCore.Signal(int, int)
-    nio_cancel_signal = QtCore.Signal(int)
-    allocate_udp_nio_signal = QtCore.Signal(int, int, int)
 
     _instance_count = 1
     _allocated_names = []
@@ -303,108 +300,6 @@ class Node(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def getNIOInfo(self, nio):
-        """
-        Returns NIO information for a specific NIO.
-
-        :param nio: NIO instance
-
-        :returns: NIO information (dictionary)
-        """
-
-        nio_type = str(nio).lower()
-        nio_info = {}
-        if nio_type == "nio_udp":
-            # return NIO UDP info
-            nio_info["type"] = nio_type
-            nio_info["lport"] = nio.lport()
-            nio_info["rhost"] = nio.rhost()
-            nio_info["rport"] = nio.rport()
-
-            log.debug("creating {} for {} with lport={}, rhost={}, rport={}".format(nio,
-                                                                                    self.name(),
-                                                                                    nio.lport(),
-                                                                                    nio.rhost(),
-                                                                                    nio.rport()))
-            return nio_info
-
-        elif nio_type == "nio_generic_ethernet":
-            # return NIO generic Ethernet info
-            nio_info["type"] = nio_type
-            nio_info["ethernet_device"] = nio.ethernetDevice()
-
-            log.debug("creating {} for {} with Ethernet device {}".format(nio,
-                                                                          self.name(),
-                                                                          nio.ethernetDevice()))
-            return nio_info
-
-        elif nio_type == "nio_nat":
-            nio_info["type"] = nio_type
-            log.debug("creating {} for {} with identifier '{}'".format(nio,
-                                                                       self.name(),
-                                                                       nio.identifier()))
-            return nio_info
-
-        elif nio_type == "nio_linux_ethernet":
-            # return NIO Linux Ethernet info
-            nio_info["type"] = nio_type
-            nio_info["ethernet_device"] = nio.ethernetDevice()
-
-            log.debug("creating {} for {} with Ethernet device {}".format(nio,
-                                                                          self.name(),
-                                                                          nio.ethernetDevice()))
-            return nio_info
-
-        elif nio_type == "nio_tap":
-            # return NIO TAP info
-            nio_info["type"] = nio_type
-            nio_info["tap_device"] = nio.tapDevice()
-
-            log.debug("creating {} for {} with TAP device {}".format(nio,
-                                                                     self.name(),
-                                                                     nio.tapDevice()))
-            return nio_info
-
-        elif nio_type == "nio_unix":
-            # return NIO UNIX info
-            nio_info["type"] = nio_type
-            nio_info["local_file"] = nio.localFile()
-            nio_info["remote_file"] = nio.remoteFile()
-
-            log.debug("creating {} for {} with local file '{}' and remote file '{}'".format(nio,
-                                                                                            self.name(),
-                                                                                            nio.localFile(),
-                                                                                            nio.remoteFile()))
-            return nio_info
-
-        elif nio_type == "nio_vde":
-            # return NIO VDE info
-            nio_info["type"] = nio_type
-            nio_info["control_file"] = nio.controlFile()
-            nio_info["local_file"] = nio.localFile()
-
-            log.debug("creating {} for {} with control file '{}' and local file '{}'".format(nio,
-                                                                                             self.name(),
-                                                                                             nio.controlFile(),
-                                                                                             nio.localFile()))
-            return nio_info
-
-        elif nio_type == "nio_vmnet":
-            # return NIO VMnet info
-            nio_info["type"] = nio_type
-            nio_info["vmnet"] = nio.vmnet()
-            log.debug("creating {} for {}".format(nio, self.name()))
-            return nio_info
-
-        elif nio_type == "nio_null":
-            nio_info["type"] = nio_type
-            log.debug("creating {} for {} with identifier '{}'".format(nio,
-                                                                       self.name(),
-                                                                       nio.identifier()))
-            return nio_info
-
-        assert("Not supposed to get here!")
-
     @staticmethod
     def defaultCategories():
         """
@@ -537,28 +432,3 @@ class Node(QtCore.QObject):
 
         self._project.delete(self._server, path, callback, context=context, **kwargs)
 
-    def allocateUDPPort(self, port_id):
-        """
-        Requests an UDP port allocation.
-
-        :param port_id: port identifier
-        """
-        log.debug("{} is requesting an UDP port allocation".format(self.name()))
-        self.httpPost("/ports/udp", self._allocateUDPPortCallback, context={"port_id": port_id})
-
-    def _allocateUDPPortCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for allocateUDPPort.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while allocating an UDP port for {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            port_id = context["port_id"]
-            lport = result["udp_port"]
-            log.debug("{} has allocated UDP port {}".format(self.name(), port_id, lport))
-            self.allocate_udp_nio_signal.emit(self.id(), port_id, lport)

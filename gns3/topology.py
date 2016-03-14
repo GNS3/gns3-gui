@@ -551,9 +551,10 @@ class Topology:
                 new_uuid = str(uuid.uuid4())
                 topology["topology"]["nodes"][key]["vm_id"] = new_uuid
                 if old_uuid:
-                    for path in glob.glob(os.path.join(glob.escape(self.project.filesDir()), "project-files", "*", old_uuid)):
-                        new_path = path.replace(old_uuid, new_uuid)
-                        shutil.move(path, new_path)
+                    if self.project.filesDir():
+                        for path in glob.glob(os.path.join(glob.escape(self.project.filesDir()), "project-files", "*", old_uuid)):
+                            new_path = path.replace(old_uuid, new_uuid)
+                            shutil.move(path, new_path)
         return topology
 
     def loadFile(self, path, project):

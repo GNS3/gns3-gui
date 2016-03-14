@@ -31,9 +31,9 @@ class ATMPort(Port):
     :param nio: NIO instance to attach to this port
     """
 
-    def __init__(self, name, nio=None):
+    def __init__(self, name):
 
-        super().__init__(name, nio)
+        super().__init__(name)
 
     @staticmethod
     def longNameType():

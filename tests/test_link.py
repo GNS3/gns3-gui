@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2016 GNS3 Technologies Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import pytest
+import uuid
+from unittest.mock import MagicMock
+
+
+from gns3.link import Link
+from gns3.modules.vpcs.vpcs_device import VPCSDevice
+from gns3.modules.vpcs import VPCS
+from gns3.servers import Servers
+
+
+@pytest.fixture
+def devices(local_server, project):
+    """
+    Create two VPCS for test
+    """
+    device1 = VPCSDevice(VPCS(), local_server, project)
+    device1._vpcs_id = str(uuid.uuid4())
+    device1._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
+    device1.setInitialized(True)
+
+    device2 = VPCSDevice(VPCS(), local_server, project)
+    device2._vpcs_id = str(uuid.uuid4())
+    device2._settings = {"name": "VPCS 2", "script_file": "", "console": None, "startup_script": None}
+    device2.setInitialized(True)
+
+    return (device1, device2)
+
+
+@pytest.fixture
+def controller():
+    Servers.instance()._controller_server = MagicMock()
+    return Servers.instance()._controller_server
+
+
+def test_create_link(devices, project, controller):
+    link = Link(devices[0], devices[0].ports()[0], devices[1], devices[1].ports()[0])
+
+    data = {
+        "vms": [
+            {"vm_id": devices[0].vm_id(), "adapter_number": 0, "port_number": 0},
+            {"vm_id": devices[1].vm_id(), "adapter_number": 0, "port_number": 0}
+        ]
+    }
+
+    controller.post.assert_called_with("/projects/{}/links".format(project.id()), link._linkCreatedCallback, body=data)
+
+    mock_signal = MagicMock()
+    link.add_link_signal.connect(mock_signal)
+    link._linkCreatedCallback({"link_id": str(uuid.uuid4())})
+    mock_signal.assert_called_with(link._id)
+
+    assert not devices[0].ports()[0].isFree()
