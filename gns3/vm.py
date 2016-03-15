@@ -154,6 +154,7 @@ class VM(Node):
         """
         Create the VM on the controller
         """
+
         body = {"properties": {}}
         body["vm_type"] = self.URL_PREFIX
         body["hypervisor_id"] = self._server.server_id()

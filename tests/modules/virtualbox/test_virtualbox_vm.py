@@ -34,11 +34,12 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
         virtualbox_vm.setup("VMNAME")
         mock.assert_called_with(ANY,
                                 "/vms",
-                                virtualbox_vm._setupCallback,
+                                virtualbox_vm._setupVMCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'hypervisor_id': 'local',
                                     'vm_type': 'virtualbox',
+                                    'console_type': 'telnet',
                                     'properties': {
                                         'linked_clone': False,
                                         'vmname': 'VMNAME'
@@ -55,7 +56,7 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
-        virtualbox_vm._setupCallback(params)
+        virtualbox_vm._setupVMCallback(params)
         assert virtualbox_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 

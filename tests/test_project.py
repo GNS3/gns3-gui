@@ -150,12 +150,12 @@ def test_project_post_non_created_project_remote_server_two_query(remote_server)
         # assert args[1] == "/hypervisor/projects/{uuid}/notifications".format(uuid=uuid)
         # assert args[0] == "GET"
 
-        name, args, kwargs = calls[2]
+        name, args, kwargs = calls[1]
         assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
         assert args[0] == "POST"
         assert kwargs["body"] == {"test": "test"}
 
-        name, args, kwargs = calls[3]
+        name, args, kwargs = calls[2]
         assert args[0] == "POST"
         assert args[1] == "/hypervisor/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
@@ -198,17 +198,17 @@ def test_project_post_non_created_project_remote_server_two_query_two_server(rem
         # assert args[0] == "GET"
         # assert args[1] == "/hypervisor/projects/{uuid}/notifications".format(uuid=uuid)
 
-        name, args, kwargs = calls[2]
+        name, args, kwargs = calls[1]
         assert args[0] == "POST"
         assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
-        name, args, kwargs = calls[3]
+        name, args, kwargs = calls[2]
         assert args[0] == "POST"
         assert args[1] == "/hypervisor/projects/{uuid}/test3".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
-        name, args, kwargs = calls[4]
+        name, args, kwargs = calls[3]
         assert args[0] == "POST"
         assert args[1] == "/hypervisor/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}

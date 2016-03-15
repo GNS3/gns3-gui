@@ -34,13 +34,14 @@ def test_qemu_vm_setup(qemu_vm, project):
         qemu_vm.setup("/bin/fake", name="VMNAME")
         mock.assert_called_with(ANY,
                                 "/vms",
-                                qemu_vm._setupCallback,
+                                qemu_vm._setupVMCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
                                         'linked_clone': True,
                                         'qemu_path': '/bin/fake'
                                     },
+                                    'console_type': 'telnet',
                                     'hypervisor_id': 'local',
                                     'vm_type': 'qemu'
                                 },
@@ -55,7 +56,7 @@ def test_qemu_vm_setup(qemu_vm, project):
             "vm_directory": "/tmp/test",
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
-        qemu_vm._setupCallback(params)
+        qemu_vm._setupVMCallback(params)
         assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.vmDir() == "/tmp/test"
 
@@ -66,13 +67,14 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
         qemu_vm.setup("/bin/fake", name="VMNAME")
         mock.assert_called_with(ANY,
                                 "/vms",
-                                qemu_vm._setupCallback,
+                                qemu_vm._setupVMCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
                                         'linked_clone': True,
                                         'qemu_path': '/bin/fake'
                                     },
+                                    'console_type': 'telnet',
                                     'hypervisor_id': 'local',
                                     'vm_type': 'qemu'
                                 },
@@ -88,7 +90,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661",
             "command_line": "/bin/fake"
         }
-        qemu_vm._setupCallback(params)
+        qemu_vm._setupVMCallback(params)
         assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.commandLine() == "/bin/fake"
 
@@ -99,7 +101,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
         qemu_vm.setup("/bin/fake", name="VMNAME")
         mock.assert_called_with(ANY,
                                 "/vms",
-                                qemu_vm._setupCallback,
+                                qemu_vm._setupVMCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -107,7 +109,8 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
                                         'qemu_path': '/bin/fake'
                                     },
                                     'hypervisor_id': 'local',
-                                    'vm_type': 'qemu'
+                                    'vm_type': 'qemu',
+                                    'console_type': 'telnet'
                                 },
                                 context={})
 
@@ -120,7 +123,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            qemu_vm._setupCallback(params)
+            qemu_vm._setupVMCallback(params)
             assert mock.called
 
         assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"

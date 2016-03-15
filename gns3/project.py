@@ -239,8 +239,9 @@ class Project(QtCore.QObject):
                     "path": self.filesDir()
                 }
                 Servers.instance().controllerServer().post("/projects", func, body=body)
-            # We bufferize the query for when the project is created on the remote server
-            self._callback_finish_creating_on_server.append(func)
+            else:
+                # We bufferize the query for when the project is created on the remote server
+                self._callback_finish_creating_on_server.append(func)
         else:
             self._projectOnServerCreated(method, path, callback, body, params={}, hypervisor_server=server, **kwargs)
 

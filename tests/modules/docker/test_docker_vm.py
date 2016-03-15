@@ -45,10 +45,11 @@ def test_docker_vm_setup(project, local_server):
         }
         mock.assert_called_with(ANY,
                                 "/vms",
-                                docker_vm._setupCallback,
+                                docker_vm._setupVMCallback,
                                 body={
                                     "hypervisor_id": "local",
                                     "vm_type": "docker",
+                                    "console_type": "telnet",
                                     "properties": {
                                         "adapters": 1,
                                         "image": "ubuntu",
@@ -66,7 +67,7 @@ def test_setupCallback(project, local_server):
         "name": "DOCKER1",
         "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
     }
-    docker_vm._setupCallback(params)
+    docker_vm._setupVMCallback(params)
 
     assert docker_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
     assert docker_vm.name() == "DOCKER1"
@@ -128,10 +129,11 @@ def test_load(project, local_server):
         mock.assert_called_with(
             ANY,
             "/vms",
-            docker_vm._setupCallback,
+            docker_vm._setupVMCallback,
             body={'hypervisor_id': 'local',
                   'name': 'mysql:latest-1',
                   'console': 6000,
+                  'console_type': 'telnet',
                   'vm_type': 'docker',
                   'vm_id': 'ec35076f-f6e5-4c72-a594-e94a47419710',
                   'properties': {'start_command': '/bin/ls',

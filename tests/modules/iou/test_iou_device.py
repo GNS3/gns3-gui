@@ -57,13 +57,14 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
         iou_device.setup("/tmp/iou.bin", name="PC 1")
         mock.assert_called_with(ANY,
                                 "/vms",
-                                iou_device._setupCallback,
+                                iou_device._setupVMCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
                                       'vm_type': 'iou',
+                                      'console_type': 'telnet',
                                       'hypervisor_id': 'local'
                                 },
                                 context={})
@@ -77,7 +78,7 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._setupCallback(params)
+        iou_device._setupVMCallback(params)
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -102,7 +103,7 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
         }
 
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            iou_device._setupCallback(params)
+            iou_device._setupVMCallback(params)
             assert mock.called
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -119,12 +120,13 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
         iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
         mock.assert_called_with(ANY,
                                 "/vms",
-                                iou_device._setupCallback,
+                                iou_device._setupVMCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
+                                      'console_type': 'telnet',
                                       'vm_type': 'iou',
                                       'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'hypervisor_id': 'local'
@@ -140,7 +142,7 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._setupCallback(params)
+        iou_device._setupVMCallback(params)
 
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -161,13 +163,14 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
         iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
         mock.assert_called_with(ANY,
                                 "/vms",
-                                iou_device._setupCallback,
+                                iou_device._setupVMCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n',
                                           'startup_config_content': 'hostname %h'
                                       },
+                                      'console_type': 'telnet',
                                       'vm_type': 'iou',
                                       'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'hypervisor_id': 'local'
