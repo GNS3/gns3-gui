@@ -167,9 +167,12 @@ class VM(Node):
             else:
                 body["properties"][key] = value
 
-        self.controllerHttpPost("/vms", self._setupCallback, body=body)
+        if "console_type" not in body:
+            body["console_type"] = "telnet"
 
-    def _setupCallback(self, result, error=False, **kwargs):
+        self.controllerHttpPost("/vms", self._setupVMCallback, body=body)
+
+    def _setupVMCallback(self, result, error=False, **kwargs):
         """
         Callback for setup.
 
@@ -211,6 +214,17 @@ class VM(Node):
                                                                                       self._settings[name],
                                                                                       value))
                     self._settings[name] = value
+            # For compatibility with old API
+            result.update(result["properties"])
+            del result["properties"]
+        return self._setupCallback(result, error=error, **kwargs)
+
+    def _setupCallback(self, result, error=False, **kwargs):
+        """
+        Setup callback compatible with the hypervisor api.
+        Could be removed when all VM will be rewrite to use the
+        controller API
+        """
         return True
 
     def _updateCallback(self, result, error=False, **kwargs):

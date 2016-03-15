@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, ANY
 from gns3.modules.qemu.qemu_vm import QemuVM
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
@@ -30,11 +30,21 @@ def test_qemu_vm_init(local_server, project):
 
 def test_qemu_vm_setup(qemu_vm, project):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/qemu/vms".format(project_id=project.id())
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                qemu_vm._setupCallback,
+                                body={
+                                    'name': 'VMNAME',
+                                    'properties': {
+                                        'linked_clone': True,
+                                        'qemu_path': '/bin/fake'
+                                    },
+                                    'hypervisor_id': 'local',
+                                    'vm_type': 'qemu'
+                                },
+                                context={})
 
         # Callback
         params = {
@@ -45,18 +55,28 @@ def test_qemu_vm_setup(qemu_vm, project):
             "vm_directory": "/tmp/test",
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
-        args[1](params)
+        qemu_vm._setupCallback(params)
         assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.vmDir() == "/tmp/test"
 
 
 def test_qemu_vm_setup_command_line(qemu_vm, project):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/qemu/vms".format(project_id=project.id())
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                qemu_vm._setupCallback,
+                                body={
+                                    'name': 'VMNAME',
+                                    'properties': {
+                                        'linked_clone': True,
+                                        'qemu_path': '/bin/fake'
+                                    },
+                                    'hypervisor_id': 'local',
+                                    'vm_type': 'qemu'
+                                },
+                                context={})
 
         # Callback
         params = {
@@ -68,18 +88,28 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661",
             "command_line": "/bin/fake"
         }
-        args[1](params)
+        qemu_vm._setupCallback(params)
         assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.commandLine() == "/bin/fake"
 
 
 def test_qemu_vm_setup_md5_missing(qemu_vm, project):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/qemu/vms".format(project_id=project.id())
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                qemu_vm._setupCallback,
+                                body={
+                                    'name': 'VMNAME',
+                                    'properties': {
+                                        'linked_clone': True,
+                                        'qemu_path': '/bin/fake'
+                                    },
+                                    'hypervisor_id': 'local',
+                                    'vm_type': 'qemu'
+                                },
+                                context={})
 
         # Callback
         params = {
@@ -90,7 +120,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            args[1](params)
+            qemu_vm._setupCallback(params)
             assert mock.called
 
         assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"

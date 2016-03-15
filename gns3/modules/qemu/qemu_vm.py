@@ -149,7 +149,7 @@ class QemuVM(VM):
         self._port_segment_size = port_segment_size
         self._first_port_name = first_port_name
         params.update(additional_settings)
-        self.httpPost("/qemu/vms", self._setupCallback, body=params, progressText="Creating {}".format(name))
+        self._create(params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """

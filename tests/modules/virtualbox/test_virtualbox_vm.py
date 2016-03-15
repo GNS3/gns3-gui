@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, ANY
 from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
@@ -30,11 +30,21 @@ def test_virtualbox_vm_init(local_server, project):
 
 def test_virtualbox_vm_setup(virtualbox_vm, project):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         virtualbox_vm.setup("VMNAME")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms".format(project_id=project.id())
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                virtualbox_vm._setupCallback,
+                                body={
+                                    'name': 'VMNAME',
+                                    'hypervisor_id': 'local',
+                                    'vm_type': 'virtualbox',
+                                    'properties': {
+                                        'linked_clone': False,
+                                        'vmname': 'VMNAME'
+                                    }
+                                },
+                                context={})
 
         # Callback
         params = {
@@ -45,7 +55,7 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
-        args[1](params)
+        virtualbox_vm._setupCallback(params)
         assert virtualbox_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 

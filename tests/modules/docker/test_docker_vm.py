@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, ANY
 from gns3.modules.docker.docker_vm import DockerVM
 from gns3.modules.docker import Docker
 from gns3.ports.port import Port
@@ -32,7 +31,7 @@ def test_docker_vm_init(local_server, project):
 def test_docker_vm_setup(project, local_server):
 
     docker_vm = DockerVM(Docker(), local_server, project)
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         docker_vm.setup("ubuntu", base_name="ubuntu")
         assert docker_vm._settings == {
             'image': 'ubuntu',
@@ -44,14 +43,19 @@ def test_docker_vm_setup(project, local_server):
             'console_type': 'telnet',
             'aux': None
         }
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/docker/vms".format(project_id=project.id())
-        assert kwargs["body"] == {
-            "adapters": 1,
-            "image": "ubuntu",
-            "name": "ubuntu-1"
-        }
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                docker_vm._setupCallback,
+                                body={
+                                    "hypervisor_id": "local",
+                                    "vm_type": "docker",
+                                    "properties": {
+                                        "adapters": 1,
+                                        "image": "ubuntu",
+                                    },
+                                    "name": "ubuntu-1"
+                                },
+                                context={})
 
 
 def test_setupCallback(project, local_server):
@@ -90,26 +94,26 @@ def test_load(project, local_server):
         "description": "Docker image",
         "id": 1,
         "label": {
-          "color": "#ff000000",
-          "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
-          "text": "mysql:latest",
-          "x": -2.609375,
-          "y": -25
+            "color": "#ff000000",
+            "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+            "text": "mysql:latest",
+            "x": -2.609375,
+            "y": -25
         },
         "ports": [
-          {
-            "adapter_number": 0,
-            "id": 1,
-            "name": "Ethernet0",
-            "port_number": 0
-          }
+            {
+                "adapter_number": 0,
+                "id": 1,
+                "name": "Ethernet0",
+                "port_number": 0
+            }
         ],
         "properties": {
-          "adapters": 1,
-          "console": 6000,
-          "image": "mysql:latest",
-          "name": "mysql:latest-1",
-          "start_command": "/bin/ls"
+            "adapters": 1,
+            "console": 6000,
+            "image": "mysql:latest",
+            "name": "mysql:latest-1",
+            "start_command": "/bin/ls"
         },
         "server_id": 1,
         "type": "DockerVM",
@@ -119,17 +123,18 @@ def test_load(project, local_server):
     }
 
     docker_vm = DockerVM(Docker(), local_server, project)
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         docker_vm.load(node)
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/docker/vms".format(project_id=project.id())
-        assert kwargs["body"] == {
-            "image": "mysql:latest",
-            "name": "mysql:latest-1",
-            "adapters": 1,
-            "start_command": "/bin/ls",
-            "console": 6000,
-            "vm_id": "ec35076f-f6e5-4c72-a594-e94a47419710",
-        }
-
+        mock.assert_called_with(
+            ANY,
+            "/vms",
+            docker_vm._setupCallback,
+            body={'hypervisor_id': 'local',
+                  'name': 'mysql:latest-1',
+                  'console': 6000,
+                  'vm_type': 'docker',
+                  'vm_id': 'ec35076f-f6e5-4c72-a594-e94a47419710',
+                  'properties': {'start_command': '/bin/ls',
+                                 'adapters': 1,
+                                 'image': 'mysql:latest'}},
+            context={})

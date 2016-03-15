@@ -98,8 +98,7 @@ class DockerVM(VM):
         if vm_id:
             params["vm_id"] = vm_id
         params.update(additional_settings)
-
-        self.httpPost("/docker/vms", self._setupCallback, body=params)
+        self._create(params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """Callback for Docker container setup.

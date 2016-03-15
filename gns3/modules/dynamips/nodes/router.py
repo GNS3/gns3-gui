@@ -270,7 +270,7 @@ class Router(VM):
             del additional_settings["private_config"]
 
         params.update(additional_settings)
-        self.httpPost("/dynamips/vms", self._setupCallback, body=params)
+        self._create(params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """

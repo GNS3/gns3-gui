@@ -18,7 +18,7 @@
 import pytest
 import os
 from uuid import uuid4
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, ANY
 
 from gns3.modules.iou.iou_device import IOUDevice
 from gns3.ports.port import Port
@@ -51,18 +51,22 @@ def test_iou_device_init(local_server, project):
 
 def test_iou_device_setup(iou_device, project, fake_iourc):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
         iou_device.setup("/tmp/iou.bin", name="PC 1")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms"
-        assert kwargs["body"] == {
-            "name": "PC 1",
-            "path": "/tmp/iou.bin",
-            "iourc_content": "[license]\r\ngns42 = dsfdsfdsfdsf;\r\n"
-        }
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                iou_device._setupCallback,
+                                body={'name': 'PC 1',
+                                      'properties': {
+                                          'path': '/tmp/iou.bin',
+                                          'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
+                                      },
+                                      'vm_type': 'iou',
+                                      'hypervisor_id': 'local'
+                                },
+                                context={})
 
         # Callback
         params = {
@@ -73,7 +77,7 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        args[1](params)
+        iou_device._setupCallback(params)
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -83,18 +87,10 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
     It should notify the user asking him to upload the image
     """
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
         iou_device.setup("/tmp/iou.bin", name="PC 1")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms"
-        assert kwargs["body"] == {
-            "name": "PC 1",
-            "path": "/tmp/iou.bin",
-            "iourc_content": "[license]\r\ngns42 = dsfdsfdsfdsf;\r\n"
-        }
 
         # Callback
         params = {
@@ -106,7 +102,7 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
         }
 
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            args[1](params)
+            iou_device._setupCallback(params)
             assert mock.called
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -117,19 +113,23 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
         iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms"
-        assert kwargs["body"] == {
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "name": "PC 1",
-            "path": "/tmp/iou.bin",
-            "iourc_content": "[license]\r\ngns42 = dsfdsfdsfdsf;\r\n"
-        }
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                iou_device._setupCallback,
+                                body={'name': 'PC 1',
+                                      'properties': {
+                                          'path': '/tmp/iou.bin',
+                                          'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
+                                      },
+                                      'vm_type': 'iou',
+                                      'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
+                                      'hypervisor_id': 'local'
+                                },
+                                context={})
 
         # Callback
         params = {
@@ -140,7 +140,8 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        args[1](params)
+        iou_device._setupCallback(params)
+
 
         assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -154,20 +155,24 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
     with open(startup_config, "w+") as f:
         f.write("hostname %h")
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
         iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms"
-        assert kwargs["body"] == {
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "name": "PC 1",
-            "path": "/tmp/iou.bin",
-            "startup_config_content": "hostname %h",
-            'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
-        }
+        mock.assert_called_with(ANY,
+                                "/vms",
+                                iou_device._setupCallback,
+                                body={'name': 'PC 1',
+                                      'properties': {
+                                          'path': '/tmp/iou.bin',
+                                          'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n',
+                                          'startup_config_content': 'hostname %h'
+                                      },
+                                      'vm_type': 'iou',
+                                      'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
+                                      'hypervisor_id': 'local'
+                                },
+                                context={})
 
 
 def test_update(iou_device):

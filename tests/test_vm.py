@@ -18,7 +18,7 @@
 import uuid
 
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.node import Node
 from gns3.ports.port import Port
@@ -34,6 +34,7 @@ def test_create(vpcs_device, local_server):
         assert kwargs["body"] == {
             "name": "PC 1",
             "hypervisor_id": local_server.server_id(),
+            "console_type": "telnet",
             "vm_type": "vpcs",
             "properties": {
                 "startup_script": "echo TEST"
@@ -41,9 +42,10 @@ def test_create(vpcs_device, local_server):
         }
 
 
-def test_setupCallback(vpcs_device):
+def test_setupVMCallback(vpcs_device):
     vm_id = str(uuid.uuid4())
-    vpcs_device._setupCallback({
+    vpcs_device._setupCallback = MagicMock()
+    vpcs_device._setupVMCallback({
         "name": "PC 1",
         "vm_id": vm_id,
         "properties": {
@@ -52,6 +54,13 @@ def test_setupCallback(vpcs_device):
     })
     assert vpcs_device._vm_id == vm_id
     assert vpcs_device._settings["startup_script"] == "echo TEST"
+    vpcs_device._setupCallback.assert_called_with({
+            "name": "PC 1",
+            "vm_id": vm_id,
+            "startup_script": "echo TEST"
+        },
+        error=False
+    )
 
 
 def test_vpcs_device_start(vpcs_device):
