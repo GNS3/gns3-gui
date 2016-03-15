@@ -1089,13 +1089,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return self.saveProject(self._project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
-        else:
-            return True
+        return True
 
     def startupLoading(self):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+        if not LocalConfig.instance().isMainGui():
+            reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                self.close()
+                return
+
 
         # restore debug level
         if self._settings["debug_level"]:
