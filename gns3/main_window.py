@@ -1089,8 +1089,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return self.saveProject(self._project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
-        else:
-            return True
+        return True
 
     def startupLoading(self):
         """
