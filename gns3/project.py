@@ -56,8 +56,7 @@ class Project(QtCore.QObject):
         # We queue query in order to ensure the project is only created once on remote server
         self._callback_finish_creating_on_server = None
 
-        self._listen_notification = False
-        self._notifications_stream = set()
+        self._notification_stream = None
 
         super().__init__()
 
@@ -272,8 +271,7 @@ class Project(QtCore.QObject):
         if not self._id:
             self._id = params["project_id"]
 
-            #TODO: Listen notif from server
-            #self._startListenNotifications(hypervisor_server)
+            self._startListenNotifications()
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         hypervisor_server.createHTTPQuery(method, path, callback, body=body, **kwargs)
@@ -311,9 +309,8 @@ class Project(QtCore.QObject):
         if error:
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
-            if self._id:
-                for stream in self._notifications_stream:
-                    stream.abort()
+            if self._notification_stream:
+                self._notification_stream.abort()
                 log.info("Project {} closed".format(self._id))
 
         self._closed = True
@@ -341,10 +338,10 @@ class Project(QtCore.QObject):
                        None,
                        body=params)
 
-    def _startListenNotifications(self, server):
+    def _startListenNotifications(self):
 
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notifications_stream.add(server.createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True))
+        self._notification_stream = Servers.instance().controllerServer().createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
 
     def _event_received(self, result, server=None, **kwargs):
 
@@ -368,6 +365,6 @@ class Project(QtCore.QObject):
             log.info(result["event"]["message"])
             print("Info: " + result["event"]["message"])
         elif result["action"] == "ping":
-            # Compatible with 1.4.0 server
-            if "event" in result:
-                server.setSystemUsage(result["event"])
+            if "hypervisor_id" in result:
+                hypervisor = Servers.instance().getServerFromString(result["hypervisor_id"])
+                hypervisor.setSystemUsage(result["event"])
