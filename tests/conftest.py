@@ -51,7 +51,6 @@ def project(local_server):
 
     project = Project()
     project.setId(str(uuid.uuid4()))
-    project._listen_notification = True
     project._created = True
     project.setName("unsaved")
     return project
