@@ -1063,6 +1063,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :returns: boolean
         """
 
+        # check if any node is running
+        topology = Topology.instance()
+        topology.project = self._project
+        running_node = False
+        for node in topology.nodes():
+            if hasattr(node, "start") and node.status() == Node.started:
+                running_node = True
+                break
+        if running_node:
+            QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, please stop it before closing GNS3")
+            return False
+
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
             if self._project.temporary():
                 destination_file = "untitled.gns3"
@@ -1076,20 +1088,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return self.saveProject(self._project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
-        else:
-            # check if any node is running
-            topology = Topology.instance()
-            topology.project = self._project
-            running_node = False
-            for node in topology.nodes():
-                if hasattr(node, "start") and node.status() == Node.started:
-                    running_node = True
-                    break
-            if running_node:
-                reply = QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, would you like to continue?",
-                                                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.No:
-                    return False
         return True
 
     def startupLoading(self):
