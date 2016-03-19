@@ -1072,8 +1072,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 running_node = True
                 break
         if running_node:
-            reply = QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running please stop it before continue.",
-                                                  QtWidgets.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, please stop it before closing GNS3")
             return False
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
