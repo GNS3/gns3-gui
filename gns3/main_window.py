@@ -1094,6 +1094,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+
         if not LocalConfig.instance().isMainGui():
             reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -1101,6 +1102,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.close()
                 return
 
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
+            QtWidgets.QMessageBox.warning(self, "Root", "Running GNS3 as root is not recommended and could be dangerous")
 
         # restore debug level
         if self._settings["debug_level"]:
@@ -1145,9 +1148,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
-
         self._createTemporaryProject()
-
         self.ready_signal.emit()
 
         if self._settings["check_for_update"]:
