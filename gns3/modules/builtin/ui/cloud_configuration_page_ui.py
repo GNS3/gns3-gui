@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Sat Mar 19 22:31:09 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_cloudConfigPageWidget(object):
-
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
         cloudConfigPageWidget.resize(653, 478)
@@ -409,10 +408,10 @@ class Ui_cloudConfigPageWidget(object):
     def retranslateUi(self, cloudConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
         cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud configuration"))
-        self.uiGenericEthernetGroupBox.setTitle(_translate("cloudConfigPageWidget", "Generic Ethernet NIO (Administrator or root access required)"))
+        self.uiGenericEthernetGroupBox.setTitle(_translate("cloudConfigPageWidget", "Generic Ethernet NIO"))
         self.uiAddGenericEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiDeleteGenericEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
-        self.uiLinuxEthernetGroupBox.setTitle(_translate("cloudConfigPageWidget", "Linux Ethernet NIO (Linux only, root access required)"))
+        self.uiLinuxEthernetGroupBox.setTitle(_translate("cloudConfigPageWidget", "Linux Ethernet NIO (Linux only)"))
         self.uiAddLinuxEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiDeleteLinuxEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIOEthernetTab), _translate("cloudConfigPageWidget", "Ethernet"))
@@ -431,7 +430,7 @@ class Ui_cloudConfigPageWidget(object):
         self.uiAddNIOUDPPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiDeleteNIOUDPPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIOUDPTab), _translate("cloudConfigPageWidget", "UDP"))
-        self.uiNIOTAPGroupBox.setTitle(_translate("cloudConfigPageWidget", "TAP interface (require root access)"))
+        self.uiNIOTAPGroupBox.setTitle(_translate("cloudConfigPageWidget", "TAP interface"))
         self.uiAddNIOTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiDeleteNIOTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIOTAPTab), _translate("cloudConfigPageWidget", "TAP"))
@@ -457,3 +456,4 @@ class Ui_cloudConfigPageWidget(object):
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.NIONullTab), _translate("cloudConfigPageWidget", "NULL"))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
         self.uiNIOsTabWidget.setTabText(self.uiNIOsTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
+
