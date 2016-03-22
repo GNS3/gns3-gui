@@ -59,7 +59,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.canceled.connect(self._canceledSlot)
         self.destroyed.connect(self._cleanup)
 
-        self._thread = QtCore.QThread(self)
+        self._thread = QtCore.QThread(self.parent())
 
         self._worker = worker
         self._worker.finished.connect(self.accept)
