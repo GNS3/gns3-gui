@@ -94,7 +94,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         MainWindow._instance = self
         self._settings = {}
-        HTTPClient.setProgressCallback(Progress().instance())
+        HTTPClient.setProgressCallback(Progress.instance(self))
 
         self._project = None
         self._createTemporaryProject()
