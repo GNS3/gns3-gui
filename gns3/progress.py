@@ -34,13 +34,10 @@ class Progress(QtCore.QObject):
     remove_query_signal = QtCore.Signal(str)
     progress_signal = QtCore.Signal(str, int, int)
 
-    def __init__(self, min_duration=1000):
+    def __init__(self, parent, min_duration=1000):
 
-        super().__init__()
+        super().__init__(parent)
         self._progress_dialog = None
-
-        from .main_window import MainWindow
-        self._parent = MainWindow.instance()
 
         # Timer called for refreshing the progress dialog status
         self._rtimer = QtCore.QTimer()
@@ -98,6 +95,10 @@ class Progress(QtCore.QObject):
             for query in self._queries.copy().values():
                 query["response"].abort()
 
+    def _rejectSlot(self):
+        self._progress_dialog = None
+        self._cancelSlot()
+
     def update(self):
         if len(self._queries) == 0 and (time.time() * 1000) >= self._display_start_time + self._minimum_duration:
             self.hide()
@@ -106,8 +107,9 @@ class Progress(QtCore.QObject):
 
     def show(self):
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
-            progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
+            progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self.parent())
             progress_dialog.canceled.connect(self._cancelSlot)
+            progress_dialog.rejected.connect(self._rejectSlot)
             progress_dialog.setWindowModality(Qt.Qt.ApplicationModal)
             progress_dialog.setWindowTitle("Please wait")
             progress_dialog.setMinimumDuration(self._minimum_duration)
@@ -180,7 +182,7 @@ class Progress(QtCore.QObject):
             self._cancel_button_text = old_cancel_button_text
 
     @staticmethod
-    def instance():
+    def instance(parent=None):
         """
         Singleton to return only one instance of Progress.
 
@@ -188,5 +190,6 @@ class Progress(QtCore.QObject):
         """
 
         if not hasattr(Progress, "_instance") or Progress._instance is None:
-            Progress._instance = Progress()
+            Progress._instance = Progress(parent)
         return Progress._instance
+
