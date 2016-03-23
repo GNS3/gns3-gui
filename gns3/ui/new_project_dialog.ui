@@ -64,6 +64,9 @@
         <property name="text">
          <string>Name:</string>
         </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
        </widget>
       </item>
       <item row="0" column="1" colspan="3">
@@ -128,6 +131,38 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiNameLineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>NewProjectDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>321</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiLocationLineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>NewProjectDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>285</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>
