@@ -2,15 +2,13 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_NewProjectDialog(object):
-
     def setupUi(self, NewProjectDialog):
         NewProjectDialog.setObjectName("NewProjectDialog")
         NewProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -21,7 +19,7 @@ class Ui_NewProjectDialog(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NewProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridLayout_2.addWidget(self.uiButtonBox, 2, 2, 1, 1)
         self.uiOpenProjectPushButton = QtWidgets.QPushButton(NewProjectDialog)
@@ -40,6 +38,7 @@ class Ui_NewProjectDialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiNameLabel.sizePolicy().hasHeightForWidth())
         self.uiNameLabel.setSizePolicy(sizePolicy)
+        self.uiNameLabel.setTextFormat(QtCore.Qt.AutoText)
         self.uiNameLabel.setObjectName("uiNameLabel")
         self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
         self.uiNameLineEdit = QtWidgets.QLineEdit(self.uiProjectGroupBox)
@@ -64,6 +63,8 @@ class Ui_NewProjectDialog(object):
         self.retranslateUi(NewProjectDialog)
         self.uiButtonBox.accepted.connect(NewProjectDialog.accept)
         self.uiButtonBox.rejected.connect(NewProjectDialog.reject)
+        self.uiNameLineEdit.returnPressed.connect(NewProjectDialog.accept)
+        self.uiLocationLineEdit.returnPressed.connect(NewProjectDialog.accept)
         QtCore.QMetaObject.connectSlotsByName(NewProjectDialog)
 
     def retranslateUi(self, NewProjectDialog):
@@ -75,3 +76,4 @@ class Ui_NewProjectDialog(object):
         self.uiNameLabel.setText(_translate("NewProjectDialog", "Name:"))
         self.uiLocationLabel.setText(_translate("NewProjectDialog", "Location:"))
         self.uiLocationBrowserToolButton.setText(_translate("NewProjectDialog", "Browse..."))
+
