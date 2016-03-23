@@ -64,17 +64,22 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         if not os.path.isdir(snapshot_dir):
             return
 
+        snapshots = []
         for snapshot in os.listdir(snapshot_dir):
             match = re.search(r"^(.*)_([0-9]+)_([0-9]+)", snapshot)
             if match:
                 snapshot_name = match.group(1)
                 snapshot_date = match.group(2)[:2] + '/' + match.group(2)[2:4] + '/' + match.group(2)[4:]
                 snapshot_time = match.group(3)[:2] + ':' + match.group(3)[2:4] + ':' + match.group(3)[4:]
-                item = QtWidgets.QListWidgetItem(self.uiSnapshotsList)
-                item.setText("{} on {} at {}".format(snapshot_name, snapshot_date, snapshot_time))
-                item.setData(QtCore.Qt.UserRole, os.path.join(snapshot_dir, snapshot))
+                snapshots.append((snapshot_name, snapshot_date, snapshot_time))
 
-        self.uiSnapshotsList.sortItems(QtCore.Qt.AscendingOrder)
+        # Sort by date
+        snapshots = sorted(snapshots, key=(lambda v: v[1] + v[2]))
+        for snapshot_name, snapshot_date, snapshot_time in snapshots:
+            item = QtWidgets.QListWidgetItem(self.uiSnapshotsList)
+            item.setText("{} on {} at {}".format(snapshot_name, snapshot_date, snapshot_time))
+            item.setData(QtCore.Qt.UserRole, os.path.join(snapshot_dir, snapshot))
+
 
         if self.uiSnapshotsList.count():
             self.uiSnapshotsList.setCurrentRow(0)
