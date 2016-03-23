@@ -1083,7 +1083,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if self._nodeRunning():
-            QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, please stop it before closing GNS3")
+            QtWidgets.QMessageBox.warning(self, "Closing project", "A device is still running, please stop it before closing your project")
             return False
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
@@ -1219,7 +1219,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if self._nodeRunning():
-            QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, please stop it before saving")
+            QtWidgets.QMessageBox.warning(self, "Save As", "All devices must be stopped before saving to another location")
             return False
 
         if self._isTopologyOnRemoteServer() and not self._project.temporary():
