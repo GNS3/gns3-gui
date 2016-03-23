@@ -19,6 +19,7 @@ import logging
 import time
 from contextlib import contextmanager
 
+from .utils import human_filesize
 from .qt import QtCore, QtWidgets, Qt, QtNetwork
 
 log = logging.getLogger(__name__)
@@ -119,6 +120,9 @@ class Progress(QtCore.QObject):
             else:
                 progress_dialog.setCancelButton(None)
 
+            text = list(self._queries.values())[0]["explanation"]
+            progress_dialog.setLabelText(text)
+
             self._progress_dialog = progress_dialog
             self._finished_query_during_display = 0
             self._display_start_time = time.time() * 1000
@@ -126,6 +130,11 @@ class Progress(QtCore.QObject):
         else:
             start_timer = False
             progress_dialog = self._progress_dialog
+
+            if len(self._queries) > 0:
+                text = list(self._queries.values())[0]["explanation"]
+            else:
+                text = "Waiting"
 
             # If we have multiple queries running progress show progress of the queries
             # otherwise it's the progress of the current query
@@ -137,8 +146,9 @@ class Progress(QtCore.QObject):
                 progress_dialog.setMaximum(query["maximum"])
                 progress_dialog.setValue(query["current"])
 
-        if len(self._queries) > 0:
-            text = list(self._queries.values())[0]["explanation"]
+                if query["maximum"] > 1000:
+                    text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))
+
             progress_dialog.setLabelText(text)
 
     def hide(self):
