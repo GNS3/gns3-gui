@@ -62,20 +62,15 @@ class Progress(QtCore.QObject):
         self._allow_cancel_query = False
         self._enable = True
 
-        self._mutex = QtCore.QMutex()
-
     def _addQuerySlot(self, query_id, explanation, response):
-
         self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0, "response": response}
 
     def _removeQuerySlot(self, query_id):
-
         self._finished_query_during_display += 1
         if query_id in self._queries:
             del self._queries[query_id]
 
     def progress_dialog(self):
-
         return self._progress_dialog
 
     def _progressSlot(self, query_id, current, maximum):
@@ -113,6 +108,7 @@ class Progress(QtCore.QObject):
             progress_dialog.rejected.connect(self._rejectSlot)
             progress_dialog.setWindowModality(Qt.Qt.ApplicationModal)
             progress_dialog.setWindowTitle("Please wait")
+            progress_dialog.setAutoReset(False)
             progress_dialog.setMinimumDuration(self._minimum_duration)
 
             if len(self._cancel_button_text) > 0:
@@ -143,8 +139,22 @@ class Progress(QtCore.QObject):
                 progress_dialog.setValue(self._finished_query_during_display)
             elif len(self._queries) == 1:
                 query = list(self._queries.values())[0]
-                progress_dialog.setMaximum(query["maximum"])
-                progress_dialog.setValue(query["current"])
+                if query["maximum"] == query["current"]:
+
+                    # We animate the bar. In theory Qt should be able to do it but
+                    # due to all the manipulation of the dialog he is getting lost
+                    bar_speed = 8
+                    if progress_dialog.maximum() != bar_speed:
+                        progress_dialog.setMaximum(bar_speed)
+                        progress_dialog.setValue(0)
+                    elif progress_dialog.value() == bar_speed:
+                        progress_dialog.setValue(0)
+                    else:
+                        progress_dialog.setValue(progress_dialog.value() + 1)
+
+                else:
+                    progress_dialog.setMaximum(query["maximum"])
+                    progress_dialog.setValue(query["current"])
 
                 if query["maximum"] > 1000:
                     text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))
