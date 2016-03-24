@@ -116,7 +116,10 @@ class Progress(QtCore.QObject):
             else:
                 progress_dialog.setCancelButton(None)
 
-            text = list(self._queries.values())[0]["explanation"]
+            if len(self._queries) > 0:
+                text = list(self._queries.values())[0]["explanation"]
+            else:
+                text = "Waiting"
             progress_dialog.setLabelText(text)
 
             self._progress_dialog = progress_dialog
