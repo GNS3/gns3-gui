@@ -458,6 +458,8 @@ class VM(Node):
         self.loaded_signal.connect(self._updatePortSettings)
 
     def openConsole(self, command=None, aux=False):
+        if command is None:
+            command = self.consoleCommand()
 
         console_type = "telnet"
         if hasattr(self, "serialConsole") and self.serialConsole():
@@ -472,9 +474,6 @@ class VM(Node):
             # Aux console is always telnet
             console_type = "telnet"
         else:
-            if command is None:
-                command = self.consoleCommand()
-
             console_port = self.console()
             if "console_type" in self.settings():
                 console_type = self.settings()["console_type"]
