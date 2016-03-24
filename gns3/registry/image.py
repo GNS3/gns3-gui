@@ -101,7 +101,10 @@ class Image:
         """
         Return image file size
         """
-        return os.path.getsize(self.path)
+        try:
+            return os.path.getsize(self.path)
+        except OSError:
+            return 0
 
     def copy(self, directory, filename):
         """

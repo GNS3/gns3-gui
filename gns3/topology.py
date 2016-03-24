@@ -286,6 +286,15 @@ class Topology:
         if image in self._images:
             self._images.remove(image)
 
+        if not self._project:
+            return
+
+        # We delete by security only images in the project files directory
+        if not os.path.isabs(image.filePath()):
+            if image.filePath() not in [ image.filePath() for image in self._images ]:
+                os.remove(os.path.join(self._project.filesDir(), "project-files", image.filePath()))
+
+
     def addInstance(self, name, id, size_id, image_id, private_key, public_key,
                     host=None, port=None, ssl_ca=None, ssl_ca_file=None):
         """
