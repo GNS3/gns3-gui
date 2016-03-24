@@ -19,7 +19,7 @@ from gns3.progress import Progress
 
 
 def test_context():
-    progress = Progress(min_duration=500)
+    progress = Progress(None, min_duration=500)
     assert progress._minimum_duration == 500
     assert progress._enable
 

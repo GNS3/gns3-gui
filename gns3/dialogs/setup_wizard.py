@@ -127,7 +127,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         super().initializePage(page_id)
         if self.page(page_id) == self.uiVMWizardPage:
-            cpu_count = psutil.cpu_count()
+            # limit the number of vCPUs to the number of physical cores (hyper thread CPUs are excluded)
+            # because this is likely to degrade performances.
+            cpu_count = psutil.cpu_count(logical=False)
             self.uiCPUSpinBox.setValue(cpu_count)
             # we want to allocate half of the available physical memory
             ram = int(psutil.virtual_memory().total / (1024 * 1024) / 2)

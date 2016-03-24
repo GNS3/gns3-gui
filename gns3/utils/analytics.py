@@ -44,7 +44,7 @@ class AnalyticsClient(QtCore.QObject):
 
         def finished(network_reply):
             if network_reply.error() != QtNetwork.QNetworkReply.NoError:
-                log.critical("Error when pushing to Google Analytics %s", network_reply.errorString())
+                log.debug("Error when pushing to Google Analytics %s", network_reply.errorString())
 
         self._manager.finished.connect(finished)
 

@@ -94,7 +94,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         MainWindow._instance = self
         self._settings = {}
-        HTTPClient.setProgressCallback(Progress().instance())
+        HTTPClient.setProgressCallback(Progress.instance(self))
 
         self._project = None
         self._createTemporaryProject()
@@ -565,6 +565,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if node.server() != Servers.instance().localServer():
                 QtWidgets.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots can only be created if all the nodes run locally")
                 return
+
+        if self._nodeRunning():
+            QtWidgets.QMessageBox.warning(self, "Snapshots", "Sorry, snapshots can only be created when all nodes are stopped")
+            return
 
         dialog = SnapshotsDialog(self,
                                  self._project.topologyFile(),
@@ -1056,12 +1060,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if close_windows:
             self.close()
 
+    def _nodeRunning(self):
+        """
+        Display a warning to user
+
+        :returns: False is a device is still running
+        """
+        # check if any node is running
+        topology = Topology.instance()
+        topology.project = self._project
+        running_node = False
+        for node in topology.nodes():
+            if hasattr(node, "start") and node.status() == Node.started:
+                return True
+        return False
+
     def checkForUnsavedChanges(self):
         """
         Checks if there are any unsaved changes.
 
         :returns: boolean
         """
+
+        if self._nodeRunning():
+            QtWidgets.QMessageBox.warning(self, "Closing project", "A device is still running, please stop it before closing your project")
+            return False
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
             if self._project.temporary():
@@ -1076,26 +1099,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return self.saveProject(self._project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
-        else:
-            # check if any node is running
-            topology = Topology.instance()
-            topology.project = self._project
-            running_node = False
-            for node in topology.nodes():
-                if hasattr(node, "start") and node.status() == Node.started:
-                    running_node = True
-                    break
-            if running_node:
-                reply = QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, would you like to continue?",
-                                                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.No:
-                    return False
         return True
 
     def startupLoading(self):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+
+        if not LocalConfig.instance().isMainGui():
+            reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                self.close()
+                return
+
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
+            QtWidgets.QMessageBox.warning(self, "Root", "Running GNS3 as root is not recommended and could be dangerous")
 
         # restore debug level
         if self._settings["debug_level"]:
@@ -1140,9 +1159,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
-
         self._createTemporaryProject()
-
         self.ready_signal.emit()
 
         if self._settings["check_for_update"]:
@@ -1201,15 +1218,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :returns: GNS3 project file (.gns3)
         """
 
-        # first check if any node that can be started is running
-        topology = Topology.instance()
-        topology.project = self._project
-        running_nodes = self._running_nodes()
-
-        if running_nodes:
-            nodes = "\n".join(running_nodes)
-            MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
-            return
+        if self._nodeRunning():
+            QtWidgets.QMessageBox.warning(self, "Save As", "All devices must be stopped before saving to another location")
+            return False
 
         if self._isTopologyOnRemoteServer() and not self._project.temporary():
             MessageBox(self, "Save project", "You can not use the save as function on a remote project for the moment.")

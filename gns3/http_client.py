@@ -395,9 +395,9 @@ class HTTPClient(QtCore.QObject):
 
         :param query: The query to execute when all network stack is ready
         """
-        self.executeHTTPQuery("GET", "/version", query, {})
+        self.executeHTTPQuery("GET", "/version", query, {}, timeout=5)
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None):
+    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120):
         """
         Call the remote server, if not connected, check connection before
 
@@ -414,10 +414,10 @@ class HTTPClient(QtCore.QObject):
         """
 
         if self._connected:
-            return self.executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
+            return self.executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, timeout=timeout)
         else:
             log.info("Connection to {}".format(self.url()))
-            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText)
+            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, timeout=timeout)
             self._connect(query)
 
     def _connectionError(self, callback, msg=""):
@@ -539,7 +539,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None):
+    def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=5):
         """
         Call the remote server
 
@@ -552,6 +552,7 @@ class HTTPClient(QtCore.QObject):
         :param showProgress: Display progress to the user
         :param progressText: Text display to user in progress dialog. None for auto generated
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
+        :param timeout: Delay in seconds before raising a timeout
         :returns: QNetworkReply
         """
 
@@ -594,7 +595,18 @@ class HTTPClient(QtCore.QObject):
             # where query start before finishing connect to everything
             self.notify_progress_start_query(context["query_id"], progressText, response)
 
+        if timeout is not None:
+            QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, response))
+
         return response
+
+    def _timeoutSlot(self, response):
+        """
+        Beware it's call for all request you need to check the status of the response
+        """
+        # We check if we received HTTP headers
+        if not len(response.rawHeaderList()) > 0:
+            response.abort()
 
     def _processDownloadProgress(self, response, callback, context, bytesReceived, bytesTotal):
         """

@@ -231,7 +231,7 @@
     <string>Memory</string>
    </property>
    <property name="subTitle">
-    <string>Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS to start.</string>
+    <string>Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS from starting.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
@@ -473,7 +473,7 @@
     <string>Idle-PC</string>
    </property>
    <property name="subTitle">
-    <string>An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core.</string>
+    <string>An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its cores.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">

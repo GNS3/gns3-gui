@@ -19,6 +19,7 @@ import logging
 import time
 from contextlib import contextmanager
 
+from .utils import human_filesize
 from .qt import QtCore, QtWidgets, Qt, QtNetwork
 
 log = logging.getLogger(__name__)
@@ -34,13 +35,10 @@ class Progress(QtCore.QObject):
     remove_query_signal = QtCore.Signal(str)
     progress_signal = QtCore.Signal(str, int, int)
 
-    def __init__(self, min_duration=1000):
+    def __init__(self, parent, min_duration=1000):
 
-        super().__init__()
+        super().__init__(parent)
         self._progress_dialog = None
-
-        from .main_window import MainWindow
-        self._parent = MainWindow.instance()
 
         # Timer called for refreshing the progress dialog status
         self._rtimer = QtCore.QTimer()
@@ -64,20 +62,15 @@ class Progress(QtCore.QObject):
         self._allow_cancel_query = False
         self._enable = True
 
-        self._mutex = QtCore.QMutex()
-
     def _addQuerySlot(self, query_id, explanation, response):
-
         self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0, "response": response}
 
     def _removeQuerySlot(self, query_id):
-
         self._finished_query_during_display += 1
         if query_id in self._queries:
             del self._queries[query_id]
 
     def progress_dialog(self):
-
         return self._progress_dialog
 
     def _progressSlot(self, query_id, current, maximum):
@@ -98,6 +91,10 @@ class Progress(QtCore.QObject):
             for query in self._queries.copy().values():
                 query["response"].abort()
 
+    def _rejectSlot(self):
+        self._progress_dialog = None
+        self._cancelSlot()
+
     def update(self):
         if len(self._queries) == 0 and (time.time() * 1000) >= self._display_start_time + self._minimum_duration:
             self.hide()
@@ -106,16 +103,24 @@ class Progress(QtCore.QObject):
 
     def show(self):
         if self._progress_dialog is None or self._progress_dialog.wasCanceled():
-            progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self._parent)
+            progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self.parent())
             progress_dialog.canceled.connect(self._cancelSlot)
+            progress_dialog.rejected.connect(self._rejectSlot)
             progress_dialog.setWindowModality(Qt.Qt.ApplicationModal)
             progress_dialog.setWindowTitle("Please wait")
+            progress_dialog.setAutoReset(False)
             progress_dialog.setMinimumDuration(self._minimum_duration)
 
             if len(self._cancel_button_text) > 0:
                 progress_dialog.setCancelButtonText(self._cancel_button_text)
             else:
                 progress_dialog.setCancelButton(None)
+
+            if len(self._queries) > 0:
+                text = list(self._queries.values())[0]["explanation"]
+            else:
+                text = "Waiting"
+            progress_dialog.setLabelText(text)
 
             self._progress_dialog = progress_dialog
             self._finished_query_during_display = 0
@@ -125,6 +130,11 @@ class Progress(QtCore.QObject):
             start_timer = False
             progress_dialog = self._progress_dialog
 
+            if len(self._queries) > 0:
+                text = list(self._queries.values())[0]["explanation"]
+            else:
+                text = "Waiting"
+
             # If we have multiple queries running progress show progress of the queries
             # otherwise it's the progress of the current query
             if len(self._queries) + self._finished_query_during_display > 1:
@@ -132,11 +142,26 @@ class Progress(QtCore.QObject):
                 progress_dialog.setValue(self._finished_query_during_display)
             elif len(self._queries) == 1:
                 query = list(self._queries.values())[0]
-                progress_dialog.setMaximum(query["maximum"])
-                progress_dialog.setValue(query["current"])
+                if query["maximum"] == query["current"]:
 
-        if len(self._queries) > 0:
-            text = list(self._queries.values())[0]["explanation"]
+                    # We animate the bar. In theory Qt should be able to do it but
+                    # due to all the manipulation of the dialog he is getting lost
+                    bar_speed = 8
+                    if progress_dialog.maximum() != bar_speed:
+                        progress_dialog.setMaximum(bar_speed)
+                        progress_dialog.setValue(0)
+                    elif progress_dialog.value() == bar_speed:
+                        progress_dialog.setValue(0)
+                    else:
+                        progress_dialog.setValue(progress_dialog.value() + 1)
+
+                else:
+                    progress_dialog.setMaximum(query["maximum"])
+                    progress_dialog.setValue(query["current"])
+
+                if query["maximum"] > 1000:
+                    text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))
+
             progress_dialog.setLabelText(text)
 
     def hide(self):
@@ -180,7 +205,7 @@ class Progress(QtCore.QObject):
             self._cancel_button_text = old_cancel_button_text
 
     @staticmethod
-    def instance():
+    def instance(parent=None):
         """
         Singleton to return only one instance of Progress.
 
@@ -188,5 +213,6 @@ class Progress(QtCore.QObject):
         """
 
         if not hasattr(Progress, "_instance") or Progress._instance is None:
-            Progress._instance = Progress()
+            Progress._instance = Progress(parent)
         return Progress._instance
+

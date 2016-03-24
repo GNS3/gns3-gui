@@ -1,5 +1,32 @@
 # Change Log
 
+## 1.4.5 23/03/2016
+
+* Change some sentences.
+* Sort snapshots by date
+* Block save as and snapshot when a device is running
+* If you hit enter in the new project dialog it's work
+* Display upload size during progress
+* This should avoid blinking dialog. And display better progress
+* SetupWizard: limit the number of vCPUs for the GNS3 VM to the number of physical cores.
+* Remove blocking code. Ref #1109.
+* Fixes "QThread: Destroyed while thread is still running",
+* Add a timeout when you are not able to join the remote server
+* Remove bad smell from progress dialog and handle ESC key
+* Remove root required messages in cloud node. Ref #608.
+* Show a warning when the GUI is run with root rights. Fixes #608.
+* Change message when closing GNS3 with running device.
+* Ask the user to stop device before closing
+* At startup display a warning if another GUI is already running
+* Fix a crash if you delete a file while refreshing the list of appliances
+* Fix double opening of serial console
+* Always ask the server for builtin
+* Improve detection of vmrun on OSX
+* Delete image from images dir when no longer need
+* Sort node name in topology summary
+* Allow to show a message box for test without starting GNS3
+* Drop licence for paramiko since we no longer use it
+
 ## 1.4.4 23/02/2016
 
 * Fix crash when selecting no image in GNS3A but clicking on Download

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Tue Mar 22 18:20:46 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -311,7 +312,7 @@ class Ui_IOSRouterWizard(object):
         self.uiChassisLabel.setText(_translate("IOSRouterWizard", "Chassis:"))
         self.uiEtherSwitchCheckBox.setText(_translate("IOSRouterWizard", "This is an EtherSwitch router"))
         self.uiMemoryWizardPage.setTitle(_translate("IOSRouterWizard", "Memory"))
-        self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS to start."))
+        self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS from starting."))
         self.uiRamLabel.setText(_translate("IOSRouterWizard", "Default RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("IOSRouterWizard", " MiB"))
         self.uiTestIOSImagePushButton.setText(_translate("IOSRouterWizard", "&Test IOS image"))
@@ -331,7 +332,7 @@ class Ui_IOSRouterWizard(object):
         self.uiWic1Label.setText(_translate("IOSRouterWizard", "wic 1:"))
         self.uiWic2Label.setText(_translate("IOSRouterWizard", "wic 2:"))
         self.uiIdlePCWizardPage.setTitle(_translate("IOSRouterWizard", "Idle-PC"))
-        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core."))
+        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its cores."))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:"))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder"))
 
