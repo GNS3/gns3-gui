@@ -162,7 +162,6 @@ def test_handle_handleSslErrors():
             'password': 'toto',
             'port': 443,
             'protocol': 'https',
-            'ram_limit': 0,
             'url': 'https://root@127.0.0.1:443',
             'user': 'root'
         }
@@ -187,7 +186,6 @@ def test_handle_handleSslErrors():
             'password': 'toto',
             'port': 443,
             'protocol': 'https',
-            'ram_limit': 0,
             'url': 'https://root@127.0.0.1:443',
             'user': 'root'
         }

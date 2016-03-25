@@ -313,7 +313,6 @@ SERVERS_SETTINGS = {
         "user": "",
         "password": ""
     },
-    "load_balancing_method": "ram_usage",
     "remote_servers": [],
 }
 

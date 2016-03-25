@@ -229,7 +229,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteServerProtocolComboBox.setCurrentIndex(self.uiRemoteServerProtocolComboBox.findText(protocol))
         self.uiRemoteServerPortLineEdit.setText(settings["host"])
         self.uiRemoteServerPortSpinBox.setValue(port)
-        self.uiRAMLimitSpinBox.setValue(settings["ram_limit"])
         self.uiRemoteServerUserLineEdit.setText(settings["user"])
 
     def _remoteServerChangedSlot(self):
@@ -251,7 +250,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         protocol = self.uiRemoteServerProtocolComboBox.currentText().lower()
         host = self.uiRemoteServerPortLineEdit.text().strip()
         port = self.uiRemoteServerPortSpinBox.value()
-        ram_limit = self.uiRAMLimitSpinBox.value()
         user = self.uiRemoteServerUserLineEdit.text().strip()
         password = self.uiRemoteServerPasswordLineEdit.text().strip()
 
@@ -271,7 +269,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         settings = {"protocol": protocol,
                     "host": host,
                     "port": port,
-                    "ram_limit": ram_limit,
                     "user": user,
                     "password": password}
 
@@ -307,13 +304,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         :param servers_settings: servers settings
         """
-
-        if servers_settings["load_balancing_method"] == "ram_usage":
-            self.uiRAMUsageRadioButton.setChecked(True)
-        elif servers_settings["load_balancing_method"] == "round_robin":
-            self.uiRoundRobinRadioButton.setChecked(True)
-        elif servers_settings["load_balancing_method"] == "rendezvous_hashing":
-            self.uiRendezVousHashingRadioButton.setChecked(True)
 
         # local server settings
         local_server_settings = servers_settings["local_server"]
@@ -461,14 +451,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             log.info("GNS3 VM restart required!")
             restart_gns3_vm = True
         servers_settings["vm"].update(new_gns3vm_settings)
-
-        # save the load-balancing preference
-        if self.uiRAMUsageRadioButton.isChecked():
-            servers_settings["load_balancing_method"] = "ram_usage"
-        elif self.uiRoundRobinRadioButton.isChecked():
-            servers_settings["load_balancing_method"] = "round_robin"
-        elif self.uiRendezVousHashingRadioButton.isChecked():
-            servers_settings["load_balancing_method"] = "rendezvous_hashing"
 
         # save the server preferences
         servers.setSettings(servers_settings)

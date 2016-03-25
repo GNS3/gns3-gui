@@ -80,7 +80,6 @@ def test_dump(vpcs_device, project, local_server):
                     "local": True,
                     "port": 3080,
                     "protocol": "http",
-                    "ram_limit": 0
                 }
             ]
         },
@@ -141,7 +140,6 @@ def test_dump_http_auth(vpcs_device, project, remote_server):
                     "local": False,
                     "port": 8001,
                     "protocol": "http",
-                    "ram_limit": 0,
                     "user": "hello"
                 }
             ]
@@ -225,7 +223,6 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         "local": True,
                         "port": 3080,
                         "protocol": "http",
-                        "ram_limit": 0,
                         "vm": False
                     }
                 ]

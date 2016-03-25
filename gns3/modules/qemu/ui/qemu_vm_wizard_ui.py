@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Fri Mar 25 14:43:13 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,13 +37,9 @@ class Ui_QemuVMWizard(object):
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.uiLoadBalanceCheckBox = QtWidgets.QCheckBox(self.uiRemoteServersGroupBox)
-        self.uiLoadBalanceCheckBox.setChecked(True)
-        self.uiLoadBalanceCheckBox.setObjectName("uiLoadBalanceCheckBox")
-        self.gridLayout_7.addWidget(self.uiLoadBalanceCheckBox, 0, 0, 1, 2)
         self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
         self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
-        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 1, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.uiRemoteServersComboBox = QtWidgets.QComboBox(self.uiRemoteServersGroupBox)
         self.uiRemoteServersComboBox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -51,7 +48,7 @@ class Ui_QemuVMWizard(object):
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
-        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
         self.verticalLayout_3.addWidget(self.uiRemoteServersGroupBox)
         QemuVMWizard.addPage(self.uiServerWizardPage)
         self.uiTypeWizardPage = QtWidgets.QWizardPage()
@@ -272,9 +269,8 @@ class Ui_QemuVMWizard(object):
         self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM on a remote computer"))
         self.uiVMRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM  on the GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM  on your local computer"))
-        self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote servers"))
-        self.uiLoadBalanceCheckBox.setText(_translate("QemuVMWizard", "Load balance across all available remote servers"))
-        self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on server:"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote server"))
+        self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on:"))
         self.uiTypeWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM type"))
         self.uiTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a type of QEMU VM to help with pre-configuration."))
         self.uiOSDeprecatedWarningLabel.setText(_translate("QemuVMWizard", "<html><head/><body><p><span style=\" font-weight:600;\">WARNING</span>: The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM</p></body></html>"))

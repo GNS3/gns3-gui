@@ -209,7 +209,8 @@
                 "local": { "type": "boolean" },
                 "ram_limit": {
                     "type": "integer",
-                    "minimum": 0
+                    "minimum": 0,
+                    "description": "Deprecated in 1.4.5"
                 },
                 "port": { "$ref": "#/definitions/network_port" },
                 "user": {

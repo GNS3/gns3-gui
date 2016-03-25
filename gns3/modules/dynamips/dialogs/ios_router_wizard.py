@@ -431,10 +431,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         if self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
-            if self.uiLoadBalanceCheckBox.isChecked():
-                server = "load-balance"
-            else:
-                server = self.uiRemoteServersComboBox.currentText()
+            server = self.uiRemoteServersComboBox.currentText()
         elif self.uiVMRadioButton.isChecked():
             server = "vm"
 

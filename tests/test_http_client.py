@@ -258,7 +258,6 @@ def test_dump(http_client):
         'local': True,
         'port': 3080,
         'protocol': 'http',
-        'ram_limit': 0,
         'vm': False}
 
 

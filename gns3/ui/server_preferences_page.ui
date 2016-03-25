@@ -53,8 +53,8 @@
       <attribute name="title">
        <string>Local server</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
         <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -76,7 +76,7 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="uiGeneralSettingsGroupBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -186,13 +186,13 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="uiConsolePortRangeGroupBox">
          <property name="title">
           <string>Console port range (5900 =&gt; 6000 is shared with VNC)</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
            <widget class="QSpinBox" name="uiConsoleStartPortSpinBox">
             <property name="suffix">
              <string notr="true"> TCP</string>
@@ -205,14 +205,14 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="1">
            <widget class="QLabel" name="uiConsolePortRangeLabel">
             <property name="text">
              <string>to</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="2">
            <widget class="QSpinBox" name="uiConsoleEndPortSpinBox">
             <property name="suffix">
              <string notr="true"> TCP</string>
@@ -225,10 +225,23 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>225</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0" colspan="2">
         <widget class="QGroupBox" name="uiUDPPortRangeGroupBox">
          <property name="title">
           <string>UDP tunneling port range</string>
@@ -267,10 +280,23 @@
             </property>
            </widget>
           </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="4" column="0">
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -430,7 +456,7 @@
           <item row="1" column="1">
            <widget class="QLineEdit" name="uiVMPasswordLineEdit">
             <property name="inputMethodHints">
-             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
             </property>
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
@@ -521,7 +547,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="currentText">
+         <property name="currentText" stdset="0">
           <string>HTTP</string>
          </property>
          <item>
@@ -543,7 +569,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="4" column="1">
         <widget class="QLineEdit" name="uiRemoteServerUserLineEdit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -560,14 +586,14 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="uiRemoteServerUserLabel">
          <property name="text">
           <string>User:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QPushButton" name="uiAddRemoteServerPushButton">
@@ -620,47 +646,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiRAMLimitLabel">
-         <property name="text">
-          <string>RAM limit:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QSpinBox" name="uiRAMLimitSpinBox">
-         <property name="suffix">
-          <string> MB</string>
-         </property>
-         <property name="maximum">
-          <number>10000000</number>
-         </property>
-         <property name="singleStep">
-          <number>512</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiRemoteServerPasswordLabel">
-         <property name="text">
-          <string>Password:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
-         <property name="inputMethodHints">
-          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
+       <item row="7" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -673,14 +659,32 @@
          </property>
         </spacer>
        </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiRemoteServerPasswordLabel">
+         <property name="text">
+          <string>Password:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
+         <property name="inputMethodHints">
+          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
       <zorder>uiRemoteServerProtocolComboBox</zorder>
       <zorder>uiRemoteServerHostLabel</zorder>
       <zorder>uiRemoteServerPortLineEdit</zorder>
       <zorder>uiRemoteServerPortLabel</zorder>
       <zorder>uiRemoteServerPortSpinBox</zorder>
-      <zorder>uiRAMLimitLabel</zorder>
-      <zorder>uiRAMLimitSpinBox</zorder>
       <zorder>uiRemoteServerUserLabel</zorder>
       <zorder>uiRemoteServerUserLineEdit</zorder>
       <zorder>uiRemoteServersTreeWidget</zorder>
@@ -688,68 +692,6 @@
       <zorder>uiRemoteServerPasswordLineEdit</zorder>
       <zorder>uiRemoteServerPasswordLabel</zorder>
       <zorder>verticalSpacer_3</zorder>
-     </widget>
-     <widget class="QWidget" name="uiLoadBalancingTabWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <attribute name="title">
-       <string>Load Balancing</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QGroupBox" name="uiMethodGroupBox">
-         <property name="title">
-          <string>Method</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="uiRAMUsageRadioButton">
-            <property name="text">
-             <string>RAM usage</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="uiRoundRobinRadioButton">
-            <property name="text">
-             <string>Round-Robin</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="uiRendezVousHashingRadioButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Rendezvous hashing</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
      </widget>
     </widget>
    </item>
@@ -810,10 +752,6 @@
   <tabstop>uiRemoteServerPasswordLineEdit</tabstop>
   <tabstop>uiAddRemoteServerPushButton</tabstop>
   <tabstop>uiDeleteRemoteServerPushButton</tabstop>
-  <tabstop>uiRAMLimitSpinBox</tabstop>
-  <tabstop>uiRAMUsageRadioButton</tabstop>
-  <tabstop>uiRoundRobinRadioButton</tabstop>
-  <tabstop>uiRendezVousHashingRadioButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Tue Mar 22 18:20:46 2016
+# Created: Fri Mar 25 14:45:27 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,13 +37,9 @@ class Ui_IOSRouterWizard(object):
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.uiLoadBalanceCheckBox = QtWidgets.QCheckBox(self.uiRemoteServersGroupBox)
-        self.uiLoadBalanceCheckBox.setChecked(True)
-        self.uiLoadBalanceCheckBox.setObjectName("uiLoadBalanceCheckBox")
-        self.gridLayout_7.addWidget(self.uiLoadBalanceCheckBox, 0, 0, 1, 2)
         self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
         self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
-        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 1, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.uiRemoteServersComboBox = QtWidgets.QComboBox(self.uiRemoteServersGroupBox)
         self.uiRemoteServersComboBox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -52,7 +48,7 @@ class Ui_IOSRouterWizard(object):
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
-        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiRemoteServersGroupBox)
         IOSRouterWizard.addPage(self.uiServerWizardPage)
         self.uiIOSImageWizardPage = QtWidgets.QWizardPage()
@@ -296,9 +292,8 @@ class Ui_IOSRouterWizard(object):
         self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on a remote computer"))
         self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on the GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on your local computer"))
-        self.uiRemoteServersGroupBox.setTitle(_translate("IOSRouterWizard", "Remote servers"))
-        self.uiLoadBalanceCheckBox.setText(_translate("IOSRouterWizard", "Load balance across all available remote servers"))
-        self.uiRemoteServersLabel.setText(_translate("IOSRouterWizard", "Run on server:"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("IOSRouterWizard", "Remote server"))
+        self.uiRemoteServersLabel.setText(_translate("IOSRouterWizard", "Run on:"))
         self.uiIOSImageWizardPage.setTitle(_translate("IOSRouterWizard", "IOS image"))
         self.uiIOSImageWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose an IOS image."))
         self.uiIOSExistingImageRadioButton.setText(_translate("IOSRouterWizard", "Existing image"))

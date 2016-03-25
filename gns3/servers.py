@@ -244,7 +244,6 @@ class Servers(QtCore.QObject):
             self._addRemoteServer(protocol=remote_server.get("protocol", "http"),
                                   host=remote_server["host"],
                                   port=remote_server["port"],
-                                  ram_limit=remote_server.get("ram_limit", 0),
                                   user=remote_server.get("user", None),
                                   password=remote_server.get("password", None),
                                   accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
@@ -635,14 +634,13 @@ class Servers(QtCore.QObject):
 
         return self._vm_server
 
-    def _addRemoteServer(self, protocol="http", host="localhost", port=3080, ram_limit=0, user=None, password=None, accept_insecure_certificate=False, id=None):
+    def _addRemoteServer(self, protocol="http", host="localhost", port=3080, user=None, password=None, accept_insecure_certificate=False):
         """
         Adds a new remote server.
 
         :param protocol: Server protocol
         :param host: host or address of the server
         :param port: port of the server (integer)
-        :param ram_limit: maximum RAM to be used (integer)
         :param user: user login or None
         :param password: user password or None
         :param accept_insecure_certificate: Accept invalid SSL certificate
@@ -652,7 +650,6 @@ class Servers(QtCore.QObject):
 
         server = {"host": host,
                   "port": port,
-                  "ram_limit": ram_limit,
                   "protocol": protocol,
                   "user": user,
                   "password": password}
@@ -709,7 +706,8 @@ class Servers(QtCore.QObject):
         elif server_name == "vm":
             return self._vm_server
         elif server_name == "load-balance":
-            return self.anyRemoteServer()
+            log.warning("Load-balancing support has been deprecated, using local server...")
+            return self._local_server
 
         if "://" in server_name:
             for server in self.servers():
@@ -722,27 +720,6 @@ class Servers(QtCore.QObject):
         else:
             (host, port) = server_name.split(":")
             return self.getRemoteServer("http", host, port, None)
-
-    def anyRemoteServer(self, ram=0):
-        """
-        Returns a remote server for load balancing.
-
-        :param ram: RAM amount to be allocated by the node
-
-        :returns: remote server (HTTPClient instance)
-        """
-
-        if self._settings["load_balancing_method"] == "ram_usage":
-            for server in self._remote_servers.values():
-                if not server.RAMLimit():
-                    return server
-                if (server.allocatedRAM() + ram) <= server.RAMLimit():
-                    if ram > 0:
-                        server.increaseAllocatedRAM(ram)
-                    return server
-        elif self._settings["load_balancing_method"] == "round_robin":
-            return next(iter(self))
-        return next(iter(self))  # default is Round-Robin
 
     def updateRemoteServers(self, servers):
         """
