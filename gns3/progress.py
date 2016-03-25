@@ -118,9 +118,7 @@ class Progress(QtCore.QObject):
 
             if len(self._queries) > 0:
                 text = list(self._queries.values())[0]["explanation"]
-            else:
-                text = "Waiting"
-            progress_dialog.setLabelText(text)
+                progress_dialog.setLabelText(text)
 
             self._progress_dialog = progress_dialog
             self._finished_query_during_display = 0
@@ -133,7 +131,7 @@ class Progress(QtCore.QObject):
             if len(self._queries) > 0:
                 text = list(self._queries.values())[0]["explanation"]
             else:
-                text = "Waiting"
+                text = None
 
             # If we have multiple queries running progress show progress of the queries
             # otherwise it's the progress of the current query
@@ -159,10 +157,11 @@ class Progress(QtCore.QObject):
                     progress_dialog.setMaximum(query["maximum"])
                     progress_dialog.setValue(query["current"])
 
-                if query["maximum"] > 1000:
+                if text and query["maximum"] > 1000:
                     text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))
 
-            progress_dialog.setLabelText(text)
+            if text:
+                progress_dialog.setLabelText(text)
 
     def hide(self):
         """

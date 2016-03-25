@@ -164,7 +164,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             caps = os.getxattr(path, "security.capability")
             # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
             if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                return(2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
+                return (2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
         return (0, None)
 
     def checkGNS3InstalledTwice(self):
@@ -175,11 +175,29 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
         try:
             if os.path.exists("/usr/local/bin/gns3server") and os.path.exists("/usr/bin/gns3server"):
-                return(2, "GNS3 is installed twice please remove it from /usr/local/bin")
+                return (2, "GNS3 is installed twice please remove it from /usr/local/bin")
         except OSError:
             pass
         return (0, None)
 
+    def checkRPFServiceIsRunning(self):
+        """Check if the RPF service is running (required to use Ethernet NIOs)"""
+
+        if not sys.platform.startswith("win"):
+            return (0, None)
+
+        import pywintypes
+        import win32service
+        import win32serviceutil
+
+        try:
+            if win32serviceutil.QueryServiceStatus("npf", None)[1] != win32service.SERVICE_RUNNING:
+                return (2, "The NPF service is not running: open cmd.exe as an Administrator and type 'sc config npf start= auto && net start npf'")
+        except pywintypes.error as e:
+            if e[0] == 1060:
+                return (2, "The NPF service is not installed, please install Winpcap and reboot")
+            else:
+                return (2, "Could not check if the NPF service is running: {}".format(e[2]))
 
 if __name__ == '__main__':
     import sys

@@ -104,6 +104,9 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
     def accept(self):
 
+        if not self:
+            return
+
         log.debug("{} thread finished".format(self._worker.objectName()))
         self._cleanup()
         super().accept()
