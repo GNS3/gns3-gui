@@ -173,7 +173,7 @@ class Ui_IOUVMConverterWizard(object):
                                          "<li>Log as root with password cisco</li>\n"
                                          "<li>Type ifconfig eth0</li>\n"
                                          "<li>Remember the addr</li>\n"
-                                         "<li>In your browser open http://THEADDR:8000</li>\n"
+                                         "<li>In your browser open http://THEADDR:3080</li>\n"
                                          "<li>Download projects and images backups</li>\n"
                                          "<li>halt the vm</li>\n"
                                          "</ul>"))
@@ -181,7 +181,7 @@ class Ui_IOUVMConverterWizard(object):
                                          "<ul>\n"
                                          "<li>Start the GNS3 VM</li>\n"
                                          "<li>Remember the IP display on the information screen</li>\n"
-                                         "<li>In a browser open http://THEIP:8000/upload</li>\n"
+                                         "<li>In a browser open http://THEIP:3080/upload</li>\n"
                                          "<li>Select the option for restoring projects and upload the previous backup</li>\n"
                                          "<li>Select the option for restoring images and upload the previous backup</li>\n"
                                          "</ul>"))

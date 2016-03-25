@@ -66,7 +66,7 @@ def local_server():
 
     server = Servers.instance().localServer()
     server.setHost('127.0.0.1')
-    server.setPort(8000)
+    server.setPort(3080)
     return server
 
 

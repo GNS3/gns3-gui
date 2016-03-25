@@ -38,7 +38,7 @@ def empty_config(tmpdir, images_dir, symbols_dir):
                 "images_path": images_dir,
                 "symbols_path": symbols_dir,
                 "path": "",
-                "port": 8000,
+                "port": 3080,
                 "projects_path": str(tmpdir),
                 "report_errors": False,
                 "udp_end_port_range": 20000,

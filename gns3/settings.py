@@ -37,7 +37,7 @@ DEFAULT_SYMBOLS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/symbols"))
 DEFAULT_CONFIGS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/configs"))
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
-DEFAULT_LOCAL_SERVER_PORT = 8000
+DEFAULT_LOCAL_SERVER_PORT = 3080
 
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
@@ -308,7 +308,7 @@ SERVERS_SETTINGS = {
         "adjust_local_server_ip": True,
         "vmname": "GNS3 VM",
         "vmx_path": "",
-        "server_port": 8000,  # hardcoded for now
+        "server_port": 3080,  # hardcoded for now
         "virtualization": "VMware",
         "user": "",
         "password": ""

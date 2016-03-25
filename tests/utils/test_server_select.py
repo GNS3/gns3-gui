@@ -48,12 +48,12 @@ def test_server_select_local_server_local_disallow(main_window, local_server):
 
 def test_server_select_local_server_and_remote_select_local(main_window, remote_server, local_server):
 
-    with patch("gns3.qt.QtWidgets.QInputDialog.getItem", return_value=("Local server (http://127.0.0.1:8000)", True)) as mock:
+    with patch("gns3.qt.QtWidgets.QInputDialog.getItem", return_value=("Local server (http://127.0.0.1:3080)", True)) as mock:
         server = server_select(main_window)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[3] == ["Local server (http://127.0.0.1:8000)", remote_server.url()]
+        assert args[3] == ["Local server (http://127.0.0.1:3080)", remote_server.url()]
         assert server.url() == local_server.url()
 
 
@@ -64,7 +64,7 @@ def test_server_select_local_server_and_remote_select_remote(main_window, remote
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[3] == ["Local server (http://127.0.0.1:8000)", remote_server.url()]
+        assert args[3] == ["Local server (http://127.0.0.1:3080)", remote_server.url()]
         assert server == remote_server
 
 
@@ -84,13 +84,13 @@ def test_server_select_local_server_and_gns3_vm_select_vm(main_window, gns3vm_se
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[3] == ["Local server (http://127.0.0.1:8000)", "GNS3 VM (http://unset:8000)"]
+        assert args[3] == ["Local server (http://127.0.0.1:3080)", "GNS3 VM (http://unset:3080)"]
         assert server == gns3vm_server
 
 
 def test_server_select_local_server_and_remote_user_cancel(main_window, remote_server, local_server):
 
-    with patch("gns3.qt.QtWidgets.QInputDialog.getItem", return_value=("Local server (http://127.0.0.1:8000)", False)) as mock:
+    with patch("gns3.qt.QtWidgets.QInputDialog.getItem", return_value=("Local server (http://127.0.0.1:3080)", False)) as mock:
         server = server_select(main_window)
 
         assert mock.called

@@ -44,7 +44,7 @@ def response():
 @pytest.fixture
 def http_client(http_request, network_manager):
 
-    return HTTPClient({"protocol": "http", "host": "127.0.0.1", "port": "8000"}, network_manager)
+    return HTTPClient({"protocol": "http", "host": "127.0.0.1", "port": "3080"}, network_manager)
 
 
 @pytest.yield_fixture(autouse=True)
@@ -65,7 +65,7 @@ def test_get_connected(http_client, http_request, network_manager, response):
     callback = unittest.mock.MagicMock()
 
     http_client.get("/test", callback)
-    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:8000/v1/test"))
+    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:3080/v1/test"))
 
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
@@ -88,7 +88,7 @@ def test_get_connected_auth(http_client, http_request, network_manager, response
     callback = unittest.mock.MagicMock()
 
     http_client.get("/test", callback)
-    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:8000/v1/test"))
+    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:3080/v1/test"))
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
@@ -256,7 +256,7 @@ def test_dump(http_client):
         'host': '127.0.0.1',
         'id': 0,
         'local': True,
-        'port': 8000,
+        'port': 3080,
         'protocol': 'http',
         'ram_limit': 0,
         'vm': False}
@@ -335,4 +335,4 @@ def test_callbackConnect_non_gns3_server(http_client):
     mock = unittest.mock.MagicMock()
     http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
     assert http_client._connected is False
-    mock.assert_called_with({"message": "The remote server http://127.0.0.1:8000 is not a GNS3 server"}, error=True, server=http_client)
+    mock.assert_called_with({"message": "The remote server http://127.0.0.1:3080 is not a GNS3 server"}, error=True, server=http_client)

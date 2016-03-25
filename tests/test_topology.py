@@ -78,7 +78,7 @@ def test_dump(vpcs_device, project, local_server):
                     "host": "127.0.0.1",
                     "id": local_server.id(),
                     "local": True,
-                    "port": 8000,
+                    "port": 3080,
                     "protocol": "http",
                     "ram_limit": 0
                 }
@@ -223,7 +223,7 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         "host": "127.0.0.1",
                         "id": local_server.id(),
                         "local": True,
-                        "port": 8000,
+                        "port": 3080,
                         "protocol": "http",
                         "ram_limit": 0,
                         "vm": False
@@ -343,7 +343,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                     "host": "127.0.0.1",
                     "id": 1,
                     "local": True,
-                    "port": 8000
+                    "port": 3080
                 }
             ]
         },
@@ -464,7 +464,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
                     "host": "127.0.0.1",
                     "id": 1,
                     "local": True,
-                    "port": 8000
+                    "port": 3080
                 }
             ]
         },

@@ -635,7 +635,7 @@ class Servers(QtCore.QObject):
 
         return self._vm_server
 
-    def _addRemoteServer(self, protocol="http", host="localhost", port=8000, ram_limit=0, user=None, password=None, accept_insecure_certificate=False, id=None):
+    def _addRemoteServer(self, protocol="http", host="localhost", port=3080, ram_limit=0, user=None, password=None, accept_insecure_certificate=False, id=None):
         """
         Adds a new remote server.
 
