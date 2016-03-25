@@ -23,7 +23,7 @@ Link items are graphical representation of a link on the QGraphicsScene
 import math
 import struct
 import sys
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
 
 class LinkItem(QtWidgets.QGraphicsPathItem):
@@ -75,6 +75,9 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         # indicates if the link is being hovered
         self._hovered = False
+
+        # QGraphicsSvgItem to indicate a capture
+        self._capturing_item = None
 
         if not self._adding_flag:
             # there is a destination
@@ -443,3 +446,19 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         self.destination = scene_point
         self.adjust()
         self.update()
+
+    def _drawCaptureSymbol(self):
+        """
+        Draws a capture symbol in the middle of the link to indicate a capture is active.
+        """
+
+        if not self._adding_flag:
+            if (self._source_port.capturing() or self._destination_port.capturing()) and self.length >= 150:
+                link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 18, self.source.y() + self.dy / 2.0 - 18)
+                if self._capturing_item is None:
+                    self._capturing_item = QtSvg.QGraphicsSvgItem(':/icons/inspect.svg', self)
+                self._capturing_item.setPos(link_center)
+                if not self._capturing_item.isVisible():
+                    self._capturing_item.show()
+            elif self._capturing_item:
+                self._capturing_item.hide()

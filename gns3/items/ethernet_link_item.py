@@ -200,3 +200,5 @@ class EthernetLinkItem(LinkItem):
                 destination_port_label.hide()
 
             painter.drawPoint(point2)
+
+        self._drawCaptureSymbol()
