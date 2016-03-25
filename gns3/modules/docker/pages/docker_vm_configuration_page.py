@@ -22,6 +22,7 @@ Configuration page for Docker images.
 from gns3.qt import QtWidgets
 
 from ..ui.docker_vm_configuration_page_ui import Ui_dockerVMConfigPageWidget
+from ....dialogs.file_editor_dialog import FileEditorDialog
 
 
 class DockerVMConfigurationPage(
@@ -32,6 +33,7 @@ class DockerVMConfigurationPage(
 
         super().__init__()
         self.setupUi(self)
+        self.uiNetworkConfigEditButton.released.connect(self._networkConfigEditSlot)
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -72,13 +74,21 @@ class DockerVMConfigurationPage(
             self.uiCategoryComboBox.setCurrentIndex(settings["category"])
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
+            self.uiNetworkConfigEditButton.hide()
         else:
+            self._node = node
             self.uiConsolePortSpinBox.setValue(settings["console"])
             self.uiCategoryComboBox.hide()
             self.uiCategoryLabel.hide()
 
             self.uiDefaultNameFormatLabel.hide()
             self.uiDefaultNameFormatLineEdit.hide()
+
+    def _networkConfigEditSlot(self):
+        dialog = FileEditorDialog(self._node, self._node.networkInterfacesPath())
+        dialog.setModal(True)
+        self.stackUnder(dialog)
+        dialog.show()
 
     def saveSettings(self, settings, node=None, group=False):
         """Saves the Docker container settings.

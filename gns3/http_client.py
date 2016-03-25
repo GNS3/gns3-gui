@@ -397,7 +397,7 @@ class HTTPClient(QtCore.QObject):
         """
         self.executeHTTPQuery("GET", "/version", query, {}, timeout=5)
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120):
+    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, **kwargs):
         """
         Call the remote server, if not connected, check connection before
 
@@ -525,6 +525,13 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Content-Type", b"application/octet-stream")
             # QT is smart and will compute the Content-Lenght for us
             return body
+        elif isinstance(body, str):
+            request.setRawHeader(b"Content-Type", b"application/octet-stream")
+            data = QtCore.QByteArray(body.encode())
+            body = QtCore.QBuffer(self)
+            body.setData(data)
+            body.open(QtCore.QIODevice.ReadOnly)
+            return body
         else:
             return None
 
@@ -539,7 +546,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=5):
+    def executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=5, **kwargs):
         """
         Call the remote server
 
@@ -714,7 +721,7 @@ class HTTPClient(QtCore.QObject):
                 if status >= 400:
                     callback(params, error=True, server=self, context=context)
                 else:
-                    callback(params, server=self, context=context)
+                    callback(params, server=self, context=context, raw_body=body)
         # response.deleteLater()
         if status == 400:
             try:

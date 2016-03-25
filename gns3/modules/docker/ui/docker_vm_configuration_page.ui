@@ -24,44 +24,12 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="7" column="1">
-        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiCMDLabel">
-         <property name="text">
-          <string>Start command:</string>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="maximum">
+          <number>65535</number>
          </property>
         </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiAdapterLabel">
-         <property name="text">
-          <string>Adapters:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiEnvironmentLabel">
-         <property name="text">
-          <string>Environment (KEY=VALUE one by line):</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="uiCMDLineEdit"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="uiDefaultNameFormatLabel">
@@ -70,17 +38,16 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="uiCMDLineEdit"/>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiNameLabel">
          <property name="text">
           <string>Name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
          </property>
         </widget>
        </item>
@@ -129,6 +96,39 @@
          </property>
         </widget>
        </item>
+       <item row="7" column="1">
+        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiCMDLabel">
+         <property name="text">
+          <string>Start command:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiAdapterLabel">
+         <property name="text">
+          <string>Adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="uiEnvironmentLabel">
+         <property name="text">
+          <string>Environment (KEY=VALUE one by line):</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
        <item row="6" column="1">
         <widget class="QComboBox" name="uiConsoleTypeComboBox">
          <item>
@@ -147,6 +147,20 @@
         <widget class="QLabel" name="uiConsoleTypeLabel">
          <property name="text">
           <string>Console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QPushButton" name="uiNetworkConfigEditButton">
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Network configuration</string>
          </property>
         </widget>
        </item>

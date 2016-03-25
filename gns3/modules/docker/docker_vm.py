@@ -348,6 +348,12 @@ class DockerVM(VM):
         """
         return ":/symbols/docker_guest.svg"
 
+    def networkInterfacesPath(self):
+        """
+        Return path of the /etc/network/interfaces
+        """
+        return "/project-files/docker/{}/etc/network/interfaces".format(self._vm_id)
+
     @staticmethod
     def symbolName():
         return "Docker container"
