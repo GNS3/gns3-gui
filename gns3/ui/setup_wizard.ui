@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>541</height>
+    <width>775</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -44,8 +44,11 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QRadioButton" name="uiVMRadioButton">
+      <property name="toolTip">
+       <string>Dynamips, IOU, VPCS and Qemu will use this virtual machine.</string>
+      </property>
       <property name="text">
-       <string>Local GNS3 VM (Dynamips, IOU, VPCS and Qemu will use this virtual machine)</string>
+       <string>Local GNS3 VM</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -54,6 +57,9 @@
     </item>
     <item row="1" column="0">
      <widget class="QRadioButton" name="uiLocalRadioButton">
+      <property name="toolTip">
+       <string>Eveything that is supported by your system will run on your computer.</string>
+      </property>
       <property name="text">
        <string>Local server</string>
       </property>
@@ -105,6 +111,9 @@
         </item>
         <item>
          <widget class="QRadioButton" name="uiVmwareRadioButton">
+          <property name="toolTip">
+           <string>VMware is recommended to run Qemu based appliances (required for KVM).</string>
+          </property>
           <property name="text">
            <string>VMware (recommended)</string>
           </property>
@@ -115,6 +124,9 @@
         </item>
         <item>
          <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
+          <property name="toolTip">
+           <string>Use VirtualBox if you intend to only use Dynamips, IOU or VPCS.</string>
+          </property>
           <property name="text">
            <string>VirtualBox</string>
           </property>
@@ -161,7 +173,7 @@
     <item>
      <widget class="QLabel" name="uiGNS3VMDownloadLinkUrlLabel">
       <property name="text">
-       <string>If you don't have the VM you can &lt;a href=&quot;https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip&quot;&gt;download it here&lt;/a&gt;. And import the VM in the virtualization software and hit refresh.</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The GNS3 VM can be &lt;a href=&quot;https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloaded here&lt;/span&gt;&lt;/a&gt;. Import the VM in your virtualization software and hit refresh.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="openExternalLinks">
        <bool>true</bool>

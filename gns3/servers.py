@@ -611,13 +611,28 @@ class Servers(QtCore.QObject):
         """
 
         gns3_vm_settings = self._settings["vm"]
+
+        if gns3_vm_settings["virtualization"] == "remote":
+            protocol = gns3_vm_settings["remote_vm_protocol"]
+            host = gns3_vm_settings["remote_vm_host"]
+            port = gns3_vm_settings["remote_vm_port"]
+            user = gns3_vm_settings["remote_vm_user"]
+            password = gns3_vm_settings["remote_vm_password"]
+        else:
+            protocol = "http"
+            host = "unset"
+            port = gns3_vm_settings["local_vm_port"]
+            user = gns3_vm_settings["local_vm_user"]
+            password = gns3_vm_settings["local_vm_password"]
+
         server_info = {
-            "host": "unset",
-            "port": gns3_vm_settings["server_port"],
-            "protocol": "http",
-            "user": gns3_vm_settings["user"],
-            "password": gns3_vm_settings["password"]
+            "host": host,
+            "port": port,
+            "protocol": protocol,
+            "user": user,
+            "password": password
         }
+
         server = self.getNetworkClientInstance(server_info, self._network_manager)
         server.setLocal(False)
         server.setGNS3VM(True)

@@ -79,7 +79,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         download_url = "https://github.com/GNS3/gns3-gui/releases/download/v{version}/GNS3.VM.VMware.Workstation.{version}.zip".format(version=__version__)
-        self.uiGNS3VMDownloadLinkUrlLabel.setText('If you don\'t have the GNS3 Virtual Machine you can <a href="{download_url}">download it here</a>.<br>And import the VM in the virtualization software and hit refresh.'.format(download_url=download_url))
+        self.uiGNS3VMDownloadLinkUrlLabel.setText('The GNS3 VM can <a href="{download_url}">downloaded here</a>.<br>Import the VM in your virtualization software and hit refresh.'.format(download_url=download_url))
         self.uiVirtualBoxRadioButton.setChecked(False)
         from gns3.modules import VMware
         settings = VMware.instance().settings()

@@ -264,7 +264,6 @@ GENERAL_SETTINGS = {
     "default_local_news": False,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
-    "debug_level": 0,
     "recent_files": [],
     "geometry": "",
     "state": "",
@@ -308,10 +307,15 @@ SERVERS_SETTINGS = {
         "adjust_local_server_ip": True,
         "vmname": "GNS3 VM",
         "vmx_path": "",
-        "server_port": 3080,  # hardcoded for now
+        "local_vm_port": 3080,  # hardcoded for now
+        "local_vm_user": "",
+        "local_vm_password": "",
         "virtualization": "VMware",
-        "user": "",
-        "password": ""
+        "remote_vm_protocol": "http",
+        "remote_vm_host": "",
+        "remote_vm_port": 3080,
+        "remote_vm_user": "",
+        "remote_vm_password": ""
     },
     "remote_servers": [],
 }

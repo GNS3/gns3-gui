@@ -167,7 +167,6 @@ class WaitForVMWorker(QtCore.QObject):
         """
 
         vm_server = Servers.instance().vmServer()
-
         self._is_running = True
         if self._virtualization == "VMware":
             self._is_running = self._start_vmware(vm_server)
@@ -249,7 +248,9 @@ class WaitForVMWorker(QtCore.QObject):
         return True
 
     def _start_virtualbox(self, vm_server):
-        """handle a VirtualBox based GNS3 VM"""
+        """
+        Handle a VirtualBox based GNS3 VM
+        """
 
         try:
             # get a NAT interface number

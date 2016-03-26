@@ -1129,11 +1129,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         gns3_vm = GNS3VM.instance()
         if gns3_vm.autoStart() and not gns3_vm.isRunning():
             servers.initVMServer()
-            worker = WaitForVMWorker()
-            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
-            progress_dialog.show()
-            if progress_dialog.exec_():
-                gns3_vm.adjustLocalServerIP()
+            if gns3_vm.isRemote():
+                gns3_vm.setRunning(True)
+            else:
+                worker = WaitForVMWorker()
+                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
+                progress_dialog.show()
+                if progress_dialog.exec_():
+                    gns3_vm.adjustLocalServerIP()
 
         # start and connect to the local server
         server = servers.localServer()

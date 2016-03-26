@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>529</width>
-    <height>645</height>
+    <width>526</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -324,9 +324,9 @@
        </sizepolicy>
       </property>
       <attribute name="title">
-       <string>Local GNS3 VM</string>
+       <string>GNS3 VM server</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QCheckBox" name="uiEnableVMCheckBox">
          <property name="sizePolicy">
@@ -342,7 +342,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Enable the local GNS3 VM</string>
+          <string>Enable the GNS3 VM</string>
          </property>
          <property name="checked">
           <bool>false</bool>
@@ -350,50 +350,76 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="uiGNS3VMSettingsGroupBox">
+        <widget class="QGroupBox" name="uiVirtualizationGroupBox">
          <property name="title">
-          <string>Settings</string>
+          <string>Virtualization software</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="uiVmwareRadioButton">
+            <property name="toolTip">
+             <string>VMware is recommended to run Qemu based appliances (required for KVM).</string>
+            </property>
+            <property name="text">
+             <string>VMware</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
+            <property name="toolTip">
+             <string>Use VirtualBox if you intend to run Dynamips, IOU or VPCS appliances.</string>
+            </property>
+            <property name="text">
+             <string>VirtualBox</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QRadioButton" name="uiRemoteRadioButton">
+            <property name="toolTip">
+             <string>Use remote if your VM is run on a remote server (e.g. ESXi or dedicated server).</string>
+            </property>
+            <property name="text">
+             <string>Remote</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>166</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="uiLocalGNS3VMSettingsGroupBox">
+         <property name="title">
+          <string>Local GNS3 VM</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <item row="8" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiAdjustLocalServerIPCheckBox">
-            <property name="text">
-             <string>Adjust the local server IP to be in the same subnet</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="uiHeadlessCheckBox">
-            <property name="text">
-             <string>Start VM in headless mode</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QCheckBox" name="uiShutdownCheckBox">
-            <property name="text">
-             <string>ACPI shutdown VM when closing GNS3</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="uiVMNameLabel">
-            <property name="text">
-             <string>VM name:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QPushButton" name="uiRefreshPushButton">
-            <property name="text">
-             <string>&amp;Refresh</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
+          <item row="1" column="0">
            <widget class="QComboBox" name="uiVMListComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -403,58 +429,186 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="uiRefreshPushButton">
+            <property name="text">
+             <string>&amp;Refresh</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
+           <widget class="QLabel" name="uiVMNameLabel">
             <property name="text">
-             <string>Virtualization software:</string>
+             <string>VM name:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="uiShutdownCheckBox">
             <property name="text">
-             <string>VirtualBox</string>
+             <string>ACPI shutdown VM when closing GNS3</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="uiVmwareRadioButton">
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="uiHeadlessCheckBox">
             <property name="text">
-             <string>VMware (recommended)</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>Start VM in headless mode</string>
             </property>
            </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiAdjustLocalServerIPCheckBox">
+            <property name="text">
+             <string>Adjust the local server IP to be in the same subnet</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="uiLocalGNS3VMPortLabel">
+              <property name="text">
+               <string>Server port:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="uiLocalGNS3VMPortSpinBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="suffix">
+               <string notr="true"> TCP</string>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+              <property name="value">
+               <number>3080</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="uiRemoteGNS3VMSettingsGroupBox">
          <property name="title">
-          <string>Authentication (optional)</string>
+          <string>Remote GNS3 VM</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <widget class="QLabel" name="uiVMUserLabel">
+           <widget class="QLabel" name="uiRemoteGNS3VMProtocolLabel">
+            <property name="text">
+             <string>Protocol:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="uiRemoteGNS3VMProtocolComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentText" stdset="0">
+             <string>HTTP</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>HTTP</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HTTPS</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiRemoteGNS3VMHostLabel">
+            <property name="text">
+             <string>Host:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="uiRemoteGNS3VMHostLineEdit">
+            <property name="text">
+             <string>192.168.56.101</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiRemoteGNS3VMPortLabel">
+            <property name="text">
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="uiRemoteGNS3VMPortSpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string notr="true"> TCP</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>3080</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiRemoteGNS3VMUserLabel">
             <property name="text">
              <string>User:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="uiVMUserLineEdit"/>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="uiRemoteGNS3VMUserLineEdit">
+            <property name="toolTip">
+             <string/>
+            </property>
+           </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="uiVMPasswordLabel">
+          <item row="4" column="0">
+           <widget class="QLabel" name="uiRemoteGNS3VMPasswordLabel">
             <property name="text">
              <string>Password:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="uiVMPasswordLineEdit">
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="uiRemoteGNS3VMPasswordLineEdit">
             <property name="inputMethodHints">
              <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
             </property>
@@ -563,7 +717,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerPortLineEdit">
+        <widget class="QLineEdit" name="uiRemoteServerHostLineEdit">
          <property name="text">
           <string>192.168.56.101</string>
          </property>
@@ -682,7 +836,7 @@
       </layout>
       <zorder>uiRemoteServerProtocolComboBox</zorder>
       <zorder>uiRemoteServerHostLabel</zorder>
-      <zorder>uiRemoteServerPortLineEdit</zorder>
+      <zorder>uiRemoteServerHostLineEdit</zorder>
       <zorder>uiRemoteServerPortLabel</zorder>
       <zorder>uiRemoteServerPortSpinBox</zorder>
       <zorder>uiRemoteServerUserLabel</zorder>
@@ -742,11 +896,9 @@
   <tabstop>uiRefreshPushButton</tabstop>
   <tabstop>uiHeadlessCheckBox</tabstop>
   <tabstop>uiShutdownCheckBox</tabstop>
-  <tabstop>uiVMUserLineEdit</tabstop>
-  <tabstop>uiVMPasswordLineEdit</tabstop>
   <tabstop>uiRemoteServersTreeWidget</tabstop>
   <tabstop>uiRemoteServerProtocolComboBox</tabstop>
-  <tabstop>uiRemoteServerPortLineEdit</tabstop>
+  <tabstop>uiRemoteServerHostLineEdit</tabstop>
   <tabstop>uiRemoteServerPortSpinBox</tabstop>
   <tabstop>uiRemoteServerUserLineEdit</tabstop>
   <tabstop>uiRemoteServerPasswordLineEdit</tabstop>
@@ -772,4 +924,7 @@
    <bool>true</bool>
   </property>
  </designerdata>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
