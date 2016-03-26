@@ -149,7 +149,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             vm_settings = Servers.instance().settings()["vm"]
             for vm in result:
                 vmx_path = ""
-                if vm_settings["virtualization"] == "VMware":
+                if self.uiVmwareRadioButton.isChecked():
                     vmx_path = vm.get("vmx_path")
                 self.uiVMListComboBox.addItem(vm["vmname"], vmx_path)
             gns3_vm = Servers.instance().vmSettings()
