@@ -61,7 +61,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
         self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
-        self.uiRemoteServerProtocolComboBox.currentIndexChanged[str].connect(self._remoteServerProtocolChangedSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiLocalServerAutoStartCheckBox.stateChanged.connect(self._useLocalServerAutoStartSlot)
         self.uiEnableVMCheckBox.stateChanged.connect(self._enableGNS3VMSlot)
@@ -69,11 +68,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
         self.uiRemoteRadioButton.toggled.connect(self._remoteGNS3VMToggledSlot)
-        self.uiRemoteGNS3VMProtocolComboBox.currentIndexChanged[str].connect(self._remoteGNS3VMProtocolChangedSlot)
-
-        # default protocol is HTTP
-        self._remoteServerProtocolChangedSlot("HTTP")
-        self._remoteGNS3VMProtocolChangedSlot("HTTP")
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
@@ -324,42 +318,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             assert item.server_id in self._remote_servers, "Missing {} in {}".format(item.server_id, self._remote_servers)
             del self._remote_servers[item.server_id]
             self.uiRemoteServersTreeWidget.takeTopLevelItem(self.uiRemoteServersTreeWidget.indexOfTopLevelItem(item))
-
-    def _remoteServerProtocolChangedSlot(self, protocol):
-        """
-        Hide/show user/password depending on the protocol type.
-
-        :param procotol: HTTP or HTTPS
-        """
-
-        if protocol == "HTTPS":
-            self.uiRemoteServerUserLabel.show()
-            self.uiRemoteServerUserLineEdit.show()
-            self.uiRemoteServerPasswordLabel.show()
-            self.uiRemoteServerPasswordLineEdit.show()
-        else:
-            self.uiRemoteServerUserLabel.hide()
-            self.uiRemoteServerUserLineEdit.hide()
-            self.uiRemoteServerPasswordLabel.hide()
-            self.uiRemoteServerPasswordLineEdit.hide()
-
-    def _remoteGNS3VMProtocolChangedSlot(self, protocol):
-        """
-        Hide/show user/password depending on the protocol type.
-
-        :param procotol: HTTP or HTTPS
-        """
-
-        if protocol == "HTTPS":
-            self.uiRemoteGNS3VMUserLabel.show()
-            self.uiRemoteGNS3VMUserLineEdit.show()
-            self.uiRemoteGNS3VMPasswordLabel.show()
-            self.uiRemoteGNS3VMPasswordLineEdit.show()
-        else:
-            self.uiRemoteGNS3VMUserLabel.hide()
-            self.uiRemoteGNS3VMUserLineEdit.hide()
-            self.uiRemoteGNS3VMPasswordLabel.hide()
-            self.uiRemoteGNS3VMPasswordLineEdit.hide()
 
     def _populateWidgets(self, servers_settings):
         """
