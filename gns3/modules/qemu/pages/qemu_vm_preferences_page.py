@@ -136,6 +136,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(1)
+        self.uiQemuVMsTreeWidget.setMaximumWidth(self.uiQemuVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def _qemuVMChangedSlot(self):
         """
@@ -236,6 +237,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         if self._items:
             self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
             self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiQemuVMsTreeWidget.setMaximumWidth(self.uiQemuVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """

@@ -79,6 +79,7 @@ class DockerVMPreferencesPage(
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(1)
+        self.uiDockerVMsTreeWidget.setMaximumWidth(self.uiDockerVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def _dockerImageChangedSlot(self):
         """Loads a selected Docker image from the tree widget."""
@@ -211,8 +212,8 @@ class DockerVMPreferencesPage(
 
         if self._items:
             self.uiDockerVMsTreeWidget.setCurrentItem(self._items[0])
-            self.uiDockerVMsTreeWidget.sortByColumn(
-                0, QtCore.Qt.AscendingOrder)
+            self.uiDockerVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiDockerVMsTreeWidget.setMaximumWidth(self.uiDockerVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """Saves the Docker image preferences."""

@@ -97,6 +97,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self.uiIOUDeviceInfoTreeWidget.expandAll()
         self.uiIOUDeviceInfoTreeWidget.resizeColumnToContents(0)
         self.uiIOUDeviceInfoTreeWidget.resizeColumnToContents(1)
+        self.uiIOUDevicesTreeWidget.setMaximumWidth(self.uiIOUDevicesTreeWidget.sizeHintForColumn(0) + 10)
 
     def _iouDeviceChangedSlot(self):
         """
@@ -193,6 +194,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         if self._items:
             self.uiIOUDevicesTreeWidget.setCurrentItem(self._items[0])
             self.uiIOUDevicesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiIOUDevicesTreeWidget.setMaximumWidth(self.uiIOUDevicesTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """

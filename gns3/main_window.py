@@ -988,8 +988,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         with Progress.instance().context(min_duration=0):
             dialog = PreferencesDialog(self)
+            dialog.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["preferences_dialog_geometry"].encode()))
             dialog.show()
             dialog.exec_()
+            self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
+            self.setSettings(self._settings)
 
     def keyPressEvent(self, event):
         """

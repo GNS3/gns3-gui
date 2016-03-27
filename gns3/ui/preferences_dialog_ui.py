@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/preferences_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Sat Mar 26 16:09:27 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PreferencesDialog(object):
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")
-        PreferencesDialog.resize(900, 600)
+        PreferencesDialog.resize(900, 525)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(2)
@@ -22,18 +23,15 @@ class Ui_PreferencesDialog(object):
         PreferencesDialog.setModal(True)
         self.horizontalLayout = QtWidgets.QHBoxLayout(PreferencesDialog)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.uiLine = QtWidgets.QFrame(PreferencesDialog)
-        self.uiLine.setFrameShape(QtWidgets.QFrame.HLine)
-        self.uiLine.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.uiLine.setObjectName("uiLine")
-        self.horizontalLayout.addWidget(self.uiLine)
-        self.uiTreeWidget = QtWidgets.QTreeWidget(PreferencesDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        self.splitter = QtWidgets.QSplitter(PreferencesDialog)
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setObjectName("splitter")
+        self.uiTreeWidget = QtWidgets.QTreeWidget(self.splitter)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiTreeWidget.sizePolicy().hasHeightForWidth())
         self.uiTreeWidget.setSizePolicy(sizePolicy)
-        self.uiTreeWidget.setMaximumSize(QtCore.QSize(160, 16777215))
         font = QtGui.QFont()
         font.setPointSize(11)
         font.setBold(True)
@@ -43,11 +41,12 @@ class Ui_PreferencesDialog(object):
         self.uiTreeWidget.setObjectName("uiTreeWidget")
         self.uiTreeWidget.headerItem().setText(0, "1")
         self.uiTreeWidget.header().setVisible(False)
-        self.horizontalLayout.addWidget(self.uiTreeWidget)
-        self.vbox = QtWidgets.QVBoxLayout()
-        self.vbox.setSpacing(3)
+        self.layoutWidget = QtWidgets.QWidget(self.splitter)
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.vbox = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.vbox.setContentsMargins(0, 0, 0, 0)
         self.vbox.setObjectName("vbox")
-        self.uiTitleLabel = QtWidgets.QLabel(PreferencesDialog)
+        self.uiTitleLabel = QtWidgets.QLabel(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -62,11 +61,11 @@ class Ui_PreferencesDialog(object):
         self.uiTitleLabel.setFrameShape(QtWidgets.QFrame.Box)
         self.uiTitleLabel.setObjectName("uiTitleLabel")
         self.vbox.addWidget(self.uiTitleLabel)
-        self.scrollArea = QtWidgets.QScrollArea(PreferencesDialog)
+        self.scrollArea = QtWidgets.QScrollArea(self.layoutWidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 680, 519))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 445, 441))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -83,13 +82,13 @@ class Ui_PreferencesDialog(object):
         self.verticalLayout.addWidget(self.uiStackedWidget)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.vbox.addWidget(self.scrollArea)
-        self.uiButtonBox = QtWidgets.QDialogButtonBox(PreferencesDialog)
+        self.uiButtonBox = QtWidgets.QDialogButtonBox(self.layoutWidget)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
         self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setCenterButtons(False)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.vbox.addWidget(self.uiButtonBox)
-        self.horizontalLayout.addLayout(self.vbox)
+        self.horizontalLayout.addWidget(self.splitter)
 
         self.retranslateUi(PreferencesDialog)
         self.uiButtonBox.accepted.connect(PreferencesDialog.accept)

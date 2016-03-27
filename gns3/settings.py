@@ -267,6 +267,7 @@ GENERAL_SETTINGS = {
     "recent_files": [],
     "geometry": "",
     "state": "",
+    "preferences_dialog_geometry": "",
     "debug_level": 0,
 }
 
