@@ -109,7 +109,11 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
                              2: self.uiWic2comboBox}
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        self.addImageSelector(self.uiIOSExistingImageRadioButton, self.uiIOSImageListComboBox, self.uiIOSImageLineEdit, self.uiIOSImageToolButton, IOSRouterPreferencesPage.getIOSImage)
+        self.addImageSelector(self.uiIOSExistingImageRadioButton,
+                              self.uiIOSImageListComboBox,
+                              self.uiIOSImageLineEdit,
+                              self.uiIOSImageToolButton,
+                              IOSRouterPreferencesPage.getIOSImage)
 
     def _prefillPlatform(self):
         """
@@ -274,7 +278,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
     def _iosImageBrowserSlot(self):
         """
-        Slot to open a file browser and select an IOU image.
+        Slot to open a file browser and select an IOS image.
         """
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
@@ -307,6 +311,9 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         if image.lower().startswith("c7200p"):
             QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
+
+        if image.lower().startswith("c1700") or image.lower().startswith("c2600"):
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Using c1700 and c2600 IOS images is not recommended, they can be unstable or buggy")
 
         index = self.uiPlatformComboBox.findText(detected_platform)
         if index != -1:

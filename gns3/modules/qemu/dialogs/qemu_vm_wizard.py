@@ -103,13 +103,17 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
+        if self.currentPage() == self.uiServerWizardPage:
+            if self.uiLocalRadioButton.isChecked() and not sys.platform.startswith("linux"):
+                QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
+
         if self.currentPage() == self.uiBinaryMemoryWizardPage:
             if not self.uiQemuListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
                 return False
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
 
-            if (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
+            if sys.platform.startswith("darwin") and "GNS3.app" in qemu_path:
                 QtWidgets.QMessageBox.warning(self, "Qemu binaries", "This version of qemu is obsolete and provided only for compatibility with old GNS3 versions.\nPlease use Qemu in the GNS3 VM for full Qemu support.")
         return True
 
@@ -245,12 +249,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         current_id = self.currentId()
         if self.page(current_id) == self.uiTypeWizardPage:
-
-            if sys.platform.startswith("linux") or not self.uiLocalRadioButton.isChecked():
-                self.uiOSDeprecatedWarningLabel.hide()
-            else:
-                self.uiOSDeprecatedWarningLabel.show()
-
             if self.uiTypeComboBox.currentText().startswith("IOSv"):
                 self.uiRamSpinBox.setValue(384)
             elif self.uiTypeComboBox.currentText().startswith("IOS-XRv"):
