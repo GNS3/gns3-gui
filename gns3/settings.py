@@ -308,9 +308,6 @@ SERVERS_SETTINGS = {
         "adjust_local_server_ip": True,
         "vmname": "GNS3 VM",
         "vmx_path": "",
-        "local_vm_port": 3080,  # hardcoded for now
-        "local_vm_user": "",
-        "local_vm_password": "",
         "virtualization": "VMware",
         "remote_vm_protocol": "http",
         "remote_vm_host": "",

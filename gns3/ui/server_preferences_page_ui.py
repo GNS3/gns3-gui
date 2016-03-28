@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Fri Mar 25 19:15:53 2016
+# Created: Mon Mar 28 11:53:19 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -212,29 +212,15 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRefreshPushButton = QtWidgets.QPushButton(self.uiLocalGNS3VMSettingsGroupBox)
         self.uiRefreshPushButton.setObjectName("uiRefreshPushButton")
         self.gridLayout_2.addWidget(self.uiRefreshPushButton, 0, 2, 1, 1)
-        self.uiLocalGNS3VMPortLabel = QtWidgets.QLabel(self.uiLocalGNS3VMSettingsGroupBox)
-        self.uiLocalGNS3VMPortLabel.setObjectName("uiLocalGNS3VMPortLabel")
-        self.gridLayout_2.addWidget(self.uiLocalGNS3VMPortLabel, 1, 0, 1, 1)
         self.uiHeadlessCheckBox = QtWidgets.QCheckBox(self.uiLocalGNS3VMSettingsGroupBox)
         self.uiHeadlessCheckBox.setObjectName("uiHeadlessCheckBox")
-        self.gridLayout_2.addWidget(self.uiHeadlessCheckBox, 2, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiHeadlessCheckBox, 1, 0, 1, 2)
         self.uiShutdownCheckBox = QtWidgets.QCheckBox(self.uiLocalGNS3VMSettingsGroupBox)
         self.uiShutdownCheckBox.setObjectName("uiShutdownCheckBox")
-        self.gridLayout_2.addWidget(self.uiShutdownCheckBox, 3, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.uiShutdownCheckBox, 2, 0, 1, 2)
         self.uiAdjustLocalServerIPCheckBox = QtWidgets.QCheckBox(self.uiLocalGNS3VMSettingsGroupBox)
         self.uiAdjustLocalServerIPCheckBox.setObjectName("uiAdjustLocalServerIPCheckBox")
-        self.gridLayout_2.addWidget(self.uiAdjustLocalServerIPCheckBox, 4, 0, 1, 2)
-        self.uiLocalGNS3VMPortSpinBox = QtWidgets.QSpinBox(self.uiLocalGNS3VMSettingsGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiLocalGNS3VMPortSpinBox.sizePolicy().hasHeightForWidth())
-        self.uiLocalGNS3VMPortSpinBox.setSizePolicy(sizePolicy)
-        self.uiLocalGNS3VMPortSpinBox.setSuffix(" TCP")
-        self.uiLocalGNS3VMPortSpinBox.setMaximum(65535)
-        self.uiLocalGNS3VMPortSpinBox.setProperty("value", 3080)
-        self.uiLocalGNS3VMPortSpinBox.setObjectName("uiLocalGNS3VMPortSpinBox")
-        self.gridLayout_2.addWidget(self.uiLocalGNS3VMPortSpinBox, 1, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.uiAdjustLocalServerIPCheckBox, 3, 0, 1, 2)
         self.verticalLayout.addWidget(self.uiLocalGNS3VMSettingsGroupBox)
         self.uiRemoteGNS3VMSettingsGroupBox = QtWidgets.QGroupBox(self.uiGNS3VMTabWidget)
         self.uiRemoteGNS3VMSettingsGroupBox.setObjectName("uiRemoteGNS3VMSettingsGroupBox")
@@ -449,7 +435,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalGNS3VMSettingsGroupBox.setTitle(_translate("ServerPreferencesPageWidget", "Local GNS3 VM"))
         self.uiVMNameLabel.setText(_translate("ServerPreferencesPageWidget", "VM name:"))
         self.uiRefreshPushButton.setText(_translate("ServerPreferencesPageWidget", "&Refresh"))
-        self.uiLocalGNS3VMPortLabel.setText(_translate("ServerPreferencesPageWidget", "Server port:"))
         self.uiHeadlessCheckBox.setText(_translate("ServerPreferencesPageWidget", "Start VM in headless mode"))
         self.uiShutdownCheckBox.setText(_translate("ServerPreferencesPageWidget", "ACPI shutdown VM when closing GNS3"))
         self.uiAdjustLocalServerIPCheckBox.setText(_translate("ServerPreferencesPageWidget", "Adjust the local server IP to be in the same subnet"))

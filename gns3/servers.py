@@ -621,9 +621,9 @@ class Servers(QtCore.QObject):
         else:
             protocol = "http"
             host = "unset"
-            port = gns3_vm_settings["local_vm_port"]
-            user = gns3_vm_settings["local_vm_user"]
-            password = gns3_vm_settings["local_vm_password"]
+            port = 3080  # hardcoded port for local GNS3 VM
+            user = ""  # no user for local GNS3 VM
+            password = ""  # no password for local GNS3 VM
 
         server_info = {
             "host": host,

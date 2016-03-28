@@ -363,7 +363,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         else:
             self.uiRemoteRadioButton.setChecked(True)
         self.uiHeadlessCheckBox.setChecked(vm_settings["headless"])
-        self.uiLocalGNS3VMPortSpinBox.setValue(vm_settings["local_vm_port"])
 
         # Remote GNS3 VM settings
         index = self.uiRemoteGNS3VMProtocolComboBox.findText(vm_settings["remote_vm_protocol"])
@@ -472,7 +471,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                                     "vmname": self.uiVMListComboBox.currentText(),
                                     "vmx_path": self.uiVMListComboBox.currentData(),
                                     "headless": self.uiHeadlessCheckBox.isChecked(),
-                                    "local_vm_port": self.uiLocalGNS3VMPortSpinBox.value(),
                                     "remote_vm_protocol": self.uiRemoteGNS3VMProtocolComboBox.currentText().lower(),
                                     "remote_vm_host": self.uiRemoteGNS3VMHostLineEdit.text(),
                                     "remote_vm_port": self.uiRemoteGNS3VMPortSpinBox.value(),
