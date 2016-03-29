@@ -333,7 +333,9 @@ class Project(QtCore.QObject):
         else:
             if self._id:
                 for stream in self._notifications_stream:
-                    stream.abort()
+                    # While looping a stream could have disapear
+                    if stream:
+                        stream.abort()
                 log.info("Project {} closed".format(self._id))
 
         if server in self._created_servers:
