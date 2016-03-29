@@ -148,6 +148,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self._topology = Topology.instance()
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
         self.show_only_devices_with_capture = False
+        self.setExpandsOnDoubleClick(False)
         self.itemDoubleClicked.connect(self._itemDoubleClickedSlot)
 
     def addNode(self, node):
