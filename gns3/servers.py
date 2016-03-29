@@ -687,7 +687,7 @@ class Servers(QtCore.QObject):
         client = HTTPClient(settings, network_manager)
         return client
 
-    def foundRemoteServer(self, protocol, host, port, user, settings={}):
+    def findRemoteServer(self, protocol, host, port, user, settings={}):
         """
         Search a remote server.
 
@@ -697,7 +697,7 @@ class Servers(QtCore.QObject):
         :param user: the username
         :param settings: Additional settings
 
-        :returns: remote server (HTTPClient instance). Return None if it's doesn't exists
+        :returns: remote server (HTTPClient instance). Returns None if it doesn't exist.
         """
         url = getNetworkUrl(protocol, host, port, user, settings)
         for server in self._remote_servers.values():
@@ -718,7 +718,7 @@ class Servers(QtCore.QObject):
         :returns: remote server (HTTPClient instance)
         """
 
-        server = self.foundRemoteServer(protocol, host, port, user, settings)
+        server = self.findRemoteServer(protocol, host, port, user, settings)
         if server:
             return server
         settings['user'] = user

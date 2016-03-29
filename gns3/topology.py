@@ -673,17 +673,19 @@ class Topology:
                     topology_server.pop("local", False)
 
                     server_id = topology_server.pop("id")
-                    self._servers[server_id] = server_manager.foundRemoteServer(protocol, host, port, user, topology_server)
+                    self._servers[server_id] = server_manager.findRemoteServer(protocol, host, port, user, topology_server)
 
-                    reply = QtWidgets.QMessageBox.warning(main_window, "Load topology", "The server {}://{}:{} doesn't exists in your settings do you want to choose a different?\nWe recommend to backup the topology before.".format(protocol, host, port), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                    reply = QtWidgets.QMessageBox.warning(main_window,
+                                                          "Remote server not found",
+                                                          "Remote server {}://{}:{} doesn't exist in your preferences, do you want to select another server?\n\nIt is recommended to backup your project first.".format(protocol, host, port),
+                                                          QtWidgets.QMessageBox.Yes,
+                                                          QtWidgets.QMessageBox.No)
                     if reply == QtWidgets.QMessageBox.Yes:
                         self._servers[server_id] = server_select(main_window)
 
                     if self._servers[server_id] is None:
-                        # The user has not change the server we create the server from the topology
+                        # The user has not changed the server, let's create the server from the topology
                         self._servers[server_id] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
-
-
 
         # nodes
         self._load_old_topology = False
