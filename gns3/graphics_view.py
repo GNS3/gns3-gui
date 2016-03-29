@@ -438,7 +438,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         is_not_link = True
         item = self.itemAt(event.pos())
-        if item and isinstance(item, LinkItem):
+        if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
         else:
             for it in self.scene().items():
