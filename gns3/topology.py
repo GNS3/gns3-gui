@@ -42,6 +42,7 @@ from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
+from .utils.server_select import server_select
 from .version import __version__
 from .topology_check import getTopologyValidationErrors
 
@@ -672,7 +673,19 @@ class Topology:
                     topology_server.pop("local", False)
 
                     server_id = topology_server.pop("id")
-                    self._servers[server_id] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
+                    self._servers[server_id] = server_manager.findRemoteServer(protocol, host, port, user, topology_server)
+
+                    reply = QtWidgets.QMessageBox.warning(main_window,
+                                                          "Remote server not found",
+                                                          "Remote server {}://{}:{} doesn't exist in your preferences, do you want to select another server?\n\nIt is recommended to backup your project first.".format(protocol, host, port),
+                                                          QtWidgets.QMessageBox.Yes,
+                                                          QtWidgets.QMessageBox.No)
+                    if reply == QtWidgets.QMessageBox.Yes:
+                        self._servers[server_id] = server_select(main_window)
+
+                    if self._servers[server_id] is None:
+                        # The user has not changed the server, let's create the server from the topology
+                        self._servers[server_id] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
 
         # nodes
         self._load_old_topology = False

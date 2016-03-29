@@ -106,6 +106,21 @@ def testServers():
     assert len(servers.servers()) == 2
 
 
+def test_foundRemoteServer():
+    servers = Servers.instance()
+    # Create a server
+    http_server = servers.getRemoteServer("http", "localhost", 3080, None)
+
+    http_server = servers.foundRemoteServer("http", "localhost", 3080, None)
+    assert http_server.protocol() == "http"
+    assert http_server.host() == "localhost"
+    assert http_server.port() == 3080
+    assert http_server.user() is None
+
+    http_server = servers.foundRemoteServer("http", "localhost", 4242, None)
+    assert http_server is None
+
+
 def test_getRemoteServer():
     servers = Servers.instance()
     http_server = servers.getRemoteServer("http", "localhost", 3080, None)
