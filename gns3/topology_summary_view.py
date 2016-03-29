@@ -148,6 +148,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self._topology = Topology.instance()
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
         self.show_only_devices_with_capture = False
+        self.itemDoubleClicked.connect(self._itemDoubleClickedSlot)
 
     def addNode(self, node):
         """
@@ -217,6 +218,20 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         if item.sourcePort() == port or item.destinationPort() == port:
                             item.setHovered(True)
 
+
+    def _itemDoubleClickedSlot(self, current_item):
+        """
+        When user double click on an element we center the topology on it
+        """
+        if current_item != 0:
+            from .main_window import MainWindow
+            view = MainWindow.instance().uiGraphicsView
+            for item in view.scene().items():
+                if isinstance(item, NodeItem):
+                    if isinstance(current_item, TopologyNodeItem) and item.node().id() == current_item.node().id():
+                        view.centerOn(item)
+
+
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
@@ -228,6 +243,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             self._showContextualMenu()
         else:
             super().mousePressEvent(event)
+
 
     def _showContextualMenu(self):
         """
