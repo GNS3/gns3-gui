@@ -211,13 +211,12 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                     item.setSelected(False)
                     if isinstance(current_item, TopologyNodeItem) and item.node().id() == current_item.node().id():
                         item.setSelected(True)
-                if isinstance(item, LinkItem):
+                elif isinstance(item, LinkItem):
                     item.setHovered(False)
                     if not isinstance(current_item, TopologyNodeItem):
                         port = current_item.data(0, QtCore.Qt.UserRole)
                         if item.sourcePort() == port or item.destinationPort() == port:
                             item.setHovered(True)
-
 
     def _itemDoubleClickedSlot(self, current_item):
         """
@@ -230,7 +229,11 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 if isinstance(item, NodeItem):
                     if isinstance(current_item, TopologyNodeItem) and item.node().id() == current_item.node().id():
                         view.centerOn(item)
-
+                elif isinstance(item, LinkItem):
+                    if not isinstance(current_item, TopologyNodeItem):
+                        port = current_item.data(0, QtCore.Qt.UserRole)
+                        if item.sourcePort() == port or item.destinationPort() == port:
+                            view.centerOn(item)
 
     def mousePressEvent(self, event):
         """
