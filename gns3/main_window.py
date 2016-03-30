@@ -50,6 +50,7 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.wait_for_vm_worker import WaitForVMWorker
+from .utils.export_project_worker import ExportProjectWorker
 from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
@@ -58,7 +59,6 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology
-from .utils.download_project import DownloadProjectWorker
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
@@ -205,7 +205,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
-        self.uiDownloadRemoteProject.triggered.connect(self._downloadRemoteProjectActionSlot)
+        self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -1558,19 +1558,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         QtCore.QTimer.singleShot(counter, callback)
 
-    def _downloadRemoteProjectActionSlot(self):
-        if self._project.temporary():
-            QtWidgets.QMessageBox.warning(self, "Download project", "You cannot download a temporary project")
-            return
-
+    def _exportProjectActionSlot(self):
         running_nodes = self._running_nodes()
         if running_nodes:
             nodes = "\n".join(running_nodes)
-            MessageBox(self, "Download project", "Please stop the following nodes before downloading the project", nodes)
+            MessageBox(self, "Download project", "Please stop the following nodes before exporting the project", nodes)
             return
 
-        download_worker = DownloadProjectWorker(self, self._project, Servers.instance())
-        progress_dialog = ProgressDialog(download_worker, "Download remote project", "Downloading project files...", "Cancel", parent=self)
+        export_worker = ExportProjectWorker(self, self._project)
+        progress_dialog = ProgressDialog(export_worker, "Export project", "Exporting project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 

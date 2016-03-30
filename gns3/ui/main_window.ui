@@ -91,12 +91,8 @@ background-none;
     <addaction name="uiOpenProjectAction"/>
     <addaction name="uiSaveProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
-    <addaction name="uiExportProjectAction"/>
-    <addaction name="uiImportProjectAction"/>
     <addaction name="separator"/>
-    <addaction name="uiMoveLocalProjectToCloudAction"/>
-    <addaction name="uiMoveCloudProjectToLocalAction"/>
-    <addaction name="uiDownloadRemoteProject"/>
+    <addaction name="uiExportProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiOpenApplianceAction"/>
     <addaction name="uiImportExportConfigsAction"/>
@@ -1154,38 +1150,6 @@ background-none;
     <string>Fit in view</string>
    </property>
   </action>
-  <action name="uiExportProjectAction">
-   <property name="text">
-    <string>Backup project to cloud</string>
-   </property>
-   <property name="visible">
-    <bool>false</bool>
-   </property>
-  </action>
-  <action name="uiImportProjectAction">
-   <property name="text">
-    <string>Restore backup from cloud</string>
-   </property>
-   <property name="visible">
-    <bool>false</bool>
-   </property>
-  </action>
-  <action name="uiMoveLocalProjectToCloudAction">
-   <property name="text">
-    <string>Move local project to cloud</string>
-   </property>
-   <property name="visible">
-    <bool>false</bool>
-   </property>
-  </action>
-  <action name="uiMoveCloudProjectToLocalAction">
-   <property name="text">
-    <string>Move cloud project to local</string>
-   </property>
-   <property name="visible">
-    <bool>false</bool>
-   </property>
-  </action>
   <action name="uiDarkStyleAction">
    <property name="text">
     <string>Dark Style</string>
@@ -1255,6 +1219,20 @@ background-none;
   <action name="uiDoctorAction">
    <property name="text">
     <string>GNS3 &amp;Doctor</string>
+   </property>
+  </action>
+  <action name="actionExport_project">
+   <property name="text">
+    <string>Export project</string>
+   </property>
+  </action>
+  <action name="uiExportProjectAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export project</string>
    </property>
   </action>
  </widget>
