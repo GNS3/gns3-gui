@@ -93,6 +93,7 @@ background-none;
     <addaction name="uiSaveProjectAsAction"/>
     <addaction name="separator"/>
     <addaction name="uiExportProjectAction"/>
+    <addaction name="uiImportProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiOpenApplianceAction"/>
     <addaction name="uiImportExportConfigsAction"/>
@@ -1229,10 +1230,19 @@ background-none;
   <action name="uiExportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+     <normaloff>:/icons/export_config.svg</normaloff>:/icons/export_config.svg</iconset>
    </property>
    <property name="text">
     <string>Export project</string>
+   </property>
+  </action>
+  <action name="uiImportProjectAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/import_config.svg</normaloff>:/icons/import_config.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Import project</string>
    </property>
   </action>
  </widget>

@@ -51,6 +51,7 @@ from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.wait_for_vm_worker import WaitForVMWorker
 from .utils.export_project_worker import ExportProjectWorker
+from .utils.import_project_worker import ImportProjectWorker
 from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
@@ -206,6 +207,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
+        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -390,7 +392,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z);;NET files (*.net)",
                                                         "GNS3 project files (*.gns3)")
         if path:
             self.loadPath(path)
@@ -427,7 +429,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog.reject()
                 self._project_dialog = None
 
-            if path.endswith(".gns3a"):
+            if path.endswith(".gns3z"):
+                import_worker = ImportProjectWorker(self, path)
+                import_worker.imported.connect(self.loadPath)
+
+                progress_dialog = ProgressDialog(import_worker, "Import project", "Importing project files...", "Cancel", parent=self)
+                progress_dialog.show()
+                progress_dialog.exec_()
+            elif path.endswith(".gns3a"):
                 try:
                     self._appliance_wizard = ApplianceWizard(self, path)
                 except ApplianceError as e:
@@ -1569,6 +1578,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         progress_dialog = ProgressDialog(export_worker, "Export project", "Exporting project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def _importProjectActionSlot(self):
+        """
+        Slot called to import a project
+        """
+
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                        "Open topology",
+                                                        directory,
+                                                        "All files (*.*);;GNS3 topology (*.gns3z)",
+                                                        "GNS3 topology (*.gns3z)")
+        if not path:
+            return
+        self.loadPath(path)
 
     def _setStyle(self, style):
 
