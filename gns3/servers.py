@@ -101,7 +101,6 @@ class Servers(QtCore.QObject):
         self.server_added_signal.emit("local")
         log.info("New local server connection {} registered".format(self._local_server.url()))
 
-
     @staticmethod
     def _findLocalServer(self):
         """

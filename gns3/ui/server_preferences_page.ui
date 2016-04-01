@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
-    <height>650</height>
+    <width>550</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -54,28 +54,6 @@
        <string>Local server</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Enable local server</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="uiGeneralSettingsGroupBox">
          <property name="sizePolicy">
@@ -184,6 +162,28 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Enable local server</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="2" column="0" colspan="2">
@@ -296,25 +296,11 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
-        <spacer name="verticalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
       <zorder>uiGeneralSettingsGroupBox</zorder>
       <zorder>uiConsolePortRangeGroupBox</zorder>
       <zorder>uiUDPPortRangeGroupBox</zorder>
       <zorder>uiLocalServerAutoStartCheckBox</zorder>
-      <zorder>verticalSpacer_4</zorder>
      </widget>
      <widget class="QWidget" name="uiGNS3VMTabWidget">
       <property name="sizePolicy">
@@ -469,108 +455,46 @@
        </item>
        <item>
         <widget class="QGroupBox" name="uiRemoteGNS3VMSettingsGroupBox">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
          <property name="title">
           <string>Remote GNS3 VM</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiRemoteGNS3VMProtocolLabel">
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Protocol:</string>
+             <string>Server:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="uiRemoteGNS3VMProtocolComboBox">
+          <item>
+           <widget class="QComboBox" name="uiServersComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="currentText" stdset="0">
-             <string>HTTP</string>
-            </property>
-            <item>
-             <property name="text">
-              <string>HTTP</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>HTTPS</string>
-             </property>
-            </item>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="uiRemoteGNS3VMHostLabel">
+          <item>
+           <widget class="QPushButton" name="uiAddServerPushButton">
             <property name="text">
-             <string>Host:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="uiRemoteGNS3VMHostLineEdit">
-            <property name="text">
-             <string>192.168.56.101</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="uiRemoteGNS3VMPortLabel">
-            <property name="text">
-             <string>Port:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="uiRemoteGNS3VMPortSpinBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>3080</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="uiRemoteGNS3VMUserLabel">
-            <property name="text">
-             <string>User:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="uiRemoteGNS3VMUserLineEdit">
-            <property name="toolTip">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="uiRemoteGNS3VMPasswordLabel">
-            <property name="text">
-             <string>Password:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="uiRemoteGNS3VMPasswordLineEdit">
-            <property name="inputMethodHints">
-             <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
+             <string>Add server</string>
             </property>
            </widget>
           </item>
@@ -603,13 +527,6 @@
        <string>Remote servers</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiRemoteServerHostLabel">
-         <property name="text">
-          <string>Host:</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0" colspan="2">
         <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
          <property name="sizePolicy">
@@ -643,68 +560,7 @@
          </column>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiRemoteServerProtocolLabel">
-         <property name="text">
-          <string>Protocol:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="uiRemoteServerProtocolComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="currentText" stdset="0">
-          <string>HTTP</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>HTTP</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>HTTPS</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerHostLineEdit">
-         <property name="text">
-          <string>192.168.56.101</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerUserLineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiRemoteServerPortLabel">
-         <property name="text">
-          <string>Port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiRemoteServerUserLabel">
-         <property name="text">
-          <string>User:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
+       <item row="1" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QPushButton" name="uiAddRemoteServerPushButton">
@@ -738,26 +594,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="1">
-        <widget class="QSpinBox" name="uiRemoteServerPortSpinBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="suffix">
-          <string notr="true"> TCP</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="value">
-          <number>3080</number>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
+       <item row="2" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -770,41 +607,24 @@
          </property>
         </spacer>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiRemoteServerPasswordLabel">
-         <property name="text">
-          <string>Password:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="uiRemoteServerPasswordLineEdit">
-         <property name="inputMethodHints">
-          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
-         </property>
-        </widget>
-       </item>
       </layout>
-      <zorder>uiRemoteServerProtocolComboBox</zorder>
-      <zorder>uiRemoteServerHostLabel</zorder>
-      <zorder>uiRemoteServerHostLineEdit</zorder>
-      <zorder>uiRemoteServerPortLabel</zorder>
-      <zorder>uiRemoteServerPortSpinBox</zorder>
-      <zorder>uiRemoteServerUserLabel</zorder>
-      <zorder>uiRemoteServerUserLineEdit</zorder>
       <zorder>uiRemoteServersTreeWidget</zorder>
-      <zorder>uiRemoteServerProtocolLabel</zorder>
-      <zorder>uiRemoteServerPasswordLineEdit</zorder>
-      <zorder>uiRemoteServerPasswordLabel</zorder>
       <zorder>verticalSpacer_3</zorder>
      </widget>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -852,11 +672,6 @@
   <tabstop>uiHeadlessCheckBox</tabstop>
   <tabstop>uiShutdownCheckBox</tabstop>
   <tabstop>uiRemoteServersTreeWidget</tabstop>
-  <tabstop>uiRemoteServerProtocolComboBox</tabstop>
-  <tabstop>uiRemoteServerHostLineEdit</tabstop>
-  <tabstop>uiRemoteServerPortSpinBox</tabstop>
-  <tabstop>uiRemoteServerUserLineEdit</tabstop>
-  <tabstop>uiRemoteServerPasswordLineEdit</tabstop>
   <tabstop>uiAddRemoteServerPushButton</tabstop>
   <tabstop>uiDeleteRemoteServerPushButton</tabstop>
  </tabstops>

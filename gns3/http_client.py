@@ -154,6 +154,9 @@ class HTTPClient(QtCore.QObject):
     def setUser(self, user):
         self._user = user
 
+    def password(self):
+        return self._password
+
     def setPassword(self, password):
         self._password = password
 
