@@ -35,7 +35,19 @@ class NewServerDialog(QtWidgets.QDialog, Ui_NewServerDialog):
 
         super().__init__(parent)
         self.setupUi(self)
+        self.uiEnableAuthenticationCheckBox.stateChanged.connect(self._enableAuthenticationSlot)
 
+    def _enableAuthenticationSlot(self, state):
+        """
+        Slot to enable or not the authentication.
+        """
+
+        if state:
+            self.uiServerUserLineEdit.setEnabled(True)
+            self.uiServerPasswordLineEdit.setEnabled(True)
+        else:
+            self.uiServerUserLineEdit.setEnabled(False)
+            self.uiServerPasswordLineEdit.setEnabled(False)
 
     def accept(self):
         """
@@ -45,8 +57,11 @@ class NewServerDialog(QtWidgets.QDialog, Ui_NewServerDialog):
         protocol = self.uiServerProtocolComboBox.currentText().lower()
         host = self.uiServerHostLineEdit.text().strip()
         port = self.uiServerPortSpinBox.value()
-        user = self.uiServerUserLineEdit.text().strip()
-        password = self.uiServerPasswordLineEdit.text().strip()
+        if self.uiEnableAuthenticationCheckBox.isChecked():
+            user = self.uiServerUserLineEdit.text().strip()
+            password = self.uiServerPasswordLineEdit.text().strip()
+        else:
+            user = password = ""
 
         if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
@@ -54,7 +69,6 @@ class NewServerDialog(QtWidgets.QDialog, Ui_NewServerDialog):
         if port is None or port < 1:
             QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server port {}".format(port))
             return
-
 
         servers = Servers.instance()
         remote_servers = servers.remoteServers()

@@ -21,8 +21,6 @@ Configuration page for server preferences.
 
 import os
 import sys
-import re
-import uuid
 import shutil
 
 import logging
@@ -423,13 +421,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             if self.uiServersComboBox.currentData() is None:
                 QtWidgets.QMessageBox.critical(self, "Remote GNS3 VM host", "The remote GNS3 VM cannot be empty")
                 return
-            new_gns3vm_settings["virtualization"]     = "remote"
+            new_gns3vm_settings["virtualization"] = "remote"
             new_gns3vm_settings["remote_vm_protocol"] = self.uiServersComboBox.currentData().protocol()
             new_gns3vm_settings["remote_vm_password"] = self.uiServersComboBox.currentData().password()
-            new_gns3vm_settings["remote_vm_host"]     = self.uiServersComboBox.currentData().host()
-            new_gns3vm_settings["remote_vm_port"]     = self.uiServersComboBox.currentData().port()
-            new_gns3vm_settings["remote_vm_user"]     = self.uiServersComboBox.currentData().user()
-            new_gns3vm_settings["remote_vm_url"]      = self.uiServersComboBox.currentData().url()
+            new_gns3vm_settings["remote_vm_host"] = self.uiServersComboBox.currentData().host()
+            new_gns3vm_settings["remote_vm_port"] = self.uiServersComboBox.currentData().port()
+            new_gns3vm_settings["remote_vm_user"] = self.uiServersComboBox.currentData().user()
+            new_gns3vm_settings["remote_vm_url"] = self.uiServersComboBox.currentData().url()
 
         if not self.uiRemoteRadioButton.isChecked() and new_gns3vm_settings != servers_settings["vm"]:
             log.info("GNS3 VM restart required!")
