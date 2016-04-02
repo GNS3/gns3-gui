@@ -454,8 +454,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                         local_nodes.append(node.name())
                 if local_nodes:
                     nodes = "\n".join(local_nodes)
-                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the \
-                    local server before changing the local server settings", nodes)
+                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings", nodes)
                     return
                 servers.setLocalServerSettings(new_local_server_settings)
                 servers.registerLocalServer()
