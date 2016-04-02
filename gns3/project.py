@@ -105,6 +105,12 @@ class Project(QtCore.QObject):
 
         self._temporary = temporary
 
+    def servers(self):
+        """
+        :returns: List of server where GNS3 is running
+        """
+        return self._created_servers
+
     def id(self):
         """
         Get project identifier
