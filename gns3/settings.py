@@ -309,6 +309,7 @@ SERVERS_SETTINGS = {
         "vmname": "GNS3 VM",
         "vmx_path": "",
         "virtualization": "VMware",
+        "remote_vm_url": "",
         "remote_vm_protocol": "http",
         "remote_vm_host": "",
         "remote_vm_port": 3080,
