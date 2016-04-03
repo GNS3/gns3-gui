@@ -142,6 +142,10 @@
         <file>classic_icons/image-hover.svg</file>
         <file>classic_icons/import_export_configs.svg</file>
         <file>classic_icons/import_export_configs-hover.svg</file>
+        <file>classic_icons/import.svg</file>
+        <file>classic_icons/import-hover.svg</file>
+        <file>classic_icons/export.svg</file>
+        <file>classic_icons/export-hover.svg</file>
         <file>classic_icons/new-project.svg</file>
         <file>classic_icons/new-project-hover.svg</file>
         <file>classic_icons/open.svg</file>
@@ -201,6 +205,10 @@
         <file>charcoal_icons/image-hover.svg</file>
         <file>charcoal_icons/import_export_configs.svg</file>
         <file>charcoal_icons/import_export_configs-hover.svg</file>
+        <file>charcoal_icons/import.svg</file>
+        <file>charcoal_icons/import-hover.svg</file>
+        <file>charcoal_icons/export.svg</file>
+        <file>charcoal_icons/export-hover.svg</file>
         <file>charcoal_icons/new-project.svg</file>
         <file>charcoal_icons/new-project-hover.svg</file>
         <file>charcoal_icons/open.svg</file>
