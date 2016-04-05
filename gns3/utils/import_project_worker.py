@@ -54,41 +54,42 @@ class ImportProjectWorker(QtCore.QObject):
     def _newProjectDialodAcceptedSlot(self):
         new_project_settings = self._project_dialog.getNewProjectSettings()
 
-        self.updated.emit(25)
-
-        dst = new_project_settings['project_files_dir']
+        self._dst = new_project_settings['project_files_dir']
+        name = new_project_settings['project_name']
         self._project_file = new_project_settings['project_path']
+        Servers.instance().localServer().post("/projects", self._createProjectCallback, body={"project_id": self._project_uuid, "name": name, "path": self._dst})
 
-        try:
-            with zipfile.ZipFile(self._source) as myzip:
-                myzip.extractall(dst)
-
-            with open(os.path.join(dst, "project.gns3")) as f:
-                project = json.load(f)
-            project["project_id"] = self._project_uuid
-
-            shutil.move(os.path.join(dst, "project.gns3"), self._project_file)
-
-            self.updated.emit(50)
-
-            if os.path.exists(os.path.join(dst, "servers", "vm")):
-                self._zippath = os.path.join(dst, "servers", "vm.zip")
-                with zipfile.ZipFile(self._zippath, 'w') as z:
-                    for root, dirs, files in os.walk(os.path.join(dst, "servers", "vm")):
-                        for file in files:
-                            path = os.path.join(root, file)
-                            z.write(path, os.path.relpath(path, os.path.join(dst, "servers", "vm")))
-
-                Servers.instance().vmServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._zippath))
-            else:
-                self.finished.emit()
-                self.imported.emit(self._project_file)
-        except OSError as e:
-            self.error.emit("Can't write the topology {}: {}".format(self._path, str(e)), True)
+    def _createProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
+        if error:
+            self.error.emit("Can't import the project", True)
             self.finished.emit()
             return
 
+        self.updated.emit(25)
+        Servers.instance().localServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source))
+
     def _importProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
+        if error:
+            self.error.emit("Can't import the project", True)
+            self.finished.emit()
+            return
+
+        self.updated.emit(50)
+
+        if os.path.exists(os.path.join(self._dst, "servers", "vm")):
+            self._zippath = os.path.join(self._dst, "servers", "vm.zip")
+            with zipfile.ZipFile(self._zippath, 'w') as z:
+                for root, dirs, files in os.walk(os.path.join(self._dst, "servers", "vm")):
+                    for file in files:
+                        path = os.path.join(root, file)
+                        z.write(path, os.path.relpath(path, os.path.join(self._dst, "servers", "vm")))
+
+            Servers.instance().localServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectVMCallback, body=pathlib.Path(self._zippath))
+        else:
+            self.finished.emit()
+            self.imported.emit(self._project_file)
+
+    def _importProjectVMCallback(self, content, error=False, server=None, context={}, **kwargs):
         try:
             os.remove(self._zippath)
         except OSError as e:
