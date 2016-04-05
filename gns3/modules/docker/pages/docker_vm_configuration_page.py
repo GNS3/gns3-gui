@@ -75,6 +75,7 @@ class DockerVMConfigurationPage(
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
             self.uiNetworkConfigEditButton.hide()
+            self.uiNetworkConfigLabel.hide()
         else:
             self._node = node
             self.uiConsolePortSpinBox.setValue(settings["console"])

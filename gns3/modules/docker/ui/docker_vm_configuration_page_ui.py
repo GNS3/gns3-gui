@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dockerVMConfigPageWidget(object):
     def setupUi(self, dockerVMConfigPageWidget):
         dockerVMConfigPageWidget.setObjectName("dockerVMConfigPageWidget")
-        dockerVMConfigPageWidget.resize(651, 402)
+        dockerVMConfigPageWidget.resize(651, 431)
         self.verticalLayout = QtWidgets.QVBoxLayout(dockerVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(dockerVMConfigPageWidget)
@@ -81,9 +81,9 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiNetworkConfigEditButton = QtWidgets.QPushButton(self.tab)
         self.uiNetworkConfigEditButton.setObjectName("uiNetworkConfigEditButton")
         self.gridLayout.addWidget(self.uiNetworkConfigEditButton, 8, 1, 1, 1)
-        self.label = QtWidgets.QLabel(self.tab)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 8, 0, 1, 1)
+        self.uiNetworkConfigLabel = QtWidgets.QLabel(self.tab)
+        self.uiNetworkConfigLabel.setObjectName("uiNetworkConfigLabel")
+        self.gridLayout.addWidget(self.uiNetworkConfigLabel, 8, 0, 1, 1)
         self.uiTabWidget.addTab(self.tab, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
@@ -111,6 +111,6 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiConsoleTypeComboBox.setItemText(1, _translate("dockerVMConfigPageWidget", "vnc"))
         self.uiConsoleTypeLabel.setText(_translate("dockerVMConfigPageWidget", "Console type:"))
         self.uiNetworkConfigEditButton.setText(_translate("dockerVMConfigPageWidget", "Edit"))
-        self.label.setText(_translate("dockerVMConfigPageWidget", "Network configuration"))
+        self.uiNetworkConfigLabel.setText(_translate("dockerVMConfigPageWidget", "Network configuration"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("dockerVMConfigPageWidget", "General settings"))
 
