@@ -221,10 +221,8 @@
                 }
             },
             "required": [
-                "host",
                 "id",
-                "local",
-                "port"
+                "local"
             ],
             "additionalProperties": false
         },
