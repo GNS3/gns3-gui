@@ -99,7 +99,7 @@ class DockerVM(VM):
             params["vm_id"] = vm_id
         params.update(additional_settings)
 
-        self.httpPost("/docker/vms", self._setupCallback, body=params)
+        self.httpPost("/docker/vms", self._setupCallback, body=params, timeout=None)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """Callback for Docker container setup.
