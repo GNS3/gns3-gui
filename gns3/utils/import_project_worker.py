@@ -21,6 +21,7 @@ import shutil
 import uuid
 import json
 import os
+import sys
 
 
 from ..qt import QtCore, QtWidgets
@@ -66,7 +67,11 @@ class ImportProjectWorker(QtCore.QObject):
             return
 
         self.updated.emit(25)
-        Servers.instance().localServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source))
+        if sys.platform.startswith("linux") and Servers.instance().vmServer() is None:
+            Servers.instance().localServer().post("/projects/{}/import?gns3vm=0".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source))
+        else:
+            Servers.instance().localServer().post("/projects/{}/import?gns3vm=1".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source))
+
 
     def _importProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
         if error:
@@ -77,6 +82,11 @@ class ImportProjectWorker(QtCore.QObject):
         self.updated.emit(50)
 
         if os.path.exists(os.path.join(self._dst, "servers", "vm")):
+            if Servers.instance().vmServer() is None:
+                self.error.emit("You need to configure the GNS3 VM to import this project", True)
+                self.finished.emit()
+                return
+
             self._zippath = os.path.join(self._dst, "servers", "vm.zip")
             with zipfile.ZipFile(self._zippath, 'w') as z:
                 for root, dirs, files in os.walk(os.path.join(self._dst, "servers", "vm")):
@@ -84,7 +94,7 @@ class ImportProjectWorker(QtCore.QObject):
                         path = os.path.join(root, file)
                         z.write(path, os.path.relpath(path, os.path.join(self._dst, "servers", "vm")))
 
-            Servers.instance().localServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectVMCallback, body=pathlib.Path(self._zippath))
+            Servers.instance().vmServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectVMCallback, body=pathlib.Path(self._zippath))
         else:
             self.finished.emit()
             self.imported.emit(self._project_file)
