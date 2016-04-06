@@ -143,7 +143,15 @@ class DockerVM(VM):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
+                if name == "adapters":
+                    nb_adapters_changed = True
                 self._settings[name] = value
+
+        if nb_adapters_changed:
+            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+            # TODO: dynamically add/remove adapters
+            self._ports.clear()
+            self._addAdapters(self._settings["adapters"])
 
         if updated:
             log.info("Docker VM {} has been updated".format(self.name()))
