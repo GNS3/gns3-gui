@@ -19,11 +19,12 @@
 Configuration page for Docker images.
 """
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtWidgets, QtGui
 
 from ..ui.docker_vm_configuration_page_ui import Ui_dockerVMConfigPageWidget
 from ....dialogs.file_editor_dialog import FileEditorDialog
 from ....dialogs.node_properties_dialog import ConfigurationError
+from ....dialogs.symbol_selection_dialog import SymbolSelectionDialog
 
 
 class DockerVMConfigurationPage(
@@ -34,7 +35,21 @@ class DockerVMConfigurationPage(
 
         super().__init__()
         self.setupUi(self)
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiNetworkConfigEditButton.released.connect(self._networkConfigEditSlot)
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -72,6 +87,10 @@ class DockerVMConfigurationPage(
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
 
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["symbol"])
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
+
             self.uiCategoryComboBox.setCurrentIndex(settings["category"])
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
@@ -85,6 +104,10 @@ class DockerVMConfigurationPage(
 
             self.uiDefaultNameFormatLabel.hide()
             self.uiDefaultNameFormatLineEdit.hide()
+
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
 
     def _networkConfigEditSlot(self):
         dialog = FileEditorDialog(self._node, self._node.networkInterfacesPath())
@@ -133,6 +156,13 @@ class DockerVMConfigurationPage(
                 QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
             else:
                 settings["default_name_format"] = default_name_format
+
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["symbol"] = symbol_path
         else:
             settings["console"] = self.uiConsolePortSpinBox.value()
 
