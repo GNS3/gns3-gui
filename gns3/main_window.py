@@ -1571,7 +1571,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         running_nodes = self._running_nodes()
         if running_nodes:
             nodes = "\n".join(running_nodes)
-            MessageBox(self, "Download project", "Please stop the following nodes before exporting the project", nodes)
+            MessageBox(self, "Export project", "Please stop the following nodes before exporting the project", nodes)
+            return
+
+        if self.testAttribute(QtCore.Qt.WA_WindowModified):
+            MessageBox(self, "Export project", "Please save the project before exporting it")
             return
 
         export_worker = ExportProjectWorker(self, self._project)
