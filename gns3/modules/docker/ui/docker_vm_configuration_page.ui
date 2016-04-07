@@ -44,8 +44,28 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiSymbolToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="6" column="1">
         <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="minimum">
+          <number>1024</number>
+         </property>
          <property name="maximum">
           <number>65535</number>
          </property>
@@ -58,7 +78,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="10" column="0">
         <widget class="QLabel" name="uiEnvironmentLabel">
          <property name="text">
           <string>Environment (KEY=VALUE one by line):</string>
@@ -71,7 +91,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="11" column="1">
         <widget class="QPushButton" name="uiNetworkConfigEditButton">
          <property name="text">
           <string>Edit</string>
@@ -92,7 +112,7 @@
          </item>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="11" column="0">
         <widget class="QLabel" name="uiNetworkConfigLabel">
          <property name="text">
           <string>Network configuration</string>
@@ -154,7 +174,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
+       <item row="10" column="1">
         <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
        </item>
        <item row="4" column="0">
@@ -164,6 +184,45 @@
          </property>
         </widget>
        </item>
+       <item row="8" column="1">
+        <widget class="QComboBox" name="uiConsoleResolutionComboBox">
+         <item>
+          <property name="text">
+           <string>1920x1080</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1366x768</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1280x1024</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1280x800</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1024x768</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>800x600</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>640x480</string>
+          </property>
+         </item>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="uiSymbolLabel">
          <property name="text">
@@ -171,22 +230,29 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <widget class="QLineEdit" name="uiSymbolLineEdit"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="uiSymbolToolButton">
-           <property name="text">
-            <string>&amp;Browse...</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiConsoleResolutionLabel">
+         <property name="text">
+          <string>Console resolution (for VNC):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiAuxPortLabel">
+         <property name="text">
+          <string>Aux port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QSpinBox" name="uiAuxPortSpinBox">
+         <property name="minimum">
+          <number>1024</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

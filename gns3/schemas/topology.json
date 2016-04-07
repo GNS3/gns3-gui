@@ -331,7 +331,11 @@
                 "image": { "$ref": "#/definitions/mandatory_string" },
                 "environment": { "type": "string" },
                 "start_command": { "type": "string" },
-                "console_type": { "$ref": "#/definitions/mandatory_string" }
+                "console_type": { "$ref": "#/definitions/mandatory_string" },
+                "console_resolution": {
+                  "type": "string",
+                  "pattern": "^[0-9]+x[0-9]+$"
+                }
             },
             "required": [
                 "console",

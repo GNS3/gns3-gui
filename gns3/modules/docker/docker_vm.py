@@ -54,7 +54,8 @@ class DockerVM(VM):
             "environment": DOCKER_CONTAINER_SETTINGS["environment"],
             "console": None,
             "aux": None,
-            "console_type": DOCKER_CONTAINER_SETTINGS["console_type"]
+            "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
+            "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"]
         }
 
     def _addAdapters(self, adapters):

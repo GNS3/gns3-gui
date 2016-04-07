@@ -63,6 +63,7 @@ class DockerVMConfigurationPage(
         self.uiCMDLineEdit.setText(settings["start_command"])
         self.uiEnvironmentTextEdit.setText(settings["environment"])
         self.uiConsoleTypeComboBox.setCurrentIndex(self.uiConsoleTypeComboBox.findText(settings["console_type"]))
+        self.uiConsoleResolutionComboBox.setCurrentIndex(self.uiConsoleResolutionComboBox.findText(settings["console_resolution"]))
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -76,6 +77,8 @@ class DockerVMConfigurationPage(
             self.uiAdapterSpinBox.hide()
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
+            self.uiAuxPortLabel.hide()
+            self.uiAuxPortSpinBox.hide()
             self.uiCategoryComboBox.hide()
 
         if not node:
@@ -94,11 +97,14 @@ class DockerVMConfigurationPage(
             self.uiCategoryComboBox.setCurrentIndex(settings["category"])
             self.uiConsolePortLabel.hide()
             self.uiConsolePortSpinBox.hide()
+            self.uiAuxPortLabel.hide()
+            self.uiAuxPortSpinBox.hide()
             self.uiNetworkConfigEditButton.hide()
             self.uiNetworkConfigLabel.hide()
         else:
             self._node = node
             self.uiConsolePortSpinBox.setValue(settings["console"])
+            self.uiAuxPortSpinBox.setValue(settings["aux"])
             self.uiCategoryComboBox.hide()
             self.uiCategoryLabel.hide()
 
@@ -126,6 +132,7 @@ class DockerVMConfigurationPage(
         settings["start_command"] = self.uiCMDLineEdit.text()
         settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText()
+        settings["console_resolution"] = self.uiConsoleResolutionComboBox.currentText()
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()
@@ -165,5 +172,6 @@ class DockerVMConfigurationPage(
                 settings["symbol"] = symbol_path
         else:
             settings["console"] = self.uiConsolePortSpinBox.value()
+            settings["aux"] = self.uiAuxPortSpinBox.value()
 
 
