@@ -21,6 +21,7 @@ import shutil
 
 from ..qt import QtCore, QtWidgets
 from ..servers import Servers
+from ..topology import Topology
 
 
 class ExportProjectWorker(QtCore.QObject):
@@ -43,6 +44,14 @@ class ExportProjectWorker(QtCore.QObject):
             self.finished.emit()
             return
 
+        topology = Topology.instance()
+        for node in topology.nodes():
+
+            if node.__class__.__name__ in ["VirtualBoxVM", "VMwareVM"]:
+                self.error.emit("You cannot export a project including VMware or VirtualBox VM because the data are managed by this software.", True)
+                self.finished.emit()
+                return
+
         for server in self._project.servers():
             if not server.isLocal() and not server.isGNS3VM():
                 self.error.emit("Project from remote server can not be exported. Only project for local and GNS3 VM are supported.", True)
@@ -50,7 +59,7 @@ class ExportProjectWorker(QtCore.QObject):
                 return
 
         self._path, _ = QtWidgets.QFileDialog.getSaveFileName(self.parent(), "Export project", None, "GNS3 Topology (*.gns3z)", "GNS3 Topology (*.gns3z)")
-        if self._path is None:
+        if self._path is None or len(self._path) == 0:
             self.finished.emit()
             return
 
