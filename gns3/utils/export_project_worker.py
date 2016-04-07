@@ -44,6 +44,14 @@ class ExportProjectWorker(QtCore.QObject):
             self.finished.emit()
             return
 
+        if not os.path.exists(self._project.readmePathFile()):
+            text, ok = QtWidgets.QInputDialog.getMultiLineText(self.parent(), "Readme", "Please provide a description for the topology if you want to share it with the public. \nThis will be save in the file README.txt in the project and use for all project exports", "Topology title\n\nAuthor: Grace Hopper <grace@hopper>\n\nThis topology...")
+            if not ok:
+                self.finished.emit()
+                return
+            with open(self._project.readmePathFile(), 'w+') as f:
+                f.write(text)
+
         topology = Topology.instance()
         for node in topology.nodes():
 

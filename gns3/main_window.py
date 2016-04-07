@@ -246,6 +246,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.triggered.connect(self._insertImageActionSlot)
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
+        self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
@@ -1003,6 +1004,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             self.setSettings(self._settings)
 
+    def _editReadmeActionSlot(self):
+        """
+        Slot to edit the README file
+        """
+
+        if self._project.temporary():
+            QtWidgets.QMessageBox.critical(self, "README", "Sorry, README file is not supported with temporary projects")
+            return
+
+        log.debug("Opened %s", self._project.readmePathFile())
+        if not os.path.exists(self._project.readmePathFile()):
+            try:
+                with open(self._project.readmePathFile(), "w+") as f:
+                    f.write("Title: My lab\nAuthor: Grass Hopper <grass@hopper.com>\n\nThis lab is about...")
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self, "README", "Could not create {}".format(self._project.readmePathFile()))
+                return
+        if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + self._project.readmePathFile(), QtCore.QUrl.TolerantMode)) is False:
+            QtWidgets.QMessageBox.critical(self, "README", "Could not open {}".format(self._project.readmePathFile()))
+
     def keyPressEvent(self, event):
         """
         Handles all key press events for the main window.
@@ -1630,6 +1651,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.setIcon(QtGui.QIcon(":/icons/save.svg"))
         self.uiSaveProjectAsAction.setIcon(QtGui.QIcon(":/icons/save-as.svg"))
         self.uiImportExportConfigsAction.setIcon(QtGui.QIcon(":/icons/import_export_configs.svg"))
+        self.uiImportProjectAction.setIcon(QtGui.QIcon(":/icons/import_config.svg"))
+        self.uiExportProjectAction.setIcon(QtGui.QIcon(":/icons/export_config.svg"))
         self.uiScreenshotAction.setIcon(QtGui.QIcon(":/icons/camera-photo.svg"))
         self.uiSnapshotAction.setIcon(QtGui.QIcon(":/icons/snapshot.svg"))
         self.uiQuitAction.setIcon(QtGui.QIcon(":/icons/quit.svg"))
@@ -1647,6 +1670,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.setIcon(QtGui.QIcon(":/icons/image.svg"))
         self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/icons/rectangle.svg", ":/icons/rectangle-hover.svg"))
         self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/icons/ellipse.svg", ":/icons/ellipse-hover.svg"))
+        self.uiEditReadmeAction.setIcon(QtGui.QIcon(":/icons/edit.svg"))
         self.uiOnlineHelpAction.setIcon(QtGui.QIcon(":/icons/help.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/icons/router.png", ":/icons/router-hover.png"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/icons/switch.png", ":/icons/switch-hover.png"))
@@ -1686,6 +1710,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.setIcon(self._getStyleIcon(":/classic_icons/image.svg", ":/classic_icons/image-hover.svg"))
         self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/classic_icons/rectangle.svg", ":/classic_icons/rectangle-hover.svg"))
         self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/classic_icons/ellipse.svg", ":/classic_icons/ellipse-hover.svg"))
+        self.uiEditReadmeAction.setIcon(self._getStyleIcon(":/classic_icons/edit.svg", ":/classic_icons/edit.svg"))
         self.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/classic_icons/help.svg", ":/classic_icons/help-hover.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/classic_icons/router.svg", ":/classic_icons/router-hover.svg"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/classic_icons/switch.svg", ":/classic_icons/switch-hover.svg"))
@@ -1748,6 +1773,7 @@ QComboBox QAbstractItemView {background-color: #dedede}
         self.uiInsertImageAction.setIcon(self._getStyleIcon(":/charcoal_icons/image.svg", ":/charcoal_icons/image-hover.svg"))
         self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/charcoal_icons/rectangle.svg", ":/charcoal_icons/rectangle-hover.svg"))
         self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/charcoal_icons/ellipse.svg", ":/charcoal_icons/ellipse-hover.svg"))
+        self.uiEditReadmeAction.setIcon(self._getStyleIcon(":/charcoal_icons/edit.svg", ":/charcoal_icons/edit.svg"))
         self.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/charcoal_icons/help.svg", ":/charcoal_icons/help-hover.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/charcoal_icons/router.svg", ":/charcoal_icons/router-hover.svg"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/charcoal_icons/switch.svg", ":/charcoal_icons/switch-hover.svg"))
