@@ -64,7 +64,7 @@ class ServerItem(QtWidgets.QTreeWidgetItem):
         else:
             text = self._server.url()
 
-        if usage is not None and usage["cpu_usage_percent"] > 0.0:
+        if usage is not None:
             text = "{} CPU {}%, RAM {}%".format(text, usage["cpu_usage_percent"], usage["memory_usage_percent"])
 
         self.setText(0, text)

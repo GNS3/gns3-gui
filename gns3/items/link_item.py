@@ -26,6 +26,18 @@ import sys
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
 
+class SvgCaptureItem(QtSvg.QGraphicsSvgItem):
+
+    def __init__(self, symbol, parent):
+
+        QtSvg.QGraphicsSvgItem.__init__(self, symbol, parent)
+
+    def mousePressEvent(self, event):
+
+        self.parentItem().mousePressEvent(event)
+        event.accept()
+
+
 class LinkItem(QtWidgets.QGraphicsPathItem):
 
     """
@@ -454,9 +466,10 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         if not self._adding_flag:
             if (self._source_port.capturing() or self._destination_port.capturing()) and self.length >= 150:
-                link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 18, self.source.y() + self.dy / 2.0 - 18)
+                link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                 if self._capturing_item is None:
-                    self._capturing_item = QtSvg.QGraphicsSvgItem(':/icons/inspect.svg', self)
+                    self._capturing_item = SvgCaptureItem(':/icons/inspect.svg', self)
+                    self._capturing_item.setScale(0.6)
                 self._capturing_item.setPos(link_center)
                 if not self._capturing_item.isVisible():
                     self._capturing_item.show()
