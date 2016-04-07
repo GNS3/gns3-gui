@@ -136,6 +136,9 @@ class Project(QtCore.QObject):
 
         self._files_dir = files_dir
 
+    def readmePathFile(self):
+        return os.path.join(self._files_dir, "README.txt")
+
     def topologyFile(self):
         """
         Path to the topology file

@@ -246,6 +246,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.triggered.connect(self._insertImageActionSlot)
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
+        self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
@@ -1002,6 +1003,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dialog.exec_()
             self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             self.setSettings(self._settings)
+
+    def _editReadmeActionSlot(self):
+        """
+        Slot to edit the Readme
+        """
+        log.debug("Opened %s", self._project.readmePathFile())
+        if not os.path.exists(self._project.readmePathFile()):
+            try:
+                with open(self._project.readmePathFile(), "w+") as f:
+                    f.write("Topology title\n\nAuthor: Grace Hopper <grace@hopper>\n\nThis topology...")
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self, "Readme", "Could not create {}".format(self._project.readmePathFile()))
+                return
+        if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + self._project.readmePathFile(), QtCore.QUrl.TolerantMode)) is False:
+            QtWidgets.QMessageBox.critical(self, "Readme", "Could not open {}".format(self._project.readmePathFile()))
 
     def keyPressEvent(self, event):
         """
