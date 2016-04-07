@@ -128,7 +128,7 @@ class DockerVMPreferencesPage(
             dialog.show()
             if dialog.exec_():
                 if docker_image["name"] != item.text(0):
-                    new_key = "{server}:{image}".format(
+                    new_key = "{server}:{name}".format(
                         server=docker_image["server"],
                         name=docker_image["name"])
                     if new_key in self._docker_containers:
