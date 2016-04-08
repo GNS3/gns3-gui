@@ -429,7 +429,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             new_gns3vm_settings["remote_vm_user"] = self.uiServersComboBox.currentData().user()
             new_gns3vm_settings["remote_vm_url"] = self.uiServersComboBox.currentData().url()
 
-        if not self.uiRemoteRadioButton.isChecked() and new_gns3vm_settings != servers_settings["vm"]:
+        if new_gns3vm_settings != servers_settings["vm"]:
             log.info("GNS3 VM restart required!")
             restart_gns3_vm = True
         servers_settings["vm"].update(new_gns3vm_settings)
@@ -444,7 +444,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         if restart_gns3_vm:
             gns3_vm = GNS3VM.instance()
             gns3_vm.shutdown(force=True)
-            if gns3_vm.autoStart():
+            if servers_settings["vm"]["virtualization"] == "remote":
+                servers.initVMServer()
+            elif gns3_vm.autoStart():
                 servers.initVMServer()
                 worker = WaitForVMWorker()
                 progress_dialog = ProgressDialog(worker, "Local GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
