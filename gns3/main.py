@@ -189,7 +189,11 @@ def main():
         raise SystemExit("Python 3.4 or higher is required")
 
     def version(version_string):
-        return [int(i) for i in re.split(r'[^0-9]', version_string)]
+        result = []
+        for i in re.split(r'[^0-9]', version_string):
+            if len(i):
+                result.append(int(i))
+        return result
 
     # 4.8.3 because of QSettings (http://pyqt.sourceforge.net/Docs/PyQt4/pyqt_qsettings.html)
     if DEFAULT_BINDING == "PyQt4" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
