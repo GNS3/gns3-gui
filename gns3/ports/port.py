@@ -499,9 +499,7 @@ class Port:
                     command1 = shlex.split(command1)
                     command2 = shlex.split(command2)
                 except ValueError as e:
-                    msg = "Invalid packet capture command {}: {}".format(command, str(e))
-                    print(msg)
-                    log.error(msg)
+                    log.error("Invalid packet capture command {}: {}".format(command, str(e)))
                     return
 
             self._tail_process = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)

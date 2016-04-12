@@ -29,6 +29,29 @@ from .pycutext import PyCutExt
 from .modules import MODULES
 from .local_config import LocalConfig
 
+import logging
+log = logging.getLogger(__name__)
+
+
+class ConsoleLogHandler(logging.StreamHandler):
+    """
+    Display log event to the console
+    """
+    def emit(self, record):
+        message = self.format(record)
+        level_no = record.levelno
+        if level_no >= logging.ERROR:
+            self._console_view.write("\n{}".format(message), error=True)
+        elif level_no >= logging.WARNING:
+            self._console_view.write(" \n{}".format(message), warning=True)
+        elif level_no >= logging.INFO:
+            # To avoid noise on console we display all event only if log level is debug
+            # or if we force the display in the log record
+            if "show" in record.__dict__ or logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+                self._console_view.write("\n{}".format(message))
+        elif level_no >= logging.DEBUG:
+            self._console_view.write("\n{}".format(message))
+
 
 class ConsoleView(PyCutExt, ConsoleCmd):
 
@@ -45,9 +68,6 @@ class ConsoleView(PyCutExt, ConsoleCmd):
                      "Copyright (c) 2006-{} GNS3 Technologies.\n" \
                      "Use Help -> GNS3 Doctor to detect common issues." \
                      "".format(__version__, platform.system(), bitness, platform.python_version(), QtCore.QT_VERSION_STR, current_year)
-
-        if LocalConfig.instance().experimental():
-            self.intro += "\nWARNING: Experimental features enable. You can use some unfinished features and lost data."
 
         # Parent class initialization
         try:
@@ -66,6 +86,11 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         except Exception as e:
             sys.stderr.write(e)
 
+        self._handleLogs()
+
+        if LocalConfig.instance().experimental():
+           log.warning("WARNING: Experimental features enable. You can use some unfinished features and lost data.")
+
         for module in MODULES:
             instance = module.instance()
             instance.notification_signal.connect(self.writeNotification)
@@ -73,6 +98,17 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # required for Cmd module (do_help etc.)
         self.stdout = sys.stdout
         self._topology = Topology.instance()
+
+
+    def _handleLogs(self):
+        """
+        Catch log message and display them
+        """
+
+        log = logging.getLogger()
+        log_handler = ConsoleLogHandler()
+        log_handler._console_view = self
+        log.addHandler(log_handler)
 
     def isatty(self):
         """

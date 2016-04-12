@@ -290,7 +290,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 break
 
         if not source_item or not destination_item:
-            print("Could not find a source or destination item for the link!")
+            log.error("Could not find a source or destination item for the link!")
             self.deleteLinkSlot(link_id)
             return
 

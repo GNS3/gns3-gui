@@ -479,7 +479,6 @@ class Servers(QtCore.QObject):
                 QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not find an unused port for the local server: {}".format(e))
                 return False
             log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
-            print("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
         return True
 
     def _findUnusedLocalPort(self, host):

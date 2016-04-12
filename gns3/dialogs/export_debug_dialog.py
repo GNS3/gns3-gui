@@ -29,6 +29,7 @@ from gns3.local_config import LocalConfig
 import logging
 log = logging.getLogger(__name__)
 
+
 class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
     """
     This dialog allow user to export useful information

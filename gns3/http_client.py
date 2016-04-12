@@ -312,8 +312,7 @@ class HTTPClient(QtCore.QObject):
                 if callback is not None:
                     callback({"message": msg}, error=True, server=server)
                 return
-            print(msg)
-            print("WARNING: Use a different client and server version can create bugs. Use it at your own risk.")
+            log.warning("Use a different client and server version can create bugs. Use it at your own risk.")
 
         self._connected = True
         self.connection_connected_signal.emit()
@@ -386,6 +385,10 @@ class HTTPClient(QtCore.QObject):
         :param timeout: Delay in seconds before raising a timeout
         :returns: QNetworkReply
         """
+
+        #TODO: remove it when all call are migrated
+        if "hypervisor/" in path:
+            log.warning("Legacy hypervisor direct call %s", path)
 
         try:
             ip = self._host.rsplit('%', 1)[0]
@@ -510,7 +513,7 @@ class HTTPClient(QtCore.QObject):
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
                 if status == 401:
-                    print(error_message)
+                    log.error(error_message)
 
             try:
                 body = bytes(response.readAll()).decode("utf-8").strip("\0")

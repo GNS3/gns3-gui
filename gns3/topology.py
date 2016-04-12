@@ -541,8 +541,7 @@ class Topology:
         errors = getTopologyValidationErrors(topology)
         if errors:
             log.error(errors)
-            print(errors)
-            print(VALIDATION_ERROR_MESSAGE)
+            log.error(VALIDATION_ERROR_MESSAGE)
             if hasattr(sys, '_called_from_test'):
                 raise Exception
 
@@ -591,8 +590,7 @@ class Topology:
         errors = getTopologyValidationErrors(json_topology)
         if errors:
             log.error(errors)
-            print(errors)
-            print(VALIDATION_ERROR_MESSAGE)
+            log.error(VALIDATION_ERROR_MESSAGE)
             if hasattr(sys, '_called_from_test'):
                 raise Exception
 
@@ -912,7 +910,6 @@ class Topology:
                             break
                     if not found:
                         msg = "Corrupted topology {} source port doesn't exist".format(link["description"])
-                        print(msg)
                         log.error(msg)
 
                     # find the destination port
@@ -926,7 +923,6 @@ class Topology:
                             break
                     if not found:
                         msg = "Corrupted topology {} destination port {} doesn't exist".format(link["description"], link["destination_port_id"])
-                        print(msg)
                         log.error(msg)
 
                     if source_port and destination_port:

@@ -270,7 +270,7 @@ class Project(QtCore.QObject):
         """
 
         if error:
-            print("Error while creating project: {}".format(params["message"]))
+            log.error("Error while creating project: {}".format(params["message"]))
             return
 
         if not self._created:
@@ -366,13 +366,10 @@ class Project(QtCore.QObject):
                     vm.stopped_signal.emit()
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
-            print("Error: " + result["event"]["message"])
         elif result["action"] == "log.warning":
             log.warning(result["event"]["message"])
-            print("Warning: " + result["event"]["message"])
         elif result["action"] == "log.info":
-            log.info(result["event"]["message"])
-            print("Info: " + result["event"]["message"])
+            log.info(result["event"]["message"], extra={"show": True})
         elif result["action"] == "ping":
             if "hypervisor_id" in result:
                 hypervisor = Servers.instance().getServerFromString(result["hypervisor_id"])

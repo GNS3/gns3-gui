@@ -118,7 +118,7 @@ class LocalConfig(QtCore.QObject):
                 try:
                     shutil.copytree(old_path, new_path)
                 except OSError as e:
-                    print("Can't copy the old config: %s", str(e))
+                    log.error("Can't copy the old config: %s", str(e))
 
     def _migrateOldConfig(self):
         """

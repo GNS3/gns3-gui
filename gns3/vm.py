@@ -417,7 +417,6 @@ class VM(Node):
             for port in self._ports:
                 if port.name() in initialized_port_name:
                     msg = "Duplicate port name {} in {}.".format(port.name(), self.name())
-                    print(msg)
                     log.error(msg)
                 else:
                     ports.append(port.dump())
@@ -490,7 +489,6 @@ class VM(Node):
 
                             if port in port_initialized:
                                 msg = "Topology corrupted port {} already exists for {}".format(port, self.name())
-                                print(msg)
                                 log.error(msg)
                             else:
                                 port.setName(topology_port["name"])

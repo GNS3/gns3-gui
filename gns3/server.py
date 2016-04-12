@@ -266,6 +266,6 @@ class Server(QtCore.QObject):
         """
         Closes the connection with the server.
         """
-        log.info("Connection to %s closed", self.url())
+        log.debug("Connection to %s closed", self.url())
         self._http_client.close()
         self.connection_closed_signal.emit()
