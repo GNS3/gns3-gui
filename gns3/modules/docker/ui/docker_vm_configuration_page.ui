@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>651</width>
-    <height>402</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,17 +24,13 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="7" column="1">
-        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="uiCMDLineEdit"/>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiCMDLabel">
-         <property name="text">
-          <string>Start command:</string>
-         </property>
-        </widget>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="uiAdapterLabel">
          <property name="text">
           <string>Adapters:</string>
@@ -42,6 +38,47 @@
         </widget>
        </item>
        <item row="7" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiSymbolToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="1">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="minimum">
+          <number>1024</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+         <property name="text">
+          <string>Default name format</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
         <widget class="QLabel" name="uiEnvironmentLabel">
          <property name="text">
           <string>Environment (KEY=VALUE one by line):</string>
@@ -54,21 +91,36 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       <item row="11" column="1">
+        <widget class="QPushButton" name="uiNetworkConfigEditButton">
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="uiCMDLineEdit"/>
+       <item row="7" column="1">
+        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>vnc</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="uiNetworkConfigLabel">
+         <property name="text">
+          <string>Network configuration</string>
+         </property>
+        </widget>
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
-         <property name="text">
-          <string>Default name format</string>
-         </property>
-        </widget>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiNameLabel">
@@ -78,20 +130,13 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
         <widget class="QSpinBox" name="uiAdapterSpinBox">
          <property name="minimum">
           <number>1</number>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="uiConsolePortLabel">
          <property name="text">
           <string>Console port:</string>
@@ -129,24 +174,83 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+       <item row="10" column="1">
+        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiCMDLabel">
+         <property name="text">
+          <string>Start command:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QComboBox" name="uiConsoleResolutionComboBox">
          <item>
           <property name="text">
-           <string>telnet</string>
+           <string>1920x1080</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>vnc</string>
+           <string>1366x768</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1280x1024</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1280x800</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1024x768</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>800x600</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>640x480</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiConsoleTypeLabel">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
          <property name="text">
-          <string>Console type:</string>
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiConsoleResolutionLabel">
+         <property name="text">
+          <string>Console resolution (for VNC):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiAuxPortLabel">
+         <property name="text">
+          <string>Aux port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QSpinBox" name="uiAuxPortSpinBox">
+         <property name="minimum">
+          <number>1024</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
          </property>
         </widget>
        </item>

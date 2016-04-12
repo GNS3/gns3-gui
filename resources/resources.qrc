@@ -66,6 +66,7 @@
         <file>icons/stop-hover.svg</file>
         <file>icons/reload.svg</file>
         <file>icons/add-note.svg</file>
+        <file>icons/edit.svg</file>
         <file>icons/inspect.svg</file>
         <file>icons/capture-start.svg</file>
         <file>icons/capture-stop.svg</file>
@@ -126,6 +127,8 @@
         <file>classic_icons/add-link-cancel.svg</file>
         <file>classic_icons/add-note.svg</file>
         <file>classic_icons/add-note-hover.svg</file>
+        <file>classic_icons/edit.svg</file>
+        <file>classic_icons/edit-hover.svg</file>
         <file>classic_icons/browse-all-icons.svg</file>
         <file>classic_icons/browse-all-icons-hover.svg</file>
         <file>classic_icons/camera-photo.svg</file>
@@ -142,6 +145,10 @@
         <file>classic_icons/image-hover.svg</file>
         <file>classic_icons/import_export_configs.svg</file>
         <file>classic_icons/import_export_configs-hover.svg</file>
+        <file>classic_icons/import.svg</file>
+        <file>classic_icons/import-hover.svg</file>
+        <file>classic_icons/export.svg</file>
+        <file>classic_icons/export-hover.svg</file>
         <file>classic_icons/new-project.svg</file>
         <file>classic_icons/new-project-hover.svg</file>
         <file>classic_icons/open.svg</file>
@@ -185,6 +192,8 @@
         <file>charcoal_icons/add-link-1-cancel.svg</file>
         <file>charcoal_icons/add-note.svg</file>
         <file>charcoal_icons/add-note-hover.svg</file>
+        <file>charcoal_icons/edit.svg</file>
+        <file>charcoal_icons/edit-hover.svg</file>
         <file>charcoal_icons/browse-all-icons.svg</file>
         <file>charcoal_icons/browse-all-icons-hover.svg</file>
         <file>charcoal_icons/camera-photo.svg</file>
@@ -201,6 +210,10 @@
         <file>charcoal_icons/image-hover.svg</file>
         <file>charcoal_icons/import_export_configs.svg</file>
         <file>charcoal_icons/import_export_configs-hover.svg</file>
+        <file>charcoal_icons/import.svg</file>
+        <file>charcoal_icons/import-hover.svg</file>
+        <file>charcoal_icons/export.svg</file>
+        <file>charcoal_icons/export-hover.svg</file>
         <file>charcoal_icons/new-project.svg</file>
         <file>charcoal_icons/new-project-hover.svg</file>
         <file>charcoal_icons/open.svg</file>

@@ -167,7 +167,6 @@ class WaitForVMWorker(QtCore.QObject):
         """
 
         vm_server = Servers.instance().vmServer()
-
         self._is_running = True
         if self._virtualization == "VMware":
             self._is_running = self._start_vmware(vm_server)
@@ -249,7 +248,9 @@ class WaitForVMWorker(QtCore.QObject):
         return True
 
     def _start_virtualbox(self, vm_server):
-        """handle a VirtualBox based GNS3 VM"""
+        """
+        Handle a VirtualBox based GNS3 VM
+        """
 
         try:
             # get a NAT interface number
@@ -297,9 +298,9 @@ class WaitForVMWorker(QtCore.QObject):
                 log.debug("Removing GNS3VM NAT port forwarding rule from interface {}".format(nat_interface_number))
                 self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "delete", "GNS3VM"])
 
-            # add a GNS3VM NAT port forwarding rule to redirect 127.0.0.1 with random port to port 8000 in the VM
+            # add a GNS3VM NAT port forwarding rule to redirect 127.0.0.1 with random port to port 3080 in the VM
             log.debug("Adding GNS3VM NAT port forwarding rule with port {} to interface {}".format(port, nat_interface_number))
-            self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,8000".format(ip_address, port)])
+            self._vm.execute_vboxmanage("controlvm", [self._vmname, "natpf{}".format(nat_interface_number), "GNS3VM,tcp,{},{},,3080".format(ip_address, port)])
 
             if not self._is_running:
                 return False

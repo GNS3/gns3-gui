@@ -61,9 +61,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
 
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
-        if hasattr(self, "uiLoadBalanceCheckBox"):
-            self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
-
         self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
 
     def initializePage(self, page_id):
@@ -516,15 +513,3 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(False)
             self.uiRemoteServersGroupBox.hide()
-
-    def _loadBalanceToggledSlot(self, checked):
-        """
-        Slot for when the load balance checkbox is toggled.
-
-        :param checked: either the box is checked or not
-        """
-
-        if checked:
-            self.uiRemoteServersComboBox.setEnabled(False)
-        else:
-            self.uiRemoteServersComboBox.setEnabled(True)

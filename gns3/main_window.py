@@ -50,6 +50,8 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.wait_for_vm_worker import WaitForVMWorker
+from .utils.export_project_worker import ExportProjectWorker
+from .utils.import_project_worker import ImportProjectWorker
 from .utils.message_box import MessageBox
 from .ports.port import Port
 from .items.node_item import NodeItem
@@ -58,7 +60,6 @@ from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology
-from .utils.download_project import DownloadProjectWorker
 from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
@@ -94,7 +95,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         MainWindow._instance = self
         self._settings = {}
-        HTTPClient.setProgressCallback(Progress().instance())
+        HTTPClient.setProgressCallback(Progress.instance(self))
 
         self._project = None
         self._createTemporaryProject()
@@ -205,7 +206,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
         self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
-        self.uiDownloadRemoteProject.triggered.connect(self._downloadRemoteProjectActionSlot)
+        self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
+        self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
@@ -244,6 +246,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.triggered.connect(self._insertImageActionSlot)
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
+        self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
@@ -390,7 +393,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;NET files (*.net)",
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z);;NET files (*.net)",
                                                         "GNS3 project files (*.gns3)")
         if path:
             self.loadPath(path)
@@ -427,7 +430,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog.reject()
                 self._project_dialog = None
 
-            if path.endswith(".gns3a"):
+            if path.endswith(".gns3z"):
+                import_worker = ImportProjectWorker(self, path)
+                import_worker.imported.connect(self.loadPath)
+
+                progress_dialog = ProgressDialog(import_worker, "Import project", "Importing project files...", "Cancel", parent=self)
+                progress_dialog.show()
+                progress_dialog.exec_()
+            elif path.endswith(".gns3a"):
                 try:
                     self._appliance_wizard = ApplianceWizard(self, path)
                 except ApplianceError as e:
@@ -565,6 +575,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if node.server() != Servers.instance().localServer():
                 QtWidgets.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots can only be created if all the nodes run locally")
                 return
+
+        if self._nodeRunning():
+            QtWidgets.QMessageBox.warning(self, "Snapshots", "Sorry, snapshots can only be created when all nodes are stopped")
+            return
 
         dialog = SnapshotsDialog(self,
                                  self._project.topologyFile(),
@@ -984,8 +998,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         with Progress.instance().context(min_duration=0):
             dialog = PreferencesDialog(self)
+            dialog.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["preferences_dialog_geometry"].encode()))
             dialog.show()
             dialog.exec_()
+            self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
+            self.setSettings(self._settings)
+
+    def _editReadmeActionSlot(self):
+        """
+        Slot to edit the README file
+        """
+
+        if self._project.temporary():
+            QtWidgets.QMessageBox.critical(self, "README", "Sorry, README file is not supported with temporary projects")
+            return
+
+        log.debug("Opened %s", self._project.readmePathFile())
+        if not os.path.exists(self._project.readmePathFile()):
+            try:
+                with open(self._project.readmePathFile(), "w+") as f:
+                    f.write("Title: My lab\nAuthor: Grass Hopper <grass@hopper.com>\n\nThis lab is about...")
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self, "README", "Could not create {}".format(self._project.readmePathFile()))
+                return
+        if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + self._project.readmePathFile(), QtCore.QUrl.TolerantMode)) is False:
+            QtWidgets.QMessageBox.critical(self, "README", "Could not open {}".format(self._project.readmePathFile()))
 
     def keyPressEvent(self, event):
         """
@@ -1056,12 +1093,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if close_windows:
             self.close()
 
+    def _nodeRunning(self):
+        """
+        Display a warning to user
+
+        :returns: False is a device is still running
+        """
+        # check if any node is running
+        topology = Topology.instance()
+        topology.project = self._project
+        running_node = False
+        for node in topology.nodes():
+            if hasattr(node, "start") and node.status() == Node.started:
+                return True
+        return False
+
     def checkForUnsavedChanges(self):
         """
         Checks if there are any unsaved changes.
 
         :returns: boolean
         """
+
+        if self._nodeRunning():
+            QtWidgets.QMessageBox.warning(self, "Closing project", "A device is still running, please stop it before closing your project")
+            return False
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
             if self._project.temporary():
@@ -1076,26 +1132,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return self.saveProject(self._project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
-        else:
-            # check if any node is running
-            topology = Topology.instance()
-            topology.project = self._project
-            running_node = False
-            for node in topology.nodes():
-                if hasattr(node, "start") and node.status() == Node.started:
-                    running_node = True
-                    break
-            if running_node:
-                reply = QtWidgets.QMessageBox.warning(self, "GNS3", "A device is still running, would you like to continue?",
-                                                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.No:
-                    return False
         return True
 
     def startupLoading(self):
         """
         Called by QTimer.singleShot to load everything needed at startup.
         """
+
+        if not LocalConfig.instance().isMainGui():
+            reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                self.close()
+                return
+
+        if not sys.platform.startswith("win") and os.geteuid() == 0:
+            QtWidgets.QMessageBox.warning(self, "Root", "Running GNS3 as root is not recommended and could be dangerous")
 
         # restore debug level
         if self._settings["debug_level"]:
@@ -1110,11 +1162,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         gns3_vm = GNS3VM.instance()
         if gns3_vm.autoStart() and not gns3_vm.isRunning():
             servers.initVMServer()
-            worker = WaitForVMWorker()
-            progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
-            progress_dialog.show()
-            if progress_dialog.exec_():
-                gns3_vm.adjustLocalServerIP()
+            if gns3_vm.isRemote():
+                gns3_vm.setRunning(True)
+            else:
+                worker = WaitForVMWorker()
+                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
+                progress_dialog.show()
+                if progress_dialog.exec_():
+                    gns3_vm.adjustLocalServerIP()
 
         # start and connect to the local server
         server = servers.localServer()
@@ -1140,9 +1195,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
-
         self._createTemporaryProject()
-
         self.ready_signal.emit()
 
         if self._settings["check_for_update"]:
@@ -1201,15 +1254,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :returns: GNS3 project file (.gns3)
         """
 
-        # first check if any node that can be started is running
-        topology = Topology.instance()
-        topology.project = self._project
-        running_nodes = self._running_nodes()
-
-        if running_nodes:
-            nodes = "\n".join(running_nodes)
-            MessageBox(self, "Save project", "Please stop the following nodes before saving the topology to a new location", nodes)
-            return
+        if self._nodeRunning():
+            QtWidgets.QMessageBox.warning(self, "Save As", "All devices must be stopped before saving to another location")
+            return False
 
         if self._isTopologyOnRemoteServer() and not self._project.temporary():
             MessageBox(self, "Save project", "You can not use the save as function on a remote project for the moment.")
@@ -1541,21 +1588,38 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         QtCore.QTimer.singleShot(counter, callback)
 
-    def _downloadRemoteProjectActionSlot(self):
-        if self._project.temporary():
-            QtWidgets.QMessageBox.warning(self, "Download project", "You cannot download a temporary project")
-            return
-
+    def _exportProjectActionSlot(self):
         running_nodes = self._running_nodes()
         if running_nodes:
             nodes = "\n".join(running_nodes)
-            MessageBox(self, "Download project", "Please stop the following nodes before downloading the project", nodes)
+            MessageBox(self, "Export project", "Please stop the following nodes before exporting the project", nodes)
             return
 
-        download_worker = DownloadProjectWorker(self, self._project, Servers.instance())
-        progress_dialog = ProgressDialog(download_worker, "Download remote project", "Downloading project files...", "Cancel", parent=self)
+        if self.testAttribute(QtCore.Qt.WA_WindowModified):
+            MessageBox(self, "Export project", "Please save the project before exporting it")
+            return
+
+        export_worker = ExportProjectWorker(self, self._project)
+        progress_dialog = ProgressDialog(export_worker, "Export project", "Exporting project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def _importProjectActionSlot(self):
+        """
+        Slot called to import a project
+        """
+
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                        "Open topology",
+                                                        directory,
+                                                        "All files (*.*);;GNS3 topology (*.gns3z)",
+                                                        "GNS3 topology (*.gns3z)")
+        if not path:
+            return
+        self.loadPath(path)
 
     def _setStyle(self, style):
 
@@ -1587,6 +1651,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.setIcon(QtGui.QIcon(":/icons/save.svg"))
         self.uiSaveProjectAsAction.setIcon(QtGui.QIcon(":/icons/save-as.svg"))
         self.uiImportExportConfigsAction.setIcon(QtGui.QIcon(":/icons/import_export_configs.svg"))
+        self.uiImportProjectAction.setIcon(QtGui.QIcon(":/icons/import_config.svg"))
+        self.uiExportProjectAction.setIcon(QtGui.QIcon(":/icons/export_config.svg"))
         self.uiScreenshotAction.setIcon(QtGui.QIcon(":/icons/camera-photo.svg"))
         self.uiSnapshotAction.setIcon(QtGui.QIcon(":/icons/snapshot.svg"))
         self.uiQuitAction.setIcon(QtGui.QIcon(":/icons/quit.svg"))
@@ -1604,6 +1670,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.setIcon(QtGui.QIcon(":/icons/image.svg"))
         self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/icons/rectangle.svg", ":/icons/rectangle-hover.svg"))
         self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/icons/ellipse.svg", ":/icons/ellipse-hover.svg"))
+        self.uiEditReadmeAction.setIcon(QtGui.QIcon(":/icons/edit.svg"))
         self.uiOnlineHelpAction.setIcon(QtGui.QIcon(":/icons/help.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/icons/router.png", ":/icons/router-hover.png"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/icons/switch.png", ":/icons/switch-hover.png"))
@@ -1624,6 +1691,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/classic_icons/save-project.svg", ":/classic_icons/save-project-hover.svg"))
         self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/classic_icons/save-as-project.svg", ":/classic_icons/save-as-project-hover.svg"))
         self.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/classic_icons/import_export_configs.svg", ":/classic_icons/import_export_configs-hover.svg"))
+        self.uiImportProjectAction.setIcon(self._getStyleIcon(":/classic_icons/import.svg", ":/classic_icons/import-hover.svg"))
+        self.uiExportProjectAction.setIcon(self._getStyleIcon(":/classic_icons/export.svg", ":/classic_icons/export-hover.svg"))
         self.uiScreenshotAction.setIcon(self._getStyleIcon(":/classic_icons/camera-photo.svg", ":/classic_icons/camera-photo-hover.svg"))
         self.uiSnapshotAction.setIcon(self._getStyleIcon(":/classic_icons/snapshot.svg", ":/classic_icons/snapshot-hover.svg"))
         self.uiQuitAction.setIcon(self._getStyleIcon(":/classic_icons/quit.svg", ":/classic_icons/quit-hover.svg"))
@@ -1641,6 +1710,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.setIcon(self._getStyleIcon(":/classic_icons/image.svg", ":/classic_icons/image-hover.svg"))
         self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/classic_icons/rectangle.svg", ":/classic_icons/rectangle-hover.svg"))
         self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/classic_icons/ellipse.svg", ":/classic_icons/ellipse-hover.svg"))
+        self.uiEditReadmeAction.setIcon(self._getStyleIcon(":/classic_icons/edit.svg", ":/classic_icons/edit.svg"))
         self.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/classic_icons/help.svg", ":/classic_icons/help-hover.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/classic_icons/router.svg", ":/classic_icons/router-hover.svg"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/classic_icons/switch.svg", ":/classic_icons/switch-hover.svg"))
@@ -1684,6 +1754,8 @@ QComboBox QAbstractItemView {background-color: #dedede}
         self.uiSaveProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-project.svg", ":/charcoal_icons/save-project-hover.svg"))
         self.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-as-project.svg", ":/charcoal_icons/save-as-project-hover.svg"))
         self.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/charcoal_icons/import_export_configs.svg", ":/charcoal_icons/import_export_configs-hover.svg"))
+        self.uiImportProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/import.svg", ":/charcoal_icons/import-hover.svg"))
+        self.uiExportProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/export.svg", ":/charcoal_icons/export-hover.svg"))
         self.uiScreenshotAction.setIcon(self._getStyleIcon(":/charcoal_icons/camera-photo.svg", ":/charcoal_icons/camera-photo-hover.svg"))
         self.uiSnapshotAction.setIcon(self._getStyleIcon(":/charcoal_icons/snapshot.svg", ":/charcoal_icons/snapshot-hover.svg"))
         self.uiQuitAction.setIcon(self._getStyleIcon(":/charcoal_icons/quit.svg", ":/charcoal_icons/quit-hover.svg"))
@@ -1701,6 +1773,7 @@ QComboBox QAbstractItemView {background-color: #dedede}
         self.uiInsertImageAction.setIcon(self._getStyleIcon(":/charcoal_icons/image.svg", ":/charcoal_icons/image-hover.svg"))
         self.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/charcoal_icons/rectangle.svg", ":/charcoal_icons/rectangle-hover.svg"))
         self.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/charcoal_icons/ellipse.svg", ":/charcoal_icons/ellipse-hover.svg"))
+        self.uiEditReadmeAction.setIcon(self._getStyleIcon(":/charcoal_icons/edit.svg", ":/charcoal_icons/edit.svg"))
         self.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/charcoal_icons/help.svg", ":/charcoal_icons/help-hover.svg"))
         self.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/charcoal_icons/router.svg", ":/charcoal_icons/router-hover.svg"))
         self.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/charcoal_icons/switch.svg", ":/charcoal_icons/switch-hover.svg"))

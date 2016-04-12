@@ -101,6 +101,12 @@ class Project(QtCore.QObject):
 
         self._temporary = temporary
 
+    def servers(self):
+        """
+        :returns: List of server where GNS3 is running
+        """
+        return self._created_servers
+
     def id(self):
         """
         Get project identifier
@@ -125,6 +131,9 @@ class Project(QtCore.QObject):
     def setFilesDir(self, files_dir):
 
         self._files_dir = files_dir
+
+    def readmePathFile(self):
+        return os.path.join(self._files_dir, "README.txt")
 
     def topologyFile(self):
         """
@@ -311,7 +320,7 @@ class Project(QtCore.QObject):
         else:
             if self._notification_stream:
                 self._notification_stream.abort()
-                log.info("Project {} closed".format(self._id))
+        log.info("Project {} closed".format(self._id))
 
         self._closed = True
         self.project_closed_signal.emit()

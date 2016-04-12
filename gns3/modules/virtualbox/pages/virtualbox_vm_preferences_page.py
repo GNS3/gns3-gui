@@ -91,6 +91,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiVirtualBoxVMInfoTreeWidget.expandAll()
         self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiVirtualBoxVMInfoTreeWidget.resizeColumnToContents(1)
+        self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def _vboxVMChangedSlot(self):
         """
@@ -178,6 +179,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         if self._items:
             self.uiVirtualBoxVMsTreeWidget.setCurrentItem(self._items[0])
             self.uiVirtualBoxVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """

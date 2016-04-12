@@ -21,8 +21,6 @@ Configuration page for server preferences.
 
 import os
 import sys
-import re
-import uuid
 import shutil
 
 import logging
@@ -38,6 +36,7 @@ from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..settings import SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
+from ..dialogs.new_server_dialog import NewServerDialog
 
 
 class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
@@ -51,6 +50,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         super().__init__()
         self.setupUi(self)
         self._remote_servers = {}
+        self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(False)
 
         # connect the slots
         self.uiServerPreferenceTabWidget.currentChanged.connect(self._tabChangedSlot)
@@ -58,7 +58,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiUbridgeToolButton.clicked.connect(self._ubridgeBrowserSlot)
         self.uiAddRemoteServerPushButton.clicked.connect(self._remoteServerAddSlot)
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
-        self.uiRemoteServersTreeWidget.itemClicked.connect(self._remoteServerClickedSlot)
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiLocalServerAutoStartCheckBox.stateChanged.connect(self._useLocalServerAutoStartSlot)
@@ -66,6 +65,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
+        self.uiRemoteRadioButton.toggled.connect(self._remoteGNS3VMToggledSlot)
+        self.uiAddServerPushButton.clicked.connect(self._remoteServerAddSlot)
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
@@ -96,6 +97,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to refresh the VirtualBox VMs list.
         """
 
+        QtWidgets.QMessageBox.warning(self, "GNS3 VM on VirtualBox", "VirtualBox doesn't support nested virtulization, this means running Qemu based VM could be very slow")
         self._refreshVMListSlot()
 
     def _refreshVMListSlot(self):
@@ -110,6 +112,20 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             server.get("/vmware/vms", self._getVMsFromServerCallback)
         elif self.uiVirtualBoxRadioButton.isChecked():
             server.get("/virtualbox/vms", self._getVMsFromServerCallback)
+
+    def _remoteGNS3VMToggledSlot(self, state):
+        """
+        Toggled when remote radio button state changes.
+
+        :param state: boolean
+        """
+
+        if state:
+            self.uiLocalGNS3VMSettingsGroupBox.setEnabled(False)
+            self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(True)
+        else:
+            self.uiLocalGNS3VMSettingsGroupBox.setEnabled(True)
+            self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(False)
 
     def _getVMsFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -127,7 +143,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             vm_settings = Servers.instance().settings()["vm"]
             for vm in result:
                 vmx_path = ""
-                if vm_settings["virtualization"] == "VMware":
+                if self.uiVmwareRadioButton.isChecked():
                     vmx_path = vm.get("vmx_path")
                 self.uiVMListComboBox.addItem(vm["vmname"], vmx_path)
             gns3_vm = Servers.instance().vmSettings()
@@ -145,15 +161,20 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         if state:
-            if not self.uiLocalServerAutoStartCheckBox.isChecked():
-                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The local server need to be enable in order to use the GNS3 VM")
+            if not self.uiLocalServerAutoStartCheckBox.isChecked() and not self.uiRemoteRadioButton.isChecked():
+                QtWidgets.QMessageBox.critical(self, "Local GNS3 VM", "The local server must be enabled in order to use a local GNS3 VM")
                 self.uiEnableVMCheckBox.setChecked(False)
                 return
-            self.uiGNS3VMSettingsGroupBox.setEnabled(True)
-            self._refreshVMListSlot()
+            if self.uiRemoteRadioButton.isChecked():
+                self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(True)
+                self.uiLocalGNS3VMSettingsGroupBox.setEnabled(False)
+            else:
+                self.uiLocalGNS3VMSettingsGroupBox.setEnabled(True)
+                self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(False)
+                self._refreshVMListSlot()
         else:
-            self.uiGNS3VMSettingsGroupBox.setEnabled(False)
-
+            self.uiLocalGNS3VMSettingsGroupBox.setEnabled(False)
+            self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(False)
 
     def _useLocalServerAutoStartSlot(self, state):
         """
@@ -165,8 +186,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiConsolePortRangeGroupBox.setEnabled(True)
             self.uiUDPPortRangeGroupBox.setEnabled(True)
         else:
-            if self.uiEnableVMCheckBox.isChecked():
-                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The local server need to be enable in order to use the GNS3 VM. Please turn off the GNS3 VM before turning off the local server.")
+            if self.uiEnableVMCheckBox.isChecked() and not self.uiRemoteRadioButton.isChecked():
+                QtWidgets.QMessageBox.critical(self, "Local GNS3 VM", "The local server need to be enable in order to use a local GNS3 VM. Please deactivate the local GNS3 VM before turning off the local server.")
                 self.uiLocalServerAutoStartCheckBox.setChecked(True)
                 return
             self.uiGeneralSettingsGroupBox.setEnabled(False)
@@ -211,27 +232,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         self.uiUbridgePathLineEdit.setText(path)
 
-    def _remoteServerClickedSlot(self, item, column):
-        """
-        Loads a selected remote server from the tree widget.
-
-        :param item: selected QTreeWidgetItem instance
-        :param column: ignored
-        """
-
-        settings = item.settings
-        protocol = settings["protocol"].upper()
-        try:
-            port = int(settings["port"])
-        except ValueError:
-            QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid port")
-            return
-        self.uiRemoteServerProtocolComboBox.setCurrentIndex(self.uiRemoteServerProtocolComboBox.findText(protocol))
-        self.uiRemoteServerPortLineEdit.setText(settings["host"])
-        self.uiRemoteServerPortSpinBox.setValue(port)
-        self.uiRAMLimitSpinBox.setValue(settings["ram_limit"])
-        self.uiRemoteServerUserLineEdit.setText(settings["user"])
-
     def _remoteServerChangedSlot(self):
         """
         Enables the use of the delete button.
@@ -248,47 +248,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Adds a new remote server.
         """
 
-        protocol = self.uiRemoteServerProtocolComboBox.currentText().lower()
-        host = self.uiRemoteServerPortLineEdit.text().strip()
-        port = self.uiRemoteServerPortSpinBox.value()
-        ram_limit = self.uiRAMLimitSpinBox.value()
-        user = self.uiRemoteServerUserLineEdit.text().strip()
-        password = self.uiRemoteServerPasswordLineEdit.text().strip()
-
-        if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
-            QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server hostname {}".format(host))
-            return
-        if port is None or port < 1:
-            QtWidgets.QMessageBox.critical(self, "Remote server", "Invalid remote server port {}".format(port))
-            return
-
-        # check if the remote server is already defined
-        for server in self._remote_servers.values():
-            if server["protocol"] == protocol and server["host"] == host and server["port"] == port and server["user"] == user:
-                QtWidgets.QMessageBox.critical(self, "Remote server", "Remote server is already defined.")
-                return
-
-        settings = {"protocol": protocol,
-                    "host": host,
-                    "port": port,
-                    "ram_limit": ram_limit,
-                    "user": user,
-                    "password": password}
-
-        # add a new entry in the tree widget
-        item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-        item.setText(0, protocol)
-        item.setText(1, host)
-        item.setText(2, str(port))
-        item.setText(3, user)
-        item.settings = settings
-        item.server_id = uuid.uuid4()  # Create a temporary unique server id
-
-        # keep track of this remote server
-        self._remote_servers[item.server_id] = settings
-
-        self.uiRemoteServerPortSpinBox.setValue(self.uiRemoteServerPortSpinBox.value() + 1)
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
+        dialog = NewServerDialog(self.parent())
+        dialog.show()
+        if dialog.exec_():
+            self.loadPreferences()
 
     def _remoteServerDeleteSlot(self):
         """
@@ -308,13 +271,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         :param servers_settings: servers settings
         """
 
-        if servers_settings["load_balancing_method"] == "ram_usage":
-            self.uiRAMUsageRadioButton.setChecked(True)
-        elif servers_settings["load_balancing_method"] == "round_robin":
-            self.uiRoundRobinRadioButton.setChecked(True)
-        elif servers_settings["load_balancing_method"] == "rendezvous_hashing":
-            self.uiRendezVousHashingRadioButton.setChecked(True)
-
         # local server settings
         local_server_settings = servers_settings["local_server"]
         self.uiLocalServerPathLineEdit.setText(local_server_settings["path"])
@@ -331,10 +287,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiUDPStartPortSpinBox.setValue(local_server_settings["udp_start_port_range"])
         self.uiUDPEndPortSpinBox.setValue(local_server_settings["udp_end_port_range"])
 
-        # GNS3 VM settings
+        # Local GNS3 VM settings
         vm_settings = servers_settings["vm"]
-        self.uiVMUserLineEdit.setText(vm_settings["user"])
-        self.uiVMPasswordLineEdit.setText(vm_settings["password"])
         self.uiEnableVMCheckBox.setChecked(vm_settings["auto_start"])
         self.uiShutdownCheckBox.setChecked(vm_settings["auto_stop"])
         self.uiAdjustLocalServerIPCheckBox.setChecked(vm_settings["adjust_local_server_ip"])
@@ -351,6 +305,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiVmwareRadioButton.setChecked(True)
         elif vm_settings["virtualization"] == "VirtualBox":
             self.uiVirtualBoxRadioButton.setChecked(True)
+        else:
+            self.uiRemoteRadioButton.setChecked(True)
         self.uiHeadlessCheckBox.setChecked(vm_settings["headless"])
 
     def loadPreferences(self):
@@ -365,6 +321,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         # load remote server preferences
         self._remote_servers.clear()
+        self.uiServersComboBox.clear()
         self.uiRemoteServersTreeWidget.clear()
         for server_id, server in servers.remoteServers().items():
             protocol = server.protocol()
@@ -379,6 +336,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             item.setText(3, user)
             item.settings = server.settings()
             item.server_id = server_id
+
+            self.uiServersComboBox.addItem(server.url(), server)
+
+        self.uiServersComboBox.setCurrentIndex(self.uiServersComboBox.findText(servers_settings['vm']['remote_vm_url']))
 
         self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
 
@@ -433,8 +394,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                         local_nodes.append(node.name())
                 if local_nodes:
                     nodes = "\n".join(local_nodes)
-                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the \
-                    local server before changing the local server settings", nodes)
+                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings", nodes)
                     return
                 servers.setLocalServerSettings(new_local_server_settings)
                 servers.registerLocalServer()
@@ -450,25 +410,29 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                                     "adjust_local_server_ip": self.uiAdjustLocalServerIPCheckBox.isChecked(),
                                     "vmname": self.uiVMListComboBox.currentText(),
                                     "vmx_path": self.uiVMListComboBox.currentData(),
-                                    "headless": self.uiHeadlessCheckBox.isChecked(),
-                                    "user": self.uiVMUserLineEdit.text(),
-                                    "password": self.uiVMPasswordLineEdit.text()})
+                                    "headless": self.uiHeadlessCheckBox.isChecked()})
+
+
         if self.uiVmwareRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VMware"
         elif self.uiVirtualBoxRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VirtualBox"
+        elif self.uiRemoteRadioButton.isChecked():
+            if self.uiServersComboBox.currentData() is None:
+                QtWidgets.QMessageBox.critical(self, "Remote GNS3 VM host", "The remote GNS3 VM cannot be empty")
+                return
+            new_gns3vm_settings["virtualization"] = "remote"
+            new_gns3vm_settings["remote_vm_protocol"] = self.uiServersComboBox.currentData().protocol()
+            new_gns3vm_settings["remote_vm_password"] = self.uiServersComboBox.currentData().password()
+            new_gns3vm_settings["remote_vm_host"] = self.uiServersComboBox.currentData().host()
+            new_gns3vm_settings["remote_vm_port"] = self.uiServersComboBox.currentData().port()
+            new_gns3vm_settings["remote_vm_user"] = self.uiServersComboBox.currentData().user()
+            new_gns3vm_settings["remote_vm_url"] = self.uiServersComboBox.currentData().url()
+
         if new_gns3vm_settings != servers_settings["vm"]:
             log.info("GNS3 VM restart required!")
             restart_gns3_vm = True
         servers_settings["vm"].update(new_gns3vm_settings)
-
-        # save the load-balancing preference
-        if self.uiRAMUsageRadioButton.isChecked():
-            servers_settings["load_balancing_method"] = "ram_usage"
-        elif self.uiRoundRobinRadioButton.isChecked():
-            servers_settings["load_balancing_method"] = "round_robin"
-        elif self.uiRendezVousHashingRadioButton.isChecked():
-            servers_settings["load_balancing_method"] = "rendezvous_hashing"
 
         # save the server preferences
         servers.setSettings(servers_settings)
@@ -476,14 +440,16 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         servers.updateRemoteServers(self._remote_servers)
         servers.save()
 
-        # start or restart the GNS3 VM if required
+        # start or restart the local GNS3 VM if required
         if restart_gns3_vm:
             gns3_vm = GNS3VM.instance()
             gns3_vm.shutdown(force=True)
-            if gns3_vm.autoStart():
+            if servers_settings["vm"]["virtualization"] == "remote":
+                servers.initVMServer()
+            elif gns3_vm.autoStart():
                 servers.initVMServer()
                 worker = WaitForVMWorker()
-                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
+                progress_dialog = ProgressDialog(worker, "Local GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
                 progress_dialog.show()
                 if progress_dialog.exec_():
                     local_server_ip = gns3_vm.adjustLocalServerIP()
@@ -504,3 +470,5 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                 dialog.exec_()
             else:
                 QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
+
+        self.loadPreferences()

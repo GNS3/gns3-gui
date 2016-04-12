@@ -63,6 +63,7 @@ class HTTPClient(QtCore.QObject):
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
         self._connected = False
+
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
 
         self._network_manager = network_manager
@@ -112,6 +113,12 @@ class HTTPClient(QtCore.QObject):
         """Returns current server url"""
 
         return "{}://{}:{}".format(self.protocol(), self.host(), self.port())
+
+    def password(self):
+        return self._password
+
+    def setPassword(self, password):
+        self._password = password
 
     def _notify_progress_start_query(self, query_id, progress_text, response):
         """
@@ -226,9 +233,9 @@ class HTTPClient(QtCore.QObject):
         :param query: The query to execute when all network stack is ready
         :param query: The Server to connect
         """
-        self._executeHTTPQuery("GET", "/hypervisor/version", query, {}, server=server)
+        self._executeHTTPQuery("GET", "/hypervisor/version", query, {}, server=server, timeout=5)
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None):
+    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, **kwargs):
         """
         Call the remote server, if not connected, check connection before
 
@@ -242,14 +249,15 @@ class HTTPClient(QtCore.QObject):
         :param progressText: Text display to user in the progress dialog. None for auto generated
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :param server: The server where the query will run
+        :param timeout: Delay in seconds before raising a timeout
         :returns: QNetworkReply
         """
 
         if self._connected:
-            return self._executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server)
+            return self._executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout)
         else:
             log.info("Connection to {}".format(self.url()))
-            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server)
+            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout)
             self._connect(query, server)
 
     def _connectionError(self, callback, msg="", server=None):
@@ -340,6 +348,13 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Content-Type", b"application/octet-stream")
             # QT is smart and will compute the Content-Lenght for us
             return body
+        elif isinstance(body, str):
+            request.setRawHeader(b"Content-Type", b"application/octet-stream")
+            data = QtCore.QByteArray(body.encode())
+            body = QtCore.QBuffer(self)
+            body.setData(data)
+            body.open(QtCore.QIODevice.ReadOnly)
+            return body
         else:
             return None
 
@@ -354,7 +369,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=5, **kwargs):
         """
         Call the remote server
 
@@ -368,6 +383,7 @@ class HTTPClient(QtCore.QObject):
         :param progressText: Text display to user in progress dialog. None for auto generated
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :param server: The server where the query is executed
+        :param timeout: Delay in seconds before raising a timeout
         :returns: QNetworkReply
         """
 
@@ -410,7 +426,19 @@ class HTTPClient(QtCore.QObject):
             # where query start before finishing connect to everything
             self._notify_progress_start_query(context["query_id"], progressText, response)
 
+        if timeout is not None:
+            QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, response))
+
         return response
+
+    def _timeoutSlot(self, response):
+        """
+        Beware it's call for all request you need to check the status of the response
+        """
+        # We check if we received HTTP headers
+        if not len(response.rawHeaderList()) > 0:
+            response.abort()
+
 
     def _processDownloadProgress(self, response, callback, context, server, bytesReceived, bytesTotal):
         """
@@ -518,7 +546,7 @@ class HTTPClient(QtCore.QObject):
                 if status >= 400:
                     callback(params, error=True, server=server, context=context)
                 else:
-                    callback(params, server=server, context=context)
+                    callback(params, server=server, context=context, raw_body=body)
         # response.deleteLater()
         if status == 400:
             try:
@@ -529,3 +557,4 @@ class HTTPClient(QtCore.QObject):
             except Exception:
                 e = HttpBadRequest(body)
             raise e
+

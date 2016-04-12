@@ -19,7 +19,7 @@
 Graphical representation of an image on the QGraphicsScene.
 """
 
-from ..qt import QtWidgets
+from ..qt import QtWidgets, QtCore
 
 
 class ImageItem():

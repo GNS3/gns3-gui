@@ -2,19 +2,17 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/iouvm_converter_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOUVMConverterWizard(object):
-
     def setupUi(self, IOUVMConverterWizard):
         IOUVMConverterWizard.setObjectName("IOUVMConverterWizard")
         IOUVMConverterWizard.resize(649, 377)
-        IOUVMConverterWizard.setOptions(QtWidgets.QWizard.NoCancelButton | QtWidgets.QWizard.NoDefaultButton)
+        IOUVMConverterWizard.setOptions(QtWidgets.QWizard.NoCancelButton|QtWidgets.QWizard.NoDefaultButton)
         self.uiWizardWelcomePage = QtWidgets.QWizardPage()
         self.uiWizardWelcomePage.setObjectName("uiWizardWelcomePage")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiWizardWelcomePage)
@@ -46,7 +44,7 @@ class Ui_IOUVMConverterWizard(object):
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.label_3 = QtWidgets.QLabel(self.uiWizardUpdateIOUVM)
         self.label_3.setTextFormat(QtCore.Qt.RichText)
-        self.label_3.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName("label_3")
         self.verticalLayout_4.addWidget(self.label_3)
         IOUVMConverterWizard.addPage(self.uiWizardUpdateIOUVM)
@@ -139,72 +137,73 @@ class Ui_IOUVMConverterWizard(object):
         _translate = QtCore.QCoreApplication.translate
         IOUVMConverterWizard.setWindowTitle(_translate("IOUVMConverterWizard", "GNS3 IOU Converter"))
         self.label.setText(_translate("IOUVMConverterWizard", "<h1>Welcome to the IOUVM converter</h1>\n"
-                                      "<p>This Wizard will help you to convert the IOUVM to the new GNS3 VM</p>\n"
-                                      "<p>The GNS3 VM has a self update system allowing you to easily upgrade between version of the GNS3 VM without manual operations.</p>"))
+"<p>This Wizard will help you to convert the IOUVM to the new GNS3 VM</p>\n"
+"<p>The GNS3 VM has a self update system allowing you to easily upgrade between version of the GNS3 VM without manual operations.</p>"))
         self.label_14.setText(_translate("IOUVMConverterWizard", "<h1>Start GNS3</h1>\n"
-                                         "<ul>\n"
-                                         "<li>Start GNS3 >= 1.4</li>\n"
-                                         "<li>Configure the GNS3 VM via preferences or the initial wizard</li>\n"
-                                         "<li>Exit all instance of GNS3</li>\n"
-                                         "</ul>"))
+"<ul>\n"
+"<li>Start GNS3 >= 1.4</li>\n"
+"<li>Configure the GNS3 VM via preferences or the initial wizard</li>\n"
+"<li>Exit all instance of GNS3</li>\n"
+"</ul>"))
         self.label_2.setText(_translate("IOUVMConverterWizard", "<h1>Setup NAT</h1>\n"
-                                        "<ul>\n"
-                                        "<li>Start VirtualBox </li>\n"
-                                        "<li>Click on the IOUVM</li>\n"
-                                        "<li>Click on settings</li>\n"
-                                        "<li>Click on Network</li>\n"
-                                        "<li>Change Host-only adapter to NAT</li>\n"
-                                        "<li>Click on OK</li>\n"
-                                        "<li>Start the VM<li>\n"
-                                        "</ul>"))
+"<ul>\n"
+"<li>Start VirtualBox </li>\n"
+"<li>Click on the IOUVM</li>\n"
+"<li>Click on settings</li>\n"
+"<li>Click on Network</li>\n"
+"<li>Change Host-only adapter to NAT</li>\n"
+"<li>Click on OK</li>\n"
+"<li>Start the VM<li>\n"
+"</ul>"))
         self.label_3.setText(_translate("IOUVMConverterWizard", "<html><head/><body><p><span style=\" font-size:xx-large; font-weight:600;\">Update GNS3 on IOUVM</span></p><p>In the VM: </p><ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Log as root with password CISCO</li><li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">pip3 install gns3-server==1.3.10</li><li style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">halt</li></ul></body></html>"))
         self.label_4.setText(_translate("IOUVMConverterWizard", "<h1>Restore VM network settings</h1>\n"
-                                        "<ul>\n"
-                                        "<li>Start VirtualBox </li>\n"
-                                        "<li>Click on the IOUVM</li>\n"
-                                        "<li>Click on settings</li>\n"
-                                        "<li>Click on Network</li>\n"
-                                        "<li>Change NAT adapter to Host-Only</li>\n"
-                                        "<li>Click on OK</li>\n"
-                                        "<li>Start the VM<li>\n"
-                                        "</ul>"))
+"<ul>\n"
+"<li>Start VirtualBox </li>\n"
+"<li>Click on the IOUVM</li>\n"
+"<li>Click on settings</li>\n"
+"<li>Click on Network</li>\n"
+"<li>Change NAT adapter to Host-Only</li>\n"
+"<li>Click on OK</li>\n"
+"<li>Start the VM<li>\n"
+"</ul>"))
         self.label_10.setText(_translate("IOUVMConverterWizard", "<h1>Download backups</h1>\n"
-                                         "<ul>\n"
-                                         "<li>Log as root with password cisco</li>\n"
-                                         "<li>Type ifconfig eth0</li>\n"
-                                         "<li>Remember the addr</li>\n"
-                                         "<li>In your browser open http://THEADDR:8000</li>\n"
-                                         "<li>Download projects and images backups</li>\n"
-                                         "<li>halt the vm</li>\n"
-                                         "</ul>"))
+"<ul>\n"
+"<li>Log as root with password cisco</li>\n"
+"<li>Type ifconfig eth0</li>\n"
+"<li>Remember the addr</li>\n"
+"<li>In your browser open http://THEADDR:8000</li>\n"
+"<li>Download projects and images backups</li>\n"
+"<li>halt the vm</li>\n"
+"</ul>"))
         self.label_11.setText(_translate("IOUVMConverterWizard", "<h1>Restore backups</h1>\n"
-                                         "<ul>\n"
-                                         "<li>Start the GNS3 VM</li>\n"
-                                         "<li>Remember the IP display on the information screen</li>\n"
-                                         "<li>In a browser open http://THEIP:8000/upload</li>\n"
-                                         "<li>Select the option for restoring projects and upload the previous backup</li>\n"
-                                         "<li>Select the option for restoring images and upload the previous backup</li>\n"
-                                         "</ul>"))
+"<ul>\n"
+"<li>Start the GNS3 VM</li>\n"
+"<li>Remember the IP display on the information screen</li>\n"
+"<li>In a browser open http://THEIP:8000/upload</li>\n"
+"<li>Select the option for restoring projects and upload the previous backup</li>\n"
+"<li>Select the option for restoring images and upload the previous backup</li>\n"
+"</ul>"))
         self.label_5.setText(_translate("IOUVMConverterWizard", "<center>\n"
-                                        "BACKUP<br>\n"
-                                        "YOUR TOPOLOGIES!\n"
-                                        "</center>"))
+"BACKUP<br>\n"
+"YOUR TOPOLOGIES!\n"
+"</center>"))
         self.label_7.setText(_translate("IOUVMConverterWizard", "<h1>Validation of the IOURC file</h1> \n"
-                                        "The IOURC file contain your licence for IOU.<br>\n"
-                                        "The format of file is:\n"
-                                        "<pre>\n"
-                                        "[license]\n"
-                                        "gns3-iouvm = OLDLICENCE;\n"
-                                        "gns3vm = NEWLICENCE;\n"
-                                        "</pre>\n"
-                                        "<br>\n"
-                                        "The GNS3VM require a new licence. You need to add it in the file. IOU is a CISCO product. GNS3 staff is not allowed to provide this licence."))
+"The IOURC file contain your licence for IOU.<br>\n"
+"The format of file is:\n"
+"<pre>\n"
+"[license]\n"
+"gns3-iouvm = OLDLICENCE;\n"
+"gns3vm = NEWLICENCE;\n"
+"</pre>\n"
+"<br>\n"
+"The GNS3VM require a new licence. You need to add it in the file. IOU is a CISCO product. GNS3 staff is not allowed to provide this licence."))
         self.label_12.setText(_translate("IOUVMConverterWizard", "<h1>Update configuration</h1>\n"
-                                         "<p style=\"color: red\">Your GNS3 configuration will be updated.</p>\n"
-                                         "<p>All your remote servers will be removed and replace by the GNS3VM. </p><p>If you have a custom remote server <strong>DO NOT CONTINUE</strong></p>"))
+"<p style=\"color: red\">Your GNS3 configuration will be updated.</p>\n"
+"<p>All your remote servers will be removed and replace by the GNS3VM. </p><p>If you have a custom remote server <strong>DO NOT CONTINUE</strong></p>"))
         self.label_6.setText(_translate("IOUVMConverterWizard", "<h1>Patch topologies</h1>\n"
-                                        "We need to patch your topologies please select your topologies directory"))
+"We need to patch your topologies please select your topologies directory"))
         self.uiPushButtonBrowse.setText(_translate("IOUVMConverterWizard", "Browse..."))
         self.label_8.setText(_translate("IOUVMConverterWizard", "<center>\n"
-                                        "<h1>Congratulation you can now use the GNS3 VM</h1>\n"
-                                        "</center>"))
+"<h1>Congratulation you can now use the GNS3 VM</h1>\n"
+"</center>"))
+

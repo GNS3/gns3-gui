@@ -45,7 +45,8 @@ def test_qemu_vm_setup(qemu_vm, project):
                                     'hypervisor_id': 'local',
                                     'vm_type': 'qemu'
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
         # Callback
         params = {
@@ -78,7 +79,8 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
                                     'hypervisor_id': 'local',
                                     'vm_type': 'qemu'
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
         # Callback
         params = {
@@ -112,7 +114,8 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
                                     'vm_type': 'qemu',
                                     'console_type': 'telnet'
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
         # Callback
         params = {

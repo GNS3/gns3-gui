@@ -27,17 +27,17 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
 
     :param parent: parent widget.
     :param showed_from_startup: boolean to indicate if this dialog
+    :param default_project_name: Project name by default
     has been opened automatically when GNS3 started.
     """
 
-    def __init__(self, parent, showed_from_startup=False):
+    def __init__(self, parent, showed_from_startup=False, default_project_name="untitled"):
 
         super().__init__(parent)
         self.setupUi(self)
 
         self._main_window = parent
         self._project_settings = {}
-        default_project_name = "untitled"
         self.uiNameLineEdit.setText(default_project_name)
         self.uiLocationLineEdit.setText(os.path.join(self._main_window.projectsDirPath(), default_project_name))
 

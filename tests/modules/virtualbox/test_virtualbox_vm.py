@@ -45,7 +45,8 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
                                         'vmname': 'VMNAME'
                                     }
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
         # Callback
         params = {

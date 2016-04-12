@@ -65,6 +65,5 @@ def test_dump(server):
         'local': True,
         'port': 8000,
         'protocol': 'http',
-        'ram_limit': 0,
         'vm': False}
 

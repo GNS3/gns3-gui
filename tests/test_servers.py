@@ -19,6 +19,7 @@ import sys
 import json
 import pytest
 import binascii
+import subprocess
 
 from gns3.servers import Servers
 from gns3.qt import QtWidgets
@@ -42,7 +43,7 @@ def test_loadSettings_EmptySettings(local_config, tmpdir):
     Servers._instance = None
     servers = Servers.instance()
 
-    assert servers.localServerSettings()["port"] == 8000
+    assert servers.localServerSettings()["port"] == 3080
     assert len(servers.localServerSettings()["password"]) == 64
     assert len(servers.localServerSettings()["user"]) == 64
 
@@ -98,17 +99,19 @@ def test_loadSettingsWith13LocalServerSetting(tmpdir, local_config):
     assert local_server["user"] == "world"
     assert local_server["password"] == "hello"
 
+
 def testServers():
     servers = Servers.instance()
-    http_server = servers.getRemoteServer("http", "localhost", 8000, None)
+    http_server = servers.getRemoteServer("http", "localhost", 3080, None)
     assert len(servers.servers()) == 2
+
 
 def test_getRemoteServer():
     servers = Servers.instance()
-    http_server = servers.getRemoteServer("http", "localhost", 8000, None)
+    http_server = servers.getRemoteServer("http", "localhost", 3080, None)
     assert http_server.protocol() == "http"
     assert http_server.host() == "localhost"
-    assert http_server.port() == 8000
+    assert http_server.port() == 3080
     assert http_server.user() is None
 
 
@@ -143,54 +146,6 @@ def test_is_non_local_server_configured():
     assert servers.isNonLocalServerConfigured() is False
 
 
-def test_handle_handleSslErrors():
-    """
-    Simulate when user accept an insecure certificate. This should be save to the configuration
-    """
-
-    servers = Servers.instance()
-
-    servers._addRemoteServer("https", "127.0.0.1", "443", user="root", password="toto")
-    servers._saveSettings()
-    assert servers._settings["remote_servers"] == [
-        {
-            'accept_insecure_certificate': None,
-            'host': '127.0.0.1',
-            'password': 'toto',
-            'port': 443,
-            'protocol': 'https',
-            'ram_limit': 0,
-            'url': 'https://root@127.0.0.1:443',
-            'user': 'root'
-        }
-    ]
-
-    reply = MagicMock()
-    reply.url.return_value.toDisplayString.return_value = "https://root@127.0.0.1:443/v1/version"
-    ssl_error = MagicMock()
-    ssl_error.certificate.return_value.digest.return_value = binascii.unhexlify("cca0a932ced2fb1b1a18c823542cb065")
-    errorList = [ssl_error]
-
-    with patch("gns3.qt.QtWidgets.QMessageBox.warning") as message_box_mock:
-        message_box_mock.return_value = QtWidgets.QMessageBox.Yes
-        servers._handleSslErrors(reply, errorList)
-
-    servers._saveSettings()
-    assert len(servers._settings["remote_servers"]) == 1
-    assert servers._settings["remote_servers"] == [
-        {
-            'accept_insecure_certificate': 'cca0a932ced2fb1b1a18c823542cb065',
-            'host': '127.0.0.1',
-            'password': 'toto',
-            'port': 443,
-            'protocol': 'https',
-            'ram_limit': 0,
-            'url': 'https://root@127.0.0.1:443',
-            'user': 'root'
-        }
-    ]
-
-
 @pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
 def test_startLocalServer(tmpdir, local_config):
     local_server_path = str(tmpdir / "gns3server")
@@ -211,11 +166,16 @@ def test_startLocalServer(tmpdir, local_config):
 
     with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
         mock_local_config.return_value = str(tmpdir)
-        with patch("subprocess.Popen") as mock:
+        process_mock = MagicMock()
+        with patch("subprocess.Popen", return_value=process_mock) as mock:
+
+            # If everything work fine the command is still running and a timeout is raised
+            process_mock.communicate.side_effect = subprocess.TimeoutExpired("test", 1)
+
             Servers.instance().startLocalServer()
             mock.assert_called_with([local_server_path,
                                      '--host=127.0.0.1',
-                                     '--port=8000',
+                                     '--port=3080',
                                      '--local',
                                      '--controller',
                                      '--debug',

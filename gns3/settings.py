@@ -37,7 +37,7 @@ DEFAULT_SYMBOLS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/symbols"))
 DEFAULT_CONFIGS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/configs"))
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
-DEFAULT_LOCAL_SERVER_PORT = 8000
+DEFAULT_LOCAL_SERVER_PORT = 3080
 
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
@@ -264,10 +264,10 @@ GENERAL_SETTINGS = {
     "default_local_news": False,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
-    "debug_level": 0,
     "recent_files": [],
     "geometry": "",
     "state": "",
+    "preferences_dialog_geometry": "",
     "debug_level": 0,
 }
 
@@ -296,8 +296,8 @@ SERVERS_SETTINGS = {
         "auth": True,
         "user": "",
         "password": "",
-        "console_start_port_range": 2000,
-        "console_end_port_range": 7000,
+        "console_start_port_range": 5000,
+        "console_end_port_range": 10000,
         "udp_start_port_range": 10000,
         "udp_end_port_range": 20000,
     },
@@ -308,12 +308,14 @@ SERVERS_SETTINGS = {
         "adjust_local_server_ip": True,
         "vmname": "GNS3 VM",
         "vmx_path": "",
-        "server_port": 8000,  # hardcoded for now
         "virtualization": "VMware",
-        "user": "",
-        "password": ""
+        "remote_vm_url": "",
+        "remote_vm_protocol": "http",
+        "remote_vm_host": "",
+        "remote_vm_port": 3080,
+        "remote_vm_user": "",
+        "remote_vm_password": ""
     },
-    "load_balancing_method": "ram_usage",
     "remote_servers": [],
 }
 

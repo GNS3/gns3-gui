@@ -27,7 +27,7 @@
        <item>
         <widget class="QGroupBox" name="uiGenericEthernetGroupBox">
          <property name="title">
-          <string>Generic Ethernet NIO (Administrator or root access required)</string>
+          <string>Generic Ethernet NIO</string>
          </property>
          <layout class="QGridLayout">
           <item row="0" column="0" colspan="3">
@@ -78,7 +78,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Linux Ethernet NIO (Linux only, root access required)</string>
+          <string>Linux Ethernet NIO (Linux only)</string>
          </property>
          <layout class="QGridLayout">
           <item row="0" column="0" colspan="3">
@@ -368,7 +368,7 @@
        <item>
         <widget class="QGroupBox" name="uiNIOTAPGroupBox">
          <property name="title">
-          <string>TAP interface (require root access)</string>
+          <string>TAP interface</string>
          </property>
          <layout class="QGridLayout">
           <item row="0" column="0">

@@ -54,7 +54,8 @@ class DockerVM(VM):
             "environment": DOCKER_CONTAINER_SETTINGS["environment"],
             "console": None,
             "aux": None,
-            "console_type": DOCKER_CONTAINER_SETTINGS["console_type"]
+            "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
+            "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"]
         }
 
     def _addAdapters(self, adapters):
@@ -98,7 +99,7 @@ class DockerVM(VM):
         if vm_id:
             params["vm_id"] = vm_id
         params.update(additional_settings)
-        self._create(params)
+        self._create(params, timeout=None)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """Callback for Docker container setup.
@@ -142,7 +143,15 @@ class DockerVM(VM):
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
+                if name == "adapters":
+                    nb_adapters_changed = True
                 self._settings[name] = value
+
+        if nb_adapters_changed:
+            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+            # TODO: dynamically add/remove adapters
+            self._ports.clear()
+            self._addAdapters(self._settings["adapters"])
 
         if updated:
             log.info("Docker VM {} has been updated".format(self.name()))
@@ -346,6 +355,12 @@ class DockerVM(VM):
         :returns: symbol path (or resource).
         """
         return ":/symbols/docker_guest.svg"
+
+    def networkInterfacesPath(self):
+        """
+        Return path of the /etc/network/interfaces
+        """
+        return "/project-files/docker/{}/etc/network/interfaces".format(self._vm_id)
 
     @staticmethod
     def symbolName():

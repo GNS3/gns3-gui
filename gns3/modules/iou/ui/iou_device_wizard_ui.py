@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Fri Mar 25 14:43:13 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,13 +37,9 @@ class Ui_IOUDeviceWizard(object):
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.uiLoadBalanceCheckBox = QtWidgets.QCheckBox(self.uiRemoteServersGroupBox)
-        self.uiLoadBalanceCheckBox.setChecked(True)
-        self.uiLoadBalanceCheckBox.setObjectName("uiLoadBalanceCheckBox")
-        self.gridLayout_7.addWidget(self.uiLoadBalanceCheckBox, 0, 0, 1, 2)
         self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
         self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
-        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 1, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.uiRemoteServersComboBox = QtWidgets.QComboBox(self.uiRemoteServersGroupBox)
         self.uiRemoteServersComboBox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -51,7 +48,7 @@ class Ui_IOUDeviceWizard(object):
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
-        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
         self.gridLayout_2.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
         IOUDeviceWizard.addPage(self.uiServerWizardPage)
         self.uiNameImageWizardPage = QtWidgets.QWizardPage()
@@ -128,9 +125,8 @@ class Ui_IOUDeviceWizard(object):
         self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on a remote computers"))
         self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on the GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on your local computer"))
-        self.uiRemoteServersGroupBox.setTitle(_translate("IOUDeviceWizard", "Remote servers"))
-        self.uiLoadBalanceCheckBox.setText(_translate("IOUDeviceWizard", "Load balance across all available remote servers"))
-        self.uiRemoteServersLabel.setText(_translate("IOUDeviceWizard", "Run on server:"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("IOUDeviceWizard", "Remote server"))
+        self.uiRemoteServersLabel.setText(_translate("IOUDeviceWizard", "Run on:"))
         self.uiNameImageWizardPage.setTitle(_translate("IOUDeviceWizard", "Name and image"))
         self.uiNameImageWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a descriptive name for the new IOU device and add an IOU image."))
         self.uiNameLabel.setText(_translate("IOUDeviceWizard", "Name:"))

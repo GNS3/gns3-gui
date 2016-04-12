@@ -384,6 +384,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         self.uiIOSRouterInfoTreeWidget.expandAll()
         self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(0)
         self.uiIOSRouterInfoTreeWidget.resizeColumnToContents(1)
+        self.uiIOSRoutersTreeWidget.setMaximumWidth(self.uiIOSRoutersTreeWidget.sizeHintForColumn(0) + 10)
 
     def loadPreferences(self):
         """
@@ -404,6 +405,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         if self._items:
             self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
             self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiIOSRoutersTreeWidget.setMaximumWidth(self.uiIOSRoutersTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """

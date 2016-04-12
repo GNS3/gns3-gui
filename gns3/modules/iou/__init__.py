@@ -137,8 +137,6 @@ class IOU(Module):
         """
 
         if node in self._nodes:
-            if "ram" in node.settings():
-                node.server().decreaseAllocatedRAM(node.settings()["ram"])
             self._nodes.remove(node)
 
     def VMs(self):

@@ -79,8 +79,8 @@ class SerialLinkItem(LinkItem):
         scale_vect_diag = math.sqrt(scale_vect.x() ** 2 + scale_vect.y() ** 2)
         scale_coef = scale_vect_diag / 40.0
 
-        self.source = QtCore.QPointF(self.source.x() + scale_vect.x() / scale_coef, self.source.y() + scale_vect.y() / scale_coef)
-        self.destination = QtCore.QPointF(self.destination.x() - scale_vect.x() / scale_coef, self.destination.y() - scale_vect.y() / scale_coef)
+        self.source_point = QtCore.QPointF(self.source.x() + scale_vect.x() / scale_coef, self.source.y() + scale_vect.y() / scale_coef)
+        self.destination_point = QtCore.QPointF(self.destination.x() - scale_vect.x() / scale_coef, self.destination.y() - scale_vect.y() / scale_coef)
 
     def shape(self):
         """
@@ -91,9 +91,9 @@ class SerialLinkItem(LinkItem):
 
         path = QtWidgets.QGraphicsPathItem.shape(self)
         offset = self._point_size / 2
-        point = self.source
+        point = self.source_point
         path.addEllipse(point.x() - offset, point.y() - offset, self._point_size, self._point_size)
-        point = self.destination
+        point = self.destination_point
         path.addEllipse(point.x() - offset, point.y() - offset, self._point_size, self._point_size)
         return path
 
@@ -141,7 +141,7 @@ class SerialLinkItem(LinkItem):
             elif source_port_label:
                 source_port_label.hide()
 
-            painter.drawPoint(self.source)
+            painter.drawPoint(self.source_point)
 
             # destination point color
             if self._destination_port.status() == Port.started:
@@ -170,4 +170,6 @@ class SerialLinkItem(LinkItem):
             elif destination_port_label:
                 destination_port_label.hide()
 
-            painter.drawPoint(self.destination)
+            painter.drawPoint(self.destination_point)
+
+        self._drawCaptureSymbol()

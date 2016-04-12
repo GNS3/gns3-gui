@@ -36,5 +36,6 @@ DOCKER_CONTAINER_SETTINGS = {
     "image": "",
     "adapters": 1,
     "environment": "",
-    "console_type": "telnet"
+    "console_type": "telnet",
+    "console_resolution": "1024x768"
 }

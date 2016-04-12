@@ -50,8 +50,6 @@ class VMWizard(QtWidgets.QWizard):
             self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
 
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
-        if hasattr(self, "uiLoadBalanceCheckBox"):
-            self.uiLoadBalanceCheckBox.toggled.connect(self._loadBalanceToggledSlot)
 
         # By default we use the local server
         self._server = Servers.instance().localServer()
@@ -152,15 +150,3 @@ class VMWizard(QtWidgets.QWizard):
             else:
                 self._server = Servers.instance().localServer()
         return True
-
-    def _loadBalanceToggledSlot(self, checked):
-        """
-        Slot for when the load balance checkbox is toggled.
-
-        :param checked: either the box is checked or not
-        """
-
-        if checked:
-            self.uiRemoteServersComboBox.setEnabled(False)
-        else:
-            self.uiRemoteServersComboBox.setEnabled(True)

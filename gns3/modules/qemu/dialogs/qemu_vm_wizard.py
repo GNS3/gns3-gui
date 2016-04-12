@@ -43,57 +43,18 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
     def __init__(self, qemu_vms, parent):
 
         super().__init__(qemu_vms, Qemu.instance().settings()["use_local_server"], parent)
-
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
-
-        self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
-
-        # Available types
-        self.uiTypeComboBox.addItems(["Default", "IOSv", "IOSv-L2", "IOS-XRv", "ASA 8.4(2)", "IDS"])
 
         # Mandatory fields
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
         self.uiDiskWizardPage.registerField("hda_disk_image*", self.uiHdaDiskImageLineEdit)
-        self.uiDiskImageHdbWizardPage.registerField("hdb_disk_image*", self.uiHdbDiskImageLineEdit)
-        self.uiASAWizardPage.registerField("initrd*", self.uiInitrdImageLineEdit)
-        self.uiASAWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
+        self.uiInitrdKernelImageWizardPage.registerField("initrd*", self.uiInitrdImageLineEdit)
+        self.uiInitrdKernelImageWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
 
         # Fill image combo boxes
         self.addImageSelector(self.uiHdaDiskExistingImageRadioButton, self.uiHdaDiskImageListComboBox, self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton, QemuVMConfigurationPage.getDiskImage, create_image_wizard=QemuImageWizard, create_button=self.uiHdaDiskImageCreateToolButton, image_suffix="-hda")
-        self.addImageSelector(self.uiHdbDiskExistingImageRadioButton, self.uiHdbDiskImageListComboBox, self.uiHdbDiskImageLineEdit, self.uiHdbDiskImageToolButton, QemuVMConfigurationPage.getDiskImage, create_image_wizard=QemuImageWizard, create_button=self.uiHdbDiskImageCreateToolButton, image_suffix="-hdb")
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiInitrdImageListComboBox, self.uiInitrdImageLineEdit, self.uiInitrdImageToolButton, QemuVMConfigurationPage.getDiskImage)
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiKernelImageListComboBox, self.uiKernelImageLineEdit, self.uiKernelImageToolButton, QemuVMConfigurationPage.getDiskImage)
-
-    def _typeChangedSlot(self, vm_type):
-        """
-        When the type of QEMU VM is changed.
-
-        :param vm_type: type of VM
-        """
-
-        if vm_type == "IOSv":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_virl.svg"))
-            self.uiNameLineEdit.setText("vIOS")
-            self.uiHdaDiskImageLabel.setText("IOSv VDMK file:")
-        elif vm_type == "IOSv-L2":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/iosv_l2_virl.svg"))
-            self.uiNameLineEdit.setText("vIOS-L2")
-            self.uiHdaDiskImageLabel.setText("IOSv-L2 VDMK file:")
-        elif vm_type == "IOS-XRv":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
-            self.uiNameLineEdit.setText("IOS-XRv")
-            self.uiHdaDiskImageLabel.setText("IOS-XRv VDMK file:")
-        elif vm_type == "ASA 8.4(2)":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/asa.svg"))
-            self.uiNameLineEdit.setText("ASA")
-        elif vm_type == "IDS":
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ids.svg"))
-            self.uiNameLineEdit.setText("IDS")
-            self.uiHdaDiskImageLabel.setText("Disk image (hda):")
-        else:
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
-            self.uiHdaDiskImageLabel.setText("Disk image (hda):")
-            self.uiNameLineEdit.setText("")
 
     def validateCurrentPage(self):
         """
@@ -103,20 +64,31 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
+        if self.currentPage() == self.uiServerWizardPage:
+            if self.uiLocalRadioButton.isChecked() and not sys.platform.startswith("linux"):
+                QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
+
+        if self.currentPage() == self.uiNameWizardPage:
+            if self.uiLegacyASACheckBox.isChecked():
+                QtWidgets.QMessageBox.warning(self, "Legacy ASA VM", "Running ASA (with initrd/kernel) is not recommended, please use ASAv instead")
+                self.uiRamSpinBox.setValue(1024)
+            else:
+                self.uiRamSpinBox.setValue(256)
+
         if self.currentPage() == self.uiBinaryMemoryWizardPage:
             if not self.uiQemuListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
                 return False
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
 
-            if (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
+            if sys.platform.startswith("darwin") and "GNS3.app" in qemu_path:
                 QtWidgets.QMessageBox.warning(self, "Qemu binaries", "This version of qemu is obsolete and provided only for compatibility with old GNS3 versions.\nPlease use Qemu in the GNS3 VM for full Qemu support.")
         return True
 
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) in [self.uiDiskWizardPage, self.uiASAWizardPage, self.uiDiskImageHdbWizardPage]:
+        if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
             self.loadImagesList("/qemu/vms")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
             try:
@@ -144,7 +116,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2 ** 32
             if sys.platform.startswith("win"):
-                if self.uiTypeComboBox.currentText() != "Default" and self.uiLocalRadioButton.isChecked():
+                if self.uiLegacyASACheckBox.isChecked() and self.uiLocalRadioButton.isChecked():
                     search_string = r"qemu-0.13.0\qemu-system-i386w.exe"
                 elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
@@ -185,46 +157,22 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "ram": self.uiRamSpinBox.value(),
             "qemu_path": qemu_path,
             "server": server,
+            "category": Node.end_devices,
+            "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
         }
 
-        if self.uiTypeComboBox.currentText() == "IOSv":
-            settings["adapters"] = 8
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["symbol"] = ":/symbols/iosv_virl.svg"
-            settings["category"] = Node.routers
-        elif self.uiTypeComboBox.currentText() == "IOSv-L2":
-            settings["adapters"] = 8
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["symbol"] = ":/symbols/iosv_l2_virl.svg"
-            settings["category"] = Node.switches
-        elif self.uiTypeComboBox.currentText() == "IOS-XRv":
-            settings["adapters"] = 16
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["symbol"] = ":/symbols/router.svg"
-            settings["category"] = Node.routers
-        elif self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
+        if self.uiLegacyASACheckBox.isChecked():
+            # special settings for legacy ASA VM
             settings["adapters"] = 4
             settings["initrd"] = self.uiInitrdImageLineEdit.text()
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt -net nic"
             settings["options"] = "-no-kvm -icount auto -hdachs 980,16,32"
-
             if not sys.platform.startswith("darwin"):
                 settings["cpu_throttling"] = 80  # limit to 80% CPU usage
             settings["process_priority"] = "low"
             settings["symbol"] = ":/symbols/asa.svg"
             settings["category"] = Node.security_devices
-        elif self.uiTypeComboBox.currentText() == "IDS":
-            settings["adapters"] = 3
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text()
-            settings["options"] = "-smbios type=1,product=IDS-4215"
-            settings["symbol"] = ":/symbols/ids.svg"
-            settings["category"] = Node.security_devices
-        else:
-            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text()
-            settings["category"] = Node.end_devices
 
         if "options" not in settings:
             settings["options"] = ""
@@ -244,30 +192,10 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         """
 
         current_id = self.currentId()
-        if self.page(current_id) == self.uiTypeWizardPage:
-
-            if sys.platform.startswith("linux") or not self.uiLocalRadioButton.isChecked():
-                self.uiOSDeprecatedWarningLabel.hide()
-            else:
-                self.uiOSDeprecatedWarningLabel.show()
-
-            if self.uiTypeComboBox.currentText().startswith("IOSv"):
-                self.uiRamSpinBox.setValue(384)
-            elif self.uiTypeComboBox.currentText().startswith("IOS-XRv"):
-                self.uiRamSpinBox.setValue(3072)
-            elif self.uiTypeComboBox.currentText() != "Default":
-                self.uiRamSpinBox.setValue(1024)
-
-        elif self.page(current_id) == self.uiDiskWizardPage:
-
-            if self.uiTypeComboBox.currentText() == "IDS":
-                return self.uiDiskWizardPage.nextId() + 1
-
-            if self.uiTypeComboBox.currentText() == "ASA 8.4(2)":
+        if self.page(current_id) == self.uiDiskWizardPage:
+            if self.uiLegacyASACheckBox.isChecked():
                 return self.uiDiskWizardPage.nextId()
             return -1
-
-        elif self.page(current_id) == self.uiASAWizardPage:
+        elif self.page(current_id) == self.uiInitrdKernelImageWizardPage:
             return -1
-
         return QtWidgets.QWizard.nextId(self)

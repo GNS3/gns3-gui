@@ -432,7 +432,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         is_not_link = True
         item = self.itemAt(event.pos())
-        if item and isinstance(item, LinkItem):
+        if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
         else:
             for it in self.scene().items():
@@ -1521,11 +1521,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The GNS3 VM is not running")
                     return
             elif node_data["server"] == "load-balance":
-                ram = node_data.get("ram", 0)
-                server = Servers.instance().anyRemoteServer(ram)
-                if server is None:
-                    QtWidgets.QMessageBox.critical(self, "Remote server", "Cannot load balance: no remote server configured")
-                    return
+                QtWidgets.QMessageBox.critical(self, "Remote server", "Load-balancing support has been deprecated")
+                return
             else:
                 server = Servers.instance().getServerFromString(node_data["server"])
 

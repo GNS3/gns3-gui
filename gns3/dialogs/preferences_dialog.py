@@ -64,10 +64,11 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # select the first available page
         self.uiTreeWidget.setCurrentItem(self._items[0])
 
+        # set the maximum width based on the content of column 0
+        self.uiTreeWidget.setMaximumWidth(self.uiTreeWidget.sizeHintForColumn(0) + 10)
+
         # Something has change?
         self._modified = False
-
-
 
     def _loadPreferencePages(self):
         """
@@ -157,7 +158,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             self.uiTitleLabel.setText("{} preferences".format(name))
         index = self.uiStackedWidget.indexOf(preferences_page)
         widget = self.uiStackedWidget.widget(index)
-        self.uiStackedWidget.setMinimumSize(widget.size())
+        #self.uiStackedWidget.setMinimumSize(widget.size())
         self.uiStackedWidget.resize(widget.size())
         self.uiStackedWidget.setCurrentIndex(index)
 

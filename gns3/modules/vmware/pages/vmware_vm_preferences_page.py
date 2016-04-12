@@ -90,6 +90,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiVMwareVMInfoTreeWidget.expandAll()
         self.uiVMwareVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiVMwareVMInfoTreeWidget.resizeColumnToContents(1)
+        self.uiVMwareVMsTreeWidget.setMaximumWidth(self.uiVMwareVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def _vmwareVMChangedSlot(self):
         """
@@ -186,6 +187,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         if self._items:
             self.uiVMwareVMsTreeWidget.setCurrentItem(self._items[0])
             self.uiVMwareVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiVMwareVMsTreeWidget.setMaximumWidth(self.uiVMwareVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """

@@ -43,9 +43,7 @@ class Server(QtCore.QObject):
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
         self._usage = None
-        self._ram_limit = settings.get("ram_limit", 0)
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
-        self._allocated_ram = 0
         self._local = True
         self._gns3_vm = False
         self._server_id = settings.get("server_id", self.url())
@@ -174,7 +172,6 @@ class Server(QtCore.QObject):
         Return a dictionnary with server settings
         """
         settings = {"protocol": self.protocol(),
-                    "ram_limit": self.RAMLimit(),
                     "host": self.host(),
                     "port": self.port(),
                     "user": self.user(),
@@ -199,46 +196,6 @@ class Server(QtCore.QObject):
     def setSystemUsage(self, usage):
        self._usage = usage
        self.system_usage_updated_signal.emit()
-
-    def RAMLimit(self):
-        """
-        Returns the RAM limit for this server (used for RAM usage load balancing).
-
-        :returns: RAM limit (integer)
-        """
-
-        return self._ram_limit
-
-    def allocatedRAM(self):
-        """
-        Amount of allocated RAM on this server (used for RAM usage load balancing).
-
-        :returns: allocated RAM (integer)
-        """
-
-        return self._allocated_ram
-
-    def increaseAllocatedRAM(self, ram):
-        """
-        Increase the amount of allocated RAM on this server (used for RAM usage load balancing).
-
-        :param ram: amount of RAM (integer)
-        """
-
-        log.info("RAM usage on {} has increased by {} MB (total load is now {} MB)".format(self.url(), ram, self._allocated_ram + ram))
-        self._allocated_ram += ram
-
-    def decreaseAllocatedRAM(self, ram):
-        """
-        Decrease the amount of allocated RAM on this server (used for RAM usage load balancing).
-
-        :param ram: amount of RAM (integer)
-        """
-
-        log.info("RAM usage on {} has decreased by {} MB (total load is now {} MB)".format(self.url(), ram, self._allocated_ram - ram))
-        self._allocated_ram -= ram
-        if self._allocated_ram < 0:
-            self._allocated_ram = 0
 
     def dump(self):
         """

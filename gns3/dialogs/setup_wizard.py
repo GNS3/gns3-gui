@@ -79,7 +79,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         download_url = "https://github.com/GNS3/gns3-gui/releases/download/v{version}/GNS3.VM.VMware.Workstation.{version}.zip".format(version=__version__)
-        self.uiGNS3VMDownloadLinkUrlLabel.setText('If you don\'t have the GNS3 Virtual Machine you can <a href="{download_url}">download it here</a>.<br>And import the VM in the virtualization software and hit refresh.'.format(download_url=download_url))
+        self.uiGNS3VMDownloadLinkUrlLabel.setText('The GNS3 VM can <a href="{download_url}">downloaded here</a>.<br>Import the VM in your virtualization software and hit refresh.'.format(download_url=download_url))
         self.uiVirtualBoxRadioButton.setChecked(False)
         from gns3.modules import VMware
         settings = VMware.instance().settings()
@@ -93,6 +93,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Slot to refresh the VirtualBox VMs list.
         """
 
+        QtWidgets.QMessageBox.warning(self, "GNS3 VM on VirtualBox", "VirtualBox doesn't support nested virtulization, this means running Qemu based VM could be very slow")
         download_url = "https://github.com/GNS3/gns3-gui/releases/download/v{version}/GNS3.VM.VirtualBox.{version}.zip".format(version=__version__)
         self.uiGNS3VMDownloadLinkUrlLabel.setText('If you don\'t have the GNS3 Virtual Machine you can <a href="{download_url}">download it here</a>.<br>And import the VM in the virtualization software and hit refresh.'.format(download_url=download_url))
         self.uiVmwareRadioButton.setChecked(False)
@@ -127,7 +128,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         super().initializePage(page_id)
         if self.page(page_id) == self.uiVMWizardPage:
-            cpu_count = psutil.cpu_count()
+            # limit the number of vCPUs to the number of physical cores (hyper thread CPUs are excluded)
+            # because this is likely to degrade performances.
+            cpu_count = psutil.cpu_count(logical=False)
             self.uiCPUSpinBox.setValue(cpu_count)
             # we want to allocate half of the available physical memory
             ram = int(psutil.virtual_memory().total / (1024 * 1024) / 2)

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Thu Apr  7 14:36:32 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -46,7 +47,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -86,8 +87,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setSpacing(0)
+        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -120,8 +121,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setSpacing(0)
+        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -375,10 +376,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -387,18 +388,6 @@ class Ui_MainWindow(object):
         self.uiLabInstructionsAction.setObjectName("uiLabInstructionsAction")
         self.uiFitInViewAction = QtWidgets.QAction(MainWindow)
         self.uiFitInViewAction.setObjectName("uiFitInViewAction")
-        self.uiExportProjectAction = QtWidgets.QAction(MainWindow)
-        self.uiExportProjectAction.setVisible(False)
-        self.uiExportProjectAction.setObjectName("uiExportProjectAction")
-        self.uiImportProjectAction = QtWidgets.QAction(MainWindow)
-        self.uiImportProjectAction.setVisible(False)
-        self.uiImportProjectAction.setObjectName("uiImportProjectAction")
-        self.uiMoveLocalProjectToCloudAction = QtWidgets.QAction(MainWindow)
-        self.uiMoveLocalProjectToCloudAction.setVisible(False)
-        self.uiMoveLocalProjectToCloudAction.setObjectName("uiMoveLocalProjectToCloudAction")
-        self.uiMoveCloudProjectToLocalAction = QtWidgets.QAction(MainWindow)
-        self.uiMoveCloudProjectToLocalAction.setVisible(False)
-        self.uiMoveCloudProjectToLocalAction.setObjectName("uiMoveCloudProjectToLocalAction")
         self.uiDarkStyleAction = QtWidgets.QAction(MainWindow)
         self.uiDarkStyleAction.setObjectName("uiDarkStyleAction")
         self.uiActionFullscreen = QtWidgets.QAction(MainWindow)
@@ -427,6 +416,23 @@ class Ui_MainWindow(object):
         self.uiExportDebugInformationAction.setObjectName("uiExportDebugInformationAction")
         self.uiDoctorAction = QtWidgets.QAction(MainWindow)
         self.uiDoctorAction.setObjectName("uiDoctorAction")
+        self.actionExport_project = QtWidgets.QAction(MainWindow)
+        self.actionExport_project.setObjectName("actionExport_project")
+        self.uiExportProjectAction = QtWidgets.QAction(MainWindow)
+        icon31 = QtGui.QIcon()
+        icon31.addPixmap(QtGui.QPixmap(":/icons/export_config.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiExportProjectAction.setIcon(icon31)
+        self.uiExportProjectAction.setObjectName("uiExportProjectAction")
+        self.uiImportProjectAction = QtWidgets.QAction(MainWindow)
+        icon32 = QtGui.QIcon()
+        icon32.addPixmap(QtGui.QPixmap(":/icons/import_config.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiImportProjectAction.setIcon(icon32)
+        self.uiImportProjectAction.setObjectName("uiImportProjectAction")
+        self.uiEditReadmeAction = QtWidgets.QAction(MainWindow)
+        icon33 = QtGui.QIcon()
+        icon33.addPixmap(QtGui.QPixmap(":/icons/edit.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiEditReadmeAction.setIcon(icon33)
+        self.uiEditReadmeAction.setObjectName("uiEditReadmeAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -435,12 +441,9 @@ class Ui_MainWindow(object):
         self.uiFileMenu.addAction(self.uiOpenProjectAction)
         self.uiFileMenu.addAction(self.uiSaveProjectAction)
         self.uiFileMenu.addAction(self.uiSaveProjectAsAction)
+        self.uiFileMenu.addSeparator()
         self.uiFileMenu.addAction(self.uiExportProjectAction)
         self.uiFileMenu.addAction(self.uiImportProjectAction)
-        self.uiFileMenu.addSeparator()
-        self.uiFileMenu.addAction(self.uiMoveLocalProjectToCloudAction)
-        self.uiFileMenu.addAction(self.uiMoveCloudProjectToLocalAction)
-        self.uiFileMenu.addAction(self.uiDownloadRemoteProject)
         self.uiFileMenu.addSeparator()
         self.uiFileMenu.addAction(self.uiOpenApplianceAction)
         self.uiFileMenu.addAction(self.uiImportExportConfigsAction)
@@ -478,6 +481,7 @@ class Ui_MainWindow(object):
         self.uiAnnotateMenu.addAction(self.uiInsertImageAction)
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
         self.uiAnnotateMenu.addAction(self.uiDrawEllipseAction)
+        self.uiAnnotateMenu.addAction(self.uiEditReadmeAction)
         self.uiToolsMenu.addAction(self.uiVPCSAction)
         self.uiToolsMenu.addAction(self.uiIOUVMConverterAction)
         self.uiMenuBar.addAction(self.uiFileMenu.menuAction())
@@ -672,10 +676,6 @@ class Ui_MainWindow(object):
         self.uiGettingStartedAction.setToolTip(_translate("MainWindow", "Show GNS3 news"))
         self.uiLabInstructionsAction.setText(_translate("MainWindow", "&Lab instructions"))
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view"))
-        self.uiExportProjectAction.setText(_translate("MainWindow", "Backup project to cloud"))
-        self.uiImportProjectAction.setText(_translate("MainWindow", "Restore backup from cloud"))
-        self.uiMoveLocalProjectToCloudAction.setText(_translate("MainWindow", "Move local project to cloud"))
-        self.uiMoveCloudProjectToLocalAction.setText(_translate("MainWindow", "Move cloud project to local"))
         self.uiDarkStyleAction.setText(_translate("MainWindow", "Dark Style"))
         self.uiActionFullscreen.setText(_translate("MainWindow", "Fullscreen"))
         self.uiActionFullscreen.setShortcut(_translate("MainWindow", "Ctrl+F"))
@@ -688,10 +688,14 @@ class Ui_MainWindow(object):
         self.uiExportDebugInformationAction.setText(_translate("MainWindow", "Export debug information"))
         self.uiExportDebugInformationAction.setToolTip(_translate("MainWindow", "&Export debug information"))
         self.uiDoctorAction.setText(_translate("MainWindow", "GNS3 &Doctor"))
+        self.actionExport_project.setText(_translate("MainWindow", "Export project"))
+        self.uiExportProjectAction.setText(_translate("MainWindow", "Export project"))
+        self.uiImportProjectAction.setText(_translate("MainWindow", "Import project"))
+        self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
 
+from ..topology_summary_view import TopologySummaryView
+from ..nodes_view import NodesView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView
-from ..nodes_view import NodesView
 from ..server_summary_view import ServerSummaryView
-from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

@@ -66,6 +66,7 @@ class GNS3VM:
         """
         Kill the VBoxManage or vmrun process if running
         """
+
         if self._running_process is not None:
             self._running_process.kill()
             self._running_process.wait()
@@ -74,6 +75,7 @@ class GNS3VM:
     def _process_check_output(self, command, timeout=None):
         # Original code from Python's subprocess.check_output
         # https://github.com/python/cpython/blob/3.4/Lib/subprocess.py
+
         with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as process:
             self._running_process = process
             try:
@@ -194,6 +196,18 @@ class GNS3VM:
         vm_settings = Servers.instance().vmSettings()
         return vm_settings["auto_start"]
 
+    def isRemote(self):
+        """
+        Checks if the GNS3 VM is remote.
+
+        :returns: boolean
+        """
+
+        vm_settings = Servers.instance().vmSettings()
+        if vm_settings["virtualization"] == "remote":
+            return True
+        return False
+
     def adjustLocalServerIP(self):
         """
         Adjust the local server IP address to be in the same subnet as the GNS3 VM.
@@ -296,7 +310,7 @@ class GNS3VM:
                 pass
             except subprocess.TimeoutExpired:
                 log.warning("Could not ACPI shutdown the VM (timeout expired)")
-            self._is_running = False
+        self._is_running = False
 
     @staticmethod
     def instance():

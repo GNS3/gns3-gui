@@ -41,6 +41,7 @@ def test_docker_vm_setup(project, local_server):
             'console': None,
             'environment': '',
             'console_type': 'telnet',
+            'console_resolution': '1024x768',
             'aux': None
         }
         mock.assert_called_with(ANY,
@@ -56,7 +57,8 @@ def test_docker_vm_setup(project, local_server):
                                     },
                                     "name": "ubuntu-1"
                                 },
-                                context={})
+                                context={},
+                                timeout=None)
 
 
 def test_setupCallback(project, local_server):
@@ -82,7 +84,8 @@ def test_dump(project, local_server):
         'properties': {
             'adapters': 1,
             'name': 'ubuntu-1',
-            'console_type': 'telnet'
+            'console_type': 'telnet',
+            'console_resolution': '1024x768'
         },
         'server_id': local_server.id(),
         'type': 'DockerVM',
@@ -139,4 +142,5 @@ def test_load(project, local_server):
                   'properties': {'start_command': '/bin/ls',
                                  'adapters': 1,
                                  'image': 'mysql:latest'}},
-            context={})
+            context={},
+            timeout=None)

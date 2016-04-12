@@ -131,10 +131,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
         if self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
-            if self.uiLoadBalanceCheckBox.isChecked():
-                server = "load-balance"
-            else:
-                server = self.uiRemoteServersComboBox.currentText()
+            server = self.uiRemoteServersComboBox.currentText()
         elif self.uiVMRadioButton.isChecked():
             server = "vm"
 

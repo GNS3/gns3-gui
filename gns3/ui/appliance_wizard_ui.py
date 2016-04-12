@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/appliance_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/appliance_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Fri Mar 25 14:45:27 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -124,14 +125,10 @@ class Ui_ApplianceWizard(object):
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
-        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 2, 1, 1, 1)
-        self.uiLoadBalanceCheckBox = QtWidgets.QCheckBox(self.uiRemoteServersGroupBox)
-        self.uiLoadBalanceCheckBox.setChecked(True)
-        self.uiLoadBalanceCheckBox.setObjectName("uiLoadBalanceCheckBox")
-        self.gridLayout_7.addWidget(self.uiLoadBalanceCheckBox, 1, 0, 1, 2)
+        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
         self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
         self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
-        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 2, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 1, 0, 1, 1)
         self.verticalLayout_2.addWidget(self.uiRemoteServersGroupBox)
         ApplianceWizard.addPage(self.uiServerWizardPage)
         self.uiCheckServerWizardPage = QtWidgets.QWizardPage()
@@ -295,9 +292,8 @@ class Ui_ApplianceWizard(object):
         self.uiRemoteRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on a remote computer"))
         self.uiVMRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on the GNS3 VM (recommended)"))
         self.uiLocalRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on your local computer"))
-        self.uiRemoteServersGroupBox.setTitle(_translate("ApplianceWizard", "Remote servers"))
-        self.uiLoadBalanceCheckBox.setText(_translate("ApplianceWizard", "Load balance across all available remote servers"))
-        self.uiRemoteServersLabel.setText(_translate("ApplianceWizard", "Run on server:"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("ApplianceWizard", "Remote server"))
+        self.uiRemoteServersLabel.setText(_translate("ApplianceWizard", "Run on:"))
         self.uiCheckServerLabel.setText(_translate("ApplianceWizard", "Please wait while checking server capacities..."))
         self.uiFilesWizardPage.setTitle(_translate("ApplianceWizard", "Required files"))
         self.uiFilesWizardPage.setSubTitle(_translate("ApplianceWizard", "The following files are required to install NX-OS"))
@@ -369,7 +365,7 @@ class Ui_ApplianceWizard(object):
         self.uiUsageTextEdit.setHtml(_translate("ApplianceWizard", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The default username/password is admin/admin. A default configuration is present.</p></body></html>"))
 
 from . import resources_rc

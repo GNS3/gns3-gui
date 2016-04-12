@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Fri Mar 25 14:43:13 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,13 +37,9 @@ class Ui_DockerVMWizard(object):
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.uiLoadBalanceCheckBox = QtWidgets.QCheckBox(self.uiRemoteServersGroupBox)
-        self.uiLoadBalanceCheckBox.setChecked(True)
-        self.uiLoadBalanceCheckBox.setObjectName("uiLoadBalanceCheckBox")
-        self.gridLayout_7.addWidget(self.uiLoadBalanceCheckBox, 0, 0, 1, 2)
         self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
         self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
-        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 1, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.uiRemoteServersComboBox = QtWidgets.QComboBox(self.uiRemoteServersGroupBox)
         self.uiRemoteServersComboBox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -51,7 +48,7 @@ class Ui_DockerVMWizard(object):
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
-        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiRemoteServersGroupBox)
         DockerVMWizard.addPage(self.uiServerWizardPage)
         self.uiImageWizardPage = QtWidgets.QWizardPage()
@@ -203,9 +200,8 @@ class Ui_DockerVMWizard(object):
         self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run the Docker VM on a remote computer"))
         self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run the Docker VM on the GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run the Docker VM on your local computer"))
-        self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote servers"))
-        self.uiLoadBalanceCheckBox.setText(_translate("DockerVMWizard", "Load balance across all available remote servers"))
-        self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on server:"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote server"))
+        self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on:"))
         self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))
         self.uiImageWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a Docker virtual machine from the list. Or provide an image name on docker hub."))
         self.uiExistingImageRadioButton.setText(_translate("DockerVMWizard", "Existing image"))

@@ -109,7 +109,11 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
                              2: self.uiWic2comboBox}
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        self.addImageSelector(self.uiIOSExistingImageRadioButton, self.uiIOSImageListComboBox, self.uiIOSImageLineEdit, self.uiIOSImageToolButton, IOSRouterPreferencesPage.getIOSImage)
+        self.addImageSelector(self.uiIOSExistingImageRadioButton,
+                              self.uiIOSImageListComboBox,
+                              self.uiIOSImageLineEdit,
+                              self.uiIOSImageToolButton,
+                              IOSRouterPreferencesPage.getIOSImage)
 
     def _prefillPlatform(self):
         """
@@ -137,6 +141,9 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         if image.lower().startswith("c7200p"):
             QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
+
+        if image.lower().startswith("c1700") or image.lower().startswith("c2600"):
+            QtWidgets.QMessageBox.warning(self, "IOS image", "Using c1700 or c2600 IOS images is not recommended, they can be unstable or buggy")
 
         index = self.uiPlatformComboBox.findText(detected_platform)
         if index != -1:
@@ -272,50 +279,6 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             self.uiIdlepcLineEdit.setText(idlepc)
             QtWidgets.QMessageBox.information(self, "Idle-PC finder", "Idle-PC value {} has been found suitable for your IOS image".format(idlepc))
 
-    def _iosImageBrowserSlot(self):
-        """
-        Slot to open a file browser and select an IOU image.
-        """
-
-        from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        server = Servers.instance().getServerFromString(self.getSettings()["server"])
-        path = IOSRouterPreferencesPage.getIOSImage(self, server)
-        if not path:
-            return
-        self.uiIOSImageLineEdit.clear()
-        self.uiIOSImageLineEdit.setText(path)
-
-        # try to guess the platform
-        image = os.path.basename(path)
-        match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
-        if not match:
-            QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
-            return
-
-        detected_platform = match.group(1)
-        detected_chassis = ""
-        # IOS images for the 3600 platform start with the chassis name (c3620 etc.)
-        for platform, chassis in CHASSIS.items():
-            if detected_platform[1:] in chassis:
-                detected_chassis = detected_platform[1:]
-                detected_platform = platform
-                break
-
-        if detected_platform not in PLATFORMS_DEFAULT_RAM:
-            QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for the {} platform/chassis and is not supported by this application!".format(detected_platform))
-            return
-
-        if image.lower().startswith("c7200p"):
-            QtWidgets.QMessageBox.warning(self, "IOS image", "This IOS image is for c7200 PowerPC routers and is not recommended. Please use an IOS image that do not start with c7200p.")
-
-        index = self.uiPlatformComboBox.findText(detected_platform)
-        if index != -1:
-            self.uiPlatformComboBox.setCurrentIndex(index)
-
-        index = self.uiChassisComboBox.findText(detected_chassis)
-        if index != -1:
-            self.uiChassisComboBox.setCurrentIndex(index)
-
     def done(self, result):
 
         if self._router:
@@ -431,10 +394,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         if self.uiLocalRadioButton.isChecked():
             server = "local"
         elif self.uiRemoteRadioButton.isChecked():
-            if self.uiLoadBalanceCheckBox.isChecked():
-                server = "load-balance"
-            else:
-                server = self.uiRemoteServersComboBox.currentText()
+            server = self.uiRemoteServersComboBox.currentText()
         elif self.uiVMRadioButton.isChecked():
             server = "vm"
 

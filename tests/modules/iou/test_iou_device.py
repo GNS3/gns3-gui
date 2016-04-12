@@ -67,7 +67,8 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
                                       'console_type': 'telnet',
                                       'hypervisor_id': 'local'
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
         # Callback
         params = {
@@ -131,7 +132,8 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
                                       'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'hypervisor_id': 'local'
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
         # Callback
         params = {
@@ -175,7 +177,8 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
                                       'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'hypervisor_id': 'local'
                                 },
-                                context={})
+                                context={},
+                                timeout=120)
 
 
 def test_update(iou_device):

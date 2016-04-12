@@ -150,7 +150,7 @@ class VM(Node):
             if result:
                 self._updateCallback(result)
 
-    def _create(self, params):
+    def _create(self, params, timeout=120):
         """
         Create the VM on the controller
         """
@@ -171,7 +171,7 @@ class VM(Node):
         if "console_type" not in body:
             body["console_type"] = "telnet"
 
-        self.controllerHttpPost("/vms", self._setupVMCallback, body=body)
+        self.controllerHttpPost("/vms", self._setupVMCallback, body=body, timeout=timeout)
 
     def _setupVMCallback(self, result, error=False, **kwargs):
         """
@@ -438,6 +438,11 @@ class VM(Node):
         self.loaded_signal.connect(self._updatePortSettings)
 
     def openConsole(self, command=None, aux=False):
+        if command is None:
+            if aux:
+                command = self.consoleCommand(console_type="telnet")
+            else:
+                command = self.consoleCommand()
 
         console_type = "telnet"
         if hasattr(self, "serialConsole") and self.serialConsole():
@@ -452,9 +457,6 @@ class VM(Node):
             # Aux console is always telnet
             console_type = "telnet"
         else:
-            if command is None:
-                command = self.consoleCommand()
-
             console_port = self.console()
             if "console_type" in self.settings():
                 console_type = self.settings()["console_type"]

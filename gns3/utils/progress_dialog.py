@@ -50,8 +50,6 @@ class ProgressDialog(QtWidgets.QProgressDialog):
             maximum = 0
 
         super().__init__(label_text, cancel_button_text, minimum, maximum, parent)
-
-
         self.setModal(True)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self._errors = []
@@ -59,13 +57,14 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.canceled.connect(self._canceledSlot)
         self.destroyed.connect(self._cleanup)
 
-        self._thread = QtCore.QThread(self)
-
+        self._thread = QtCore.QThread()
         self._worker = worker
+        self._worker.setObjectName(worker.__class__.__name__)
+        self._worker.moveToThread(self._thread)
         self._worker.finished.connect(self.accept)
         self._worker.updated.connect(self._updateProgress)
         self._worker.error.connect(self._error)
-        self._worker.moveToThread(self._thread)
+        self._thread.started.connect(self._worker.run)
 
         self._countdownTimer = None
         if delay == 0:
@@ -93,13 +92,24 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
     def _start(self):
         #  connect the thread signals and start the thread
-        self._thread.started.connect(self._worker.run)
+
         self._thread.start()
+        log.debug("{} thread started".format(self._worker.objectName()))
 
     def _canceledSlot(self):
 
         self._worker.cancel()
+        log.debug("{} thread canceled".format(self._worker.objectName()))
         self._cleanup()
+
+    def accept(self):
+
+        if not self:
+            return
+
+        log.debug("{} thread finished".format(self._worker.objectName()))
+        self._cleanup()
+        super().accept()
 
     def __del__(self):
 
@@ -110,22 +120,23 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         Delete the thread.
         """
 
-        if not self or sip.isdeleted(self):
+        if not self:
             return
 
-        if self._countdownTimer:
+        if self._countdownTimer and not sip.isdeleted(self):
             self._countdownTimer.stop()
 
-        if self._thread:
-            if not sip.isdeleted(self._thread):
-                if self._thread.isRunning():
-                    thread = self._thread
-                    self._thread = None
-                    thread.quit()
-                    if not thread.wait(3000):
-                        thread.terminate()
-                        thread.wait()
-                    thread.deleteLater()
+        if self._thread and not sip.isdeleted(self._thread):
+            if self._thread.isRunning():
+                log.debug("{} thread is being destroyed".format(self._worker.objectName()))
+                thread = self._thread
+                self._thread = None
+                thread.quit()
+                if not thread.wait(3000):
+                    thread.terminate()
+                    thread.wait()
+                log.debug("{} thread destroyed".format(self._worker.objectName()))
+                thread.deleteLater()
 
     def _updateProgress(self, value):
         """
@@ -134,8 +145,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         :param value: value for the progress bar (integer)
         """
 
-        if self is not None and self._thread is not None:
-            # It seem in some cases this is called on a deleted object and crash
+        if self and self._thread:
+            # It seems in some cases this is called on a deleted object and crash
             if not sip.isdeleted(self):
                 self.setValue(value)
 
@@ -145,11 +156,12 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
         :param message: message
         """
-        if self is None or sip.isdeleted(self):
+
+        if not self or sip.isdeleted(self):
             return
 
         if stop:
-            log.critical(message)
+            log.critical("{} thread stopping with an error: {}".format(self._worker.objectName(), message))
             QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
             self._canceledSlot()
         else:

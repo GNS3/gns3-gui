@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Fri Mar 25 14:45:27 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,13 +37,9 @@ class Ui_IOSRouterWizard(object):
         self.uiRemoteServersGroupBox.setObjectName("uiRemoteServersGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiRemoteServersGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.uiLoadBalanceCheckBox = QtWidgets.QCheckBox(self.uiRemoteServersGroupBox)
-        self.uiLoadBalanceCheckBox.setChecked(True)
-        self.uiLoadBalanceCheckBox.setObjectName("uiLoadBalanceCheckBox")
-        self.gridLayout_7.addWidget(self.uiLoadBalanceCheckBox, 0, 0, 1, 2)
         self.uiRemoteServersLabel = QtWidgets.QLabel(self.uiRemoteServersGroupBox)
         self.uiRemoteServersLabel.setObjectName("uiRemoteServersLabel")
-        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 1, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.uiRemoteServersComboBox = QtWidgets.QComboBox(self.uiRemoteServersGroupBox)
         self.uiRemoteServersComboBox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -51,7 +48,7 @@ class Ui_IOSRouterWizard(object):
         sizePolicy.setHeightForWidth(self.uiRemoteServersComboBox.sizePolicy().hasHeightForWidth())
         self.uiRemoteServersComboBox.setSizePolicy(sizePolicy)
         self.uiRemoteServersComboBox.setObjectName("uiRemoteServersComboBox")
-        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiRemoteServersGroupBox)
         IOSRouterWizard.addPage(self.uiServerWizardPage)
         self.uiIOSImageWizardPage = QtWidgets.QWizardPage()
@@ -295,9 +292,8 @@ class Ui_IOSRouterWizard(object):
         self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on a remote computer"))
         self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on the GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on your local computer"))
-        self.uiRemoteServersGroupBox.setTitle(_translate("IOSRouterWizard", "Remote servers"))
-        self.uiLoadBalanceCheckBox.setText(_translate("IOSRouterWizard", "Load balance across all available remote servers"))
-        self.uiRemoteServersLabel.setText(_translate("IOSRouterWizard", "Run on server:"))
+        self.uiRemoteServersGroupBox.setTitle(_translate("IOSRouterWizard", "Remote server"))
+        self.uiRemoteServersLabel.setText(_translate("IOSRouterWizard", "Run on:"))
         self.uiIOSImageWizardPage.setTitle(_translate("IOSRouterWizard", "IOS image"))
         self.uiIOSImageWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose an IOS image."))
         self.uiIOSExistingImageRadioButton.setText(_translate("IOSRouterWizard", "Existing image"))
@@ -311,7 +307,7 @@ class Ui_IOSRouterWizard(object):
         self.uiChassisLabel.setText(_translate("IOSRouterWizard", "Chassis:"))
         self.uiEtherSwitchCheckBox.setText(_translate("IOSRouterWizard", "This is an EtherSwitch router"))
         self.uiMemoryWizardPage.setTitle(_translate("IOSRouterWizard", "Memory"))
-        self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS to start."))
+        self.uiMemoryWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please check the amount of memory (RAM) that you allocate to IOS. Too much or not enough RAM could prevent IOS from starting."))
         self.uiRamLabel.setText(_translate("IOSRouterWizard", "Default RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("IOSRouterWizard", " MiB"))
         self.uiTestIOSImagePushButton.setText(_translate("IOSRouterWizard", "&Test IOS image"))
@@ -331,7 +327,7 @@ class Ui_IOSRouterWizard(object):
         self.uiWic1Label.setText(_translate("IOSRouterWizard", "wic 1:"))
         self.uiWic2Label.setText(_translate("IOSRouterWizard", "wic 2:"))
         self.uiIdlePCWizardPage.setTitle(_translate("IOSRouterWizard", "Idle-PC"))
-        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its core."))
+        self.uiIdlePCWizardPage.setSubTitle(_translate("IOSRouterWizard", "An idle-pc value is necessary to prevent IOS to use 100% of your processor or one of its cores."))
         self.uiIdlepcLabel.setText(_translate("IOSRouterWizard", "Idle-PC:"))
         self.uiIdlePCFinderPushButton.setText(_translate("IOSRouterWizard", "Idle-PC finder"))
 

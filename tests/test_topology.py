@@ -24,6 +24,7 @@ from gns3.project import Project
 from gns3.version import __version__
 from gns3.items.pixmap_image_item import PixmapImageItem
 import gns3.main_window
+import gns3.qt
 
 
 def test_topology_init():
@@ -78,9 +79,8 @@ def test_dump(vpcs_device, project, local_server):
                     "host": "127.0.0.1",
                     "id": local_server.id(),
                     "local": True,
-                    "port": 8000,
+                    "port": 3080,
                     "protocol": "http",
-                    "ram_limit": 0
                 }
             ]
         },
@@ -141,7 +141,6 @@ def test_dump_http_auth(vpcs_device, project, remote_server):
                     "local": False,
                     "port": 8001,
                     "protocol": "http",
-                    "ram_limit": 0,
                     "user": "hello"
                 }
             ]
@@ -223,9 +222,8 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         "host": "127.0.0.1",
                         "id": local_server.id(),
                         "local": True,
-                        "port": 8000,
+                        "port": 3080,
                         "protocol": "http",
-                        "ram_limit": 0,
                         "vm": False
                     }
                 ]
@@ -343,7 +341,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                     "host": "127.0.0.1",
                     "id": 1,
                     "local": True,
-                    "port": 8000
+                    "port": 3080
                 }
             ]
         },
@@ -374,6 +372,133 @@ def test_load(project, monkeypatch, main_window, tmpdir):
     assert len(topology.nodes()) == 2
     assert len(topology._node_to_links_mapping) == 2
     assert topology.getNode(1).initialized()
+    assert topology.getNode(1).server() is not None
+    assert topology.getNode(2).initialized()
+    assert main_window.uiGraphicsView.addLink.called
+
+
+def test_load_invalid_server(project, monkeypatch, main_window, tmpdir):
+
+    topo = {
+        "project_id": project.id(),
+        "auto_start": False,
+        "name": "twovpcs",
+        "topology": {
+            "links": [
+                {
+                    "description": "Link from VPCS 1 port Ethernet0 to VPCS 2 port Ethernet0",
+                    "destination_node_id": 2,
+                    "destination_port_id": 2,
+                    "id": 1,
+                    "source_node_id": 1,
+                    "source_port_id": 1
+                }
+            ],
+            "nodes": [
+                {
+                    "description": "VPCS device",
+                    "id": 1,
+                    "label": {
+                        "color": "#000000",
+                        "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                        "text": "VPCS 1",
+                        "x": 10.75,
+                        "y": -25.0
+                    },
+                    "ports": [
+                        {
+                            "description": "connected to VPCS 2 on port Ethernet0",
+                            "id": 1,
+                            "link_id": 1,
+                            "name": "Ethernet0",
+                            "nio": "NIO_UDP",
+                            "port_number": 0,
+                            "adapter_number": 0
+                        }
+                    ],
+                    "properties": {
+                        "console": 4501,
+                        "name": "VPCS 1",
+                        "script_file": "startup.vpc"
+                    },
+                    "server_id": 1,
+                    "type": "VPCSDevice",
+                    "vpcs_id": 1,
+                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cb8",
+                    "x": -349.5,
+                    "y": -206.5
+                },
+                {
+                    "description": "VPCS device",
+                    "id": 2,
+                    "label": {
+                        "color": "#000000",
+                        "font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+                        "text": "VPCS 2",
+                        "x": 10.75,
+                        "y": -25.0
+                    },
+                    "ports": [
+                        {
+                            "description": "connected to VPCS 1 on port Ethernet0",
+                            "id": 2,
+                            "link_id": 1,
+                            "name": "Ethernet0",
+                            "nio": "NIO_UDP",
+                            "port_number": 0
+                        }
+                    ],
+                    "properties": {
+                        "console": 4502,
+                        "name": "VPCS 2",
+                        "script_file": "startup.vpc"
+                    },
+                    "server_id": 1,
+                    "type": "VPCSDevice",
+                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cba",
+                    "vpcs_id": 2,
+                    "x": 69.5,
+                    "y": -190.5
+                }
+            ],
+            "servers": [
+                {
+                    "host": "127.0.0.1",
+                    "id": 1,
+                    "local": False,
+                    "port": 3081
+                }
+            ]
+        },
+        "type": "topology",
+        "version": "1.3.0"
+    }
+
+    monkeypatch.setattr('gns3.main_window.MainWindow.instance', lambda: main_window)
+
+    # We return an uuid for each HTTP post
+    def http_loader(self, method, path, callback, body={}, **kwargs):
+        if path == "/projects":
+            callback({"project_id": uuid.uuid4(), "path": str(tmpdir)})
+        elif path[-14:] == "/notifications":
+            pass
+        else:
+            callback({"vm_id": uuid.uuid4()})
+
+    monkeypatch.setattr("gns3.http_client.HTTPClient.createHTTPQuery", http_loader)
+
+    monkeypatch.setattr("gns3.http_client.HTTPClient.connected", lambda self: True)
+
+    topology = Topology()
+    topology.project = project
+    with patch("gns3.qt.QtWidgets.QMessageBox.warning", return_value=gns3.qt.QtWidgets.QMessageBox.Yes):
+        topology._load(topo)
+
+    assert topology._project.id() == project.id()
+    assert len(topology.nodes()) == 2
+    assert len(topology._node_to_links_mapping) == 2
+    assert topology.getNode(1).initialized()
+    assert topology.getNode(1).server() is not None
     assert topology.getNode(2).initialized()
     assert main_window.uiGraphicsView.addLink.called
 
@@ -464,7 +589,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
                     "host": "127.0.0.1",
                     "id": 1,
                     "local": True,
-                    "port": 8000
+                    "port": 3080
                 }
             ]
         },
