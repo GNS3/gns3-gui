@@ -44,14 +44,6 @@ class ExportProjectWorker(QtCore.QObject):
             self.finished.emit()
             return
 
-        if not os.path.exists(self._project.readmePathFile()):
-            text, ok = QtWidgets.QInputDialog.getMultiLineText(self.parent(), "Readme", "Please provide a description for the topology if you want to share it with the public. \nThis will be save in the file README.txt in the project and use for all project exports", "Topology title\n\nAuthor: Grace Hopper <grace@hopper>\n\nThis topology...")
-            if not ok:
-                self.finished.emit()
-                return
-            with open(self._project.readmePathFile(), 'w+') as f:
-                f.write(text)
-
         topology = Topology.instance()
         for node in topology.nodes():
 
@@ -60,11 +52,26 @@ class ExportProjectWorker(QtCore.QObject):
                 self.finished.emit()
                 return
 
+        reply = QtWidgets.QMessageBox.question(self.parent(), "Include image", "Would you like to include the base image in the export?.\n\nThe topology will require no additional download but will be much bigger.\n\nAll the images need to be available on your local computer.", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+        self._include_images = int(reply == QtWidgets.QMessageBox.Yes)
+
+
+        if not os.path.exists(self._project.readmePathFile()):
+            text, ok = QtWidgets.QInputDialog.getMultiLineText(self.parent(), "Readme", "Please provide a description for the topology if you want to share it with the public. \nThis will be save in the file README.txt in the project and use for all project exports", "Topology title\n\nAuthor: Grace Hopper <grace@hopper>\n\nThis topology...")
+            if not ok:
+                self.finished.emit()
+                return
+            with open(self._project.readmePathFile(), 'w+') as f:
+                f.write(text)
+
         for server in self._project.servers():
             if not server.isLocal() and not server.isGNS3VM():
                 self.error.emit("Project from remote server can not be exported. Only project for local and GNS3 VM are supported.", True)
                 self.finished.emit()
                 return
+
+
+        QtWidgets.QMessageBox.information(self.parent(), "Export", "Remember to check the licence of the material used in the topology before sharing it with someone else.", QtWidgets.QMessageBox.Ok)
 
         self._path, _ = QtWidgets.QFileDialog.getSaveFileName(self.parent(), "Export project", None, "GNS3 Topology (*.gns3z)", "GNS3 Topology (*.gns3z)")
         if self._path is None or len(self._path) == 0:
@@ -86,7 +93,7 @@ class ExportProjectWorker(QtCore.QObject):
         if vm_server:
             self._project.get(vm_server, "/export", self._exportVmReceived, downloadProgressCallback=self._downloadFileProgress)
         else:
-            self._project.get(Servers.instance().localServer(), "/export", self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
+            self._project.get(Servers.instance().localServer(), "/export?include_images={}".format(self._include_images), self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
 
     def _exportVmReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
@@ -109,7 +116,7 @@ class ExportProjectWorker(QtCore.QObject):
             self.finished.emit()
             return
 
-        self._project.get(Servers.instance().localServer(), "/export", self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
+        self._project.get(Servers.instance().localServer(), "/export?include_images={}".format(self._include_images), self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
 
     def _exportLocalReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
