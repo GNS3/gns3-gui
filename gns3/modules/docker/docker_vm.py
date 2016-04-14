@@ -176,33 +176,6 @@ class DockerVM(VM):
         log.debug("{} is updating settings: {}".format(self.name(), params))
         self.httpPut("/docker/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
 
-    def suspend(self):
-        """Suspends this Docker container."""
-        if self.status() == Node.suspended:
-            log.debug("{} is already suspended".format(self.name()))
-            return
-        log.debug("{} is being suspended".format(self.name()))
-        self.httpPost("/docker/vms/{id}/suspend".format(
-            id=self._vm_id), self._suspendCallback)
-
-    def _suspendCallback(self, result, error=False, **kwargs):
-        """Callback for container suspend.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-        if error:
-            log.error("error while suspending {}: {}".format(
-                self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has suspended".format(self.name()))
-            self.setStatus(Node.suspended)
-            for port in self._ports:
-                # set ports as suspended
-                port.setStatus(Port.suspended)
-            self.suspended_signal.emit()
-
     def dump(self):
         """
         Returns a representation of this Docker VM instance.

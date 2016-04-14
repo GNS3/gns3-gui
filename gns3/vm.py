@@ -131,7 +131,7 @@ class VM(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback, progressText="{} is starting".format(self.name()))
+        self.controllerHttpPost("/vms/{vm_id}/start".format(vm_id=self._vm_id), self._startCallback, progressText="{} is starting".format(self.name()))
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -183,7 +183,7 @@ class VM(Node):
         """
 
         if error:
-            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
+            log.error("Error while setting up {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
@@ -256,7 +256,7 @@ class VM(Node):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/stop".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._stopCallback, progressText="{} is stopping".format(self.name()))
+        self.controllerHttpPost("/vms/{vm_id}/stop".format(vm_id=self._vm_id), self._stopCallback, progressText="{} is stopping".format(self.name()))
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
@@ -272,6 +272,37 @@ class VM(Node):
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
+
+    def suspend(self):
+        """
+        Suspends this router.
+        """
+
+        if self.status() == Node.suspended:
+            log.debug("{} is already suspended".format(self.name()))
+            return
+
+        log.debug("{} is being suspended".format(self.name()))
+        self.controllerHttpPost("/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
+
+    def _suspendCallback(self, result, error=False, **kwargs):
+        """
+        Callback for suspend.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            log.info("{} has suspended".format(self.name()))
+            self.setStatus(Node.suspended)
+            for port in self._ports:
+                # set ports as suspended
+                port.setStatus(Port.suspended)
+            self.suspended_signal.emit()
 
     def reload(self):
         """

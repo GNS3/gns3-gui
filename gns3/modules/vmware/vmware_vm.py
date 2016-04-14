@@ -220,37 +220,6 @@ class VMwareVM(VM):
             log.info("VMware VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
-    def suspend(self):
-        """
-        Suspends this VMware VM instance.
-        """
-
-        if self.status() == Node.suspended:
-            log.debug("{} is already suspended".format(self.name()))
-            return
-
-        log.debug("{} is being suspended".format(self.name()))
-        self.httpPost("/vmware/vms/{vm_id}/suspend".format(vm_id=self._vm_id), self._suspendCallback)
-
-    def _suspendCallback(self, result, error=False, **kwargs):
-        """
-        Callback for suspend.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has suspended".format(self.name()))
-            self.setStatus(Node.suspended)
-            for port in self._ports:
-                # set ports as suspended
-                port.setStatus(Port.suspended)
-            self.suspended_signal.emit()
-
     def info(self):
         """
         Returns information about this VMware VM instance.

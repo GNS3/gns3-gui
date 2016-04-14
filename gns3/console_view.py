@@ -41,16 +41,16 @@ class ConsoleLogHandler(logging.StreamHandler):
         message = self.format(record)
         level_no = record.levelno
         if level_no >= logging.ERROR:
-            self._console_view.write("\n{}".format(message), error=True)
+            self._console_view.write("{}\n".format(message), error=True)
         elif level_no >= logging.WARNING:
-            self._console_view.write(" \n{}".format(message), warning=True)
+            self._console_view.write("{}\n".format(message), warning=True)
         elif level_no >= logging.INFO:
             # To avoid noise on console we display all event only if log level is debug
             # or if we force the display in the log record
             if "show" in record.__dict__ or logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-                self._console_view.write("\n{}".format(message))
+                self._console_view.write("{}\n".format(message))
         elif level_no >= logging.DEBUG:
-            self._console_view.write("\n{}".format(message))
+            self._console_view.write("{}\n".format(message))
 
 
 class ConsoleView(PyCutExt, ConsoleCmd):
