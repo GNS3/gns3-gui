@@ -157,7 +157,7 @@ class VM(Node):
 
         body = {"properties": {}}
         body["vm_type"] = self.URL_PREFIX
-        body["hypervisor_id"] = self._server.server_id()
+        body["compute_id"] = self._server.server_id()
 
         # We have two kind of properties. The general properties common to all
         # VM and the specific that we need to put in the properties field
@@ -222,7 +222,7 @@ class VM(Node):
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
-        Setup callback compatible with the hypervisor api.
+        Setup callback compatible with the compute api.
         Could be removed when all VM will be rewrite to use the
         controller API
         """

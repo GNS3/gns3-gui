@@ -48,7 +48,7 @@ def test_docker_vm_setup(project, local_server):
                                 "/vms",
                                 docker_vm._setupVMCallback,
                                 body={
-                                    "hypervisor_id": "local",
+                                    "compute_id": "local",
                                     "vm_type": "docker",
                                     "console_type": "telnet",
                                     "properties": {
@@ -133,7 +133,7 @@ def test_load(project, local_server):
             ANY,
             "/vms",
             docker_vm._setupVMCallback,
-            body={'hypervisor_id': 'local',
+            body={'compute_id': 'local',
                   'name': 'mysql:latest-1',
                   'console': 6000,
                   'console_type': 'telnet',

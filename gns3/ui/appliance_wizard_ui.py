@@ -284,7 +284,7 @@ class Ui_ApplianceWizard(object):
         self.uiInfoTreeWidget.topLevelItem(4).setText(0, _translate("ApplianceWizard", "Maintainer:"))
         self.uiInfoTreeWidget.topLevelItem(4).setText(1, _translate("ApplianceWizard", "The GNS3 team"))
         self.uiInfoTreeWidget.setSortingEnabled(__sortingEnabled)
-        self.uiDescriptionLabel.setText(_translate("ApplianceWizard", "NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a hypervisor."))
+        self.uiDescriptionLabel.setText(_translate("ApplianceWizard", "NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a compute."))
         self.uiServerWizardPage.setTitle(_translate("ApplianceWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose a server type to run your new Appliance."))
         self.uiServerTypeGroupBox.setTitle(_translate("ApplianceWizard", "Server type"))

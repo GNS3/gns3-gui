@@ -33,7 +33,7 @@ def test_create(vpcs_device, local_server):
         assert args[0] == "/vms"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "hypervisor_id": local_server.server_id(),
+            "compute_id": local_server.server_id(),
             "console_type": "telnet",
             "vm_type": "vpcs",
             "properties": {

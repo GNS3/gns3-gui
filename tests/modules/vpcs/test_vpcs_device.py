@@ -38,7 +38,7 @@ def test_vpcs_device_setup(vpcs_device, project, local_server):
         assert args[0] == "/vms"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "hypervisor_id": local_server.server_id(),
+            "compute_id": local_server.server_id(),
             "vm_type": "vpcs",
             "console_type": "telnet",
             "properties": {
@@ -75,7 +75,7 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "hypervisor_id": local_server.server_id(),
+            "compute_id": local_server.server_id(),
             "vm_type": "vpcs",
             "console_type": "telnet",
             "properties": {}
@@ -115,7 +115,7 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
         assert kwargs["body"] == {
             "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "hypervisor_id": local_server.server_id(),
+            "compute_id": local_server.server_id(),
             "vm_type": "vpcs",
             "console_type": "telnet",
             "properties": {}

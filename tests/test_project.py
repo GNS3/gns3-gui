@@ -52,7 +52,7 @@ def test_project_post_non_initialized_project_local_server(tmpdir, local_server)
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -85,7 +85,7 @@ def test_project_post_non_created_project_local_server(tmpdir, local_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -115,7 +115,7 @@ def test_project_post_non_created_project_remote_server(remote_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -146,17 +146,17 @@ def test_project_post_non_created_project_remote_server_two_query(remote_server)
         calls = mock.mock_calls
 
         # name, args, kwargs = calls[1]
-        # assert args[1] == "/hypervisor/projects/{uuid}/notifications".format(uuid=uuid)
+        # assert args[1] == "/compute/projects/{uuid}/notifications".format(uuid=uuid)
         # assert args[0] == "GET"
 
         name, args, kwargs = calls[1]
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert args[0] == "POST"
         assert kwargs["body"] == {"test": "test"}
 
         name, args, kwargs = calls[2]
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test2".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -195,21 +195,21 @@ def test_project_post_non_created_project_remote_server_two_query_two_server(rem
 
         # name, args, kwargs = calls[1]
         # assert args[0] == "GET"
-        # assert args[1] == "/hypervisor/projects/{uuid}/notifications".format(uuid=uuid)
+        # assert args[1] == "/compute/projects/{uuid}/notifications".format(uuid=uuid)
 
         name, args, kwargs = calls[1]
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
         name, args, kwargs = calls[2]
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test3".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test3".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
         name, args, kwargs = calls[3]
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test2".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test2".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -229,7 +229,7 @@ def test_project_post_on_created_project(local_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "POST"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -249,7 +249,7 @@ def test_project_get_on_created_project(local_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "GET"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
 
 
 def test_project_put_on_created_project(local_server):
@@ -268,7 +268,7 @@ def test_project_put_on_created_project(local_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "PUT"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
 
@@ -288,7 +288,7 @@ def test_project_delete_on_created_project(local_server):
 
         args, kwargs = mock.call_args
         assert args[0] == "DELETE"
-        assert args[1] == "/hypervisor/projects/{uuid}/test".format(uuid=uuid)
+        assert args[1] == "/compute/projects/{uuid}/test".format(uuid=uuid)
 
 
 def test_project_close(local_server):
@@ -391,7 +391,7 @@ def test_project_moveFromTemporaryToPath(tmpdir, local_server):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "PUT"
-        assert args[1] == "/hypervisor/projects/{project_id}".format(project_id=project.id())
+        assert args[1] == "/compute/projects/{project_id}".format(project_id=project.id())
         assert kwargs["body"] == {"name": "untitled", "path": str(tmpdir), "temporary": False}
 
     assert project.temporary() is False

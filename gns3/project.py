@@ -236,7 +236,7 @@ class Project(QtCore.QObject):
         """
 
         if not self._created:
-            func = qpartial(self._projectOnServerCreated, method, path, callback, body, hypervisor_server=server, **kwargs)
+            func = qpartial(self._projectOnServerCreated, method, path, callback, body, compute_server=server, **kwargs)
 
             if self._callback_finish_creating_on_server is None:
                 self._callback_finish_creating_on_server = []
@@ -251,9 +251,9 @@ class Project(QtCore.QObject):
                 # We bufferize the query for when the project is created on the remote server
                 self._callback_finish_creating_on_server.append(func)
         else:
-            self._projectOnServerCreated(method, path, callback, body, params={}, hypervisor_server=server, **kwargs)
+            self._projectOnServerCreated(method, path, callback, body, params={}, compute_server=server, **kwargs)
 
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, hypervisor_server=None, server=None, **kwargs):
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, compute_server=None, server=None, **kwargs):
         """
         The project is created on the server continue
         the query
@@ -283,7 +283,7 @@ class Project(QtCore.QObject):
             self._startListenNotifications()
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        hypervisor_server.createHTTPQuery(method, path, callback, body=body, **kwargs)
+        compute_server.createHTTPQuery(method, path, callback, body=body, **kwargs)
 
         # Call all operations waiting for project creation:
         if self._callback_finish_creating_on_server:
@@ -299,14 +299,14 @@ class Project(QtCore.QObject):
             self.project_about_to_close_signal.emit()
 
             if self._servers.localServerProcessIsRunning() and local_server_shutdown:
-                Servers.instance().controllerServer().post("/hypervisors/shutdown", self._projectClosedCallback)
+                Servers.instance().controllerServer().post("/computes/shutdown", self._projectClosedCallback)
             else:
                 Servers.instance().controllerServer().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
             if self._servers.localServerProcessIsRunning() and local_server_shutdown:
                 log.info("Local server running shutdown the server")
                 local_server = self._servers.localServer()
-                local_server.post("/hypervisors/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
+                local_server.post("/computes/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
             else:
                 # The project is not initialized when we close it
                 self._closed = True
@@ -371,6 +371,6 @@ class Project(QtCore.QObject):
         elif result["action"] == "log.info":
             log.info(result["event"]["message"], extra={"show": True})
         elif result["action"] == "ping":
-            if "hypervisor_id" in result:
-                hypervisor = Servers.instance().getServerFromString(result["hypervisor_id"])
-                hypervisor.setSystemUsage(result["event"])
+            if "compute_id" in result:
+                compute = Servers.instance().getServerFromString(result["compute_id"])
+                compute.setSystemUsage(result["event"])

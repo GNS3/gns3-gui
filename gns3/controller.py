@@ -53,8 +53,8 @@ class Controller(QtCore.QObject):
 
     def addServer(self, server):
         log.debug("Add server %s to the controller", server.server_id())
-        self.post("/hypervisors", None, body={
-            "hypervisor_id": server.server_id(),
+        self.post("/computes", None, body={
+            "compute_id": server.server_id(),
             "protocol": server.protocol(),
             "host": server.host(),
             "port": server.port(),

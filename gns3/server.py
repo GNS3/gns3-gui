@@ -249,14 +249,14 @@ class Server(QtCore.QObject):
         """
         Forward the query to the HTTP client
         """
-        path = "/hypervisor" + path
+        path = "/compute" + path
         return self._http_client.createHTTPQuery(method, path, *args, server=self, **kwargs)
 
     def getSynchronous(self, path, *args, **kwargs):
         """
         Forward the query to the HTTP client
         """
-        path = "hypervisor/" + path
+        path = "compute/" + path
         return self._http_client.getSynchronous(path, *args, **kwargs)
 
     def connected(self):

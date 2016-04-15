@@ -37,7 +37,7 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
                                 virtualbox_vm._setupVMCallback,
                                 body={
                                     'name': 'VMNAME',
-                                    'hypervisor_id': 'local',
+                                    'compute_id': 'local',
                                     'vm_type': 'virtualbox',
                                     'console_type': 'telnet',
                                     'properties': {

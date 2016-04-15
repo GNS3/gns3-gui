@@ -44,17 +44,17 @@ def test_http_query_forwarded_to_http_client(server):
     """
     server._http_client = MagicMock()
     server.get("/get")
-    server._http_client.createHTTPQuery.assert_called_with("GET", "/hypervisor/get", server=server)
+    server._http_client.createHTTPQuery.assert_called_with("GET", "/compute/get", server=server)
     server.post("/post")
-    server._http_client.createHTTPQuery.assert_called_with("POST", "/hypervisor/post", server=server)
+    server._http_client.createHTTPQuery.assert_called_with("POST", "/compute/post", server=server)
     server.put("/put")
-    server._http_client.createHTTPQuery.assert_called_with("PUT", "/hypervisor/put", server=server)
+    server._http_client.createHTTPQuery.assert_called_with("PUT", "/compute/put", server=server)
     server.delete("/delete")
-    server._http_client.createHTTPQuery.assert_called_with("DELETE", "/hypervisor/delete", server=server)
+    server._http_client.createHTTPQuery.assert_called_with("DELETE", "/compute/delete", server=server)
     server.createHTTPQuery("GET", "/create")
-    server._http_client.createHTTPQuery.assert_called_with("GET", "/hypervisor/create", server=server)
+    server._http_client.createHTTPQuery.assert_called_with("GET", "/compute/create", server=server)
     server.getSynchronous("synchronous")
-    server._http_client.getSynchronous.assert_called_with("hypervisor/synchronous")
+    server._http_client.getSynchronous.assert_called_with("compute/synchronous")
 
 
 def test_dump(server):

@@ -42,7 +42,7 @@ def test_qemu_vm_setup(qemu_vm, project):
                                         'qemu_path': '/bin/fake'
                                     },
                                     'console_type': 'telnet',
-                                    'hypervisor_id': 'local',
+                                    'compute_id': 'local',
                                     'vm_type': 'qemu'
                                 },
                                 context={},
@@ -76,7 +76,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
                                         'qemu_path': '/bin/fake'
                                     },
                                     'console_type': 'telnet',
-                                    'hypervisor_id': 'local',
+                                    'compute_id': 'local',
                                     'vm_type': 'qemu'
                                 },
                                 context={},
@@ -110,7 +110,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
                                         'linked_clone': True,
                                         'qemu_path': '/bin/fake'
                                     },
-                                    'hypervisor_id': 'local',
+                                    'compute_id': 'local',
                                     'vm_type': 'qemu',
                                     'console_type': 'telnet'
                                 },

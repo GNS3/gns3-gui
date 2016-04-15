@@ -233,7 +233,7 @@ class HTTPClient(QtCore.QObject):
         :param query: The query to execute when all network stack is ready
         :param query: The Server to connect
         """
-        self._executeHTTPQuery("GET", "/hypervisor/version", query, {}, server=server, timeout=5)
+        self._executeHTTPQuery("GET", "/compute/version", query, {}, server=server, timeout=5)
 
     def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, **kwargs):
         """
@@ -387,8 +387,8 @@ class HTTPClient(QtCore.QObject):
         """
 
         #TODO: remove it when all call are migrated
-        if "hypervisor/" in path:
-            log.warning("Legacy hypervisor direct call %s", path)
+        if "compute/" in path:
+            log.warning("Legacy compute direct call %s", path)
 
         try:
             ip = self._host.rsplit('%', 1)[0]

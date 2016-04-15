@@ -128,7 +128,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="uiDescriptionLabel">
       <property name="text">
-       <string>NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a hypervisor.</string>
+       <string>NX-OSv is a reference platform for an implementation of the Cisco Nexus operating system, based on the Nexus 7000-series platforms, running as a full virtual machine on a compute.</string>
       </property>
       <property name="scaledContents">
        <bool>false</bool>
