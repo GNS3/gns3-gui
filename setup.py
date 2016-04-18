@@ -51,8 +51,7 @@ setup(
     install_requires=open("requirements.txt", "r").read().splitlines(),
     entry_points={
         "gui_scripts": [
-            "gns3 = gns3.main:main",
-            "gns3-iouvm-converter = gns3.iouvm_converter:main"
+            "gns3 = gns3.main:main"
         ]
     },
     packages=find_packages(".", exclude=["docs", "tests"]),

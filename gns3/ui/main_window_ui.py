@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Thu Apr  7 14:36:32 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -87,8 +86,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -121,8 +120,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -376,10 +375,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -407,8 +406,6 @@ class Ui_MainWindow(object):
         self.uiSetupWizard = QtWidgets.QAction(MainWindow)
         self.uiSetupWizard.setMenuRole(QtWidgets.QAction.NoRole)
         self.uiSetupWizard.setObjectName("uiSetupWizard")
-        self.uiIOUVMConverterAction = QtWidgets.QAction(MainWindow)
-        self.uiIOUVMConverterAction.setObjectName("uiIOUVMConverterAction")
         self.uiOpenApplianceAction = QtWidgets.QAction(MainWindow)
         self.uiOpenApplianceAction.setIcon(icon1)
         self.uiOpenApplianceAction.setObjectName("uiOpenApplianceAction")
@@ -483,7 +480,6 @@ class Ui_MainWindow(object):
         self.uiAnnotateMenu.addAction(self.uiDrawEllipseAction)
         self.uiAnnotateMenu.addAction(self.uiEditReadmeAction)
         self.uiToolsMenu.addAction(self.uiVPCSAction)
-        self.uiToolsMenu.addAction(self.uiIOUVMConverterAction)
         self.uiMenuBar.addAction(self.uiFileMenu.menuAction())
         self.uiMenuBar.addAction(self.uiEditMenu.menuAction())
         self.uiMenuBar.addAction(self.uiViewMenu.menuAction())
@@ -683,7 +679,6 @@ class Ui_MainWindow(object):
         self.uiDownloadRemoteProject.setText(_translate("MainWindow", "Download remote project"))
         self.uiQemuImgWizardAction.setText(_translate("MainWindow", "Qemu image wizard"))
         self.uiSetupWizard.setText(_translate("MainWindow", "&Setup Wizard"))
-        self.uiIOUVMConverterAction.setText(_translate("MainWindow", "IOU VM Converter"))
         self.uiOpenApplianceAction.setText(_translate("MainWindow", "Import appliance"))
         self.uiExportDebugInformationAction.setText(_translate("MainWindow", "Export debug information"))
         self.uiExportDebugInformationAction.setToolTip(_translate("MainWindow", "&Export debug information"))
@@ -693,9 +688,9 @@ class Ui_MainWindow(object):
         self.uiImportProjectAction.setText(_translate("MainWindow", "Import project"))
         self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
 
-from ..topology_summary_view import TopologySummaryView
-from ..nodes_view import NodesView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView
+from ..nodes_view import NodesView
 from ..server_summary_view import ServerSummaryView
+from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

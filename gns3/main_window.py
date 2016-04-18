@@ -257,7 +257,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
-        self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -358,16 +357,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self._createTemporaryProject()
             self._project_dialog = None
-
-    def _IOUVMConverterActionSlot(self):
-        command = shutil.which("gns3-iouvm-converter")
-        if command is None:
-            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "gns3-iouvm-converter not found")
-            return
-        try:
-            subprocess.Popen([command])
-        except (OSError, subprocess.SubprocessError) as e:
-            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "Error when running gns3-iouvm-converter {}".format(e))
 
     def openApplianceActionSlot(self):
         """
