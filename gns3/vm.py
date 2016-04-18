@@ -310,7 +310,7 @@ class VM(Node):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/reload".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._reloadCallback)
+        self.controllerHttpPost("/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """

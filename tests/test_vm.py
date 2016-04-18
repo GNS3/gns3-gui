@@ -65,11 +65,11 @@ def test_setupVMCallback(vpcs_device):
 
 def test_vpcs_device_start(vpcs_device):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
         vpcs_device.start()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}/start".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vms/{vm_id}/start".format(vm_id=vpcs_device.vm_id())
 
 
 def test_vpcs_dump(vpcs_device):
@@ -90,21 +90,21 @@ def test_vpcs_load(vpcs_device):
 
 def test_vpcs_device_stop(vpcs_device):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
         vpcs_device.setStatus(Node.started)
         vpcs_device.stop()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}/stop".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vms/{vm_id}/stop".format(vm_id=vpcs_device.vm_id())
 
 
 def test_vpcs_device_reload(vpcs_device):
 
-    with patch('gns3.node.Node.httpPost') as mock:
+    with patch('gns3.node.Node.controllerHttpPost') as mock:
         vpcs_device.reload()
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}/reload".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vms/{vm_id}/reload".format(vm_id=vpcs_device.vm_id())
 
 
 def test_readBaseConfig(vpcs_device, tmpdir):
