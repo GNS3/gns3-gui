@@ -101,7 +101,7 @@ class VM(Node):
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         if self._vm_id and self._server.connected():
-            self.httpDelete("/{prefix}/vms/{vm_id}".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._deleteCallback)
+            self.controllerHttpDelete("/{prefix}/vms/{vm_id}".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -150,11 +150,10 @@ class VM(Node):
             if result:
                 self._updateCallback(result)
 
-    def _create(self, params, timeout=120):
+    def _prepareBody(self, params):
         """
-        Create the VM on the controller
+        :returns: Body for Create and update
         """
-
         body = {"properties": {}}
         body["vm_type"] = self.URL_PREFIX
         body["compute_id"] = self._server.server_id()
@@ -170,8 +169,22 @@ class VM(Node):
 
         if "console_type" not in body:
             body["console_type"] = "telnet"
+        return body
 
+    def _create(self, params, timeout=120):
+        """
+        Create the VM on the controller
+        """
+        body = self._prepareBody(params)
         self.controllerHttpPost("/vms", self._setupVMCallback, body=body, timeout=timeout)
+
+    def _update(self, params, timeout=60):
+        """
+        Update the VM on the controller
+        """
+        log.debug("{} is updating settings: {}".format(self.name(), params))
+        body = self._prepareBody(params)
+        self.controllerHttpPut("/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params, timeout=timeout)
 
     def _setupVMCallback(self, result, error=False, **kwargs):
         """
@@ -237,12 +250,16 @@ class VM(Node):
         """
 
         if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
+            log.error("error while updating {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
         if "command_line" in result:
             self._command_line = result["command_line"]
+
+        # For compatibility with old API
+        result.update(result["properties"])
+        del result["properties"]
 
         return True
 
@@ -422,6 +439,7 @@ class VM(Node):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             PacketCapture.instance().stopCapture(self, context["port"])
+
     def dump(self):
         """
         Returns a representation of this device.

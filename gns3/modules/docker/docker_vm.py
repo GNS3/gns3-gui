@@ -173,9 +173,7 @@ class DockerVM(VM):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
-        log.debug("{} is updating settings: {}".format(self.name(), params))
-        self.httpPut("/docker/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
+        self.update(params)        
 
     def dump(self):
         """
@@ -351,5 +349,3 @@ class DockerVM(VM):
 
     def __str__(self):
         return "Docker container"
-
-

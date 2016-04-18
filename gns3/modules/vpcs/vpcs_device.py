@@ -146,9 +146,8 @@ class VPCSDevice(VM):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        log.debug("{} is updating settings: {}".format(self.name(), params))
-        self.httpPut("/vpcs/vms/{vm_id}".format(project_id=self._project.id(), vm_id=self._vm_id), self._updateCallback, body=params)
-
+        self._update(params)
+    
     def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.

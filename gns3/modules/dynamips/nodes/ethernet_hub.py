@@ -132,11 +132,7 @@ class EthernetHub(Device):
 
         if updated:
             if params:
-                log.debug("{} is being updated: {}".format(self.name(), params))
-                self.httpPut("/dynamips/devices/{device_id}".format(device_id=self._device_id), self._updateCallback, body=params)
-            else:
-                log.info("{} has been updated".format(self.name()))
-                self.updated_signal.emit()
+                self._update(params)
 
     def _updateCallback(self, result, error=False, **kwargs):
         """
