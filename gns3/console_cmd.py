@@ -28,10 +28,6 @@ import json
 from .qt import QtCore
 from .node import Node
 from .version import __version__
-try:
-    from gns3converter import __version__ as gns3converter_version
-except ImportError:
-    gns3converter_version = "Not installed"
 
 
 class ConsoleCmd(cmd.Cmd):
@@ -45,7 +41,6 @@ class ConsoleCmd(cmd.Cmd):
         if hasattr(sys, "frozen"):
             compiled = "(compiled)"
         print("GNS3 version is {} {}".format(__version__, compiled))
-        print("GNS3 Converter version is {}".format(gns3converter_version))
         print("Python version is {}.{}.{} ({}-bit) with {} encoding".format(sys.version_info[0],
                                                                             sys.version_info[1],
                                                                             sys.version_info[2],

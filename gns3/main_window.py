@@ -1346,58 +1346,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return True
 
-    def _convertOldProject(self, path):
-        """
-        Converts old ini-style GNS3 topologies (<=0.8.7) to the newer version 1+ JSON format.
-
-        :param path: path to the project file.
-        """
-
-        try:
-            from gns3converter.main import do_conversion, get_snapshots, ConvertError
-        except ImportError as e:
-            log.error("GNS3 converter is missing: {}".format(str(e)))
-            QtWidgets.QMessageBox.critical(self, "GNS3 converter", "Please install gns3-converter in order to open old ini-style GNS3 projects")
-            self._createTemporaryProject()
-            return
-
-        try:
-            project_name = os.path.basename(os.path.dirname(path))
-            project_dir = os.path.join(self.projectsDirPath(), project_name)
-
-            while os.path.isdir(project_dir):
-                text, ok = QtWidgets.QInputDialog.getText(self,
-                                                          "GNS3 converter",
-                                                          "Project '{}' already exists. Please choose an alternative project name:".format(project_name),
-                                                          text=project_name + "2")
-                if ok:
-                    project_name = text
-                    project_dir = os.path.join(self.projectsDirPath(), project_name)
-                else:
-                    self._createTemporaryProject()
-                    return
-
-            for snapshot_def in get_snapshots(path):
-                do_conversion(snapshot_def, project_name, project_dir, quiet=True)
-
-            topology_def = {'file': path, 'snapshot': False}
-            do_conversion(topology_def, project_name, project_dir, quiet=True)
-        except ConvertError as e:
-            QtWidgets.QMessageBox.critical(self, "GNS3 converter", "Could not convert {}: {}".format(path, e))
-            self._createTemporaryProject()
-            return
-        except Exception:
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            lines = traceback.format_exception(exc_type, exc_value, exc_tb)
-            tb = "".join(lines)
-            MessageBox(self, "GNS3 converter", "Unexpected exception while converting {}".format(path), details=tb)
-            self._createTemporaryProject()
-            return
-
-        QtWidgets.QMessageBox.information(self, "GNS3 converter", "Your project has been converted to a new format and can be found in: {}".format(project_dir))
-        project_path = os.path.join(project_dir, project_name + ".gns3")
-        self._loadProject(project_path)
-
     def _loadProject(self, path):
         """
         Loads a project into GNS3.
@@ -1412,9 +1360,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
 
             extension = os.path.splitext(path)[1]
-            if extension == ".net":
-                self._convertOldProject(path)
-                return
             topology.loadFile(path, self._project)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))

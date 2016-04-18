@@ -272,10 +272,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-License notice for gns3-converter
----------------------------------
-https://github.com/dlintott/gns3-converter/blob/master/COPYING
-
 License notice for pywin32
 --------------------------
 https://github.com/SublimeText/Pywin32/blob/master/License.txt
