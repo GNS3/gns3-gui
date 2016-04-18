@@ -25,6 +25,8 @@ import struct
 import sys
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
+from ..node import Node
+
 
 class SvgCaptureItem(QtSvg.QGraphicsSvgItem):
 
@@ -109,6 +111,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         """
         Delete this link
         """
+
+        if not self._source_port.isHotPluggable() and self._source_item.node().status() == Node.started:
+            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "A link cannot be removed because {} is running".format(self._source_item.node().name()))
+            return False
+        elif not self._destination_port.isHotPluggable() and self._destination_item.node().status() == Node.started:
+            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "A link cannot be removed because {} is running".format(self._destination_item.node().name()))
+            return False
 
         # first delete the port labels if any
         if self._source_port.label():
