@@ -382,7 +382,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z);;NET files (*.net)",
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z)",
                                                         "GNS3 project files (*.gns3)")
         if path:
             self.loadPath(path)
