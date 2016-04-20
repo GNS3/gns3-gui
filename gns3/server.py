@@ -37,6 +37,7 @@ class Server(QtCore.QObject):
     def __init__(self, settings, http_client):
 
         super().__init__()
+        self._connected = False
         self._protocol = settings.get("protocol", "http")
         self._host = settings["host"]
         self._port = int(settings["port"])
@@ -49,7 +50,6 @@ class Server(QtCore.QObject):
         self._server_id = settings.get("server_id", self.url())
 
         self._http_client = http_client
-        self._http_client.connection_connected_signal.connect(lambda: self.connection_connected_signal.emit())
 
         # Unique ID for dump in topology
         self._id = Server._instance_count
@@ -194,8 +194,11 @@ class Server(QtCore.QObject):
         return self._usage
 
     def setSystemUsage(self, usage):
-       self._usage = usage
-       self.system_usage_updated_signal.emit()
+        if self._connected is False:
+            self._connected = True
+            self.connection_connected_signal.emit()
+        self._usage = usage
+        self.system_usage_updated_signal.emit()
 
     def dump(self):
         """
@@ -260,7 +263,7 @@ class Server(QtCore.QObject):
         return self._http_client.getSynchronous(path, *args, **kwargs)
 
     def connected(self):
-        return self._http_client.connected()
+        return self._connected
 
     def close(self):
         """
@@ -268,4 +271,5 @@ class Server(QtCore.QObject):
         """
         log.debug("Connection to %s closed", self.url())
         self._http_client.close()
+        self._connected = False
         self.connection_closed_signal.emit()
