@@ -34,7 +34,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         super().__init__()
         self.setupUi(self)
-        self._nios = []
+        self._nios = set()
 
         # connect NIO generic Ethernet slots
         self.uiGenericEthernetComboBox.currentIndexChanged.connect(self._genericEthernetSelectedSlot)
@@ -114,7 +114,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_gen_eth:{interface}".format(interface=interface)
             if nio not in self._nios:
                 self.uiGenericEthernetListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _genericEthernetDeleteSlot(self):
         """
@@ -163,7 +163,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_gen_linux:{interface}".format(interface=interface)
             if nio not in self._nios:
                 self.uiLinuxEthernetListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _linuxEthernetDeleteSlot(self):
         """
@@ -217,7 +217,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_nat:{}".format(identifier)
             if nio not in self._nios:
                 self.uiNIONATListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _NIONATDeleteSlot(self):
         """
@@ -277,7 +277,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                                                            rport=remote_port)
             if nio not in self._nios:
                 self.uiNIOUDPListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
                 self.uiLocalPortSpinBox.setValue(local_port + 1)
                 self.uiRemotePortSpinBox.setValue(remote_port + 1)
 
@@ -333,7 +333,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_tap:{}".format(tap_interface.lower())
             if nio not in self._nios:
                 self.uiNIOTAPListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _NIOTAPDeleteSlot(self):
         """
@@ -390,7 +390,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                                                      remote=remote_file)
             if nio not in self._nios:
                 self.uiNIOUNIXListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _NIOUNIXDeleteSlot(self):
         """
@@ -446,7 +446,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_vde:{control}:{local}".format(control=control_file, local=local_file)
             if nio not in self._nios:
                 self.uiNIOVDEListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _NIOVDEDeleteSlot(self):
         """
@@ -500,7 +500,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             nio = "nio_null:{}".format(identifier)
             if nio not in self._nios:
                 self.uiNIONullListWidget.addItem(nio)
-                self._nios.append(nio)
+                self._nios.add(nio)
 
     def _NIONullDeleteSlot(self):
         """
@@ -558,7 +558,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiLinuxEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
         # populate the NIO lists
-        self.nios = []
+        self.nios = set()
         self.uiGenericEthernetListWidget.clear()
         self.uiLinuxEthernetListWidget.clear()
         self.uiNIOUDPListWidget.clear()
@@ -568,7 +568,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiNIONullListWidget.clear()
 
         for nio in settings["nios"]:
-            self._nios.append(nio)
+            self._nios.add(nio)
             if nio.lower().startswith("nio_gen_eth"):
                 self.uiGenericEthernetListWidget.addItem(nio)
             elif nio.lower().startswith("nio_gen_linux"):
