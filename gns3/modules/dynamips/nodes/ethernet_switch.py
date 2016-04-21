@@ -80,7 +80,6 @@ class EthernetSwitch(Device):
             if "id" in initial_port:
                 port.setId(initial_port["id"])
             port.setStatus(EthernetPort.started)
-            port.setPacketCaptureSupported(True)
             self._ports.append(port)
             self._settings["ports"][port.portNumber()] = {"type": initial_port["type"],
                                                           "vlan": initial_port["vlan"],
@@ -116,7 +115,6 @@ class EthernetSwitch(Device):
                 port = EthernetPort(str(port_number))
                 port.setPortNumber(port_number)
                 port.setStatus(EthernetPort.started)
-                port.setPacketCaptureSupported(True)
                 self._ports.append(port)
                 updated = True
                 log.debug("port {} has been added".format(port_number))

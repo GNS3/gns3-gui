@@ -109,7 +109,6 @@ class Router(VM):
             new_port.setShortName(short_name)
             new_port.setPortNumber(port_number)
             new_port.setAdapterNumber(slot_number)
-            new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
@@ -145,7 +144,6 @@ class Router(VM):
             new_port.setPortNumber(base + port_number)
             # WICs are always in adapter slot 0.
             new_port.setAdapterNumber(0)
-            new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("port {} has been added".format(port_name))
 
@@ -330,7 +328,7 @@ class Router(VM):
                 params[name] = value
 
         self._update(params)
-        
+
     def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.

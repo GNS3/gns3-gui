@@ -21,7 +21,6 @@ Base class for VM classes.
 
 import os
 from gns3.servers import Servers
-from gns3.packet_capture import PacketCapture
 
 from .node import Node
 
@@ -374,71 +373,6 @@ class VM(Node):
             self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
             return None
         return ""
-
-    def startPacketCapture(self, port, capture_file_name, data_link_type):
-        """
-        Starts a packet capture.
-
-        :param port: Port instance
-        :param capture_file_name: PCAP capture file path
-        :param data_link_type: PCAP data link type (unused by some VM)
-        """
-
-        params = {"capture_file_name": capture_file_name,
-                  "data_link_type": data_link_type}
-        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self.httpPost("/{prefix}/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/start_capture".format(
-            vm_id=self._vm_id,
-            prefix=self.URL_PREFIX,
-            adapter_number=port.adapterNumber(),
-            port_number=port.portNumber()),
-            self._startPacketCaptureCallback,
-            context={"port": port},
-            body=params)
-
-    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for starting a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            PacketCapture.instance().startCapture(self, context["port"], result["pcap_file_path"])
-
-    def stopPacketCapture(self, port):
-        """
-        Stops a packet capture.
-
-        :param port: Port instance
-        """
-
-        log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/adapters/{adapter_number}/ports/{port_number}/stop_capture".format(
-            vm_id=self._vm_id,
-            prefix=self.URL_PREFIX,
-            adapter_number=port.adapterNumber(),
-            port_number=port.portNumber()),
-            self._stopPacketCaptureCallback,
-            context={"port": port})
-
-    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for stopping a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            PacketCapture.instance().stopCapture(self, context["port"])
 
     def dump(self):
         """

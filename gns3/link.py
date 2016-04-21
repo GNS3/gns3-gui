@@ -19,6 +19,7 @@
 Manages and stores everything needed for a connection between 2 devices.
 """
 
+import re
 
 from .qt import QtCore
 from .servers import Servers
@@ -44,6 +45,8 @@ class Link(QtCore.QObject):
     # additions and deletions.
     add_link_signal = QtCore.Signal(int)
     delete_link_signal = QtCore.Signal(int)
+    updated_link_signal = QtCore.Signal(int)
+    error_link_signal = QtCore.Signal(int)
 
     _instance_count = 1
 
@@ -65,6 +68,8 @@ class Link(QtCore.QObject):
         self._destination_node = destination_node
         self._destination_port = destination_port
         self._link_id = None
+        self._capturing = False
+        self._capture_file_path = None
 
         body = {
             "vms": [
@@ -91,6 +96,25 @@ class Link(QtCore.QObject):
 
         self._link_id = result["link_id"]
 
+    def setCapturing(self, capturing):
+        self._capturing = capturing
+        self.updated_link_signal.emit(self._id)
+
+    def capturing(self):
+        """
+        Is a capture running on the link?
+        """
+        return self._capturing
+
+    def capture_file_path(self):
+        """
+        Path of the capture file
+        """
+        return self._capture_file_path
+
+    def project(self):
+        return self._source_node.project()
+
     @classmethod
     def reset(cls):
         """
@@ -106,6 +130,17 @@ class Link(QtCore.QObject):
                                                            self._destination_node.name(),
                                                            self._destination_port.name())
 
+    def capture_file_name(self):
+        """
+        :returns: File name for a capture on this link
+        """
+        capture_file_name = "{}_{}_to_{}_{}".format(
+            self._source_node.name(),
+            self._source_port.name(),
+            self._destination_node.name(),
+            self._destination_port.name())
+        return re.sub("[^0-9A-Za-z_-]", "", capture_file_name)
+
     def deleteLink(self):
         """
         Deletes this link.
@@ -116,7 +151,7 @@ class Link(QtCore.QObject):
                                                             self._destination_node.name(),
                                                             self._destination_port.name()))
 
-        Servers.instance().controllerServer().delete("/projects/{project_id}/links/{link_id}".format(project_id=self._source_node.project().id(),
+        Servers.instance().controllerServer().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
                                                                                                      link_id=self._link_id), self._linkDeletedCallback)
 
     def _linkDeletedCallback(self, result, error=False, **kwargs):
@@ -124,7 +159,7 @@ class Link(QtCore.QObject):
         Called after the link is remove from the topology
         """
         if error:
-            log.error("error while deleting link: {}".format(result["message"]))
+            log.error("Error while deleting link: {}".format(result["message"]))
             return
 
         self._source_port.setFree()
@@ -135,6 +170,49 @@ class Link(QtCore.QObject):
         # let the GUI know about this link has been deleted
         self.delete_link_signal.emit(self._id)
 
+    def startCapture(self, data_link_type, capture_file_name):
+        data = {
+            "capture_file_name": capture_file_name,
+            "data_link_type": data_link_type
+        }
+        Servers.instance().controllerServer().post(
+            "/projects/{project_id}/links/{link_id}/start_capture".format(
+                project_id=self.project().id(),
+                link_id=self._link_id),
+                self._startCaptureCallback,
+                body=data)
+
+    def _startCaptureCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while starting capture on link: {}".format(result["message"]))
+            return
+        self._capture_file_path = result["capture_file_path"]
+        self.setCapturing(True)
+
+    def stopCapture(self):
+        Servers.instance().controllerServer().post(
+            "/projects/{project_id}/links/{link_id}/stop_capture".format(
+                project_id=self.project().id(),
+                link_id=self._link_id),
+            self._stopCaptureCallback)
+
+    def _stopCaptureCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while stopping capture on link: {}".format(result["message"]))
+            return
+        self.setCapturing(False)
+
+    def get(self, path, callback, **kwargs):
+        """
+        HTTP Get from a link
+        """
+        Servers.instance().controllerServer().get(
+            "/projects/{project_id}/links/{link_id}{path}".format(
+                project_id=self.project().id(),
+                link_id=self._link_id,
+                path=path),
+            callback,
+            **kwargs)
 
     def id(self):
         """

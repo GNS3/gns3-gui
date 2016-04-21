@@ -21,11 +21,11 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
-import struct
 import sys
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
 from ..node import Node
+from ..packet_capture import PacketCapture
 
 
 class SvgCaptureItem(QtSvg.QGraphicsSvgItem):
@@ -96,6 +96,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         if not self._adding_flag:
             # there is a destination
             self._link = link
+            self._link.updated_link_signal.connect(self._drawCaptureSymbol)
             self.setFlag(self.ItemIsFocusable)
             source_item.addLink(self)
             destination_item.addLink(self)
@@ -217,14 +218,14 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         :param menu: QMenu instance
         """
 
-        if not self._source_port.capturing() or not self._destination_port.capturing():
+        if not self._link.capturing():
             # start capture
             start_capture_action = QtWidgets.QAction("Start capture", menu)
             start_capture_action.setIcon(QtGui.QIcon(':/icons/capture-start.svg'))
             start_capture_action.triggered.connect(self._startCaptureActionSlot)
             menu.addAction(start_capture_action)
 
-        if self._source_port.capturing() or self._destination_port.capturing():
+        if self._link.capturing():
             # stop capture
             stop_capture_action = QtWidgets.QAction("Stop capture", menu)
             stop_capture_action.setIcon(QtGui.QIcon(':/icons/capture-stop.svg'))
@@ -237,8 +238,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             start_wireshark_action.triggered.connect(self._startWiresharkActionSlot)
             menu.addAction(start_wireshark_action)
 
-            if sys.platform.startswith("win") and struct.calcsize("P") * 8 == 64:
-                # Windows 64-bit only (Solarwinds RTV limitation).
+            if PacketCapture.instance().packetAnalyzerAvailable():
                 analyze_action = QtWidgets.QAction("Analyze capture", menu)
                 analyze_action.setIcon(QtGui.QIcon(':/icons/rtv.png'))
                 analyze_action.triggered.connect(self._analyzeCaptureActionSlot)
@@ -300,26 +300,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         contextual menu.
         """
 
-        ports = {}
-        if self._source_port.packetCaptureSupported() and not self._source_port.capturing():
-            for dlt_name, dlt in self._source_port.dataLinkTypes().items():
-                port = "{} port {} ({} encapsulation: {})".format(self._source_item.node().name(), self._source_port.name(), dlt_name, dlt)
-                ports[port] = [self._source_item.node(), self._source_port, dlt]
-
-        if self._destination_port.packetCaptureSupported() and not self._destination_port.capturing():
-            for dlt_name, dlt in self._destination_port.dataLinkTypes().items():
-                port = "{} port {} ({} encapsulation: {})".format(self._destination_item.node().name(), self._destination_port.name(), dlt_name, dlt)
-                ports[port] = [self._destination_item.node(), self._destination_port, dlt]
-
-        if not ports:
-            QtWidgets.QMessageBox.critical(self._main_window, "Packet capture", "Packet capture is not supported on this link")
-            return
-
-        selection, ok = QtWidgets.QInputDialog.getItem(self._main_window, "Packet capture", "Please select a port:", list(ports.keys()), 0, False)
-        if ok:
-            if selection in ports:
-                node, port, dlt = ports[selection]
-                node.startPacketCapture(port, port.captureFileName(node.name()), dlt)
+        PacketCapture.instance().startCapture(self._link)
 
     def _stopCaptureActionSlot(self):
         """
@@ -327,21 +308,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         contextual menu.
         """
 
-        if self._source_port.capturing() and self._destination_port.capturing():
-            ports = {}
-            source_port = "{} port {}".format(self._source_item.node().name(), self._source_port.name())
-            ports[source_port] = [self._source_item.node(), self._source_port]
-            destination_port = "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())
-            ports[destination_port] = [self._destination_item.node(), self._destination_port]
-            selection, ok = QtWidgets.QInputDialog.getItem(self._main_window, "Packet capture", "Please select a port:", list(ports.keys()), 0, False)
-            if ok:
-                if selection in ports:
-                    node, port = ports[selection]
-                    node.stopPacketCapture(port)
-        elif self._source_port.capturing():
-            self._source_item.node().stopPacketCapture(self._source_port)
-        elif self._destination_port.capturing():
-            self._destination_item.node().stopPacketCapture(self._destination_port)
+        PacketCapture.instance().stopCapture(self._link)
 
     def _startWiresharkActionSlot(self):
         """
@@ -349,22 +316,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         contextual menu.
         """
 
-        try:
-            if self._source_port.capturing() and self._destination_port.capturing():
-                ports = ["{} port {}".format(self._source_item.node().name(), self._source_port.name()),
-                         "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())]
-                selection, ok = QtWidgets.QInputDialog.getItem(self._main_window, "Packet capture", "Please select a port:", ports, 0, False)
-                if ok:
-                    if selection.endswith(self._source_port.name()):
-                        self._source_port.startPacketCaptureReader(self._source_item.node().name())
-                    else:
-                        self._destination_port.startPacketCaptureReader(self._destination_item.node().name())
-            elif self._source_port.capturing():
-                self._source_port.startPacketCaptureReader(self._source_item.node().name())
-            elif self._destination_port.capturing():
-                self._destination_port.startPacketCaptureReader(self._destination_item.node().name())
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
+        PacketCapture.instance().startPacketCaptureReader(self._link)
 
     def _analyzeCaptureActionSlot(self):
         """
@@ -373,21 +325,61 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         """
 
         try:
-            if self._source_port.capturing() and self._destination_port.capturing():
-                ports = ["{} port {}".format(self._source_item.node().name(), self._source_port.name()),
-                         "{} port {}".format(self._destination_item.node().name(), self._destination_port.name())]
-                selection, ok = QtWidgets.QInputDialog.getItem(self._main_window, "Capture analyzer", "Please select a port:", ports, 0, False)
-                if ok:
-                    if selection.endswith(self._source_port.name()):
-                        self._source_port.startPacketCaptureAnalyzer()
-                    else:
-                        self._destination_port.startPacketCaptureAnalyzer()
-            elif self._source_port.capturing():
-                self._source_port.startPacketCaptureAnalyzer()
-            elif self._destination_port.capturing():
-                self._destination_port.startPacketCaptureAnalyzer()
+            PacketCapture.instance().startPacketCaptureAnalyzer(self._link)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self._main_window, "Capture analyzer", "Cannot start the packet capture analyzer program: {}".format(e))
+
+    def startPacketCapture(self, source_node_name, capture_file_path):
+        """
+        Starts a packet capture.
+
+        :param capture_file_path: PCAP capture output file
+        """
+
+        self._capturing = True
+        self._capture_file_path = capture_file_path
+        log.info("Saving packet capture to {}".format(capture_file_path))
+        if os.path.isfile(capture_file_path) and self._settings["command_auto_start"]:
+            self.startPacketCaptureReader(source_node_name)
+
+    def stopPacketCapture(self):
+        """
+        Stops a packet capture.
+        """
+
+        self._capturing = False
+        self._capture_file_path = ""
+        if self._tail_process and self._tail_process.poll() is None:
+            try:
+                self._tail_process.kill()
+            except PermissionError:
+                pass
+            self._tail_process = None
+        self._capture_reader_process = None
+
+
+    def startPacketCaptureAnalyzer(self):
+        """
+        Starts the packet capture analyzer.
+        """
+
+        if not os.path.isfile(self._capture_file_path):
+            raise FileNotFoundError("the {} capture file does not exist on this host".format(self._capture_file_path))
+
+        if self._capture_analyzer_process and self._capture_analyzer_process.poll() is None:
+            self._capture_analyzer_process.kill()
+            self._capture_analyzer_process = None
+
+        command = self._settings["packet_capture_analyzer_command"]
+        temp_capture_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(self._capture_file_path))
+
+        try:
+            shutil.copy(self._capture_file_path, temp_capture_file_path)
+        except OSError:
+            raise
+
+        command = command.replace("%c", '"' + temp_capture_file_path + '"')
+        self._capture_analyzer_process = subprocess.Popen(command)
 
     def setHovered(self, value):
         """
@@ -474,7 +466,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         """
 
         if not self._adding_flag:
-            if (self._source_port.capturing() or self._destination_port.capturing()) and self.length >= 150:
+            if self._link.capturing() and self.length >= 150:
                 link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                 if self._capturing_item is None:
                     self._capturing_item = SvgCaptureItem(':/icons/inspect.svg', self)

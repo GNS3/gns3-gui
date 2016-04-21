@@ -98,7 +98,6 @@ class VMwareVM(VM):
                 new_port = EthernetPort(port_name, nio=NIOVMNET)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
-            new_port.setPacketCaptureSupported(True)
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 

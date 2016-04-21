@@ -26,6 +26,7 @@ from .node import Node
 from .topology import Topology
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
+from .packet_capture import PacketCapture
 
 import logging
 log = logging.getLogger(__name__)
@@ -332,8 +333,6 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         Stop all packet captures.
         """
 
-        for node in self._topology.nodes():
-            if hasattr(node, "stopPacketCapture"):
-                for port in node.ports():
-                    if port.capturing():
-                        node.stopPacketCapture(port)
+        for link in self._topology.links():
+            if link.capturing():
+                PacketCapture.instance().stopCapture(link)

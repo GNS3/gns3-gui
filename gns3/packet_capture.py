@@ -16,7 +16,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
+import shlex
 import tempfile
+import subprocess
+
+from .qt import QtWidgets
+from .local_config import LocalConfig
+from .settings import PACKET_CAPTURE_SETTINGS
+from .link import Link
+from .dialogs.capture_dialog import CaptureDialog
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -27,9 +37,23 @@ class PacketCapture:
     """This class manage packet capture, it's a singleton"""
 
     def __init__(self):
-        self._capture_files = {}
+        self._tail_process = {}
+        self._capture_reader_process = {}
+        # Auto start the capture program for th link
+        self._autostart = {}
 
-    def startCapture(self, vm, port, file_path):
+    def topology(self):
+        from .topology import Topology
+        return Topology.instance()
+
+    def parent(self):
+        from .main_window import MainWindow
+        return MainWindow.instance()
+
+    def settings(self):
+        return LocalConfig.instance().loadSectionSettings("PacketCapture", PACKET_CAPTURE_SETTINGS)
+
+    def startCapture(self, link):
         """
         Start the packet capture reader on this port
 
@@ -37,58 +61,121 @@ class PacketCapture:
         :param port: Instance of port where capture should be executed
         :param file_path: capture file path on server
         """
+        link.updated_link_signal.connect(self._updatedLinkSlot)
+        if link.capturing():
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "A capture is already running")
+            return
 
-        if vm.server().isLocal():
-            try:
-                port.startPacketCapture(vm.name(), file_path)
-            except OSError as e:
-                vm.error_signal.emit(vm.id(), "Could not start the packet capture reader: {}: {}".format(e, e.filename))
-        else:
-            (fd, temp_capture_file_path) = tempfile.mkstemp()
-            os.close(fd)
-            try:
-                port.startPacketCapture(vm.name(), temp_capture_file_path)
-            except OSError as e:
-                vm.error_signal.emit(vm.id(), "Could not start the packet capture reader: {}: {}".format(e, e.filename))
-            self._capture_files[port] = temp_capture_file_path
 
-            vm.server().get("/files/stream",
-                            None,
-                            body={"location": file_path},
-                            context={"pcap_file": temp_capture_file_path, "vm": vm},
-                            downloadProgressCallback=self._processDownloadPcapProgress,
-                            showProgress=False)
+        dialog = CaptureDialog(self.parent(), link.capture_file_name(), self.settings()["command_auto_start"])
+        if dialog.exec_():
+            self._autostart[link] = dialog.commandAutoStart()
+            link.startCapture(dialog.dataLink(), dialog.fileName() + ".pcap")
 
-        log.info("{} has successfully started capturing packets on {}".format(vm.name(), port.name()))
-        vm.updated_signal.emit()
 
-    def _processDownloadPcapProgress(self, content, context={}, **kwargs):
 
-        try:
-            with open(context["pcap_file"], 'ab+') as f:
-                f.write(content)
-        except OSError as e:
-            vm = context["vm"]
-            vm.error_signal.emit(vm.id(), "Could not write packet capture: {}: {}".format(e, context["pcap_file"]))
+    def _updatedLinkSlot(self, link_id):
+        link = self.topology().getLink(link_id)
 
-    def stopCapture(self, vm, port):
+        if link.capturing():
+            if self._autostart[link]:
+                self.startPacketCaptureReader(link)
+            log.info("Has successfully started capturing packets on {} to {}".format(link.id(), link.capture_file_path()))
+
+    def stopCapture(self, link):
         """
-        Stop the packet capture reader on this port
+        Stop the packet capture reader on this link
 
         :param vm: Instance of the virtual machine
-        :param port: Instance of port where capture should be executed
+        :param link: Instance of link where capture should be stopped
         """
 
-        port.stopPacketCapture()
-        if port in self._capture_files:
-            try:
-                os.remove(self._capture_files[port])
-            except OSError as e:
-                vm.error_signal.emit(vm.id(), "Could not stop packet capture: {}: {}".format(e, self._capture_files[port]))
-            self._capture_files[port] = None
+        link.stopCapture()
+        log.info("Has successfully stopped capturing packets on {}".format(link.id()))
 
-        log.info("{} has successfully stopped capturing packets on {}".format(vm.name(), port.name()))
-        vm.updated_signal.emit()
+    def startPacketCaptureReader(self, link):
+        """
+        Starts the packet capture reader.
+        """
+        self._startPacketCommand(link, self.settings()["packet_capture_reader_command"])
+
+    def startPacketCaptureAnalyzer(self, link):
+        """
+        Starts the packet capture analyzer
+        """
+        self._startPacketCommand(link, self.settings()["packet_capture_analyzer_command"])
+
+    def packetAnalyzerAvailable(self):
+        command = self.settings()["packet_capture_analyzer_command"]
+        return command is not None and len(command) > 0
+
+    def _startPacketCommand(self, link, command):
+        """
+        Start a command for analyzing the packets
+        """
+        if link.capture_file_path() is None:
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "A capture is not running")
+            return
+
+        capture_file_path = link.capture_file_path()
+
+        if not os.path.isfile(capture_file_path):
+            log.error("The %s capture file does not exist on this host".format(capture_file_path))
+
+        if link in self._tail_process and self._tail_process[link].poll() is None:
+            self._tail_process[link].kill()
+            del self._tail_process[link]
+        if link in self._capture_reader_process and self._capture_reader_process[link].poll() is None:
+            self._capture_reader_process[link].kill()
+            del self._capture_reader_process[link]
+
+        # PCAP capture file path
+        command = command.replace("%c", '"' + capture_file_path + '"')
+
+        # Add description
+        description = "{} {} to {} {}".format(
+            link.sourceNode().name(),
+            link.sourcePort().name(),
+            link.destinationNode().name(),
+            link.destinationPort().name())
+        command = command.replace("%d", description)
+
+        if "|" in command:
+            # live traffic capture (using tail)
+            command1, command2 = command.split("|", 1)
+            info = None
+            if sys.platform.startswith("win"):
+                # hide tail window on Windows
+                info = subprocess.STARTUPINFO()
+                info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                info.wShowWindow = subprocess.SW_HIDE
+                if hasattr(sys, "frozen"):
+                    tail_path = os.path.dirname(os.path.abspath(sys.executable))  # for Popen to find tail.exe
+                else:
+                    # We suppose a developer will have tail the standard GNS3 location
+                    tail_path = "C:\\Program Files\\GNS3"
+                command1 = command1.replace("tail.exe", os.path.join(tail_path, "tail.exe"))
+                command1 = command1.strip()
+                command2 = command2.strip()
+            else:
+                try:
+                    command1 = shlex.split(command1)
+                    command2 = shlex.split(command2)
+                except ValueError as e:
+                    log.error("Invalid packet capture command {}: {}".format(command, str(e)))
+                    return
+
+            self._tail_process[link] = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
+            self._capture_reader_process[link] = subprocess.Popen(
+                command2,
+                stdin=self._tail_process[link].stdout,
+                stdout=subprocess.PIPE)
+            self._tail_process[link].stdout.close()
+        else:
+            # normal traffic capture
+            if not sys.platform.startswith("win"):
+                command = shlex.split(command)
+            self._capture_reader_process[link] = subprocess.Popen(command)
 
     @staticmethod
     def instance():

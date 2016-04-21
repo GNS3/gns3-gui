@@ -85,7 +85,6 @@ class IOUDevice(VM):
                 new_port.setShortName(short_name)
                 new_port.setPortNumber(port_number)
                 new_port.setAdapterNumber(slot_number)
-                new_port.setPacketCaptureSupported(True)
                 self._ports.append(new_port)
                 log.debug("port {} has been added".format(port_name))
 

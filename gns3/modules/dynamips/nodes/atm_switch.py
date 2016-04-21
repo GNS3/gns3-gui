@@ -76,7 +76,6 @@ class ATMSwitch(Device):
             if "id" in initial_port:
                 port.setId(initial_port["id"])
             port.setStatus(ATMPort.started)
-            port.setPacketCaptureSupported(True)
             self._ports.append(port)
 
         params = {"name": name,
@@ -116,7 +115,6 @@ class ATMSwitch(Device):
                 port = ATMPort(port_name)
                 port.setPortNumber(int(port_name))
                 port.setStatus(ATMPort.started)
-                port.setPacketCaptureSupported(True)
                 self._ports.append(port)
                 updated = True
                 log.debug("port {} has been added".format(port_name))

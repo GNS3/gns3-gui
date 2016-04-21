@@ -45,6 +45,23 @@ def devices(local_server, project):
 
 
 @pytest.fixture
+def link(devices, controller, project):
+    link = Link(devices[0], devices[0].ports()[0], devices[1], devices[1].ports()[0])
+
+    data = {
+        "vms": [
+            {"vm_id": devices[0].vm_id(), "adapter_number": 0, "port_number": 0},
+            {"vm_id": devices[1].vm_id(), "adapter_number": 0, "port_number": 0}
+        ]
+    }
+
+    controller.post.assert_called_with("/projects/{}/links".format(project.id()), link._linkCreatedCallback, body=data)
+
+    link._linkCreatedCallback({"link_id": str(uuid.uuid4())})
+    return link
+
+
+@pytest.fixture
 def controller():
     Servers.instance()._controller_server = MagicMock()
     return Servers.instance()._controller_server
@@ -84,3 +101,13 @@ def test_delete_link(devices, project, controller):
     mock_signal.assert_called_with(link._id)
 
     assert devices[0].ports()[0].isFree()
+
+
+def test_start_capture_link(link, controller, project):
+    link.startCapture()
+    controller.post.assert_called_with("/projects/{}/links/{}/start_capture".format(project.id(), link._link_id), link._startCaptureCallback)
+
+
+def test_stop_capture_link(link, controller, project):
+    link.stopCapture()
+    controller.post.assert_called_with("/projects/{}/links/{}/stop_capture".format(project.id(), link._link_id), link._stopCaptureCallback)

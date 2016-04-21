@@ -784,12 +784,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             save_config_action.triggered.connect(self.saveConfigActionSlot)
             menu.addAction(save_config_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "startPacketCapture"), items)):
-            capture_action = QtWidgets.QAction("Capture", menu)
-            capture_action.setIcon(QtGui.QIcon(':/icons/inspect.svg'))
-            capture_action.triggered.connect(self.captureActionSlot)
-            menu.addAction(capture_action)
-
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
             idlepc_action = QtWidgets.QAction("Idle-PC", menu)
             idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
@@ -1212,33 +1206,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and hasattr(item.node(), "saveConfig") and item.node().initialized():
                 item.node().saveConfig()
-
-    def captureActionSlot(self):
-        """
-        Slot to receive events from the capture action in the
-        contextual menu.
-        """
-
-        for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "startPacketCapture") and item.node().initialized():
-                node = item.node()
-                ports = {}
-                for port in node.ports():
-                    if not port.isFree() and port.packetCaptureSupported() and not port.capturing():
-                        for dlt_name, dlt in port.dataLinkTypes().items():
-                            key = "Port {} ({} encapsulation: {})".format(port.name(), dlt_name, dlt)
-                            ports[key] = [port, dlt]
-                if ports:
-                    selection, ok = QtWidgets.QInputDialog.getItem(self, "Capture on {}".format(node.name()), "Please select a port:", list(ports.keys()), 0, False)
-                    if ok:
-                        if selection in ports:
-                            port, dlt = ports[selection]
-                            try:
-                                node.startPacketCapture(port, port.captureFileName(node.name()), dlt)
-                            except OSError as e:
-                                QtWidgets.QMessageBox.critical(self._main_window, "Packet capture", "Cannot start Wireshark: {}".format(e))
-                else:
-                    QtWidgets.QMessageBox.warning(self, "Capture", "No port available for packet capture on {}".format(node.name()))
 
     def getCommandLineSlot(self):
         """

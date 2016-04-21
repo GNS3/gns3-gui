@@ -25,7 +25,7 @@ import struct
 from gns3.qt import QtCore, QtWidgets
 from ..ui.packet_capture_preferences_page_ui import Ui_PacketCapturePreferencesPageWidget
 from ..settings import PACKET_CAPTURE_SETTINGS, PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS
-from ..ports.port import Port
+from ..local_config import LocalConfig
 
 
 class PacketCapturePreferencesPage(QtWidgets.QWidget, Ui_PacketCapturePreferencesPageWidget):
@@ -89,8 +89,7 @@ class PacketCapturePreferencesPage(QtWidgets.QWidget, Ui_PacketCapturePreference
         Loads the packet capture preferences.
         """
 
-        packet_capture_settings = Port.packetCaptureSettings()
-        self._populatePacketCaptureSettingWiddgets(packet_capture_settings)
+        self._populatePacketCaptureSettingWiddgets(LocalConfig.instance().loadSectionSettings("PacketCapture", PACKET_CAPTURE_SETTINGS))
 
     def savePreferences(self):
         """
@@ -100,4 +99,4 @@ class PacketCapturePreferencesPage(QtWidgets.QWidget, Ui_PacketCapturePreference
         new_settings = {"packet_capture_reader_command": self.uiCaptureReaderCommandLineEdit.text(),
                         "command_auto_start": self.uiAutoStartCheckBox.isChecked(),
                         "packet_capture_analyzer_command": self.uiCaptureAnalyzerCommandLineEdit.text()}
-        Port.setPacketCaptureSettings(new_settings)
+        LocalConfig.instance().saveSectionSettings("PacketCapture", new_settings)

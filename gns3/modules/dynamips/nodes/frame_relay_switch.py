@@ -76,7 +76,6 @@ class FrameRelaySwitch(Device):
             if "id" in initial_port:
                 port.setId(initial_port["id"])
             port.setStatus(FrameRelayPort.started)
-            port.setPacketCaptureSupported(True)
             self._ports.append(port)
 
         params = {"name": name,
@@ -117,7 +116,6 @@ class FrameRelaySwitch(Device):
                 port = FrameRelayPort(port_name)
                 port.setPortNumber(int(port_name))
                 port.setStatus(FrameRelayPort.started)
-                port.setPacketCaptureSupported(True)
                 self._ports.append(port)
                 updated = True
                 log.debug("port {} has been added".format(port_name))

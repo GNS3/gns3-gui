@@ -21,7 +21,6 @@ Base class for Device classes.
 
 
 from gns3.node import Node
-from gns3.packet_capture import PacketCapture
 
 import logging
 log = logging.getLogger(__name__)
@@ -138,66 +137,3 @@ class Device(Node):
 
         log.debug("{} has deleted a NIO: {}".format(self.name(), result))
 
-    def startPacketCapture(self, port, capture_file_name, data_link_type):
-        """
-        Starts a packet capture.
-
-        :param port: Port instance
-        :param capture_file_name: PCAP capture file path
-        :param data_link_type: PCAP data link type
-        """
-
-        params = {"capture_file_name": capture_file_name,
-                  "data_link_type": data_link_type}
-
-        log.debug("{} is starting a packet capture on {}: {}".format(self.name(), port.name(), params))
-        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/start_capture".format(
-            port=port.portNumber(),
-            prefix=self.URL_PREFIX,
-            device_id=self._device_id),
-            self._startPacketCaptureCallback,
-            context={"port": port},
-            body=params)
-
-    def _startPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for starting a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while starting capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            PacketCapture.instance().startCapture(self, context["port"], result["pcap_file_path"])
-
-    def stopPacketCapture(self, port):
-        """
-        Stops a packet capture.
-
-        :param port: Port instance
-        """
-
-        log.debug("{} is stopping a packet capture on {}".format(self.name(), port.name()))
-        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/stop_capture".format(
-            port=port.portNumber(),
-            prefix=self.URL_PREFIX,
-            device_id=self._device_id),
-            self._stopPacketCaptureCallback,
-            context={"port": port})
-
-    def _stopPacketCaptureCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for stopping a packet capture.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while stopping capture {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            PacketCapture.instance().stopCapture(self, context["port"])

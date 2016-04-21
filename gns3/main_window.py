@@ -162,9 +162,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, GENERAL_SETTINGS)
 
-        # restore packet capture settings
-        Port.loadPacketCaptureSettings()
-
     def settings(self):
         """
         Returns the general settings.
