@@ -67,7 +67,6 @@ class Builtin(Module):
         Resets the module.
         """
 
-        log.info("Built-in module reset")
         self._nodes.clear()
 
     def createNode(self, node_class, server, project):

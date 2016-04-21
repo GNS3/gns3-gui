@@ -319,7 +319,6 @@ class Dynamips(Module):
         Resets the module.
         """
 
-        log.info("Dynamips module reset")
         self._nodes.clear()
 
     def exportConfigs(self, directory):

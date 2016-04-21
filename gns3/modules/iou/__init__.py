@@ -259,7 +259,6 @@ class IOU(Module):
         Resets the servers.
         """
 
-        log.info("IOU module reset")
         self._nodes.clear()
 
     def exportConfigs(self, directory):

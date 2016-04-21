@@ -299,7 +299,6 @@ class VirtualBox(Module):
         Resets the module.
         """
 
-        log.info("VirtualBox module reset")
         self._nodes.clear()
 
     @staticmethod

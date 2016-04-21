@@ -405,7 +405,6 @@ class Topology:
         self._initialized_nodes.clear()
         self._initialized_links.clear()
         self._instances = []
-        log.info("Topology reset")
 
     def _dump_gui_settings(self, topology):
         """

@@ -253,7 +253,6 @@ class Qemu(Module):
         Resets the servers.
         """
 
-        log.info("QEMU module reset")
         self._nodes.clear()
 
     def getQemuBinariesFromServer(self, server, callback, archs=None):

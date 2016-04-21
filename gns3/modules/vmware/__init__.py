@@ -362,7 +362,6 @@ class VMware(Module):
         Resets the module.
         """
 
-        log.info("VMware module reset")
         self._nodes.clear()
 
     @staticmethod

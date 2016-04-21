@@ -190,7 +190,6 @@ class Docker(Module):
 
     def reset(self):
         """Resets the servers."""
-        log.info("Docker module reset")
         self._nodes.clear()
 
     def getDockerImagesFromServer(self, server, callback):
