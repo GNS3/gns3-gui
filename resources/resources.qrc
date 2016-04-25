@@ -96,6 +96,7 @@
         <file>icons/snapshot.svg</file>
         <file>icons/plus.svg</file>
         <file>icons/minus.svg</file>
+        <file>icons/reset.svg</file>
         <file>icons/horizontally.svg</file>
         <file>icons/vertically.svg</file>
         <file>icons/export_config.svg</file>

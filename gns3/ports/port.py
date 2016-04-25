@@ -424,6 +424,15 @@ class Port:
 
         self._port_label = label
 
+    def deleteLabel(self):
+        """
+        Deletes a port label.
+        """
+
+        if self._port_label is not None:
+            self._port_label.delete()
+            self._port_label = None
+
     @classmethod
     def loadPacketCaptureSettings(cls):
         """
