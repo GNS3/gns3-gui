@@ -73,6 +73,10 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
             QtWidgets.QMessageBox.critical(self, "VBoxManage", "{} is not an executable".format(os.path.basename(path)))
             return False
 
+        if sys.platform.startswith("win") and "virtualbox.exe" in path.lower():
+            QtWidgets.QMessageBox.critical(self, "VBoxManage", "VBoxManage.exe must be selected instead of VirtualBox.exe")
+            return False
+
         return True
 
     def _restoreDefaultsSlot(self):
