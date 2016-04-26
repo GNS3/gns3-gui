@@ -20,6 +20,7 @@ Configuration page for VirtualBox preferences.
 """
 
 import os
+import sys
 import shutil
 from gns3.qt import QtWidgets
 
