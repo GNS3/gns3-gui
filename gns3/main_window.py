@@ -66,6 +66,7 @@ from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
+from .dialogs.new_appliance_dialog import NewApplianceDialog
 from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
@@ -124,6 +125,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiServerSummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
+        # Make sure the dock widget is not open
+        self.uiNodesDockWidget.setVisible(False)
 
         # default directories for QFileDialog
         self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
@@ -258,6 +261,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
         self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
+        # New appliance button
+        self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -274,6 +279,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.project_new_signal.connect(self.project_created)
 
         self.ready_signal.connect(self._readySlot)
+
 
     def project(self):
         """
@@ -358,6 +364,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self._createTemporaryProject()
             self._project_dialog = None
+
+    def _newApplianceActionSlot(self):
+        """
+        Called when user want to create a new appliance
+        """
+        dialog = NewApplianceDialog(self)
+        dialog.show()
 
     def _IOUVMConverterActionSlot(self):
         command = shutil.which("gns3-iouvm-converter")
