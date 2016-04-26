@@ -20,6 +20,7 @@ Configuration page for VirtualBox preferences.
 """
 
 import os
+import sys
 import shutil
 from gns3.qt import QtWidgets
 
@@ -71,6 +72,10 @@ class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageW
 
         if not os.access(path, os.X_OK):
             QtWidgets.QMessageBox.critical(self, "VBoxManage", "{} is not an executable".format(os.path.basename(path)))
+            return False
+
+        if sys.platform.startswith("win") and "virtualbox.exe" in path.lower():
+            QtWidgets.QMessageBox.critical(self, "VBoxManage", "VBoxManage.exe must be selected instead of VirtualBox.exe")
             return False
 
         return True

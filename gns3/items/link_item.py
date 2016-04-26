@@ -201,14 +201,8 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         Resets the port label positions.
         """
 
-        source_port_label = self._source_port.label()
-        destination_port_label = self._destination_port.label()
-        if source_port_label is not None:
-            source_port_label.delete()
-            self._source_port.setLabel(None)
-        if destination_port_label is not None:
-            destination_port_label.delete()
-            self._destination_port.setLabel(None)
+        self._source_port.deleteLabel()
+        self._destination_port.deleteLabel()
 
     def populateLinkContextualMenu(self, menu):
         """
