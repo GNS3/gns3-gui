@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Tue Apr 26 11:38:43 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -46,7 +47,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -86,8 +87,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setSpacing(0)
+        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -120,8 +121,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setSpacing(0)
+        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -377,8 +378,8 @@ class Ui_MainWindow(object):
         icon28 = QtGui.QIcon()
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -427,6 +428,8 @@ class Ui_MainWindow(object):
         self.uiExportDebugInformationAction.setObjectName("uiExportDebugInformationAction")
         self.uiDoctorAction = QtWidgets.QAction(MainWindow)
         self.uiDoctorAction.setObjectName("uiDoctorAction")
+        self.uiAcademyAction = QtWidgets.QAction(MainWindow)
+        self.uiAcademyAction.setObjectName("uiAcademyAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -451,7 +454,7 @@ class Ui_MainWindow(object):
         self.uiHelpMenu.addAction(self.uiOnlineHelpAction)
         self.uiHelpMenu.addAction(self.uiCheckForUpdateAction)
         self.uiHelpMenu.addAction(self.uiSetupWizard)
-        self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
+        self.uiHelpMenu.addAction(self.uiAcademyAction)
         self.uiHelpMenu.addAction(self.uiDoctorAction)
         self.uiHelpMenu.addAction(self.uiExportDebugInformationAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
@@ -688,10 +691,11 @@ class Ui_MainWindow(object):
         self.uiExportDebugInformationAction.setText(_translate("MainWindow", "Export debug information"))
         self.uiExportDebugInformationAction.setToolTip(_translate("MainWindow", "&Export debug information"))
         self.uiDoctorAction.setText(_translate("MainWindow", "GNS3 &Doctor"))
+        self.uiAcademyAction.setText(_translate("MainWindow", "GNS3 &Academy"))
 
-from ..console_view import ConsoleView
-from ..graphics_view import GraphicsView
-from ..nodes_view import NodesView
-from ..server_summary_view import ServerSummaryView
 from ..topology_summary_view import TopologySummaryView
+from ..graphics_view import GraphicsView
+from ..server_summary_view import ServerSummaryView
+from ..nodes_view import NodesView
+from ..console_view import ConsoleView
 from . import resources_rc
