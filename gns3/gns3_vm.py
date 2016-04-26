@@ -19,6 +19,7 @@
 Manages the GNS3 VM.
 """
 
+import os
 import sys
 import subprocess
 import codecs
@@ -74,7 +75,7 @@ class GNS3VM:
     def _process_check_output(self, command, timeout=None):
         # Original code from Python's subprocess.check_output
         # https://github.com/python/cpython/blob/3.4/Lib/subprocess.py
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as process:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=os.environ) as process:
             self._running_process = process
             try:
                 output, unused_err = process.communicate(None, timeout=timeout)
