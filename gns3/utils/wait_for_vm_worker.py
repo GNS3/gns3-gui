@@ -179,7 +179,7 @@ class WaitForVMWorker(QtCore.QObject):
 
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
-            status, json_data = self._waitForServer(vm_server, "version", retry=120)
+            status, json_data = self._waitForServer(vm_server, "version", retry=40)
             if status == 401:
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return
