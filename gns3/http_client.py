@@ -298,8 +298,8 @@ class HTTPClient(QtCore.QObject):
         try:
             url = "{protocol}://{host}:{port}/v1/{endpoint}".format(protocol=self._scheme, host=self._http_host, port=self._http_port, endpoint=endpoint)
 
-            log.debug("Synchronous get %s with user %s", url, self._user)
             if self._user is not None and len(self._user) > 0:
+                log.debug("Synchronous get {} with user '{}'".format(url, self._user))
                 auth_handler = urllib.request.HTTPBasicAuthHandler()
                 auth_handler.add_password(realm="GNS3 server",
                                           uri=url,
@@ -307,6 +307,8 @@ class HTTPClient(QtCore.QObject):
                                           passwd=self._password)
                 opener = urllib.request.build_opener(auth_handler)
                 urllib.request.install_opener(opener)
+            else:
+                log.debug("Synchronous get {} (no authentication)".format(url))
 
             response = urllib.request.urlopen(url, timeout=timeout)
             content_type = response.getheader("CONTENT-TYPE")
