@@ -18,7 +18,7 @@
 
 import sys
 
-from .qt import QtWidgets, QtGui, QtCore
+from .qt import QtWidgets, QtGui, QtCore, DEFAULT_BINDING
 from .version import __version__
 
 import logging
@@ -35,6 +35,10 @@ class Application(QtWidgets.QApplication):
         self.setOrganizationDomain("gns3.net")
         self.setApplicationName("GNS3")
         self.setApplicationVersion(__version__)
+
+        if DEFAULT_BINDING == "PyQt5":
+            # this is only available in Qt5
+            self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
         # File path if we have received the path to
         # a file on system via an OSX event
