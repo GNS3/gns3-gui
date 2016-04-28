@@ -169,6 +169,7 @@ class Config:
         new_config["image"] = appliance_config["docker"]["image"]
         new_config["environment"] = appliance_config["docker"].get("environment", "")
         new_config["start_command"] = appliance_config["docker"].get("start_command", "")
+        new_config["console_type"] = appliance_config["docker"].get("console_type", "telnet")
         self._config["Docker"]["containers"].append(new_config)
 
     def _add_dynamips_config(self, new_config, appliance_config):
