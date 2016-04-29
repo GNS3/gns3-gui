@@ -44,14 +44,15 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # We adapt the max size to the screen resolution
         # We need to manually do that otherwise on small screen the windows
         # could be bigger than the screen instead of displaying scrollbars
-        height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100
-        width = QtWidgets.QDesktopWidget().screenGeometry().width() - 100
+        ratio = self.devicePixelRatio()
+        height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100 * ratio
+        width = QtWidgets.QDesktopWidget().screenGeometry().width() - 100 * ratio
 
         self.setMaximumSize(QtCore.QSize(width, height))
-        if width > 900 and self.width() < 900:
+        if width > 900 * ratio and self.width() < 900 * ratio:
             self.resize(900, self.height())
-        if height > 768 and self.height() < 768:
-            self.resize(self.width(), 768)
+        if height > 768 * ratio and self.height() < 768 * ratio:
+            self.resize(self.width(), 768 * ratio)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
         self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply)
@@ -65,7 +66,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         self.uiTreeWidget.setCurrentItem(self._items[0])
 
         # set the maximum width based on the content of column 0
-        self.uiTreeWidget.setMaximumWidth(self.uiTreeWidget.sizeHintForColumn(0) + 10)
+        self.uiTreeWidget.setMaximumWidth(self.uiTreeWidget.sizeHintForColumn(0) + 10 * ratio)
 
         # Something has change?
         self._modified = False
