@@ -33,10 +33,7 @@ import inspect
 import logging
 log = logging.getLogger(__name__)
 
-
-DEFAULT_BINDING = 'PyQt5'
-
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
+from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
