@@ -196,6 +196,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         try:
             if win32serviceutil.QueryServiceStatus("npf", None)[1] != win32service.SERVICE_RUNNING:
                 return (2, "The NPF service is not running: open cmd.exe as an Administrator and type 'sc config npf start= auto && net start npf'")
+            return (0, None)
         except pywintypes.error as e:
             if e[0] == 1060:
                 return (2, "The NPF service is not installed, please install Winpcap and reboot")
