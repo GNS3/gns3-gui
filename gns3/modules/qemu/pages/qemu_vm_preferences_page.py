@@ -230,7 +230,9 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         for key, qemu_vm in self._qemu_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, qemu_vm["name"])
-            item.setIcon(0, QtGui.QIcon(qemu_vm["symbol"]))
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(qemu_vm["symbol"]))
+            item.setIcon(0, icon)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

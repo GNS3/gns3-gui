@@ -172,7 +172,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         for key, vbox_vm in self._virtualbox_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["name"])
-            item.setIcon(0, QtGui.QIcon(vbox_vm["symbol"]))
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(vbox_vm["symbol"]))
+            item.setIcon(0, icon)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

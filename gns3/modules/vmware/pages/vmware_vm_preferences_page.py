@@ -180,7 +180,9 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         for key, vmware_vm in self._vmware_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMsTreeWidget)
             item.setText(0, vmware_vm["name"])
-            item.setIcon(0, QtGui.QIcon(vmware_vm["symbol"]))
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(vmware_vm["symbol"]))
+            item.setIcon(0, icon)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

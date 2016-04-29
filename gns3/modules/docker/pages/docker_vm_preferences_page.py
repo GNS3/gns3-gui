@@ -207,7 +207,9 @@ class DockerVMPreferencesPage(
         for key, docker_image in self._docker_containers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, docker_image["name"])
-            item.setIcon(0, QtGui.QIcon(docker_image["symbol"]))
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(docker_image["symbol"]))
+            item.setIcon(0, icon)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
