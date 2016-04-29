@@ -30,12 +30,6 @@ class Application(QtWidgets.QApplication):
     file_open_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, argv):
-        super().__init__(argv)
-        # this info is necessary for QSettings
-        self.setOrganizationName("GNS3")
-        self.setOrganizationDomain("gns3.net")
-        self.setApplicationName("GNS3")
-        self.setApplicationVersion(__version__)
 
         if DEFAULT_BINDING == "PyQt5":
             # this is only available in Qt5
@@ -43,6 +37,16 @@ class Application(QtWidgets.QApplication):
             if parse_version(QtCore.BINDING_VERSION_STR) >= parse_version("5.6.0"):
                 self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
             self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+
+        super().__init__(argv)
+
+        # this info is necessary for QSettings
+        self.setOrganizationName("GNS3")
+        self.setOrganizationDomain("gns3.net")
+        self.setApplicationName("GNS3")
+        self.setApplicationVersion(__version__)
+
+
 
         # File path if we have received the path to
         # a file on system via an OSX event
