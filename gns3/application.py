@@ -19,6 +19,7 @@
 import sys
 
 from .qt import QtWidgets, QtGui, QtCore, DEFAULT_BINDING
+from pkg_resources import parse_version
 from .version import __version__
 
 import logging
@@ -39,7 +40,8 @@ class Application(QtWidgets.QApplication):
         if DEFAULT_BINDING == "PyQt5":
             # this is only available in Qt5
             self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
-            self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+            if parse_version(QtCore.BINDING_VERSION_STR) >= parse_version("5.6.0"):
+                self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
             self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
         # File path if we have received the path to
