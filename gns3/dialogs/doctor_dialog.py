@@ -49,14 +49,17 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
         for method in sorted(dir(self)):
             if method.startswith('check'):
-                self.write(getattr(self, method).__doc__ + "...")
-                (res, msg) = getattr(self, method)()
-                if res == 0:
-                    self.write('<span style="color: green"><strong>OK</strong></span>')
-                elif res == 1:
-                    self.write('<span style="color: orange"><strong>WARNING</strong> {}</span>'.format(msg))
-                elif res == 2:
-                    self.write('<span style="color: red"><strong>ERROR</strong> {}</span>'.format(msg))
+                try:
+                    self.write(getattr(self, method).__doc__ + "...")
+                    (res, msg) = getattr(self, method)()
+                    if res == 0:
+                        self.write('<span style="color: green"><strong>OK</strong></span>')
+                    elif res == 1:
+                        self.write('<span style="color: orange"><strong>WARNING</strong> {}</span>'.format(msg))
+                    elif res == 2:
+                        self.write('<span style="color: red"><strong>ERROR</strong> {}</span>'.format(msg))
+                except Exception as e:
+                    self.write('<span style="color: red"><strong>FAIL</strong> The doctor fail during this test with error: {} Please check on the forum.</span>'.format(str(e)))
                 self.write("<br/>")
 
     def write(self, text):
