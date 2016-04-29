@@ -195,10 +195,6 @@ def main():
                 result.append(int(i))
         return result
 
-    # 4.8.3 because of QSettings (http://pyqt.sourceforge.net/Docs/PyQt4/pyqt_qsettings.html)
-    if DEFAULT_BINDING == "PyQt4" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
-        raise SystemExit("Requirement is PyQt version 4.8.3 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
-
     if DEFAULT_BINDING == "PyQt5" and version(QtCore.BINDING_VERSION_STR) < version("5.0.0"):
         raise SystemExit("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 

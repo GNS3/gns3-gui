@@ -16,9 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Compatibility layer for Qt bindings, so it is easier to switch from PyQt4 to PyQt5 and
-vice-versa. It is possible to add PySide if needed.
-For PyQt4 and PyQt5 differences please see http://pyqt.sourceforge.net/Docs/PyQt5/pyqt4_differences.html
+Compatibility layer for Qt bindings, so it is easier to switch to PySide if needed.
 """
 
 # based on https://gist.github.com/remram44/5985681 and
@@ -36,23 +34,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-if os.environ.get('GNS3_QT4', None) is not None:
-    DEFAULT_BINDING = 'PyQt4'
-else:
-    try:
-        import PyQt5
-        DEFAULT_BINDING = 'PyQt5'
-    except ImportError:
-        DEFAULT_BINDING = 'PyQt4'
-
-
-if DEFAULT_BINDING == 'PyQt4':
-    log.critical('ERROR: PyQt4 is no longer supported, please upgrade to PyQt5 for Python 3')
-    from PyQt4 import QtGui
-    app = QtGui.QApplication(sys.argv)
-    message = QtGui.QMessageBox.critical(None, 'GNS3', 'PyQt4 is no longer supported, please upgrade to PyQt5 for Python 3')
-    sys.exit(1)
-
+DEFAULT_BINDING = 'PyQt5'
 
 from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
 sys.modules[__name__ + '.QtCore'] = QtCore
