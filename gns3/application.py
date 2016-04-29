@@ -38,6 +38,8 @@ class Application(QtWidgets.QApplication):
 
         if DEFAULT_BINDING == "PyQt5":
             # this is only available in Qt5
+            self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
+            self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
             self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
         # File path if we have received the path to
