@@ -64,7 +64,6 @@ class NodesView(QtWidgets.QTreeWidget):
                 item.setText(0, node["name"])
                 item.setData(0, QtCore.Qt.UserRole, node)
                 image = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
-                image.setDevicePixelRatio(QtWidgets.QApplication.instance().devicePixelRatio())
                 # Set the ARGB to 0 to prevent rendering artifacts
                 image.fill(0x00000000)
                 svg_renderer = QImageSvgRenderer(node["symbol"])

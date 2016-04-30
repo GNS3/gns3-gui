@@ -19,7 +19,7 @@
 Graphical representation of a SVG node on the QGraphicsScene.
 """
 
-from ..qt import QtSvg, QtWidgets
+from ..qt import QtSvg
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .node_item import NodeItem
 
@@ -49,4 +49,3 @@ class SvgNodeItem(NodeItem, QtSvg.QGraphicsSvgItem):
         else:
             renderer = QImageSvgRenderer(node.defaultSymbol())
         self.setSharedRenderer(renderer)
-        self.setScale(QtWidgets.QApplication.instance().devicePixelRatio())
