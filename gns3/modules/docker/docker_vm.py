@@ -90,7 +90,7 @@ class DockerVM(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this container")
             return
 
-        self._settings["name"] = name
+        self.setName(name)
         self._settings["image"] = image
         params = {
             "name": name,
