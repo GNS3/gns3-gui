@@ -380,7 +380,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open appliance",
                                                         directory,
-                                                        "All files (*.*);;GNS3 appliance (*.gns3a)",
+                                                        "All files (*.*);;GNS3 appliance (*.gns3a);;GNS3 appliance (*.gns3appliance)",
                                                         "GNS3 appliance (*.gns3a)")
         if path:
             self.loadPath(path)
@@ -393,7 +393,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z);;NET files (*.net)",
+                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3project);;NET files (*.net)",
                                                         "GNS3 project files (*.gns3)")
         if path:
             self.loadPath(path)
@@ -430,14 +430,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog.reject()
                 self._project_dialog = None
 
-            if path.endswith(".gns3z"):
+            if path.endswith(".gns3project"):
                 import_worker = ImportProjectWorker(self, path)
                 import_worker.imported.connect(self.loadPath)
 
                 progress_dialog = ProgressDialog(import_worker, "Import project", "Importing project files...", "Cancel", parent=self)
                 progress_dialog.show()
                 progress_dialog.exec_()
-            elif path.endswith(".gns3a"):
+            elif path.endswith(".gns3a") or path.endswith(".gns3appliance"):
                 try:
                     self._appliance_wizard = ApplianceWizard(self, path)
                 except ApplianceError as e:
@@ -1615,8 +1615,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open topology",
                                                         directory,
-                                                        "All files (*.*);;GNS3 topology (*.gns3z)",
-                                                        "GNS3 topology (*.gns3z)")
+                                                        "All files (*.*);;GNS3 topology (*.gns3project)",
+                                                        "GNS3 topology (*.gns3project)")
         if not path:
             return
         self.loadPath(path)
