@@ -100,7 +100,7 @@ background-none;
     <addaction name="uiOnlineHelpAction"/>
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
-    <addaction name="uiLabInstructionsAction"/>
+    <addaction name="uiAcademyAction"/>
     <addaction name="uiDoctorAction"/>
     <addaction name="uiExportDebugInformationAction"/>
     <addaction name="uiAboutQtAction"/>
@@ -1208,6 +1208,11 @@ background-none;
    </property>
    <property name="text">
     <string>Edit readme</string>
+  </property>
+  </action>
+  <action name="uiAcademyAction">
+   <property name="text">
+    <string>GNS3 &amp;Academy</string>
    </property>
   </action>
  </widget>

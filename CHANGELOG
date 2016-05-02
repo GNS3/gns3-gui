@@ -1,5 +1,31 @@
 # Change Log
 
+## 1.4.6 28/04/2016
+
+* Fix a typo in qemu preferences
+* Fix upload of large image to the VM
+* Reduce the number of connection tries from 120 to 40 when connecting the GNS3 server running inside the GNS3 VM.
+* Include link to the GNS3 academy. Fixes #1178.
+* Snapback feature for port labels. Fixes #1182.
+* Prevent users to select VirtualBox.exe instead of VBoxManage.exe. Fixes #1195.
+* Improve the vmrun error message
+* If we can not read the registry try to guess vmware type from vmrun path
+* Ensure that you can not duplicate an interface in a cloud
+* Dissallow removal of link of running emulator without support of hotlink
+* Check PyQT version support dev version
+* Show server CPU usage if it's 0
+* Clear warnings about using linked clones with VMware Player.
+* Double click center on link
+* Double click on an element in topology summary center the view on it
+* Fix a very very rare crash when closing a project
+* Avoid a small blink of the waiting text
+* Fix a crash with image item
+* Show a symbol in the middle of the link when packet capturing is activated. Ref #789.
+* GNS3 doctor: check if the NPF service is running. Fixes #1124.
+* Fixes progress dialog is None in accept()
+* Fix another race conditions in progress dialog
+* Replace the installation instructions by a link to the doc
+
 ## 1.4.5 23/03/2016
 
 * Change some sentences.

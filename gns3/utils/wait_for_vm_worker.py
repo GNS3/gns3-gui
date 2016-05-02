@@ -178,7 +178,7 @@ class WaitForVMWorker(QtCore.QObject):
 
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
-            status, json_data = self._waitForServer(vm_server, "version", retry=120)
+            status, json_data = self._waitForServer(vm_server, "version", retry=40)
             if status == 401:
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return
@@ -193,8 +193,7 @@ class WaitForVMWorker(QtCore.QObject):
                 return
             server_version = json_data["version"]
             if __version__ != server_version:
-                # It's just a warning. If the version has a big mistach the HTTP code for the connection to
-                # to the server will block.
+                # Just a warning: the HTTP code for the connection to the server will block if the version has a mismatch
                 print("Client version {} differs with server version {} in the GNS3 VM, please upgrade the VM by selecting the Upgrade options in the VM menu.".format(__version__, server_version))
         except OSError as e:
             self.error.emit("Request error {}".format(e), True)

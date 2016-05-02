@@ -257,6 +257,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
+        self.uiAcademyAction.triggered.connect(self._academyActionSlot)
         self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
 
         # browsers tool bar connections
@@ -917,6 +918,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog = DoctorDialog(self)
         dialog.show()
         dialog.exec_()
+
+    def _academyActionSlot(self):
+        """
+        Slot to launch a browser pointing to the courses page.
+        """
+
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://academy.gns3.com/"))
 
     def _showNodesDockWidget(self, title, category):
         """
