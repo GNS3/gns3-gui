@@ -273,6 +273,8 @@ def main():
     exit_code = app.exec_()
     delattr(MainWindow, "_instance")
 
+    # We force deleting the app object otherwise it's segfault on Fedora
+    del app
     # We force a full garbage collect before exit
     # for unknow reason otherwise Qt Segfault on OSX in some
     # conditions
