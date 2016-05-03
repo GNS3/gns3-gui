@@ -226,6 +226,9 @@ class VM(Node):
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
+            # To avoid block the client if the node no longer exists or server doesn't answer we consider node as stopped
+            if not "status" in result or result["status"] == 404:
+                self.setStatus(Node.stopped)
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
