@@ -37,5 +37,7 @@ DOCKER_CONTAINER_SETTINGS = {
     "adapters": 1,
     "environment": "",
     "console_type": "telnet",
-    "console_resolution": "1024x768"
+    "console_resolution": "1024x768",
+    "console_http_port": 80,
+    "console_http_path": "/"
 }

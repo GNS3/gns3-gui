@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>431</height>
+    <width>656</width>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,11 +24,15 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="uiCMDLineEdit"/>
-       </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="uiAdapterLabel">
@@ -37,10 +41,33 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiConsoleTypeLabel">
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="uiCMDLineEdit"/>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Console type:</string>
+          <string>HTTP port in the container:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QSpinBox" name="uiAuxPortSpinBox">
+         <property name="minimum">
+          <number>1024</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QSpinBox" name="uiConsoleHttpPortSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
          </property>
         </widget>
        </item>
@@ -78,7 +105,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
+       <item row="12" column="0">
         <widget class="QLabel" name="uiEnvironmentLabel">
          <property name="text">
           <string>Environment (KEY=VALUE one by line):</string>
@@ -91,7 +118,7 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="1">
+       <item row="13" column="1">
         <widget class="QPushButton" name="uiNetworkConfigEditButton">
          <property name="text">
           <string>Edit</string>
@@ -110,9 +137,19 @@
            <string>vnc</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>http</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>https</string>
+          </property>
+         </item>
         </widget>
        </item>
-       <item row="11" column="0">
+       <item row="13" column="0">
         <widget class="QLabel" name="uiNetworkConfigLabel">
          <property name="text">
           <string>Network configuration</string>
@@ -142,6 +179,9 @@
           <string>Console port:</string>
          </property>
         </widget>
+       </item>
+       <item row="12" column="1">
+        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
        </item>
        <item row="2" column="1">
         <widget class="QComboBox" name="uiCategoryComboBox">
@@ -173,9 +213,6 @@
           <string>Category</string>
          </property>
         </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="uiCMDLabel">
@@ -237,22 +274,22 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="11" column="0">
         <widget class="QLabel" name="uiAuxPortLabel">
          <property name="text">
           <string>Aux port:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
-        <widget class="QSpinBox" name="uiAuxPortSpinBox">
-         <property name="minimum">
-          <number>1024</number>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>HTTP path:</string>
          </property>
         </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLineEdit" name="uiHttpConsolePathLineEdit"/>
        </item>
       </layout>
      </widget>
