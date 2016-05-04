@@ -93,6 +93,7 @@ class DockerVM(VM):
             return
 
         self.setName(name)
+        self._settings["name"] = name
         self._settings["image"] = image
         params = {
             "name": name,
