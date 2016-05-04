@@ -158,7 +158,9 @@ def test_add_appliance_docker(empty_config, iou_l3):
         "start_command": "",
         "environment": "",
         "usage": "By default all interfaces are connected to the br0",
-        "console_type": "telnet"
+        "console_type": "telnet",
+        "console_http_port": 80,
+        "console_http_path": "/"
     }
 
 
