@@ -57,7 +57,7 @@ from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
 from gns3.local_config import LocalConfig
 from gns3.application import Application
-from pkg_resources import parse_version
+from gns3.utils import parse_version
 
 
 import logging

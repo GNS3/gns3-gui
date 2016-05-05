@@ -19,7 +19,7 @@
 import sys
 
 from .qt import QtWidgets, QtGui, QtCore
-from pkg_resources import parse_version
+from gns3.utils import parse_version
 from .version import __version__
 
 import logging
