@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Wed May  4 23:59:34 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(550, 580)
+        ServerPreferencesPageWidget.resize(526, 631)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -38,11 +39,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_6 = QtWidgets.QGridLayout(self.uiLocalTabWidget)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.uiGeneralSettingsGroupBox = QtWidgets.QGroupBox(self.uiLocalTabWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiGeneralSettingsGroupBox.sizePolicy().hasHeightForWidth())
-        self.uiGeneralSettingsGroupBox.setSizePolicy(sizePolicy)
         self.uiGeneralSettingsGroupBox.setObjectName("uiGeneralSettingsGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiGeneralSettingsGroupBox)
         self.gridLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
@@ -149,10 +145,8 @@ class Ui_ServerPreferencesPageWidget(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem1)
         self.gridLayout_6.addWidget(self.uiUDPPortRangeGroupBox, 3, 0, 1, 2)
-        self.uiGeneralSettingsGroupBox.raise_()
-        self.uiConsolePortRangeGroupBox.raise_()
-        self.uiUDPPortRangeGroupBox.raise_()
-        self.uiLocalServerAutoStartCheckBox.raise_()
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem2, 4, 0, 1, 1)
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiGNS3VMTabWidget = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -192,8 +186,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.buttonGroup.addButton(self.uiRemoteRadioButton)
         self.gridLayout_7.addWidget(self.uiRemoteRadioButton, 0, 2, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(166, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_7.addItem(spacerItem2, 0, 3, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(166, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_7.addItem(spacerItem3, 0, 3, 1, 1)
         self.verticalLayout.addWidget(self.uiVirtualizationGroupBox)
         self.uiLocalGNS3VMSettingsGroupBox = QtWidgets.QGroupBox(self.uiGNS3VMTabWidget)
         self.uiLocalGNS3VMSettingsGroupBox.setObjectName("uiLocalGNS3VMSettingsGroupBox")
@@ -250,8 +244,8 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiAddServerPushButton.setObjectName("uiAddServerPushButton")
         self.horizontalLayout_4.addWidget(self.uiAddServerPushButton)
         self.verticalLayout.addWidget(self.uiRemoteGNS3VMSettingsGroupBox)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem3)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem4)
         self.uiServerPreferenceTabWidget.addTab(self.uiGNS3VMTabWidget, "")
         self.uiRemoteTabWidget = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -283,16 +277,13 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setEnabled(False)
         self.uiDeleteRemoteServerPushButton.setObjectName("uiDeleteRemoteServerPushButton")
         self.horizontalLayout_3.addWidget(self.uiDeleteRemoteServerPushButton)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem4)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem5)
         self.gridLayout_5.addLayout(self.horizontalLayout_3, 1, 0, 1, 2)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem5, 2, 0, 1, 1)
-        self.uiRemoteServersTreeWidget.raise_()
+        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem6, 2, 0, 1, 1)
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiServerPreferenceTabWidget)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem6)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

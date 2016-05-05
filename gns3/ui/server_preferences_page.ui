@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>580</height>
+    <width>526</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,12 +56,6 @@
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="uiGeneralSettingsGroupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="title">
           <string>General settings</string>
          </property>
@@ -296,11 +290,25 @@
          </layout>
         </widget>
        </item>
+       <item row="4" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
       <zorder>uiGeneralSettingsGroupBox</zorder>
       <zorder>uiConsolePortRangeGroupBox</zorder>
       <zorder>uiUDPPortRangeGroupBox</zorder>
       <zorder>uiLocalServerAutoStartCheckBox</zorder>
+      <zorder>verticalSpacer</zorder>
      </widget>
      <widget class="QWidget" name="uiGNS3VMTabWidget">
       <property name="sizePolicy">
@@ -612,19 +620,6 @@
       <zorder>verticalSpacer_3</zorder>
      </widget>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
